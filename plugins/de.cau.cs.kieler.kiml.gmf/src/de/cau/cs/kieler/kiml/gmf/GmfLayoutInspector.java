@@ -39,22 +39,19 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.Style;
 import org.eclipse.gmf.runtime.notation.View;
 
+import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyle;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsFactory;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
-import de.cau.cs.kieler.kiml.klayoutdata.KOption;
-import de.cau.cs.kieler.kiml.klayoutdata.KStringOption;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
  *
@@ -63,11 +60,12 @@ import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 public class GmfLayoutInspector implements ILayoutInspector {
 
     /** list of layout option data. */
-    private List<LayoutOptionData> optionDataList;
+    private List<LayoutOptionData<?>> optionDataList;
     /** the layout option style stored in the notation view. */
     private LayoutOptionStyle optionStyle;
     /** map of layout option data to KOptions from the layout option style. */
-    private Map<LayoutOptionData, KOption> koptionMap = new HashMap<LayoutOptionData, KOption>();
+    private Map<LayoutOptionData<?>, KOption> koptionMap
+            = new HashMap<LayoutOptionData<?>, KOption>();
     /** layout provider data of the shown edit part. */
     private LayoutProviderData partProviderData;
     /** layout provider data of the containing edit part. */
@@ -80,7 +78,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
     private IGraphicalEditPart containmentEditPart;
     /** whether the focus edit part has children. */
     private boolean hasChildren;
-
+    
     /**
      * Finds the diagram edit part of an edit part.
      * 
@@ -113,11 +111,11 @@ public class GmfLayoutInspector implements ILayoutInspector {
      * @param setUserOptions if true, the user defined options are also set
      */
     public static void setLayoutOptions(final IGraphicalEditPart editPart,
-            final KLayoutData layoutData, final boolean setUserOptions) {
+            final KGraphData layoutData, final boolean setUserOptions) {
         LayoutServices layoutServices = LayoutServices.getInstance();
 
         // get default layout options for the diagram type
-        String diagramType = (String) KimlUiUtil.getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
+        String diagramType = (String) KimlUiUtil.getOption(editPart, LayoutOptions.DIAGRAM_TYPE_ID);
         Map<String, Object> options = new LinkedHashMap<String, Object>(
                 layoutServices.getOptions(diagramType));
         
@@ -155,9 +153,9 @@ public class GmfLayoutInspector implements ILayoutInspector {
         
         // add all options to the layout data instance
         for (Entry<String, Object> option : options.entrySet()) {
-            LayoutOptionData optionData = layoutServices.getLayoutOptionData(option.getKey());
+            LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(option.getKey());
             if (option.getValue() != null) {
-                optionData.setValue(layoutData, option.getValue());
+                layoutData.setProperty(optionData, option.getValue());
             }
         }
     }
@@ -196,10 +194,10 @@ public class GmfLayoutInspector implements ILayoutInspector {
         if (optionStyle != null) {
             for (KOption option : optionStyle.getOptions()) {
                 if (!onlyDefault || option.isDefault()) {
-                    LayoutOptionData optionData = layoutServices.getLayoutOptionData(
+                    LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(
                             option.getKey());
                     if (optionData != null) {
-                        Object value = KimlLayoutUtil.getValue(option, optionData);
+                        Object value = optionData.parseValue(option.getValue());
                         if (value != null) {
                             options.put(option.getKey(), value);
                         }
@@ -207,39 +205,6 @@ public class GmfLayoutInspector implements ILayoutInspector {
                 }
             }
         }
-    }
-    
-    /**
-     * Adds a {@link KOption} to the given layout option style. This operation must be run in
-     * a safe context; use {@link #runModelChange} to achieve this.
-     * 
-     * @param optionStyle layout option style of a notation view
-     * @param optionData the layout option data for which the {@code KOption} shall be created
-     * @return the new {@code KOption}
-     */
-    private static KOption addKOption(final LayoutOptionStyle optionStyle,
-            final LayoutOptionData optionData) {
-        KOption koption = null;
-        switch (optionData.getType()) {
-        case STRING:
-            koption = KLayoutDataFactory.eINSTANCE.createKStringOption();
-            break;
-        case BOOLEAN:
-            koption = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
-            break;
-        case ENUM:
-        case INT:
-            koption = KLayoutDataFactory.eINSTANCE.createKIntOption();
-            break;
-        case FLOAT:
-            koption = KLayoutDataFactory.eINSTANCE.createKFloatOption();
-            break;
-        default:
-            return null;
-        }
-        koption.setKey(optionData.getId());
-        optionStyle.getOptions().add(koption);
-        return koption;
     }
 
     /**
@@ -398,10 +363,10 @@ public class GmfLayoutInspector implements ILayoutInspector {
         String partLayoutHint = null;
         if (optionStyle != null) {
             for (KOption koption : optionStyle.getOptions()) {
-                if (LayoutOptions.LAYOUT_HINT.equals(koption.getKey())) {
-                    partLayoutHint = ((KStringOption) koption).getValue();
+                if (LayoutOptions.LAYOUT_HINT_ID.equals(koption.getKey())) {
+                    partLayoutHint = koption.getValue();
                 }
-                LayoutOptionData optionData = LayoutServices.getInstance()
+                LayoutOptionData<?> optionData = LayoutServices.getInstance()
                         .getLayoutOptionData(koption.getKey());
                 if (optionData != null) {
                     koptionMap.put(optionData, koption);
@@ -412,9 +377,9 @@ public class GmfLayoutInspector implements ILayoutInspector {
             DiagramEditPart diagramEditPart = getDiagramEditPart(containerEditPart);
             if (diagramEditPart != null) {
                 KOption koption = getKOption(diagramEditPart,
-                        LayoutOptions.LAYOUT_HINT);
+                        LayoutOptions.LAYOUT_HINT_ID);
                 if (koption != null && koption.isDefault()) {
-                    partLayoutHint = ((KStringOption) koption).getValue();
+                    partLayoutHint = koption.getValue();
                 }
             }
         }
@@ -433,21 +398,21 @@ public class GmfLayoutInspector implements ILayoutInspector {
         KOption containerLayoutHintOption = getKOption(
                 (containerEditPart instanceof CompartmentEditPart
                         ? (IGraphicalEditPart) containerEditPart.getParent() : containerEditPart),
-                LayoutOptions.LAYOUT_HINT);
+                LayoutOptions.LAYOUT_HINT_ID);
         if (containerLayoutHintOption == null) {
             DiagramEditPart diagramEditPart = getDiagramEditPart(containerEditPart);
             if (diagramEditPart != null) {
                 KOption koption = getKOption(diagramEditPart,
-                        LayoutOptions.LAYOUT_HINT);
+                        LayoutOptions.LAYOUT_HINT_ID);
                 if (koption != null && koption.isDefault()) {
                     containerLayoutHintOption = koption;
                 }
             }
         }
-        String containerLayoutHint = containerLayoutHintOption instanceof KStringOption
-                ? ((KStringOption) containerLayoutHintOption).getValue() : null;
+        String containerLayoutHint = containerLayoutHintOption == null ? null
+                : containerLayoutHintOption.getValue();
         String containerDiagramType = (String) KimlUiUtil.getOption(containerEditPart,
-                LayoutOptions.DIAGRAM_TYPE);
+                LayoutOptions.DIAGRAM_TYPE_ID);
         containerProviderData = layoutServices.getLayoutProviderData(
                 containerLayoutHint, containerDiagramType);
         LayoutViewPart layoutView = LayoutViewPart.findView();
@@ -462,7 +427,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
                 partProviderData = containerProviderData;
             } else if (containmentEditPart != null) {
                 String childCompartmentDiagramType = (String) KimlUiUtil.getOption(
-                        containmentEditPart, LayoutOptions.DIAGRAM_TYPE);
+                        containmentEditPart, LayoutOptions.DIAGRAM_TYPE_ID);
                 partProviderData = layoutServices.getLayoutProviderData(
                         partLayoutHint, childCompartmentDiagramType);
                 optionDataList.addAll(layoutServices.getLayoutOptions(partProviderData,
@@ -483,31 +448,49 @@ public class GmfLayoutInspector implements ILayoutInspector {
     /**
      * {@inheritDoc}
      */
-    public List<LayoutOptionData> getOptionData() {
+    public List<LayoutOptionData<?>> getOptionData() {
         return optionDataList;
     }
     
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public KOption getKOption(final LayoutOptionData optionData, final boolean create) {
+    public Object getOption(final LayoutOptionData<?> optionData) {
         KOption koption = koptionMap.get(optionData);
-        if (koption == null && create) {
-            if (optionStyle == null) {
-                optionStyle = LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle();
-                focusEditPart.getNotationView().getStyles().add(optionStyle);
-            }
-            koption = addKOption(optionStyle, optionData);
-            koptionMap.put(optionData, koption);
+        if (koption == null) {
+            return null;
+        } else {
+            return optionData.parseValue(koption.getValue());
         }
-        return koption;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public void setOption(final LayoutOptionData<?> optionData, final Object value) {
+        if (value == null) {
+            removeOption(optionData);
+        } else {
+            KOption koption = koptionMap.get(optionData);
+            if (koption == null) {
+                if (optionStyle == null) {
+                    optionStyle = LayoutOptionsFactory.eINSTANCE.createLayoutOptionStyle();
+                    focusEditPart.getNotationView().getStyles().add(optionStyle);
+                }
+                koption = LayoutOptionsFactory.eINSTANCE.createKOption();
+                koption.setKey(optionData.getId());
+                optionStyle.getOptions().add(koption);
+                koptionMap.put(optionData, koption);
+            }
+            koption.setValue(value.toString());
+        }
     }
     
     /**
      * {@inheritDoc}
      */
-    public void removeKOption(final LayoutOptionData optionData) {
+    public void removeOption(final LayoutOptionData<?> optionData) {
         removeKOption(optionStyle, optionData);
         koptionMap.remove(optionData);
     }
@@ -518,7 +501,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
      * @param style a layout option style
      * @param optionData a layout option data
      */
-    private void removeKOption(final LayoutOptionStyle style, final LayoutOptionData optionData) {
+    private void removeKOption(final LayoutOptionStyle style, final LayoutOptionData<?> optionData) {
         ListIterator<KOption> optionIter = style.getOptions().listIterator();
         while (optionIter.hasNext()) {
             if (optionIter.next().getKey().equals(optionData.getId())) {
@@ -531,7 +514,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
     /**
      * {@inheritDoc}
      */
-    public void removeAllKOptions() {
+    public void removeAllOptions() {
         View view = focusEditPart.getNotationView();
         if (view instanceof Diagram) {
             Diagram diagram = (Diagram) view;
@@ -611,7 +594,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public void setDefault(final LayoutOptionData optionData, final Object value) {
+    public void setDefault(final LayoutOptionData<?> optionData, final Object value) {
         View notationView = focusEditPart.getNotationView();
         
         // get the layout option style
@@ -622,29 +605,34 @@ public class GmfLayoutInspector implements ILayoutInspector {
             notationView.getStyles().add(style);
         }
         
-        // get the layout option
-        KOption koption = null;
-        for (KOption opt : style.getOptions()) {
-            if (opt.getKey().equals(optionData.getId())) {
-                koption = opt;
-                break;
-            }
-        }
-        if (koption == null) {
-            koption = addKOption(style, optionData);
-        }
-        
-        // set the new option value
-        if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
-            KimlLayoutUtil.setValue(koption, optionData,
-                    LayoutPropertySource.getLayoutHint((String) value));
+        if (value == null) {
+            removeKOption(style, optionData);
         } else {
-            KimlLayoutUtil.setValue(koption, optionData, value);
+            // get the layout option
+            KOption koption = null;
+            for (KOption opt : style.getOptions()) {
+                if (opt.getKey().equals(optionData.getId())) {
+                    koption = opt;
+                    break;
+                }
+            }
+            if (koption == null) {
+                koption = LayoutOptionsFactory.eINSTANCE.createKOption();
+                koption.setKey(optionData.getId());
+                optionStyle.getOptions().add(koption);
+            }
+            
+            // set the new option value
+            if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
+                koption.setValue(LayoutPropertySource.getLayoutHint((String) value));
+            } else {
+                koption.setValue(value.toString());
+            }
+            koption.setDefault(true);
+            
+            // remove the option from all children
+            removeChildOptions(notationView, optionData);
         }
-        koption.setDefault(true);
-        
-        // remove the option from all children
-        removeChildOptions(notationView, optionData);
     }
     
     /**
@@ -653,7 +641,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
      * @param notationView a notation view
      * @param optionData layout option data
      */
-    private void removeChildOptions(final View notationView, final LayoutOptionData optionData) {
+    private void removeChildOptions(final View notationView, final LayoutOptionData<?> optionData) {
         for (Object child : notationView.getPersistedChildren()) {
             View node = (View) child;
             LayoutOptionStyle style = (LayoutOptionStyle) node.getStyle(
@@ -677,7 +665,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
     /**
      * {@inheritDoc}
      */
-    public Object getDefault(final LayoutOptionData optionData) {
+    public Object getDefault(final LayoutOptionData<?> optionData) {
         IGraphicalEditPart diagramEditPart = getDiagramEditPart(focusEditPart);
         LayoutOptionStyle style = (LayoutOptionStyle) diagramEditPart.getNotationView()
                 .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
@@ -685,7 +673,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
             for (KOption koption : style.getOptions()) {
                 if (koption.getKey().equals(optionData.getId())
                         && koption.isDefault()) {
-                    return KimlLayoutUtil.getValue(koption, optionData);
+                    return optionData.parseValue(koption.getValue());
                 }
             }
         }

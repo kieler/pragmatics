@@ -81,7 +81,7 @@ public class DiagramDefaultAction extends Action {
      * @param entry a property sheet entry
      */
     private void applyOption(final ILayoutInspector inspector, final IPropertySheetEntry entry) {
-        LayoutOptionData theOptionData = KimlUiUtil.getOptionData(
+        LayoutOptionData<?> theOptionData = KimlUiUtil.getOptionData(
                 layoutView.getCurrentProviderData(), entry.getDisplayName());
         if (theOptionData == null) {
             return;
@@ -89,7 +89,7 @@ public class DiagramDefaultAction extends Action {
 
         final Object value = theOptionData.parseValue(entry.getValueAsString());
         if (value != null) {
-            final LayoutOptionData optionData = theOptionData;
+            final LayoutOptionData<?> optionData = theOptionData;
             Runnable modelChange = new Runnable() {
                 public void run() {
                     inspector.setDefault(optionData, value);

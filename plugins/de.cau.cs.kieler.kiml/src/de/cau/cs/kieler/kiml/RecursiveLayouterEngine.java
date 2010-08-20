@@ -18,7 +18,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Performs layout in a graph with hierarchy by executing a layout provider on
@@ -112,16 +112,16 @@ public class RecursiveLayouterEngine {
      */
     private void checkLayout(final KNode layoutNode) {
         // check the new size of the parent node
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
-        float minWidth = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_WIDTH);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        float minWidth = parentLayout.getProperty(LayoutOptions.MIN_WIDTH);
         if (parentLayout.getWidth() < minWidth) {
             parentLayout.setWidth(minWidth);
         }
-        float minHeight = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_HEIGHT);
+        float minHeight = parentLayout.getProperty(LayoutOptions.MIN_HEIGHT);
         if (parentLayout.getHeight() < minHeight) {
             parentLayout.setHeight(minHeight);
         }
-        LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE, true);
+        LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE_ID, true);
 
     }
 

@@ -44,6 +44,15 @@ public interface LayoutOptionsFactory extends EFactory {
     LayoutOptionStyle createLayoutOptionStyle();
 
     /**
+     * Returns a new object of class '<em>KOption</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>KOption</em>'.
+     * @generated
+     */
+    KOption createKOption();
+
+    /**
      * Returns the package supported by this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

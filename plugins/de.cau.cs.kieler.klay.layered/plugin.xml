@@ -42,6 +42,8 @@
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.LayeredEdgeRouting"
+            default="POLYLINE"
             description="Style of edge routing"
             id="de.cau.cs.kieler.klay.layered.edgeRouting"
             name="Edge Routing"
@@ -49,12 +51,14 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="false"
             id="de.cau.cs.kieler.klay.layered.debugInfo"
             name="Debug Info"
             type="boolean">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="false"
             description="If enabled, edges with priority &gt; 0 are drawn straight instead of keeping the connected nodes in line.ne."
             id="de.cau.cs.kieler.klay.layered.straightEdges"
             name="Straight Edges"
@@ -62,6 +66,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="Defines the minimal angle that short edges may have."
             id="de.cau.cs.kieler.klay.layered.minimalAngle"
             name="Minimal Angle"
@@ -69,6 +74,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="false"
             description="Whether wide nodes should be distributed to several layers"
             id="de.cau.cs.kieler.klay.layered.distributeNodes"
             name="Distribute Nodes"
@@ -76,6 +82,8 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.LayeredNodeLayering"
+            default="NETWORK_SIMPLEX"
             description="Style of the node layering"
             id="de.cau.cs.kieler.klay.layered.nodeLayering"
             name="Node Layering"

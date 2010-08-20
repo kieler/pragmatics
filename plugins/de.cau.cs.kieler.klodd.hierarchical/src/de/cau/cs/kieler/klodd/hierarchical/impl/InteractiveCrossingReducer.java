@@ -21,7 +21,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.modules.ICrossingReducer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayerElement;
@@ -83,7 +83,7 @@ public class InteractiveCrossingReducer extends AbstractAlgorithm implements ICr
         } else {
             // process an edge
             KEdge edge = (KEdge) element.getElemObj();
-            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
             if (layoutDirection == LayoutDirection.DOWN) {
                 float currVal = edgeLayout.getSourcePoint().getX();
                 for (KPoint bendPoint : edgeLayout.getBendPoints()) {

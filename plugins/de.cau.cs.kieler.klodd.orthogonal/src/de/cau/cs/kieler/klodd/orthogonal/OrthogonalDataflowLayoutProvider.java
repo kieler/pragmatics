@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.orthogonal.impl.ConnectedComponents;
 import de.cau.cs.kieler.klodd.orthogonal.impl.KandinskyLPOrthogonalizer;
 import de.cau.cs.kieler.klodd.orthogonal.impl.LayeringCompacter;
@@ -76,8 +76,8 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
         // get the currently configured modules
         updateModules();
         // set option for minimal distance
-        float minDist = LayoutOptions.getFloat(KimlLayoutUtil.getShapeLayout(layoutNode),
-                LayoutOptions.MIN_SPACING);
+        float minDist = LayoutOptions.getFloat(KimlUtil.getShapeLayout(layoutNode),
+                LayoutOptions.MIN_SPACING_ID);
         if (Float.isNaN(minDist)) {
             minDist = DEF_MIN_DIST;
         }
@@ -126,8 +126,8 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
      * @param parentNode parent layout node
      */
     private void applyLayout(final List<TSMGraph> components, final KNode parentNode) {
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
-        KInsets insets = LayoutOptions.getObject(parentLayout, KInsets.class);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
+        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
         float currentYpos = 0.0f, maxWidth = 0.0f;
         for (TSMGraph component : components) {
             component.applyLayout(0.0f, currentYpos);

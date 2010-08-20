@@ -18,7 +18,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The Mixed-Upward Planarization layouter from the OGDF library.
@@ -45,17 +45,17 @@ public class PlanarizationLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     protected void prepareLayouter(final KNode layoutNode) {
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
         // get page ratio
         float pageRatio =
                 LayoutOptions
-                        .getFloat(parentLayout, LayoutOptions.ASPECT_RATIO);
+                        .getFloat(parentLayout, LayoutOptions.ASPECT_RATIO_ID);
         if (Float.isNaN(pageRatio)) {
             pageRatio = DEF_PAGE_RATIO;
         }
         // get separation
         float minSpacing =
-                LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
+                LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
         if (Float.isNaN(minSpacing)) {
             minSpacing = DEF_MINSPACING;
         }
@@ -95,19 +95,19 @@ public class PlanarizationLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     public Object getDefault(final String optionId) {
-        if (optionId.equals(LayoutOptions.LAYOUT_DIRECTION)) {
+        if (optionId.equals(LayoutOptions.LAYOUT_DIRECTION_ID)) {
             return LayoutDirection.UP;
-        } else if (optionId.equals(LayoutOptions.MIN_SPACING)) {
+        } else if (optionId.equals(LayoutOptions.MIN_SPACING_ID)) {
             return DEF_MINSPACING;
-        } else if (optionId.equals(LayoutOptions.BORDER_SPACING)) {
+        } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(LayoutOptions.ASPECT_RATIO)) {
+        } else if (optionId.equals(LayoutOptions.ASPECT_RATIO_ID)) {
             return DEF_PAGE_RATIO;
         } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
             return DEF_LABEL_SPACING;
         } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
             return DEF_LABEL_MARGIN_DISTANCE;
-        } else if (optionId.equals(LayoutOptions.BORDER_SPACING)) {
+        } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
         } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
             return DEF_LABEL_SPACING;

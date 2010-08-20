@@ -42,7 +42,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
         /** identifier of the associated diagram type or element type. */
         private String associatedTypeId;
         /** layout option data. */
-        private LayoutOptionData optionData;
+        private LayoutOptionData<?> optionData;
         /** the current value. */
         private Object value;
         
@@ -55,7 +55,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
          * @param thevalue the current value
          */
         public DataEntry(final String thetypeName, final String thetypeId,
-                final LayoutOptionData theoptionData, final Object thevalue) {
+                final LayoutOptionData<?> theoptionData, final Object thevalue) {
             this.associatedTypeName = thetypeName;
             this.associatedTypeId = thetypeId;
             this.optionData = theoptionData;
@@ -85,7 +85,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
          *
          * @return the option data
          */
-        public LayoutOptionData getOptionData() {
+        public LayoutOptionData<?> getOptionData() {
             return optionData;
         }
 

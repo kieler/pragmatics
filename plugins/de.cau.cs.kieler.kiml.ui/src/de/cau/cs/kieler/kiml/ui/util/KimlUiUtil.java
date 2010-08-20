@@ -180,7 +180,7 @@ public final class KimlUiUtil {
      * @return true if no layout should be performed for the edit part
      */
     public static boolean isNoLayout(final EditPart editPart) {
-        Boolean result = (Boolean) getOption(editPart, LayoutOptions.NO_LAYOUT);
+        Boolean result = (Boolean) getOption(editPart, LayoutOptions.NO_LAYOUT_ID);
         if (result != null) {
             return result;
         } else {
@@ -196,17 +196,17 @@ public final class KimlUiUtil {
      * @param displayName display name of the layout option as seen by the user
      * @return the most suitable layout option data
      */
-    public static LayoutOptionData getOptionData(final LayoutProviderData[] providerDataArray,
+    public static LayoutOptionData<?> getOptionData(final LayoutProviderData[] providerDataArray,
             final String displayName) {
         for (LayoutProviderData providerData : providerDataArray) {
-            LayoutOptionData optionData = EclipseLayoutServices.getInstance().getOptionData(
+            LayoutOptionData<?> optionData = EclipseLayoutServices.getInstance().getOptionData(
                     providerData, displayName);
             if (optionData != null) {
                 return optionData;
             }
         }
         // the only option data that is added without explicit support by layouters is layout hint
-        return LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUT_HINT);
+        return LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUT_HINT_ID);
     }
 
 }

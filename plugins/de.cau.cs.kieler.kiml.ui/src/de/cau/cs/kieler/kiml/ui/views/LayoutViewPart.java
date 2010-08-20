@@ -403,7 +403,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                 }
                 // add the "set as default for diagram type" action
                 LayoutServices layoutServices = LayoutServices.getInstance();
-                String diagramType = (String) KimlUiUtil.getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
+                String diagramType = (String) KimlUiUtil.getOption(editPart,
+                        LayoutOptions.DIAGRAM_TYPE_ID);
                 if (diagramType == null) {
                     if (diagramTypeDefaultItem != null) {
                         diagramTypeDefaultItem.setEnabled(false);

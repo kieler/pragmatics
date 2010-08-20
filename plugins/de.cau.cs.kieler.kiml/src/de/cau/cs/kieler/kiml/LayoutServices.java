@@ -29,14 +29,10 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
-import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.EdgeType;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.Shape;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Singleton class for access to the KIML layout services. This class is used
@@ -64,8 +60,8 @@ public class LayoutServices {
     private Map<String, LayoutProviderData> layoutProviderMap
             = new LinkedHashMap<String, LayoutProviderData>();
     /** mapping of layout option identifiers to their data instances. */
-    private Map<String, LayoutOptionData> layoutOptionMap
-            = new LinkedHashMap<String, LayoutOptionData>();
+    private Map<String, LayoutOptionData<?>> layoutOptionMap
+            = new LinkedHashMap<String, LayoutOptionData<?>>();
     /** mapping of layout type identifiers to their names. */
     private Map<String, String> layoutTypeMap = new HashMap<String, String>();
     /** mapping of category identifiers to their names. */
@@ -75,19 +71,18 @@ public class LayoutServices {
     /** mapping of object identifiers to associated options. */
     private Map<String, Map<String, Object>> id2OptionsMap
             = new HashMap<String, Map<String, Object>>();
+    /** map of enumeration classes to layout option identifiers. */
+    private static Map<Class<? extends Enum<?>>, String> enum2idMap =
+            new HashMap<Class<? extends Enum<?>>, String>();
 
     /**
      * The default constructor is hidden to prevent others from instantiating
      * this singleton class.
      */
     protected LayoutServices() {
-        LayoutOptions.registerEnum(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.class);
-        LayoutOptions.registerEnum(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.class);
-        LayoutOptions.registerEnum(LayoutOptions.EDGE_ROUTING, EdgeRouting.class);
-        LayoutOptions.registerEnum(LayoutOptions.EDGE_TYPE, EdgeType.class);
-        LayoutOptions.registerEnum(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.class);
-        LayoutOptions.registerEnum(LayoutOptions.PORT_SIDE, PortSide.class);
-        LayoutOptions.registerEnum(LayoutOptions.SHAPE, Shape.class);
+        enum2idMap.put(EdgeLabelPlacement.class, LayoutOptions.EDGE_LABEL_PLACEMENT_ID);
+        enum2idMap.put(PortSide.class, LayoutOptions.PORT_SIDE_ID);
+        enum2idMap.put(Shape.class, LayoutOptions.SHAPE_ID);
     }
 
     /**
@@ -182,8 +177,13 @@ public class LayoutServices {
          * 
          * @param optionData data instance of the layout option to register
          */
-        public void addLayoutOption(final LayoutOptionData optionData) {
+        @SuppressWarnings("unchecked")
+        public void addLayoutOption(final LayoutOptionData<?> optionData) {
             layoutOptionMap.put(optionData.getId(), optionData);
+            Class<?> clazz = optionData.getOptionClass();
+            if (clazz != null && clazz.isEnum()) {
+                enum2idMap.put((Class<Enum<?>>) clazz, optionData.getId());
+            }
         }
 
         /**
@@ -321,9 +321,9 @@ public class LayoutServices {
      */
     public final AbstractLayoutProvider getLayoutProvider(final KNode layoutNode)
             throws KielerException {
-        KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
-        String layoutHint = LayoutOptions.getString(nodeLayout, LayoutOptions.LAYOUT_HINT);
-        String diagramType = LayoutOptions.getString(nodeLayout, LayoutOptions.DIAGRAM_TYPE);
+        KShapeLayout nodeLayout = KimlUtil.getShapeLayout(layoutNode);
+        String layoutHint = LayoutOptions.getString(nodeLayout, LayoutOptions.LAYOUT_HINT_ID);
+        String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
         LayoutProviderData providerData = getLayoutProviderData(layoutHint, diagramType);
         if (providerData != null) {
             return providerData.getInstance();
@@ -339,8 +339,28 @@ public class LayoutServices {
      * @return the corresponding layout option data, or {@code null} if there is
      *         no option with the given identifier
      */
-    public final LayoutOptionData getLayoutOptionData(final String id) {
+    public final LayoutOptionData<?> getLayoutOptionData(final String id) {
         return layoutOptionMap.get(id);
+    }
+    
+    /**
+     * Returns a layout option data for the given enumeration class.
+     * 
+     * @param <T> enumeration class type
+     * @param clazz the enumeration class
+     * @return a corresponding layout option data, or {@code null} if there is no such
+     *     option data
+     */
+    @SuppressWarnings("unchecked")
+    public final <T extends Enum<?>> LayoutOptionData<T> getLayoutOptionData(final Class<T> clazz) {
+        String optionId = enum2idMap.get(clazz);
+        if (optionId != null) {
+            LayoutOptionData<?> optionData = layoutOptionMap.get(optionId);
+            if (optionData != null) {
+                return (LayoutOptionData<T>) optionData;
+            }
+        }
+        return null;
     }
 
     /**
@@ -349,7 +369,7 @@ public class LayoutServices {
      * 
      * @return collection of registered layout options
      */
-    public final Collection<LayoutOptionData> getLayoutOptionData() {
+    public final Collection<LayoutOptionData<?>> getLayoutOptionData() {
         return Collections.unmodifiableCollection(layoutOptionMap.values());
     }
 
@@ -362,12 +382,12 @@ public class LayoutServices {
      * @param target layout option target
      * @return list of suitable layout options
      */
-    public final List<LayoutOptionData> getLayoutOptions(final LayoutProviderData providerData,
+    public final List<LayoutOptionData<?>> getLayoutOptions(final LayoutProviderData providerData,
             final LayoutOptionData.Target target) {
-        List<LayoutOptionData> optionDataList = new ArrayList<LayoutOptionData>();
-        for (LayoutOptionData optionData : layoutOptionMap.values()) {
+        List<LayoutOptionData<?>> optionDataList = new ArrayList<LayoutOptionData<?>>();
+        for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
             if (providerData.knowsOption(optionData.getId())
-                    || LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
+                    || LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
                 if (optionData.hasTarget(target)) {
                     optionDataList.add(optionData);
                 }

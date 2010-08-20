@@ -17,6 +17,7 @@ package de.cau.cs.kieler.core.kgraph.provider;
 
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 
 import java.util.Collection;
@@ -29,14 +30,13 @@ import org.eclipse.emf.common.util.ResourceLocator;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-import org.eclipse.emf.ecore.provider.EModelElementItemProvider;
-
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
@@ -46,7 +46,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * @generated
  */
 public class KGraphElementItemProvider
-    extends EModelElementItemProvider
+    extends ItemProviderAdapter
     implements
         IEditingDomainItemProvider,
         IStructuredItemContentProvider,
@@ -148,6 +148,11 @@ public class KGraphElementItemProvider
     @Override
     protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
         super.collectNewChildDescriptors(newChildDescriptors, object);
+
+        newChildDescriptors.add
+            (createChildParameter
+                (KGraphPackage.Literals.KGRAPH_ELEMENT__DATA,
+                 KGraphFactory.eINSTANCE.createKGraphData()));
     }
 
     /**

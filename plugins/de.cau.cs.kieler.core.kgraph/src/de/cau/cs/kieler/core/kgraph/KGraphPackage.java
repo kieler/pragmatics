@@ -17,9 +17,9 @@ package de.cau.cs.kieler.core.kgraph;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EcorePackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -80,22 +80,13 @@ public interface KGraphPackage extends EPackage {
     int KGRAPH_ELEMENT = 0;
 
     /**
-     * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KGRAPH_ELEMENT__EANNOTATIONS = EcorePackage.EMODEL_ELEMENT__EANNOTATIONS;
-
-    /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KGRAPH_ELEMENT__DATA = EcorePackage.EMODEL_ELEMENT_FEATURE_COUNT + 0;
+    int KGRAPH_ELEMENT__DATA = 0;
 
     /**
      * The number of structural features of the '<em>Element</em>' class.
@@ -104,17 +95,73 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KGRAPH_ELEMENT_FEATURE_COUNT = EcorePackage.EMODEL_ELEMENT_FEATURE_COUNT + 1;
+    int KGRAPH_ELEMENT_FEATURE_COUNT = 1;
 
     /**
-     * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.KGraphData <em>Data</em>}' class.
+     * The meta object id for the '{@link de.cau.cs.kieler.core.properties.IPropertyHolder <em>IProperty Holder</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.core.kgraph.KGraphData
+     * @see de.cau.cs.kieler.core.properties.IPropertyHolder
+     * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIPropertyHolder()
+     * @generated
+     */
+    int IPROPERTY_HOLDER = 8;
+
+    /**
+     * The number of structural features of the '<em>IProperty Holder</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int IPROPERTY_HOLDER_FEATURE_COUNT = 0;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.EMapPropertyHolderImpl <em>EMap Property Holder</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.kgraph.impl.EMapPropertyHolderImpl
+     * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getEMapPropertyHolder()
+     * @generated
+     */
+    int EMAP_PROPERTY_HOLDER = 6;
+
+    /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EMAP_PROPERTY_HOLDER__PROPERTIES = IPROPERTY_HOLDER_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>EMap Property Holder</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EMAP_PROPERTY_HOLDER_FEATURE_COUNT = IPROPERTY_HOLDER_FEATURE_COUNT + 1;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl <em>Data</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getKGraphData()
      * @generated
      */
     int KGRAPH_DATA = 1;
+
+    /**
+     * The feature id for the '<em><b>Properties</b></em>' map.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KGRAPH_DATA__PROPERTIES = EMAP_PROPERTY_HOLDER__PROPERTIES;
 
     /**
      * The number of structural features of the '<em>Data</em>' class.
@@ -123,7 +170,7 @@ public interface KGraphPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int KGRAPH_DATA_FEATURE_COUNT = 0;
+    int KGRAPH_DATA_FEATURE_COUNT = EMAP_PROPERTY_HOLDER_FEATURE_COUNT + 0;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.KNodeImpl <em>KNode</em>}' class.
@@ -134,15 +181,6 @@ public interface KGraphPackage extends EPackage {
      * @generated
      */
     int KNODE = 2;
-
-    /**
-     * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KNODE__EANNOTATIONS = KGRAPH_ELEMENT__EANNOTATIONS;
 
     /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
@@ -227,15 +265,6 @@ public interface KGraphPackage extends EPackage {
     int KEDGE = 3;
 
     /**
-     * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KEDGE__EANNOTATIONS = KGRAPH_ELEMENT__EANNOTATIONS;
-
-    /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -309,15 +338,6 @@ public interface KGraphPackage extends EPackage {
     int KPORT = 4;
 
     /**
-     * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KPORT__EANNOTATIONS = KGRAPH_ELEMENT__EANNOTATIONS;
-
-    /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -373,15 +393,6 @@ public interface KGraphPackage extends EPackage {
     int KLABEL = 5;
 
     /**
-     * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int KLABEL__EANNOTATIONS = KGRAPH_ELEMENT__EANNOTATIONS;
-
-    /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -416,6 +427,90 @@ public interface KGraphPackage extends EPackage {
      * @ordered
      */
     int KLABEL_FEATURE_COUNT = KGRAPH_ELEMENT_FEATURE_COUNT + 2;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.IPropertyToObjectMapImpl <em>IProperty To Object Map</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.kgraph.impl.IPropertyToObjectMapImpl
+     * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIPropertyToObjectMap()
+     * @generated
+     */
+    int IPROPERTY_TO_OBJECT_MAP = 7;
+
+    /**
+     * The feature id for the '<em><b>Key</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int IPROPERTY_TO_OBJECT_MAP__KEY = 0;
+
+    /**
+     * The feature id for the '<em><b>Value</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int IPROPERTY_TO_OBJECT_MAP__VALUE = 1;
+
+    /**
+     * The number of structural features of the '<em>IProperty To Object Map</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int IPROPERTY_TO_OBJECT_MAP_FEATURE_COUNT = 2;
+
+    /**
+     * The meta object id for the '<em>IProperty</em>' data type.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.properties.IProperty
+     * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIProperty()
+     * @generated
+     */
+    int IPROPERTY = 10;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.util.Pair <em>Pair</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.util.Pair
+     * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getPair()
+     * @generated
+     */
+    int PAIR = 9;
+
+    /**
+     * The feature id for the '<em><b>First</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int PAIR__FIRST = 0;
+
+    /**
+     * The feature id for the '<em><b>Second</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int PAIR__SECOND = 1;
+
+    /**
+     * The number of structural features of the '<em>Pair</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int PAIR_FEATURE_COUNT = 2;
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.KGraphElement <em>Element</em>}'.
@@ -665,6 +760,116 @@ public interface KGraphPackage extends EPackage {
     EReference getKLabel_Parent();
 
     /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.EMapPropertyHolder <em>EMap Property Holder</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>EMap Property Holder</em>'.
+     * @see de.cau.cs.kieler.core.kgraph.EMapPropertyHolder
+     * @generated
+     */
+    EClass getEMapPropertyHolder();
+
+    /**
+     * Returns the meta object for the map '{@link de.cau.cs.kieler.core.kgraph.EMapPropertyHolder#getProperties <em>Properties</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the map '<em>Properties</em>'.
+     * @see de.cau.cs.kieler.core.kgraph.EMapPropertyHolder#getProperties()
+     * @see #getEMapPropertyHolder()
+     * @generated
+     */
+    EReference getEMapPropertyHolder_Properties();
+
+    /**
+     * Returns the meta object for class '{@link java.util.Map.Entry <em>IProperty To Object Map</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>IProperty To Object Map</em>'.
+     * @see java.util.Map.Entry
+     * @model keyDataType="de.cau.cs.kieler.core.kgraph.IProperty<?>" keyRequired="true" keyTransient="true"
+     *        valueDataType="org.eclipse.emf.ecore.EJavaObject" valueTransient="true"
+     * @generated
+     */
+    EClass getIPropertyToObjectMap();
+
+    /**
+     * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Key</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Key</em>'.
+     * @see java.util.Map.Entry
+     * @see #getIPropertyToObjectMap()
+     * @generated
+     */
+    EAttribute getIPropertyToObjectMap_Key();
+
+    /**
+     * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Value</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Value</em>'.
+     * @see java.util.Map.Entry
+     * @see #getIPropertyToObjectMap()
+     * @generated
+     */
+    EAttribute getIPropertyToObjectMap_Value();
+
+    /**
+     * Returns the meta object for data type '{@link de.cau.cs.kieler.core.properties.IProperty <em>IProperty</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for data type '<em>IProperty</em>'.
+     * @see de.cau.cs.kieler.core.properties.IProperty
+     * @model instanceClass="de.cau.cs.kieler.core.properties.IProperty" typeParameters="T"
+     * @generated
+     */
+    EDataType getIProperty();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.properties.IPropertyHolder <em>IProperty Holder</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>IProperty Holder</em>'.
+     * @see de.cau.cs.kieler.core.properties.IPropertyHolder
+     * @model instanceClass="de.cau.cs.kieler.core.properties.IPropertyHolder"
+     * @generated
+     */
+    EClass getIPropertyHolder();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.util.Pair <em>Pair</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Pair</em>'.
+     * @see de.cau.cs.kieler.core.util.Pair
+     * @model instanceClass="de.cau.cs.kieler.core.util.Pair" typeParameters="F S"
+     * @generated
+     */
+    EClass getPair();
+
+    /**
+     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.util.Pair#getFirst <em>First</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference '<em>First</em>'.
+     * @see de.cau.cs.kieler.core.util.Pair#getFirst()
+     * @see #getPair()
+     * @generated
+     */
+    EReference getPair_First();
+
+    /**
+     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.core.util.Pair#getSecond <em>Second</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference '<em>Second</em>'.
+     * @see de.cau.cs.kieler.core.util.Pair#getSecond()
+     * @see #getPair()
+     * @generated
+     */
+    EReference getPair_Second();
+
+    /**
      * Returns the factory that creates the instances of the model.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -705,10 +910,10 @@ public interface KGraphPackage extends EPackage {
         EReference KGRAPH_ELEMENT__DATA = eINSTANCE.getKGraphElement_Data();
 
         /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.KGraphData <em>Data</em>}' class.
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl <em>Data</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.core.kgraph.KGraphData
+         * @see de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl
          * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getKGraphData()
          * @generated
          */
@@ -881,6 +1086,96 @@ public interface KGraphPackage extends EPackage {
          * @generated
          */
         EReference KLABEL__PARENT = eINSTANCE.getKLabel_Parent();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.EMapPropertyHolderImpl <em>EMap Property Holder</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.kgraph.impl.EMapPropertyHolderImpl
+         * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getEMapPropertyHolder()
+         * @generated
+         */
+        EClass EMAP_PROPERTY_HOLDER = eINSTANCE.getEMapPropertyHolder();
+
+        /**
+         * The meta object literal for the '<em><b>Properties</b></em>' map feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference EMAP_PROPERTY_HOLDER__PROPERTIES = eINSTANCE.getEMapPropertyHolder_Properties();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.IPropertyToObjectMapImpl <em>IProperty To Object Map</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.kgraph.impl.IPropertyToObjectMapImpl
+         * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIPropertyToObjectMap()
+         * @generated
+         */
+        EClass IPROPERTY_TO_OBJECT_MAP = eINSTANCE.getIPropertyToObjectMap();
+
+        /**
+         * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute IPROPERTY_TO_OBJECT_MAP__KEY = eINSTANCE.getIPropertyToObjectMap_Key();
+
+        /**
+         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute IPROPERTY_TO_OBJECT_MAP__VALUE = eINSTANCE.getIPropertyToObjectMap_Value();
+
+        /**
+         * The meta object literal for the '<em>IProperty</em>' data type.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.properties.IProperty
+         * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIProperty()
+         * @generated
+         */
+        EDataType IPROPERTY = eINSTANCE.getIProperty();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.properties.IPropertyHolder <em>IProperty Holder</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.properties.IPropertyHolder
+         * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIPropertyHolder()
+         * @generated
+         */
+        EClass IPROPERTY_HOLDER = eINSTANCE.getIPropertyHolder();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.util.Pair <em>Pair</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.util.Pair
+         * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getPair()
+         * @generated
+         */
+        EClass PAIR = eINSTANCE.getPair();
+
+        /**
+         * The meta object literal for the '<em><b>First</b></em>' containment reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference PAIR__FIRST = eINSTANCE.getPair_First();
+
+        /**
+         * The meta object literal for the '<em><b>Second</b></em>' containment reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference PAIR__SECOND = eINSTANCE.getPair_Second();
 
     }
 

@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.util.Property;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.planar.alg.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.alg.IOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.alg.IPathFinder;

@@ -22,7 +22,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Placing algorithm for boxes. Edges of the graph are not considered.
@@ -51,13 +51,13 @@ public class BoxPlacer extends AbstractAlgorithm {
     public void placeBoxes(final List<KNode> sortedBoxes, final KNode parentNode,
             final float objSpacing, final float borderSpacing, final boolean expandNodes) {
         getMonitor().begin("Box placement", 1);
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
-        KInsets insets = LayoutOptions.getObject(parentLayout, KInsets.class);
-        float minWidth = Math.max(LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_WIDTH)
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
+        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        float minWidth = Math.max(parentLayout.getProperty(LayoutOptions.MIN_WIDTH)
                 - insets.getLeft() - insets.getRight(), 0);
-        float minHeight = Math.max(LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_HEIGHT)
+        float minHeight = Math.max(parentLayout.getProperty(LayoutOptions.MIN_HEIGHT)
                 - insets.getTop() - insets.getBottom(), 0);
-        float aspectRatio = LayoutOptions.getFloat(parentLayout, LayoutOptions.ASPECT_RATIO);
+        float aspectRatio = LayoutOptions.getFloat(parentLayout, LayoutOptions.ASPECT_RATIO_ID);
         if (Float.isNaN(aspectRatio) || aspectRatio <= 0) {
             aspectRatio = DEF_ASPECT_RATIO;
         }
@@ -93,9 +93,9 @@ public class BoxPlacer extends AbstractAlgorithm {
         float maxRowWidth = 0.0f;
         float totalArea = 0.0f;
         for (KNode box : sortedBoxes) {
-            KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(box);
-            if (!LayoutOptions.getBoolean(boxLayout, LayoutOptions.FIXED_SIZE)) {
-                KimlLayoutUtil.resizeNode(box);
+            KShapeLayout boxLayout = KimlUtil.getShapeLayout(box);
+            if (!LayoutOptions.getBoolean(boxLayout, LayoutOptions.FIXED_SIZE_ID)) {
+                KimlUtil.resizeNode(box);
             }
             maxRowWidth = Math.max(maxRowWidth, boxLayout.getWidth());
             totalArea += boxLayout.getWidth() * boxLayout.getHeight();
@@ -111,7 +111,7 @@ public class BoxPlacer extends AbstractAlgorithm {
         LinkedList<Float> rowHeights = new LinkedList<Float>();
         ListIterator<KNode> boxIter = sortedBoxes.listIterator();
         while (boxIter.hasNext()) {
-            KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(boxIter.next());
+            KShapeLayout boxLayout = KimlUtil.getShapeLayout(boxIter.next());
             float width = boxLayout.getWidth();
             float height = boxLayout.getHeight();
             if (xpos + width > maxRowWidth) {
@@ -155,13 +155,13 @@ public class BoxPlacer extends AbstractAlgorithm {
                     nextRowIndex = rowIndexIter.next();
                 }
                 KNode box = boxIter.next();
-                KShapeLayout boxLayout = KimlLayoutUtil.getShapeLayout(box);
+                KShapeLayout boxLayout = KimlUtil.getShapeLayout(box);
                 boxLayout.setHeight(rowHeight);
                 if (boxIter.nextIndex() == nextRowIndex) {
                     float newWidth = broadestRow - xpos - borderSpacing;
                     float oldWidth = boxLayout.getWidth();
                     boxLayout.setWidth(newWidth);
-                    KimlLayoutUtil.translate(box, (newWidth - oldWidth) / 2, 0.0f);
+                    KimlUtil.translate(box, (newWidth - oldWidth) / 2, 0.0f);
                 }
                 xpos += boxLayout.getWidth() + minSpacing;
             }

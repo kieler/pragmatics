@@ -15,6 +15,7 @@
  */
 package de.cau.cs.kieler.kiml.gmf.layoutoptions;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -99,6 +100,53 @@ public interface LayoutOptionsPackage extends EPackage {
 
 
     /**
+     * The meta object id for the '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.KOptionImpl <em>KOption</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.KOptionImpl
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackageImpl#getKOption()
+     * @generated
+     */
+    int KOPTION = 1;
+
+    /**
+     * The feature id for the '<em><b>Key</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KOPTION__KEY = 0;
+
+    /**
+     * The feature id for the '<em><b>Value</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KOPTION__VALUE = 1;
+
+    /**
+     * The feature id for the '<em><b>Default</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KOPTION__DEFAULT = 2;
+
+    /**
+     * The number of structural features of the '<em>KOption</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KOPTION_FEATURE_COUNT = 3;
+
+
+    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionStyle <em>Layout Option Style</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -118,6 +166,49 @@ public interface LayoutOptionsPackage extends EPackage {
      * @generated
      */
     EReference getLayoutOptionStyle_Options();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption <em>KOption</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>KOption</em>'.
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption
+     * @generated
+     */
+    EClass getKOption();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption#getKey <em>Key</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Key</em>'.
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption#getKey()
+     * @see #getKOption()
+     * @generated
+     */
+    EAttribute getKOption_Key();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption#getValue <em>Value</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Value</em>'.
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption#getValue()
+     * @see #getKOption()
+     * @generated
+     */
+    EAttribute getKOption_Value();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption#isDefault <em>Default</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Default</em>'.
+     * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption#isDefault()
+     * @see #getKOption()
+     * @generated
+     */
+    EAttribute getKOption_Default();
 
     /**
      * Returns the factory that creates the instances of the model.
@@ -158,6 +249,40 @@ public interface LayoutOptionsPackage extends EPackage {
          * @generated
          */
         EReference LAYOUT_OPTION_STYLE__OPTIONS = eINSTANCE.getLayoutOptionStyle_Options();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.KOptionImpl <em>KOption</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.KOptionImpl
+         * @see de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackageImpl#getKOption()
+         * @generated
+         */
+        EClass KOPTION = eINSTANCE.getKOption();
+
+        /**
+         * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KOPTION__KEY = eINSTANCE.getKOption_Key();
+
+        /**
+         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KOPTION__VALUE = eINSTANCE.getKOption_Value();
+
+        /**
+         * The meta object literal for the '<em><b>Default</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute KOPTION__DEFAULT = eINSTANCE.getKOption_Default();
 
     }
 

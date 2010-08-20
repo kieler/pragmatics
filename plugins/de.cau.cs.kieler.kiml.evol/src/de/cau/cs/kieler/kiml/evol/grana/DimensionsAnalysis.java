@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  *
@@ -51,7 +51,7 @@ public class DimensionsAnalysis implements IAnalysis {
         float xmax = 0.0f;
         float ymax = 0.0f;
         for (final KNode node : parentNode.getChildren()) {
-            final KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(node);
+            final KShapeLayout nodeLayout = KimlUtil.getShapeLayout(node);
             final float xpos = nodeLayout.getXpos();
             final float ypos = nodeLayout.getYpos();
             Assert.isTrue((xpos >= 0.0f) && (ypos >= 0.0f), "negative node positions");

@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.grana.MinAvgMaxResult;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that computes the minimum, average and maximum edge length.
@@ -44,7 +44,7 @@ public class EdgeLengthAnalysis implements IAnalysis {
      * @return the length
      */
     private float computeEdgeLength(final KEdge edge) {
-        KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
         float edgeLength = 0;
         KPoint current = edgeLayout.getSourcePoint();
         for (KPoint point : edgeLayout.getBendPoints()) {

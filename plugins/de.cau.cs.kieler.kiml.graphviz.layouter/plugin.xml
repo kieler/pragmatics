@@ -202,6 +202,7 @@
       </layoutProvider>
       <layoutOption
             appliesTo="edges"
+            default="-1"
             description="Distance of edge labels to the source or target node"
             id="de.cau.cs.kieler.kiml.graphviz.options.labelDistance"
             name="Label Distance"

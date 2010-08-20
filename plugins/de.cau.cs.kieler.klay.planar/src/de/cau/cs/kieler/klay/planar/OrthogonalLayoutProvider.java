@@ -21,7 +21,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.planar.alg.IOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.alg.IPlanarityTester;
 import de.cau.cs.kieler.klay.planar.alg.IPlanarizer;
@@ -43,19 +43,6 @@ import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
 
     // ======================== Layout Options =====================================================
-
-    /**
-     * An enum for the possible planar testing algorithms used by the layouter.
-     * 
-     * @author ocl
-     */
-    public enum PlanarTestingAlgorithm {
-        /** The algorithm by Boyer and Myrvold. */
-        BOYER_MYRVOLD_ALGORITHM,
-
-        /** The algorithm based on the left-right-planarity test. */
-        LEFT_RIGT_PLANARITY_ALGORITHM,
-    }
 
     /** The layout option ID for the planar testing algorithm option. */
     public static final String PLANAR_TESTING_ALGORITHM = new String(
@@ -90,15 +77,6 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
     /** Algorithm for orthogonalization. */
     private IOrthogonalizer orthogonalizer = new QuodOrthogonalizer();
 
-    // ======================== Constructor ========================================================
-
-    /**
-     * Default Constructor.
-     */
-    public OrthogonalLayoutProvider() {
-        LayoutOptions.registerEnum(PLANAR_TESTING_ALGORITHM, PlanarTestingAlgorithm.class);
-    }
-
     // ======================== Layout Provider ====================================================
 
     @Override
@@ -107,7 +85,7 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
         monitor.begin("Orthogonal Layout", 1);
 
         // Get layout options
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
         PlanarTestingAlgorithm algorithm = LayoutOptions.getEnum(parentLayout,
                 PlanarTestingAlgorithm.class);
         switch (algorithm) {

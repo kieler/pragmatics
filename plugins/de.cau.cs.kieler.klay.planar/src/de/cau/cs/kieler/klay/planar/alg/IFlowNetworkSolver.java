@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.klay.planar.alg;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
-import de.cau.cs.kieler.core.util.Property;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 
 /**

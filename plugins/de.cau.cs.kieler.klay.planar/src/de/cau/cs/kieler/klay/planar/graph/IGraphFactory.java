@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Property;
+import de.cau.cs.kieler.core.properties.Property;
 
 /**
  * An interface for the creation of graph objects. This interface implements the factory method

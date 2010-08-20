@@ -33,7 +33,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeType;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The base wrapper class for all OGDF layouters.
@@ -120,7 +120,7 @@ public abstract class OgdfLayouter {
     protected void layoutLabels(final KNode layoutNode) {
         // create the label layouter
         Ogdf.createLabelLayouter();
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
         // TODO as soon as ogdf provides a better label layouter this should be
         // reworked
         float edgeDistance =
@@ -217,10 +217,8 @@ public abstract class OgdfLayouter {
         for (KNode child : layoutNode.getChildren()) {
             for (KEdge kedge : child.getOutgoingEdges()) {
                 if (child.getParent() == kedge.getTarget().getParent()) {
-                    EdgeType edgeType =
-                            LayoutOptions.getEnum(
-                                    KimlLayoutUtil.getEdgeLayout(kedge),
-                                    EdgeType.class);
+                    EdgeType edgeType = KimlUtil.getEdgeLayout(kedge)
+                            .getProperty(LayoutOptions.EDGE_TYPE);
                     if (edgeType == EdgeType.GENERALIZATION
                             || edgeType == EdgeType.ASSOCIATION
                             || edgeType == EdgeType.DEPENDENCY) {
@@ -250,7 +248,7 @@ public abstract class OgdfLayouter {
 
         // process nodes
         for (KNode knode : layoutNode.getChildren()) {
-            KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(knode);
+            KShapeLayout shapeLayout = KimlUtil.getShapeLayout(knode);
             long ogdfNode =
                     Ogdf.Graph_addNode(
                             shapeLayout.getXpos() + shapeLayout.getWidth() / 2,
@@ -270,10 +268,8 @@ public abstract class OgdfLayouter {
                     kedge2ogdfEdgeMap.put(kedge, ogdfEdge);
                     if (isUmlLayout) {
                         // set the hierarchy type of the edge
-                        EdgeType edgeType =
-                                LayoutOptions.getEnum(
-                                        KimlLayoutUtil.getEdgeLayout(kedge),
-                                        EdgeType.class);
+                        EdgeType edgeType = KimlUtil.getEdgeLayout(kedge)
+                                .getProperty(LayoutOptions.EDGE_TYPE);
                         switch (edgeType) {
                         case ASSOCIATION:
                             Ogdf.Graph_setEdgeType(ogdfEdge,
@@ -300,10 +296,9 @@ public abstract class OgdfLayouter {
             long ogdfEdge = entry.getValue();
             boolean makeMult1 = false, makeMult2 = false;
             for (KLabel label : kedge.getLabels()) {
-                KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                EdgeLabelPlacement placement =
-                        LayoutOptions.getEnum(labelLayout,
-                                EdgeLabelPlacement.class);
+                KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
+                EdgeLabelPlacement placement = labelLayout.getProperty(
+                        LayoutOptions.EDGE_LABEL_PLACEMENT);
                 int labelTyp = Ogdf.LABEL_TYPE_NAME;
                 switch (placement) {
                 case HEAD:
@@ -338,7 +333,7 @@ public abstract class OgdfLayouter {
     protected void applyLayout(final KNode parentNode) {
         // get the parent node layout
         KShapeLayout parentNodeLayout =
-                KimlLayoutUtil.getShapeLayout(parentNode);
+                KimlUtil.getShapeLayout(parentNode);
         Ogdf.Graph_getBoundingBox();
         float boundingBoxX = Ogdf.Graph_getBoundingBoxX();
         float boundingBoxY = Ogdf.Graph_getBoundingBoxY();
@@ -347,9 +342,9 @@ public abstract class OgdfLayouter {
         // get the border spacing
         float borderSpacing =
                 LayoutOptions.getFloat(parentNodeLayout,
-                        LayoutOptions.BORDER_SPACING);
+                        LayoutOptions.BORDER_SPACING_ID);
         if (Float.isNaN(borderSpacing)) {
-            Object borderSpacingObj = getDefault(LayoutOptions.BORDER_SPACING);
+            Object borderSpacingObj = getDefault(LayoutOptions.BORDER_SPACING_ID);
             if (borderSpacingObj instanceof Float) {
                 borderSpacing = (Float) borderSpacingObj;
             } else {
@@ -362,7 +357,7 @@ public abstract class OgdfLayouter {
         // apply node layout
         for (Map.Entry<KNode, Long> entry : knode2ogdfNodeMap.entrySet()) {
             KShapeLayout nodeLayout =
-                    KimlLayoutUtil.getShapeLayout(entry.getKey());
+                    KimlUtil.getShapeLayout(entry.getKey());
             Long ogdfNode = entry.getValue();
             toKShape(nodeLayout, Ogdf.Graph_getNodeX(ogdfNode) + offsetX,
                     Ogdf.Graph_getNodeY(ogdfNode) + offsetY,
@@ -371,7 +366,7 @@ public abstract class OgdfLayouter {
         // apply edge layout
         for (Map.Entry<KEdge, Long> entry : kedge2ogdfEdgeMap.entrySet()) {
             KEdge kedge = entry.getKey();
-            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
             EList<KPoint> kbends = edgeLayout.getBendPoints();
             kbends.clear();
             long ogdfEdge = entry.getValue();
@@ -420,10 +415,9 @@ public abstract class OgdfLayouter {
             // set the edge labels
             boolean makeMult1 = false, makeMult2 = false;
             for (KLabel label : kedge.getLabels()) {
-                KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                EdgeLabelPlacement placement =
-                        LayoutOptions.getEnum(labelLayout,
-                                EdgeLabelPlacement.class);
+                KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
+                EdgeLabelPlacement placement = labelLayout.getProperty(
+                        LayoutOptions.EDGE_LABEL_PLACEMENT);
                 int labelTyp = Ogdf.LABEL_TYPE_NAME;
                 switch (placement) {
                 case HEAD:
@@ -451,8 +445,7 @@ public abstract class OgdfLayouter {
         }
 
         // get the insets
-        KInsets insets =
-                LayoutOptions.getObject(parentNodeLayout, KInsets.class);
+        KInsets insets = parentNodeLayout.getProperty(LayoutOptions.INSETS);
         // set the width/height of the graph
         parentNodeLayout.setWidth(boundingBoxWidth + 2 * borderSpacing
                 + insets.getLeft() + insets.getRight());

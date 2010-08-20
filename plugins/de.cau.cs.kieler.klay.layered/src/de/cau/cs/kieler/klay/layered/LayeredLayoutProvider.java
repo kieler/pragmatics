@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas.DrawingMode;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
@@ -76,12 +76,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
     /** the DebugCanvas to use for debug drawings. **/
     private DebugCanvas debugCanvas;
-    
-    /** constructor registering the new enum option. */
-    public LayeredLayoutProvider() {
-        LayoutOptions.registerEnum(OPT_EDGE_ROUTING, LayeredEdgeRouting.class);
-        LayoutOptions.registerEnum(OPT_NODE_LAYERING, LayeredNodeLayering.class);
-    }
 
     /**
      * {@inheritDoc}
@@ -90,7 +84,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Layered layout", 1);
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
 
         // check which EdgeRouter to use
         LayeredEdgeRouting routing = LayoutOptions.getEnum(parentLayout, LayeredEdgeRouting.class);
@@ -142,7 +136,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             // get debug canvas and clear
             debugCanvas = new DebugCanvas(layoutNode, DrawingMode.IMMEDIATE);
             float borderspacing = LayoutOptions
-                    .getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
+                    .getFloat(parentLayout, LayoutOptions.BORDER_SPACING_ID);
             if (Float.isNaN(borderspacing) || borderspacing < 0) {
                 borderspacing = Properties.DEF_SPACING;
             }
@@ -161,7 +155,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         LayeredGraph layeredGraph = graphImporter.getGraph();
         
         // set object spacing option
-        float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
+        float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
         if (!Float.isNaN(objSpacing) && objSpacing > 0) {
             layeredGraph.setProperty(Properties.OBJ_SPACING, objSpacing);
         }
@@ -230,9 +224,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public Object getDefault(final String optionId) {
-        if (LayoutOptions.MIN_SPACING.equals(optionId)) {
+        if (LayoutOptions.MIN_SPACING_ID.equals(optionId)) {
             return Properties.DEF_SPACING;
-        } else if (LayoutOptions.BORDER_SPACING.equals(optionId)) {
+        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
             return Properties.DEF_SPACING;
         } else if (OPT_MINIMAL_EDGE_ANGLE.equals(optionId)) {
             return 0;

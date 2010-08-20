@@ -27,13 +27,11 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
-import de.cau.cs.kieler.kiml.klayoutdata.KOption;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
 
 /**
  * A property source for layout options for GMF diagrams.
@@ -74,7 +72,7 @@ public class LayoutPropertySource implements IPropertySource {
             if (layoutHintChoices == null) {
                 createLayoutHintChoices();
             }
-            List<LayoutOptionData> optionData = layoutInspector.getOptionData();
+            List<LayoutOptionData<?>> optionData = layoutInspector.getOptionData();
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
             for (int i = 0; i < propertyDescriptors.length; i++) {
                 propertyDescriptors[i] = new LayoutPropertyDescriptor(optionData.get(i),
@@ -89,14 +87,10 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public Object getPropertyValue(final Object id) {
         EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
-        LayoutOptionData optionData = layoutServices.getLayoutOptionData((String) id);
-        KOption koption = layoutInspector.getKOption(optionData, false);
-        Object value = null;
-        if (koption != null) {
-            value = translateValue(KimlLayoutUtil.getValue(koption, optionData), optionData);
-        }
+        LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData((String) id);
+        Object value = translateValue(layoutInspector.getOption(optionData), optionData);
         if (value == null) {
-            if (LayoutOptions.LAYOUT_HINT.equals(id)) {
+            if (LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
                 value = layoutInspector.getFocusLayouterData().getId();
             } else {
                 if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
@@ -118,13 +112,13 @@ public class LayoutPropertySource implements IPropertySource {
         return value;
     }
     
-    private static Object translateValue(final Object value, final LayoutOptionData optionData) {
+    private static Object translateValue(final Object value, final LayoutOptionData<?> optionData) {
         if (value == null) {
             return null;
         }
         switch (optionData.getType()) {
         case STRING:
-            if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
+            if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
                 return layoutHintIndexMap.get(value);
             } else {
                 return value;
@@ -158,11 +152,10 @@ public class LayoutPropertySource implements IPropertySource {
         Runnable modelChange = new Runnable() {
             public void run() {
                 Object value = thevalue;
-                LayoutOptionData optionData = LayoutServices.getInstance()
+                LayoutOptionData<?> optionData = LayoutServices.getInstance()
                         .getLayoutOptionData((String) id);
-                KOption koption = layoutInspector.getKOption(optionData, true);
-                if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
-                    KimlLayoutUtil.setValue(koption, optionData,
+                if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
+                    layoutInspector.setOption(optionData,
                             layoutHintValues[((Integer) value).intValue()]);
                     LayoutViewPart layoutView = LayoutViewPart.findView();
                     if (layoutView != null) {
@@ -179,8 +172,11 @@ public class LayoutPropertySource implements IPropertySource {
                     case BOOLEAN:
                         value = Boolean.valueOf((Integer) value == 1);
                         break;
+                    case ENUM:
+                        value = optionData.getEnumValue((Integer) value);
+                        break;
                     }
-                    KimlLayoutUtil.setValue(koption, optionData, value);
+                    layoutInspector.setOption(optionData, value);
                 }
             }
         };
@@ -199,28 +195,25 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public boolean isPropertySet(final Object id) {
-        LayoutOptionData optionData = LayoutServices.getInstance().getLayoutOptionData((String) id);
-        KOption koption = layoutInspector.getKOption(optionData, false);
-        return koption != null;
+        LayoutOptionData<?> optionData = LayoutServices.getInstance().getLayoutOptionData((String) id);
+        Object value = layoutInspector.getOption(optionData);
+        return value != null;
     }
 
     /**
      * {@inheritDoc}
      */
     public void resetPropertyValue(final Object id) {
-        final LayoutOptionData optionData = LayoutServices.getInstance()
+        final LayoutOptionData<?> optionData = LayoutServices.getInstance()
                 .getLayoutOptionData((String) id);
-        KOption koption = layoutInspector.getKOption(optionData, false);
-        if (koption != null) {
-            Runnable modelChange = new Runnable() {
-                public void run() {
-                    layoutInspector.removeKOption(optionData);
-                }
-            };
-            KimlUiUtil.runModelChange(modelChange, layoutInspector.getEditingDomain(),
-                    Messages.getString("kiml.ui.12"));
-        }
-        if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())
+        Runnable modelChange = new Runnable() {
+            public void run() {
+                layoutInspector.removeOption(optionData);
+            }
+        };
+        KimlUiUtil.runModelChange(modelChange, layoutInspector.getEditingDomain(),
+                Messages.getString("kiml.ui.12"));
+        if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())
                 || optionData.getType() == LayoutOptionData.Type.BOOLEAN
                 || optionData.getType() == LayoutOptionData.Type.ENUM) {
             LayoutViewPart layoutView = LayoutViewPart.findView();

@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The upward-planarization layout algorithm from the OGDF library.
@@ -93,11 +93,11 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
             throw new RuntimeException("Layouter does not support not-connected graphs.");
         }
         
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
         
         // get the minimum spacing and layer distance
         float minSpacing =
-                LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
+                LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
         if (Float.isNaN(minSpacing)) {
             minSpacing = DEF_MIN_SPACING;
         }
@@ -119,9 +119,9 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     public Object getDefault(final String optionId) {
-        if (optionId.equals(LayoutOptions.MIN_SPACING)) {
+        if (optionId.equals(LayoutOptions.MIN_SPACING_ID)) {
             return DEF_MIN_SPACING;
-        } else if (optionId.equals(LayoutOptions.BORDER_SPACING)) {
+        } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
         } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
             return DEF_LABEL_SPACING;

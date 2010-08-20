@@ -32,7 +32,7 @@ import org.eclipse.gmf.runtime.notation.View;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Edit policy used to update the hypernodes structure. This edit policy creates a
@@ -101,7 +101,7 @@ public class HypernodesEditPolicy extends AbstractEditPolicy {
     private static void findHyperedges(final KNode parentNode,
             final Map<KNode, Set<KNode>> hypernodeMap) {
         for (KNode child : parentNode.getChildren()) {
-            if (LayoutOptions.getBoolean(KimlLayoutUtil.getShapeLayout(child),
+            if (KimlUtil.getShapeLayout(child).getProperty(
                     LayoutOptions.HYPERNODE)) {
                 for (KEdge edge : child.getOutgoingEdges()) {
                     handleNeighbor(child, edge.getTarget(), hypernodeMap);
@@ -117,7 +117,7 @@ public class HypernodesEditPolicy extends AbstractEditPolicy {
     
     private static void handleNeighbor(final KNode hypernode, final KNode neighbor,
             final Map<KNode, Set<KNode>> hypernodeMap) {
-        if (!LayoutOptions.getBoolean(KimlLayoutUtil.getShapeLayout(neighbor),
+        if (!KimlUtil.getShapeLayout(neighbor).getProperty(
                 LayoutOptions.HYPERNODE)) {
             // add the normal node to the hyperedge
             Set<KNode> hyperedge = hypernodeMap.get(hypernode);

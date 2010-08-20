@@ -51,7 +51,7 @@ import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * @author atr
@@ -124,8 +124,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                   ((IPictogramElementEditPart) topEditPart)
                   .getPictogramElement();
               if (element != null) {
-                  KNode topNode = KimlLayoutUtil.createInitializedNode();
-                  KShapeLayout shapeLayout = KimlLayoutUtil
+                  KNode topNode = KimlUtil.createInitializedNode();
+                  KShapeLayout shapeLayout = KimlUtil
                   .getShapeLayout(topNode);
                   shapeLayout.setXpos(element.getGraphicsAlgorithm().getX());
                   shapeLayout.setYpos(element.getGraphicsAlgorithm().getY());
@@ -173,12 +173,12 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     ContainerShape cs = (ContainerShape) shape;
                     GraphicsAlgorithm containerGa = cs.getGraphicsAlgorithm();
 
-                    KNode childnode = KimlLayoutUtil.createInitializedNode();
+                    KNode childnode = KimlUtil.createInitializedNode();
                     returnstate = false;
 
                     childnode.setParent(topNode);
                     KShapeLayout shapeLayout =
-                        KimlLayoutUtil.getShapeLayout(childnode);
+                        KimlUtil.getShapeLayout(childnode);
                     shapeLayout.setXpos(containerGa.getX());
                     shapeLayout.setYpos(containerGa.getY());
                     shapeLayout.setHeight(containerGa.getHeight());
@@ -186,9 +186,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
                     // TODO how to get minimal size of the shape
                     LayoutOptions.setFloat(shapeLayout,
-                            LayoutOptions.MIN_WIDTH, 20.0f);
+                            LayoutOptions.MIN_WIDTH_ID, 20.0f);
                     LayoutOptions.setFloat(shapeLayout,
-                            LayoutOptions.MIN_HEIGHT, 20.0f);
+                            LayoutOptions.MIN_HEIGHT_ID, 20.0f);
 
                     pictElem2GraphElemMap.put(cs, childnode);
                     graphElemHeightWidth.put(cs,
@@ -197,19 +197,19 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     boolean state = buildLayoutGraphRecursively(cs, childnode);
 
                     LayoutOptions.setBoolean(shapeLayout,
-                            LayoutOptions.FIXED_SIZE, state);
+                            LayoutOptions.FIXED_SIZE_ID, state);
                     // }
                     if (cs.getAnchors().size() != 0) {
                         EList<Anchor> childAnchors = cs.getAnchors();
                        for (Anchor anchor : childAnchors) {
                           if (anchor.getReferencedGraphicsAlgorithm() != null) {
-                                KPort port = KimlLayoutUtil
+                                KPort port = KimlUtil
                                     .createInitializedPort();
                                 pictElem2GraphElemMap.put(
                                         anchor, port);
                                 port.setNode(topNode);
                                 KShapeLayout portLayout =
-                                    KimlLayoutUtil.getShapeLayout(port);
+                                    KimlUtil.getShapeLayout(port);
                                 portLayout.setXpos(anchor
                                         .getGraphicsAlgorithm().getX());
                                 portLayout.setYpos(anchor
@@ -288,7 +288,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 : pictElem2GraphElemMap.entrySet()) {
             PictogramElement pelem = entry.getKey();
             KGraphElement kelem = entry.getValue();
-            KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(kelem);
+            KShapeLayout shapeLayout = KimlUtil.getShapeLayout(kelem);
             pelem.getGraphicsAlgorithm().setX((int) shapeLayout.getXpos());
             pelem.getGraphicsAlgorithm().setY((int) shapeLayout.getYpos());
             pelem.getGraphicsAlgorithm().setHeight(
@@ -323,7 +323,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             KEdge edge = entryLink.getValue();
             Connection conn = entryLink.getKey();
 
-            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
             EList<org.eclipse.graphiti.mm.datatypes.Point> pointList
             = ((FreeFormConnection) conn).getBendpoints();
 
@@ -393,7 +393,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     private void processConnections() {
 
         for (Connection connection : connections) {
-            KEdge edge = KimlLayoutUtil.createInitializedEdge();
+            KEdge edge = KimlUtil.createInitializedEdge();
             reference2EdgeMap.put(connection, edge);
 
             KNode sourceNode = null, targetNode = null;
@@ -436,7 +436,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 }
             }
 
-            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
 
             EList<Point> pointList = ((FreeFormConnection) connection)
                                      .getBendpoints();

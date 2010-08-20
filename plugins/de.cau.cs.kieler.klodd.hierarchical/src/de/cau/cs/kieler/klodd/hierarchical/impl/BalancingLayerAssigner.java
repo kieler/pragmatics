@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.InteractionLevel;
 import de.cau.cs.kieler.klodd.hierarchical.modules.ILayerAssigner;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
@@ -58,7 +58,7 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
         basicLayerAssigner.reset(getMonitor().subTask(1));
         LayeredGraph layeredGraph = basicLayerAssigner.assignLayers(graph, parentNode,
                 objSpacing, balanceOverSize);
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
         InteractionLevel interactionLevel = LayoutOptions.getEnum(parentLayout,
                 InteractionLevel.class);
         boolean interactive = interactionLevel == InteractionLevel.LAYERS

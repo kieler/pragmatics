@@ -244,10 +244,10 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         LayoutServices layoutServices = LayoutServices.getInstance();
 
         List<Pair<String, String>> diagramTypeList = layoutServices.getDiagramTypes();
-        Collection<LayoutOptionData> layoutOptionData = layoutServices.getLayoutOptionData();
+        Collection<LayoutOptionData<?>> layoutOptionData = layoutServices.getLayoutOptionData();
         diagramTypeEntries = new LinkedList<OptionsTableProvider.DataEntry>();
         for (Pair<String, String> diagramType : diagramTypeList) {
-            for (LayoutOptionData data : layoutOptionData) {
+            for (LayoutOptionData<?> data : layoutOptionData) {
                 String preference = EclipseLayoutServices.getPreferenceName(
                         diagramType.getFirst(), data.getId());
                 if (preferenceStore.contains(preference)) {
@@ -280,10 +280,10 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         LayoutServices layoutServices = LayoutServices.getInstance();
 
         Set<String> elements = EclipseLayoutServices.getInstance().getRegisteredElements();
-        Collection<LayoutOptionData> layoutOptionData = layoutServices.getLayoutOptionData();
+        Collection<LayoutOptionData<?>> layoutOptionData = layoutServices.getLayoutOptionData();
         elementEntries = new LinkedList<OptionsTableProvider.DataEntry>();
         for (String element : elements) {
-            for (LayoutOptionData data : layoutOptionData) {
+            for (LayoutOptionData<?> data : layoutOptionData) {
                 String preference = EclipseLayoutServices.getPreferenceName(element, data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
@@ -440,7 +440,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * @param entry an option table entry
      */
     private void showEditDialog(final Shell shell, final OptionsTableProvider.DataEntry entry) {
-        LayoutOptionData optionData = entry.getOptionData();
+        LayoutOptionData<?> optionData = entry.getOptionData();
         if (entry.getValue() != null) {
             String value = entry.getValue().toString();
             InputDialog dialog = new InputDialog(shell, Messages.getString("kiml.ui.23"),

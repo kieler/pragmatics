@@ -11,15 +11,15 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.util;
+package de.cau.cs.kieler.core.properties;
 
 /**
- * A property that can be stored in a hash map.
+ * A property that uses a string for identification.
  *
  * @param <T> type of the property
  * @author msp
  */
-public class Property<T> {
+public class Property<T> implements IProperty<T> {
     
     /** identifier of this property. */
     private String id;
@@ -53,6 +53,8 @@ public class Property<T> {
     public boolean equals(final Object obj) {
         if (obj instanceof Property<?>) {
             return this.id.equals(((Property<?>) obj).id);
+        } else if (obj instanceof IProperty<?>) {
+            return this.id.equals(((IProperty<?>) obj).getIdentifier());
         } else {
             return false;
         }
@@ -66,12 +68,26 @@ public class Property<T> {
     }
     
     /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return id;
+    }
+    
+    /**
      * Returns the default value of this property.
      * 
      * @return the default value
      */
     public T getDefault() {
         return defaultValue;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getIdentifier() {
+        return id;
     }
 
 }

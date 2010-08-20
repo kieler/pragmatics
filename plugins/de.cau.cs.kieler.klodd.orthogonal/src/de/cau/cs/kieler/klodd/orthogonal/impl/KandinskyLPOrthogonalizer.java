@@ -24,7 +24,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.orthogonal.Messages;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IOrthogonalizer;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMEdge;
@@ -395,15 +395,15 @@ public class KandinskyLPOrthogonalizer extends AbstractAlgorithm implements IOrt
                     KEdge layoutEdge = (KEdge) tsmEdge.getObject();
                     if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT) {
                         if (layoutEdge.getSourcePort() != null) {
-                            addSideConstraint(edgeEntry.getEdge(), LayoutOptions.getEnum(
-                                    KimlLayoutUtil.getShapeLayout(layoutEdge.getSourcePort()),
-                                    PortSide.class), ilp, false);
+                            addSideConstraint(edgeEntry.getEdge(),
+                                    KimlUtil.getShapeLayout(layoutEdge.getSourcePort())
+                                    .getProperty(LayoutOptions.PORT_SIDE), ilp, false);
                         }
                     } else {
                         if (layoutEdge.getTargetPort() != null) {
-                            addSideConstraint(edgeEntry.getEdge(), LayoutOptions.getEnum(
-                                    KimlLayoutUtil.getShapeLayout(layoutEdge.getTargetPort()),
-                                    PortSide.class), ilp, true);
+                            addSideConstraint(edgeEntry.getEdge(),
+                                    KimlUtil.getShapeLayout(layoutEdge.getTargetPort())
+                                    .getProperty(LayoutOptions.PORT_SIDE), ilp, true);
                         }
                     }
                 }

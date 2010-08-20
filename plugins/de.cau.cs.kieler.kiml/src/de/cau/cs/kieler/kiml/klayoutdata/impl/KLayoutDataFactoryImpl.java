@@ -72,11 +72,6 @@ public class KLayoutDataFactoryImpl extends EFactoryImpl implements KLayoutDataF
             case KLayoutDataPackage.KSHAPE_LAYOUT: return createKShapeLayout();
             case KLayoutDataPackage.KEDGE_LAYOUT: return createKEdgeLayout();
             case KLayoutDataPackage.KPOINT: return createKPoint();
-            case KLayoutDataPackage.KSTRING_OPTION: return createKStringOption();
-            case KLayoutDataPackage.KINT_OPTION: return createKIntOption();
-            case KLayoutDataPackage.KBOOLEAN_OPTION: return createKBooleanOption();
-            case KLayoutDataPackage.KFLOAT_OPTION: return createKFloatOption();
-            case KLayoutDataPackage.KOBJECT_OPTION: return createKObjectOption();
             case KLayoutDataPackage.KINSETS: return createKInsets();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -111,56 +106,6 @@ public class KLayoutDataFactoryImpl extends EFactoryImpl implements KLayoutDataF
     public KPoint createKPoint() {
         KPointImpl kPoint = new KPointImpl();
         return kPoint;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public KStringOption createKStringOption() {
-        KStringOptionImpl kStringOption = new KStringOptionImpl();
-        return kStringOption;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public KIntOption createKIntOption() {
-        KIntOptionImpl kIntOption = new KIntOptionImpl();
-        return kIntOption;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public KBooleanOption createKBooleanOption() {
-        KBooleanOptionImpl kBooleanOption = new KBooleanOptionImpl();
-        return kBooleanOption;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public KFloatOption createKFloatOption() {
-        KFloatOptionImpl kFloatOption = new KFloatOptionImpl();
-        return kFloatOption;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public KObjectOption createKObjectOption() {
-        KObjectOptionImpl kObjectOption = new KObjectOptionImpl();
-        return kObjectOption;
     }
 
     /**

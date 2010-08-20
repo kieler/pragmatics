@@ -25,7 +25,6 @@ import de.cau.cs.kieler.graphs.*;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -107,7 +106,6 @@ public class GraphsSwitch<T> {
                 T result = caseNode(node);
                 if (result == null) result = caseKNode(node);
                 if (result == null) result = caseKGraphElement(node);
-                if (result == null) result = caseEModelElement(node);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -116,7 +114,6 @@ public class GraphsSwitch<T> {
                 T result = caseEdge(edge);
                 if (result == null) result = caseKEdge(edge);
                 if (result == null) result = caseKGraphElement(edge);
-                if (result == null) result = caseEModelElement(edge);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -125,7 +122,6 @@ public class GraphsSwitch<T> {
                 T result = casePort(port);
                 if (result == null) result = caseKPort(port);
                 if (result == null) result = caseKGraphElement(port);
-                if (result == null) result = caseEModelElement(port);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -175,21 +171,6 @@ public class GraphsSwitch<T> {
      * @generated
      */
     public T casePort(Port object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>EModel Element</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>EModel Element</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseEModelElement(EModelElement object) {
         return null;
     }
 

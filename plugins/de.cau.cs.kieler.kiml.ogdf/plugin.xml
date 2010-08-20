@@ -9,6 +9,7 @@
       </category>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="Distance of edge labels to the nodes"
             id="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
             name="Label Distance"
@@ -16,6 +17,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="Spacing of labels to the edges"
             id="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
             name="Label Spacing"
@@ -23,6 +25,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="The number of iterations performed by the algorithm."
             id="de.cau.cs.kieler.kiml.ogdf.option.iterations"
             name="Iterations"
@@ -30,6 +33,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="The minimal distance between nodes on a circle."
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistCircle"
             name="Minimum Circle Distance"
@@ -37,6 +41,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="The minimal distance between levels."
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel"
             name="Minimum Level Distance"
@@ -44,6 +49,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="The minimal distance between siblings on the same level. "
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling"
             name="Minimum Sibling Distance"
@@ -51,6 +57,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="The minimal distance between connected components. "
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
             name="Minimum CC Distance"
@@ -58,6 +65,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="The horizontal spacing between adjacent subtrees."
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistSubtree"
             name="Minimum Subtree Distance"
@@ -65,6 +73,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="The horizontal spacing between adjacent trees in a forest. "
             id="de.cau.cs.kieler.kiml.ogdf.option.minDistTree"
             name="Minimum Tree Distance"
@@ -72,6 +81,8 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.Orientation"
+            default="TOP_TO_BOTTOM"
             description="Determines if the graph is laid out in a top-to-bottom, bottom-to-top, left-to-right, or right-to-left fashion."
             id="de.cau.cs.kieler.kiml.ogdf.option.orientation"
             name="Orientation"
@@ -79,6 +90,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="false"
             description="Determines whether edges are routed in an orthogonal or straight-line fashion. "
             id="de.cau.cs.kieler.kiml.ogdf.option.orthogonal"
             name="Orthogonal"
@@ -86,6 +98,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="false"
             description="Sets whether the initial placement of the choosen is different on every algorithm call."
             id="de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement"
             name="New Initial Placement"
@@ -93,6 +106,8 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.QualityVsSpeed"
+            default="BEAUTIFULANDFAST"
             description="Specifies whether the algorithm prioritizes quality or speed."
             id="de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed"
             name="Quality vs Speed"
@@ -100,6 +115,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="The unit edge length."
             id="de.cau.cs.kieler.kiml.ogdf.option.fmmm.unitEdgeLength"
             name="Unit Edge Length"
@@ -107,6 +123,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            default="-1"
             description="The edge length this algorithm is aiming to."
             id="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.desiredEdgeLength"
             name="Desired Edge Length"
@@ -114,6 +131,8 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.Costs"
+            default="STANDARD"
             description="Defines the costs used in the algorithm."
             id="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs"
             name="Costs"
@@ -121,6 +140,8 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.Speed"
+            default="MEDIUM"
             description="Defines the temperature and the number of iterations."
             id="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed"
             name="Speed"

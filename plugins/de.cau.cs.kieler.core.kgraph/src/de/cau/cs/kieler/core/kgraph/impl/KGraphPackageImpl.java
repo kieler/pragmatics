@@ -15,6 +15,7 @@
  */
 package de.cau.cs.kieler.core.kgraph.impl;
 
+import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -24,11 +25,18 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.core.util.Pair;
+import java.util.Map;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.EcorePackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -81,6 +89,41 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * @generated
      */
     private EClass kLabelEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass eMapPropertyHolderEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass iPropertyToObjectMapEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass iPropertyHolderEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass pairEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EDataType iPropertyEDataType = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -358,6 +401,96 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getEMapPropertyHolder() {
+        return eMapPropertyHolderEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getEMapPropertyHolder_Properties() {
+        return (EReference)eMapPropertyHolderEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getIPropertyToObjectMap() {
+        return iPropertyToObjectMapEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getIPropertyToObjectMap_Key() {
+        return (EAttribute)iPropertyToObjectMapEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getIPropertyToObjectMap_Value() {
+        return (EAttribute)iPropertyToObjectMapEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EDataType getIProperty() {
+        return iPropertyEDataType;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getIPropertyHolder() {
+        return iPropertyHolderEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getPair() {
+        return pairEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getPair_First() {
+        return (EReference)pairEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getPair_Second() {
+        return (EReference)pairEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public KGraphFactory getKGraphFactory() {
         return (KGraphFactory)getEFactoryInstance();
     }
@@ -409,6 +542,22 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         kLabelEClass = createEClass(KLABEL);
         createEAttribute(kLabelEClass, KLABEL__TEXT);
         createEReference(kLabelEClass, KLABEL__PARENT);
+
+        eMapPropertyHolderEClass = createEClass(EMAP_PROPERTY_HOLDER);
+        createEReference(eMapPropertyHolderEClass, EMAP_PROPERTY_HOLDER__PROPERTIES);
+
+        iPropertyToObjectMapEClass = createEClass(IPROPERTY_TO_OBJECT_MAP);
+        createEAttribute(iPropertyToObjectMapEClass, IPROPERTY_TO_OBJECT_MAP__KEY);
+        createEAttribute(iPropertyToObjectMapEClass, IPROPERTY_TO_OBJECT_MAP__VALUE);
+
+        iPropertyHolderEClass = createEClass(IPROPERTY_HOLDER);
+
+        pairEClass = createEClass(PAIR);
+        createEReference(pairEClass, PAIR__FIRST);
+        createEReference(pairEClass, PAIR__SECOND);
+
+        // Create data types
+        iPropertyEDataType = createEDataType(IPROPERTY);
     }
 
     /**
@@ -434,28 +583,29 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         setNsPrefix(eNS_PREFIX);
         setNsURI(eNS_URI);
 
-        // Obtain other dependent packages
-        EcorePackage theEcorePackage = (EcorePackage)EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
-
         // Create type parameters
+        ETypeParameter pairEClass_F = addETypeParameter(pairEClass, "F");
+        ETypeParameter pairEClass_S = addETypeParameter(pairEClass, "S");
+        addETypeParameter(iPropertyEDataType, "T");
 
         // Set bounds for type parameters
 
         // Add supertypes to classes
-        kGraphElementEClass.getESuperTypes().add(theEcorePackage.getEModelElement());
+        kGraphDataEClass.getESuperTypes().add(this.getEMapPropertyHolder());
         kNodeEClass.getESuperTypes().add(this.getKGraphElement());
         kEdgeEClass.getESuperTypes().add(this.getKGraphElement());
         kPortEClass.getESuperTypes().add(this.getKGraphElement());
         kLabelEClass.getESuperTypes().add(this.getKGraphElement());
+        eMapPropertyHolderEClass.getESuperTypes().add(this.getIPropertyHolder());
 
         // Initialize classes and features; add operations and parameters
         initEClass(kGraphElementEClass, KGraphElement.class, "KGraphElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getKGraphElement_Data(), this.getKGraphData(), null, "data", null, 0, -1, KGraphElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         EOperation op = addEOperation(kGraphElementEClass, this.getKGraphData(), "getData", 0, 1, IS_UNIQUE, IS_ORDERED);
-        addEParameter(op, theEcorePackage.getEClass(), "type", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, ecorePackage.getEClass(), "type", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-        initEClass(kGraphDataEClass, KGraphData.class, "KGraphData", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEClass(kGraphDataEClass, KGraphData.class, "KGraphData", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
         initEClass(kNodeEClass, KNode.class, "KNode", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getKNode_Children(), this.getKNode(), this.getKNode_Parent(), "children", null, 0, -1, KNode.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -478,8 +628,60 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         initEReference(getKPort_Label(), this.getKLabel(), null, "label", null, 0, 1, KPort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kLabelEClass, KLabel.class, "KLabel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getKLabel_Text(), theEcorePackage.getEString(), "text", null, 1, 1, KLabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getKLabel_Text(), ecorePackage.getEString(), "text", null, 1, 1, KLabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKLabel_Parent(), this.getKGraphElement(), null, "parent", null, 1, 1, KLabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(eMapPropertyHolderEClass, EMapPropertyHolder.class, "EMapPropertyHolder", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getEMapPropertyHolder_Properties(), this.getIPropertyToObjectMap(), null, "properties", null, 0, -1, EMapPropertyHolder.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(iPropertyToObjectMapEClass, Map.Entry.class, "IPropertyToObjectMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+        EGenericType g1 = createEGenericType(this.getIProperty());
+        EGenericType g2 = createEGenericType();
+        g1.getETypeArguments().add(g2);
+        initEAttribute(getIPropertyToObjectMap_Key(), g1, "key", null, 1, 1, Map.Entry.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getIPropertyToObjectMap_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(iPropertyHolderEClass, IPropertyHolder.class, "IPropertyHolder", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+
+        op = addEOperation(iPropertyHolderEClass, null, "setProperty", 0, 1, IS_UNIQUE, IS_ORDERED);
+        g1 = createEGenericType(this.getIProperty());
+        g2 = createEGenericType();
+        g1.getETypeArguments().add(g2);
+        addEParameter(op, g1, "property", 1, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, ecorePackage.getEJavaObject(), "value", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+        op = addEOperation(iPropertyHolderEClass, null, "getProperty", 0, 1, IS_UNIQUE, IS_ORDERED);
+        ETypeParameter t1 = addETypeParameter(op, "T");
+        g1 = createEGenericType(this.getIProperty());
+        g2 = createEGenericType(t1);
+        g1.getETypeArguments().add(g2);
+        addEParameter(op, g1, "property", 0, 1, IS_UNIQUE, IS_ORDERED);
+        g1 = createEGenericType(t1);
+        initEOperation(op, g1);
+
+        op = addEOperation(iPropertyHolderEClass, null, "copyProperties", 0, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, this.getIPropertyHolder(), "holder", 1, 1, IS_UNIQUE, IS_ORDERED);
+
+        op = addEOperation(iPropertyHolderEClass, null, "getAllProperties", 1, 1, IS_UNIQUE, IS_ORDERED);
+        g1 = createEGenericType(ecorePackage.getEEList());
+        g2 = createEGenericType(this.getPair());
+        g1.getETypeArguments().add(g2);
+        EGenericType g3 = createEGenericType(this.getIProperty());
+        g2.getETypeArguments().add(g3);
+        EGenericType g4 = createEGenericType();
+        g3.getETypeArguments().add(g4);
+        g3 = createEGenericType(ecorePackage.getEJavaObject());
+        g2.getETypeArguments().add(g3);
+        initEOperation(op, g1);
+
+        initEClass(pairEClass, Pair.class, "Pair", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+        g1 = createEGenericType(pairEClass_F);
+        initEReference(getPair_First(), g1, null, "first", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        g1 = createEGenericType(pairEClass_S);
+        initEReference(getPair_Second(), g1, null, "second", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        // Initialize data types
+        initEDataType(iPropertyEDataType, IProperty.class, "IProperty", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
         // Create resource
         createResource(eNS_URI);

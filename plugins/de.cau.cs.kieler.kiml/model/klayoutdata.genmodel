@@ -10,9 +10,6 @@
       ecorePackage="klayoutdata.ecore#/">
     <genClasses image="false" ecoreClass="klayoutdata.ecore#//KLayoutData">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference klayoutdata.ecore#//KLayoutData/options"/>
-      <genOperations ecoreOperation="klayoutdata.ecore#//KLayoutData/getOption">
-        <genParameters ecoreParameter="klayoutdata.ecore#//KLayoutData/getOption/key"/>
-      </genOperations>
     </genClasses>
     <genClasses ecoreClass="klayoutdata.ecore#//KShapeLayout">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute klayoutdata.ecore#//KShapeLayout/xpos"/>
@@ -28,6 +25,31 @@
     <genClasses ecoreClass="klayoutdata.ecore#//KPoint">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute klayoutdata.ecore#//KPoint/x"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute klayoutdata.ecore#//KPoint/y"/>
+    </genClasses>
+    <genClasses ecoreClass="klayoutdata.ecore#//EStringToEObjectMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute klayoutdata.ecore#//EStringToEObjectMap/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference klayoutdata.ecore#//EStringToEObjectMap/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute klayoutdata.ecore#//EStringToEObjectMap/default"/>
+    </genClasses>
+    <genClasses ecoreClass="klayoutdata.ecore#//KInsets">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute klayoutdata.ecore#//KInsets/top"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute klayoutdata.ecore#//KInsets/bottom"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute klayoutdata.ecore#//KInsets/left"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute klayoutdata.ecore#//KInsets/right"/>
+    </genClasses>
+    <genClasses ecoreClass="klayoutdata.ecore#//Property">
+      <genTypeParameters ecoreTypeParameter="klayoutdata.ecore#//Property/T"/>
+      <genOperations ecoreOperation="klayoutdata.ecore#//Property/getDefault"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="klayoutdata.ecore#//IPropertyHolder">
+      <genOperations ecoreOperation="klayoutdata.ecore#//IPropertyHolder/setProperty">
+        <genParameters ecoreParameter="klayoutdata.ecore#//IPropertyHolder/setProperty/property"/>
+        <genParameters ecoreParameter="klayoutdata.ecore#//IPropertyHolder/setProperty/value"/>
+      </genOperations>
+      <genOperations ecoreOperation="klayoutdata.ecore#//IPropertyHolder/getProperty">
+        <genParameters ecoreParameter="klayoutdata.ecore#//IPropertyHolder/getProperty/property"/>
+        <genTypeParameters ecoreTypeParameter="klayoutdata.ecore#//IPropertyHolder/getProperty/T"/>
+      </genOperations>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

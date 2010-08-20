@@ -35,6 +35,15 @@ public interface KGraphFactory extends EFactory {
     KGraphFactory eINSTANCE = de.cau.cs.kieler.core.kgraph.impl.KGraphFactoryImpl.init();
 
     /**
+     * Returns a new object of class '<em>Data</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Data</em>'.
+     * @generated
+     */
+    KGraphData createKGraphData();
+
+    /**
      * Returns a new object of class '<em>KNode</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

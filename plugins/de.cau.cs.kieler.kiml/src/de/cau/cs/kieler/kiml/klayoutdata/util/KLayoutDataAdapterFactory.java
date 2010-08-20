@@ -15,7 +15,9 @@
  */
 package de.cau.cs.kieler.kiml.klayoutdata.util;
 
+import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 
 import de.cau.cs.kieler.kiml.klayoutdata.*;
 
@@ -83,10 +85,6 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
     protected KLayoutDataSwitch<Adapter> modelSwitch =
         new KLayoutDataSwitch<Adapter>() {
             @Override
-            public Adapter caseKLayoutData(KLayoutData object) {
-                return createKLayoutDataAdapter();
-            }
-            @Override
             public Adapter caseKShapeLayout(KShapeLayout object) {
                 return createKShapeLayoutAdapter();
             }
@@ -99,32 +97,16 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
                 return createKPointAdapter();
             }
             @Override
-            public Adapter caseKOption(KOption object) {
-                return createKOptionAdapter();
-            }
-            @Override
-            public Adapter caseKStringOption(KStringOption object) {
-                return createKStringOptionAdapter();
-            }
-            @Override
-            public Adapter caseKIntOption(KIntOption object) {
-                return createKIntOptionAdapter();
-            }
-            @Override
-            public Adapter caseKBooleanOption(KBooleanOption object) {
-                return createKBooleanOptionAdapter();
-            }
-            @Override
-            public Adapter caseKFloatOption(KFloatOption object) {
-                return createKFloatOptionAdapter();
-            }
-            @Override
-            public Adapter caseKObjectOption(KObjectOption object) {
-                return createKObjectOptionAdapter();
-            }
-            @Override
             public Adapter caseKInsets(KInsets object) {
                 return createKInsetsAdapter();
+            }
+            @Override
+            public Adapter caseIPropertyHolder(IPropertyHolder object) {
+                return createIPropertyHolderAdapter();
+            }
+            @Override
+            public Adapter caseEMapPropertyHolder(EMapPropertyHolder object) {
+                return createEMapPropertyHolderAdapter();
             }
             @Override
             public Adapter caseKGraphData(KGraphData object) {
@@ -149,20 +131,6 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
         return modelSwitch.doSwitch((EObject)target);
     }
 
-
-    /**
-     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.klayoutdata.KLayoutData <em>KLayout Data</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
-     * @generated
-     */
-    public Adapter createKLayoutDataAdapter() {
-        return null;
-    }
 
     /**
      * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout <em>KShape Layout</em>}'.
@@ -207,90 +175,6 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.klayoutdata.KOption <em>KOption</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see de.cau.cs.kieler.kiml.klayoutdata.KOption
-     * @generated
-     */
-    public Adapter createKOptionAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.klayoutdata.KStringOption <em>KString Option</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see de.cau.cs.kieler.kiml.klayoutdata.KStringOption
-     * @generated
-     */
-    public Adapter createKStringOptionAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.klayoutdata.KIntOption <em>KInt Option</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see de.cau.cs.kieler.kiml.klayoutdata.KIntOption
-     * @generated
-     */
-    public Adapter createKIntOptionAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.klayoutdata.KBooleanOption <em>KBoolean Option</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see de.cau.cs.kieler.kiml.klayoutdata.KBooleanOption
-     * @generated
-     */
-    public Adapter createKBooleanOptionAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.klayoutdata.KFloatOption <em>KFloat Option</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see de.cau.cs.kieler.kiml.klayoutdata.KFloatOption
-     * @generated
-     */
-    public Adapter createKFloatOptionAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.klayoutdata.KObjectOption <em>KObject Option</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see de.cau.cs.kieler.kiml.klayoutdata.KObjectOption
-     * @generated
-     */
-    public Adapter createKObjectOptionAdapter() {
-        return null;
-    }
-
-    /**
      * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.klayoutdata.KInsets <em>KInsets</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
@@ -301,6 +185,34 @@ public class KLayoutDataAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createKInsetsAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.core.properties.IPropertyHolder <em>IProperty Holder</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.core.properties.IPropertyHolder
+     * @generated
+     */
+    public Adapter createIPropertyHolderAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.core.kgraph.EMapPropertyHolder <em>EMap Property Holder</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.core.kgraph.EMapPropertyHolder
+     * @generated
+     */
+    public Adapter createEMapPropertyHolderAdapter() {
         return null;
     }
 

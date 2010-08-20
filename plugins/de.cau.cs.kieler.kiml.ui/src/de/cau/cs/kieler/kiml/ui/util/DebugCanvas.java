@@ -31,7 +31,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A canvas for drawing debug information on the active diagram.
@@ -108,7 +108,7 @@ public class DebugCanvas {
             // calculate the offset
             KNode currentNode = parentNode;
             while (currentNode != null) {
-                KShapeLayout currentLayout = KimlLayoutUtil
+                KShapeLayout currentLayout = KimlUtil
                         .getShapeLayout(currentNode);
                 xOffset += currentLayout.getXpos();
                 yOffset += currentLayout.getYpos();

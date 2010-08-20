@@ -10,13 +10,8 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
-package de.cau.cs.kieler.kiml.klayoutdata.impl;
-
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
-import de.cau.cs.kieler.kiml.klayoutdata.KOption;
+package de.cau.cs.kieler.kiml.gmf.layoutoptions;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -32,14 +27,15 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KOptionImpl#getKey <em>Key</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KOptionImpl#isDefault <em>Default</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.KOptionImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.KOptionImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.gmf.layoutoptions.KOptionImpl#isDefault <em>Default</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public abstract class KOptionImpl extends EObjectImpl implements KOption {
+public class KOptionImpl extends EObjectImpl implements KOption {
     /**
      * The default value of the '{@link #getKey() <em>Key</em>}' attribute.
      * <!-- begin-user-doc -->
@@ -59,6 +55,26 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      * @ordered
      */
     protected String key = KEY_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getValue()
+     * @generated
+     * @ordered
+     */
+    protected static final String VALUE_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getValue() <em>Value</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getValue()
+     * @generated
+     * @ordered
+     */
+    protected String value = VALUE_EDEFAULT;
 
     /**
      * The default value of the '{@link #isDefault() <em>Default</em>}' attribute.
@@ -96,7 +112,7 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
      */
     @Override
     protected EClass eStaticClass() {
-        return KLayoutDataPackage.Literals.KOPTION;
+        return LayoutOptionsPackage.Literals.KOPTION;
     }
 
     /**
@@ -117,7 +133,28 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
         String oldKey = key;
         key = newKey;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KOPTION__KEY, oldKey, key));
+            eNotify(new ENotificationImpl(this, Notification.SET, LayoutOptionsPackage.KOPTION__KEY, oldKey, key));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setValue(String newValue) {
+        String oldValue = value;
+        value = newValue;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, LayoutOptionsPackage.KOPTION__VALUE, oldValue, value));
     }
 
     /**
@@ -138,7 +175,7 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
         boolean oldDefault = default_;
         default_ = newDefault;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KOPTION__DEFAULT, oldDefault, default_));
+            eNotify(new ENotificationImpl(this, Notification.SET, LayoutOptionsPackage.KOPTION__DEFAULT, oldDefault, default_));
     }
 
     /**
@@ -149,9 +186,11 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
+            case LayoutOptionsPackage.KOPTION__KEY:
                 return getKey();
-            case KLayoutDataPackage.KOPTION__DEFAULT:
+            case LayoutOptionsPackage.KOPTION__VALUE:
+                return getValue();
+            case LayoutOptionsPackage.KOPTION__DEFAULT:
                 return isDefault();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -165,10 +204,13 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
+            case LayoutOptionsPackage.KOPTION__KEY:
                 setKey((String)newValue);
                 return;
-            case KLayoutDataPackage.KOPTION__DEFAULT:
+            case LayoutOptionsPackage.KOPTION__VALUE:
+                setValue((String)newValue);
+                return;
+            case LayoutOptionsPackage.KOPTION__DEFAULT:
                 setDefault((Boolean)newValue);
                 return;
         }
@@ -183,10 +225,13 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
+            case LayoutOptionsPackage.KOPTION__KEY:
                 setKey(KEY_EDEFAULT);
                 return;
-            case KLayoutDataPackage.KOPTION__DEFAULT:
+            case LayoutOptionsPackage.KOPTION__VALUE:
+                setValue(VALUE_EDEFAULT);
+                return;
+            case LayoutOptionsPackage.KOPTION__DEFAULT:
                 setDefault(DEFAULT_EDEFAULT);
                 return;
         }
@@ -201,9 +246,11 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KLayoutDataPackage.KOPTION__KEY:
+            case LayoutOptionsPackage.KOPTION__KEY:
                 return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-            case KLayoutDataPackage.KOPTION__DEFAULT:
+            case LayoutOptionsPackage.KOPTION__VALUE:
+                return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
+            case LayoutOptionsPackage.KOPTION__DEFAULT:
                 return default_ != DEFAULT_EDEFAULT;
         }
         return super.eIsSet(featureID);
@@ -221,6 +268,8 @@ public abstract class KOptionImpl extends EObjectImpl implements KOption {
         StringBuffer result = new StringBuffer(super.toString());
         result.append(" (key: ");
         result.append(key);
+        result.append(", value: ");
+        result.append(value);
         result.append(", default: ");
         result.append(default_);
         result.append(')');

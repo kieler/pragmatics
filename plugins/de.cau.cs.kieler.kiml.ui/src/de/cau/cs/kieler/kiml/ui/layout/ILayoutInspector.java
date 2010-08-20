@@ -22,7 +22,6 @@ import org.eclipse.gef.EditPart;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
-import de.cau.cs.kieler.kiml.klayoutdata.KOption;
 
 /**
  * Interface for edit part inspectors for handling of layout options. A layout inspector is always
@@ -44,19 +43,26 @@ public interface ILayoutInspector {
      * 
      * @return list of available layout options
      */
-    List<LayoutOptionData> getOptionData();
+    List<LayoutOptionData<?>> getOptionData();
 
     /**
-     * Returns the currently stored {@code KOption} value for the given layout option.
+     * Returns the currently stored option value for the given layout option.
      * {@link #initOptions()} must be called before this method is used.
      * 
      * @param optionData layout option data
-     * @param create if true and the {@code KOption} is not available, a new instance is created and
-     *            returned
-     * @return the current value, or {@code null} if there is no such value and {@code create} is
-     *         false
+     * @return the current value, or {@code null} if there is no such value
      */
-    KOption getKOption(LayoutOptionData optionData, boolean create);
+    Object getOption(LayoutOptionData<?> optionData);
+    
+    /**
+     * Sets the given value for a layout option. {@link #initOptions()} must be
+     * called before this method is used. Giving {@code null} as option value
+     * is equivalent to calling {@link #removeOption(LayoutOptionData)}.
+     * 
+     * @param optionData layout option data
+     * @param value the new value for the layout option
+     */
+    void setOption(LayoutOptionData<?> optionData, Object value);
 
     /**
      * Removes any stored value for the given layout option. {@link #initOptions()} must be called
@@ -64,7 +70,7 @@ public interface ILayoutInspector {
      * 
      * @param optionData layout option data
      */
-    void removeKOption(LayoutOptionData optionData);
+    void removeOption(LayoutOptionData<?> optionData);
 
     /**
      * Returns the layout provider descriptor for the associated edit part. {@link #initOptions()}
@@ -100,7 +106,7 @@ public interface ILayoutInspector {
     /**
      * Removes all stored layout options from the associated edit part and its children.
      */
-    void removeAllKOptions();
+    void removeAllOptions();
 
     /**
      * Returns the default value for the associated diagram.
@@ -109,7 +115,7 @@ public interface ILayoutInspector {
      * @return default value of the layout option, or {@code null} if no default value is set for
      *         the diagram
      */
-    Object getDefault(LayoutOptionData optionData);
+    Object getDefault(LayoutOptionData<?> optionData);
 
     /**
      * Sets the given option as default value for all elements of the associated diagram.
@@ -117,7 +123,7 @@ public interface ILayoutInspector {
      * @param optionData layout option data
      * @param value new default value
      */
-    void setDefault(LayoutOptionData optionData, Object value);
+    void setDefault(LayoutOptionData<?> optionData, Object value);
 
     /**
      * Returns the edit part that is associated with this layout inspector.

@@ -85,6 +85,29 @@ public class KGraphItemProviderAdapterFactory extends KGraphAdapterFactory imple
     }
 
     /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.core.kgraph.KGraphData} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected KGraphDataItemProvider kGraphDataItemProvider;
+
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.core.kgraph.KGraphData}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createKGraphDataAdapter() {
+        if (kGraphDataItemProvider == null) {
+            kGraphDataItemProvider = new KGraphDataItemProvider(this);
+        }
+
+        return kGraphDataItemProvider;
+    }
+
+    /**
      * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.core.kgraph.KNode} instances.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -174,6 +197,29 @@ public class KGraphItemProviderAdapterFactory extends KGraphAdapterFactory imple
         }
 
         return kLabelItemProvider;
+    }
+
+    /**
+     * This keeps track of the one adapter used for all {@link java.util.Map.Entry} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected IPropertyToObjectMapItemProvider iPropertyToObjectMapItemProvider;
+
+    /**
+     * This creates an adapter for a {@link java.util.Map.Entry}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createIPropertyToObjectMapAdapter() {
+        if (iPropertyToObjectMapItemProvider == null) {
+            iPropertyToObjectMapItemProvider = new IPropertyToObjectMapItemProvider(this);
+        }
+
+        return iPropertyToObjectMapItemProvider;
     }
 
     /**
@@ -275,10 +321,12 @@ public class KGraphItemProviderAdapterFactory extends KGraphAdapterFactory imple
      * @generated
      */
     public void dispose() {
+        if (kGraphDataItemProvider != null) kGraphDataItemProvider.dispose();
         if (kNodeItemProvider != null) kNodeItemProvider.dispose();
         if (kEdgeItemProvider != null) kEdgeItemProvider.dispose();
         if (kPortItemProvider != null) kPortItemProvider.dispose();
         if (kLabelItemProvider != null) kLabelItemProvider.dispose();
+        if (iPropertyToObjectMapItemProvider != null) iPropertyToObjectMapItemProvider.dispose();
     }
 
 }

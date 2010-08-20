@@ -20,16 +20,16 @@ import de.cau.cs.kieler.core.IKielerPreferenceStore;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.impl.BalancingLayerAssigner;
 import de.cau.cs.kieler.klodd.hierarchical.impl.BalancingNodePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.impl.BarycenterCrossingReducer;
@@ -130,15 +130,6 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
     private static final int LARGE_TASK = 15;
     
     /**
-     * Creates an instance of the layout provider.
-     */
-    public HierarchicalDataflowLayoutProvider() {
-        // register layout options
-        LayoutOptions.registerEnum(HierarchicalDataflowLayoutProvider.OPT_INTERACTIVE,
-                InteractionLevel.class);
-    }
-    
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -148,15 +139,15 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
                 SMALL_TASK + SMALL_TASK + SMALL_TASK + LARGE_TASK + LARGE_TASK
                 + LARGE_TASK + LARGE_TASK);
         // get the currently configured modules
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
         updateModules(parentLayout);
         // set option for minimal object spacing
-        float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
+        float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
         if (Float.isNaN(objSpacing)) {
             objSpacing = DEF_MIN_DIST;
         }
         // set option for border spacing
-        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
+        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING_ID);
         if (Float.isNaN(borderSpacing)) {
             borderSpacing = DEF_MIN_DIST;
         }
@@ -199,15 +190,15 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public Object getDefault(final String optionId) {
-        if (LayoutOptions.FIXED_SIZE.equals(optionId)) {
+        if (LayoutOptions.FIXED_SIZE_ID.equals(optionId)) {
             return false;
-        } else if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId)) {
+        } else if (LayoutOptions.LAYOUT_DIRECTION_ID.equals(optionId)) {
             return LayoutDirection.RIGHT;
-        } else if (LayoutOptions.MIN_SPACING.equals(optionId)) {
+        } else if (LayoutOptions.MIN_SPACING_ID.equals(optionId)) {
             return DEF_MIN_DIST;
-        } else if (LayoutOptions.BORDER_SPACING.equals(optionId)) {
+        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
             return DEF_MIN_DIST;
-        } else if (LayoutOptions.PORT_CONSTRAINTS.equals(optionId)) {
+        } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionId)) {
             return PortConstraints.UNDEFINED;
         } else {
             return null;
@@ -309,23 +300,23 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
      * @param parentNode parent layout node
      */
     private void preProcess(final KNode parentNode) {
-        KLayoutData parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
+        KGraphData parentLayout = KimlUtil.getShapeLayout(parentNode);
         LayoutDirection layoutDirection = LayoutOptions.getEnum(parentLayout, LayoutDirection.class);
 
         for (KNode node : parentNode.getChildren()) {
             // fill port data for the child node
-            KimlLayoutUtil.fillPortInfo(node, layoutDirection);
+            KimlUtil.fillPortInfo(node, layoutDirection);
 
             // set node size if not fixed
             if (node.getChildren().isEmpty()
-                    && !LayoutOptions.getBoolean(KimlLayoutUtil.getShapeLayout(node),
-                    LayoutOptions.FIXED_SIZE)) {
-                KimlLayoutUtil.resizeNode(node);
+                    && !LayoutOptions.getBoolean(KimlUtil.getShapeLayout(node),
+                    LayoutOptions.FIXED_SIZE_ID)) {
+                KimlUtil.resizeNode(node);
             }
         }
 
         // fill port data for the parent node
-        KimlLayoutUtil.fillPortInfo(parentNode, layoutDirection);
+        KimlUtil.fillPortInfo(parentNode, layoutDirection);
     }
 
     /**
@@ -335,7 +326,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         List<KSlimEdge> reversedEdges = cycleRemover.getReversedEdges();
         for (KSlimEdge slimEdge : reversedEdges) {
             KEdge layoutEdge = (KEdge) slimEdge.getObject();
-            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(layoutEdge);
+            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(layoutEdge);
             // reverse bend points
             List<KPoint> bendPoints = new LinkedList<KPoint>();
             for (KPoint point : edgeLayout.getBendPoints()) {

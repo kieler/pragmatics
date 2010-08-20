@@ -48,19 +48,19 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Box layout", 2);
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
         // set option for minimal spacing
-        float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
+        float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
         if (Float.isNaN(objSpacing)) {
             objSpacing = DEFAULT_SPACING;
         }
         // set option for border spacing
-        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
+        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING_ID);
         if (Float.isNaN(borderSpacing)) {
             borderSpacing = DEFAULT_SPACING;
         }
         // set expand nodes option
-        boolean expandNodes = LayoutOptions.getBoolean(parentLayout, LayoutOptions.EXPAND_NODES);
+        boolean expandNodes = LayoutOptions.getBoolean(parentLayout, LayoutOptions.EXPAND_NODES_ID);
 
         // sort boxes according to priority and size
         boxSorter.reset(progressMonitor.subTask(1));
@@ -77,15 +77,15 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public Object getDefault(final String optionId) {
-        if (LayoutOptions.MIN_SPACING.equals(optionId)) {
+        if (LayoutOptions.MIN_SPACING_ID.equals(optionId)) {
             return DEFAULT_SPACING;
-        } else if (LayoutOptions.BORDER_SPACING.equals(optionId)) {
+        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
             return DEFAULT_SPACING;
-        } else if (LayoutOptions.PRIORITY.equals(optionId)) {
+        } else if (LayoutOptions.PRIORITY_ID.equals(optionId)) {
             return 0;
-        } else if (LayoutOptions.EXPAND_NODES.equals(optionId)) {
+        } else if (LayoutOptions.EXPAND_NODES_ID.equals(optionId)) {
             return false;
-        } else if (LayoutOptions.ASPECT_RATIO.equals(optionId)) {
+        } else if (LayoutOptions.ASPECT_RATIO_ID.equals(optionId)) {
             return BoxPlacer.DEF_ASPECT_RATIO;
         } else {
             return null;

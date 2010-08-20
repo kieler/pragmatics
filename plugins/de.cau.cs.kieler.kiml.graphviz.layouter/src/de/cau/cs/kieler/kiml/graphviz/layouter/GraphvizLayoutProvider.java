@@ -66,19 +66,19 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public Object getDefault(final String optionId) {
-        if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId)) {
+        if (LayoutOptions.LAYOUT_DIRECTION_ID.equals(optionId)) {
             return LayoutDirection.RIGHT;
-        } else if (LayoutOptions.BORDER_SPACING.equals(optionId)) {
+        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
             return GraphvizLayouter.DEF_MIN_SPACING / 2;
-        } else if (LayoutOptions.MIN_SPACING.equals(optionId)) {
+        } else if (LayoutOptions.MIN_SPACING_ID.equals(optionId)) {
             return GraphvizLayouter.DEF_MIN_SPACING;
-        } else if (LayoutOptions.FIXED_SIZE.equals(optionId)) {
+        } else if (LayoutOptions.FIXED_SIZE_ID.equals(optionId)) {
             return false;
-        } else if (LayoutOptions.RANDOM_SEED.equals(optionId)) {
+        } else if (LayoutOptions.RANDOM_SEED_ID.equals(optionId)) {
             return 1;
-        } else if (LayoutOptions.LABEL_SPACING.equals(optionId)) {
+        } else if (LayoutOptions.LABEL_SPACING_ID.equals(optionId)) {
             return 1.0f;
-        } else if (LayoutOptions.EDGE_ROUTING.equals(optionId)) {
+        } else if (LayoutOptions.EDGE_ROUTING_ID.equals(optionId)) {
             return EdgeRouting.SPLINES;
         } else if (GraphvizLayouter.OPT_LABEL_DISTANCE.equals(optionId)) {
             return 1.0f;

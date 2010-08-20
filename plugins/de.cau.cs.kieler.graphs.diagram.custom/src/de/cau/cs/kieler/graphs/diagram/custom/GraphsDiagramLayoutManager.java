@@ -46,7 +46,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Specialized Layout Manager for Graphs diagrams.
@@ -145,13 +145,13 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
     private KNode buildLayoutGraphRecursively(final KNode graphNode,
             final IGraphicalEditPart editPart) {
         Map<?, ?> editPartRegistry = editPart.getViewer().getEditPartRegistry();
-        KNode layoutNode = KimlLayoutUtil.createInitializedNode();
+        KNode layoutNode = KimlUtil.createInitializedNode();
         // store the connection to process them later
         edges.addAll(graphNode.getOutgoingEdges());
         
         // set location and size
         IFigure nodeFigure = editPart.getFigure();
-        KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+        KShapeLayout nodeLayout = KimlUtil.getShapeLayout(layoutNode);
         Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure);
         Rectangle containerBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure.getParent());
         nodeLayout.setXpos(nodeBounds.x - containerBounds.x);
@@ -159,8 +159,8 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         nodeLayout.setHeight(nodeBounds.height);
         nodeLayout.setWidth(nodeBounds.width);
         Dimension minSize = nodeFigure.getMinimumSize();
-        LayoutOptions.setFloat(nodeLayout, LayoutOptions.MIN_WIDTH, minSize.width);
-        LayoutOptions.setFloat(nodeLayout, LayoutOptions.MIN_HEIGHT, minSize.height);
+        nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
+        nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
         
         getGraphElem2EditPartMap().put(layoutNode, editPart);
         graphMap.put(graphNode, layoutNode);
@@ -173,13 +173,13 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
             Object obj = editPartRegistry.get(graphElem2ViewMap.get(port));
             if (obj instanceof IGraphicalEditPart) {
                 IGraphicalEditPart portEP = (IGraphicalEditPart) obj;
-                KPort layoutPort = KimlLayoutUtil.createInitializedPort();
+                KPort layoutPort = KimlUtil.createInitializedPort();
                 layoutPort.setNode(layoutNode);
                 getGraphElem2EditPartMap().put(layoutPort, portEP);
                 graphMap.put(port, layoutPort);
                 
                 // set the port's layout, relative to the node position
-                KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(layoutPort);
+                KShapeLayout portLayout = KimlUtil.getShapeLayout(layoutPort);
                 Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(portEP.getFigure());
                 portLayout.setXpos(portBounds.x - nodeBounds.x);
                 portLayout.setYpos(portBounds.y - nodeBounds.y);
@@ -203,7 +203,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 KNode layoutChild = buildLayoutGraphRecursively(child, childEP);
                 layoutChild.setParent(layoutNode);
                 if (kinsets == null) {
-                    kinsets = LayoutOptions.getObject(nodeLayout, KInsets.class);
+                    kinsets = nodeLayout.getProperty(LayoutOptions.INSETS);
                     Insets insets = KimlUiUtil.calcInsets(nodeFigure, childEP.getFigure());
                     kinsets.setLeft(insets.left);
                     kinsets.setTop(insets.top);
@@ -215,7 +215,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
 
         // set all layout options for the node
         if (graphNode.getChildren().isEmpty()) {
-            LayoutOptions.setBoolean(nodeLayout, LayoutOptions.FIXED_SIZE, true);
+            LayoutOptions.setBoolean(nodeLayout, LayoutOptions.FIXED_SIZE_ID, true);
         }
         if (!graphNode.getPorts().isEmpty()) {
             if (graphNode.getChildren().isEmpty()) {
@@ -225,7 +225,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
             }
         }
         if (((Node) graphNode).isIsHypernode()) {
-            LayoutOptions.setBoolean(nodeLayout, LayoutOptions.HYPERNODE, true);
+            nodeLayout.setProperty(LayoutOptions.HYPERNODE, true);
         }
         GmfLayoutInspector.setLayoutOptions(editPart, nodeLayout, true);
         return layoutNode;
@@ -241,7 +241,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         for (KEdge graphEdge : edges) {
             Object obj = editPartRegistry.get(graphElem2ViewMap.get(graphEdge));
             if (obj instanceof ConnectionEditPart) {
-                KEdge layoutEdge = KimlLayoutUtil.createInitializedEdge();
+                KEdge layoutEdge = KimlUtil.createInitializedEdge();
                 KPort sourcePort = (KPort) graphMap.get(graphEdge.getSourcePort());
                 if (sourcePort == null) {
                     layoutEdge.setSource((KNode) graphMap.get(graphEdge.getSource()));
@@ -266,13 +266,13 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 KNode sourceParent = layoutEdge.getSource().getParent();
                 IGraphicalEditPart sourceParentEP = getGraphElem2EditPartMap().get(sourceParent);
                 Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParentEP.getFigure());
-                KInsets insets = LayoutOptions.getObject(KimlLayoutUtil.getShapeLayout(
-                        sourceParent), KInsets.class);
+                KInsets insets = KimlUtil.getShapeLayout(sourceParent)
+                        .getProperty(LayoutOptions.INSETS);
                 float offsetx = sourceParentBounds.x + insets.getLeft();
                 float offsety = sourceParentBounds.y + insets.getTop();
     
                 // store the current coordinates of the edge
-                KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(layoutEdge);
+                KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(layoutEdge);
                 setEdgeLayout(edgeLayout, connection, offsetx, offsety);
                 
                 // set edge labels

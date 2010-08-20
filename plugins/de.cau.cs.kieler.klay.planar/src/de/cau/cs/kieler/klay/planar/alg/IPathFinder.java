@@ -16,9 +16,9 @@ package de.cau.cs.kieler.klay.planar.alg;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.IAlgorithm;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.core.util.Property;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 

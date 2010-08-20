@@ -20,10 +20,10 @@ import java.util.List;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 
+import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -56,9 +56,9 @@ public class ApplyLayoutRequest extends Request {
      * @param editPart the corresponding edit part
      */
     public void addElement(final KGraphElement element, final GraphicalEditPart editPart) {
-        KLayoutData layoutData = (KLayoutData) element.getData(
-                KLayoutDataPackage.eINSTANCE.getKLayoutData());
-        if (layoutData == null || !LayoutOptions.getBoolean(layoutData, LayoutOptions.NO_LAYOUT)) {
+        KGraphData layoutData = (KGraphData) element.getData(
+                KGraphPackage.eINSTANCE.getKGraphData());
+        if (layoutData == null || !layoutData.getProperty(LayoutOptions.NO_LAYOUT)) {
             mappingList.add(new Pair<KGraphElement, GraphicalEditPart>(element, editPart));
         }
     }

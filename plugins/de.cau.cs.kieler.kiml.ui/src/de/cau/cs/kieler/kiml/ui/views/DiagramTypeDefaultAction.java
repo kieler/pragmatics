@@ -61,7 +61,7 @@ public class DiagramTypeDefaultAction extends Action {
     public void run() {
         EditPart editPart = layoutView.getCurrentEditPart();
         if (editPart != null) {
-            String diagramType = (String) KimlUiUtil.getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
+            String diagramType = (String) KimlUiUtil.getOption(editPart, LayoutOptions.DIAGRAM_TYPE_ID);
             if (diagramType != null) {
                 for (IPropertySheetEntry entry : layoutView.getSelection()) {
                     setDefault(diagramType, entry);
@@ -78,7 +78,7 @@ public class DiagramTypeDefaultAction extends Action {
      * @param entry a property sheet entry
      */
     private void setDefault(final String diagramType, final IPropertySheetEntry entry) {
-        LayoutOptionData optionData = KimlUiUtil.getOptionData(
+        LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(
                 layoutView.getCurrentProviderData(), entry.getDisplayName());
         
         if (optionData != null) {

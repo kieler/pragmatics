@@ -111,8 +111,10 @@ public abstract class DiagramLayoutManager {
                 // third phase: apply layout with animation
                 @Override
                 protected void postUIexec(final IStatus status) {
-                    int nodeCount = status == null ? 0 : status.getCode();
-                    applyAnimatedLayout(animate, cacheLayout, nodeCount);
+                    if (status.getSeverity() == IStatus.OK) {
+                        int nodeCount = status == null ? 0 : status.getCode();
+                        applyAnimatedLayout(animate, cacheLayout, nodeCount);
+                    }
                 }
             };
             monitoredOperation.runMonitored();

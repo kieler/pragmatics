@@ -22,7 +22,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimNode;
 
 /**
@@ -184,12 +184,12 @@ public class Layer {
             int portrank = 0;
             for (LayerElement element : elements) {
                 KPort port = (KPort) element.getElemObj();
-                LayoutOptions.setInt(KimlLayoutUtil.getShapeLayout(port), LayoutOptions.PORT_RANK,
+                KimlUtil.getShapeLayout(port).setProperty(LayoutOptions.PORT_RANK,
                         portrank++);
             }
         }
         // sort elements according to port sides and ranks
-        final Comparator<KPort> portComparator = new KimlLayoutUtil.PortComparator(forward, layeredGraph
+        final Comparator<KPort> portComparator = new KimlUtil.PortComparator(forward, layeredGraph
                 .getLayoutDirection());
         Collections.sort(elements, new Comparator<LayerElement>() {
             public int compare(final LayerElement elem1, final LayerElement elem2) {
@@ -203,7 +203,7 @@ public class Layer {
             int portrank = 0;
             for (LayerElement element : elements) {
                 KPort port = (KPort) element.getElemObj();
-                LayoutOptions.setInt(KimlLayoutUtil.getShapeLayout(port), LayoutOptions.PORT_RANK,
+                KimlUtil.getShapeLayout(port).setProperty(LayoutOptions.PORT_RANK,
                         portrank++);
             }
         }

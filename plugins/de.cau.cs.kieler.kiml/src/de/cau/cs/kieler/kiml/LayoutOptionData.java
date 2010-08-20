@@ -15,22 +15,17 @@ package de.cau.cs.kieler.kiml;
 
 import java.util.StringTokenizer;
 
-import de.cau.cs.kieler.kiml.klayoutdata.KBooleanOption;
-import de.cau.cs.kieler.kiml.klayoutdata.KFloatOption;
-import de.cau.cs.kieler.kiml.klayoutdata.KIntOption;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
-import de.cau.cs.kieler.kiml.klayoutdata.KOption;
-import de.cau.cs.kieler.kiml.klayoutdata.KStringOption;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.properties.IProperty;
 
 /**
  * Data type used to store information for a layout option.
  * 
+ * @param <T> data type for the option data
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class LayoutOptionData {
+public class LayoutOptionData<T> implements IProperty<T> {
 
     /** literal value constant for booleans. */
     public static final String BOOLEAN_LITERAL = "boolean";
@@ -96,6 +91,8 @@ public class LayoutOptionData {
 
     /** identifier of the layout option. */
     private String id;
+    /** the default value of this option. */
+    private T defaultValue;
     /** type of the layout option. */
     private Type type = Type.UNDEFINED;
     /** user friendly name of the layout option. */
@@ -104,41 +101,37 @@ public class LayoutOptionData {
     private String description;
     /** configured targets (accessed through bit masks). */
     private int targets;
-    /** cached value of the enumeration class, used for ENUM typed options. */
-    @SuppressWarnings("rawtypes")
-    private Class<? extends Enum> enumClass = null;
+    /** the class that represents this option type. */
+    private Class<?> clazz;
     /** cached value of the available choices. */
-    private String[] choices = null;
+    private String[] choices;
 
     /**
      * Checks whether the enumeration class is set correctly. This method must
      * not be called for options other than enumerations.
      */
     private void checkEnumClass() {
-        if (enumClass == null) {
-            enumClass = LayoutOptions.getEnumClass(id);
-        }
-        if (enumClass == null) {
+        if (clazz == null || !clazz.isEnum()) {
             throw new IllegalStateException("Unknown enumeration type set for this layout option.");
         }
     }
-
+    
     /**
      * {@inheritDoc}
      */
-     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof LayoutOptionData) {
-            return id.equals((LayoutOptionData) obj);
+        if (obj instanceof LayoutOptionData<?>) {
+            return this.id.equals(((LayoutOptionData<?>) obj).id);
+        } else if (obj instanceof IProperty<?>) {
+            return this.id.equals(((IProperty<?>) obj).getIdentifier());
         } else {
             return false;
         }
     }
-
-     /**
-      * {@inheritDoc}
-      */
-     @Override
+    
+    /**
+     * {@inheritDoc}
+     */
     public int hashCode() {
         return id.hashCode();
     }
@@ -184,7 +177,6 @@ public class LayoutOptionData {
      * @return an instance of the corresponding correctly typed value, or
      *         {@code null} if the given value string is invalid
      */
-    @SuppressWarnings("unchecked")
     public Object parseValue(final String valueString) {
         if (valueString == null || valueString.equals("null")) {
             return null;
@@ -210,7 +202,9 @@ public class LayoutOptionData {
         case ENUM:
             try {
                 checkEnumClass();
-                return Enum.valueOf(enumClass, valueString);
+                @SuppressWarnings({ "unchecked", "rawtypes" })
+                Enum<?> value = Enum.valueOf((Class<? extends Enum>) clazz, valueString);
+                return value;
             } catch (IllegalArgumentException exception) {
                 return null;
             }
@@ -234,7 +228,8 @@ public class LayoutOptionData {
             switch (type) {
             case ENUM:
                 checkEnumClass();
-                Enum<?>[] enums = enumClass.getEnumConstants();
+                @SuppressWarnings({ "unchecked", "rawtypes" })
+                Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
                 choices = new String[enums.length];
                 for (int i = 0; i < enums.length; i++) {
                     choices[i] = enums[i].toString();
@@ -260,7 +255,8 @@ public class LayoutOptionData {
         switch (type) {
         case ENUM:
             checkEnumClass();
-            Enum<?>[] enums = enumClass.getEnumConstants();
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
             return enums[intValue];
         default:
             return null;
@@ -272,56 +268,11 @@ public class LayoutOptionData {
      * 
      * @param layoutData layout data for which the option shall be set
      * @param value the new value of this option
+     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#setProperty(IProperty, Object)}
+     *     instead
      */
-    public void setValue(final KLayoutData layoutData, final Object value) {
-        KOption option = layoutData.getOption(id);
-        if (option == null) {
-            switch (type) {
-            case BOOLEAN:
-                option = KLayoutDataFactory.eINSTANCE.createKBooleanOption();
-                break;
-            case ENUM:
-            case INT:
-                option = KLayoutDataFactory.eINSTANCE.createKIntOption();
-                break;
-            case STRING:
-                option = KLayoutDataFactory.eINSTANCE.createKStringOption();
-                break;
-            case FLOAT:
-                option = KLayoutDataFactory.eINSTANCE.createKFloatOption();
-                break;
-            default:
-                throw new IllegalStateException("Invalid type set for this layout option.");
-            }
-            option.setKey(id);
-            layoutData.getOptions().add(option);
-        }
-        switch (type) {
-        case BOOLEAN:
-            KBooleanOption booleanOption = (KBooleanOption) option;
-            booleanOption.setValue(((Boolean) value).booleanValue());
-            break;
-        case ENUM:
-            KIntOption intOption = (KIntOption) option;
-            if (value instanceof Enum<?>) {
-                intOption.setValue(((Enum<?>) value).ordinal());                
-                break;
-            }
-        case INT:
-            intOption = (KIntOption) option;
-            intOption.setValue(((Integer) value).intValue());
-            break;
-        case STRING:
-            KStringOption stringOption = (KStringOption) option;
-            stringOption.setValue((String) value);
-            break;
-        case FLOAT:
-            KFloatOption floatOption = (KFloatOption) option;
-            floatOption.setValue(((Float) value).floatValue());
-            break;
-        default:
-            throw new IllegalStateException("Invalid type set for this layout option.");
-        }
+    public void setValue(final KGraphData layoutData, final Object value) {
+        layoutData.setProperty(this, value);
     }
 
     /**
@@ -430,8 +381,8 @@ public class LayoutOptionData {
 
     /**
      * Returns the identifier.
-     *
-     * @return the identifier
+     * 
+     *  @return the identifier
      */
     public String getId() {
         return id;
@@ -489,6 +440,47 @@ public class LayoutOptionData {
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public T getDefault() {
+        return defaultValue;
+    }
+    
+    /**
+     * Sets the default value.
+     * 
+     * @param thedefaultValue the default value
+     */
+    public void setDefault(final T thedefaultValue) {
+        this.defaultValue = thedefaultValue;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getIdentifier() {
+        return id;
+    }
+
+    /**
+     * Returns the option type class, which may be {@code null}.
+     * 
+     * @return the type class
+     */
+    public Class<?> getOptionClass() {
+        return clazz;
+    }
+
+    /**
+     * Sets the option type class.
+     * 
+     * @param theclazz the class to set
+     */
+    public void setOptionClass(final Class<?> theclazz) {
+        this.clazz = theclazz;
     }
 
 }

@@ -16,11 +16,22 @@
 package de.cau.cs.kieler.core.kgraph.util;
 
 import de.cau.cs.kieler.core.kgraph.*;
+import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
+import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KGraphPackage;
+import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.core.util.Pair;
 import java.util.List;
 
+import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -100,13 +111,14 @@ public class KGraphSwitch<T> {
             case KGraphPackage.KGRAPH_ELEMENT: {
                 KGraphElement kGraphElement = (KGraphElement)theEObject;
                 T result = caseKGraphElement(kGraphElement);
-                if (result == null) result = caseEModelElement(kGraphElement);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
             case KGraphPackage.KGRAPH_DATA: {
                 KGraphData kGraphData = (KGraphData)theEObject;
                 T result = caseKGraphData(kGraphData);
+                if (result == null) result = caseEMapPropertyHolder(kGraphData);
+                if (result == null) result = caseIPropertyHolder(kGraphData);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -114,7 +126,6 @@ public class KGraphSwitch<T> {
                 KNode kNode = (KNode)theEObject;
                 T result = caseKNode(kNode);
                 if (result == null) result = caseKGraphElement(kNode);
-                if (result == null) result = caseEModelElement(kNode);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -122,7 +133,6 @@ public class KGraphSwitch<T> {
                 KEdge kEdge = (KEdge)theEObject;
                 T result = caseKEdge(kEdge);
                 if (result == null) result = caseKGraphElement(kEdge);
-                if (result == null) result = caseEModelElement(kEdge);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -130,7 +140,6 @@ public class KGraphSwitch<T> {
                 KPort kPort = (KPort)theEObject;
                 T result = caseKPort(kPort);
                 if (result == null) result = caseKGraphElement(kPort);
-                if (result == null) result = caseEModelElement(kPort);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -138,7 +147,19 @@ public class KGraphSwitch<T> {
                 KLabel kLabel = (KLabel)theEObject;
                 T result = caseKLabel(kLabel);
                 if (result == null) result = caseKGraphElement(kLabel);
-                if (result == null) result = caseEModelElement(kLabel);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case KGraphPackage.EMAP_PROPERTY_HOLDER: {
+                EMapPropertyHolder eMapPropertyHolder = (EMapPropertyHolder)theEObject;
+                T result = caseEMapPropertyHolder(eMapPropertyHolder);
+                if (result == null) result = caseIPropertyHolder(eMapPropertyHolder);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case KGraphPackage.IPROPERTY_TO_OBJECT_MAP: {
+                @SuppressWarnings("unchecked") Map.Entry<IProperty<?>, Object> iPropertyToObjectMap = (Map.Entry<IProperty<?>, Object>)theEObject;
+                T result = caseIPropertyToObjectMap(iPropertyToObjectMap);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -237,17 +258,62 @@ public class KGraphSwitch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>EModel Element</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>EMap Property Holder</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
      * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>EModel Element</em>'.
+     * @return the result of interpreting the object as an instance of '<em>EMap Property Holder</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseEModelElement(EModelElement object) {
+    public T caseEMapPropertyHolder(EMapPropertyHolder object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>IProperty To Object Map</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>IProperty To Object Map</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseIPropertyToObjectMap(Map.Entry<IProperty<?>, Object> object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>IProperty Holder</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>IProperty Holder</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseIPropertyHolder(IPropertyHolder object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Pair</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Pair</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public <F, S> T casePair(Pair<F, S> object) {
         return null;
     }
 

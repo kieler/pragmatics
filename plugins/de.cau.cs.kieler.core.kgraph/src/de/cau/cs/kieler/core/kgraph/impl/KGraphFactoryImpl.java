@@ -16,8 +16,18 @@
 package de.cau.cs.kieler.core.kgraph.impl;
 
 import de.cau.cs.kieler.core.kgraph.*;
+import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.kgraph.KGraphFactory;
+import de.cau.cs.kieler.core.kgraph.KGraphPackage;
+import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -69,13 +79,55 @@ public class KGraphFactoryImpl extends EFactoryImpl implements KGraphFactory {
     @Override
     public EObject create(EClass eClass) {
         switch (eClass.getClassifierID()) {
+            case KGraphPackage.KGRAPH_DATA: return createKGraphData();
             case KGraphPackage.KNODE: return createKNode();
             case KGraphPackage.KEDGE: return createKEdge();
             case KGraphPackage.KPORT: return createKPort();
             case KGraphPackage.KLABEL: return createKLabel();
+            case KGraphPackage.IPROPERTY_TO_OBJECT_MAP: return (EObject)createIPropertyToObjectMap();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Object createFromString(EDataType eDataType, String initialValue) {
+        switch (eDataType.getClassifierID()) {
+            case KGraphPackage.IPROPERTY:
+                return createIPropertyFromString(eDataType, initialValue);
+            default:
+                throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public String convertToString(EDataType eDataType, Object instanceValue) {
+        switch (eDataType.getClassifierID()) {
+            case KGraphPackage.IPROPERTY:
+                return convertIPropertyToString(eDataType, instanceValue);
+            default:
+                throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KGraphData createKGraphData() {
+        KGraphDataImpl kGraphData = new KGraphDataImpl();
+        return kGraphData;
     }
 
     /**
@@ -116,6 +168,34 @@ public class KGraphFactoryImpl extends EFactoryImpl implements KGraphFactory {
     public KLabel createKLabel() {
         KLabelImpl kLabel = new KLabelImpl();
         return kLabel;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public Map.Entry<IProperty<?>, Object> createIPropertyToObjectMap() {
+        IPropertyToObjectMapImpl iPropertyToObjectMap = new IPropertyToObjectMapImpl();
+        return iPropertyToObjectMap;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public IProperty<?> createIPropertyFromString(EDataType eDataType, String initialValue) {
+        return (IProperty<?>)super.createFromString(initialValue);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String convertIPropertyToString(EDataType eDataType, Object instanceValue) {
+        return super.convertToString(instanceValue);
     }
 
     /**

@@ -50,7 +50,6 @@ import de.cau.cs.kieler.kiml.graphviz.dot.dot.NodeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Statement;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -58,10 +57,11 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -208,11 +208,11 @@ public class GraphvizLayouter {
         graphvizModel.getGraphs().add(graph);
 
         // set attributes for the whole graph
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parent);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parent);
         setGraphAttributes(graph, command, parentLayout);
         
         // get interactive layout option
-        boolean interactive = LayoutOptions.getBoolean(parentLayout, LayoutOptions.INTERACTIVE);
+        boolean interactive = LayoutOptions.getBoolean(parentLayout, LayoutOptions.INTERACTIVE_ID);
 
         // create nodes
         for (KNode childNode : parent.getChildren()) {
@@ -224,14 +224,14 @@ public class GraphvizLayouter {
             nodeStatement.setNode(node);
 
             List<Attribute> attributes = nodeStatement.getAttributes();
-            KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(childNode);
+            KShapeLayout shapeLayout = KimlUtil.getShapeLayout(childNode);
             // set label - removed as it is currently not needed for layout
             // KLabel label = childNode.getLabel();
             // attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
             // createString(label.getText())));
             // set width and height
-            if (!LayoutOptions.getBoolean(shapeLayout, LayoutOptions.FIXED_SIZE)) {
-                KimlLayoutUtil.resizeNode(childNode);
+            if (!LayoutOptions.getBoolean(shapeLayout, LayoutOptions.FIXED_SIZE_ID)) {
+                KimlUtil.resizeNode(childNode);
             }
             String width = Float.toString(shapeLayout.getWidth() / DPI);
             String height = Float.toString(shapeLayout.getHeight() / DPI);
@@ -283,8 +283,8 @@ public class GraphvizLayouter {
 
                     graph.getStatements().add(edgeStatement);
                 } else {
-                    KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(outgoingEdge);
-                    LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
+                    KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(outgoingEdge);
+                    edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
@@ -301,12 +301,12 @@ public class GraphvizLayouter {
      * @param parentLayout the layout data for the parent node
      */
     private void setGraphAttributes(final Graph graph, final String command,
-            final KLayoutData parentLayout) {
+            final KGraphData parentLayout) {
         AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
         graphAttrStatement.setType(AttributeType.GRAPH);
         List<Attribute> graphAttrs = graphAttrStatement.getAttributes();
         // set minimal spacing
-        float minSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
+        float minSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
         if (Float.isNaN(minSpacing)) {
             minSpacing = DEF_MIN_SPACING;
         }
@@ -325,7 +325,7 @@ public class GraphvizLayouter {
             graph.getStatements().add(edgeAttrStatement);
         }
         // set offset to border
-        offset = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
+        offset = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING_ID);
         if (Float.isNaN(offset)) {
             offset = DEF_MIN_SPACING / 2;
         }
@@ -357,7 +357,7 @@ public class GraphvizLayouter {
                 Boolean.toString(useSplines)));
         // configure initial placement of nodes
         if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
-            int seed = LayoutOptions.getInt(parentLayout, LayoutOptions.RANDOM_SEED);
+            int seed = LayoutOptions.getInt(parentLayout, LayoutOptions.RANDOM_SEED_ID);
             if (seed == Integer.MIN_VALUE) {
                 seed = 1;
             }
@@ -392,7 +392,7 @@ public class GraphvizLayouter {
      */
     private static void setEdgeLabels(final KEdge kedge, final List<Attribute> attributes,
             final boolean isVertical) {
-        KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
         // as Graphviz only supports positioning of one label per label placement, all labels
         // are stacked to one big label as workaround
         StringBuilder midLabel = new StringBuilder(),
@@ -402,8 +402,8 @@ public class GraphvizLayouter {
         boolean isCenterFontName = false, isCenterFontSize = false;
         for (KLabel label : kedge.getLabels()) {
             StringBuilder buffer = midLabel;
-            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-            EdgeLabelPlacement placement = LayoutOptions.getEnum(labelLayout, EdgeLabelPlacement.class);
+            KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
+            EdgeLabelPlacement placement = labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
             boolean takeFontName = false, takeFontSize = false;
             switch (placement) {
             case CENTER:
@@ -428,10 +428,10 @@ public class GraphvizLayouter {
             }
             buffer.append(label.getText());
             if (takeFontName) {
-                fontName = LayoutOptions.getString(labelLayout, LayoutOptions.FONT_NAME);
+                fontName = labelLayout.getProperty(LayoutOptions.FONT_NAME);
             }
             if (takeFontSize) {
-                fontSize = LayoutOptions.getInt(labelLayout, LayoutOptions.FONT_SIZE);
+                fontSize = labelLayout.getProperty(LayoutOptions.FONT_SIZE);
                 // increase the font size to let Graphviz prepare more room for the label
                 if (fontSize > 0) {
                     fontSize *= FONT_SIZE_MULT;
@@ -443,7 +443,7 @@ public class GraphvizLayouter {
         if (midLabel.length() == 0) {
             midLabel.append(' ');
         } else {
-            float labelSpacing = LayoutOptions.getFloat(edgeLayout, LayoutOptions.LABEL_SPACING);
+            float labelSpacing = LayoutOptions.getFloat(edgeLayout, LayoutOptions.LABEL_SPACING_ID);
             int charsToAdd = ((Float.isNaN(labelSpacing) || labelSpacing < 1)
                     ? 1 : (int) labelSpacing) - 1;
             for (int i = 0; i < charsToAdd; i++) {
@@ -687,7 +687,7 @@ public class GraphvizLayouter {
                 // process a node
                 NodeStatement nodeStatement = (NodeStatement) statement;
                 KNode knode = (KNode) graphElementMap.get(nodeStatement.getNode().getName());
-                KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(knode);
+                KShapeLayout nodeLayout = KimlUtil.getShapeLayout(knode);
                 float xpos = 0.0f, ypos = 0.0f, width = 0.0f, height = 0.0f;
                 for (Attribute attribute : nodeStatement.getAttributes()) {
                     try {
@@ -716,7 +716,7 @@ public class GraphvizLayouter {
                 EdgeStatement edgeStatement = (EdgeStatement) statement;
                 Map<String, String> attributeMap = createAttributeMap(edgeStatement.getAttributes());
                 KEdge kedge = (KEdge) graphElementMap.get(attributeMap.get(GraphvizAPI.ATTR_COMMENT));
-                KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+                KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
                 List<KPoint> edgePoints = edgeLayout.getBendPoints();
                 edgePoints.clear();
                 String posString = attributeMap.get(GraphvizAPI.ATTR_POS);
@@ -806,9 +806,9 @@ public class GraphvizLayouter {
         }
 
         // set parent node attributes
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
         if (boundingBox != null) {
-            KInsets insets = LayoutOptions.getObject(parentLayout, KInsets.class);
+            KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
             parentLayout.setWidth((float) boundingBox.x + insets.getLeft()
                     + insets.getRight() + 2 * offset);
             parentLayout.setHeight((float) boundingBox.y + insets.getTop()
@@ -830,9 +830,9 @@ public class GraphvizLayouter {
             final EdgeLabelPlacement placement, final float offsetx, final float offsety) {
         float combinedWidth = 0.0f, combinedHeight = 0.0f;
         for (KLabel label : kedge.getLabels()) {
-            if (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(label),
-                    EdgeLabelPlacement.class) == placement) {
-                KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+            if (KimlUtil.getShapeLayout(label)
+                    .getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == placement) {
+                KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
                 combinedWidth = Math.max(combinedWidth, labelLayout.getWidth());
                 combinedHeight += labelLayout.getHeight();
             }
@@ -841,8 +841,8 @@ public class GraphvizLayouter {
         float xpos = (float) pos.x - combinedWidth / 2 + offsetx;
         float ypos = (float) pos.y - combinedHeight / 2 + offsety;
         for (KLabel label : kedge.getLabels()) {
-            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-            if (LayoutOptions.getEnum(labelLayout, EdgeLabelPlacement.class) == placement) {
+            KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
+            if (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == placement) {
                 float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;
                 labelLayout.setXpos(xpos + xoffset);
                 labelLayout.setYpos(ypos);

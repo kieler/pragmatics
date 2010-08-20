@@ -11,9 +11,11 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.util;
+package de.cau.cs.kieler.core.properties;
 
 import java.util.List;
+
+import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * Interface for holders of property values.
@@ -23,12 +25,13 @@ import java.util.List;
 public interface IPropertyHolder {
     
     /**
-     * Sets a property value.
+     * Sets a property value. No type checking is performed while setting, so
+     * users of this method must take care that the right object types are generated.
      * 
      * @param property the property to set
      * @param value the new value
      */
-    void setProperty(Property<?> property, final Object value);
+    void setProperty(IProperty<?> property, final Object value);
     
     /**
      * Retrieves a property value.
@@ -37,20 +40,20 @@ public interface IPropertyHolder {
      * @param property the property to get
      * @return the current value, or the default value if the property is not set
      */
-    <T> T getProperty(Property<T> property);
+    <T> T getProperty(IProperty<T> property);
     
     /**
      * Copy all properties from another property holder to this one.
      * 
-     * @param other another property holder
+     * @param holder another property holder
      */
-    void copyProperties(IPropertyHolder other);
+    void copyProperties(IPropertyHolder holder);
     
     /**
      * Returns a list of all assigned properties with associated values.
      * 
      * @return a list of all properties
      */
-    List<Pair<Property<?>, Object>> getAllProperties();
+    List<Pair<IProperty<?>, Object>> getAllProperties();
 
 }

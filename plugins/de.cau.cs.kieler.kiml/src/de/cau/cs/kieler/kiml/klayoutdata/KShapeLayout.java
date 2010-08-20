@@ -15,6 +15,8 @@
  */
 package de.cau.cs.kieler.kiml.klayoutdata;
 
+import de.cau.cs.kieler.core.kgraph.KGraphData;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -45,7 +47,7 @@ package de.cau.cs.kieler.kiml.klayoutdata;
  * @model
  * @generated
  */
-public interface KShapeLayout extends KLayoutData {
+public interface KShapeLayout extends KGraphData {
     /**
      * Returns the value of the '<em><b>Xpos</b></em>' attribute.
      * The default value is <code>"0.0f"</code>.

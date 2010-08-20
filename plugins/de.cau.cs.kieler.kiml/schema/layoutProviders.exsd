@@ -224,6 +224,23 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="default" type="string">
+            <annotation>
+               <documentation>
+                  The default value to use when no other value can be determined for this option.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  An optional Java class giving more detail on the data type. For &lt;code&gt;enum&lt;/code&gt; options this attribute must hold the Enum class of the option.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

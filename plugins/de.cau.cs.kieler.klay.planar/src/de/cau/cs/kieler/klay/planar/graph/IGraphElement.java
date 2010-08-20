@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
-import de.cau.cs.kieler.core.util.IPropertyHolder;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 
 /**
  * A generic element in the interface for a general graph data structure.

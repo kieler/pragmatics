@@ -40,7 +40,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Layout provider that uses the layout algorithm shipped with Draw2D. Either the
@@ -92,11 +92,11 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public Object getDefault(final String optionId) {
-        if (LayoutOptions.MIN_SPACING.equals(optionId)) {
+        if (LayoutOptions.MIN_SPACING_ID.equals(optionId)) {
             return DEF_MIN_SPACING;
-        } else if (LayoutOptions.LAYOUT_DIRECTION.equals(optionId)) {
+        } else if (LayoutOptions.LAYOUT_DIRECTION_ID.equals(optionId)) {
             return LayoutDirection.DOWN;
-        } else if (LayoutOptions.FIXED_SIZE.equals(optionId)) {
+        } else if (LayoutOptions.FIXED_SIZE_ID.equals(optionId)) {
             return false;
         } else {
             return null;
@@ -114,8 +114,8 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         DirectedGraph graph = new DirectedGraph();
         
         // set layout options for the graph
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
-        float minSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        float minSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
         if (Float.isNaN(minSpacing)) {
             minSpacing = DEF_MIN_SPACING;
         }
@@ -136,9 +136,9 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         Map<KNode, Node> nodeMap = new HashMap<KNode, Node>();
         for (KNode knode : layoutNode.getChildren()) {
             Node draw2dNode = new Node(knode);
-            KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(knode);
-            if (!LayoutOptions.getBoolean(nodeLayout, LayoutOptions.FIXED_SIZE)) {
-                KimlLayoutUtil.resizeNode(knode);
+            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(knode);
+            if (!LayoutOptions.getBoolean(nodeLayout, LayoutOptions.FIXED_SIZE_ID)) {
+                KimlUtil.resizeNode(knode);
             }
             draw2dNode.width = (int) nodeLayout.getWidth();
             draw2dNode.height = (int) nodeLayout.getHeight();
@@ -156,8 +156,8 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
                     Edge draw2dEdge = new Edge(kedge, draw2dSource, draw2dTarget);
                     graph.edges.add(draw2dEdge);
                 } else {
-                    KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
-                    LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
+                    KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
+                    edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
@@ -177,7 +177,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
             Node node = graph.nodes.getNode(i);
             if (node.data instanceof KNode) {
                 KNode knode = (KNode) node.data;
-                KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(knode);
+                KShapeLayout nodeLayout = KimlUtil.getShapeLayout(knode);
                 nodeLayout.setXpos(node.x);
                 nodeLayout.setYpos(node.y);
             }
@@ -188,7 +188,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
             Edge edge = graph.edges.getEdge(i);
             if (edge.data instanceof KEdge) {
                 KEdge kedge = (KEdge) edge.data;
-                KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+                KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
                 edgeLayout.getBendPoints().clear();
                 PointList pointList = edge.getPoints();
                 KPoint sourcekPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
@@ -211,15 +211,15 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
                 
                 // disable layout for the edge labels
                 for (KLabel label : kedge.getLabels()) {
-                    KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
-                    LayoutOptions.setBoolean(labelLayout, LayoutOptions.NO_LAYOUT, true);
+                    KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
+                    labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
         
         // apply parent node layout
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
-        KInsets insets = LayoutOptions.getObject(parentLayout, KInsets.class);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
+        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
         Dimension layoutSize = graph.getLayoutSize();
         parentLayout.setWidth(insets.getLeft() + layoutSize.width + insets.getRight());
         parentLayout.setHeight(insets.getTop() + layoutSize.height + insets.getBottom());

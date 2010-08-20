@@ -22,7 +22,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Algorithm that sorts nodes according to their priority and
@@ -47,13 +47,13 @@ public class BoxSorter extends AbstractAlgorithm {
         
         Collections.sort(sortedBoxes, new Comparator<KNode>() {
             public int compare(final KNode child1, final KNode child2) {
-                KShapeLayout layout1 = KimlLayoutUtil.getShapeLayout(child1);
-                int prio1 = LayoutOptions.getInt(layout1, LayoutOptions.PRIORITY);
+                KShapeLayout layout1 = KimlUtil.getShapeLayout(child1);
+                int prio1 = LayoutOptions.getInt(layout1, LayoutOptions.PRIORITY_ID);
                 if (prio1 == Integer.MIN_VALUE) {
                     prio1 = 0;
                 }
-                KShapeLayout layout2 = KimlLayoutUtil.getShapeLayout(child2);
-                int prio2 = LayoutOptions.getInt(layout2, LayoutOptions.PRIORITY);
+                KShapeLayout layout2 = KimlUtil.getShapeLayout(child2);
+                int prio2 = LayoutOptions.getInt(layout2, LayoutOptions.PRIORITY_ID);
                 if (prio2 == Integer.MIN_VALUE) {
                     prio2 = 0;
                 }

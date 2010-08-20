@@ -79,7 +79,7 @@ import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Diagram layout manager that is able to generically layout diagrams generated
@@ -377,8 +377,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      *         in the root edit part
      */
     protected KNode doBuildLayoutGraph(final IGraphicalEditPart rootPart) {
-        KNode topNode = KimlLayoutUtil.createInitializedNode();
-        KShapeLayout shapeLayout = KimlLayoutUtil.getShapeLayout(topNode);
+        KNode topNode = KimlUtil.createInitializedNode();
+        KShapeLayout shapeLayout = KimlUtil.getShapeLayout(topNode);
         Rectangle rootBounds = rootPart.getFigure().getBounds();
         // start with the whole diagram as root for layout
         if (rootPart instanceof DiagramEditPart) {
@@ -438,13 +438,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // process ports (border items)
             if (obj instanceof AbstractBorderItemEditPart) {
                 AbstractBorderItemEditPart borderItem = (AbstractBorderItemEditPart) obj;
-                KPort port = KimlLayoutUtil.createInitializedPort();
+                KPort port = KimlUtil.createInitializedPort();
                 graphElem2EditPartMap.put(port, borderItem);
                 editPart2GraphElemMap.put(borderItem, port);
                 port.setNode(parentLayoutNode);
                 
                 // set the port's layout, relative to the node position
-                KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(port);
+                KShapeLayout portLayout = KimlUtil.getShapeLayout(port);
                 Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(borderItem.getFigure());
                 Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(currentEditPart.getFigure());
                 portLayout.setXpos(portBounds.x - nodeBounds.x);
@@ -472,7 +472,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                             KLabel portLabel = port.getLabel();
                             portLabel.setText(text);
                             // set the port label's layout
-                            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(portLabel);
+                            KShapeLayout labelLayout = KimlUtil.getShapeLayout(portLabel);
                             Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
                             labelLayout.setXpos(labelBounds.x - portBounds.x);
                             labelLayout.setYpos(labelBounds.y - portBounds.y);
@@ -507,7 +507,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
                 if (!KimlUiUtil.isNoLayout(childNodeEditPart)) {
                     IFigure nodeFigure = childNodeEditPart.getFigure();
-                    KNode childLayoutNode = KimlLayoutUtil.createInitializedNode();
+                    KNode childLayoutNode = KimlUtil.createInitializedNode();
     
                     // store all the connections to process them later
                     addConnections(childNodeEditPart);
@@ -515,19 +515,19 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     // set location and size
                     Rectangle childBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure);
                     Rectangle containerBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure.getParent());
-                    KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(childLayoutNode);
+                    KShapeLayout nodeLayout = KimlUtil.getShapeLayout(childLayoutNode);
                     nodeLayout.setXpos(childBounds.x - containerBounds.x);
                     nodeLayout.setYpos(childBounds.y - containerBounds.y);
                     nodeLayout.setHeight(childBounds.height);
                     nodeLayout.setWidth(childBounds.width);
                     Dimension minSize = nodeFigure.getMinimumSize();
-                    LayoutOptions.setFloat(nodeLayout, LayoutOptions.MIN_WIDTH, minSize.width);
-                    LayoutOptions.setFloat(nodeLayout, LayoutOptions.MIN_HEIGHT, minSize.height);
+                    nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
+                    nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
                     
                     // set insets if not yet defined
                     if (kinsets == null) {
-                        kinsets = LayoutOptions.getObject(KimlLayoutUtil.getShapeLayout(
-                                parentLayoutNode), KInsets.class);
+                        kinsets = KimlUtil.getShapeLayout(parentLayoutNode)
+                                .getProperty(LayoutOptions.INSETS);
                         Insets insets = KimlUiUtil.calcInsets(parentFigure, nodeFigure);
                         kinsets.setLeft(insets.left);
                         kinsets.setTop(insets.top);
@@ -568,22 +568,22 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     KLabel label = parent.getLabel();
                     if (label.getText() == null || label.getText().length() == 0) {
                         label.setText(text);
-                        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+                        KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
                         labelLayout.setWidth(labelFigure.getPreferredSize().width);
                         labelLayout.setHeight(labelFigure.getPreferredSize().height);
-                        LayoutOptions.setString(labelLayout, LayoutOptions.FONT_NAME,
+                        labelLayout.setProperty(LayoutOptions.FONT_NAME,
                                 font.getFontData()[0].getName());
-                        LayoutOptions.setInt(labelLayout, LayoutOptions.FONT_SIZE,
+                        labelLayout.setProperty(LayoutOptions.FONT_SIZE,
                                 font.getFontData()[0].getHeight());
                     }
                 }
             }
         }
 
-        KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(parentLayoutNode);
+        KShapeLayout nodeLayout = KimlUtil.getShapeLayout(parentLayoutNode);
         // set default fixed size option
         if (!hasChildNodes && !hasChildCompartments && !isCollapsed) {
-            LayoutOptions.setBoolean(nodeLayout, LayoutOptions.FIXED_SIZE, true);
+            LayoutOptions.setBoolean(nodeLayout, LayoutOptions.FIXED_SIZE_ID, true);
         }
         // set default port constraints option
         if (hasPorts) {
@@ -631,11 +631,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     edgeLabelPlacement = EdgeLabelPlacement.TAIL;
                     isOppositeEdge = true;
                 } else {
-                    edge = KimlLayoutUtil.createInitializedEdge();
+                    edge = KimlUtil.createInitializedEdge();
                     reference2EdgeMap.put(reference, edge);
                 }
             } else {
-                edge = KimlLayoutUtil.createInitializedEdge();
+                edge = KimlUtil.createInitializedEdge();
             }
             
             KNode sourceNode, targetNode;
@@ -672,8 +672,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // calculate offset for edge and label coordinates
             IGraphicalEditPart sourceParent = graphElem2EditPartMap.get(sourceNode.getParent());
             Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParent.getFigure());
-            KInsets insets = LayoutOptions.getObject(KimlLayoutUtil.getShapeLayout(
-                    sourceNode.getParent()), KInsets.class);
+            KInsets insets = KimlUtil.getShapeLayout(sourceNode.getParent())
+                    .getProperty(LayoutOptions.INSETS);
             float offsetx = sourceParentBounds.x + insets.getLeft();
             float offsety = sourceParentBounds.y + insets.getTop();
 
@@ -712,7 +712,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 editPart2GraphElemMap.put(connection, edge);
     
                 // store the current coordinates of the edge
-                KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+                KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
                 setEdgeLayout(edgeLayout, connection, offsetx, offsety);
     
                 // set user defined layout options for the edge
@@ -803,26 +803,29 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     if (labelText.length() == 0) {
                         labelText = ".";
                     }
-                    KLabel label = KimlLayoutUtil.createInitializedLabel(edge);
-                    KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(label);
+                    KLabel label = KimlUtil.createInitializedLabel(edge);
+                    KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
                         switch (labelEditPart.getKeyPoint()) {
                         case ConnectionLocator.SOURCE:
-                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.HEAD);
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                    EdgeLabelPlacement.HEAD);
                             break;
                         case ConnectionLocator.MIDDLE:
-                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.CENTER);
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                    EdgeLabelPlacement.CENTER);
                             break;
                         case ConnectionLocator.TARGET:
-                            LayoutOptions.setEnum(labelLayout, EdgeLabelPlacement.TAIL);
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                                    EdgeLabelPlacement.TAIL);
                             break;
                         }
                     } else {
-                        LayoutOptions.setEnum(labelLayout, placement);
+                        labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
                     }
-                    LayoutOptions.setString(labelLayout, LayoutOptions.FONT_NAME,
+                    labelLayout.setProperty(LayoutOptions.FONT_NAME,
                             font.getFontData()[0].getName());
-                    LayoutOptions.setInt(labelLayout, LayoutOptions.FONT_SIZE,
+                    labelLayout.setProperty(LayoutOptions.FONT_SIZE,
                             font.getFontData()[0].getHeight());
                     labelLayout.setXpos(labelBounds.x - offsetx);
                     labelLayout.setYpos(labelBounds.y - offsety);
@@ -854,8 +857,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             while (parent != null) {
                 for (KNode child : parent.getChildren()) {
                     if (child != previousNode) {
-                        KShapeLayout childLayout = KimlLayoutUtil.getShapeLayout(child);
-                        LayoutOptions.setBoolean(childLayout, LayoutOptions.FIXED_SIZE, true);
+                        KShapeLayout childLayout = KimlUtil.getShapeLayout(child);
+                        LayoutOptions.setBoolean(childLayout, LayoutOptions.FIXED_SIZE_ID, true);
                         removeFromLayout(child);
                     }
                 }

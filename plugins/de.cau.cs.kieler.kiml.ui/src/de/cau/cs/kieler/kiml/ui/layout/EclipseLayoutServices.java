@@ -31,6 +31,7 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.util.Pair;
@@ -90,6 +91,8 @@ public class EclipseLayoutServices extends LayoutServices {
     public static final String ATTRIBUTE_CATEGORY = "category";
     /** name of the 'class' attribute in the extension points. */
     public static final String ATTRIBUTE_CLASS = "class";
+    /** name of the 'default' attribute in the extension points. */
+    public static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'description' attribute in the extension points. */
     public static final String ATTRIBUTE_DESCRIPTION = "description";
     /** name of the 'id' attribute in the extension points. */
@@ -209,7 +212,7 @@ public class EclipseLayoutServices extends LayoutServices {
      *     in the layout graph
      * @return an object with the default value
      */
-    public Object getDefault(final LayoutOptionData optionData,
+    public Object getDefault(final LayoutOptionData<?> optionData,
             final LayoutProviderData providerData, final EditPart editPart,
             final EditPart containerEditPart, final boolean hasChildren) {
         Object result = null;
@@ -232,7 +235,7 @@ public class EclipseLayoutServices extends LayoutServices {
         if (containerEditPart != null) {
             // check default option of the diagram type
             String diagramType = (String) KimlUiUtil.getOption(containerEditPart,
-                    LayoutOptions.DIAGRAM_TYPE);
+                    LayoutOptions.DIAGRAM_TYPE_ID);
             result = getOption(diagramType, optionData.getId());
             if (result != null) {
                 return result;
@@ -246,9 +249,9 @@ public class EclipseLayoutServices extends LayoutServices {
         }
         
         // fall back to default value of specific options
-        if (LayoutOptions.FIXED_SIZE.equals(optionData.getId())) {
+        if (LayoutOptions.FIXED_SIZE_ID.equals(optionData.getId())) {
             return Boolean.valueOf(!hasChildren);
-        } else if (LayoutOptions.PORT_CONSTRAINTS.equals(optionData.getId())) {
+        } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
             if (hasChildren) {
                 return PortConstraints.FREE.ordinal();
             } else {
@@ -419,7 +422,7 @@ public class EclipseLayoutServices extends LayoutServices {
      * @param optionData a layout option data
      * @param valueString the value to store for the diagram type and option
      */
-    public void storeOption(final String diagramType, final LayoutOptionData optionData,
+    public void storeOption(final String diagramType, final LayoutOptionData<?> optionData,
             final String valueString) {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
@@ -438,7 +441,7 @@ public class EclipseLayoutServices extends LayoutServices {
      * @param storeDomainModel if true, the option is stored for the domain model element
      *     associated with the edit part, else for the edit part itself
      */
-    public void storeOption(final EditPart editPart, final LayoutOptionData optionData,
+    public void storeOption(final EditPart editPart, final LayoutOptionData<?> optionData,
             final String valueString, final boolean storeDomainModel) {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
@@ -463,7 +466,7 @@ public class EclipseLayoutServices extends LayoutServices {
         for (String[] optionArray : defaultOptions) {
             String className = optionArray[0];
             String optionId = optionArray[1];
-            LayoutOptionData optionData = getInstance().getLayoutOptionData(optionId);
+            LayoutOptionData<?> optionData = getInstance().getLayoutOptionData(optionId);
             if (optionData != null) {
                 String valueString = optionArray[2];
                 Object value = optionData.parseValue(valueString);
@@ -485,7 +488,7 @@ public class EclipseLayoutServices extends LayoutServices {
     public Object getDefault(final String className, final String optionId) {
         for (String[] optionArray : defaultOptions) {
             if (optionArray[0].equals(className) && optionArray[1].equals(optionId)) {
-                LayoutOptionData optionData = getInstance().getLayoutOptionData(optionId);
+                LayoutOptionData<?> optionData = getInstance().getLayoutOptionData(optionId);
                 if (optionData != null) {
                     String valueString = optionArray[2];
                     return optionData.parseValue(valueString);
@@ -503,9 +506,9 @@ public class EclipseLayoutServices extends LayoutServices {
      * @param optionName user-friendly name of a layout option
      * @return the corresponding layout option data
      */
-    public LayoutOptionData getOptionData(final LayoutProviderData providerData,
+    public LayoutOptionData<?> getOptionData(final LayoutProviderData providerData,
             final String optionName) {
-        for (LayoutOptionData data : getLayoutOptionData()) {
+        for (LayoutOptionData<?> data : getLayoutOptionData()) {
             if (data.getName().equals(optionName) && providerData.knowsOption(data.getId())) {
                 return data;
             }
@@ -625,9 +628,10 @@ public class EclipseLayoutServices extends LayoutServices {
                 }
             } else if (ELEMENT_LAYOUT_OPTION.equals(element.getName())) {
                 // register a layout option from the extension
-                LayoutOptionData optionData = new LayoutOptionData();
-                optionData.setId(element.getAttribute(ATTRIBUTE_ID));
-                if (optionData.getId() == null || optionData.getId().length() == 0) {
+                LayoutOptionData<Object> optionData = new LayoutOptionData<Object>();
+                String optionId = element.getAttribute(ATTRIBUTE_ID);
+                optionData.setId(optionId);
+                if (optionId == null || optionId.length() == 0) {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
                     continue;
                 }
@@ -636,6 +640,25 @@ public class EclipseLayoutServices extends LayoutServices {
                 } catch (IllegalArgumentException exception) {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_TYPE, exception);
                     continue;
+                }
+                String className = element.getAttribute(ATTRIBUTE_CLASS);
+                if (className != null && className.length() > 0) {
+                    Bundle contributor = Platform.getBundle(element.getContributor().getName());
+                    if (contributor != null) {
+                        try {
+                            Class<?> clazz = contributor.loadClass(className);
+                            optionData.setOptionClass(clazz);
+                        } catch (ClassNotFoundException exception) {
+                            reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
+                        }
+                    }
+                }
+                try {
+                    Object defaultValue = optionData.parseValue(
+                            element.getAttribute(ATTRIBUTE_DEFAULT));
+                    optionData.setDefault(defaultValue);
+                } catch (IllegalStateException exception) {
+                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
                 }
                 optionData.setName(element.getAttribute(ATTRIBUTE_NAME));
                 if (optionData.getName() == null) {
@@ -778,9 +801,9 @@ public class EclipseLayoutServices extends LayoutServices {
         }
         
         // load default options for diagram types
-        Collection<LayoutOptionData> layoutOptionData = getLayoutOptionData();
+        Collection<LayoutOptionData<?>> layoutOptionData = getLayoutOptionData();
         for (Pair<String, String> diagramType : diagramTypes) {
-            for (LayoutOptionData data : layoutOptionData) {
+            for (LayoutOptionData<?> data : layoutOptionData) {
                 String preference = getPreferenceName(diagramType.getFirst(), data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
@@ -798,7 +821,7 @@ public class EclipseLayoutServices extends LayoutServices {
             registeredElements.add(editPartsTokenizer.nextToken());
         }
         for (String editPartName : registeredElements) {
-            for (LayoutOptionData data : layoutOptionData) {
+            for (LayoutOptionData<?> data : layoutOptionData) {
                 String preference = getPreferenceName(editPartName, data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));

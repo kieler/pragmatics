@@ -16,13 +16,24 @@
 package de.cau.cs.kieler.core.kgraph.util;
 
 import de.cau.cs.kieler.core.kgraph.*;
+import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
+import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KGraphPackage;
+import de.cau.cs.kieler.core.kgraph.KLabel;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import de.cau.cs.kieler.core.util.Pair;
+import java.util.Map;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 
-import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -106,8 +117,20 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
                 return createKLabelAdapter();
             }
             @Override
-            public Adapter caseEModelElement(EModelElement object) {
-                return createEModelElementAdapter();
+            public Adapter caseEMapPropertyHolder(EMapPropertyHolder object) {
+                return createEMapPropertyHolderAdapter();
+            }
+            @Override
+            public Adapter caseIPropertyToObjectMap(Map.Entry<IProperty<?>, Object> object) {
+                return createIPropertyToObjectMapAdapter();
+            }
+            @Override
+            public Adapter caseIPropertyHolder(IPropertyHolder object) {
+                return createIPropertyHolderAdapter();
+            }
+            @Override
+            public <F, S> Adapter casePair(Pair<F, S> object) {
+                return createPairAdapter();
             }
             @Override
             public Adapter defaultCase(EObject object) {
@@ -214,16 +237,58 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.emf.ecore.EModelElement <em>EModel Element</em>}'.
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.core.kgraph.EMapPropertyHolder <em>EMap Property Holder</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.emf.ecore.EModelElement
+     * @see de.cau.cs.kieler.core.kgraph.EMapPropertyHolder
      * @generated
      */
-    public Adapter createEModelElementAdapter() {
+    public Adapter createEMapPropertyHolderAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link java.util.Map.Entry <em>IProperty To Object Map</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see java.util.Map.Entry
+     * @generated
+     */
+    public Adapter createIPropertyToObjectMapAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.core.properties.IPropertyHolder <em>IProperty Holder</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.core.properties.IPropertyHolder
+     * @generated
+     */
+    public Adapter createIPropertyHolderAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.core.util.Pair <em>Pair</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.core.util.Pair
+     * @generated
+     */
+    public Adapter createPairAdapter() {
         return null;
     }
 

@@ -26,7 +26,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.modules.ILayerwiseEdgePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayerConnection;
@@ -182,7 +182,7 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 float sourcePos = connection.calcSourcePos(minDist);
                 float targetPos = connection.calcTargetPos(minDist);
                 if (layer.getRank() == 0 && connection.getSourcePort() != null) {
-                    PortSide placement = LayoutOptions.getEnum(KimlLayoutUtil
+                    PortSide placement = LayoutOptions.getEnum(KimlUtil
                             .getShapeLayout(connection.getSourcePort()), PortSide.class);
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
@@ -202,7 +202,7 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                         }
                     }
                 } else if (layer.getHeight() == 1 && connection.getTargetPort() != null) {
-                    PortSide placement = LayoutOptions.getEnum(KimlLayoutUtil
+                    PortSide placement = LayoutOptions.getEnum(KimlUtil
                             .getShapeLayout(connection.getTargetPort()), PortSide.class);
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {

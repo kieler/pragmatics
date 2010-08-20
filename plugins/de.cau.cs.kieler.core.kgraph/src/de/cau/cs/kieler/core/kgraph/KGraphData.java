@@ -15,7 +15,6 @@
  */
 package de.cau.cs.kieler.core.kgraph;
 
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,8 +28,8 @@ import org.eclipse.emf.ecore.EObject;
  *
  *
  * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKGraphData()
- * @model interface="true" abstract="true"
+ * @model
  * @generated
  */
-public interface KGraphData extends EObject {
+public interface KGraphData extends EMapPropertyHolder {
 } // KGraphData

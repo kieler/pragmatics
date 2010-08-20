@@ -68,6 +68,7 @@ public class LayoutOptionsFactoryImpl extends EFactoryImpl implements LayoutOpti
     public EObject create(EClass eClass) {
         switch (eClass.getClassifierID()) {
             case LayoutOptionsPackage.LAYOUT_OPTION_STYLE: return createLayoutOptionStyle();
+            case LayoutOptionsPackage.KOPTION: return createKOption();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -81,6 +82,16 @@ public class LayoutOptionsFactoryImpl extends EFactoryImpl implements LayoutOpti
     public LayoutOptionStyle createLayoutOptionStyle() {
         LayoutOptionStyleImpl layoutOptionStyle = new LayoutOptionStyleImpl();
         return layoutOptionStyle;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public KOption createKOption() {
+        KOptionImpl kOption = new KOptionImpl();
+        return kOption;
     }
 
     /**

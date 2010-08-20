@@ -15,7 +15,9 @@
  */
 package de.cau.cs.kieler.kiml.klayoutdata.util;
 
+import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 
 import de.cau.cs.kieler.kiml.klayoutdata.*;
 
@@ -98,73 +100,27 @@ public class KLayoutDataSwitch<T> {
      */
     protected T doSwitch(int classifierID, EObject theEObject) {
         switch (classifierID) {
-            case KLayoutDataPackage.KLAYOUT_DATA: {
-                KLayoutData kLayoutData = (KLayoutData)theEObject;
-                T result = caseKLayoutData(kLayoutData);
-                if (result == null) result = caseKGraphData(kLayoutData);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
             case KLayoutDataPackage.KSHAPE_LAYOUT: {
                 KShapeLayout kShapeLayout = (KShapeLayout)theEObject;
                 T result = caseKShapeLayout(kShapeLayout);
-                if (result == null) result = caseKLayoutData(kShapeLayout);
                 if (result == null) result = caseKGraphData(kShapeLayout);
+                if (result == null) result = caseEMapPropertyHolder(kShapeLayout);
+                if (result == null) result = caseIPropertyHolder(kShapeLayout);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
             case KLayoutDataPackage.KEDGE_LAYOUT: {
                 KEdgeLayout kEdgeLayout = (KEdgeLayout)theEObject;
                 T result = caseKEdgeLayout(kEdgeLayout);
-                if (result == null) result = caseKLayoutData(kEdgeLayout);
                 if (result == null) result = caseKGraphData(kEdgeLayout);
+                if (result == null) result = caseEMapPropertyHolder(kEdgeLayout);
+                if (result == null) result = caseIPropertyHolder(kEdgeLayout);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
             case KLayoutDataPackage.KPOINT: {
                 KPoint kPoint = (KPoint)theEObject;
                 T result = caseKPoint(kPoint);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KLayoutDataPackage.KOPTION: {
-                KOption kOption = (KOption)theEObject;
-                T result = caseKOption(kOption);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KLayoutDataPackage.KSTRING_OPTION: {
-                KStringOption kStringOption = (KStringOption)theEObject;
-                T result = caseKStringOption(kStringOption);
-                if (result == null) result = caseKOption(kStringOption);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KLayoutDataPackage.KINT_OPTION: {
-                KIntOption kIntOption = (KIntOption)theEObject;
-                T result = caseKIntOption(kIntOption);
-                if (result == null) result = caseKOption(kIntOption);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KLayoutDataPackage.KBOOLEAN_OPTION: {
-                KBooleanOption kBooleanOption = (KBooleanOption)theEObject;
-                T result = caseKBooleanOption(kBooleanOption);
-                if (result == null) result = caseKOption(kBooleanOption);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KLayoutDataPackage.KFLOAT_OPTION: {
-                KFloatOption kFloatOption = (KFloatOption)theEObject;
-                T result = caseKFloatOption(kFloatOption);
-                if (result == null) result = caseKOption(kFloatOption);
-                if (result == null) result = defaultCase(theEObject);
-                return result;
-            }
-            case KLayoutDataPackage.KOBJECT_OPTION: {
-                KObjectOption kObjectOption = (KObjectOption)theEObject;
-                T result = caseKObjectOption(kObjectOption);
-                if (result == null) result = caseKOption(kObjectOption);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -176,21 +132,6 @@ public class KLayoutDataSwitch<T> {
             }
             default: return defaultCase(theEObject);
         }
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>KLayout Data</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>KLayout Data</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseKLayoutData(KLayoutData object) {
-        return null;
     }
 
     /**
@@ -239,96 +180,6 @@ public class KLayoutDataSwitch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>KOption</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>KOption</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseKOption(KOption object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>KString Option</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>KString Option</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseKStringOption(KStringOption object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>KInt Option</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>KInt Option</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseKIntOption(KIntOption object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>KBoolean Option</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>KBoolean Option</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseKBooleanOption(KBooleanOption object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>KFloat Option</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>KFloat Option</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseKFloatOption(KFloatOption object) {
-        return null;
-    }
-
-    /**
-     * Returns the result of interpreting the object as an instance of '<em>KObject Option</em>'.
-     * <!-- begin-user-doc -->
-     * This implementation returns null;
-     * returning a non-null result will terminate the switch.
-     * <!-- end-user-doc -->
-     * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>KObject Option</em>'.
-     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-     * @generated
-     */
-    public T caseKObjectOption(KObjectOption object) {
-        return null;
-    }
-
-    /**
      * Returns the result of interpreting the object as an instance of '<em>KInsets</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
@@ -340,6 +191,36 @@ public class KLayoutDataSwitch<T> {
      * @generated
      */
     public T caseKInsets(KInsets object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>IProperty Holder</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>IProperty Holder</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseIPropertyHolder(IPropertyHolder object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>EMap Property Holder</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>EMap Property Holder</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseEMapPropertyHolder(EMapPropertyHolder object) {
         return null;
     }
 

@@ -18,7 +18,7 @@ package de.cau.cs.kieler.core.kgraph;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EModelElement;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -42,7 +42,7 @@ import org.eclipse.emf.ecore.EModelElement;
  * @model abstract="true"
  * @generated
  */
-public interface KGraphElement extends EModelElement {
+public interface KGraphElement extends EObject {
     /**
      * Returns the value of the '<em><b>Data</b></em>' containment reference list.
      * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KGraphData}.

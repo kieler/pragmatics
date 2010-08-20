@@ -34,6 +34,8 @@
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
+            class="de.cau.cs.kieler.klodd.hierarchical.InteractionLevel"
+            default="NONE"
             description="Select the level of interaction, that is how the algorithm respects the user&apos;s layout"
             id="de.cau.cs.kieler.klodd.interactive"
             name="Interactive"

@@ -65,7 +65,7 @@ public class RemoveOptionsAction extends Action {
                     final ILayoutInspector inspector = manager.getInspector(diagram);
                     Runnable runnable = new Runnable() {
                         public void run() {
-                            inspector.removeAllKOptions();
+                            inspector.removeAllOptions();
                         }
                     };
                     KimlUiUtil.runModelChange(runnable, inspector.getEditingDomain(),

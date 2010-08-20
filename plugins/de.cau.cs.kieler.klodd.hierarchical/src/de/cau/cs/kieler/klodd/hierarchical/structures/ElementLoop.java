@@ -23,7 +23,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Loop over a single layer element in a layered graph.
@@ -66,7 +66,7 @@ public class ElementLoop {
         this.element = elem;
         this.sourcePort = thesourcePort;
         this.targetPort = thetargetPort;
-        KimlLayoutUtil.getEdgeLayout(theedge).getBendPoints().clear();
+        KimlUtil.getEdgeLayout(theedge).getBendPoints().clear();
     }
 
     /**
@@ -101,9 +101,9 @@ public class ElementLoop {
      * @param offset offset to be added to each bend point
      */
     public void applyLayout(final KPoint offset) {
-        KShapeLayout sourcePortLayout = KimlLayoutUtil.getShapeLayout(sourcePort);
-        KShapeLayout targetPortLayout = KimlLayoutUtil.getShapeLayout(targetPort);
-        KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+        KShapeLayout sourcePortLayout = KimlUtil.getShapeLayout(sourcePort);
+        KShapeLayout targetPortLayout = KimlUtil.getShapeLayout(targetPort);
+        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
 
         // set bend points
         for (KPoint point : bendPoints) {

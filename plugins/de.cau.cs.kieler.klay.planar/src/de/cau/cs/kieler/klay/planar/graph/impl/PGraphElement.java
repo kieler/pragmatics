@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.graph.impl;
 
-import de.cau.cs.kieler.core.util.MapPropertyHolder;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphElement;
 

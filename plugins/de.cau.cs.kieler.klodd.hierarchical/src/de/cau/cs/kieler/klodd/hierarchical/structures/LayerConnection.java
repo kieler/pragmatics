@@ -28,7 +28,7 @@ import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Connection between two layer elements in a layered graph.
@@ -79,7 +79,7 @@ public class LayerConnection {
         this.sourcePort = thesourcePort;
         this.targetElement = targetElem;
         this.targetPort = thetargetPort;
-        KimlLayoutUtil.getEdgeLayout(theedge).getBendPoints().clear();
+        KimlUtil.getEdgeLayout(theedge).getBendPoints().clear();
     }
 
     /**
@@ -99,18 +99,18 @@ public class LayerConnection {
     public void applyLayout(final KPoint offset, final KInsets insets) {
         LayeredGraph layeredGraph = sourceElement.getLayer().getLayeredGraph();
         LayoutDirection layoutDirection = layeredGraph.getLayoutDirection();
-        KShapeLayout sourcePortLayout = (sourcePort == null ? null : KimlLayoutUtil
+        KShapeLayout sourcePortLayout = (sourcePort == null ? null : KimlUtil
                 .getShapeLayout(sourcePort));
-        KShapeLayout targetPortLayout = (targetPort == null ? null : KimlLayoutUtil
+        KShapeLayout targetPortLayout = (targetPort == null ? null : KimlUtil
                 .getShapeLayout(targetPort));
-        KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
 
         // subtract insets values from bend points near fixed external ports
         boolean subSourceXInset = false, subSourceYInset = false,
                 subTargetXInset = false, subTargetYInset = false;
         if (layeredGraph.getExternalPortConstraints() == PortConstraints.FIXED_POS) {
             if (sourcePort != null && sourcePort.getNode() == layeredGraph.getParentNode()) {
-                PortSide sourceSide = LayoutOptions.getEnum(sourcePortLayout, PortSide.class);
+                PortSide sourceSide = sourcePortLayout.getProperty(LayoutOptions.PORT_SIDE);
                 if (sourceSide == PortSide.NORTH || sourceSide == PortSide.SOUTH) {
                     subSourceXInset = true;
                 } else {
@@ -164,7 +164,7 @@ public class LayerConnection {
             }
         } else if (sourceElement.getElemObj() instanceof KNode) {
             KNode sourceNode = (KNode) sourceElement.getElemObj();
-            KShapeLayout sourceLayout = KimlLayoutUtil.getShapeLayout(sourceNode);
+            KShapeLayout sourceLayout = KimlUtil.getShapeLayout(sourceNode);
             sourcePoint.setX(sourceElement.getPosition().getX()
                     + sourceElement.getPosOffset().getX()
                     + (layoutDirection == LayoutDirection.DOWN ? sourceLayout.getWidth() / 2
@@ -206,7 +206,7 @@ public class LayerConnection {
             }
         } else if (targetElement.getElemObj() instanceof KNode) {
             KNode targetNode = (KNode) targetElement.getElemObj();
-            KShapeLayout targetLayout = KimlLayoutUtil.getShapeLayout(targetNode);
+            KShapeLayout targetLayout = KimlUtil.getShapeLayout(targetNode);
             targetPoint
                     .setX(targetElement.getPosition().getX()
                             + targetElement.getPosOffset().getX()
@@ -289,7 +289,7 @@ public class LayerConnection {
                         .getRealWidth() / 2 : sourceElement.getRealHeight() / 2;
             } else {
                 // align the edge to the source port
-                KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(sourcePort);
+                KShapeLayout portLayout = KimlUtil.getShapeLayout(sourcePort);
                 sourceAnchorPos += layoutDirection == LayoutDirection.DOWN
                         ? portLayout.getWidth() / 2 : portLayout.getHeight() / 2;
                 if (sourcePort.getNode() != layeredGraph.getParentNode()) {
@@ -327,7 +327,7 @@ public class LayerConnection {
                 targetAnchorPos += layoutDirection == LayoutDirection.DOWN ? targetElement
                         .getRealWidth() / 2 : targetElement.getRealHeight() / 2;
             } else {
-                KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(targetPort);
+                KShapeLayout portLayout = KimlUtil.getShapeLayout(targetPort);
                 targetAnchorPos += layoutDirection == LayoutDirection.DOWN
                         ? portLayout.getWidth() / 2 : portLayout.getHeight() / 2;
                 if (targetPort.getNode() != layeredGraph.getParentNode()) {

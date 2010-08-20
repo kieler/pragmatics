@@ -33,7 +33,7 @@ import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -92,7 +92,7 @@ public class KGraphImporter implements IGraphImporter {
         // transform nodes and ports
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         for (KNode child : layoutNode.getChildren()) {
-            KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(child);
+            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(child);
             PortConstraints portConstraints = LayoutOptions.getEnum(nodeLayout, PortConstraints.class);
             LNode newNode = new LNode(child.getLabel().getText());
             newNode.setProperty(Properties.ORIGIN, child);
@@ -100,9 +100,9 @@ public class KGraphImporter implements IGraphImporter {
             newNode.getSize().y = nodeLayout.getHeight();
             layeredNodes.add(newNode);
             elemMap.put(child, newNode);
-            KPort[] sortedPorts = KimlLayoutUtil.getSortedPorts(child);
+            KPort[] sortedPorts = KimlUtil.getSortedPorts(child);
             for (KPort kport : sortedPorts) {
-                KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(kport);
+                KShapeLayout portLayout = KimlUtil.getShapeLayout(kport);
                 PortType type = PortType.UNDEFINED;
                 int outBalance = 0;
                 for (KEdge edge : kport.getEdges()) {
@@ -125,7 +125,7 @@ public class KGraphImporter implements IGraphImporter {
                 newPort.setNode(newNode);
                 elemMap.put(kport, newPort);
                 if (portConstraints != PortConstraints.UNDEFINED) {
-                    newPort.setSide(KimlLayoutUtil.calcPortSide(kport));
+                    newPort.setSide(KimlUtil.calcPortSide(kport));
                 }
             }
             if (portConstraints != PortConstraints.UNDEFINED) {
@@ -136,7 +136,7 @@ public class KGraphImporter implements IGraphImporter {
         // transform edges
         for (KNode child : layoutNode.getChildren()) {
             for (KEdge kedge : child.getOutgoingEdges()) {
-                KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+                KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
                 // exclude edges that pass hierarchy bounds and self-loops
                 if (kedge.getTarget().getParent() == child.getParent()
                         && kedge.getSource() != kedge.getTarget()) {
@@ -149,7 +149,7 @@ public class KGraphImporter implements IGraphImporter {
                         sourcePort.setNode(sourceNode);
                     } else if (sourcePort.getType() != PortType.OUTPUT) {
                         // ignore ports with incoming as well as outgoing edges
-                        LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
+                        edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                         continue;
                     }
                     if (targetPort == null) {
@@ -157,7 +157,7 @@ public class KGraphImporter implements IGraphImporter {
                         targetPort.setNode(targetNode);
                     } else if (targetPort.getType() != PortType.INPUT) {
                         // ignore ports with incoming as well as outgoing edges
-                        LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
+                        edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                         continue;
                     }
                     LEdge newEdge = new LEdge();
@@ -165,7 +165,7 @@ public class KGraphImporter implements IGraphImporter {
                     newEdge.setSource(sourcePort);
                     newEdge.setTarget(targetPort);
                     for (KLabel klabel : kedge.getLabels()) {
-                        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(klabel);
+                        KShapeLayout labelLayout = KimlUtil.getShapeLayout(klabel);
                         LLabel newLabel = new LLabel(klabel.getText());
                         newLabel.getSize().x = labelLayout.getWidth();
                         newLabel.getSize().y = labelLayout.getHeight();
@@ -173,12 +173,12 @@ public class KGraphImporter implements IGraphImporter {
                         newEdge.getLabels().add(newLabel);
                     }
                     // set properties of the new edge
-                    int priority = LayoutOptions.getInt(edgeLayout, LayoutOptions.PRIORITY);
+                    int priority = LayoutOptions.getInt(edgeLayout, LayoutOptions.PRIORITY_ID);
                     if (priority > 0) {
                         newEdge.setProperty(Properties.PRIORITY, Integer.valueOf(priority));
                     }
                 } else {
-                    LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT, true);
+                    LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT_ID, true);
                 }
             }
         }
@@ -192,8 +192,8 @@ public class KGraphImporter implements IGraphImporter {
      */
     public void applyLayout() {
         KNode parentNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
-        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
+        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING_ID);
         if (Float.isNaN(borderSpacing) || borderSpacing < 0) {
             borderSpacing = Properties.DEF_SPACING;
         }
@@ -206,7 +206,7 @@ public class KGraphImporter implements IGraphImporter {
                 Object origin = lnode.getProperty(Properties.ORIGIN);
                 if (origin instanceof KNode) {
                     KNode knode = (KNode) origin;
-                    KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(knode);
+                    KShapeLayout nodeLayout = KimlUtil.getShapeLayout(knode);
                     nodeLayout.setXpos((float) (lnode.getPos().x + offset.x));
                     nodeLayout.setYpos((float) (lnode.getPos().y + offset.y));
                 }
@@ -236,7 +236,7 @@ public class KGraphImporter implements IGraphImporter {
                             // apply layout to labels
                             for (LLabel label : ledge.getLabels()) {
                                 KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
-                                KShapeLayout klabelLayout = KimlLayoutUtil.getShapeLayout(klabel);
+                                KShapeLayout klabelLayout = KimlUtil.getShapeLayout(klabel);
                                 KVector labelPos = new KVector(ledge.getSource().getPos().x, ledge
                                         .getSource().getPos().y);
                                 labelPos.add(ledge.getSource().getNode().getPos());
@@ -256,7 +256,7 @@ public class KGraphImporter implements IGraphImporter {
                 || routing == LayeredEdgeRouting.COMPLEX_SPLINES;
         for (Map.Entry<KEdge, List<LEdge>> edgeEntry : edgeMap.entrySet()) {
             KEdge kedge = edgeEntry.getKey();
-            KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
             List<LEdge> edgeList = edgeEntry.getValue();
             // set source and target points, considering direction of the edge
             LEdge firstEdge = edgeList.get(0);
@@ -293,12 +293,12 @@ public class KGraphImporter implements IGraphImporter {
         }
 
         // set up the parent node
-        KInsets insets = LayoutOptions.getObject(parentLayout, KInsets.class);
+        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
         parentLayout.setWidth((float) layeredGraph.getSize().x + 2 * borderSpacing
                 + insets.getLeft() + insets.getRight());
         parentLayout.setHeight((float) layeredGraph.getSize().y + 2 * borderSpacing
                 + insets.getTop() + insets.getBottom());
-        LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE, true);
+        LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE_ID, true);
     }
 
     /**

@@ -62,51 +62,6 @@ public interface KLayoutDataFactory extends EFactory {
     KPoint createKPoint();
 
     /**
-     * Returns a new object of class '<em>KString Option</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>KString Option</em>'.
-     * @generated
-     */
-    KStringOption createKStringOption();
-
-    /**
-     * Returns a new object of class '<em>KInt Option</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>KInt Option</em>'.
-     * @generated
-     */
-    KIntOption createKIntOption();
-
-    /**
-     * Returns a new object of class '<em>KBoolean Option</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>KBoolean Option</em>'.
-     * @generated
-     */
-    KBooleanOption createKBooleanOption();
-
-    /**
-     * Returns a new object of class '<em>KFloat Option</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>KFloat Option</em>'.
-     * @generated
-     */
-    KFloatOption createKFloatOption();
-
-    /**
-     * Returns a new object of class '<em>KObject Option</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>KObject Option</em>'.
-     * @generated
-     */
-    KObjectOption createKObjectOption();
-
-    /**
      * Returns a new object of class '<em>KInsets</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

@@ -64,7 +64,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Edit policy used to apply layout. This edit policy creates a
@@ -109,7 +109,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                         addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(), null);
                     } else if (layoutPair.getFirst() instanceof KPort) {
                         addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(),
-                                KimlLayoutUtil.getShapeLayout(
+                                KimlUtil.getShapeLayout(
                                 ((KPort) layoutPair.getFirst()).getNode()));
                     } else if (layoutPair.getFirst() instanceof KEdge) {
                         addEdgeLayout(command, (KEdge) layoutPair.getFirst(),
@@ -146,7 +146,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      */
     private void addShapeLayout(final GmfLayoutCommand command, final KGraphElement kgraphElement,
             final GraphicalEditPart editPart, final KShapeLayout offsetLayout) {
-        KShapeLayout layoutData = KimlLayoutUtil.getShapeLayout(kgraphElement);
+        KShapeLayout layoutData = KimlUtil.getShapeLayout(kgraphElement);
         Rectangle oldBounds = editPart.getFigure().getBounds();
         Point newLocation = new Point((int) layoutData.getXpos(),
                 (int) layoutData.getYpos());
@@ -175,15 +175,15 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      */
     private void addEdgeLayout(final GmfLayoutCommand command, final KEdge kedge,
             final ConnectionEditPart connectionEditPart) {
-        KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
         PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
         Rectangle sourceExt, targetExt;
 
-        KShapeLayout sourceLayout = KimlLayoutUtil.getShapeLayout(kedge.getSource());
+        KShapeLayout sourceLayout = KimlUtil.getShapeLayout(kedge.getSource());
         KPort sourcePort = kedge.getSourcePort();
         INodeEditPart sourceEditPart = (INodeEditPart) connectionEditPart.getSource();
         if (sourcePort != null) {
-            KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(sourcePort);
+            KShapeLayout portLayout = KimlUtil.getShapeLayout(sourcePort);
             sourceExt = new Rectangle((int) (portLayout.getXpos()
                     + sourceLayout.getXpos()), (int) (portLayout.getYpos()
                     + sourceLayout.getYpos()), (int) portLayout.getWidth(),
@@ -208,11 +208,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 .getSourceConnectionAnchorAt(sourceAnchorReference);
         String sourceTerminal = sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
 
-        KShapeLayout targetLayout = KimlLayoutUtil.getShapeLayout(kedge.getTarget());
+        KShapeLayout targetLayout = KimlUtil.getShapeLayout(kedge.getTarget());
         KPort targetPort = kedge.getTargetPort();
         INodeEditPart targetEditPart = (INodeEditPart) connectionEditPart.getTarget();
         if (targetPort != null) {
-            KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(targetPort);
+            KShapeLayout portLayout = KimlUtil.getShapeLayout(targetPort);
             targetExt = new Rectangle((int) (portLayout.getXpos()
                     + targetLayout.getXpos()), (int) (portLayout.getYpos()
                     + targetLayout.getYpos()), (int) portLayout.getWidth(),
@@ -272,7 +272,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
 
         // calculate direct new location of the label
-        KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(klabel);
+        KShapeLayout labelLayout = KimlUtil.getShapeLayout(klabel);
         ConnectionEditPart connectionEditPart = (ConnectionEditPart) labelEditPart.getParent();
         IFigure sourceFigure = ((GraphicalEditPart) connectionEditPart.getSource()).getFigure();
         Point newLocation = new Point(labelLayout.getXpos(), labelLayout.getYpos());
@@ -284,11 +284,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
 
         // get new bend points for the parent edge
         KEdge kedge = (KEdge) klabel.getParent();
-        KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(kedge);
+        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
         PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
         EObject modelElement = connectionEditPart.getNotationView().getElement();
-        EdgeLabelPlacement labelPlacement = LayoutOptions.getEnum(labelLayout,
-                EdgeLabelPlacement.class);
+        EdgeLabelPlacement labelPlacement = labelLayout.getProperty(
+                LayoutOptions.EDGE_LABEL_PLACEMENT);
         PointList absoluteBendPoints = new PointList();
         // for labels of the opposite reference of an ecore reference,
         // the list of bend points must be reversed

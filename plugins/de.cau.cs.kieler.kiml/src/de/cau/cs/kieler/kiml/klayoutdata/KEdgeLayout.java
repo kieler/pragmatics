@@ -15,6 +15,7 @@
  */
 package de.cau.cs.kieler.kiml.klayoutdata;
 
+import de.cau.cs.kieler.core.kgraph.KGraphData;
 import org.eclipse.emf.common.util.EList;
 
 /**
@@ -45,7 +46,7 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface KEdgeLayout extends KLayoutData {
+public interface KEdgeLayout extends KGraphData {
     /**
      * Returns the value of the '<em><b>Bend Points</b></em>' containment reference list.
      * The list contents are of type {@link de.cau.cs.kieler.kiml.klayoutdata.KPoint}.

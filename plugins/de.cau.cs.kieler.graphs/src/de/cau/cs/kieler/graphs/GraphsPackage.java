@@ -81,15 +81,6 @@ public interface GraphsPackage extends EPackage {
     int NODE = 0;
 
     /**
-     * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int NODE__EANNOTATIONS = KGraphPackage.KNODE__EANNOTATIONS;
-
-    /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -188,15 +179,6 @@ public interface GraphsPackage extends EPackage {
      * @generated
      */
     int EDGE = 1;
-
-    /**
-     * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int EDGE__EANNOTATIONS = KGraphPackage.KEDGE__EANNOTATIONS;
 
     /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.
@@ -333,15 +315,6 @@ public interface GraphsPackage extends EPackage {
      * @generated
      */
     int PORT = 2;
-
-    /**
-     * The feature id for the '<em><b>EAnnotations</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int PORT__EANNOTATIONS = KGraphPackage.KPORT__EANNOTATIONS;
 
     /**
      * The feature id for the '<em><b>Data</b></em>' containment reference list.

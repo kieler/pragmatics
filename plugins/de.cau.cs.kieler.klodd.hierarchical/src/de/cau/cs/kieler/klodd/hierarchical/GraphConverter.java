@@ -21,7 +21,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimEdge;
 import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimNode;
@@ -62,7 +62,7 @@ public class GraphConverter extends AbstractAlgorithm {
 
         // convert nodes
         for (KNode child : parentNode.getChildren()) {
-            KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(child);
+            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(child);
             KSlimNode newNode = new KSlimNode(slimGraph, child);
             newNode.setXpos(nodeLayout.getXpos());
             newNode.setYpos(nodeLayout.getYpos());
@@ -84,7 +84,7 @@ public class GraphConverter extends AbstractAlgorithm {
         if (includePorts) {
             // convert external ports
             for (KPort port : parentNode.getPorts()) {
-                KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(port);
+                KShapeLayout portLayout = KimlUtil.getShapeLayout(port);
                 KSlimNode newNode = new KSlimNode(slimGraph, port);
                 newNode.setXpos(portLayout.getXpos());
                 newNode.setYpos(portLayout.getYpos());
@@ -93,7 +93,7 @@ public class GraphConverter extends AbstractAlgorithm {
 
             // convert edges to external ports
             for (KPort port : parentNode.getPorts()) {
-                int flow = KimlLayoutUtil.calcFlow(port);
+                int flow = KimlUtil.calcFlow(port);
                 for (KEdge layoutEdge : port.getEdges()) {
                     KNode source = layoutEdge.getSource();
                     KNode target = layoutEdge.getTarget();

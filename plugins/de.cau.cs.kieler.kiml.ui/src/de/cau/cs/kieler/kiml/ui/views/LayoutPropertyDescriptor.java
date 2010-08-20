@@ -76,7 +76,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             switch (optionData.getType()) {
             case STRING:
                 LayoutServices layoutServices = LayoutServices.getInstance();
-                if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
+                if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
                     String layoutHint = layoutHintValues[(Integer) element];
                     String layoutType = layoutServices.getLayoutTypeName(layoutHint);
                     if (layoutType != null) {
@@ -106,7 +106,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     }
     
     /** the layout option data associated with this property descriptor. */
-    private LayoutOptionData optionData;
+    private LayoutOptionData<?> optionData;
     /** array of choices for the layout hint option. */
     private String[] layoutHintChoices;
     /** array of identifiers for the layout hint option. */
@@ -121,7 +121,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * @param thelayoutHintChoices the array of choices for the layout hint option
      * @param thelayoutHintValues the array of identifiers for the layout hint option
      */
-    public LayoutPropertyDescriptor(final LayoutOptionData theoptionData,
+    public LayoutPropertyDescriptor(final LayoutOptionData<?> theoptionData,
             final String[] thelayoutHintChoices, final String[] thelayoutHintValues) {
         this.optionData = theoptionData;
         this.layoutHintChoices = thelayoutHintChoices;
@@ -134,7 +134,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     public CellEditor createPropertyEditor(final Composite parent) {
         switch (optionData.getType()) {
         case STRING:
-            if (LayoutOptions.LAYOUT_HINT.equals(optionData.getId())) {
+            if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
                 return new ComboBoxCellEditor(parent, layoutHintChoices, SWT.READ_ONLY);
             } else {
                 return new TextCellEditor(parent);

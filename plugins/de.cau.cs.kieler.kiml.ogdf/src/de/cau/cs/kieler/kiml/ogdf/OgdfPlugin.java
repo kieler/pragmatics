@@ -45,11 +45,6 @@ public class OgdfPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        
-        LayoutOptions.registerEnum(FMMMLayouter.QUALITY_VS_SPEED, QualityVsSpeed.class);
-        LayoutOptions.registerEnum(DavidsonHarelLayouter.COSTS, Costs.class);
-        LayoutOptions.registerEnum(DavidsonHarelLayouter.SPEED, Speed.class);
-        LayoutOptions.registerEnum(TreeLayouter.ORIENTATION, Orientation.class);
     }
 
     /**

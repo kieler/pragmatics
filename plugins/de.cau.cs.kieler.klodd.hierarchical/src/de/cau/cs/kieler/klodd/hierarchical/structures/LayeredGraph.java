@@ -20,21 +20,20 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimEdge;
 import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimNode;
@@ -81,7 +80,7 @@ public class LayeredGraph {
 
         // get layout options from the parent group
         this.parentNode = theparentNode;
-        KLayoutData layoutData = KimlLayoutUtil.getShapeLayout(theparentNode);
+        KGraphData layoutData = KimlUtil.getShapeLayout(theparentNode);
         layoutDirection = LayoutOptions.getEnum(layoutData, LayoutDirection.class);
         if (layoutDirection == LayoutDirection.UNDEFINED) {
             layoutDirection = LayoutDirection.RIGHT;
@@ -245,8 +244,8 @@ public class LayeredGraph {
      * Applies the layout of this layered graph to the contained layout graph.
      */
     public void applyLayout() {
-        KShapeLayout parentLayout = KimlLayoutUtil.getShapeLayout(parentNode);
-        KInsets insets = LayoutOptions.getObject(parentLayout, KInsets.class);
+        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
+        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
         // apply the new layout to the contained elements
         for (Layer layer : layers) {
             for (LayerElement element : layer.getElements()) {
@@ -288,7 +287,7 @@ public class LayeredGraph {
 
         // update layout options of the parent layout node
         LayoutOptions.setEnum(parentLayout, PortConstraints.FIXED_POS);
-        KimlLayoutUtil.calcPortRanks(parentNode);
+        KimlUtil.calcPortRanks(parentNode);
     }
 
     /**
@@ -461,11 +460,11 @@ public class LayeredGraph {
         List<KLabel> tailLabels = new LinkedList<KLabel>();
         List<KLabel> centerLabels = new LinkedList<KLabel>();
         List<KLabel> headLabels = new LinkedList<KLabel>();
-        KEdgeLayout edgeLayout = KimlLayoutUtil.getEdgeLayout(edge);
+        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
         int midBendPoint = edgeLayout.getBendPoints().size() / 2;
         for (KLabel edgeLabel : edge.getLabels()) {
-            switch (LayoutOptions.getEnum(KimlLayoutUtil.getShapeLayout(edgeLabel),
-                    EdgeLabelPlacement.class)) {
+            switch (KimlUtil.getShapeLayout(edgeLabel)
+                    .getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)) {
             case CENTER:
                 if (midBendPoint > 0) {
                     centerLabels.add(edgeLabel);
@@ -486,7 +485,7 @@ public class LayeredGraph {
         float xpos = edgeLayout.getSourcePoint().getX() + LABEL_SPACING;
         float ypos = edgeLayout.getSourcePoint().getY() + LABEL_SPACING;
         for (KLabel edgeLabel : tailLabels) {
-            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(edgeLabel);
+            KShapeLayout labelLayout = KimlUtil.getShapeLayout(edgeLabel);
             labelLayout.setXpos(xpos);
             labelLayout.setYpos(ypos);
             ypos += labelLayout.getHeight() + LABEL_SPACING;
@@ -498,7 +497,7 @@ public class LayeredGraph {
             xpos = point.getX() + LABEL_SPACING;
             ypos = point.getY() + LABEL_SPACING;
             for (KLabel edgeLabel : centerLabels) {
-                KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(edgeLabel);
+                KShapeLayout labelLayout = KimlUtil.getShapeLayout(edgeLabel);
                 labelLayout.setXpos(xpos);
                 labelLayout.setYpos(ypos);
                 ypos += labelLayout.getHeight() + LABEL_SPACING;
@@ -509,7 +508,7 @@ public class LayeredGraph {
         xpos = edgeLayout.getTargetPoint().getX() - LABEL_SPACING;
         ypos = edgeLayout.getTargetPoint().getY();
         for (KLabel edgeLabel : headLabels) {
-            KShapeLayout labelLayout = KimlLayoutUtil.getShapeLayout(edgeLabel);
+            KShapeLayout labelLayout = KimlUtil.getShapeLayout(edgeLabel);
             ypos -= labelLayout.getHeight() - LABEL_SPACING;
             labelLayout.setXpos(xpos - labelLayout.getWidth());
             labelLayout.setYpos(ypos);

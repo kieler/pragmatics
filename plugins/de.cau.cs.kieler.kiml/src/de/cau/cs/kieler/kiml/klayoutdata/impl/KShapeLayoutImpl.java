@@ -15,6 +15,7 @@
  */
 package de.cau.cs.kieler.kiml.klayoutdata.impl;
 
+import de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
@@ -40,7 +41,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class KShapeLayoutImpl extends KLayoutDataImpl implements KShapeLayout {
+public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
     /**
      * The default value of the '{@link #getXpos() <em>Xpos</em>}' attribute.
      * <!-- begin-user-doc -->

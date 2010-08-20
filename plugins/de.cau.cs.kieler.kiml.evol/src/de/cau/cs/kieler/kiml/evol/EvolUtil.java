@@ -260,7 +260,7 @@ public final class EvolUtil {
                 final double theMutationProbability, final LayoutOptionData layoutOptionData) {
             IGene<?> result;
             final int choicesCount = layoutOptionData.getChoices().length;
-            final Class<? extends Enum<?>> enumClass = LayoutOptions.getEnumClass((String) theId);
+            final Class<? extends Enum<?>> enumClass = layoutOptionData.getOptionClass();
             Assert.isNotNull(enumClass);
             Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
             final Integer value = Integer.valueOf(theRawValue.toString());
@@ -815,7 +815,7 @@ public final class EvolUtil {
                 break;
 
             case STRING:
-                if (LayoutOptions.LAYOUT_HINT.equalsIgnoreCase((String) id)) {
+                if (LayoutOptions.LAYOUT_HINT_ID.equalsIgnoreCase((String) id)) {
                     // Cannot use the int value of the gene because it is the
                     // index for the internal list in the gene, not for the
                     // layout hint array in the property source which we would
@@ -1097,8 +1097,7 @@ public final class EvolUtil {
         final IKielerProgressMonitor monitor =
                 new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
         final boolean layoutAncestors = false;
-        final boolean cacheLayout = false;
-        final IStatus status = manager.layout(monitor, layoutAncestors, cacheLayout);
+        final IStatus status = manager.layout(monitor, layoutAncestors);
 
         if (!status.isOK()) {
             // TODO: what to do about the layouting failure? Log it? Abort?
@@ -1147,7 +1146,7 @@ public final class EvolUtil {
         for (final IPropertyDescriptor p : descriptors) {
             final String id = (String) p.getId();
             // check property descriptor id
-            if (!LayoutOptions.LAYOUT_HINT.equals(id)) {
+            if (!LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
                 final LayoutOptionData data = layoutServices.getLayoutOptionData(id);
                 Assert.isNotNull(data, "Layout option not registered: " + id);
 
@@ -1231,7 +1230,7 @@ public final class EvolUtil {
                 final Object value = source.getPropertyValue(id);
 
                 // Check the property descriptor id.
-                if (LayoutOptions.LAYOUT_HINT.equals(id)) {
+                if (LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
                     // Property is a layout hint --> store its ID for later use
 
                     Assert.isNotNull(value, "layout hint value is null");
@@ -1304,7 +1303,7 @@ public final class EvolUtil {
         final MutationInfo mutationInfo = new MutationInfo(0.01);
 
         final RadioGene hintGene =
-                new RadioGene(LayoutOptions.LAYOUT_HINT, indexOfProviderId, typeInfo,
+                new RadioGene(LayoutOptions.LAYOUT_HINT_ID, indexOfProviderId, typeInfo,
                         mutationInfo);
         return hintGene;
     }

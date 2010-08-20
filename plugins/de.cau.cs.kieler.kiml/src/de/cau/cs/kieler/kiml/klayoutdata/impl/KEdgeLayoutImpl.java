@@ -15,6 +15,7 @@
  */
 package de.cau.cs.kieler.kiml.klayoutdata.impl;
 
+import de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -49,7 +50,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class KEdgeLayoutImpl extends KLayoutDataImpl implements KEdgeLayout {
+public class KEdgeLayoutImpl extends KGraphDataImpl implements KEdgeLayout {
     /**
      * The cached value of the '{@link #getBendPoints() <em>Bend Points</em>}' containment reference list.
      * <!-- begin-user-doc -->

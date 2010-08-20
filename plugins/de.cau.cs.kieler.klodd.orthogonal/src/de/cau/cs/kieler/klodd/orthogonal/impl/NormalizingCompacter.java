@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlLayoutUtil;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.orthogonal.impl.DualGraphBuilder.ExternalFaceDetector;
 import de.cau.cs.kieler.klodd.orthogonal.modules.ICompacter;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMEdge;
@@ -449,7 +449,7 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                     sourceBend.setXpos(edge.getSource().getXpos());
                     if (((TSMNode) edge.getSource()).type == TSMNode.Type.LAYOUT
                             && layoutEdge.getSourcePort() != null) {
-                        KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(layoutEdge
+                        KShapeLayout portLayout = KimlUtil.getShapeLayout(layoutEdge
                                 .getSourcePort());
                         sourceBend.setXpos(sourceBend.getXpos() + (portLayout.getXpos() + portLayout.getWidth() / 2));
                     }
@@ -457,7 +457,7 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                     sourceBend.setYpos(edge.getSource().getYpos());
                     if (((TSMNode) edge.getSource()).type == TSMNode.Type.LAYOUT
                             && layoutEdge.getSourcePort() != null) {
-                        KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(layoutEdge
+                        KShapeLayout portLayout = KimlUtil.getShapeLayout(layoutEdge
                                 .getSourcePort());
                         sourceBend.setYpos(sourceBend.getYpos() + (portLayout.getYpos() + portLayout.getHeight() / 2));
                     }
@@ -469,7 +469,7 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                     targetBend.setYpos(edge.getTarget().getYpos());
                     if (((TSMNode) edge.getTarget()).type == TSMNode.Type.LAYOUT
                             && layoutEdge.getTargetPort() != null) {
-                        KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(layoutEdge
+                        KShapeLayout portLayout = KimlUtil.getShapeLayout(layoutEdge
                                 .getTargetPort());
                         targetBend.setYpos(targetBend.getYpos() + (portLayout.getYpos() + portLayout.getHeight() / 2));
                     }
@@ -477,7 +477,7 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                     targetBend.setXpos(edge.getTarget().getXpos());
                     if (((TSMNode) edge.getTarget()).type == TSMNode.Type.LAYOUT
                             && layoutEdge.getTargetPort() != null) {
-                        KShapeLayout portLayout = KimlLayoutUtil.getShapeLayout(layoutEdge
+                        KShapeLayout portLayout = KimlUtil.getShapeLayout(layoutEdge
                                 .getTargetPort());
                         targetBend.setXpos(targetBend.getXpos() + (portLayout.getXpos() + portLayout.getWidth() / 2));
                     }
@@ -566,7 +566,7 @@ public class NormalizingCompacter extends AbstractAlgorithm implements ICompacte
                     int endPos = horizontal ? endNodeMap.get(obj).abstrXpos
                             : endNodeMap.get(obj).abstrYpos;
                     KNode layoutNode = (KNode) node.getObject();
-                    KShapeLayout nodeLayout = KimlLayoutUtil.getShapeLayout(layoutNode);
+                    KShapeLayout nodeLayout = KimlUtil.getShapeLayout(layoutNode);
                     float size = horizontal ? nodeLayout.getWidth() : nodeLayout.getHeight();
                     assert endPos - abstrPos > 0;
                     float stepSize = size / (endPos - abstrPos);

@@ -17,11 +17,11 @@ package de.cau.cs.kieler.kiml.gmf.layoutoptions;
 
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.eclipse.gmf.runtime.notation.NotationPackage;
@@ -39,6 +39,13 @@ public class LayoutOptionsPackageImpl extends EPackageImpl implements LayoutOpti
      * @generated
      */
     private EClass layoutOptionStyleEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass kOptionEClass = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -128,6 +135,42 @@ public class LayoutOptionsPackageImpl extends EPackageImpl implements LayoutOpti
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getKOption() {
+        return kOptionEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getKOption_Key() {
+        return (EAttribute)kOptionEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getKOption_Value() {
+        return (EAttribute)kOptionEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getKOption_Default() {
+        return (EAttribute)kOptionEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public LayoutOptionsFactory getLayoutOptionsFactory() {
         return (LayoutOptionsFactory)getEFactoryInstance();
     }
@@ -153,6 +196,11 @@ public class LayoutOptionsPackageImpl extends EPackageImpl implements LayoutOpti
         // Create classes and their features
         layoutOptionStyleEClass = createEClass(LAYOUT_OPTION_STYLE);
         createEReference(layoutOptionStyleEClass, LAYOUT_OPTION_STYLE__OPTIONS);
+
+        kOptionEClass = createEClass(KOPTION);
+        createEAttribute(kOptionEClass, KOPTION__KEY);
+        createEAttribute(kOptionEClass, KOPTION__VALUE);
+        createEAttribute(kOptionEClass, KOPTION__DEFAULT);
     }
 
     /**
@@ -180,7 +228,6 @@ public class LayoutOptionsPackageImpl extends EPackageImpl implements LayoutOpti
 
         // Obtain other dependent packages
         NotationPackage theNotationPackage = (NotationPackage)EPackage.Registry.INSTANCE.getEPackage(NotationPackage.eNS_URI);
-        KLayoutDataPackage theKLayoutDataPackage = (KLayoutDataPackage)EPackage.Registry.INSTANCE.getEPackage(KLayoutDataPackage.eNS_URI);
 
         // Create type parameters
 
@@ -191,7 +238,12 @@ public class LayoutOptionsPackageImpl extends EPackageImpl implements LayoutOpti
 
         // Initialize classes and features; add operations and parameters
         initEClass(layoutOptionStyleEClass, LayoutOptionStyle.class, "LayoutOptionStyle", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getLayoutOptionStyle_Options(), theKLayoutDataPackage.getKOption(), null, "options", null, 0, -1, LayoutOptionStyle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getLayoutOptionStyle_Options(), this.getKOption(), null, "options", null, 0, -1, LayoutOptionStyle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(kOptionEClass, KOption.class, "KOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getKOption_Key(), ecorePackage.getEString(), "key", null, 1, 1, KOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getKOption_Value(), ecorePackage.getEString(), "value", null, 0, 1, KOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getKOption_Default(), ecorePackage.getEBoolean(), "default", null, 0, 1, KOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Create resource
         createResource(eNS_URI);

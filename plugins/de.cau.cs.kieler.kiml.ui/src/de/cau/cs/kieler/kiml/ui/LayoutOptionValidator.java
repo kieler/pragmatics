@@ -26,14 +26,14 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 public class LayoutOptionValidator implements IInputValidator {
 
     /** the layout option data to validate for. */
-    private LayoutOptionData optionData;
+    private LayoutOptionData<?> optionData;
     
     /**
      * Creates a layout option validator for a layout option data.
      * 
      * @param theoptionData layout option data
      */
-    public LayoutOptionValidator(final LayoutOptionData theoptionData) {
+    public LayoutOptionValidator(final LayoutOptionData<?> theoptionData) {
         this.optionData = theoptionData;
     }
     
