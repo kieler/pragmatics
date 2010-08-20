@@ -21,7 +21,7 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 
 	private ExampleAttributesPage examplePage;
 	private ExampleExportPage exRePage;
-	private ExampleResourcePage rePage;
+	private ExampleResourcesPage rePage;
 
 	private final IStructuredSelection selection;
 
@@ -35,7 +35,7 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 	public void addPages() {
 		examplePage = new ExampleAttributesPage("examplePage");
 		exRePage = new ExampleExportPage("projectImportPage");
-		rePage = new ExampleResourcePage("resourcePage");
+		rePage = new ExampleResourcesPage("resourcePage");
 		addPage(examplePage);
 		addPage(exRePage);
 		addPage(rePage);

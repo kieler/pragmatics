@@ -31,7 +31,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import de.cau.cs.kieler.kex.model.ExportResource;
 
 @SuppressWarnings("restriction")
-public class ExampleResourcePage extends WizardPage {
+public class ExampleResourcesPage extends WizardPage {
 
 	private Combo headFileCombo;
 
@@ -42,7 +42,7 @@ public class ExampleResourcePage extends WizardPage {
 
 	private final List<ExportResource> exportResources;
 
-	protected ExampleResourcePage(String pageName) {
+	protected ExampleResourcesPage(String pageName) {
 		super(pageName);
 		this.setTitle("Example Resources");
 		this.setDescription("Choose resources to export");
