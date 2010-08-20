@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class ExamplePage extends WizardPage {
+public class ExampleAttributesPage extends WizardPage {
 
 	private Text id;
 
@@ -20,7 +20,7 @@ public class ExamplePage extends WizardPage {
 
 	private Text contact;
 
-	public ExamplePage(String pageName) {
+	public ExampleAttributesPage(String pageName) {
 		super(pageName);
 		setTitle("Example Export");
 		setDescription("Please enter example attributes.");

@@ -19,9 +19,9 @@ import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExampleExportWizard extends Wizard implements IWizard {
 
-	private ExamplePage examplePage;
-	private ExampleResourcePage exRePage;
-	private ResourcePage rePage;
+	private ExampleAttributesPage examplePage;
+	private ExampleExportPage exRePage;
+	private ExampleResourcePage rePage;
 
 	private final IStructuredSelection selection;
 
@@ -33,9 +33,9 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 
 	@Override
 	public void addPages() {
-		examplePage = new ExamplePage("examplePage");
-		exRePage = new ExampleResourcePage("projectImportPage");
-		rePage = new ResourcePage("resourcePage");
+		examplePage = new ExampleAttributesPage("examplePage");
+		exRePage = new ExampleExportPage("projectImportPage");
+		rePage = new ExampleResourcePage("resourcePage");
 		addPage(examplePage);
 		addPage(exRePage);
 		addPage(rePage);

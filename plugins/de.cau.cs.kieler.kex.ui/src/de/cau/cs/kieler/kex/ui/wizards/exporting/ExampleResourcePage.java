@@ -1,248 +1,354 @@
 package de.cau.cs.kieler.kex.ui.wizards.exporting;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.internal.ide.DialogUtil;
+import org.eclipse.ui.internal.ide.dialogs.ResourceTreeAndListGroup;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import de.cau.cs.kieler.kex.controller.ExampleManager;
-import de.cau.cs.kieler.kex.model.SourceType;
+import de.cau.cs.kieler.kex.model.ExportResource;
 
+@SuppressWarnings("restriction")
 public class ExampleResourcePage extends WizardPage {
 
-	private static final int TWO_COLUMNS = 0;
+	private Combo headFileCombo;
 
-	private Text destPath;
+	private ResourceTreeAndListGroup resourceGroup;
 
-	private final int THREE_COLUMNS = 3;
-	private List<URL> resources;
+	private final List<IProject> exportedProjects;
+	private final List<IFolder> exportedFolders;
 
-	private Tree categoryTree;
-
-	private final List<String> creatableCategories;
-	private final List<String> deletableCategories;
+	private final List<ExportResource> exportResources;
 
 	protected ExampleResourcePage(String pageName) {
 		super(pageName);
-		setTitle("Destination Choice");
-		setDescription("Set destination for exported Example and determine Example Resources.");
-		creatableCategories = new ArrayList<String>();
-		deletableCategories = new ArrayList<String>();
+		this.setTitle("Example Resources");
+		this.setDescription("Choose resources to export");
+		this.exportResources = new ArrayList<ExportResource>();
+		exportedFolders = new ArrayList<IFolder>();
+		exportedProjects = new ArrayList<IProject>();
 	}
 
 	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.BORDER);
 		composite.setLayout(new GridLayout());
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setFont(parent.getFont());
+		createResourcesGroup(composite);
+		createHeadFileComposite(composite);
 		setControl(composite);
-
-		createTopGroup(composite);
-		createMiddleGroup(composite);
-		createBottomGroup(composite);
 	}
 
-	private void createTopGroup(final Composite composite) {
-
-		Group topGroup = new Group(composite, SWT.NONE);
-		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = this.THREE_COLUMNS;
-		topGroup.setLayout(topLayout);
-		topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		topGroup.setText("Set Example Destination");
-		Label destLabel = new Label(topGroup, SWT.NONE);
-		destLabel.setText("To directory:");
-		this.destPath = new Text(topGroup, SWT.BORDER);
-		this.destPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Button addDestPath = new Button(topGroup, SWT.NONE);
-		addDestPath.setText("Add...");
-
-		addDestPath.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				DirectoryDialog dirDiag = new DirectoryDialog(composite
-						.getShell());
-
-				dirDiag.setText("Choose destination directory");
-				dirDiag.setMessage("Select a directory in a java plugin project.");
-				String dir = dirDiag.open();
-				// TODO ueberlegen, ob hier direkt eine pruefung eingebaut
-				// werden kann.
-				if (dir != null) {
-					destPath.setText(dir);
-				}
-			}
-		});
-	}
-
-	private void createMiddleGroup(final Composite composite) {
-		Group middleGroup = new Group(composite, SWT.NONE);
-		GridLayout middleLayout = new GridLayout();
-		middleGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		middleLayout.numColumns = 1;
-		middleGroup.setText("Add Example Category");
-		middleGroup.setToolTipText("Please select one or more cateogies.");
-		middleGroup.setLayout(middleLayout);
-		createCheckedTree(middleGroup);
-		createButonComposite(middleGroup);
-
-	}
-
-	private void createButonComposite(Group middleGroup) {
-		Composite buttonCompo = new Composite(middleGroup, SWT.NONE);
-		GridLayout buttonCompoLayout = new GridLayout();
-		buttonCompoLayout.numColumns = THREE_COLUMNS;
-		buttonCompo.setLayout(buttonCompoLayout);
-		buttonCompo.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Button addCategory = new Button(buttonCompo, SWT.NONE);
-		addCategory.setText("New...");
-		// addCategory.setToolTipText("Creates a new Category");
-		// FIXME schöner noch mit dem tree editing mechanismus.
-		addCategory.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				IInputValidator validator = new IInputValidator() {
-					public String isValid(String newText) {
-						if (newText.length() < 4) {
-							return "Category name has to have at least 4 characters.";
-						}
-						for (TreeItem item : categoryTree.getItems()) {
-							if (newText.equals(item.getText()))
-								return "Category exists already! Please enter another name.";
-						}
-						return null;
-
-					}
-				};
-				InputDialog dialog = new InputDialog(getShell(),
-						"Create New Category", "Please enter a new category.",
-						"", validator);
-				dialog.open();
-				String value = dialog.getValue();
-				TreeItem item = new TreeItem(categoryTree, SWT.NONE);
-				item.setText(value);
-				creatableCategories.add(value);
-			}
-		});
-
-		Button deleteCategory = new Button(buttonCompo, SWT.NONE);
-		deleteCategory.setText("Delete");
-		// deleteCategory.setToolTipText("Deletes selected categories.");
-		deleteCategory.addSelectionListener(new SelectionAdapter() {
-
+	private void createHeadFileComposite(Composite composite) {
+		Composite headResourceComposite = new Composite(composite, SWT.BORDER);
+		GridLayout data = new GridLayout();
+		data.numColumns = 2;
+		headResourceComposite.setLayout(data);
+		headResourceComposite.setLayoutData(new GridData(
+				GridData.FILL_HORIZONTAL));
+		new Label(headResourceComposite, SWT.NONE).setText("Head File:");
+		this.headFileCombo = new Combo(headResourceComposite, SWT.READ_ONLY);
+		this.headFileCombo
+				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.headFileCombo
+				.setToolTipText("Choose one of selected files to make it the headfile.");
+		headFileCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selection = categoryTree.getSelection();
-				for (TreeItem item : selection) {
-					getDeletableCategories().add(item.getText());
-					item.setGrayed(true);
-				}
+				// e.data;
 			}
 		});
-
-		Button revertTree = new Button(buttonCompo, SWT.NONE);
-		revertTree.setText("Revert");
-		revertTree.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// TODO revert button, der alle categorie änderungen
-				// zurücksetzt.
-				super.widgetSelected(e);
-			}
-		});
-
-	}
-
-	private void createBottomGroup(Composite composite) {
-		// TODO think about: exampleFolderButton kann ich glaube ich nicht
-		// machen, nachdenken was damit passiert bis zum import
-		Group bottomGroup = new Group(composite, SWT.NONE);
-		GridLayout bottomLayout = new GridLayout();
-		bottomLayout.numColumns = 1;
-		bottomGroup.setText("Options");
-		bottomGroup.setLayout(bottomLayout);
-		bottomGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Button exampleFolderButton = new Button(bottomGroup, SWT.CHECK);
-		exampleFolderButton.setText("create folder with example name");
-		exampleFolderButton.setSelection(true);
-		Button copyHiddenFilesButton = new Button(bottomGroup, SWT.CHECK);
-		copyHiddenFilesButton.setText("copy hidden files");
-
-	}
-
-	void createCheckedTree(Composite parent) {
-		this.categoryTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		categoryTree.setLayoutData(data);
-		fillTree(categoryTree);
 
 	}
 
 	/**
-	 * Helper method to fill a tree with data
+	 * Converts the projects of workspace to input elements for
+	 * {@link ResourceTreeAndListGroup} and initializes that.
 	 * 
-	 * @param tree
-	 *            the tree to fill
+	 * @param parent
+	 *            , Composite
 	 */
-	private void fillTree(Tree tree) {
-		// disable drawing to avoid flicker
-		tree.setRedraw(false);
-		List<String> categories = ExampleManager.get().getCategories();
-		for (String category : categories) {
-			TreeItem item = new TreeItem(tree, SWT.NONE);
-			item.setText(category);
+	protected final void createResourcesGroup(Composite parent) {
+
+		List<Object> input = new ArrayList<Object>();
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
+				.getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			if (projects[i].isOpen()) {
+				input.add(projects[i]);
+			}
 		}
-		// enable drawing
-		tree.setRedraw(true);
+		initResourceGroup(parent, input);
 	}
 
-	public List<String> getCategories() {
-		List<String> result = new ArrayList<String>();
-		for (TreeItem item : this.categoryTree.getSelection()) {
-			result.add(item.getText());
+	/**
+	 * Initializes {@link ResourceTreeAndListGroup}, that means creating two
+	 * tree one for projects and folders and another one for the containing
+	 * files.
+	 * 
+	 * @param parent
+	 *            , Composite
+	 * @param input
+	 *            , input elements for {@link ResourceTreeAndListGroup}
+	 */
+	private void initResourceGroup(Composite parent, List<Object> input) {
+		this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
+				getResourceProvider(IResource.FOLDER),
+				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
+				getResourceProvider(IResource.FILE),
+				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
+				SWT.BORDER, DialogUtil.inRegularFontMode(parent));
+		this.resourceGroup.addCheckStateListener(new ICheckStateListener() {
+
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				Object element = event.getElement();
+				if (element instanceof IFolder) {
+					if (event.getChecked())
+						getExportedFolders().add((IFolder) element);
+					else
+						getExportedFolders().remove(element);
+				}
+				if (element instanceof IProject) {
+					if (event.getChecked())
+						getExportedProjects().add((IProject) element);
+					else
+						getExportedProjects().remove(element);
+				}
+
+				fillHeadFileCombo();
+			}
+
+		});
+
+	}
+
+	protected void fillHeadFileCombo() {
+		@SuppressWarnings("unchecked")
+		List<IFile> allCheckedListItems = this.resourceGroup
+				.getAllCheckedListItems();
+		int size = allCheckedListItems.size();
+		String[] items = new String[size];
+		for (int i = 0; i < size; i++) {
+			Object object = allCheckedListItems.get(i);
+			if (object instanceof IFile) {
+				items[i] = ((IFile) object).getFullPath().toString();
+			}
 		}
-		return result;
+		headFileCombo.setItems(items);
 	}
 
-	public String getDestLocation() {
-		return this.destPath.getText();
+	/**
+	 * Returns a content provider for {@link IResource}s that returns only
+	 * children of the given resource type.
+	 */
+	// TODO verstehen.
+	private ITreeContentProvider getResourceProvider(final int resourceType) {
+		return new WorkbenchContentProvider() {
+			@Override
+			public Object[] getChildren(Object o) {
+				if (o instanceof IContainer) {
+					IResource[] members = null;
+					try {
+						members = ((IContainer) o).members();
+					} catch (CoreException e) {
+						// just return an empty set of children
+						return new Object[0];
+					}
+
+					// filter out the desired resource types
+					ArrayList<IResource> results = new ArrayList<IResource>();
+					for (int i = 0; i < members.length; i++) {
+						// And the test bits with the resource types to see if
+						// they are what we want
+						if ((members[i].getType() & resourceType) > 0
+								&& !members[i].getName().startsWith(".")) {
+							results.add(members[i]);
+						}
+					}
+					return results.toArray();
+				}
+				// input element case
+				if (o instanceof ArrayList) {
+					return ((ArrayList<?>) o).toArray();
+				}
+				return new Object[0];
+			}
+		};
 	}
 
-	public List<URL> getExampleResources() {
-		return this.resources;
+	/**
+	 * Gives all files which are selected in the tree.
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<IFile> getExportedFiles() {
+		return resourceGroup.getAllCheckedListItems();
 	}
 
-	public SourceType getExportType() {
-		// TODO muss der user entscheiden wohin das gehen soll
-		// für feld wurde SourceType.map gebaut.
-		return SourceType.KIELER;
+	/**
+	 * Gives all projects which are selected in the tree.
+	 * 
+	 * @return
+	 */
+	List<IProject> getExportedProjects() {
+		return this.exportedProjects;
 	}
+
+	/**
+	 * Gives all folders which are selected in the tree.
+	 * 
+	 * @return
+	 */
+	public List<IFolder> getExportedFolders() {
+		return this.exportedFolders;
+	}
+
+	public IPath getHeadFile() {
+		return null;
+	}
+
+	// TODO validier mechanismen schon bei umschlagen auf den neue page
+	// abprï¿½fen,
+	// im wizard, nicht erst bei finish.
 
 	@Override
 	public boolean isPageComplete() {
 		return true;
 	}
 
-	public List<String> getCreatableCategories() {
-		return creatableCategories;
+	public void buildResourceStructure() {
+		List<IResource> duplicateChecker = new ArrayList<IResource>();
+		for (IProject iProject : getExportedProjects()) {
+			try {
+				for (IResource resource : iProject.members()) {
+					if (checkHiddenResource(resource))
+						continue;
+					if (resource instanceof IFolder) {
+						addFolderWithElements((IContainer) resource,
+								(IContainer) resource, duplicateChecker);
+					}
+					if (resource instanceof IFile) {
+						if (!duplicateChecker.contains(resource)) {
+							IPath fileRootPath = makeRelativePath(iProject,
+									resource);
+							this.exportResources.add(new ExportResource(
+									resource, fileRootPath));
+							duplicateChecker.add(resource);
+						}
+					}
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		for (IContainer folder : getExportedFolders()) {
+			if (checkHiddenResource(folder))
+				continue;
+			if (!duplicateChecker.contains(folder)) {
+				addFolderWithElements(folder, folder, duplicateChecker);
+			}
+		}
+		for (IFile file : getExportedFiles()) {
+			if (checkHiddenResource(file))
+				continue;
+			if (!duplicateChecker.contains(file)) {
+
+				IPath fileRootPath = filterResourceName(file);
+				this.exportResources
+						.add(new ExportResource(file, fileRootPath));
+				duplicateChecker.add(file);
+			}
+		}
 	}
 
-	public List<String> getDeletableCategories() {
-		return deletableCategories;
-	};
+	public List<ExportResource> getExportedResources() {
+		return this.exportResources;
+	}
+
+	private boolean checkHiddenResource(IResource resource) {
+		if (resource.getName().startsWith(".")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Adds the path of given folder resource to a given list of {@link IPath}.<br>
+	 * Filters than all member resources of that folder and uses
+	 * {@code makeRelativePath()}<br>
+	 * to create paths which will be added to result.<br>
+	 * All resource will be add to duplicateChecker list.
+	 * 
+	 * @param resource
+	 * @param resourcePath
+	 * @param duplicateChecker
+	 */
+	private void addFolderWithElements(IContainer resource, IContainer root,
+			List<IResource> duplicateChecker) {
+		IPath rootPath = makeRelativePath(root, resource);
+		this.exportResources.add(new ExportResource(resource, rootPath));
+		duplicateChecker.add(resource);
+		try {
+			for (IResource element : resource.members()) {
+				if (checkHiddenResource(element)) {
+					continue;
+				}
+				if (element instanceof IFolder) {
+					addFolderWithElements((IContainer) element, root,
+							duplicateChecker);
+				} else {
+					IPath fileRootPath = makeRelativePath(root, element);
+					this.exportResources.add(new ExportResource(element,
+							fileRootPath));
+					duplicateChecker.add(element);
+				}
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Uses path child resource to create a relative path to parent resource
+	 * (including parent resource name).
+	 * 
+	 * @param parent
+	 * @param child
+	 * @return
+	 */
+	private IPath makeRelativePath(IResource parent, IResource child) {
+		IPath relativePath = child.getFullPath().makeRelativeTo(
+				parent.getFullPath().removeLastSegments(1));
+		return relativePath;
+	}
+
+	private IPath filterResourceName(IResource resource) {
+		IPath resourcePath = resource.getFullPath();
+		return resourcePath
+				.removeFirstSegments(resourcePath.segmentCount() - 1);
+	}
 }
