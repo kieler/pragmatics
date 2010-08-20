@@ -68,7 +68,7 @@
             commandId="de.cau.cs.kieler.kex.ui.export">
       </handler>
       <handler
-            class="de.cau.cs.kieler.kex.ui.handlers.ExampleUpdateHandler"
+            class="de.cau.cs.kieler.kex.ui.handlers.ExampleEditHandler"
             commandId="de.cau.cs.kieler.kex.ui.edit">
       </handler>
    </extension>
