@@ -118,7 +118,7 @@ public final class EvolUtil {
                 final Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
 
             final Set<IEditorPart> editorsSet = new HashSet<IEditorPart>(editors);
-            
+
             autoRateIndividual(this.individual, editorsSet);
 
         }
@@ -178,7 +178,7 @@ public final class EvolUtil {
             final Distribution distr = Distribution.valueOf(distrNameAttr);
             // FIXME: distrNameAttr might be wrong
 
-            final LayoutOptionData layoutOptionData =
+            final LayoutOptionData<?> layoutOptionData =
                     LayoutServices.getInstance().getLayoutOptionData((String) theId);
             // FIXME: layoutOptionData might be null
             Assert.isNotNull(layoutOptionData);
@@ -257,10 +257,11 @@ public final class EvolUtil {
          */
         private IGene<?> newEnumGene(
                 final Object theId, final Object theRawValue,
-                final double theMutationProbability, final LayoutOptionData layoutOptionData) {
+                final double theMutationProbability, final LayoutOptionData<?> layoutOptionData) {
             IGene<?> result;
             final int choicesCount = layoutOptionData.getChoices().length;
-            final Class<? extends Enum<?>> enumClass = layoutOptionData.getOptionClass();
+            final Class<? extends Enum<?>> enumClass =
+                    (Class<? extends Enum<?>>) layoutOptionData.getOptionClass();
             Assert.isNotNull(enumClass);
             Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
             final Integer value = Integer.valueOf(theRawValue.toString());
@@ -781,7 +782,7 @@ public final class EvolUtil {
                 continue;
             }
 
-            final LayoutOptionData data = layoutServices.getLayoutOptionData((String) id);
+            final LayoutOptionData<?> data = layoutServices.getLayoutOptionData((String) id);
             Assert.isNotNull(data, "No layout option data for " + id);
 
             final Type layoutOptionType = data.getType();
@@ -1147,7 +1148,7 @@ public final class EvolUtil {
             final String id = (String) p.getId();
             // check property descriptor id
             if (!LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
-                final LayoutOptionData data = layoutServices.getLayoutOptionData(id);
+                final LayoutOptionData<?> data = layoutServices.getLayoutOptionData(id);
                 Assert.isNotNull(data, "Layout option not registered: " + id);
 
                 final Type type = data.getType();
@@ -1284,6 +1285,8 @@ public final class EvolUtil {
     }
 
     /**
+     * Creates a layout hint gene.
+     *
      * @param hintId
      * @return a gene that mutates over the providers of the given layout hint
      */
@@ -1300,7 +1303,7 @@ public final class EvolUtil {
         final Integer indexOfProviderId = Integer.valueOf(providerIds.indexOf(provider.getId()));
         Assert.isTrue(indexOfProviderId.intValue() >= 0);
         final RadioTypeInfo typeInfo = new RadioTypeInfo(indexOfProviderId, providerIds);
-        final MutationInfo mutationInfo = new MutationInfo(0.01);
+        final MutationInfo mutationInfo = new MutationInfo(0.05);
 
         final RadioGene hintGene =
                 new RadioGene(LayoutOptions.LAYOUT_HINT_ID, indexOfProviderId, typeInfo,

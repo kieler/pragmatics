@@ -148,7 +148,7 @@ public class EvolveHandler extends AbstractHandler {
         final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
 
         evolveJob.setProgressGroup(monitor, IProgressMonitor.UNKNOWN);
-        evolveJob.setPriority(Job.SHORT);
+        evolveJob.setPriority(Job.LONG);
         evolveJob.setUser(true);
 
         for (int steps = 0; steps < maxSteps; steps++) {
