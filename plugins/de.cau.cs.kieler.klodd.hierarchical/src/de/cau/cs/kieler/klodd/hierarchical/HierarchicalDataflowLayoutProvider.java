@@ -143,12 +143,12 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         updateModules(parentLayout);
         // set option for minimal object spacing
         float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
-        if (Float.isNaN(objSpacing)) {
+        if (Float.isNaN(objSpacing) || objSpacing < 0) {
             objSpacing = DEF_MIN_DIST;
         }
         // set option for border spacing
         float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING_ID);
-        if (Float.isNaN(borderSpacing)) {
+        if (Float.isNaN(borderSpacing) || borderSpacing < 0) {
             borderSpacing = DEF_MIN_DIST;
         }
 
