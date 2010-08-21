@@ -69,7 +69,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
     /**
      * {@inheritDoc}
      */
-    public void orthogonalize(final IGraph g) {
+    public IOrthogonalRepresentation orthogonalize(final IGraph g) {
         getMonitor().begin("Orthogonalization", 1);
 
         // Initialization
@@ -104,6 +104,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
         }
 
         getMonitor().done();
+
+        return null; // TODO orthogonal representation
     }
 
     /**
