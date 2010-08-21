@@ -237,47 +237,44 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
 
         int addedLayers = 0;
         // the leftmost layer the left edge of the wide node is assigned to on average
-        int avgLayer;
+        int avgLeft, avgRight;
         // counting variables to determine, with which other wide nodes this nodes shares the most
         // layers on average
-        int free, segment1, segment2;
-        LNode nodeSeg1, nodeSeg2, segElem, chosen;
+        int segment1, segment2, segment3;
+        LNode nodeSeg1, nodeSeg3, chosen;
         for (LNode node : wideNodes) {
             // determine layer, the node will be assigned to on average
-            avgLayer = Math
+            avgLeft = Math
                     .round((rightLayer[node.id] + addedLayers - leftLayer[node.id] - width[node.id]) / 2);
-            // determine other wide nodes in this area
-            free = 0;
-            segment1 = 0;
+            avgRight = avgLeft + width[node.id];
+            // determine other wide nodes, also assigned to this layer segment
+            segment1 = 1;
             segment2 = 0;
-            nodeSeg1 = null;
-            nodeSeg2 = null;
-            for (int i = avgLayer; i < addedLayers + width[node.id]; i++) {
-                segElem = nodeAssignment.get(i);
-                if (segElem == null) {
-                    free++;
-                } else if (nodeSeg1 == null) {
-                    nodeSeg1 = segElem;
-                    segment1++;
-                } else {
-                    nodeSeg2 = segElem;
-                    segment2++;
-                }
-            }
-            // determine other wide node, the node shares the most layers with
-            if (segment1 > segment2) {
-                if (free > segment1) {
-                    chosen = null;
-                } else {
-                    chosen = nodeSeg1;
-                }
+            segment3 = 1;
+            nodeSeg1 = nodeAssignment.get(avgLeft);
+            nodeSeg3 = nodeAssignment.get(avgRight);
+            chosen = null;
+
+            // determine the wide node, the node shares the most layers with (on average)
+            if (wideNodeID[nodeSeg1.id] == wideNodeID[nodeSeg3.id]) {
+                chosen = nodeSeg1;
             } else {
-                if (free > segment2) {
-                    chosen = null;
-                } else {
-                    chosen = nodeSeg2;
+                for (int layer = avgLeft + 1; layer < avgRight; layer++) {
+                    if (wideNodeID[nodeAssignment.get(layer).id] == wideNodeID[nodeSeg1.id]) {
+                        segment1++;
+                    } else if (wideNodeID[nodeAssignment.get(layer).id] == wideNodeID[nodeSeg3.id]) {
+                        segment3++;
+                    } else {
+                        segment2++;
+                    }
                 }
             }
+            if (segment1 > segment3 && segment1 > segment2) {
+                chosen = nodeSeg1;
+            } else if (segment3 > segment2) {
+                chosen = nodeSeg3;
+            }
+            
             // fixate node to the wide node, it shares the most layers with
             // TODO
         }
