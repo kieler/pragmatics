@@ -94,7 +94,7 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
                 this.tester = new BoyerMyrvoldPlanarityTester();
             }
             break;
-        case LEFT_RIGT_PLANARITY_ALGORITHM:
+        case LEFT_RIGHT_PLANARITY_ALGORITHM:
             if (!(this.tester instanceof LRPlanarityTester)) {
                 this.tester = new LRPlanarityTester();
             }

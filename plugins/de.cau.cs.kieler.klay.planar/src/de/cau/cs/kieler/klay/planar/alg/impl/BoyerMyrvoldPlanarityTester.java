@@ -50,7 +50,6 @@ import de.cau.cs.kieler.klay.planar.util.ManuallyIterable.ManualIterator;
  * @author ocl
  */
 public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IPlanarityTester {
-    // TODO testgraph fails!
 
     // ======================== Attributes =========================================================
 
@@ -418,7 +417,7 @@ public class BoyerMyrvoldPlanarityTester extends AbstractAlgorithm implements IP
                 this.externalFace.setSuccessor(bicomp, child, Direction.FWD);
                 this.externalFace.setSuccessor(bicomp, child, Direction.REV);
 
-                this.children[iNode].add(node);
+                this.children[iNode].add(child);
                 this.children[iBicomp].addFirst(node);
                 this.roots[iNode].add(bicomp);
 

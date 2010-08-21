@@ -24,6 +24,6 @@ public enum PlanarTestingAlgorithm {
     BOYER_MYRVOLD_ALGORITHM,
 
     /** The algorithm based on the left-right-planarity test. */
-    LEFT_RIGT_PLANARITY_ALGORITHM;
+    LEFT_RIGHT_PLANARITY_ALGORITHM;
 
 }
