@@ -104,10 +104,10 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
                     if (lastCondition == cf.getSecond()) {
                         return false;
                     } else {
-                        newFigure = figureProvider
-                                .getFigureByString(cf.getFirst(), oldFigure, null);
-                        attrFigure.setCurrentFigure(newFigure);
                         
+                        newFigure = figureProvider
+                                .getFigureByString(cf.getFirst(), oldFigure, this.getModelElement());
+                        attrFigure.setCurrentFigure(newFigure);
                         lastCondition = cf.getSecond();
                         return true;
                     }

@@ -104,7 +104,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
                     if (cf.getSecond() == lastCondition) {
                         return false;
                     } else {
-                        newFigure = figureProvider.getFigureByString(cf.getFirst(), oldFigure, null);
+                        newFigure = figureProvider.getFigureByString(cf.getFirst(), oldFigure, this.getModelElement());
                         primaryShape = newFigure;
                         lastCondition = cf.getSecond();
                         return true;

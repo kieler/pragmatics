@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
@@ -30,7 +31,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EAttributeImpl;
-import org.eclipse.emf.ecore.impl.EClassImpl;
 import org.eclipse.emf.mwe.core.ConfigurationException;
 import org.eclipse.xtend.typesystem.emf.EcoreUtil2;
 
@@ -287,30 +287,13 @@ public final class ConditionProvider {
             if (pack != null) {
 
                 EClassifier classifier = pack.getEClassifier(type);
-                EClassImpl cl = (EClassImpl) classifier;
+                EClass cl = (EClass) classifier;
                 if (cl != null) {
                     result = cl.getEStructuralFeature(feature);
                 }
                 if (result != null) {
                     return result;
                 }
-
-                // result = classifier.getInstanceClass()..eClass().getEStructuralFeature(feature);
-                /*
-                 * try { Object[] obj = null; result = (EStructuralFeature) pack.getClass()
-                 * .getMethod("get" + type + "_" + feature).invoke(pack, obj); } catch (Exception e)
-                 * { // It's intended that nothing happens here. Likely wasn't found in this package
-                 * // just try next one. }
-                 */
-                // result = featureProvider.getFeatureFromPackages(pack, feature);
-                // return result;
-                /*
-                 * EClassifier classifier = pack.getEClassifier(feature); SyncchartsPackage syncpack
-                 * =((SyncchartsPackage)pack)
-                 * 
-                 * if (classifier instanceof EStructuralFeature) { result = (EStructuralFeature)
-                 * classifier; break; }
-                 */
             }
         }
         return result;

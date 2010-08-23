@@ -73,9 +73,6 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
     @Override
     public void handleNotificationEvent(final Notification notification) {
         super.handleNotificationEvent(notification);
-        /*
-         * if (flag) { annotate(); }
-         */
         if (!(notification.isTouch()) && !(notification.getNotifier() instanceof BoundsImpl)) {
             if (primaryShape != null) {
                 if (primaryShape instanceof SwitchableFigure) {
@@ -109,7 +106,7 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
                             return false;
                         } else {
                             newFigure = figureProvider.getFigureByString(cf.getFirst(), oldFigure,
-                                    null);
+                                    this.getModelElement());
                             attrFigure.setCurrentFigure(newFigure);
                             lastCondition = cf.getSecond();
                             return true;
@@ -122,48 +119,6 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
     }
 
     /**
-     * test stuff, ignore this.
-     */
-    /*
-     * private boolean flag = true;
-     */
-    /**
-     * even more test stuff, ignore this.
-     */
-    /*
-     * private void annotate() { EObject modelElement = this.getModelElement(); if (modelElement
-     * instanceof Annotatable) { Annotatable annotatable = (Annotatable) modelElement;
-     * 
-     * StringAnnotation stringAnnotation = AnnotationsFactoryImpl.eINSTANCE
-     * .createStringAnnotation(); stringAnnotation.setName("MyTestName1");
-     * stringAnnotation.setValue("testValue");
-     * 
-     * BooleanAnnotation booleanAnnotation = AnnotationsFactoryImpl.eINSTANCE
-     * .createBooleanAnnotation(); booleanAnnotation.setName("MyTestName2");
-     * booleanAnnotation.setValue(true);
-     * 
-     * FloatAnnotation floatAnnotation = AnnotationsFactoryImpl.eINSTANCE .createFloatAnnotation();
-     * floatAnnotation.setName("MyTestName3"); floatAnnotation.setValue(42.23f);
-     * 
-     * IntAnnotation intAnnotation = AnnotationsFactoryImpl.eINSTANCE.createIntAnnotation();
-     * intAnnotation.setName("MyTestName4"); intAnnotation.setValue(42);
-     * 
-     * ReferenceAnnotation referenceAnnotation = AnnotationsFactoryImpl.eINSTANCE
-     * .createReferenceAnnotation(); referenceAnnotation.setName("MyTestName5");
-     * referenceAnnotation.setObject(new testClass());
-     * 
-     * ContainmentAnnotation containmentAnnotation =
-     * AnnotationsFactoryImpl.eINSTANCE.createContainmentAnnotation();
-     * containmentAnnotation.setName("MyTestName6"); containmentAnnotation.setObject(new
-     * testClass());
-     * 
-     * annotatable.getAnnotations().add(containmentAnnotation); flag = false; } }
-     * 
-     * public class testClass extends EObjectImpl{
-     * 
-     * }
-     */
-    /**
      * Getter of the model element for conveniences sake.
      * 
      * @return the modelElement of this editPart
@@ -173,3 +128,5 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
     }
 
 }
+
+
