@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.cau.cs.kieler.kivi.combinations" name="Combinations" schema="schema/de.cau.cs.kieler.kivi.combinations.exsd" />
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.cau.cs.kieler.kivi.Activator">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.cau.cs.kieler.kivi.preferences.ViewmanagementPreferencePage"
+            id="de.cau.cs.kieler.kivi.VMPage"
+            name="Viewmanagement">
+      </page>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kivi.combinations">
+      <combination
+            class="de.cau.cs.kieler.kivi.examples.TestCombination"
+            description="A combination for testing."
+            name="Test Combination">
+      </combination>
+   </extension>
+
+</plugin>
