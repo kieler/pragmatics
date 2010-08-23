@@ -96,6 +96,36 @@ public class EvolView extends ViewPart {
      * @author bdu
      *
      */
+    private static final class MultipleEditorsAction extends Action {
+        /** Creates a new {@link MultipleEditorsAction} instance.
+         *
+         * @param theText
+         */
+        MultipleEditorsAction(final String theText) {
+            super(theText);
+            setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(EvolPlugin.PLUGIN_ID,
+                    "icons/multiple16.png"));
+            final String currentValue =
+                    EvolPlugin.getDefault().getPreferenceStore()
+                            .getString(EvolPlugin.PREF_EDITORS);
+            setChecked(EvolPlugin.ALL_EDITORS.equals(currentValue));
+        }
+
+        @Override
+        public void run() {
+            final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
+
+            final String newValue =
+                    ((isChecked()) ? EvolPlugin.ALL_EDITORS : EvolPlugin.CURRENT_EDITOR);
+
+            store.setValue(EvolPlugin.PREF_EDITORS, newValue);
+        }
+    }
+
+    /**
+     * @author bdu
+     *
+     */
     private static final class SetInputRunnable implements Runnable {
         /**
          *
@@ -307,23 +337,7 @@ public class EvolView extends ViewPart {
 
         final IToolBarManager tm = this.getViewSite().getActionBars().getToolBarManager();
 
-        final IAction multipleEditorsAction = new Action("Multiple editors") {
-
-            @Override
-            public void run() {
-                final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
-
-                final String newValue =
-                        ((isChecked()) ? EvolPlugin.ALL_EDITORS : EvolPlugin.CURRENT_EDITOR);
-
-                store.setValue(EvolPlugin.PREF_EDITORS, newValue);
-            }
-        };
-
-        multipleEditorsAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
-                EvolPlugin.PLUGIN_ID, "icons/multiple16.png"));
-        multipleEditorsAction.setChecked(EvolPlugin.PREF_EDITORS.equals(EvolPlugin.ALL_EDITORS));
-
+        final IAction multipleEditorsAction = new MultipleEditorsAction("Multiple editors");
 
         // Add the toggle button
         tm.add(multipleEditorsAction);
