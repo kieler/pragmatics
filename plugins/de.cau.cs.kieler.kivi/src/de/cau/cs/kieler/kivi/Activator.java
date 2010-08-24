@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2008 by
+ * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -70,6 +70,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
      */
     public void earlyStartup() {
         Viewmanagement.getInstance().initialize();
+        Viewmanagement.getInstance().setActive(true); // FIXME
     }
 
 }

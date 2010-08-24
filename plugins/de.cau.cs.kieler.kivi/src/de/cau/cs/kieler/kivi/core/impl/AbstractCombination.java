@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2008 by
+ * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -31,7 +31,7 @@ import de.cau.cs.kieler.kivi.core.Viewmanagement;
 public abstract class AbstractCombination implements ICombination {
 
     private boolean active = false;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -43,6 +43,9 @@ public abstract class AbstractCombination implements ICombination {
 
     /**
      * {@inheritDoc}
+     * 
+     * Can be overridden when the default mechanism of registering triggers by
+     * implementing evaluate(ConcreteTrigger) is not wanted.
      */
     public List<Class<?>> getTriggers() {
         List<Class<?>> triggers = new ArrayList<Class<?>>();
@@ -61,6 +64,9 @@ public abstract class AbstractCombination implements ICombination {
 
     /**
      * {@inheritDoc}
+     * 
+     * Can be overridden when the default mechanism of registering triggers by
+     * implementing evaluate(ConcreteTrigger) is not wanted.
      */
     public boolean evaluate(final ITrigger trigger) {
         try {
@@ -97,7 +103,7 @@ public abstract class AbstractCombination implements ICombination {
      * {@inheritDoc}
      */
     public void undo() {
-        // nothing to do, overwritten when required
+        // nothing to do, overridden when required
     }
 
     /**

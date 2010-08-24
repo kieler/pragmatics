@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2008 by
+ * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kivi.core;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,9 +22,8 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.RegistryFactory;
 
-import de.cau.cs.kieler.kivi.examples.SelectionTrigger;
 import de.cau.cs.kieler.kivi.examples.TestCombination;
 
 /**
@@ -42,7 +40,9 @@ public class Viewmanagement {
 
     private EffectsWorker effectsWorker = new EffectsWorker();
 
-    private List<Class<?>> availableCombinations = new ArrayList<Class<?>>();
+    private List<Descriptor> availableCombinations = new ArrayList<Descriptor>();
+
+    private List<Descriptor> availableEffects = new ArrayList<Descriptor>();
 
     private Map<ITrigger, List<ICombination>> combinationsByTrigger = new HashMap<ITrigger, List<ICombination>>();
 
@@ -58,9 +58,9 @@ public class Viewmanagement {
     }
 
     /**
-     * Get the singleton view management INSTANCE.
+     * Get the singleton view management instance.
      * 
-     * @return the INSTANCE
+     * @return the instance
      */
     public static Viewmanagement getInstance() {
         return INSTANCE;
@@ -70,7 +70,7 @@ public class Viewmanagement {
      * Called on eclipse startup to do a short initialization.
      */
     public void initialize() {
-        // TODO whatever initialization requires
+        // TODO whatever initialization requires that can't go into <init>
         // check preferences, load default/selected combinations?
 
         // FIXME remove after testing
@@ -86,21 +86,25 @@ public class Viewmanagement {
     public void setActive(final boolean a) {
         if (active && !a) {
             // deactivate triggers
-            for (ITrigger t : combinationsByTrigger.keySet()) {
-                t.setActive(false);
-            }
-            // undo combinations
-            Set<ICombination> cs = new HashSet<ICombination>();
-            for (List<ICombination> l : combinationsByTrigger.values()) {
-                cs.addAll(l);
-            }
-            for (ICombination c : cs) {
-                c.undo();
+            synchronized (combinationsByTrigger) {
+                for (ITrigger t : combinationsByTrigger.keySet()) {
+                    t.setActive(false);
+                }
+                // undo combinations
+                Set<ICombination> cs = new HashSet<ICombination>();
+                for (List<ICombination> l : combinationsByTrigger.values()) {
+                    cs.addAll(l);
+                }
+                for (ICombination c : cs) {
+                    c.undo();
+                }
             }
         } else if (!active && a) {
             // activate triggers
-            for (ITrigger t : combinationsByTrigger.keySet()) {
-                t.setActive(true);
+            synchronized (combinationsByTrigger) {
+                for (ITrigger t : combinationsByTrigger.keySet()) {
+                    t.setActive(true);
+                }
             }
         }
         active = a;
@@ -113,6 +117,78 @@ public class Viewmanagement {
      */
     public boolean isActive() {
         return active;
+    }
+
+    /**
+     * Update activity state for each combination after preference page submit.
+     * 
+     * TODO better method name
+     */
+    public void updateCombinationsByGUI() {
+        List<ICombination> toActivate = new ArrayList<ICombination>();
+        List<ICombination> toDeactivate = new ArrayList<ICombination>();
+        // split up to avoid breaking the loops by modifying
+        // combinationsByTrigger
+        synchronized (combinationsByTrigger) {
+            for (Descriptor d : availableCombinations) {
+                if (d.isActive()) {
+                    boolean found = false;
+                    outer: for (List<ICombination> l : combinationsByTrigger.values()) {
+                        for (ICombination c : l) {
+                            if (d.getClazz().isInstance(c)) {
+                                found = true;
+                                break outer;
+                            }
+                        }
+                    }
+                    if (!found) {
+                        try {
+                            toActivate.add((ICombination) d.getClazz().newInstance());
+                        } catch (InstantiationException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    for (List<ICombination> l : combinationsByTrigger.values()) {
+                        for (ICombination c : l) {
+                            if (d.getClazz().isInstance(c)) {
+                                toDeactivate.add(c);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (ICombination c : toDeactivate) {
+            c.setActive(false);
+        }
+        for (ICombination c : toActivate) {
+            c.setActive(true);
+        }
+    }
+
+    /**
+     * Get a list of all available combinations registered to the combinations
+     * extension point.
+     * 
+     * @return a copied list of combinations
+     */
+    public List<Descriptor> getAvailableCombinations() {
+        return new ArrayList<Descriptor>(availableCombinations);
+    }
+
+    /**
+     * Get a list of all available effects registered to the effects extension
+     * point.
+     * 
+     * @return a copied list of effects
+     */
+    public List<Descriptor> getAvailableEffects() {
+        return new ArrayList<Descriptor>(availableEffects);
     }
 
     /**
@@ -131,6 +207,13 @@ public class Viewmanagement {
                 addCombination(t, combination);
             } else {
                 removeCombination(t, combination);
+            }
+        }
+        boolean anyActive = isCombinationClassActive(combination.getClass());
+        for (Descriptor d : availableCombinations) {
+            if (d.getClazz().equals(combination.getClass())) {
+                d.setActive(anyActive);
+                break;
             }
         }
     }
@@ -161,7 +244,7 @@ public class Viewmanagement {
      * @param effects
      *            the effects to execute
      */
-    public void executeEffects(final List<IEffect> effects) {
+    public void executeEffect(final List<IEffect> effects) {
         effectsWorker.enqueueEffect(effects);
     }
 
@@ -181,13 +264,13 @@ public class Viewmanagement {
      * @param effects
      *            the effects to be undone
      */
-    public void undoEffects(final List<IEffect> effects) {
+    public void undoEffect(final List<IEffect> effects) {
         effectsWorker.undoEffects(effects);
     }
 
     /**
-     * Distribute the event from the given trigger to all availableCombinations
-     * waiting for it. Called from the availableCombinations worker thread.
+     * Distribute the event from the given trigger to all combinations waiting
+     * for such a trigger class. Called from the combinations worker thread.
      * 
      * @param trigger
      *            the trigger that received the event
@@ -200,23 +283,26 @@ public class Viewmanagement {
     }
 
     /**
-     * Load information from the extension points registering
-     * availableCombinations etc.
+     * Load information from the extension points registering combinations,
+     * effects etc.
      */
     private void loadExtensionPoints() {
         loadCombinations();
+        loadEffects();
     }
 
     /**
-     * Load information from the availableCombinations extension point.
+     * Load all information from the combinations extension point.
      */
     private void loadCombinations() {
-        IConfigurationElement[] elements = Platform.getExtensionRegistry()
+        IConfigurationElement[] elements = RegistryFactory.getRegistry()
                 .getConfigurationElementsFor("de.cau.cs.kieler.kivi.combinations");
         for (IConfigurationElement element : elements) {
             try {
-                Class<?> combination = Class.forName(element.getAttribute("class"));
-                availableCombinations.add(combination);
+                Descriptor descriptor = new Descriptor(element.getAttribute("name"),
+                        element.getAttribute("description"), Class.forName(element
+                                .getAttribute("class")));
+                availableCombinations.add(descriptor);
             } catch (InvalidRegistryObjectException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -227,7 +313,27 @@ public class Viewmanagement {
         }
     }
 
-    // TODO move these three methods elsewhere?
+    /**
+     * Load all information from the effects extension point.
+     */
+    private void loadEffects() {
+        IConfigurationElement[] elements = RegistryFactory.getRegistry()
+                .getConfigurationElementsFor("de.cau.cs.kieler.kivi.effects");
+        for (IConfigurationElement element : elements) {
+            try {
+                Descriptor descriptor = new Descriptor(element.getAttribute("name"),
+                        element.getAttribute("description"), Class.forName(element
+                                .getAttribute("class")));
+                availableEffects.add(descriptor);
+            } catch (InvalidRegistryObjectException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * Retrieve List of availableCombinations that are active and listening to
@@ -249,6 +355,25 @@ public class Viewmanagement {
             }
         }
         return new ArrayList<ICombination>();
+    }
+    
+    /**
+     * Check whether any combination of the given class is active.
+     * 
+     * @param clazz the combination class to look for
+     * @return true if an active combination was found
+     */
+    private boolean isCombinationClassActive(final Class<?> clazz) {
+        synchronized (combinationsByTrigger) {
+            for (List<ICombination> l : combinationsByTrigger.values()) {
+                for (ICombination combination : l) {
+                    if (clazz.isInstance(combination)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
