@@ -65,8 +65,10 @@ public class EvolView extends ViewPart {
             final boolean isOnlyCurrent = ("changeCurrentRating".equalsIgnoreCase(cause));
 
             if (tv != null) {
-                // Set the new population as input.
-                EvolView.this.setInput(source.getPopulation());
+                if (!isOnlyCurrent) {
+                    // Set the new population as input.
+                    EvolView.this.setInput(source.getPopulation());
+                }
 
                 final int row = source.getPosition();
                 if ("reset".equalsIgnoreCase(cause)) {
@@ -175,7 +177,7 @@ public class EvolView extends ViewPart {
 
             if ((selection == null) || (selection.isEmpty())
                     || !(selection instanceof IStructuredSelection)) {
-                System.out.println("empty or null selection");
+                System.err.println("empty or null selection");
                 return;
             }
 
@@ -184,9 +186,10 @@ public class EvolView extends ViewPart {
                 this.tv.removeSelectionChangedListener(this);
 
                 // Update the model.
-                final int oldPos = EvolView.this.getEvolModel().getPosition();
+                final EvolModel em = EvolView.this.getEvolModel();
+                final int oldPos = em.getPosition();
                 final int newPos = ((PopulationTableEntry) element).getIndex();
-                EvolView.this.getEvolModel().setPosition(newPos);
+                em.setPosition(newPos);
 
                 // Update the table viewer.
                 final Runnable elementUpdaterRunnable = new Runnable() {
@@ -202,21 +205,50 @@ public class EvolView extends ViewPart {
                 System.out.println("after applySelectedIndividual");
                 System.out.println(oldPos + " -> " + newPos);
 
-                if (this.oldElement == null) {
-                    this.oldElement = element;
-                }
+
 
                 System.out.println("updating row");
-                this.tv.update(this.oldElement, null);
                 final Object oldElement1 = this.tv.getElementAt(oldPos);
-                this.tv.update(oldElement1, null);
 
+                if (this.oldElement != null) {
+                    this.tv.update(this.oldElement, null);
+                }
+                this.tv.update(oldElement1, null);
                 this.tv.update(element, null);
 
                 this.tv.addPostSelectionChangedListener(this);
                 System.out.println();
                 this.oldElement = element;
             }
+        }
+
+        /**
+         * Refresh the layout according to selected individual.
+         *
+         * @deprecated
+         */
+        @Deprecated
+        private void applySelectedIndividual() {
+            final EvolModel em = getEvolModel();
+            Assert.isNotNull(em);
+
+            if (!em.isValid()) {
+                return;
+            }
+
+            // Get the current individual from the model.
+            final Genome currentIndividual = em.getCurrentIndividual();
+            Assert.isNotNull(currentIndividual);
+
+            // Get the expected layout provider id.
+            final String expectedLayoutProviderId = em.getLayoutProviderId();
+            Assert.isNotNull(expectedLayoutProviderId);
+
+            // Adopt, layout and measure the current individual.
+            EvolUtil.syncApplyIndividual(currentIndividual, expectedLayoutProviderId);
+
+            // Refresh the layout view.
+            EvolUtil.asyncRefreshLayoutView();
         }
 
         SelectorTableViewer getTableViewer() {
@@ -386,34 +418,6 @@ public class EvolView extends ViewPart {
     @Override
     public void setFocus() {
         this.tableViewer.getControl().setFocus();
-    }
-
-    /**
-     * Refresh the layout according to selected individual.
-     *
-     * @deprecated
-     */
-    @Deprecated
-    private void applySelectedIndividual() {
-        Assert.isNotNull(this.evolModel);
-
-        if (!this.evolModel.isValid()) {
-            return;
-        }
-
-        // Get the current individual from the model.
-        final Genome currentIndividual = this.evolModel.getCurrentIndividual();
-        Assert.isNotNull(currentIndividual);
-
-        // Get the expected layout provider id.
-        final String expectedLayoutProviderId = this.evolModel.getLayoutProviderId();
-        Assert.isNotNull(expectedLayoutProviderId);
-
-        // Adopt, layout and measure the current individual.
-        EvolUtil.syncApplyIndividual(currentIndividual, expectedLayoutProviderId);
-
-        // Refresh the layout view.
-        EvolUtil.asyncRefreshLayoutView();
     }
 
     /**

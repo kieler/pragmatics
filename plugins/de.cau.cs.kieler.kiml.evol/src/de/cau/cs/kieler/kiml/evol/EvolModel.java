@@ -43,6 +43,44 @@ import de.cau.cs.kieler.kiml.evol.ui.IEvolModelListener;
 public final class EvolModel {
 
     /**
+     * @author bdu
+     *
+     */
+    private static final class AutoRaterRunnable implements Runnable {
+        /**
+         *
+         */
+        private final Population unrated;
+        /**
+         *
+         */
+        private final IProgressMonitor monitor;
+        /**
+         *
+         */
+        private final int scale;
+
+        /** Creates a new {@link AutoRaterRunnable} instance.
+         *
+         * @param theUnrated
+         * @param theMonitor
+         * @param theScale
+         */
+        AutoRaterRunnable(
+                final Population theUnrated,
+                final IProgressMonitor theMonitor,
+                final int theScale) {
+            this.unrated = theUnrated;
+            this.monitor = theMonitor;
+            this.scale = theScale;
+        }
+
+        public void run() {
+            EvolUtil.autoRate(this.unrated, new SubProgressMonitor(this.monitor, 1 * this.scale));
+        }
+    }
+
+    /**
      * Creates a new {@link EvolModel} instance.
      */
     public EvolModel() {
@@ -67,10 +105,10 @@ public final class EvolModel {
     public void addListener(final IEvolModelListener listener) {
         this.listeners.add(listener);
     }
-    
+
     /**
      * Auto-rate all individuals in the appropriate editors.
-     * 
+     *
      * @param theMonitor
      *            a progress monitor; may be {@code null}
      */
@@ -136,11 +174,7 @@ public final class EvolModel {
             // Calculate auto-rating for the yet unrated individuals.
             final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
 
-            final Runnable runnable = new Runnable() {
-                public void run() {
-                    EvolUtil.autoRate(unrated, new SubProgressMonitor(monitor, 1 * scale));
-                }
-            };
+            final Runnable runnable = new AutoRaterRunnable(unrated, monitor, scale);
             MonitoredOperation.runInUI(runnable, true);
             monitor.worked(autoRateWork * scale);
 
@@ -271,7 +305,7 @@ public final class EvolModel {
      */
     public void reset() {
         final IEditorPart editor = EvolUtil.getCurrentEditor();
-        final EditPart part = EvolUtil.getEditPart(editor);
+        final EditPart part = EvolUtil.getCurrentEditPart(editor);
         setPosition(0);
         setEvolAlg(null);
 
@@ -364,7 +398,7 @@ public final class EvolModel {
     private boolean isCompatibleLayoutProvider() {
 
         final IEditorPart editor = EvolUtil.getCurrentEditor();
-        final EditPart editPart = EvolUtil.getEditPart(editor);
+        final EditPart editPart = EvolUtil.getCurrentEditPart(editor);
 
         final String oldProviderId = this.layoutProviderId;
         final String newProviderId = EvolUtil.getLayoutProviderId(editor, editPart);

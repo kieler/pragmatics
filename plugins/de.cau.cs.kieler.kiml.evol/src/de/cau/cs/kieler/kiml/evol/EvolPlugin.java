@@ -44,12 +44,26 @@ public class EvolPlugin extends AbstractUIPlugin {
     public static final String PREF_EDITORS = "de.cau.cs.kieler.kiml.evol.editors";
 
     /**
-     * Preference value for all editors.
+     * Preference constant for option "Use layout hint from genome".
+     */
+    public static final String PREF_USE_LAYOUT_HINT_FROM_GENOME =
+            "de.cau.cs.kieler.kiml.evol.useLayoutHint";
+
+    /**
+     * Preference constant for option
+     * "Use layout hint from genome also for different type".
+     */
+    public static final String PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT =
+            "de.cau.cs.kieler.kiml.evol.useDifferentTypeLayoutHint";
+
+
+    /**
+     * Preference value for editor selection: all editors.
      */
     public static final String ALL_EDITORS = "ALL";
 
     /**
-     * Preference value for current editor.
+     * Preference value for editor selection: current editor.
      */
     public static final String CURRENT_EDITOR = "CURRENT";
 

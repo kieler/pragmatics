@@ -107,11 +107,6 @@ public final class EvolUtil {
         */
         private final Genome individual;
 
-        /**
-        *
-        */
-        private IEditorPart editor;
-
         public void run() {
             // Must be run in the UI thread.
 
@@ -417,6 +412,100 @@ public final class EvolUtil {
             // editor(s).
             applyIndividual(this.individual, this.layoutProviderId);
         }
+
+        /**
+         * Adopt, layout and measure the given individual in the appropriate
+         * editor(s). The obtained layout is applied to the diagrams.
+         *
+         * @param individual
+         *            a {@link Genome}; may not be {@code null}
+         * @param expectedLayoutProviderId
+         *            the expected layout provider id
+         */
+        private static void applyIndividual(
+                final Genome individual, final String expectedLayoutProviderId) {
+            Assert.isLegal((individual != null) && (expectedLayoutProviderId != null));
+            if ((individual == null) || (expectedLayoutProviderId == null)) {
+                return;
+            }
+
+            final LayoutServices layoutServices = LayoutServices.getInstance();
+            Assert.isNotNull(layoutServices);
+
+            // Get the expected layout type id.
+            final LayoutProviderData expectedProviderData =
+                    layoutServices.getLayoutProviderData(expectedLayoutProviderId);
+            Assert.isNotNull(expectedProviderData);
+            final String expectedLayoutTypeId = expectedProviderData.getType();
+            Assert.isNotNull(expectedLayoutTypeId);
+
+            // Get the appropriate editors.
+            final Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
+            Assert.isNotNull(editors);
+
+            // Get the current editor (may be null).
+            final IEditorPart currentEditor = getCurrentEditor();
+
+            // Do the layout in each appropriate editor.
+            for (final IEditorPart editor : editors) {
+                System.out.println();
+                System.out.print("--- Editor: " + editor.getTitle() + " ");
+
+                final EditPart editPart = getCurrentEditPart(editor);
+
+                // See which layout provider suits for the editor.
+                final String layoutProviderId = getLayoutProviderId(editor, editPart);
+                System.out.println("(" + layoutProviderId + ")");
+
+                // Check if we can handle its type.
+                final LayoutProviderData data =
+                        layoutServices.getLayoutProviderData(layoutProviderId);
+                final String layoutTypeId = data.getType();
+
+                if (!expectedLayoutTypeId.equalsIgnoreCase(layoutTypeId)) {
+                    // The editor is not compatible to the current population.
+                    // --> skip it
+                    System.err.println("Cannot adopt " + individual.getId() + " to "
+                            + layoutProviderId + ", expecting an editor for "
+                            + expectedLayoutTypeId);
+                    continue;
+                }
+
+                // Use the options that are encoded in the individual.
+                EvolUtil.adoptIndividual(individual, editor);
+
+                // We don't specify the edit part because we want a manager for
+                // the whole diagram.
+                final DiagramLayoutManager manager =
+                        EclipseLayoutServices.getInstance().getManager(editor, null);
+                Assert.isNotNull(manager);
+
+                final KNode layoutGraph = EvolUtil.calculateLayout(manager, editor);
+
+                // Update the rating.
+                // XXX: This should not be done here.
+                if ((editor == currentEditor) && !individual.hasUserRating()) {
+
+                    // Get the metric weights.
+                    final Map<String, Double> weightsMap =
+                            EvolUtil.extractMetricWeights(individual);
+                    Assert.isNotNull(weightsMap);
+                    EvolUtil.normalize(weightsMap);
+
+                    final int rating = EvolUtil.measure(layoutGraph, weightsMap);
+                    individual.setUserRating(rating);
+                }
+
+                // Apply the layout to the diagram in the editor.
+                // XXX it would be more straightforward to call
+                // manager.applyLayout();
+                // directly, but that method is protected
+
+                EclipseLayoutServices.getInstance().layout(editor, null,
+                        false /* showAnimation */, false /* showProgressBar */);
+            }
+        }
+
     }
 
     /**
@@ -586,7 +675,7 @@ public final class EvolUtil {
     /**
      * Find all the visible graphical editors in the workbench.
      *
-     * @return a collection of the visible graphical editors; may be empty.
+     * @return the set of the visible graphical editors; may be empty.
      */
     public static Set<IEditorPart> getEditors() {
 
@@ -624,7 +713,7 @@ public final class EvolUtil {
      *            an editor
      * @return the current edit part or {@code null} if none exists.
      */
-    public static EditPart getEditPart(final IEditorPart editor) {
+    public static EditPart getCurrentEditPart(final IEditorPart editor) {
         EditPart result = null;
         if (editor != null) {
             final ISelection selection =
@@ -643,16 +732,6 @@ public final class EvolUtil {
     }
 
     /**
-     *
-     * @param editor
-     *            an {@link IEditorPart}
-     * @return a {@link LayoutPropertySource} for the given editor.
-     */
-    public static LayoutPropertySource getLayoutPropertySource(final IEditorPart editor) {
-        return getLayoutPropertySource(editor, getEditPart(editor));
-    }
-
-    /**
      * Finds a layout provider for the given {@link IEditorPart} and
      * {@link EditPart}.
      *
@@ -660,7 +739,8 @@ public final class EvolUtil {
      *            a {@link IEditorPart}
      * @param editPart
      *            an {@link EditPart}
-     * @return the id of the layouter, or {@code null} if none can be found.
+     * @return the id of the layout provider, or {@code null} if none can be
+     *         found.
      */
     public static String getLayoutProviderId(final IEditorPart editor, final EditPart editPart) {
         final DiagramLayoutManager manager =
@@ -744,7 +824,7 @@ public final class EvolUtil {
     private static void adoptIndividual(final Genome individual, final IEditorPart editor) {
         Assert.isLegal(individual != null);
 
-        final LayoutPropertySource propertySource = getLayoutPropertySource(editor);
+        final LayoutPropertySource propertySource = getLayoutPropertySource(editor, null);
         Assert.isNotNull(propertySource);
         adoptIndividual(individual, propertySource);
     }
@@ -839,94 +919,7 @@ public final class EvolUtil {
         }
     }
 
-    /**
-     * Adopt, layout and measure the given individual in the appropriate
-     * editor(s). The obtained layout is applied to the diagrams.
-     *
-     * @param individual
-     *            a {@link Genome}; may not be {@code null}
-     * @param expectedLayoutProviderId
-     *            the expected layout provider id
-     */
-    private static void applyIndividual(
-            final Genome individual, final String expectedLayoutProviderId) {
-        Assert.isLegal((individual != null) && (expectedLayoutProviderId != null));
-        if ((individual == null) || (expectedLayoutProviderId == null)) {
-            return;
-        }
 
-        final LayoutServices layoutServices = LayoutServices.getInstance();
-        Assert.isNotNull(layoutServices);
-
-        // Get the expected layout type id.
-        final LayoutProviderData expectedProviderData =
-                layoutServices.getLayoutProviderData(expectedLayoutProviderId);
-        Assert.isNotNull(expectedProviderData);
-        final String expectedLayoutTypeId = expectedProviderData.getType();
-        Assert.isNotNull(expectedLayoutTypeId);
-
-        // Get the appropriate editors.
-        final Collection<IEditorPart> editors = getWantedEditors();
-        Assert.isNotNull(editors);
-
-        // Get the current editor (may be null).
-        final IEditorPart currentEditor = getCurrentEditor();
-
-        // Do the layout in each appropriate editor.
-        for (final IEditorPart editor : editors) {
-            System.out.println();
-            System.out.print("--- Editor: " + editor.getTitle() + " ");
-
-            final EditPart editPart = getEditPart(editor);
-
-            // See which layout provider suits for the editor.
-            final String layoutProviderId = getLayoutProviderId(editor, editPart);
-            System.out.println("(" + layoutProviderId + ")");
-
-            // Check if we can handle its type.
-            final LayoutProviderData data =
-                    layoutServices.getLayoutProviderData(layoutProviderId);
-            final String layoutTypeId = data.getType();
-
-            if (!expectedLayoutTypeId.equalsIgnoreCase(layoutTypeId)) {
-                // The editor is not compatible to the current population.
-                // --> skip it
-                System.err.println("Cannot adopt " + individual.getId() + " to "
-                        + layoutProviderId + ", expecting an editor for " + expectedLayoutTypeId);
-                continue;
-            }
-
-            // Use the options that are encoded in the individual.
-            adoptIndividual(individual, editor);
-
-            // We don't specify the edit part because we want a manager for
-            // the whole diagram.
-            final DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, null);
-            Assert.isNotNull(manager);
-
-            final Map<String, Double> weightsMap = extractMetricWeights(individual);
-            Assert.isNotNull(weightsMap);
-            normalize(weightsMap);
-
-            final KNode layoutGraph = calculateLayout(manager, editor);
-
-            // Update the rating.
-            // XXX: This should not be done here.
-            if ((editor == currentEditor) && !individual.hasUserRating()) {
-                final int rating = measure(layoutGraph, weightsMap);
-                individual.setUserRating(rating);
-            }
-
-            // Apply the layout to the diagram in the editor.
-            // XXX it would be more straightforward to call
-            // manager.applyLayout();
-            // directly, but that method is protected
-
-            EclipseLayoutServices.getInstance().layout(editor, null, false /* showAnimation */,
-                    false /* showProgressBar */);
-        }
-    }
 
     /**
      * Layouts the given individual in the given editor and calculates automatic
@@ -945,35 +938,6 @@ public final class EvolUtil {
         editors.add(editor);
 
         autoRateIndividual(individual, editors);
-    }
-
-    /**
-     * Layouts the given individual in the given editor and calculates automatic
-     * ratings for it, using the given manager and layout property source.
-     *
-     * @param ind
-     *            a {@link Genome}
-     * @param editor
-     *            an {@link IEditorPart}
-     * @param manager
-     *            a {@link DiagramLayoutManager}
-     * @param source
-     *            a {@link LayoutPropertySource}
-     * @deprecated use {@link #calculateAutoRating()} or the version for more
-     *             editors
-     */
-    @Deprecated
-    private static void autoRateIndividual(
-            final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
-            final LayoutPropertySource source) {
-        Assert.isLegal((ind != null) && (source != null));
-        if ((ind == null) || (source == null)) {
-            return;
-        }
-
-        final int rating = calculateAutoRating(ind, editor, manager, source);
-
-        ind.setUserRating(rating);
     }
 
     /**
@@ -1021,7 +985,7 @@ public final class EvolUtil {
                     EclipseLayoutServices.getInstance().getManager(editor, null);
             Assert.isNotNull(manager);
 
-            final LayoutPropertySource source = getLayoutPropertySource(editor);
+            final LayoutPropertySource source = getLayoutPropertySource(editor, null);
             Assert.isNotNull(source);
 
             final int rating = calculateAutoRating(ind, editor, manager, source);
@@ -1073,8 +1037,8 @@ public final class EvolUtil {
 
     /**
      * Builds the layout graph for the given editor, using the given manager,
-     * and performs layout on it. NOTE: The resulting layout is not applied to
-     * the diagram.
+     * and performs layout on it. <strong>NOTE</strong>: The resulting layout is
+     * not applied to the diagram.
      *
      * @param manager
      *            a {@link DiagramLayoutManager}
@@ -1201,24 +1165,57 @@ public final class EvolUtil {
         // Get the set of all learnable elements that are registered.
         final Set<String> registeredLearnables =
                 EvolutionServices.getInstance().getEvolutionDataIds();
+
         final Genome result = new Genome();
 
         // Get data from property descriptors.
         final Map<String, IPropertyDescriptor> allPropertyDescriptors =
                 getPropertyDescriptors(propertySources);
 
-        // Collect the learnable properties.
+        // Get the registered layout option data.
+        final Collection<LayoutOptionData<?>> registeredLayoutOptions =
+                LayoutServices.getInstance().getLayoutOptionData();
+
+        // Collect the learnable properties from the property descriptors.
         final Set<IPropertyDescriptor> learnables =
                 collectLearnableProperties(allPropertyDescriptors.values(), registeredLearnables);
+
 
         // Determine uniformly distributed mutation probability.
         final double uniformProb = uniformProbability(learnables.size());
 
-        System.out.println("Creating genome of " + learnables + " layout property genes ...");
+        System.out.println("Creating genome of " + learnables.size()
+                + " layout property genes ...");
         final GeneFactory gf = new GeneFactory();
 
         // A set to store the layout hint IDs we run across.
         final SortedSet<String> layoutHintIds = new TreeSet<String>();
+
+        // A map to store the property values from the layout property sources.
+        final Map<String, Object> propertyValues =
+                new HashMap<String, Object>(propertySources.size() * 10);
+
+        // Iterate the layout property sources.
+        for (final LayoutPropertySource source : propertySources) {
+
+            // Iterate the property descriptors of the layout property source.
+            final IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
+            for (final IPropertyDescriptor desc : descriptors) {
+
+                final String id = (String) desc.getId();
+                final Object value = source.getPropertyValue(id);
+
+                if (!LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
+                    if (!propertyValues.containsKey(id)) {
+                        propertyValues.put(id, value);
+                    } else {
+                    // already added this option
+                        System.out.println("Duplicate property: " + id);
+                    }
+                }
+
+            }
+        }
 
         // Iterate the layout property sources.
         for (final LayoutPropertySource source : propertySources) {
@@ -1251,7 +1248,7 @@ public final class EvolUtil {
                         Assert.isNotNull(gene, "Failed to create gene for " + id);
                         result.add(gene);
                     } else {
-                        System.out.println("Not registered: " + id);
+                        System.out.println("Not registered as evolutionData: " + id);
                     }
                 }
             } // iterate descriptors
@@ -1264,6 +1261,7 @@ public final class EvolUtil {
         if (!layoutHintIds.isEmpty()) {
             // Create a gene that can mutate over a list of layout hint IDs.
 
+            // TODO: what if we have more than one layout hint?
             final String hintId = layoutHintIds.first();
 
             final RadioGene hintGene = createLayoutHintGene(hintId);
@@ -1292,7 +1290,13 @@ public final class EvolUtil {
      */
     private static RadioGene createLayoutHintGene(final String hintId) {
         final LayoutServices layoutServices = LayoutServices.getInstance();
-        final LayoutProviderData provider = layoutServices.getLayoutProviderData(hintId);
+        final LayoutProviderData provider = layoutServices.getLayoutProviderData(hintId, null);
+
+        if (provider == null) {
+            // no provider for the given layout hint
+            return null;
+        }
+
         final String typeId = provider.getType();
 
         // Get the IDs of all suitable providers for this type.
@@ -1312,8 +1316,12 @@ public final class EvolUtil {
     }
 
     /**
+     * Collects the property descriptors from the given layout property sources.
+     *
      * @param propertySources
-     * @return
+     *            a list of LayoutPropertySource instances
+     * @return a map containing property descriptor IDs and the respective
+     *         property descriptors.
      */
     private static Map<String, IPropertyDescriptor> getPropertyDescriptors(
             final List<LayoutPropertySource> propertySources) {
@@ -1403,6 +1411,7 @@ public final class EvolUtil {
         final Population result = new Population();
         final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
 
+        // Create the individuals one by one.
         for (int i = 0; i < size; i++) {
             final Genome genome = createGenome(propertySources, metricIds);
             result.add(genome);
@@ -1478,6 +1487,7 @@ public final class EvolUtil {
      *
      * @param descriptor
      * @param value
+     *            the integer value indicating the layout hint
      * @return
      */
     private static String getLayoutHintId(final IPropertyDescriptor descriptor, final Object value) {
@@ -1488,8 +1498,8 @@ public final class EvolUtil {
         String text;
         String hintId = null;
 
-        // Get the caption.
         try {
+            // Get the caption.
             text = labelProvider.getText(value);
 
             // XXX @msp Is there a more elegant way to obtain the layout hint
@@ -1511,38 +1521,52 @@ public final class EvolUtil {
 
     /**
      *
-     * @param editor
+     * @param theEditor
      *            an {@link IEditorPart}
-     * @param editPart
-     *            an {@link EditPart}
+     * @param theEditPart
+     *            an {@link EditPart}. If this is {@code null}, the rootPart is
+     *            used instead.
      * @return a {@link LayoutPropertySource} for the given editor and edit
      *         part, or {@code null} if none can be found.
      */
     private static LayoutPropertySource getLayoutPropertySource(
-            final IEditorPart editor, final EditPart editPart) {
+            final IEditorPart theEditor, final EditPart theEditPart) {
 
-        // use root edit part
-        EditPart rootPart = editPart;
+        if (!(theEditor instanceof DiagramEditor)) {
+            // The editor is not a DiagramEditor.
+            return null;
+        }
 
-        if (rootPart != null) {
+        EditPart rootPart;
+        if (theEditPart == null) {
+            // TODO: Discuss: Is it OK to call getRoot() in this case?
+            rootPart = ((DiagramEditor) theEditor).getDiagramEditPart().getRoot();
+        } else {
+            // find root edit part
+            rootPart = theEditPart;
+
             while (rootPart.getParent() != null) {
                 rootPart = rootPart.getParent();
             }
         }
 
         final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, rootPart);
+                EclipseLayoutServices.getInstance().getManager(theEditor, rootPart);
         if (manager == null) {
+            // No layout manager found. Cannot create layout property source.
             return null;
         }
 
         final ILayoutInspector inspector = manager.getInspector(rootPart);
+        Assert.isNotNull(inspector);
+
         final LayoutPropertySource result = new LayoutPropertySource(inspector);
         return result;
     }
 
     /**
-     * Collect the layout property sources of the given editors.
+     * Collect the layout property sources of the given editors. The current
+     * editor is treated first, if there is any.
      *
      * @param editors
      * @return
@@ -1551,28 +1575,36 @@ public final class EvolUtil {
             final Set<IEditorPart> editors) {
         final List<LayoutPropertySource> sources = new LinkedList<LayoutPropertySource>();
 
-        // Collect the layout property sources of the editors.
+        // Handle current editor.
+        final IEditorPart currentEditor = getCurrentEditor();
+
+        if (currentEditor != null) {
+            final LayoutPropertySource currentPropertySource =
+                    getLayoutPropertySource(currentEditor, null);
+            if (currentPropertySource != null) {
+                sources.add(currentPropertySource);
+            }
+        }
+
+        // Collect the layout property sources of the other editors.
         for (final IEditorPart editor : editors) {
+            if (editor == currentEditor) {
+                // Already handled this one.
+                continue;
+            }
+
             if (!(editor instanceof DiagramEditor)) {
                 // Editor is not a DiagramEditor. Skip it.
                 continue;
             }
 
-            // TODO: Discuss: Is it OK to call getRoot() in this case?
-            final EditPart editPart = ((DiagramEditor) editor).getDiagramEditPart().getRoot();
+            final LayoutPropertySource propertySource = getLayoutPropertySource(editor, null);
 
-            final DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, editPart);
-            if (manager == null) {
-                // No layout manager found. Ignore this editor.
-                continue;
+            if (propertySource != null) {
+                sources.add(propertySource);
             }
-
-            final ILayoutInspector inspector = manager.getInspector(editPart);
-            Assert.isNotNull(inspector);
-            final LayoutPropertySource propertySource = new LayoutPropertySource(inspector);
-            sources.add(propertySource);
         }
+
         return sources;
     }
 
@@ -1605,10 +1637,12 @@ public final class EvolUtil {
     }
 
     /**
+     * Gets the set of wanted editors, which may be the current editor or all
+     * visible editors, depending on the user setting.
      *
-     * @return a collection of editors, may be empty.
+     * @return the set of wanted editors, may be empty.
      */
-    private static Collection<IEditorPart> getWantedEditors() {
+    private static Set<IEditorPart> getWantedEditors() {
         // Get the current editor (may be null).
         final IEditorPart currentEditor = getCurrentEditor();
 
@@ -1618,11 +1652,11 @@ public final class EvolUtil {
         final boolean wantAllEditors = EvolPlugin.ALL_EDITORS.equalsIgnoreCase(prefEditors);
 
         // Collect the editor(s).
-        final Collection<IEditorPart> editors;
+        final Set<IEditorPart> editors;
         if (wantAllEditors) {
             editors = getEditors();
         } else {
-            editors = new ArrayList<IEditorPart>(1);
+            editors = new HashSet<IEditorPart>(1);
             if (currentEditor != null) {
                 editors.add(currentEditor);
             }
