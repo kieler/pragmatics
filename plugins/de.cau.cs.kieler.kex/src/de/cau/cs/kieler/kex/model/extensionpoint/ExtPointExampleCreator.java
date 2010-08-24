@@ -36,7 +36,6 @@ import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.controller.util.IOHandler;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExportResource;
-import de.cau.cs.kieler.kex.model.ExtPointConstants;
 
 /**
  * can be used for creating new extensions for KEX extension point.<br>

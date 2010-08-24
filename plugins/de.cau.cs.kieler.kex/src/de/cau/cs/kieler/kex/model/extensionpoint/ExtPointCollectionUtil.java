@@ -14,7 +14,6 @@ import org.osgi.framework.Version;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.ExtPointConstants;
 import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExtPointCollectionUtil {

@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class DatabaseConstants {
+public class DatabaseHandler {
 
 	private final String driver = "org.postgresql.Driver";
 
@@ -42,7 +42,7 @@ public class DatabaseConstants {
 	 */
 	private void loadJdbcDriver() {
 		try {
-			Class.forName("org.postgresql.Driver");
+			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			System.exit(1);

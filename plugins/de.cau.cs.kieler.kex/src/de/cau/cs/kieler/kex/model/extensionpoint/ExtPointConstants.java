@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.model;
+package de.cau.cs.kieler.kex.model.extensionpoint;
 
 public class ExtPointConstants {
 	public static final String EXT_POINT = "de.cau.cs.kieler.kex";

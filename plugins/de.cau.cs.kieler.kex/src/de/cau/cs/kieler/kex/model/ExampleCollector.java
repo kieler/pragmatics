@@ -17,6 +17,8 @@ public abstract class ExampleCollector {
 	 */
 	public abstract Map<String, Example> getExamplePool();
 
+	public abstract SourceType getSourceType();
+
 	public List<String> getExamplesAsStrings() {
 		List<String> examplesAsString = new ArrayList<String>();
 		for (Example example : getExamplePool().values()) {
@@ -24,7 +26,5 @@ public abstract class ExampleCollector {
 		}
 		return examplesAsString;
 	}
-
-	public abstract SourceType getSourceType();
 
 }

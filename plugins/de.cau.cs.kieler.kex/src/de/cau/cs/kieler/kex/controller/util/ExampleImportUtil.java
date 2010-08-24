@@ -27,12 +27,6 @@ public class ExampleImportUtil {
 		for (Example example : selectedExamples) {
 
 			List<URL> resources = example.getResources();
-			// TODO pr�fen, ob parameter sinnvoll...
-			// wenn mehrere examples mit gleichem namen laufen, brauchen wir
-			// eine art index
-			// bzw. den identifierer... als datei oder in project properties
-			// oder im namen
-			// src/Hankees.txt
 			String destFolder = workspaceLocation + selectedResource.toString()
 					+ "/";
 			// not permantly create a example parent folder with its name.

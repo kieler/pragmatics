@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.Platform;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
-import de.cau.cs.kieler.kex.model.ExtPointConstants;
 import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExtPointExampleCollector extends ExampleCollector {

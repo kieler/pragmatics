@@ -25,8 +25,6 @@ public class Example {
 	 */
 	private Version version;
 
-	// TODO versuchen beim import ein ipath raus zu zaubern... nicht mit urls
-	// arbeiten
 	private List<URL> resources;
 
 	private String contact;
@@ -56,9 +54,11 @@ public class Example {
 
 	@Override
 	public String toString() {
-		return "Example [id=" + getId() + ", name= " + getName() + ",contact="
-				+ getContact() + ", version=" + version.toString()
-				+ "description= " + getDescription() + "]";
+		return new StringBuffer().append("Example [id=").append(getId())
+				.append(", name= ").append(getName()).append(",contact=")
+				.append(getContact()).append(", version=").append(
+						version.toString()).append("description= ").append(
+						getDescription()).append("]").toString();
 	}
 
 	public boolean contains(String category) {
@@ -89,7 +89,6 @@ public class Example {
 		return this.version;
 	}
 
-	// TODO auf jeden fall �ber string path (nutze namespace identifier) l�sen.
 	public List<URL> getResources() {
 		return resources;
 	}
