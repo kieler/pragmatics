@@ -28,9 +28,9 @@ import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExampleExportPage extends WizardPage {
 
-	private static final int TWO_COLUMNS = 0;
-
 	private Text destPath;
+
+	private Button createExampleFolder;
 
 	private final int THREE_COLUMNS = 3;
 	private List<URL> resources;
@@ -183,11 +183,11 @@ public class ExampleExportPage extends WizardPage {
 		bottomGroup.setText("Options");
 		bottomGroup.setLayout(bottomLayout);
 		bottomGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Button exampleFolderButton = new Button(bottomGroup, SWT.CHECK);
-		exampleFolderButton.setText("create folder with example name");
-		exampleFolderButton.setSelection(true);
-		Button copyHiddenFilesButton = new Button(bottomGroup, SWT.CHECK);
-		copyHiddenFilesButton.setText("copy hidden files");
+		createExampleFolder = new Button(bottomGroup, SWT.CHECK);
+		createExampleFolder.setText("create folder with example name");
+		createExampleFolder.setSelection(true);
+		// Button copyHiddenFilesButton = new Button(bottomGroup, SWT.CHECK);
+		// copyHiddenFilesButton.setText("copy hidden files");
 
 	}
 
@@ -267,5 +267,9 @@ public class ExampleExportPage extends WizardPage {
 
 	public List<String> getDeletableCategories() {
 		return deletableCategories;
-	};
+	}
+
+	public boolean createExampleFolder() {
+		return this.createExampleFolder.getSelection();
+	}
 }

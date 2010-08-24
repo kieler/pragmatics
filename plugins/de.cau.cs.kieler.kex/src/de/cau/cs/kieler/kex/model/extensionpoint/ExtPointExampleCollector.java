@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 
+import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
 import de.cau.cs.kieler.kex.model.ExtPointConstants;
@@ -31,9 +33,11 @@ public class ExtPointExampleCollector extends ExampleCollector {
 
 	/**
 	 * loads examples of extenders.
+	 * 
+	 * @throws KielerException
 	 */
 	@Override
-	public void loadExamples() {
+	public void loadExamples() throws KielerException {
 		if (this.categoryPool == null) {
 			this.categoryPool = new ArrayList<String>();
 		}
@@ -48,7 +52,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 							.getAttribute(ExtPointConstants.ID);
 					if (getExamplePool().containsKey(exampleId)) {
 						// TODO darf eigentlich nicht passieren
-						// RUNTIME Exception schmeiï¿½en...
+						// RUNTIME Exception schmeißen...
 						// oder einfach annehmen, dass dies nicht geschieht
 						continue;
 					}
@@ -57,17 +61,18 @@ public class ExtPointExampleCollector extends ExampleCollector {
 				} else if (ExtPointConstants.CATEGORY.equals(elementName)) {
 					collectCategory(element);
 				}
-			} catch (Exception e) {
-				// mh, hier kann nciht einfach jeden exception gefangen
-				// werden... untersuche welche exceptions kommen und lasse sie
-				// in eine kieler exception verschwinden
-				// if (e instanceof KielerException)
-				// TODO auch hier besser machen, den ganzen mechanismus und
-				// natuerlich ueber statusmanager
-				// ExceptionHandler.get().add(
-				// new KielerModelException(e.getMessage(), element));
-				// else
-				e.printStackTrace();
+			} catch (InvalidRegistryObjectException e) {
+				throw new KielerException("Error while loading example \""
+						+ element.getAttribute(ExtPointConstants.ID) + "\". "
+						+ e.getLocalizedMessage());
+			} catch (IllegalArgumentException e1) {
+				throw new KielerException("Error while loading example \""
+						+ element.getAttribute(ExtPointConstants.ID) + "\". "
+						+ e1.getLocalizedMessage());
+			} catch (KielerException e2) {
+				throw new KielerException("Error while loading example \""
+						+ element.getAttribute(ExtPointConstants.ID) + "\". "
+						+ e2.getLocalizedMessage());
 			}
 		}
 	}

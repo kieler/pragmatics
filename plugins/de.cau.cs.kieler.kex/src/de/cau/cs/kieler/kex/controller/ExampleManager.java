@@ -55,8 +55,10 @@ public class ExampleManager {
 
 	/**
 	 * loads examples, if not loaded before.
+	 * 
+	 * @throws KielerException
 	 */
-	public void load(boolean forceLoad) {
+	public void load(boolean forceLoad) throws KielerException {
 		if (!this.isLoaded || forceLoad) {
 			loadExamples();
 			// after completely loaded
@@ -64,7 +66,9 @@ public class ExampleManager {
 		}
 	}
 
-	private void loadExamples() {
+	private void loadExamples() throws KielerException {
+		// TODO exception pool aufbauen und alle examples laden die gehen, rest
+		// als messagebox anzeigen.
 		this.extensionCollector.loadExamples();
 		this.databaseCollector.loadExamples();
 	}

@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.cau.cs.kieler.core.KielerException;
+
 public abstract class ExampleCollector {
 
-	public abstract void loadExamples();
+	public abstract void loadExamples() throws KielerException;
 
 	/**
 	 * returns the loaded examplePool

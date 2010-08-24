@@ -65,6 +65,9 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 			validateElement(categories, 1, "Categories");
 			result.put(ExampleElement.CATEGORIES, categories);
 
+			result.put(ExampleElement.CREATE_EXAMPLE_FOLDER, exRePage
+					.createExampleFolder());
+
 			rePage.buildResourceStructure();
 			List<ExportResource> exportedResources = rePage
 					.getExportedResources();
@@ -125,9 +128,8 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 			throws KielerException {
 		if (list == null || list.size() < minLength) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("No ").append(listName)
-					.append(" has been selected.\n")
-					.append("Please choose at least ")
+			errorMsg.append("No ").append(listName).append(
+					" has been selected.\n").append("Please choose at least ")
 					.append(String.valueOf(minLength));
 			throw new KielerException(errorMsg.toString());
 		}
@@ -140,9 +142,8 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 				throw new IllegalArgumentException();
 		} catch (IllegalArgumentException e) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("The field ")
-					.append("Example Version")
-					.append(" has to be set and a correct version like 1.0 or 1.4.");
+			errorMsg.append("The field ").append("Example Version").append(
+					" has to be set and a correct version like 1.0 or 1.4.");
 			throw new KielerException(errorMsg.toString());
 		}
 	}
@@ -151,9 +152,9 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 			String checkableName) throws KielerException {
 		if (checkable == null || checkable.length() < minLength) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("The field ").append(checkableName)
-					.append(" has to be set with at least ")
-					.append(String.valueOf(minLength)).append(" characters.");
+			errorMsg.append("The field ").append(checkableName).append(
+					" has to be set with at least ").append(
+					String.valueOf(minLength)).append(" characters.");
 			throw new KielerException(errorMsg.toString());
 		}
 	}

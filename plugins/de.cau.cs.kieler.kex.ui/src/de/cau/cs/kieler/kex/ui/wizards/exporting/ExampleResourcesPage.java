@@ -115,11 +115,11 @@ public class ExampleResourcesPage extends WizardPage {
 	 */
 	private void initResourceGroup(Composite parent, List<Object> input) {
 		this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
-				getResourceProvider(IResource.FOLDER),
-				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-				getResourceProvider(IResource.FILE),
-				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-				SWT.BORDER, DialogUtil.inRegularFontMode(parent));
+				getResourceProvider(IResource.FOLDER), WorkbenchLabelProvider
+						.getDecoratingWorkbenchLabelProvider(),
+				getResourceProvider(IResource.FILE), WorkbenchLabelProvider
+						.getDecoratingWorkbenchLabelProvider(), SWT.BORDER,
+				DialogUtil.inRegularFontMode(parent));
 		this.resourceGroup.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -163,7 +163,6 @@ public class ExampleResourcesPage extends WizardPage {
 	 * Returns a content provider for {@link IResource}s that returns only
 	 * children of the given resource type.
 	 */
-	// TODO verstehen.
 	private ITreeContentProvider getResourceProvider(final int resourceType) {
 		return new WorkbenchContentProvider() {
 			@Override
@@ -190,7 +189,7 @@ public class ExampleResourcesPage extends WizardPage {
 					return results.toArray();
 				}
 				// input element case
-				if (o instanceof ArrayList) {
+				if (o instanceof ArrayList<?>) {
 					return ((ArrayList<?>) o).toArray();
 				}
 				return new Object[0];
@@ -298,8 +297,8 @@ public class ExampleResourcesPage extends WizardPage {
 
 	/**
 	 * Adds the path of given folder resource to a given list of {@link IPath}.<br>
-	 * Filters than all member resources of that folder and uses
-	 * {@code makeRelativePath()}<br>
+	 * Filters than all member resources of that folder and uses {@code
+	 * makeRelativePath()}<br>
 	 * to create paths which will be added to result.<br>
 	 * All resource will be add to duplicateChecker list.
 	 * 

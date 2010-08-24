@@ -209,7 +209,6 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		new Label(exampleGroup, SWT.NONE).setText("Title:");
 		Text text = new Text(exampleGroup, SWT.NONE);
 		text.setText(this.dummyText);
-		// text.setTabs(16);
 		this.setExampleTitle(text);
 		this.getExampleTitle().setEditable(false);
 		this.getExampleTitle().setLayoutData(

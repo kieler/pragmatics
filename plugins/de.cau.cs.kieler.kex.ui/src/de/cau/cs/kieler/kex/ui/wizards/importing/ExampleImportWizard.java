@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.kex.ui.wizards.importing;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
@@ -20,7 +21,12 @@ public class ExampleImportWizard extends Wizard implements IWizard {
 		this.selection = selection;
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Kieler Example Import");
-		ExampleManager.get().load(false);
+		try {
+			ExampleManager.get().load(true);
+		} catch (KielerException e) {
+			MessageDialog.openError(this.getShell(), "Could not load example.",
+					e.getLocalizedMessage());
+		}
 	}
 
 	@Override

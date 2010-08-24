@@ -34,8 +34,10 @@ public class ExampleImportUtil {
 			// oder im namen
 			// src/Hankees.txt
 			String destFolder = workspaceLocation + selectedResource.toString()
-					+ "/" + example.getName() + "/";
-			createFolder(destFolder);
+					+ "/";
+			// not permantly create a example parent folder with its name.
+			// it will be triggered by the export mechanism.
+			// createFolder(destFolder+ "/"+ example.getName() + "/");
 
 			Bundle bundle = Platform.getBundle(example.getNamespaceId());
 

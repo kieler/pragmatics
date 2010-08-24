@@ -67,8 +67,8 @@ public class ExtPointExampleCreator {
 	 */
 	private Document parserPluginXML(final File file) throws SAXException,
 			IOException, ParserConfigurationException {
-		return DocumentBuilderFactory.newInstance().newDocumentBuilder()
-				.parse(file);
+		return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
+				file);
 	}
 
 	/**
@@ -251,16 +251,25 @@ public class ExtPointExampleCreator {
 	/**
 	 * creates example files to given location
 	 * 
+	 * @param exampleId
+	 * 
 	 * @param sourceProject
 	 */
 	public List<IPath> copyResources(File destFile,
-			List<ExportResource> resources) throws KielerException {
+			List<ExportResource> resources, String exampleId)
+			throws KielerException {
 		List<IPath> errorList = new ArrayList<IPath>();
 		List<IPath> result = new ArrayList<IPath>();
 		try {
+			if (exampleId != null) {
+				destFile = new File(destFile.getPath() + "/" + exampleId + "/");
+				destFile.mkdir();
+				result.add(new Path(exampleId + "/"));
+			}
 			for (ExportResource resource : resources) {
 				copyFile(resource, destFile.getPath(), errorList);
-				result.add(resource.getLocalPath());
+				result.add(new Path(exampleId + "/"
+						+ resource.getLocalPath().toPortableString()));
 			}
 		} catch (KielerException e) {
 			throw new KielerModelException(e.getLocalizedMessage(), errorList);
@@ -276,8 +285,8 @@ public class ExtPointExampleCreator {
 			String sourcePath = this.workspacePath.toPortableString()
 					+ resource.getResource().getFullPath().toPortableString();
 
-			destLocation.append(destPath).append(File.separatorChar)
-					.append(resource.getLocalPath());
+			destLocation.append(destPath).append(File.separatorChar).append(
+					resource.getLocalPath());
 			Path destination = new Path(destLocation.toString());
 			errorList.add(destination);
 
@@ -339,10 +348,10 @@ public class ExtPointExampleCreator {
 		Element createdExample = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE);
 		createdExample.setAttribute(ExtPointConstants.ID, example.getId());
-		createdExample.setAttribute(ExtPointConstants.CONTACT,
-				example.getContact());
-		createdExample.setAttribute(ExtPointConstants.DESCRIPTION,
-				example.getDescription());
+		createdExample.setAttribute(ExtPointConstants.CONTACT, example
+				.getContact());
+		createdExample.setAttribute(ExtPointConstants.DESCRIPTION, example
+				.getDescription());
 		createdExample.setAttribute(ExtPointConstants.NAME, example.getName());
 		createdExample.setAttribute(ExtPointConstants.VERSION, example
 				.getVersion().toString());
@@ -364,8 +373,8 @@ public class ExtPointExampleCreator {
 	private Node toNode(IPath exResource) {
 		Element createdExResource = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE_RESOURCE);
-		createdExResource.setAttribute(ExtPointConstants.RESOURCE,
-				exResource.toPortableString());
+		createdExResource.setAttribute(ExtPointConstants.RESOURCE, exResource
+				.toPortableString());
 		return createdExResource;
 	}
 

@@ -28,10 +28,10 @@ public class ExampleExportUtil {
 	@SuppressWarnings("unchecked")
 	public static Example mapToExample(Map<ExampleElement, Object> properties) {
 		Example result = new Example(
-				(String) properties.get(ExampleElement.ID),
-				(String) properties.get(ExampleElement.NAME),
-				Version.parseVersion((String) properties
-						.get(ExampleElement.VERSION)),
+				(String) properties.get(ExampleElement.ID), (String) properties
+						.get(ExampleElement.NAME), Version
+						.parseVersion((String) properties
+								.get(ExampleElement.VERSION)),
 				(SourceType) properties.get(ExampleElement.SOURCETYPE));
 		result.setDescription((String) properties
 				.get(ExampleElement.DESCRIPTION));
@@ -75,13 +75,16 @@ public class ExampleExportUtil {
 
 		List<ExportResource> resources = (List<ExportResource>) properties
 				.get(ExampleElement.RESOURCES);
+		boolean createExampleFolder = (Boolean) properties
+				.get(ExampleElement.CREATE_EXAMPLE_FOLDER);
+		List<IPath> destResources = extensionCreator
+				.copyResources(destFile, resources,
+						(createExampleFolder ? mappedExample.getId() : null));
 		try {
-			List<IPath> destResources = extensionCreator.copyResources(
-					destFile, resources);
 			extensionCreator.addExtension(destFile, mappedExample,
-					destResources,
-					properties.get(ExampleElement.CREATE_CATEGORIES),
-					properties.get(ExampleElement.DELETE_CATEGORIES));
+					destResources, properties
+							.get(ExampleElement.CREATE_CATEGORIES), properties
+							.get(ExampleElement.DELETE_CATEGORIES));
 		} catch (KielerModelException e) {
 			if (e.getModelObject() instanceof List<?>) {
 				extensionCreator.deleteExampleResource((List<IPath>) e
@@ -90,5 +93,4 @@ public class ExampleExportUtil {
 			throw e;
 		}
 	}
-
 }

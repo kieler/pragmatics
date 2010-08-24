@@ -1,9 +1,11 @@
 package de.cau.cs.kieler.kex.ui.wizards.editing;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 
+import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 
 public class ExampleEditWizard extends Wizard implements IWizard {
@@ -18,7 +20,12 @@ public class ExampleEditWizard extends Wizard implements IWizard {
 		super();
 		this.selection = selection;
 		setWindowTitle("Kieler Example Edit");
-		ExampleManager.get().load(false);
+		try {
+			ExampleManager.get().load(true);
+		} catch (KielerException e) {
+			MessageDialog.openError(this.getShell(), "Could not load example.",
+					e.getLocalizedMessage());
+		}
 	}
 
 	@Override
