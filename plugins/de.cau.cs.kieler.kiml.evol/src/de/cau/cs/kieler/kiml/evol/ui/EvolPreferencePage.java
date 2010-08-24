@@ -11,8 +11,9 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.evol;
+package de.cau.cs.kieler.kiml.evol.ui;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -23,6 +24,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+
+import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 
 /**
  * Preference page for KIML Evolutionary.
@@ -38,7 +41,9 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
      * Creates a new preference page.
      */
     public EvolPreferencePage() {
-        super("this_title_seems_to_be_ignored", null, FLAT);
+        // The title of this preference page is already specified in the
+        // extension details.
+        super("", null, FLAT);
         setDescription("Preferences for Evolutionary Meta Layout.");
     }
 
@@ -72,11 +77,21 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         // true /* useGroup */);
         // addField(editorsEditor);
 
+        final BooleanFieldEditor useLayoutHint =
+                new BooleanFieldEditor(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME,
+                        "Adopt layout hint from genome", miscGroup);
+        addField(useLayoutHint);
+
+        final BooleanFieldEditor useDifferentTypeLayoutHint =
+                new BooleanFieldEditor(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT,
+                        "... also for different types", miscGroup);
+        addField(useDifferentTypeLayoutHint);
+
         // layout
         algorithmGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
-        miscGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
+        miscGroup.setLayout(new GridLayout(1, false));
         parent.setLayout(new FillLayout());
     }
 
-    private static final int NUM_COLUMNS = 3;
+    private static final int NUM_COLUMNS = 2;
 }

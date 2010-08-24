@@ -446,7 +446,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kiml.evol.EvolPreferencePage"
+            class="de.cau.cs.kieler.kiml.evol.ui.EvolPreferencePage"
             id="de.cau.cs.kieler.kiml.evol.preferences.evol"
             name="KIML Evolutionary">
       </page>
