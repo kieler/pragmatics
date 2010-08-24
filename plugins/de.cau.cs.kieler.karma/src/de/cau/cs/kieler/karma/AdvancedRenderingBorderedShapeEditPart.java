@@ -66,13 +66,12 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
         conditions = conditionProvider.getPairs(className);
         figureProvider = conditionProvider.getFigureProvider(className);
-
     }
 
     @Override
     public void handleNotificationEvent(final Notification notification) {
         super.handleNotificationEvent(notification);
-        if (!(notification.isTouch()) && !(notification.getNotifier() instanceof BoundsImpl)) {
+        if (!(notification.isTouch())) {
             if (primaryShape != null) {
                 if (primaryShape instanceof SwitchableFigure) {
                     SwitchableFigure attrFigure = (SwitchableFigure) primaryShape;

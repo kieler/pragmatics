@@ -67,6 +67,7 @@ public class SwitchableFigure extends Figure { // implements IAttributeAwareFigu
      */
     public void setCurrentFigure(final IFigure figure) {
         currentFigure = figure;
+        currentFigure.setBounds(super.getBounds());
         this.repaint();
     }
 
@@ -108,7 +109,12 @@ public class SwitchableFigure extends Figure { // implements IAttributeAwareFigu
         }
          */
         super.setBounds(rect);
+        if (currentFigure != null) {
+            this.currentFigure.setBounds(rect);
+        }
     }
+    
+    
 
     /**
      * Directly set the bounds of this figure, without further checks.
