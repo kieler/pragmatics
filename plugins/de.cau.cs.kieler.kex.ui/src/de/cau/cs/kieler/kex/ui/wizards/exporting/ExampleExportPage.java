@@ -15,8 +15,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -34,7 +36,7 @@ public class ExampleExportPage extends WizardPage {
 	private List<URL> resources;
 
 	private Tree categoryTree;
-
+	private final List<String> checkedCategories;
 	private final List<String> creatableCategories;
 	private final List<String> deletableCategories;
 
@@ -42,6 +44,7 @@ public class ExampleExportPage extends WizardPage {
 		super(pageName);
 		setTitle("Destination Choice");
 		setDescription("Set destination for exported Example and determine Example Resources.");
+		checkedCategories = new ArrayList<String>();
 		creatableCategories = new ArrayList<String>();
 		deletableCategories = new ArrayList<String>();
 	}
@@ -78,7 +81,8 @@ public class ExampleExportPage extends WizardPage {
 						.getShell());
 
 				dirDiag.setText("Choose destination directory");
-				dirDiag.setMessage("Select a directory in a java plugin project.");
+				dirDiag
+						.setMessage("Select a directory in a java plugin project.");
 				String dir = dirDiag.open();
 				// TODO ueberlegen, ob hier direkt eine pruefung eingebaut
 				// werden kann.
@@ -98,11 +102,11 @@ public class ExampleExportPage extends WizardPage {
 		middleGroup.setToolTipText("Please select one or more cateogies.");
 		middleGroup.setLayout(middleLayout);
 		createCheckedTree(middleGroup);
-		createButonComposite(middleGroup);
+		createButtonComposite(middleGroup);
 
 	}
 
-	private void createButonComposite(Group middleGroup) {
+	private void createButtonComposite(Group middleGroup) {
 		Composite buttonCompo = new Composite(middleGroup, SWT.NONE);
 		GridLayout buttonCompoLayout = new GridLayout();
 		buttonCompoLayout.numColumns = THREE_COLUMNS;
@@ -160,8 +164,10 @@ public class ExampleExportPage extends WizardPage {
 		revertTree.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO revert button, der alle categorie änderungen
-				// zurücksetzt.
+				categoryTree.removeAll();
+				fillTree(categoryTree);
+				creatableCategories.clear();
+				deletableCategories.clear();
 				super.widgetSelected(e);
 			}
 		});
@@ -189,6 +195,27 @@ public class ExampleExportPage extends WizardPage {
 		this.categoryTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		categoryTree.setLayoutData(data);
+		categoryTree.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				// fill per hand checked elements list
+				if (event.detail == SWT.CHECK) {
+					int removeCount = -1;
+					String category = ((TreeItem) event.item).getText();
+					for (int i = 0; i < checkedCategories.size(); i++) {
+						if (category.equals(checkedCategories.get(i))) {
+							removeCount = i;
+							break;
+						}
+					}
+
+					if (removeCount == -1) {
+						checkedCategories.add(category);
+					} else
+						checkedCategories.remove(removeCount);
+				}
+			}
+
+		});
 		fillTree(categoryTree);
 
 	}
@@ -199,7 +226,7 @@ public class ExampleExportPage extends WizardPage {
 	 * @param tree
 	 *            the tree to fill
 	 */
-	private void fillTree(Tree tree) {
+	public static void fillTree(Tree tree) {
 		// disable drawing to avoid flicker
 		tree.setRedraw(false);
 		List<String> categories = ExampleManager.get().getCategories();
@@ -211,12 +238,8 @@ public class ExampleExportPage extends WizardPage {
 		tree.setRedraw(true);
 	}
 
-	public List<String> getCategories() {
-		List<String> result = new ArrayList<String>();
-		for (TreeItem item : this.categoryTree.getSelection()) {
-			result.add(item.getText());
-		}
-		return result;
+	public List<String> getCheckedCategories() {
+		return checkedCategories;
 	}
 
 	public String getDestLocation() {

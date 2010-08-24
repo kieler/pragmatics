@@ -39,7 +39,7 @@ public class ExampleImportWizard extends Wizard implements IWizard {
 		try {
 			ExampleManager.get().importExamples(
 					importExamplePage.getContainerPath(),
-					importExamplePage.getSelectedExamples());
+					importExamplePage.getCheckedExamples());
 		} catch (KielerException e) {
 			// Messagebox ausgabe
 			return false;

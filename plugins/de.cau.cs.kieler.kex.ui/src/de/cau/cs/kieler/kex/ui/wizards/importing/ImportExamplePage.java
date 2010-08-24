@@ -12,8 +12,10 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -37,12 +39,15 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
 	private final String dummyText = "                                                                  ";
 
+	protected List<Example> checkedExamples;
+
 	private static final String EXAMPLE_DATA_KEY = "example";
 
 	protected ImportExamplePage(String name, IStructuredSelection selection) {
 		super(name, selection);
 		setTitle("Import Example");
 		setDescription("Enter example attributes and destination location.");
+		this.checkedExamples = new ArrayList<Example>();
 	}
 
 	// TODO Probleme mit der Hintergrund farbe unter ubuntu, k�nnten mit dem
@@ -109,13 +114,72 @@ public class ImportExamplePage extends WizardResourceImportPage {
 				updateElements(e.item);
 			}
 		});
+		exampleTree.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				// fill per hand checked elements list
+				if (event.detail == SWT.CHECK) {
+					TreeItem item = (TreeItem) event.item;
+					Object data = item.getData("example");
+					// if category is choosen.
+					if (data != null) {
+						updateCheckedExamples((Example) data);
+					} else {
+						updateCategoryItems(item);
+					}
+				}
+			}
+
+		});
+
 		initTree(exampleTree);
+	}
+
+	private void updateCategoryItems(TreeItem item) {
+		boolean checked = item.getChecked();
+		boolean isAdded = false;
+		for (TreeItem itemElement : item.getItems()) {
+			isAdded = false;
+			Example example = (Example) itemElement.getData("example");
+			for (int i = 0; i < checkedExamples.size(); i++) {
+				if (example.equals(checkedExamples.get(i))) {
+					isAdded = true;
+				}
+			}
+			if (checked && !isAdded)
+				checkedExamples.add(example);
+			if (!checked && isAdded)
+				checkedExamples.remove(example);
+			itemElement.setChecked(checked);
+		}
+	}
+
+	/**
+	 * Updates checked elements list, if contains element, remove it otherwise
+	 * add it.
+	 * 
+	 * @param example
+	 */
+	private void updateCheckedExamples(Example example) {
+		int removeCount = -1;
+		for (int i = 0; i < checkedExamples.size(); i++) {
+			if (example.equals(checkedExamples.get(i))) {
+				removeCount = i;
+				break;
+			}
+		}
+		if (removeCount == -1) {
+			checkedExamples.add(example);
+
+		} else {
+			checkedExamples.remove(removeCount);
+
+		}
 	}
 
 	private void initTree(Tree tree) {
 		List<String> categories = ExampleManager.get().getCategories();
 		for (int i = 0; i < categories.size(); i++) {
-			TreeItem iItem = new TreeItem(tree, SWT.NONE);
+			TreeItem iItem = new TreeItem(tree, SWT.CHECK);
 			iItem.setText(categories.get(i));
 			addExamplesToItem(categories.get(i), iItem);
 		}
@@ -188,20 +252,8 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		}
 	}
 
-	public List<Example> getSelectedExamples() {
-		List<Example> result = new ArrayList<Example>();
-		for (TreeItem item : exampleTree.getSelection()) {
-			Object data = item.getData("example");
-			// if category is choosen.
-			if (data != null) {
-				result.add((Example) data);
-			} else {
-				for (TreeItem itemElement : item.getItems()) {
-					result.add((Example) itemElement.getData("example"));
-				}
-			}
-		}
-		return result;
+	public List<Example> getCheckedExamples() {
+		return this.checkedExamples;
 	}
 
 	public void setExampleDescription(Text exampleDescription) {

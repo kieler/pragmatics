@@ -61,7 +61,7 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 			validateField(destLocation, 2, "Destination Location");
 			result.put(ExampleElement.DEST_LOCATION, destLocation);
 
-			List<String> categories = exRePage.getCategories();
+			List<String> categories = exRePage.getCheckedCategories();
 			validateElement(categories, 1, "Categories");
 			result.put(ExampleElement.CATEGORIES, categories);
 
