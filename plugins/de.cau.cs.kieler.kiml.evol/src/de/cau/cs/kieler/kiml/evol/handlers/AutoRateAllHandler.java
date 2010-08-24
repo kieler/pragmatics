@@ -91,7 +91,7 @@ public class AutoRateAllHandler extends AbstractHandler {
                 return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
 
             } catch (final OperationCanceledException exception) {
-                // Cancelled by the user.
+                // Canceled by the user.
                 return new Status(IStatus.CANCEL, EvolPlugin.PLUGIN_ID,
                         "The auto-rating was cancelled.", exception);
 

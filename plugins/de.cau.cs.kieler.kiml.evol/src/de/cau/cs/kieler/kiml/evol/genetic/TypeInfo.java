@@ -16,10 +16,11 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * A type info describes the parameters of a type.
- *
+ * A type info describes the parameters of a type that is used in an
+ * {@link IGene}.
+ * 
  * @author bdu
- *
+ * 
  * @param <T>
  */
 public abstract class TypeInfo<T extends Comparable<? super T>> {
@@ -63,7 +64,6 @@ public abstract class TypeInfo<T extends Comparable<? super T>> {
         this.clazz = theClass;
     }
 
-    // TODO: "degenericalize" this class and use clazz for casting the value
     /**
      * @return the default value
      */

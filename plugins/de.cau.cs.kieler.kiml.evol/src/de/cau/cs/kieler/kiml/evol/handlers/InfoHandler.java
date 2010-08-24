@@ -37,12 +37,12 @@ public class InfoHandler extends AbstractHandler {
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
 
-        if ((view == null)) {
+        if (view == null) {
             return null;
         }
 
         final EvolModel model = view.getEvolModel();
-        if (((model == null) || !model.isValid())) {
+        if ((model == null) || !model.isValid()) {
             return null;
         }
 
