@@ -22,7 +22,7 @@ public class ExampleImportWizard extends Wizard implements IWizard {
 		setNeedsProgressMonitor(true);
 		setWindowTitle("Kieler Example Import");
 		try {
-			ExampleManager.get().load(true);
+			ExampleManager.get().load(false);
 		} catch (KielerException e) {
 			MessageDialog.openError(this.getShell(), "Could not load example.",
 					e.getLocalizedMessage());

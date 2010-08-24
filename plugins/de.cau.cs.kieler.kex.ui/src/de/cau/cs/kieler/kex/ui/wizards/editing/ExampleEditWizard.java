@@ -21,7 +21,7 @@ public class ExampleEditWizard extends Wizard implements IWizard {
 		this.selection = selection;
 		setWindowTitle("Kieler Example Edit");
 		try {
-			ExampleManager.get().load(true);
+			ExampleManager.get().load(false);
 		} catch (KielerException e) {
 			MessageDialog.openError(this.getShell(), "Could not load example.",
 					e.getLocalizedMessage());
