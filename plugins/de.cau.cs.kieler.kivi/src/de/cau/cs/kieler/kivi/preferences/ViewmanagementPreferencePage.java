@@ -31,9 +31,12 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -57,6 +60,8 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
 
     private CheckboxTableViewer checkboxViewer;
 
+    private Button kiviActive;
+
     private List<Descriptor> combinations = Viewmanagement.getInstance().getAvailableCombinations();
 
     /**
@@ -79,6 +84,7 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
      */
     public boolean performOk() {
         if (super.performOk()) {
+            Viewmanagement.getInstance().setActive(kiviActive.getSelection());
             for (Descriptor d : combinations) {
                 boolean checked = checkboxViewer.getChecked(d);
                 d.setActive(checked);
@@ -104,16 +110,32 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
         layout.verticalSpacing = 10;
         mainComposite.setLayout(layout);
 
-        Label topLabel = new Label(mainComposite, SWT.NONE);
+        kiviActive = new Button(mainComposite, SWT.CHECK);
+        final Composite combinationsComposite = new Composite(mainComposite, SWT.NONE);
+
+        kiviActive.setText("Enable view management");
+        kiviActive.setSelection(Viewmanagement.getInstance().isActive());
+        kiviActive.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(final SelectionEvent e) {
+                combinationsComposite.setEnabled(((Button) e.widget).getSelection());
+            }
+
+            public void widgetDefaultSelected(final SelectionEvent e) {
+            }
+        });
+
+        combinationsComposite.setEnabled(Viewmanagement.getInstance().isActive());
+
+        Label topLabel = new Label(combinationsComposite, SWT.NONE);
         topLabel.setText("Combinations");
         topLabel.setFont(font);
 
-        Composite combinationsComposite = new Composite(mainComposite, SWT.NONE);
         combinationsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        GridLayout decoratorsLayout = new GridLayout();
-        decoratorsLayout.marginWidth = 0;
-        decoratorsLayout.marginHeight = 0;
-        combinationsComposite.setLayout(decoratorsLayout);
+        GridLayout combinationsLayout = new GridLayout();
+        combinationsLayout.marginWidth = 0;
+        combinationsLayout.marginHeight = 0;
+        combinationsComposite.setLayout(combinationsLayout);
         combinationsComposite.setFont(font);
 
         checkboxViewer = CheckboxTableViewer.newCheckList(combinationsComposite, SWT.SINGLE
@@ -181,17 +203,17 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
             }
         });
 
-        createDescriptionArea(mainComposite);
+        createDescriptionArea(combinationsComposite);
 
         populateDescriptors();
 
         return null;
     }
 
-    private void createDescriptionArea(final Composite mainComposite) {
+    private void createDescriptionArea(final Composite composite) {
 
-        Font mainFont = mainComposite.getFont();
-        Composite textComposite = new Composite(mainComposite, SWT.NONE);
+        Font mainFont = composite.getFont();
+        Composite textComposite = new Composite(composite, SWT.NONE);
         textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
         GridLayout textLayout = new GridLayout();
         textLayout.marginWidth = 0;

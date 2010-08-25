@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.RegistryFactory;
@@ -84,6 +85,7 @@ public class Viewmanagement {
      *            true if activating
      */
     public void setActive(final boolean a) {
+        System.out.println("setting kivi state to " + a);
         if (active && !a) {
             // deactivate triggers
             synchronized (combinationsByTrigger) {
@@ -300,19 +302,20 @@ public class Viewmanagement {
         for (IConfigurationElement element : elements) {
             try {
                 Descriptor descriptor = new Descriptor(element.getAttribute("name"),
-                        element.getAttribute("description"), Class.forName(element
-                                .getAttribute("class")));
+                        element.getAttribute("description"), element.createExecutableExtension(
+                                "class").getClass());
                 availableCombinations.add(descriptor);
             } catch (InvalidRegistryObjectException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (CoreException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
     }
 
+    // TODO merge these two methods
     /**
      * Load all information from the effects extension point.
      */
@@ -322,13 +325,13 @@ public class Viewmanagement {
         for (IConfigurationElement element : elements) {
             try {
                 Descriptor descriptor = new Descriptor(element.getAttribute("name"),
-                        element.getAttribute("description"), Class.forName(element
-                                .getAttribute("class")));
+                        element.getAttribute("description"), element.createExecutableExtension(
+                                "class").getClass());
                 availableEffects.add(descriptor);
             } catch (InvalidRegistryObjectException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (CoreException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
@@ -356,11 +359,12 @@ public class Viewmanagement {
         }
         return new ArrayList<ICombination>();
     }
-    
+
     /**
      * Check whether any combination of the given class is active.
      * 
-     * @param clazz the combination class to look for
+     * @param clazz
+     *            the combination class to look for
      * @return true if an active combination was found
      */
     private boolean isCombinationClassActive(final Class<?> clazz) {

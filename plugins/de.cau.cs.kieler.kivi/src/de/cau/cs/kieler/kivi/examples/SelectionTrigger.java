@@ -50,27 +50,30 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
         selection = s;
     }
 
-    @Override
-    public void setActive(final boolean a) {
-        if (!isActive() && a) {
-            final ISelectionListener isl = this;
-            Display.getDefault().asyncExec(new Runnable() {
-                public void run() {
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
-                            .addSelectionListener(isl);
-                }
-            });
-        } else if (isActive() && !a) {
-            final ISelectionListener isl = this;
-            Display.getDefault().asyncExec(new Runnable() {
-                public void run() {
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
-                            .removeSelectionListener(isl);
-                }
-            });
+    /**
+     * {@inheritDoc}
+     */
+    public void register() {
+        final ISelectionListener isl = this;
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
+                        .addSelectionListener(isl);
+            }
+        });
+    }
 
-        }
-        super.setActive(a);
+    /**
+     * {@inheritDoc}
+     */
+    public void unregister() {
+        final ISelectionListener isl = this;
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
+                        .removeSelectionListener(isl);
+            }
+        });
     }
 
     /**

@@ -37,6 +37,11 @@ public abstract class AbstractTrigger implements ITrigger {
      * {@inheritDoc}
      */
     public void setActive(final boolean a) {
+        if (!active && a) {
+            register();
+        } else if (active && !a) {
+            unregister();
+        }
         active = a;
     }
     
@@ -46,5 +51,15 @@ public abstract class AbstractTrigger implements ITrigger {
     public boolean isActive() {
         return active;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public abstract void register();
+    
+    /**
+     * {@inheritDoc}
+     */
+    public abstract void unregister();
 
 }

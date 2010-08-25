@@ -26,19 +26,34 @@ public interface ITrigger {
      * Inform the view management about an event. Call this method when the
      * specific trigger implementation has detected an event.
      * 
-     * @param trigger new instance of this class with set trigger parameters
+     * @param trigger
+     *            new instance of this class with set trigger parameters
      */
     void trigger(ITrigger trigger);
 
     /**
      * Called by the view management to register or unregister this trigger.
-     * @param a true if registering
+     * 
+     * @param a
+     *            true if registering
      */
     void setActive(boolean a);
-    
+
     /**
      * Checks whether the trigger is active or not.
+     * 
      * @return true if active
      */
     boolean isActive();
+
+    /**
+     * Called when the trigger is activated, registers itself where necessary.
+     */
+    void register();
+
+    /**
+     * Called when the trigger is deactivated, unregisters itself where
+     * necessary.
+     */
+    void unregister();
 }

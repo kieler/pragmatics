@@ -33,6 +33,13 @@ public class TextEffect extends AbstractEffect {
     private Label label;
     
     /**
+     * Default constructor.
+     */
+    public TextEffect() {
+        
+    }
+    
+    /**
      * Create new text effect.
      * 
      * @param t text to write
