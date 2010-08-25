@@ -7,6 +7,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -165,5 +166,45 @@ public class IOHandler {
 							+ "\" in").append(source.getPath()).toString());
 		return foundFiles[0];
 
+	}
+
+	/**
+	 * 
+	 * @param sourceUrl
+	 *            , source URL
+	 * @param destPath
+	 *            , destination path as String
+	 * @param overwrite
+	 *            , boolean
+	 * @throws KielerException
+	 * @throws IOException
+	 */
+	// TODO in IOHandler auslagern...
+	public static void writeFile(final URL sourceUrl, final String destPath,
+			final boolean overwrite) throws IOException {
+		File f2 = new File(destPath);
+
+		// TODO immer auf override setzen, muss �ber methode geregelt werden
+		// nicht �ber konstr. glaube ich.
+		InputStream is = sourceUrl.openStream();
+		OutputStream os = new FileOutputStream(f2, overwrite);
+		byte[] buf = new byte[1024];
+		int len;
+		while ((len = is.read(buf)) > 0) {
+			os.write(buf, 0, len);
+		}
+
+		is.close();
+		os.close();
+	}
+
+	/**
+	 * creates a folder with given parameter.
+	 * 
+	 * @param destFolder
+	 *            , pathname of destination folder.
+	 */
+	public static void createFolder(final String destFolder) {
+		(new File(destFolder)).mkdir();
 	}
 }
