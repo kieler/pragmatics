@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -31,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.modules.IBigNodeHandler;
 /**
  * @author pdo
  */
-public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler {
+public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler {
 
     // ===================================== Enums ================================================
 
@@ -67,8 +68,8 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      * defined as 2 times the width of the narrowest node plus the minimal spacing between two
      * elements in the drawn graph ({@code minSpacing}).
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#minSpacing minSpacing
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#width width
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#minSpacing minSpacing
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#width width
      * @see de.cau.cs.kieler.klay.layered.graph.LNode LNode
      */
     private LinkedList<LNode> wideNodes;
@@ -78,7 +79,7 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      * in the graph can be easily identified by this attribute, since their {@code width} is always
      * greater than {@code 1}, whereas the {@code width} of all other nodes remains {@code 1}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#wideNodes wideNodes
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#wideNodes wideNodes
      */
     private int[] width;
 
@@ -86,8 +87,7 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      * The height of each node in the DFS-tree. This attribute is required for the longest path
      * determination only. It will not be reused in any other part of the algorithm.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#longestPath()
-     *      longestPath()
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#longestPath() longestPath()
      */
     private int[] height;
 
@@ -104,13 +104,6 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
     private float minSpacing;
 
     /**
-     * The position relative to the largest node in a layer segment each wide node is assigned to.
-     * 
-     * @see de.cau.cs.kieler.klay.layered.graph.LNode LNode
-     */
-    private ArrayList<LNode> nodeAssignment;
-
-    /**
      * The ID of each wide node. Each dummy node, a wide node is split into, will share the same ID.
      */
     private int[] wideNodeID;
@@ -121,15 +114,16 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      */
     private int longestPath;
 
+
     // ================================== Constructor =============================================
 
     /**
-     * Default constructor for {@link PreprocessingBigNodeHandler}. It creates a new instance of
-     * this class.
+     * Default constructor for {@link AvgPositionBigNodeHandler}. It creates a new instance of this
+     * class.
      * 
      * @see de.cau.cs.kieler.klay.layered.modules.IBigNodeHandler IBigNodeSplitter
      */
-    public PreprocessingBigNodeHandler() {
+    public AvgPositionBigNodeHandler() {
     }
 
     // =============================== Initialization Methods =====================================
@@ -143,6 +137,9 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      * 
      * @param theNodes
      *            a {@code Collection} containing all nodes of the graph
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#computeNodeWidth()
+     *      computeNodeWidth()
      */
     private void initialize(final Collection<LNode> theNodes, final LayeredGraph theLayeredGraph) {
 
@@ -157,8 +154,9 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
         }
         layeredGraph = theLayeredGraph;
 
-        // the number of nodes including all dummy nodes still to add
-        int numNodes = nodes.size() + computeNodeSizes();
+        // precompute the number of nodes including all dummy nodes still to add
+        int numNodes = nodes.size() + computeNodeWidth();
+
         // initialize node attributes
         if (width == null || width.length < nodes.size()) {
             width = new int[nodes.size()];
@@ -222,6 +220,19 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
         getMonitor().done();
     }
 
+    public void removeFixationEdges() {
+        
+        Iterator<LPort> iterator = null;
+        for (LNode node : nodes) {
+            iterator = node.getPorts().iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().getProperty(Properties.FIXATION_PORT)) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
     /**
      * Helper method for the Proprocessing Big-Node-Splitter. It fixates all wide nodes among
      * themselves to prevent the layering from becoming improper. Two wide nodes are either disjoint
@@ -233,26 +244,28 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
     private void fixateWideNodes() {
 
         // the list of positions each wide is assigned to in the graph
-        nodeAssignment = new ArrayList<LNode>(longestPath << 1);
+        ArrayList<LNode> assignmentMap = new ArrayList<LNode>(longestPath << 1);
+        // a temporal list for efficient element insertion
+        ArrayList<LNode> temp = new ArrayList<LNode>(longestPath);
 
         int addedLayers = 0;
         // the leftmost layer the left edge of the wide node is assigned to on average
         int avgLeft, avgRight;
         // counting variables to determine, with which other wide nodes this nodes shares the most
         // layers on average
-        int segment1, segment2, segment3;
+        int segment1, nullSeg, segment3;
         LNode nodeSeg1, nodeSeg3, chosen;
         for (LNode node : wideNodes) {
-            // determine layer, the node will be assigned to on average
-            avgLeft = Math
-                    .round((rightLayer[node.id] + addedLayers - leftLayer[node.id] - width[node.id]) / 2);
+            // determine the layer, the node's leftmost subnode will be assigned to on average
+            avgLeft = (rightLayer[node.id] + addedLayers - leftLayer[node.id] - width[node.id]) >> 1;
             avgRight = avgLeft + width[node.id];
             // determine other wide nodes, also assigned to this layer segment
             segment1 = 1;
-            segment2 = 0;
+            nullSeg = 0;
             segment3 = 1;
-            nodeSeg1 = nodeAssignment.get(avgLeft);
-            nodeSeg3 = nodeAssignment.get(avgRight);
+            nodeSeg1 = assignmentMap.get(avgLeft);
+            nodeSeg3 = assignmentMap.get(avgRight);
+
             chosen = null;
 
             // determine the wide node, the node shares the most layers with (on average)
@@ -260,21 +273,37 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
                 chosen = nodeSeg1;
             } else {
                 for (int layer = avgLeft + 1; layer < avgRight; layer++) {
-                    if (wideNodeID[nodeAssignment.get(layer).id] == wideNodeID[nodeSeg1.id]) {
+                    if (wideNodeID[assignmentMap.get(layer).id] == wideNodeID[nodeSeg1.id]) {
                         segment1++;
-                    } else if (wideNodeID[nodeAssignment.get(layer).id] == wideNodeID[nodeSeg3.id]) {
+                    } else if (wideNodeID[assignmentMap.get(layer).id] == wideNodeID[nodeSeg3.id]) {
                         segment3++;
                     } else {
-                        segment2++;
+                        nullSeg++;
                     }
                 }
+                if (segment1 > segment3 && segment1 > nullSeg) {
+                    chosen = nodeSeg1;
+                } else if (segment3 > nullSeg) {
+                    chosen = nodeSeg3;
+                }
             }
-            if (segment1 > segment3 && segment1 > segment2) {
-                chosen = nodeSeg1;
-            } else if (segment3 > segment2) {
-                chosen = nodeSeg3;
+
+
+            if (chosen == null) {
+                if (nodeSeg1 == null && nodeSeg3 == null) {
+                   int a = 2; 
+                }
+                
+                
+                // no other wide node has already been assigned to that area
+                if (nodeSeg1 == null && nodeSeg3 != null) {
+                    // for (int layer = avgLeft; layer > avgLeft - ; layer++) {
+                }
+                // place wide node in list of assigned wide nodes
+                for (int layer = avgLeft; layer <= avgRight; layer++) {
+                    assignmentMap.set(layer, node);
+                }
             }
-            
             // fixate node to the wide node, it shares the most layers with
             // TODO
         }
@@ -290,10 +319,10 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      * 
      * @return the number of dummy nodes to be added to the graph
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#wideNodes wideNodes
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#width width
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#wideNodes wideNodes
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#width width
      */
-    private int computeNodeSizes() {
+    private int computeNodeWidth() {
 
         // determine width of the smallest node
         double minWidth = Float.MAX_VALUE;
@@ -302,24 +331,23 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
                 minWidth = node.getSize().x;
             }
         }
-        int numDummies = 0;
-        int numLayers = 0;
+        // the number of total dummy nodes to be inserted
+        int totalDummies = 0;
         // determine number of layers necessary to layer the node
         double threshold = (2 * minWidth) + minSpacing;
         for (LNode node : nodes) {
-            numLayers = 1;
+            width[node.id] = 0;
             while (threshold <= node.getSize().x) {
-                numLayers++;
-                numDummies++;
+                width[node.id]++;
                 threshold += minWidth + minSpacing;
             }
-            width[node.id] = numLayers;
-            if (numLayers > 1) {
+            totalDummies += width[node.id];
+            if (width[node.id] > 0) {
                 // node is a wide node
                 wideNodes.add(node);
             }
         }
-        return numDummies;
+        return totalDummies;
     }
 
     /**
@@ -331,8 +359,8 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      * the ID of the wide node, they originate from. Note that after a wide node has been split, its
      * width in layers stored in {@code width} will not be updated.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#wideNodes wideNodes
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#width width
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#wideNodes wideNodes
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#width width
      * 
      * 
      *      TODO
@@ -388,8 +416,8 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      * of each node in the graph, i.e. the leftmost and rightmost layer each node might be assigned
      * to in the layering phase indicated by {@code leftLayer}, resp. {@code rightLayer}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#leftLayer leftLayer
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#rightLayer rightLayer
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#leftLayer leftLayer
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#rightLayer rightLayer
      */
     private void shiftability() {
 
@@ -438,7 +466,7 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      *            will be traversed (i.e. the DFS will pass each node against the edge orietation
      *            from sink to source nodes).
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler.Direction Direction
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler.Direction Direction
      */
     private void shiftabilityDFS(final LNode node, final Direction direction) {
 
@@ -471,7 +499,7 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      * which guarantees a linear execution time. During sorting, the list {@code wideNodes} will be
      * completely cleared and rebuilt.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#wideNodes wideNodes
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#wideNodes wideNodes
      */
     private void sortWideNodes() {
 
@@ -505,7 +533,7 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      * 
      * @return the length of the longest path in the graph
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#longestPathDFS(LNode)
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#longestPathDFS(LNode)
      *      longestPathDFS()
      */
     private int longestPath() {
@@ -525,9 +553,8 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
      * @param node
      *            the root of the current DFS-subtree
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#longestPath()
-     *      longestPath()
-     * @see de.cau.cs.kieler.klay.layered.impl.PreprocessingBigNodeHandler#height height
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#longestPath() longestPath()
+     * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#height height
      */
     private int longestPathDFS(final LNode node) {
 
@@ -543,6 +570,85 @@ public class PreprocessingBigNodeHandler extends AbstractAlgorithm implements IB
         }
         height[node.id] = maxHeight;
         return maxHeight;
+    }
+    
+    
+    private int clearSpace(final ArrayList<LNode> list, final int leftIndex, final int rightIndex) {
+        
+        if (leftIndex == rightIndex) {
+            return 0;
+        }
+        if (leftIndex < 0) {
+            throw new IndexOutOfBoundsException("Input argument leftIndex is less than zero.");
+        }
+        
+        int median = (leftIndex + rightIndex) >> 1;
+        int correction = 0;
+        int shiftLeft = 0;
+        int shiftRight = 0;
+        // median gehört zu links!
+        int i = leftIndex;
+        while (i <= median) {
+            if (list.get(i) != null) {
+                shiftLeft++;
+            }
+            i++;
+        }
+        while (i <= rightIndex) {
+            if (list.get(i) != null) {
+                shiftRight++;
+            }
+            i++;
+        }
+        // determine all nodes to shift to the left
+        int shiftUpTo = median;
+        i = shiftUpTo;
+        while (i >= 0 && shiftLeft > 0) {
+            if (list.get(i) == null) {
+                shiftLeft--;
+            }
+            shiftUpTo--;
+        }
+        correction = shiftLeft;
+        shiftRight += correction;
+        // shift nodes to the left
+        int current = shiftUpTo;
+        while (current <= median) {
+            while (list.get(current) == null) {
+                current--;
+            }
+            list.set(shiftUpTo, list.get(current));
+            shiftUpTo++;
+            current++;
+        }
+        // determine all nodes to shift to the right
+        shiftUpTo = median + 1;
+        i = shiftUpTo;
+        while (i < list.size() && shiftRight > 0) {
+            if (list.get(i) == null) {
+                shiftRight--;
+            }
+            shiftUpTo++;
+        }
+        // add additional space, if necessary
+        if (i == list.size()) {
+            while (shiftRight > 0) {
+                list.add(null);
+                shiftUpTo++;
+            }
+        }
+        // shift nodes to the right
+        current = shiftUpTo;
+        while (current > median) {
+            while (list.get(current) == null) {
+                current--;
+            }
+            list.set(shiftUpTo, list.get(current));
+            shiftUpTo--;
+            current--;
+        }
+        
+        return correction;
     }
 
 }

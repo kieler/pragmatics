@@ -19,11 +19,11 @@ import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;
 
 /**
  * Container for priority definitions.
- *
+ * 
  * @author msp
  */
 public final class Properties {
-    
+
     /** Definition of node types used in the layered approach. */
     public enum NodeType {
         /** a normal node is created from a node of the original graph. */
@@ -31,33 +31,30 @@ public final class Properties {
         /** a dummy node created to split a long edge. */
         LONG_EDGE;
     }
-    
+
     /** default value for object spacing. */
     public static final float DEF_SPACING = 20.0f;
 
     /** the original object from which a graph element was created. */
     public static final Property<Object> ORIGIN = new Property<Object>("origin");
     /** minimal spacing between objects. */
-    public static final Property<Float> OBJ_SPACING = new Property<Float>(
-            "objectSpacing", DEF_SPACING);
+    public static final Property<Float> OBJ_SPACING = new Property<Float>("objectSpacing",
+            DEF_SPACING);
     /** priority of elements. */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(
-            "priority", 0);
+    public static final Property<Integer> PRIORITY = new Property<Integer>("priority", 0);
     /** node type. */
-    public static final Property<NodeType> NODE_TYPE = new Property<NodeType>(
-            "nodeType", NodeType.NORMAL);
+    public static final Property<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
+            NodeType.NORMAL);
     /** port constraints. */
     public static final Property<PortConstraints> PORT_CONS = new Property<PortConstraints>(
             "portConstraints", PortConstraints.FREE);
     /** offset for nodes in linear segments. */
-    public static final Property<Integer> LINSEG_OFFSET = new Property<Integer>(
-            "linsegOffset", 0);
+    public static final Property<Integer> LINSEG_OFFSET = new Property<Integer>("linsegOffset", 0);
     /** owning region for node. */
-    public static final Property<Region> REGION = new Property<Region>(
-            "region", null);
+    public static final Property<Region> REGION = new Property<Region>("region", null);
     /** additional information for LinearSegmentsNodePlacer on the layeredGraph. */
-    public static final Property<Boolean> STRAIGHT_EDGES = new Property<Boolean>(
-            "straightEdges", false);
+    public static final Property<Boolean> STRAIGHT_EDGES = new Property<Boolean>("straightEdges",
+            false);
     /** additional information for LongestPathLayerer on the layeredGraph. */
     public static final Property<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             "distributeNodes", false);
@@ -65,9 +62,11 @@ public final class Properties {
     public static final Property<Integer> MINIMAL_EDGE_ANGLE = new Property<Integer>(
             "minEdgeAngle", 0);
     /** flag for reversed edges. */
-    public static final Property<Boolean> REVERSED = new Property<Boolean>(
-            "reversed", false);
-    
+    public static final Property<Boolean> REVERSED = new Property<Boolean>("reversed", false);
+    /** flag indicating, whether a port is incident to fixationEdge. */
+    public static final Property<Boolean> FIXATION_PORT = new Property<Boolean>("fixationPort",
+            false);
+
     /**
      * Hidden default constructor.
      */
