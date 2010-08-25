@@ -1,5 +1,8 @@
 package de.cau.cs.kieler.kex.ui.wizards.importing;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
@@ -42,18 +45,30 @@ public class ExampleImportWizard extends Wizard implements IWizard {
 
 	@Override
 	public boolean performFinish() {
+
 		try {
 			ExampleManager.get().importExamples(
 					importExamplePage.getContainerPath(),
 					importExamplePage.getCheckedExamples());
+			// importExamplePage.getRootResource();
 		} catch (KielerException e) {
 			// Messagebox ausgabe
 			return false;
 		}
-		// TODO refresh local workspace
-		// it would be best if only folder will refreshed in which the example
-		// has to be added.
+
+		// refresh workspace project
+		IContainer element = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(importExamplePage.getContainerPath().segment(0));
+		try {
+			if (element != null) {
+				element.refreshLocal(IContainer.DEPTH_INFINITE, null);
+			}
+		} catch (CoreException e1) {
+			// do nothing
+		}
+		// open head file
+		// IDE.openEditor(getWorkbenchPage(), element, true);
+
 		return true;
 	}
-
 }

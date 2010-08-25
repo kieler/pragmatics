@@ -36,6 +36,8 @@ public class Example {
 
 	private SourceType importType;
 
+	private String rootResource;
+
 	public Example(String id, String name, Version version,
 			SourceType importType) {
 		init(id, name, version, importType);
@@ -138,6 +140,14 @@ public class Example {
 
 	public void addCategories(List<String> categories) {
 		this.categories.addAll(categories);
+	}
+
+	public void setRootResource(String rootResource) {
+		this.rootResource = rootResource;
+	}
+
+	public String getRootResource() {
+		return this.rootResource;
 	}
 
 }

@@ -108,7 +108,17 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="head_resource" type="string">
+         <attribute name="head_file" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="root_resource" type="string">
             <annotation>
                <documentation>
                   

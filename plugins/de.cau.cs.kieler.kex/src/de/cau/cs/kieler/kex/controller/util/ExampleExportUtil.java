@@ -23,10 +23,12 @@ public class ExampleExportUtil {
 	 * 
 	 * @param properties
 	 *            , Map<String, Object>
+	 * @param rootResource
 	 * @return Example
 	 */
 	@SuppressWarnings("unchecked")
-	public static Example mapToExample(Map<ExampleElement, Object> properties) {
+	public static Example mapToExample(Map<ExampleElement, Object> properties,
+			String rootResource) {
 		Example result = new Example(
 				(String) properties.get(ExampleElement.ID), (String) properties
 						.get(ExampleElement.NAME), Version
@@ -38,6 +40,7 @@ public class ExampleExportUtil {
 		result.setContact((String) properties.get(ExampleElement.CONTACT));
 		result.setCategories((List<String>) properties
 				.get(ExampleElement.CATEGORIES));
+		result.setRootResource(rootResource);
 		return result;
 	}
 
@@ -62,16 +65,16 @@ public class ExampleExportUtil {
 			ExtPointExampleCreator extensionCreator,
 			final ExampleCollector... collectors) throws KielerException {
 
-		Example mappedExample = ExampleExportUtil.mapToExample(properties);
+		Example mappedExample = ExampleExportUtil.mapToExample(properties,
+				(String) properties.get(ExampleElement.DEST_LOCATION));
 		ExampleExportUtil.checkDuplicate(mappedExample, collectors);
 
-		String destLocation = (String) properties
-				.get(ExampleElement.DEST_LOCATION);
-		File destFile = new File(destLocation);
+		File destFile = new File(mappedExample.getRootResource());
 		// TODO that has to be made updatable.
 		if (!destFile.exists())
 			throw new KielerException(
-					"There is no file at destination location:" + destLocation);
+					"There is no file at destination location:"
+							+ mappedExample.getRootResource());
 
 		List<ExportResource> resources = (List<ExportResource>) properties
 				.get(ExampleElement.RESOURCES);

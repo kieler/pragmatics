@@ -69,7 +69,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		Group topGroup = new Group(composite, SWT.NONE);
 		topGroup.setLayout(new GridLayout());
 		topGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		topGroup.setText("Set Import Location");
+		topGroup.setText("Set Destination");
 		super.createControl(topGroup);
 
 	}

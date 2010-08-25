@@ -61,6 +61,9 @@ public class IOHandler {
 	public static File filterPluginXML(final File location)
 			throws KielerException {
 
+		// TODO hier ansetzen project rausholen lokale rootresource filtern und
+		// bei example einsetzen sowie beim plugin schreiben berücksichtigen,
+		// bei resources und bei example attribute rootresource
 		File project = searchUP(location, IOHandler.PROJECT_FILE)
 				.getParentFile();
 		if (project == null) {
@@ -76,7 +79,6 @@ public class IOHandler {
 			throw new KielerException(
 					"The choosen destination contains no manifest.mf.");
 		}
-
 	}
 
 	/**
@@ -124,7 +126,7 @@ public class IOHandler {
 	 * @return File, if exactly one file is found otherwise null;
 	 * @throws KielerException
 	 */
-	private static File searchUP(File sourceDir, final String fileName)
+	public static File searchUP(File sourceDir, final String fileName)
 			throws KielerException {
 		File parent = sourceDir;
 		File[] foundFiles = null;
@@ -205,6 +207,6 @@ public class IOHandler {
 	 *            , pathname of destination folder.
 	 */
 	public static void createFolder(final String destFolder) {
-		(new File(destFolder)).mkdir();
+		new File(destFolder).mkdir();
 	}
 }

@@ -143,10 +143,13 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		List<String> categories = filterElement(exampleElement,
 				ExtPointConstants.CATEGORY, ExtPointConstants.ID);
 		example.addCategories(categories);
-		// TODO Pr�fung, ob head_resource schon in resources enthalten ansonsten
+		// TODO Pr�fung, ob head_resource schon in resources enthalten
+		// ansonsten
 		// hinzuf�gen.
 		example.setHeadResource(exampleElement
-				.getAttribute(ExtPointConstants.HEAD_RESOURCE));
+				.getAttribute(ExtPointConstants.HEAD_FILE));
+		example.setRootResource(exampleElement
+				.getAttribute(ExtPointConstants.ROOT_RESOURCE));
 		example
 				.addResources(filterElement(exampleElement,
 						ExtPointConstants.EXAMPLE_RESOURCE,

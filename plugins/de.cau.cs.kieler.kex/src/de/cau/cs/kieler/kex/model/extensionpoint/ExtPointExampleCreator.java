@@ -92,6 +92,7 @@ public class ExtPointExampleCreator {
 				pluginXML = filteredFile;
 			}
 			parsedXML = parserPluginXML(pluginXML);
+
 			NodeList plugins = this.parsedXML
 					.getElementsByTagName(PluginConstants.PLUGIN);
 			int pluginsLength = plugins.getLength();
@@ -124,6 +125,13 @@ public class ExtPointExampleCreator {
 					+ parentNode.getNodeName());
 
 			if (parseElement instanceof Example) {
+				// FIXME schöner machen.
+				// make relative root object
+				File project = IOHandler.searchUP(location,
+						IOHandler.PROJECT_FILE).getParentFile();
+				String relativeLocation = location.getPath().substring(
+						project.getPath().length() + 1);
+				((Example) parseElement).setRootResource(relativeLocation);
 				extensionKEX.appendChild(toNode((Example) parseElement,
 						destResources));
 			} else if (parseElement instanceof String) {
@@ -353,24 +361,28 @@ public class ExtPointExampleCreator {
 		createdExample.setAttribute(ExtPointConstants.NAME, example.getName());
 		createdExample.setAttribute(ExtPointConstants.VERSION, example
 				.getVersion().toString());
-		createdExample.setAttribute(ExtPointConstants.HEAD_RESOURCE, example
+		createdExample.setAttribute(ExtPointConstants.HEAD_FILE, example
 				.getHeadResource());
+		createdExample.setAttribute(ExtPointConstants.ROOT_RESOURCE, example
+				.getRootResource());
 
 		for (String category : example.getCategories()) {
 			createdExample.appendChild(toNode(category));
 		}
 
 		for (IPath exResource : resources) {
-			createdExample.appendChild(toNode(exResource));
+			createdExample.appendChild(toNode(example.getRootResource(),
+					exResource));
 		}
 		return createdExample;
+
 	}
 
-	private Node toNode(IPath exResource) {
+	private Node toNode(String relativePath, IPath exResource) {
 		Element createdExResource = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE_RESOURCE);
-		createdExResource.setAttribute(ExtPointConstants.RESOURCE, exResource
-				.toPortableString());
+		createdExResource.setAttribute(ExtPointConstants.RESOURCE, relativePath
+				+ "/" + exResource.toPortableString());
 		return createdExResource;
 	}
 

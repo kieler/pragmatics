@@ -34,7 +34,7 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 	@Override
 	public void addPages() {
 		examplePage = new ExampleAttributesPage("examplePage");
-		exRePage = new ExampleExportPage("projectImportPage");
+		exRePage = new ExampleExportPage("projectExportPage");
 		rePage = new ExampleResourcesPage("resourcePage");
 		addPage(examplePage);
 		addPage(exRePage);
