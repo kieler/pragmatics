@@ -130,8 +130,10 @@ public class ExtPointExampleCreator {
 				File project = IOHandler.searchUP(location,
 						IOHandler.PROJECT_FILE).getParentFile();
 				String relativeLocation = location.getPath().substring(
-						project.getPath().length() + 1);
-				((Example) parseElement).setRootResource(relativeLocation);
+						project.getPath().length());
+				((Example) parseElement).setRootResource((relativeLocation
+						.length() > 0) ? relativeLocation.substring(1)
+						: relativeLocation);
 				extensionKEX.appendChild(toNode((Example) parseElement,
 						destResources));
 			} else if (parseElement instanceof String) {
