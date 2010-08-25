@@ -32,6 +32,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.transformation.TransformationException;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
@@ -84,7 +85,11 @@ public class TransformationCommand extends AbstractTransactionalCommand {
     protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
             final IAdaptable info) throws ExecutionException {
         if (transformationFramework != null) {
-            transformationFramework.executeTransformation();
+            try {
+                transformationFramework.executeTransformation();
+            } catch (TransformationException e0) {
+                return CommandResult.newErrorCommandResult(e0);
+            }
 
             IEditorPart activeEditor = PlatformUI.getWorkbench()
                     .getActiveWorkbenchWindow().getActivePage()
@@ -148,10 +153,10 @@ public class TransformationCommand extends AbstractTransactionalCommand {
 
         // List<EObject> sel = selection.toList();
         // List<EObject> sel = ModelingUtil.getModelElementsFromSelection();
-        transformationFramework
-                .setParameters(selection.toArray(new Object[selection.size()]));
-        return transformationFramework.initializeTransformation(fileName, command,
-                packages.toArray(new String[packages.size()]));
+        transformationFramework.setParameters(selection
+                .toArray(new Object[selection.size()]));
+        return transformationFramework.initializeTransformation(fileName,
+                command, packages.toArray(new String[packages.size()]));
     }
 
 }

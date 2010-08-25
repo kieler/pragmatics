@@ -22,13 +22,15 @@ import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.transformation.AbstractTransformation;
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.transformation.TransformationException;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
 
 /**
- * A property tester which checks if a selected diagram object matches a given model element.
+ * A property tester which checks if a selected diagram object matches a given
+ * model element.
  * 
  * @author mim
  * 
@@ -37,23 +39,26 @@ import de.cau.cs.kieler.ksbase.core.TransformationManager;
 public class ModelObjectTester extends PropertyTester {
 
     /**
-     * Test method called by the eclipse menu framework when checking for menu visibility. This is
-     * kind of hacky, because we are ignoring the given items and using the PlatformUI class to get
-     * the current selection object. This results in multiple calls for all selected objects but it
-     * is working fast enough. Maybe this can be improved somehow.
+     * Test method called by the eclipse menu framework when checking for menu
+     * visibility. This is kind of hacky, because we are ignoring the given
+     * items and using the PlatformUI class to get the current selection object.
+     * This results in multiple calls for all selected objects but it is working
+     * fast enough. Maybe this can be improved somehow.
      * 
      * @param receiver
      *            The receiver object
      * @param property
      *            The property to check
      * @param args
-     *            The arguments, in this case this has to be the array[Editor,Transformation]
+     *            The arguments, in this case this has to be the
+     *            array[Editor,Transformation]
      * @param expectedValue
      *            The expected value
-     * @return True if all selected objects are matching to the current selection.
+     * @return True if all selected objects are matching to the current
+     *         selection.
      */
-    public boolean test(final Object receiver, final String property, final Object[] args,
-            final Object expectedValue) {
+    public boolean test(final Object receiver, final String property,
+            final Object[] args, final Object expectedValue) {
         assert (args.length == 2);
         assert (args[0] instanceof String);
         assert (args[1] instanceof String);
@@ -62,18 +67,22 @@ public class ModelObjectTester extends PropertyTester {
         if (editor != null) {
             // First, check the editorID, so we do not execute transformations
             // from other editors.
-            if (!PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                    .getActiveEditor().getEditorSite().getId().equals(editor.getEditorId())) {
+            if (!PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getActivePage().getActiveEditor().getEditorSite().getId()
+                    .equals(editor.getEditorId())) {
                 return false;
             }
-            KSBasETransformation t = editor.getTransformationById((String) args[1]);
+            KSBasETransformation t = editor
+                    .getTransformationById((String) args[1]);
             if (t != null) {
                 // Convert selection to model elements:
-                List<EObject> modelElements = ModelingUtil.getModelElementsFromSelection();
+                List<EObject> modelElements = ModelingUtil
+                        .getModelElementsFromSelection();
                 boolean executable = false;
                 for (List<String> params : t.getParameterList()) {
-                    if (evaluateTransformation(editor, t.getTransformation(), params
-                            .toArray(new String[params.size()]), null, false)) {
+                    if (evaluateTransformation(editor, t.getTransformation(),
+                            params.toArray(new String[params.size()]), null,
+                            false)) {
                         // Could the transformation be executed?
                         executable = true;
                     }
@@ -92,12 +101,16 @@ public class ModelObjectTester extends PropertyTester {
                 String validation = t.getValidation();
                 if (validation != null && validation.length() > 0) {
                     for (String valid : validation.split(",")) {
-                        AbstractTransformation at = editor.getOutPlaceTransformationByName(valid);
+                        AbstractTransformation at = editor
+                                .getOutPlaceTransformationByName(valid);
                         if (at != null) {
                             boolean isValid = false;
                             for (List<String> params : at.getParameterList()) {
-                                if (evaluateTransformation(editor, valid, params
-                                        .toArray(new String[params.size()]), modelElements, true)) {
+                                if (evaluateTransformation(
+                                        editor,
+                                        valid,
+                                        params.toArray(new String[params.size()]),
+                                        modelElements, true)) {
                                     isValid = true;
                                 }
                             }
@@ -127,10 +140,11 @@ public class ModelObjectTester extends PropertyTester {
      *            The parameter values
      * @param execute
      *            Should the transformation actually be executed?
-     * @return True If the transformation could be initialized and if the execute parameter is set,
-     *         the transformation returned true.
+     * @return True If the transformation could be initialized and if the
+     *         execute parameter is set, the transformation returned true.
      */
-    public static boolean evaluateTransformation(final EditorTransformationSettings editor,
+    public static boolean evaluateTransformation(
+            final EditorTransformationSettings editor,
             final String transformation, final String[] parameterTypes,
             final List<EObject> parameter, final boolean execute) {
         Boolean result = false;
@@ -144,13 +158,19 @@ public class ModelObjectTester extends PropertyTester {
                 return false;
             }
         }
-        if (!framework.initializeTransformation(editor.getTransformationFile(), transformation,
-                editor.getModelPackages().toArray(new String[0]))) {
+        if (!framework.initializeTransformation(editor.getTransformationFile(),
+                transformation, editor.getModelPackages()
+                        .toArray(new String[0]))) {
             framework.reset();
             return false;
         }
         if (execute) {
-            Object res = framework.executeTransformation();
+            Object res = null;
+            try {
+                res = framework.executeTransformation();
+            } catch (TransformationException e0) {
+                res = false;
+            }
             if (res instanceof Boolean) {
                 result = (Boolean) res;
             } else {
