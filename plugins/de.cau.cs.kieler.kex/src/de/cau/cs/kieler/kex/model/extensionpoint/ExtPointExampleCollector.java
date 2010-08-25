@@ -8,6 +8,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
@@ -51,11 +52,11 @@ public class ExtPointExampleCollector extends ExampleCollector {
 							.getAttribute(ExtPointConstants.ID);
 					if (getExamplePool().containsKey(exampleId)) {
 						// TODO darf eigentlich nicht passieren
-						// RUNTIME Exception schmeißen...
+						// RUNTIME Exception schmeiï¿½en...
 						// oder einfach annehmen, dass dies nicht geschieht
 						continue;
 					}
-					Example example = ExtPointCollectionUtil.toExample(element);
+					Example example = toExample(element);
 					this.examplePool.put(exampleId, example);
 				} else if (ExtPointConstants.CATEGORY.equals(elementName)) {
 					collectCategory(element);
@@ -118,4 +119,50 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	public SourceType getSourceType() {
 		return SourceType.KIELER;
 	}
+
+	public static Example toExample(final IConfigurationElement exampleElement)
+			throws InvalidRegistryObjectException, IllegalArgumentException,
+			KielerException {
+
+		String idAttribute = exampleElement.getAttribute(ExtPointConstants.ID);
+		String nameAttribute = exampleElement
+				.getAttribute(ExtPointConstants.NAME);
+		String versionAttribute = exampleElement
+				.getAttribute(ExtPointConstants.VERSION);
+		// FIXME IllegalArgumentException sehr wahrscheinlich, da das
+		// version feld
+		// ein freier string, min. default besser noch regex.
+		Example example = new Example(idAttribute, nameAttribute, Version
+				.parseVersion(versionAttribute), SourceType.KIELER);
+		example.setDescription(exampleElement
+				.getAttribute(ExtPointConstants.DESCRIPTION));
+		example.setContact(exampleElement
+				.getAttribute(ExtPointConstants.CONTACT));
+		String exNamespaceId = exampleElement.getNamespaceIdentifier();
+		example.setNamespaceId(exNamespaceId);
+		List<String> categories = filterElement(exampleElement,
+				ExtPointConstants.CATEGORY, ExtPointConstants.ID);
+		example.addCategories(categories);
+		// TODO Prï¿½fung, ob head_resource schon in resources enthalten ansonsten
+		// hinzufï¿½gen.
+		example.setHeadResource(exampleElement
+				.getAttribute(ExtPointConstants.HEAD_RESOURCE));
+		example
+				.addResources(filterElement(exampleElement,
+						ExtPointConstants.EXAMPLE_RESOURCE,
+						ExtPointConstants.RESOURCE));
+		return example;
+	}
+
+	private static List<String> filterElement(
+			IConfigurationElement exampleElement, String elementName,
+			String attributeName) {
+		List<String> result = new ArrayList<String>();
+		for (IConfigurationElement configurationElement : exampleElement
+				.getChildren(elementName)) {
+			result.add(configurationElement.getAttribute(attributeName));
+		}
+		return result;
+	}
+
 }

@@ -148,10 +148,9 @@ public class IOHandler {
 		if (fileCount == 0)
 			return null;
 		if (fileCount > 1)
-			throw new KielerException(new StringBuffer()
-					.append("There are more than one file with name \""
-							+ source + "\" in").append(source.getPath())
-					.toString());
+			throw new KielerException(new StringBuffer().append(
+					"There are more than one file with name \"" + source
+							+ "\" in").append(source.getPath()).toString());
 		return foundFiles.get(0);
 	}
 
@@ -161,10 +160,9 @@ public class IOHandler {
 		if (fileCount == 0)
 			return null;
 		if (fileCount > 1)
-			throw new KielerException(new StringBuffer()
-					.append("There are more than one file with name \""
-							+ source + "\" in").append(source.getPath())
-					.toString());
+			throw new KielerException(new StringBuffer().append(
+					"There are more than one file with name \"" + source
+							+ "\" in").append(source.getPath()).toString());
 		return foundFiles[0];
 
 	}

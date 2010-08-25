@@ -1,6 +1,5 @@
 package de.cau.cs.kieler.kex.model;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +24,13 @@ public class Example {
 	 */
 	private Version version;
 
-	private List<URL> resources;
+	private List<String> resources;
 
 	private String contact;
 
 	private String namespaceId;
 
-	private URL headResource;
+	private String headResource;
 
 	private List<String> categories;
 
@@ -48,7 +47,7 @@ public class Example {
 		this.name = name;
 		this.version = version;
 		this.setImportType(importType);
-		this.resources = new ArrayList<URL>();
+		this.resources = new ArrayList<String>();
 		this.categories = new ArrayList<String>();
 	}
 
@@ -89,7 +88,7 @@ public class Example {
 		return this.version;
 	}
 
-	public List<URL> getResources() {
+	public List<String> getResources() {
 		return resources;
 	}
 
@@ -101,7 +100,7 @@ public class Example {
 		this.contact = contact;
 	}
 
-	public void addResources(List<URL> exampleResources) {
+	public void addResources(List<String> exampleResources) {
 		this.resources.addAll(exampleResources);
 	}
 
@@ -121,11 +120,11 @@ public class Example {
 		return categories;
 	}
 
-	public void setHeadResource(URL headResource) {
+	public void setHeadResource(String headResource) {
 		this.headResource = headResource;
 	}
 
-	public URL getHeadResource() {
+	public String getHeadResource() {
 		return headResource;
 	}
 

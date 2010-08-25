@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,7 +167,7 @@ public class ExtPointExampleCreator {
 		// TODO geht so nicht, da wir nur die category kennen NICHT aber das
 		// project, muss erst gesucht werden, verbinden mit der suche von todo
 		// eine zeile tiefer
-		// TODO prüfen, ob es noch examples damit gibt, bevor geloescht werden
+		// TODO prï¿½fen, ob es noch examples damit gibt, bevor geloescht werden
 		// kann.
 		if (deletableCategories != null) {
 			@SuppressWarnings("unchecked")
@@ -354,10 +353,8 @@ public class ExtPointExampleCreator {
 		createdExample.setAttribute(ExtPointConstants.NAME, example.getName());
 		createdExample.setAttribute(ExtPointConstants.VERSION, example
 				.getVersion().toString());
-		URL headResource = example.getHeadResource();
-		if (headResource != null)
-			createdExample.setAttribute(ExtPointConstants.HEAD_RESOURCE,
-					headResource.getPath());
+		createdExample.setAttribute(ExtPointConstants.HEAD_RESOURCE, example
+				.getHeadResource());
 
 		for (String category : example.getCategories()) {
 			createdExample.appendChild(toNode(category));

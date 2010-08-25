@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.model.Example;
 
 public class ExampleImportUtil {
@@ -26,7 +27,7 @@ public class ExampleImportUtil {
 			List<Example> selectedExamples) throws KielerException {
 		for (Example example : selectedExamples) {
 
-			List<URL> resources = example.getResources();
+			List<String> resources = example.getResources();
 			String destFolder = workspaceLocation + selectedResource.toString()
 					+ "/";
 			// not permantly create a example parent folder with its name.
@@ -35,10 +36,8 @@ public class ExampleImportUtil {
 
 			Bundle bundle = Platform.getBundle(example.getNamespaceId());
 
-			for (URL resource : resources) {
+			for (String path : resources) {
 				try {
-					String path = resource.getPath();
-
 					// searching for subfiles and folders.
 					Enumeration<?> dict = bundle.findEntries(path, null, false);
 					// TODO filter for .svn and .cvs files have to be added
@@ -49,7 +48,7 @@ public class ExampleImportUtil {
 						createFolder(destFolder);
 					} else {
 						String[] resourceSplits = path.split("/");
-						writeFile(resource, destFolder
+						writeFile(bundle.getEntry(path), destFolder
 								+ resourceSplits[resourceSplits.length - 1],
 								true);
 					}
@@ -102,6 +101,14 @@ public class ExampleImportUtil {
 	 */
 	private static void createFolder(final String destFolder) {
 		(new File(destFolder)).mkdir();
+	}
+
+	private static void validateURL(final URL resourceURL)
+			throws KielerException {
+		if (resourceURL == null || resourceURL.getPath().length() < 4) {
+			throw new KielerModelException("Filtered URL is not valid.",
+					resourceURL);
+		}
 	}
 
 }
