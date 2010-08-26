@@ -6,9 +6,10 @@ import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IExportWizard;
+import org.eclipse.ui.IWorkbench;
 import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -17,32 +18,30 @@ import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.ExportResource;
 import de.cau.cs.kieler.kex.model.SourceType;
 
-public class ExampleExportWizard extends Wizard implements IWizard {
+public class ExampleExportWizard extends Wizard implements IExportWizard {
 
 	private ExampleAttributesPage examplePage;
 	private ExampleExportPage exRePage;
 	private ExampleResourcesPage rePage;
 
-	private final IStructuredSelection selection;
-
-	public ExampleExportWizard(IStructuredSelection selection) {
+	public ExampleExportWizard() {
 		super();
-		this.selection = selection;
+	}
+
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Kieler Example Export");
+		setNeedsProgressMonitor(true);
+		examplePage = new ExampleAttributesPage("Example Export", selection);
+		exRePage = new ExampleExportPage("Destination Choice", selection);
+		rePage = new ExampleResourcesPage("Example Resources", selection);
 	}
 
 	@Override
 	public void addPages() {
-		examplePage = new ExampleAttributesPage("examplePage");
-		exRePage = new ExampleExportPage("projectExportPage");
-		rePage = new ExampleResourcesPage("resourcePage");
+		super.addPages();
 		addPage(examplePage);
 		addPage(exRePage);
 		addPage(rePage);
-	}
-
-	public IStructuredSelection getSelection() {
-		return this.selection;
 	}
 
 	@Override
@@ -65,8 +64,8 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 			validateElement(categories, 1, "Categories");
 			result.put(ExampleElement.CATEGORIES, categories);
 
-			result.put(ExampleElement.CREATE_EXAMPLE_FOLDER, exRePage
-					.createExampleFolder());
+			result.put(ExampleElement.CREATE_EXAMPLE_FOLDER,
+					exRePage.createExampleFolder());
 
 			rePage.buildResourceStructure();
 			List<ExportResource> exportedResources = rePage
@@ -128,8 +127,9 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 			throws KielerException {
 		if (list == null || list.size() < minLength) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("No ").append(listName).append(
-					" has been selected.\n").append("Please choose at least ")
+			errorMsg.append("No ").append(listName)
+					.append(" has been selected.\n")
+					.append("Please choose at least ")
 					.append(String.valueOf(minLength));
 			throw new KielerException(errorMsg.toString());
 		}
@@ -142,8 +142,9 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 				throw new IllegalArgumentException();
 		} catch (IllegalArgumentException e) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("The field ").append("Example Version").append(
-					" has to be set and a correct version like 1.0 or 1.4.");
+			errorMsg.append("The field ")
+					.append("Example Version")
+					.append(" has to be set and a correct version like 1.0 or 1.4.");
 			throw new KielerException(errorMsg.toString());
 		}
 	}
@@ -152,9 +153,9 @@ public class ExampleExportWizard extends Wizard implements IWizard {
 			String checkableName) throws KielerException {
 		if (checkable == null || checkable.length() < minLength) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("The field ").append(checkableName).append(
-					" has to be set with at least ").append(
-					String.valueOf(minLength)).append(" characters.");
+			errorMsg.append("The field ").append(checkableName)
+					.append(" has to be set with at least ")
+					.append(String.valueOf(minLength)).append(" characters.");
 			throw new KielerException(errorMsg.toString());
 		}
 	}

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -40,9 +41,9 @@ public class ExampleExportPage extends WizardPage {
 	private final List<String> creatableCategories;
 	private final List<String> deletableCategories;
 
-	protected ExampleExportPage(String pageName) {
+	protected ExampleExportPage(String pageName, IStructuredSelection selection) {
 		super(pageName);
-		setTitle("Destination Choice");
+		setTitle(pageName);
 		setDescription("Set destination for exported Example and determine Example Resources.");
 		checkedCategories = new ArrayList<String>();
 		creatableCategories = new ArrayList<String>();
@@ -81,8 +82,7 @@ public class ExampleExportPage extends WizardPage {
 						.getShell());
 
 				dirDiag.setText("Choose destination directory");
-				dirDiag
-						.setMessage("Select a directory in a java plugin project.");
+				dirDiag.setMessage("Select a directory in a java plugin project.");
 				String dir = dirDiag.open();
 				// TODO ueberlegen, ob hier direkt eine pruefung eingebaut
 				// werden kann.

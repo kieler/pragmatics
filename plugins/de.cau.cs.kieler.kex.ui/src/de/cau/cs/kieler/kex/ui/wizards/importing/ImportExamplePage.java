@@ -45,7 +45,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
 	protected ImportExamplePage(String name, IStructuredSelection selection) {
 		super(name, selection);
-		setTitle("Import Example");
+		setTitle(name);
 		setDescription("Enter example attributes and destination location.");
 		this.checkedExamples = new ArrayList<Example>();
 	}

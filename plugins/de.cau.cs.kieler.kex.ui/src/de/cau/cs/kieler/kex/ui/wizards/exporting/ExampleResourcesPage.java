@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -42,9 +43,10 @@ public class ExampleResourcesPage extends WizardPage {
 
 	private final List<ExportResource> exportResources;
 
-	protected ExampleResourcesPage(String pageName) {
+	protected ExampleResourcesPage(String pageName,
+			IStructuredSelection selection) {
 		super(pageName);
-		this.setTitle("Example Resources");
+		this.setTitle(pageName);
 		this.setDescription("Choose resources to export");
 		this.exportResources = new ArrayList<ExportResource>();
 		exportedFolders = new ArrayList<IFolder>();
@@ -115,11 +117,11 @@ public class ExampleResourcesPage extends WizardPage {
 	 */
 	private void initResourceGroup(Composite parent, List<Object> input) {
 		this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
-				getResourceProvider(IResource.FOLDER), WorkbenchLabelProvider
-						.getDecoratingWorkbenchLabelProvider(),
-				getResourceProvider(IResource.FILE), WorkbenchLabelProvider
-						.getDecoratingWorkbenchLabelProvider(), SWT.BORDER,
-				DialogUtil.inRegularFontMode(parent));
+				getResourceProvider(IResource.FOLDER),
+				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
+				getResourceProvider(IResource.FILE),
+				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
+				SWT.BORDER, DialogUtil.inRegularFontMode(parent));
 		this.resourceGroup.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -297,8 +299,8 @@ public class ExampleResourcesPage extends WizardPage {
 
 	/**
 	 * Adds the path of given folder resource to a given list of {@link IPath}.<br>
-	 * Filters than all member resources of that folder and uses {@code
-	 * makeRelativePath()}<br>
+	 * Filters than all member resources of that folder and uses
+	 * {@code makeRelativePath()}<br>
 	 * to create paths which will be added to result.<br>
 	 * All resource will be add to duplicateChecker list.
 	 * 

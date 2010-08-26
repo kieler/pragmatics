@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.kex.ui.wizards.exporting;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -20,9 +21,9 @@ public class ExampleAttributesPage extends WizardPage {
 
 	private Text contact;
 
-	public ExampleAttributesPage(String pageName) {
+	public ExampleAttributesPage(String pageName, IStructuredSelection selection) {
 		super(pageName);
-		setTitle("Example Export");
+		setTitle(pageName);
 		setDescription("Please enter example attributes.");
 
 	}

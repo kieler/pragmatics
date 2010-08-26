@@ -5,52 +5,45 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.IImportWizard;
+import org.eclipse.ui.IWorkbench;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 
-public class ExampleImportWizard extends Wizard implements IWizard {
+public class ExampleImportWizard extends Wizard implements IImportWizard {
 
-	private ImportExamplePage importExamplePage;
+	private ImportExamplePage mainPage;
 
-	private final IStructuredSelection selection;
-
-	// TODO schweinerein sollen die wizard �berleben, also sicher machen auf
-	// nullpr�fungen, fieses hin und her wechseln der pages and so on...
-	public ExampleImportWizard(IStructuredSelection selection) {
+	public ExampleImportWizard() {
 		super();
-		this.selection = selection;
-		setNeedsProgressMonitor(true);
+	}
+
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Kieler Example Import");
+		setNeedsProgressMonitor(true);
 		try {
 			ExampleManager.get().load(false);
 		} catch (KielerException e) {
 			MessageDialog.openError(this.getShell(), "Could not load example.",
 					e.getLocalizedMessage());
 		}
+		mainPage = new ImportExamplePage("Import Example", selection);
 	}
 
 	@Override
 	public void addPages() {
-		importExamplePage = new ImportExamplePage("importExamplePage",
-				selection);
-		addPage(importExamplePage);
-	}
-
-	public IStructuredSelection getSelection() {
-		return selection;
+		super.addPages();
+		addPage(mainPage);
 	}
 
 	@Override
 	public boolean performFinish() {
 
 		try {
-			ExampleManager.get().importExamples(
-					importExamplePage.getContainerPath(),
-					importExamplePage.getCheckedExamples());
-			// importExamplePage.getRootResource();
+			ExampleManager.get().importExamples(mainPage.getContainerPath(),
+					mainPage.getCheckedExamples());
 		} catch (KielerException e) {
 			// Messagebox ausgabe
 			return false;
@@ -58,7 +51,7 @@ public class ExampleImportWizard extends Wizard implements IWizard {
 
 		// refresh workspace project
 		IContainer element = ResourcesPlugin.getWorkspace().getRoot()
-				.getProject(importExamplePage.getContainerPath().segment(0));
+				.getProject(mainPage.getContainerPath().segment(0));
 		try {
 			if (element != null) {
 				element.refreshLocal(IContainer.DEPTH_INFINITE, null);
@@ -71,4 +64,5 @@ public class ExampleImportWizard extends Wizard implements IWizard {
 
 		return true;
 	}
+
 }
