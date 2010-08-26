@@ -21,7 +21,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.util.ICondition;
@@ -30,7 +30,7 @@ import de.cau.cs.kieler.core.util.Pair;
 /**
  * @author ckru
  */
-public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBorderedShapeEditPart
+public abstract class AdvancedRenderingBorderedBorderItemEditPart extends BorderedBorderItemEditPart
         implements IAdvancedRenderingEditPart {
 
     /**
@@ -59,7 +59,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
      * @param view
      *            to be given to super
      */
-    public AdvancedRenderingBorderedShapeEditPart(final View view) {
+    public AdvancedRenderingBorderedBorderItemEditPart(final View view) {
         super(view);
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
