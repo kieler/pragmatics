@@ -81,40 +81,6 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
  */
 public final class EvolUtil {
     /**
-     * Auto-rater for an individual.
-     *
-     * @author bdu
-     *
-     */
-    private static final class AutoRateIndividualRunnable implements Runnable {
-        /**
-         * Creates a new {@link AutoRateIndividualRunnable} instance.
-         *
-         * @param theIndividual
-         * @param theEditor
-         */
-        AutoRateIndividualRunnable(final Genome theIndividual) {
-            this.individual = theIndividual;
-        }
-
-        /**
-        *
-        */
-        private final Genome individual;
-
-        public void run() {
-            // Must be run in the UI thread.
-
-            final Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
-
-            final Set<IEditorPart> editorsSet = new HashSet<IEditorPart>(editors);
-
-            autoRateIndividual(this.individual, editorsSet);
-
-        }
-    }
-
-    /**
      * A factory for genes.
      *
      * @author bdu
@@ -384,6 +350,42 @@ public final class EvolUtil {
     }
 
     /**
+     * Auto-rater for an individual.
+     *
+     * @author bdu
+     *
+     */
+    private static final class AutoRateIndividualRunnable implements Runnable {
+        /**
+         * Creates a new {@link AutoRateIndividualRunnable} instance.
+         *
+         * @param theIndividual
+         * @param theEditor
+         */
+        AutoRateIndividualRunnable(final Genome theIndividual, final Genome theWeightsGenome) {
+            this.individual = theIndividual;
+            this.weightsGenome = theWeightsGenome;
+        }
+
+        /**
+        *
+        */
+        private final Genome individual;
+        private final Genome weightsGenome;
+
+        public void run() {
+            // Must be run in the UI thread.
+
+            final Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
+
+            final Set<IEditorPart> editorsSet = new HashSet<IEditorPart>(editors);
+
+            autoRateIndividual(this.individual, editorsSet, weightsGenome);
+
+        }
+    }
+
+    /**
      * Applier for an individual. Can adopt, layout and measure an individual in
      * the appropriate editor(s).
      *
@@ -391,33 +393,6 @@ public final class EvolUtil {
      *
      */
     private static final class IndividualApplierRunnable implements Runnable {
-        /**
-         * Creates a new {@link IndividualApplierRunnable} instance.
-         *
-         * @param theIndividual
-         * @param theLayoutProviderId
-         */
-        IndividualApplierRunnable(final Genome theIndividual, final String theLayoutProviderId) {
-            this.layoutProviderId = theLayoutProviderId;
-            this.individual = theIndividual;
-        }
-
-        /**
-         * The expected layout provider ID.
-         */
-        private final String layoutProviderId;
-
-        /**
-         * The individual.
-         */
-        private final Genome individual;
-
-        public void run() {
-            // Adopt, layout and measure the given individual in the appropriate
-            // editor(s).
-            applyIndividual(this.individual, this.layoutProviderId);
-        }
-
         /**
          * Adopt, layout and measure the given individual in the appropriate
          * editor(s). The obtained layout is applied to the diagrams.
@@ -511,6 +486,33 @@ public final class EvolUtil {
             }
         }
 
+        /**
+         * Creates a new {@link IndividualApplierRunnable} instance.
+         *
+         * @param theIndividual
+         * @param theLayoutProviderId
+         */
+        IndividualApplierRunnable(final Genome theIndividual, final String theLayoutProviderId) {
+            this.layoutProviderId = theLayoutProviderId;
+            this.individual = theIndividual;
+        }
+
+        /**
+         * The expected layout provider ID.
+         */
+        private final String layoutProviderId;
+
+        /**
+         * The individual.
+         */
+        private final Genome individual;
+
+        public void run() {
+            // Adopt, layout and measure the given individual in the appropriate
+            // editor(s).
+            applyIndividual(this.individual, this.layoutProviderId);
+        }
+
     }
 
     /**
@@ -549,8 +551,11 @@ public final class EvolUtil {
      *            the {@link Population} to be rated
      * @param theMonitor
      *            a progress monitor; may be {@code null}
+     * @param theWeightsGenome
      */
-    public static void autoRate(final Population thePopulation, final IProgressMonitor theMonitor) {
+    public static void autoRate(
+            final Population thePopulation, final IProgressMonitor theMonitor,
+            final Genome theWeightsGenome) {
         Assert.isLegal((thePopulation != null));
         if (thePopulation == null) {
             return;
@@ -573,7 +578,7 @@ public final class EvolUtil {
                     throw new OperationCanceledException();
                 }
 
-                syncAutoRate(ind);
+                syncAutoRate(ind, theWeightsGenome);
                 monitor.worked(1 * scale);
             }
 
@@ -642,6 +647,38 @@ public final class EvolUtil {
     }
 
     /**
+     * Create a weight genome for the given metric IDs.
+     *
+     * @param metricIds
+     *            a set of metric IDs; may not be {@code null}
+     * @param gf
+     *            a {@link GeneFactory}; may be {@code null}
+     * @return a genome
+     */
+    public static Genome createWeightGenes(final Set<String> metricIds, final GeneFactory gf) {
+        Assert.isLegal(metricIds != null);
+        if (metricIds == null) {
+            return null;
+        }
+
+        final IGeneFactory factory = (gf != null ? gf : new GeneFactory());
+
+        final TypeInfo<Float> typeInfo =
+                new FloatTypeInfo(Float.valueOf(1.0f), Float.valueOf(0.0f), Float.valueOf(10.0f),
+                        UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
+        final MutationInfo mutationInfo = new MutationInfo(0.001, .05, Distribution.GAUSSIAN);
+
+        final Genome result = new Genome();
+        for (final String id : metricIds) {
+            final IGene<?> gene =
+                    factory.newGene(id, Float.valueOf(1.0f), typeInfo, mutationInfo);
+            Assert.isNotNull(gene, "Failed to create gene for " + id);
+            result.add(gene);
+        }
+        return result;
+    }
+
+    /**
      * Returns the current editor (if any). Returns {@code null} if called from
      * a non-UI thread.
      *
@@ -679,6 +716,31 @@ public final class EvolUtil {
     }
 
     /**
+     * Returns the current edit part of the given editor.
+     *
+     * @param editor
+     *            an editor
+     * @return the current edit part or {@code null} if none exists.
+     */
+    public static EditPart getCurrentEditPart(final IEditorPart editor) {
+        EditPart result = null;
+        if (editor != null) {
+            final ISelection selection =
+                    editor.getEditorSite().getSelectionProvider().getSelection();
+            Object element = null;
+            if (selection != null) {
+                if (selection instanceof StructuredSelection) {
+                    element = ((StructuredSelection) selection).getFirstElement();
+                    if (element instanceof IGraphicalEditPart) {
+                        result = (IGraphicalEditPart) element;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Find all the visible graphical editors in the workbench.
      *
      * @return the set of the visible graphical editors; may be empty.
@@ -709,31 +771,6 @@ public final class EvolUtil {
             }
         }
 
-        return result;
-    }
-
-    /**
-     * Returns the current edit part of the given editor.
-     *
-     * @param editor
-     *            an editor
-     * @return the current edit part or {@code null} if none exists.
-     */
-    public static EditPart getCurrentEditPart(final IEditorPart editor) {
-        EditPart result = null;
-        if (editor != null) {
-            final ISelection selection =
-                    editor.getEditorSite().getSelectionProvider().getSelection();
-            Object element = null;
-            if (selection != null) {
-                if (selection instanceof StructuredSelection) {
-                    element = ((StructuredSelection) selection).getFirstElement();
-                    if (element instanceof IGraphicalEditPart) {
-                        result = (IGraphicalEditPart) element;
-                    }
-                }
-            }
-        }
         return result;
     }
 
@@ -934,14 +971,16 @@ public final class EvolUtil {
      * @param editor
      *            Specifies the editor in which the individual shall be laid
      *            out.
+     * @param weightsGenome
      */
-    private static void autoRateIndividual(final Genome individual, final IEditorPart editor) {
+    private static void autoRateIndividual(
+            final Genome individual, final IEditorPart editor, final Genome weightsGenome) {
         Assert.isLegal(individual != null);
 
         final Set<IEditorPart> editors = new HashSet<IEditorPart>(1);
         editors.add(editor);
 
-        autoRateIndividual(individual, editors);
+        autoRateIndividual(individual, editors, weightsGenome);
     }
 
     /**
@@ -949,31 +988,74 @@ public final class EvolUtil {
      * automatic ratings for it.
      *
      * @param ind
-     *            a {@link Genome}
+     *            the {@link Genome} to be rated; must not be {@code null}
      * @param editors
+     *            Specifies the editors in which the individual shall be laid
+     *            out.
+     * @param weightsGenome
      */
-    private static void autoRateIndividual(final Genome ind, final Set<IEditorPart> editors) {
+    private static void autoRateIndividual(
+            final Genome ind, final Set<IEditorPart> editors, final Genome weightsGenome) {
         Assert.isLegal((ind != null) && (editors != null));
         if ((ind == null) || (editors == null)) {
             return;
         }
 
-        final int rating = calculateAutoRating(ind, editors);
+        final int rating = calculateAutoRating(ind, editors, weightsGenome);
         ind.setUserRating(rating);
     }
 
     /**
-     * Layouts the given individual in the given editors and calculates
+     * Lays out the given individual in the given editor and calculates
+     * automatic ratings for it, using the given manager and layout property
+     * source. <strong>Note</strong>: The rating is not stored in the
+     * individual.
+     *
+     * @param ind
+     *            a {@link Genome}
+     * @param editor
+     *            an {@link IEditorPart}
+     * @param manager
+     *            a {@link DiagramLayoutManager}
+     * @param source
+     *            a {@link LayoutPropertySource}
+     * @param weightsGenome
+     * @return the rating proposal
+     */
+    private static int calculateAutoRating(
+            final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
+            final LayoutPropertySource source, final Genome weightsGenome) {
+        Assert.isLegal((ind != null) && (source != null));
+        if ((ind == null) || (source == null)) {
+            return 0;
+        }
+
+        adoptIndividual(ind, source);
+
+        final Map<String, Double> weightsMap = extractMetricWeights(weightsGenome);
+        Assert.isNotNull(weightsMap);
+        normalize(weightsMap);
+
+        final KNode layoutGraph = calculateLayout(manager, editor);
+        final int rating = measure(layoutGraph, weightsMap);
+
+        return rating;
+    }
+
+    /**
+     * Lays out the given individual in the given editors and calculates
      * automatic ratings for it. <strong>Note</strong>: The rating is not stored
      * in the individual.
      *
      * @param ind
      *            a {@link Genome}
      * @param editors
+     * @param weightsGenome
      *
      * @return the rating proposal
      */
-    private static int calculateAutoRating(final Genome ind, final Set<IEditorPart> editors) {
+    private static int calculateAutoRating(
+            final Genome ind, final Set<IEditorPart> editors, final Genome weightsGenome) {
         Assert.isLegal((ind != null) && (editors != null));
         if ((ind == null) || (editors == null)) {
             return 0;
@@ -992,7 +1074,7 @@ public final class EvolUtil {
             final LayoutPropertySource source = getLayoutPropertySource(editor, null);
             Assert.isNotNull(source);
 
-            final int rating = calculateAutoRating(ind, editor, manager, source);
+            final int rating = calculateAutoRating(ind, editor, manager, source, weightsGenome);
             totalRating += rating;
         }
 
@@ -1002,41 +1084,6 @@ public final class EvolUtil {
             return averageRating;
         }
         return totalRating;
-    }
-
-    /**
-     * Layouts the given individual in the given editor and calculates automatic
-     * ratings for it, using the given manager and layout property source.
-     * <strong>Note</strong>: The rating is not stored in the individual.
-     *
-     * @param ind
-     *            a {@link Genome}
-     * @param editor
-     *            an {@link IEditorPart}
-     * @param manager
-     *            a {@link DiagramLayoutManager}
-     * @param source
-     *            a {@link LayoutPropertySource}
-     * @return the rating proposal
-     */
-    private static int calculateAutoRating(
-            final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
-            final LayoutPropertySource source) {
-        Assert.isLegal((ind != null) && (source != null));
-        if ((ind == null) || (source == null)) {
-            return 0;
-        }
-
-        adoptIndividual(ind, source);
-
-        final Map<String, Double> weightsMap = extractMetricWeights(ind);
-        Assert.isNotNull(weightsMap);
-        normalize(weightsMap);
-
-        final KNode layoutGraph = calculateLayout(manager, editor);
-        final int rating = measure(layoutGraph, weightsMap);
-
-        return rating;
     }
 
     /**
@@ -1156,103 +1203,6 @@ public final class EvolUtil {
         for (int i = 0; i < size; i++) {
             final Genome genome = genomeFactory.createGenome(propertySources, layoutHintIds);
             result.add(genome);
-        }
-        return result;
-    }
-
-    /**
-     * Retrieve the values of the given IDs in from the given layout property
-     * sources. For layout hint, the layout hint identifiers are returned
-     * instead of the actual values.
-     *
-     * @param propertySources
-     * @param id
-     * @return a set of values
-     */
-    private static Set<Object> getPropertyValues(
-            final List<LayoutPropertySource> propertySources, final String id) {
-
-        final Set<Object> result = new LinkedHashSet<Object>();
-
-        for (final LayoutPropertySource source : propertySources) {
-
-            Object value;
-            try {
-
-                value = source.getPropertyValue(id);
-            } catch (final NullPointerException exception) {
-                // getPropertyValue has a problem
-                value = null;
-            }
-
-            if (LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
-                // "Layout hint" options have an index as value.
-                // But we want the the layout hint identifier instead of its
-                // index.
-
-                if (value == null) {
-                    // layout hint not found
-                    continue;
-                }
-
-                if (value instanceof String) {
-                    // we can use this
-                    result.add(value);
-                    continue;
-                }
-
-                // Get the property descriptor.
-                final IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
-                IPropertyDescriptor descriptor = null;
-                for (final IPropertyDescriptor desc : descriptors) {
-                    if (LayoutOptions.LAYOUT_HINT_ID.equals(desc.getId())) {
-                        descriptor = desc;
-                        break;
-                    }
-                }
-
-                if (descriptor != null) {
-                    // Get the layout hint identifier.
-                    final String layoutHintId = getLayoutHintId(descriptor, value);
-                    result.add(layoutHintId);
-                }
-
-            } else {
-                result.add(value);
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Create a weight genome for the given metric IDs.
-     *
-     * @param metricIds
-     *            a set of metric IDs; may not be {@code null}
-     * @param gf
-     *            a {@link GeneFactory}; may be {@code null}
-     * @return a genome
-     */
-    public static Genome createWeightGenes(final Set<String> metricIds, final GeneFactory gf) {
-        Assert.isLegal(metricIds != null);
-        if (metricIds == null) {
-            return null;
-        }
-
-        final IGeneFactory factory = (gf != null ? gf : new GeneFactory());
-
-        final TypeInfo<Float> typeInfo =
-                new FloatTypeInfo(Float.valueOf(1.0f), Float.valueOf(0.0f), Float.valueOf(10.0f),
-                        UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
-        final MutationInfo mutationInfo = new MutationInfo(0.001, .05, Distribution.GAUSSIAN);
-
-        final Genome result = new Genome();
-        for (final String id : metricIds) {
-            final IGene<?> gene =
-                    factory.newGene(id, Float.valueOf(1.0f), typeInfo, mutationInfo);
-            Assert.isNotNull(gene, "Failed to create gene for " + id);
-            result.add(gene);
         }
         return result;
     }
@@ -1445,6 +1395,71 @@ public final class EvolUtil {
     }
 
     /**
+     * Retrieve the values of the given IDs in from the given layout property
+     * sources. For layout hint, the layout hint identifiers are returned
+     * instead of the actual values.
+     *
+     * @param propertySources
+     * @param id
+     * @return a set of values
+     */
+    private static Set<Object> getPropertyValues(
+            final List<LayoutPropertySource> propertySources, final String id) {
+
+        final Set<Object> result = new LinkedHashSet<Object>();
+
+        for (final LayoutPropertySource source : propertySources) {
+
+            Object value;
+            try {
+
+                value = source.getPropertyValue(id);
+            } catch (final NullPointerException exception) {
+                // getPropertyValue has a problem
+                value = null;
+            }
+
+            if (LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
+                // "Layout hint" options have an index as value.
+                // But we want the the layout hint identifier instead of its
+                // index.
+
+                if (value == null) {
+                    // layout hint not found
+                    continue;
+                }
+
+                if (value instanceof String) {
+                    // we can use this
+                    result.add(value);
+                    continue;
+                }
+
+                // Get the property descriptor.
+                final IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
+                IPropertyDescriptor descriptor = null;
+                for (final IPropertyDescriptor desc : descriptors) {
+                    if (LayoutOptions.LAYOUT_HINT_ID.equals(desc.getId())) {
+                        descriptor = desc;
+                        break;
+                    }
+                }
+
+                if (descriptor != null) {
+                    // Get the layout hint identifier.
+                    final String layoutHintId = getLayoutHintId(descriptor, value);
+                    result.add(layoutHintId);
+                }
+
+            } else {
+                result.add(value);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Gets the set of wanted editors, which may be the current editor or all
      * visible editors, depending on the user setting.
      *
@@ -1597,8 +1612,9 @@ public final class EvolUtil {
      *
      * @param individual
      */
-    private static void syncAutoRate(final Genome individual) {
-        MonitoredOperation.runInUI(new AutoRateIndividualRunnable(individual), true);
+    private static void syncAutoRate(final Genome individual, final Genome weightsGenome) {
+        MonitoredOperation.runInUI(new AutoRateIndividualRunnable(individual, weightsGenome),
+                true);
     }
 
     /** Hidden constructor to avoid instantiation. **/

@@ -357,7 +357,10 @@ public class EvolView extends ViewPart {
         final TableColumn column = new TableColumn(table, SWT.NONE);
         column.setWidth(DEFAULT_COLUMN_WIDTH);
         final TableColumn column2 = new TableColumn(table, SWT.NONE);
-        column2.setWidth(DEFAULT_COLUMN_WIDTH);
+        column2.setWidth(2 * DEFAULT_COLUMN_WIDTH);
+
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
 
         final SelectorTableViewer tv = new SelectorTableViewer(table);
         tv.setContentProvider(new PopulationTableContentProvider());

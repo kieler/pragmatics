@@ -20,6 +20,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Provides labels for LayoutSet table.
@@ -85,7 +86,8 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
             return ((PopulationTableEntry) element).getId();
         case 1:
             final Genome individual = ((PopulationTableEntry) element).getIndividual();
-            return (individual.size() + " genes, rating: " + individual.getUserRating());
+            return ("Rating: " + individual.getUserRating() + ", genes: " + individual.size()
+                    + ", layout hint: " + individual.find(LayoutOptions.LAYOUT_HINT_ID));
         default: // do nothing
             return null;
         }
@@ -95,4 +97,5 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
     public boolean isLabelProperty(final Object element, final String property) {
         return false;
     }
+
 }

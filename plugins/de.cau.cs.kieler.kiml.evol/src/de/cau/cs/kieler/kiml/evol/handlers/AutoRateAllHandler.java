@@ -23,12 +23,10 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
-import de.cau.cs.kieler.kiml.evol.EvolUtil;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 
 /**
@@ -124,10 +122,6 @@ public class AutoRateAllHandler extends AbstractHandler {
         Assert.isNotNull(model);
 
         if (model.isValid()) {
-            // Get the current editor.
-            final IEditorPart editor = EvolUtil.getCurrentEditor();
-            Assert.isNotNull(editor);
-
             // Create job for auto-rating.
             final Job autoRateAllJob = new AutoRateAllJob("Auto-Rating", model);
 

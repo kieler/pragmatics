@@ -47,18 +47,7 @@ public final class EvolModel {
      *
      */
     private static final class AutoRaterRunnable implements Runnable {
-        /**
-         *
-         */
-        private final Population unrated;
-        /**
-         *
-         */
-        private final IProgressMonitor monitor;
-        /**
-         *
-         */
-        private final int scale;
+        private final Genome weightsGenome;
 
         /** Creates a new {@link AutoRaterRunnable} instance.
          *
@@ -68,15 +57,31 @@ public final class EvolModel {
          */
         AutoRaterRunnable(
                 final Population theUnrated,
+                final Genome theWeightsGenome,
                 final IProgressMonitor theMonitor,
                 final int theScale) {
             this.unrated = theUnrated;
+            this.weightsGenome = theWeightsGenome;
             this.monitor = theMonitor;
             this.scale = theScale;
         }
+        /**
+         *
+         */
+        private final Population unrated;
+        /**
+         *
+         */
+        private final IProgressMonitor monitor;
+
+        /**
+         *
+         */
+        private final int scale;
 
         public void run() {
-            EvolUtil.autoRate(this.unrated, new SubProgressMonitor(this.monitor, 1 * this.scale));
+            EvolUtil.autoRate(this.unrated, new SubProgressMonitor(this.monitor, 1 * this.scale),
+                    weightsGenome);
         }
     }
 
@@ -87,14 +92,17 @@ public final class EvolModel {
         this.position = 0;
         this.layoutProviderId = null;
         this.layoutTypeId = null;
+        this.weightsGenome = null;
     }
 
     // private fields
     private BasicEvolutionaryAlgorithm evolAlg;
+
     private int position;
     private String layoutProviderId;
     private String layoutTypeId;
     private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
+    private Genome weightsGenome;
 
     /**
      * Adds a model listener.
@@ -117,7 +125,10 @@ public final class EvolModel {
         final Population population = getPopulation();
         Assert.isNotNull(population);
 
-        EvolUtil.autoRate(population, theMonitor);
+        final Genome wg = getWeightsGenome();
+        Assert.isNotNull(wg);
+
+        EvolUtil.autoRate(population, theMonitor, wg);
 
         // Notify listeners.
         afterChange("autoRate");
@@ -173,8 +184,12 @@ public final class EvolModel {
 
             // Calculate auto-rating for the yet unrated individuals.
             final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
+            Assert.isNotNull(unrated);
 
-            final Runnable runnable = new AutoRaterRunnable(unrated, monitor, scale);
+            final Genome wg = this.weightsGenome;
+            Assert.isNotNull(wg);
+
+            final Runnable runnable = new AutoRaterRunnable(unrated, wg, monitor, scale);
             MonitoredOperation.runInUI(runnable, true);
             monitor.worked(autoRateWork * scale);
 
@@ -246,6 +261,14 @@ public final class EvolModel {
     }
 
     /**
+     *
+     * @return the weights genome
+     */
+    public Genome getWeightsGenome() {
+        return this.weightsGenome;
+    }
+
+    /**
      * Checks if the model is in a valid state.
      *
      * @return {@code true} if the model is valid; otherwise {@code false}.
@@ -254,6 +277,11 @@ public final class EvolModel {
     public boolean isValid() {
         if (this.evolAlg == null) {
             System.out.println("Algorithm is not set.");
+            return false;
+        }
+
+        if (this.weightsGenome == null) {
+            System.out.println("Weights genome is not set.");
             return false;
         }
 
@@ -330,6 +358,15 @@ public final class EvolModel {
         final Population sourcePopulation = EvolUtil.createPopulation(editors);
 
         if (!sourcePopulation.isEmpty()) {
+
+            // Add meta-evolution genes for the layout metrics.
+            System.out.println("Creating metric weights ...");
+            final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+            final Genome weightGenes = EvolUtil.createWeightGenes(metricIds, null);
+            Assert.isNotNull(weightGenes);
+
+            this.weightsGenome = weightGenes;
+
             // Create and initialize the algorithm.
             final BasicEvolutionaryAlgorithm alg =
                     new BasicEvolutionaryAlgorithm(sourcePopulation);
