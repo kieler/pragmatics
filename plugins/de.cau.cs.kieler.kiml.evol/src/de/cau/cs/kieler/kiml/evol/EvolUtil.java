@@ -14,18 +14,15 @@
 package de.cau.cs.kieler.kiml.evol;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -64,8 +61,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.IGeneFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.IValueFormatter;
 import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
-import de.cau.cs.kieler.kiml.evol.genetic.RadioGene;
-import de.cau.cs.kieler.kiml.evol.genetic.RadioTypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.UniversalGene;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
@@ -110,7 +105,7 @@ public final class EvolUtil {
         public void run() {
             // Must be run in the UI thread.
 
-                final Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
+            final Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
 
             final Set<IEditorPart> editorsSet = new HashSet<IEditorPart>(editors);
 
@@ -125,7 +120,7 @@ public final class EvolUtil {
      * @author bdu
      *
      */
-    private static class GeneFactory implements IGeneFactory {
+    static class GeneFactory implements IGeneFactory {
         /**
          * The absolute value is scaled by this factor to get the default
          * variance.
@@ -282,7 +277,7 @@ public final class EvolUtil {
                 final double theMutationProbability, final String lowerBoundAttr,
                 final String upperBoundAttr, final String varianceAttr, final Distribution distr) {
             IGene<?> result;
-            final Float value = Float.valueOf((String) theRawValue);
+            Float value = Float.valueOf((String) theRawValue);
             final Float lowerBound =
                     Float.valueOf((lowerBoundAttr == null ? Float.NEGATIVE_INFINITY : Float
                             .parseFloat(lowerBoundAttr)));
@@ -315,6 +310,16 @@ public final class EvolUtil {
             } else {
                 // we use a general float gene
                 formatter = UniversalGene.FLOAT_FORMATTER;
+            }
+
+            if (value < lowerBound) {
+                System.err.println("WARNING: value < lower bound for " + theId);
+                value = lowerBound;
+            }
+
+            if (value > upperBound) {
+                System.err.println("WARNING: value > upper bound for " + theId);
+                value = upperBound;
             }
 
             final TypeInfo<Float> typeInfo =
@@ -624,6 +629,7 @@ public final class EvolUtil {
             return new Population();
         }
 
+        // Get the layout property sources of the editors.
         final List<LayoutPropertySource> sources = getLayoutPropertySources(editors);
         Assert.isNotNull(sources);
 
@@ -919,8 +925,6 @@ public final class EvolUtil {
         }
     }
 
-
-
     /**
      * Layouts the given individual in the given editor and calculates automatic
      * ratings for it. This must be run in the UI thread.
@@ -1076,273 +1080,6 @@ public final class EvolUtil {
     }
 
     /**
-     * Collect the learnable properties from the given list of
-     * IPropertyDescriptor objects.
-     *
-     * @param descriptors
-     *            a collection of property descriptors
-     * @param acceptedProperties
-     *            a set of accepted properties. If this is {@code null}, then
-     *            all registered properties are used.
-     * @return learnable properties
-     */
-    private static Set<IPropertyDescriptor> collectLearnableProperties(
-            final Collection<IPropertyDescriptor> descriptors,
-            final Set<String> acceptedProperties) {
-
-
-        if ((descriptors == null) || descriptors.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        final Set<String> accepted;
-        if (acceptedProperties == null) {
-            // Get the set of all registered learnable properties.
-            accepted = EvolutionServices.getInstance().getEvolutionDataIds();
-        } else {
-            accepted = acceptedProperties;
-        }
-
-        final LayoutServices layoutServices = LayoutServices.getInstance();
-
-        final Set<IPropertyDescriptor> result = new HashSet<IPropertyDescriptor>();
-
-        // Iterate the given property descriptors.
-        for (final IPropertyDescriptor p : descriptors) {
-            final String id = (String) p.getId();
-            // check property descriptor id
-            if (!LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
-                final LayoutOptionData<?> data = layoutServices.getLayoutOptionData(id);
-                Assert.isNotNull(data, "Layout option not registered: " + id);
-
-                final Type type = data.getType();
-                switch (type) {
-                case BOOLEAN:
-                case ENUM:
-                case INT:
-                case FLOAT:
-                    if (accepted.contains(id)) {
-                        // learnable --> collect it
-                        result.add(p);
-                    }
-                    break;
-                default:
-                    // technically not learnable --> don't count
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Create a {@link Genome} from the given layout property sources.
-     * Meta-evolution genes are appended for the given metric ids.
-     *
-     * @param propertySources
-     *            a list of {@link LayoutPropertySource} instances
-     * @param metricIds
-     *            a set of layout metric IDs; may not be {@code null}.
-     * @return a genome, or {@code null}.
-     */
-    private static Genome createGenome(
-            final List<LayoutPropertySource> propertySources, final Set<String> metricIds) {
-        Assert.isLegal(metricIds != null);
-        if ((propertySources == null) || (metricIds == null)) {
-            return null;
-        }
-
-        /*
-         * TODO: Discuss: If more than one LayoutPropertySource is contained in the given list,
-         * they may stem from different editors containing different layout providers.
-         * Should the genes from different layout providers
-         *   - be pooled without hierarchy?
-         *   - be mapped to their layout provider id?
-         *   - or be grouped together as "chromosomes" in the individual?
-         * What about duplicate properties?
-         * */
-
-        // Get the set of all learnable elements that are registered.
-        final Set<String> registeredLearnables =
-                EvolutionServices.getInstance().getEvolutionDataIds();
-
-        final Genome result = new Genome();
-
-        // Get data from property descriptors.
-        final Map<String, IPropertyDescriptor> allPropertyDescriptors =
-                getPropertyDescriptors(propertySources);
-
-        // Get the registered layout option data.
-        final Collection<LayoutOptionData<?>> registeredLayoutOptions =
-                LayoutServices.getInstance().getLayoutOptionData();
-
-        // Collect the learnable properties from the property descriptors.
-        final Set<IPropertyDescriptor> learnables =
-                collectLearnableProperties(allPropertyDescriptors.values(), registeredLearnables);
-
-
-        // Determine uniformly distributed mutation probability.
-        final double uniformProb = uniformProbability(learnables.size());
-
-        System.out.println("Creating genome of " + learnables.size()
-                + " layout property genes ...");
-        final GeneFactory gf = new GeneFactory();
-
-        // A set to store the layout hint IDs we run across.
-        final SortedSet<String> layoutHintIds = new TreeSet<String>();
-
-        // A map to store the property values from the layout property sources.
-        final Map<String, Object> propertyValues =
-                new HashMap<String, Object>(propertySources.size() * 10);
-
-        // Iterate the layout property sources.
-        for (final LayoutPropertySource source : propertySources) {
-
-            // Iterate the property descriptors of the layout property source.
-            final IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
-            for (final IPropertyDescriptor desc : descriptors) {
-
-                final String id = (String) desc.getId();
-                final Object value = source.getPropertyValue(id);
-
-                if (!LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
-                    if (!propertyValues.containsKey(id)) {
-                        propertyValues.put(id, value);
-                    } else {
-                    // already added this option
-                        System.out.println("Duplicate property: " + id);
-                    }
-                }
-
-            }
-        }
-
-        // Iterate the layout property sources.
-        for (final LayoutPropertySource source : propertySources) {
-
-            // Iterate the property descriptors of the layout property source.
-            final IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
-            for (final IPropertyDescriptor desc : descriptors) {
-
-                final String id = (String) desc.getId();
-                final Object value = source.getPropertyValue(id);
-
-                // Check the property descriptor id.
-                if (LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
-                    // Property is a layout hint --> store its ID for later use
-
-                    Assert.isNotNull(value, "layout hint value is null");
-
-                    final String hintId = getLayoutHintId(desc, value);
-
-                    layoutHintIds.add(hintId);
-
-                } else if (result.find(id) != null) {
-                    // already added this option
-                    System.out.println("Duplicate property: " + id);
-
-                } else {
-                    // learnable option?
-                    if (registeredLearnables.contains(id)) {
-                        final IGene<?> gene = gf.newGene(id, value, uniformProb);
-                        Assert.isNotNull(gene, "Failed to create gene for " + id);
-                        result.add(gene);
-                    } else {
-                        System.out.println("Not registered as evolutionData: " + id);
-                    }
-                }
-            } // iterate descriptors
-        } // iterate propertySources
-
-        Assert.isTrue(learnables.size() == result.size(),
-                "The number of genes does not have the predicted count of " + learnables.size());
-
-        // Add a gene for the layout hint.
-        if (!layoutHintIds.isEmpty()) {
-            // Create a gene that can mutate over a list of layout hint IDs.
-
-            // TODO: what if we have more than one layout hint?
-            final String hintId = layoutHintIds.first();
-
-            final RadioGene hintGene = createLayoutHintGene(hintId);
-
-            Assert.isNotNull(hintGene, "Failed to create layout hint gene.");
-            result.add(hintGene);
-        }
-
-        // Add meta-evolution genes for the layout metrics.
-        System.out.println("Adding metric weights ...");
-        final Genome weightGenes = createWeightGenes(metricIds, gf);
-        Assert.isNotNull(weightGenes);
-        result.addAll(weightGenes);
-
-        System.out.println("Created genome: " + result.size() + " genes.");
-        System.out.println();
-
-        return result;
-    }
-
-    /**
-     * Creates a layout hint gene.
-     *
-     * @param hintId
-     * @return a gene that mutates over the providers of the given layout hint
-     */
-    private static RadioGene createLayoutHintGene(final String hintId) {
-        final LayoutServices layoutServices = LayoutServices.getInstance();
-        final LayoutProviderData provider = layoutServices.getLayoutProviderData(hintId, null);
-
-        if (provider == null) {
-            // no provider for the given layout hint
-            return null;
-        }
-
-        final String typeId = provider.getType();
-
-        // Get the IDs of all suitable providers for this type.
-        final List<String> providerIds = getLayoutProviderIds(typeId);
-
-        System.out.println("Providers for " + typeId + ": " + providerIds);
-
-        final Integer indexOfProviderId = Integer.valueOf(providerIds.indexOf(provider.getId()));
-        Assert.isTrue(indexOfProviderId.intValue() >= 0);
-        final RadioTypeInfo typeInfo = new RadioTypeInfo(indexOfProviderId, providerIds);
-        final MutationInfo mutationInfo = new MutationInfo(0.05);
-
-        final RadioGene hintGene =
-                new RadioGene(LayoutOptions.LAYOUT_HINT_ID, indexOfProviderId, typeInfo,
-                        mutationInfo);
-        return hintGene;
-    }
-
-    /**
-     * Collects the property descriptors from the given layout property sources.
-     *
-     * @param propertySources
-     *            a list of LayoutPropertySource instances
-     * @return a map containing property descriptor IDs and the respective
-     *         property descriptors.
-     */
-    private static Map<String, IPropertyDescriptor> getPropertyDescriptors(
-            final List<LayoutPropertySource> propertySources) {
-        final Map<String, IPropertyDescriptor> allPropertyDescriptors =
-                new HashMap<String, IPropertyDescriptor>();
-
-        for (final LayoutPropertySource source : propertySources) {
-            final IPropertyDescriptor[] propertyDescriptorsArray =
-                    source.getPropertyDescriptors();
-
-            final List<IPropertyDescriptor> propertyDescriptorsList =
-                    Arrays.asList(propertyDescriptorsArray);
-
-            for (final IPropertyDescriptor pd : propertyDescriptorsList) {
-                allPropertyDescriptors.put((String) pd.getId(), pd);
-            }
-        }
-        return allPropertyDescriptors;
-    }
-
-    /**
      * Creates a population of the default size, taking initial values from the
      * given {@link LayoutPropertySource}.
      *
@@ -1409,24 +1146,95 @@ public final class EvolUtil {
         Assert.isLegal(size >= 0);
 
         final Population result = new Population();
-        final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+
+        final Set<Object> layoutHintIds =
+                getPropertyValues(propertySources, LayoutOptions.LAYOUT_HINT_ID);
 
         // Create the individuals one by one.
+        final GenomeFactory genomeFactory = new GenomeFactory(null);
+
         for (int i = 0; i < size; i++) {
-            final Genome genome = createGenome(propertySources, metricIds);
+            final Genome genome = genomeFactory.createGenome(propertySources, layoutHintIds);
             result.add(genome);
         }
         return result;
     }
 
     /**
+     * Retrieve the values of the given IDs in from the given layout property
+     * sources. For layout hint, the layout hint identifiers are returned
+     * instead of the actual values.
+     *
+     * @param propertySources
+     * @param id
+     * @return a set of values
+     */
+    private static Set<Object> getPropertyValues(
+            final List<LayoutPropertySource> propertySources, final String id) {
+
+        final Set<Object> result = new LinkedHashSet<Object>();
+
+        for (final LayoutPropertySource source : propertySources) {
+
+            Object value;
+            try {
+
+                value = source.getPropertyValue(id);
+            } catch (final NullPointerException exception) {
+                // getPropertyValue has a problem
+                value = null;
+            }
+
+            if (LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
+                // "Layout hint" options have an index as value.
+                // But we want the the layout hint identifier instead of its
+                // index.
+
+                if (value == null) {
+                    // layout hint not found
+                    continue;
+                }
+
+                if (value instanceof String) {
+                    // we can use this
+                    result.add(value);
+                    continue;
+                }
+
+                // Get the property descriptor.
+                final IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
+                IPropertyDescriptor descriptor = null;
+                for (final IPropertyDescriptor desc : descriptors) {
+                    if (LayoutOptions.LAYOUT_HINT_ID.equals(desc.getId())) {
+                        descriptor = desc;
+                        break;
+                    }
+                }
+
+                if (descriptor != null) {
+                    // Get the layout hint identifier.
+                    final String layoutHintId = getLayoutHintId(descriptor, value);
+                    result.add(layoutHintId);
+                }
+
+            } else {
+                result.add(value);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Create a weight genome for the given metric IDs.
+     *
      * @param metricIds
      *            a set of metric IDs; may not be {@code null}
      * @param gf
      *            a {@link GeneFactory}; may be {@code null}
-     * @return
+     * @return a genome
      */
-    private static Genome createWeightGenes(final Set<String> metricIds, final GeneFactory gf) {
+    public static Genome createWeightGenes(final Set<String> metricIds, final GeneFactory gf) {
         Assert.isLegal(metricIds != null);
         if (metricIds == null) {
             return null;
@@ -1450,7 +1258,7 @@ public final class EvolUtil {
     }
 
     /**
-     * Extracts the metric weight from the given genome.
+     * Extracts the metric weights from the given genome.
      *
      * @param genome
      *            a {@link Genome}
@@ -1483,12 +1291,12 @@ public final class EvolUtil {
     }
 
     /**
-     * Obtain the layout hint id from the given property descriptor.
+     * Obtain the layout hint identifier from the given property descriptor.
      *
      * @param descriptor
      * @param value
      *            the integer value indicating the layout hint
-     * @return
+     * @return the layout hint id
      */
     private static String getLayoutHintId(final IPropertyDescriptor descriptor, final Object value) {
         final ILabelProvider labelProvider = descriptor.getLabelProvider();
@@ -1672,20 +1480,26 @@ public final class EvolUtil {
      *
      * @param parentNode
      *            the KGraph to be analyzed.
-     * @param weightsMap
+     * @param theWeightsMap
      *            a map that associates weights to metric IDs; must not be
      *            {@code null}
      * @return a rating proposal
      */
-    private static int measure(final KNode parentNode, final Map<String, Double> weightsMap) {
-        Assert.isLegal(weightsMap != null);
+    private static int measure(final KNode parentNode, final Map<String, Double> theWeightsMap) {
+        Assert.isLegal(theWeightsMap != null);
 
-        if ((parentNode == null) || (weightsMap == null)) {
+        if ((parentNode == null) || (theWeightsMap == null)) {
             return 0;
         }
 
+        // TODO: Discuss: How should metrics be weighted per default?
+        // TODO: What if weightsMap is empty?
+        final double defaultScale = 0.0;
+
         // Get the metric IDs.
         final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+
+        final Map<String, Double> weightsMap = new HashMap<String, Double>(theWeightsMap);
 
         // We have the metric IDs, now get the metrics.
         final AnalysisServices as = AnalysisServices.getInstance();
@@ -1694,33 +1508,52 @@ public final class EvolUtil {
         for (final String metricId : metricIds) {
             final AbstractInfoAnalysis metric = as.getAnalysisById(metricId);
             Assert.isNotNull(metric, "Could not find analysis: " + metricId);
+
+            if (!weightsMap.containsKey(metricId)) {
+                weightsMap.put(metricId, defaultScale);
+            }
+            final double coeff = weightsMap.get(metricId).doubleValue();
+
+            if (coeff == 0.0) {
+                // Skip this analysis.
+                continue;
+            }
+
             metricsList.add(metric);
+        }
+
+        // Do we have anything to measure?
+        if (metricsList.isEmpty()) {
+            return 0;
         }
 
         // Perform the measurement.
         final boolean showProgressBar = false;
-        final Map<String, Object> results =
+        final Map<String, Object> analysisResults =
                 DiagramAnalyser.analyse(parentNode, metricsList, showProgressBar);
 
-        double sum = 0.0;
         double scaledSum = 0;
+
+        // scale results
         for (final AbstractInfoAnalysis metric : metricsList) {
-            final String metricResult = results.get(metric.getID()).toString();
-            final double coeff = weightsMap.get(metric.getID()).doubleValue();
+            final String metricId = metric.getID();
+            final String metricResult = analysisResults.get(metricId).toString();
+
+            Assert.isNotNull(weightsMap.containsKey(metricId));
+            final double coeff = weightsMap.get(metricId).doubleValue();
 
             double val;
             try {
-                final double parsedVal = Double.parseDouble(metricResult);
-                val = parsedVal;
+
+                final double parsedResult = Double.parseDouble(metricResult);
+                val = parsedResult;
 
             } catch (final NumberFormatException exception) {
                 val = 0.0;
             }
 
             final double scaled = val * coeff;
-
             scaledSum += scaled;
-            sum += val;
         }
 
         final int newRating = (int) Math.round((scaledSum * 1000));
@@ -1766,22 +1599,6 @@ public final class EvolUtil {
      */
     private static void syncAutoRate(final Genome individual) {
         MonitoredOperation.runInUI(new AutoRateIndividualRunnable(individual), true);
-    }
-
-    /**
-     * @param choicesCount
-     * @return the multiplicative inverse of the given number, or 0.0 if it is
-     *         not > 0.
-     */
-    private static double uniformProbability(final int choicesCount) {
-        final double uniformProb;
-        if (choicesCount > 0) {
-            uniformProb = 1.0 / choicesCount;
-        } else {
-            System.err.println("No learnable properties found.");
-            uniformProb = 0.0;
-        }
-        return uniformProb;
     }
 
     /** Hidden constructor to avoid instantiation. **/

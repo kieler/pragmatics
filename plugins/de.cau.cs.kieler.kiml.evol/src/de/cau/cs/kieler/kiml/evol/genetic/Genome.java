@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -276,6 +277,8 @@ public class Genome extends ArrayList<IGene<?>> {
     private int automaticRating;
 
     /**
+     * Find a gene with the given ID.
+     *
      * @param theId
      * @return
      */
@@ -287,6 +290,17 @@ public class Genome extends ArrayList<IGene<?>> {
 
         }
         return null;
+    }
+
+    /**
+     * @return a list of the IDs occurring in this genome.
+     */
+    public List<String> getIds() {
+        final List<String> result = new LinkedList<String>();
+        for (final IGene gene : this) {
+            result.add((String) gene.getId());
+        }
+        return result;
     }
 
 }
