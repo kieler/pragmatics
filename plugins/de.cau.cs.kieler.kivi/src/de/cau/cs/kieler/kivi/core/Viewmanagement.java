@@ -25,8 +25,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.RegistryFactory;
 
-import de.cau.cs.kieler.kivi.examples.TestCombination;
-
 /**
  * Core controller for the view management.
  * 
@@ -73,9 +71,6 @@ public class Viewmanagement {
     public void initialize() {
         // TODO whatever initialization requires that can't go into <init>
         // check preferences, load default/selected combinations?
-
-        // FIXME remove after testing
-        new TestCombination().setActive(true);
     }
 
     /**
@@ -174,8 +169,7 @@ public class Viewmanagement {
     }
 
     /**
-     * Get a list of all available combinations registered to the combinations
-     * extension point.
+     * Get a list of all available combinations registered to the combinations extension point.
      * 
      * @return a copied list of combinations
      */
@@ -184,8 +178,7 @@ public class Viewmanagement {
     }
 
     /**
-     * Get a list of all available effects registered to the effects extension
-     * point.
+     * Get a list of all available effects registered to the effects extension point.
      * 
      * @return a copied list of effects
      */
@@ -194,8 +187,8 @@ public class Viewmanagement {
     }
 
     /**
-     * Register or unregister a combination when it is activated or deactivated
-     * to enable or disable reception of trigger events.
+     * Register or unregister a combination when it is activated or deactivated to enable or disable
+     * reception of trigger events.
      * 
      * @param combination
      *            the newly activated or deactivated combination
@@ -271,8 +264,8 @@ public class Viewmanagement {
     }
 
     /**
-     * Distribute the event from the given trigger to all combinations waiting
-     * for such a trigger class. Called from the combinations worker thread.
+     * Distribute the event from the given trigger to all combinations waiting for such a trigger
+     * class. Called from the combinations worker thread.
      * 
      * @param trigger
      *            the trigger that received the event
@@ -285,8 +278,7 @@ public class Viewmanagement {
     }
 
     /**
-     * Load information from the extension points registering combinations,
-     * effects etc.
+     * Load information from the extension points registering combinations, effects etc.
      */
     private void loadExtensionPoints() {
         loadCombinations();
@@ -339,8 +331,8 @@ public class Viewmanagement {
     }
 
     /**
-     * Retrieve List of availableCombinations that are active and listening to
-     * the specified class of triggers.
+     * Retrieve List of availableCombinations that are active and listening to the specified class
+     * of triggers.
      * 
      * @param trigger
      *            class of triggers
