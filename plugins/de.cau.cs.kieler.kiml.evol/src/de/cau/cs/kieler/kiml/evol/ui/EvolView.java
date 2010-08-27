@@ -52,6 +52,7 @@ public class EvolView extends ViewPart {
             System.out.println("afterChange: " + cause);
             if ("setPosition".equalsIgnoreCase(cause)) {
                 System.out.println("setPosition occurred");
+                // TODO: apply selected individual
                 return;
             }
             // TODO: what if currentEditor is null?
@@ -247,7 +248,7 @@ public class EvolView extends ViewPart {
             // Adopt, layout and measure the current individual.
             EvolUtil.syncApplyIndividual(currentIndividual, expectedLayoutProviderId);
 
-            // Refresh the layout view.
+            // Refresh the layout view, if it can be found.
             EvolUtil.asyncRefreshLayoutView();
         }
 

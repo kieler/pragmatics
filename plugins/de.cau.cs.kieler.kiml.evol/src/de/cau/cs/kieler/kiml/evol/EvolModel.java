@@ -92,7 +92,7 @@ public final class EvolModel {
         this.position = 0;
         this.layoutProviderId = null;
         this.layoutTypeId = null;
-        this.weightsGenome = null;
+        this.weightWatchers = null;
     }
 
     // private fields
@@ -102,7 +102,9 @@ public final class EvolModel {
     private String layoutProviderId;
     private String layoutTypeId;
     private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
-    private Genome weightsGenome;
+    private Population weightWatchers;
+
+    private BasicEvolutionaryAlgorithm weightEvolAlg;
 
     /**
      * Adds a model listener.
@@ -125,7 +127,7 @@ public final class EvolModel {
         final Population population = getPopulation();
         Assert.isNotNull(population);
 
-        final Genome wg = getWeightsGenome();
+        final Genome wg = getWeightWatchers().get(0);
         Assert.isNotNull(wg);
 
         EvolUtil.autoRate(population, theMonitor, wg);
@@ -186,7 +188,10 @@ public final class EvolModel {
             final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
             Assert.isNotNull(unrated);
 
-            final Genome wg = this.weightsGenome;
+            final Population ww = this.weightWatchers;
+            Assert.isNotNull(ww);
+            Assert.isTrue(!ww.isEmpty());
+            final Genome wg = ww.get(0);
             Assert.isNotNull(wg);
 
             final Runnable runnable = new AutoRaterRunnable(unrated, wg, monitor, scale);
@@ -264,8 +269,8 @@ public final class EvolModel {
      *
      * @return the weights genome
      */
-    public Genome getWeightsGenome() {
-        return this.weightsGenome;
+    public Population getWeightWatchers() {
+        return this.weightWatchers;
     }
 
     /**
@@ -280,8 +285,13 @@ public final class EvolModel {
             return false;
         }
 
-        if (this.weightsGenome == null) {
+        if (this.weightWatchers == null) {
             System.out.println("Weights genome is not set.");
+            return false;
+        }
+
+        if (this.weightEvolAlg == null) {
+            System.out.println("Weights algorithm is not set.");
             return false;
         }
 
@@ -365,12 +375,16 @@ public final class EvolModel {
             final Genome weightGenes = EvolUtil.createWeightGenes(metricIds, null);
             Assert.isNotNull(weightGenes);
 
-            this.weightsGenome = weightGenes;
+            final Population ww = new Population();
+            ww.add(weightGenes);
+            this.weightWatchers = ww;
+            this.weightEvolAlg = new BasicEvolutionaryAlgorithm(ww);
+            this.weightEvolAlg.step();
 
             // Create and initialize the algorithm.
             final BasicEvolutionaryAlgorithm alg =
                     new BasicEvolutionaryAlgorithm(sourcePopulation);
-            setEvolAlg(alg);
+            this.evolAlg = alg;
             alg.step();
         }
 

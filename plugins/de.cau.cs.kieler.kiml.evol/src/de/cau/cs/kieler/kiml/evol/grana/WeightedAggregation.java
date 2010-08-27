@@ -38,6 +38,8 @@ public class WeightedAggregation implements IAnalysis {
             throws KielerException {
 
         progressMonitor.begin("Weighted aggregation", 1);
+
+        // TODO: read and use weights
         double sum = 0.0;
         int count = 0;
         for (final Entry<String, Object> entry : results.entrySet()) {

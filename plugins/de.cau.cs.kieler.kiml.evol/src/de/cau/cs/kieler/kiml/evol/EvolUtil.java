@@ -462,19 +462,21 @@ public final class EvolUtil {
 
                 final KNode layoutGraph = EvolUtil.calculateLayout(manager, editor);
 
-                // Update the rating.
-                // XXX: This should not be done here.
-                if ((editor == currentEditor) && !individual.hasUserRating()) {
-
-                    // Get the metric weights.
-                    final Map<String, Double> weightsMap =
-                            EvolUtil.extractMetricWeights(individual);
-                    Assert.isNotNull(weightsMap);
-                    EvolUtil.normalize(weightsMap);
-
-                    final int rating = EvolUtil.measure(layoutGraph, weightsMap);
-                    individual.setUserRating(rating);
-                }
+                // // Update the rating.
+                // // XXX: This should not be done here.
+                // if ((editor == currentEditor) && !individual.hasUserRating())
+                // {
+                //
+                // // Get the metric weights.
+                // final Map<String, Double> weightsMap =
+                // EvolUtil.extractMetricWeights(individual);
+                // Assert.isNotNull(weightsMap);
+                // EvolUtil.normalize(weightsMap);
+                //
+                // final int rating = EvolUtil.measure(layoutGraph, weightsMap);
+                // System.err.println("Updating rating.");
+                // individual.setUserRating(rating);
+                // }
 
                 // Apply the layout to the diagram in the editor.
                 // XXX it would be more straightforward to call
@@ -511,6 +513,7 @@ public final class EvolUtil {
             // Adopt, layout and measure the given individual in the appropriate
             // editor(s).
             applyIndividual(this.individual, this.layoutProviderId);
+            // Should the individual be re-rated?
         }
 
     }
@@ -666,7 +669,7 @@ public final class EvolUtil {
         final TypeInfo<Float> typeInfo =
                 new FloatTypeInfo(Float.valueOf(1.0f), Float.valueOf(0.0f), Float.valueOf(10.0f),
                         UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
-        final MutationInfo mutationInfo = new MutationInfo(0.001, .05, Distribution.GAUSSIAN);
+        final MutationInfo mutationInfo = new MutationInfo(0.01, .05, Distribution.GAUSSIAN);
 
         final Genome result = new Genome();
         for (final String id : metricIds) {
