@@ -67,7 +67,7 @@ public abstract class AbstractAnalysisBundle {
      */
     protected void notifyListenersAnalysisAdded(final AbstractInfoAnalysis analysis) {
         for (IBundleChangedListener listener : listeners) {
-            listener.analysisAdded(this, analysis);
+            listener.analysisAdded(analysis);
         }
     }
 
@@ -79,7 +79,7 @@ public abstract class AbstractAnalysisBundle {
      */
     protected void notifyListenersAnalysisRemoved(final AbstractInfoAnalysis analysis) {
         for (IBundleChangedListener listener : listeners) {
-            listener.analysisRemoved(this, analysis);
+            listener.analysisRemoved(analysis);
         }
     }
 }
