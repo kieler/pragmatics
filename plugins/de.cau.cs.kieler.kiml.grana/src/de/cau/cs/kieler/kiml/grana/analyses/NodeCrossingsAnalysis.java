@@ -164,7 +164,9 @@ public class NodeCrossingsAnalysis implements IAnalysis {
             // the start- and endpoint of the line segment lie on opposite sides
             return true;
         } else {
-            int outcode = p1OutCode != TOP && p1OutCode > BOTTOM ? p2OutCode : p1OutCode;
+            int outcode =
+                    p1OutCode != TOP && p1OutCode > BOTTOM ? p2OutCode
+                            : p1OutCode;
             if ((outcode & LEFT) > 0) {
                 return hasIntersection(p1, p2, nodeLayout.getXpos(),
                         nodeLayout.getYpos(), nodeLayout.getXpos(),
@@ -179,7 +181,7 @@ public class NodeCrossingsAnalysis implements IAnalysis {
                         nodeLayout.getYpos(),
                         nodeLayout.getXpos() + nodeLayout.getWidth(),
                         nodeLayout.getYpos());
-            } else /*if ((p1OutCode & BOTTOM) > 0)*/ {
+            } else /* if ((p1OutCode & BOTTOM) > 0) */ {
                 return hasIntersection(p1, p2, nodeLayout.getXpos(),
                         nodeLayout.getYpos() + nodeLayout.getHeight(),
                         nodeLayout.getXpos() + nodeLayout.getWidth(),
@@ -203,18 +205,23 @@ public class NodeCrossingsAnalysis implements IAnalysis {
             return 0;
         }
         int numberOfCrossings = 0;
-        for (KEdge edge : node1.getOutgoingEdges()) {
+        edgeLoop: for (KEdge edge : node1.getOutgoingEdges()) {
             if (edge.getTarget() == node2) {
                 continue;
             }
             KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
             KPoint p1 = edgeLayout.getSourcePoint();
             for (KPoint p2 : edgeLayout.getBendPoints()) {
-                numberOfCrossings += hasIntersection(p1, p2, node2) ? 1 : 0;
+                if (hasIntersection(p1, p2, node2)) {
+                    ++numberOfCrossings;
+                    continue edgeLoop;
+                }
                 p1 = p2;
             }
             KPoint p2 = edgeLayout.getTargetPoint();
-            numberOfCrossings += hasIntersection(p1, p2, node2) ? 1 : 0;
+            if (hasIntersection(p1, p2, node2)) {
+                ++numberOfCrossings;
+            }
         }
         return numberOfCrossings;
     }
