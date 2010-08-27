@@ -16,6 +16,7 @@
 package de.cau.cs.kieler.karma;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -24,12 +25,13 @@ import org.eclipse.emf.ecore.EObject;
  * @author ckru
  *
  */
-public interface IFigureProvider {
+public interface IRenderingProvider {
     
     /**
      * Method that returns a figure according to a given string.
      * @param input a string representation of the figure
      * @param oldFigure the old figure
+     * @param object
      * @return the figure
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure, final EObject object);
@@ -40,4 +42,19 @@ public interface IFigureProvider {
      */
     public IFigure getDefaultFigure();
 
+    /**
+     * Method that returns a LayoutManager according to a given string.
+     * @param input a string representation of the LayoutManager
+     * @param oldLayoutManager the old LayoutManager
+     * @param object
+     * @return the new LayoutManager
+     */
+    public LayoutManager getLayoutManagerByString(final String input, final LayoutManager oldLayoutManager, final EObject object);
+    
+    /**
+     * Returns the default LayoutManager.
+     * @return the default LayoutManager
+     */
+    public LayoutManager getDefaultLayoutManager();
+    
 }

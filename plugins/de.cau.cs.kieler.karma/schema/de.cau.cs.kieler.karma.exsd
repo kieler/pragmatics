@@ -82,13 +82,20 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="layoutParam" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <element name="listSizeCondition">
       <annotation>
          <documentation>
-            A condition that tests the size of list. &quot;Feature&quot; and &quot;Type&quot; are used to find a method in the packages with the form of get&lt;type&gt;_&lt;feature&gt;().
+            A condition that tests the size of list. &quot;Feature&quot; and &quot;Type&quot; are used to find a method in the packages with the form of get[type]_[feature]() .
          </documentation>
       </annotation>
       <complexType>
@@ -120,6 +127,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="layoutParam" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -130,7 +144,7 @@
          </documentation>
       </annotation>
       <complexType>
-         <choice minOccurs="2" maxOccurs="unbounded">
+         <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="featureValueCondition"/>
             <element ref="listSizeCondition"/>
             <element ref="customCondition"/>
@@ -140,6 +154,13 @@
             <annotation>
                <documentation>
                   This string will be given to te figure provider. The figure provider should be able to handle the string and return a figure according to this string.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="layoutParam" type="string">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>
@@ -184,6 +205,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="layoutParam" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -194,13 +222,13 @@
             <element ref="package" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="editPart" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
-         <attribute name="FigureProvider" type="string" use="required">
+         <attribute name="RenderingProvider" type="string" use="required">
             <annotation>
                <documentation>
                   The figure string  from the conditions will be given to this class and will return the figure that will be displayed.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.karma.IFigureProvider"/>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.karma.IRenderingProvider"/>
                </appinfo>
             </annotation>
          </attribute>

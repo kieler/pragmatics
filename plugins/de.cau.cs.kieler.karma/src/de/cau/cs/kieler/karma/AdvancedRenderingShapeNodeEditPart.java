@@ -53,8 +53,8 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
         super(view);
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
-        List<Pair<String, ICondition<EObject>>> conditions = conditionProvider.getPairs(className);
-        IFigureProvider figureProvider = conditionProvider.getFigureProvider(className);
+        List<Pair<Pair<String, String>, ICondition<EObject>>> conditions = conditionProvider.getPairs(className);
+        IRenderingProvider figureProvider = conditionProvider.getFigureProvider(className);
         util = new AdvancedRenderingEditPartUtil(conditions, figureProvider);
 
     }

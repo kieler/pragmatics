@@ -51,13 +51,13 @@ public final class ConditionProvider {
      * HashTable for caching condition pairs so that the ExtensionPoint is parsed only once per edit
      * part.
      */
-    private Hashtable<String, List<Pair<String, ICondition<EObject>>>> hashTableConditions = new Hashtable<String, List<Pair<String, ICondition<EObject>>>>();
+    private Hashtable<String, List<Pair<Pair<String, String>, ICondition<EObject>>>> hashTableConditions = new Hashtable<String, List<Pair<Pair<String, String>, ICondition<EObject>>>>();
 
     /**
      * HashTable for caching figure providers so that the ExtensionPoint is parsed only once per
      * edit part.
      */
-    private Hashtable<String, IFigureProvider> hashTableFigureProviders = new Hashtable<String, IFigureProvider>();
+    private Hashtable<String, IRenderingProvider> hashTableFigureProviders = new Hashtable<String, IRenderingProvider>();
 
     /**
      * HashTable for caching the relevant features and feature ids. Not yet used, will probably removed again. 
@@ -101,11 +101,11 @@ public final class ConditionProvider {
      *            the editor for which the returned conditions will be defined
      * @return list of all condition figure pairs that fit the given editor
      */
-    public List<Pair<String, ICondition<EObject>>> getPairs(final String callingEditPart) {
+    public List<Pair<Pair<String, String>, ICondition<EObject>>> getPairs(final String callingEditPart) {
         if (hashTableConditions.containsKey(callingEditPart)) {
             return hashTableConditions.get(callingEditPart);
         }
-        List<Pair<String, ICondition<EObject>>> conditionFigurePairs = new LinkedList<Pair<String, ICondition<EObject>>>();
+        List<Pair<Pair<String, String>, ICondition<EObject>>> conditionFigurePairs = new LinkedList<Pair<Pair<String, String>, ICondition<EObject>>>();
         IConfigurationElement[] configurations = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTENSION_POINT_ID);
         for (IConfigurationElement settings : configurations) {
@@ -129,14 +129,12 @@ public final class ConditionProvider {
                         IConfigurationElement[] conditions = conditionContainer.getChildren();
                         for (IConfigurationElement condition : conditions) {
                             String figureParam = condition.getAttribute("figureParam");
-                            if ((figureParam == null) || (figureParam.isEmpty())) {
-                            	System.out.println("figureparam empty");
-                            }
+                            String layoutParam = condition.getAttribute("layoutParam");
                             // IFigure figure = figureProvider.getFigureByString(figureParam);
                             ICondition<EObject> cond = getCondition(condition, packages);
                             if ((cond != null) /* && (figure != null) */) {
-                                Pair<String, ICondition<EObject>> pair = new Pair<String, ICondition<EObject>>(
-                                        figureParam, cond);
+                                Pair<Pair<String, String>, ICondition<EObject>> pair = new Pair<Pair<String, String> , ICondition<EObject>>(
+                                        new Pair <String, String>(figureParam, layoutParam), cond);
                                 conditionFigurePairs.add(pair);
                             } else {
                                 throw new RuntimeException(
@@ -326,7 +324,7 @@ public final class ConditionProvider {
      *            name of the calling edit part
      * @return the registered figure provider
      */
-    public IFigureProvider getFigureProvider(final String callingEditPart) {
+    public IRenderingProvider getFigureProvider(final String callingEditPart) {
         if (hashTableFigureProviders.containsKey(callingEditPart)) {
             return hashTableFigureProviders.get(callingEditPart);
         }
@@ -340,9 +338,9 @@ public final class ConditionProvider {
             // String editorId = settings.getAttribute("editorId");
             IConfigurationElement[] parts = settings.getChildren("editPart");
             if (checkCompatibleEditParts(parts, callingEditPart)) {
-                IFigureProvider figureProvider = null;
+                IRenderingProvider figureProvider = null;
                 try {
-                    figureProvider = (IFigureProvider) settings
+                    figureProvider = (IRenderingProvider) settings
                             .createExecutableExtension("FigureProvider");
                 } catch (CoreException e1) {
                     throw new RuntimeException("figureProvider filed to load.");

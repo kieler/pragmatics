@@ -28,58 +28,25 @@ public class AdvancedRenderingEditPartUtil {
     /**
      * The list of conditions and the corresponding string for generating the figure.
      */
-    private List<Pair<String, ICondition<EObject>>> conditions;
+    private List<Pair<Pair<String, String>, ICondition<EObject>>> conditions;
 
     /**
      * The figure provider for generating the figures from a string.
      */
-    private IFigureProvider figureProvider;
+    private IRenderingProvider renderingProvider;
 
     /**
      * 
      * @param theConditions
      *            The list of conditions and the corresponding string for generating the figure.
-     * @param theFigureProvider
+     * @param theRenderingProvider
      *            The figure provider for generating the figures from a string.
      */
-    public AdvancedRenderingEditPartUtil(List<Pair<String, ICondition<EObject>>> theConditions,
-            IFigureProvider theFigureProvider) {
+    public AdvancedRenderingEditPartUtil(
+            final List<Pair<Pair<String, String>, ICondition<EObject>>> theConditions,
+            final IRenderingProvider theRenderingProvider) {
         conditions = theConditions;
-        figureProvider = theFigureProvider;
-    }
-
-    /**
-     * Method to update a figure according to the conditions.
-     * 
-     * @param figure
-     *            the figure to be updated.
-     * @param modelElement
-     *            the modelelement the figure belongs to.
-     * @return true if the figure actually changed, false else.
-     */
-    public boolean updateFigure(IFigure figure, EObject modelElement) {
-        if ((figure instanceof SwitchableFigure) && (conditions != null)) {
-            if (!(conditions.isEmpty())) {
-                SwitchableFigure attrFigure = (SwitchableFigure) figure;
-                IFigure oldFigure = attrFigure.getCurrentFigure();
-                IFigure newFigure = null;
-                for (Pair<String, ICondition<EObject>> cf : conditions) {
-                    if (cf.getSecond().evaluate(modelElement)) {
-                        if (lastCondition == cf.getSecond()) {
-                            return false;
-                        } else {
-
-                            newFigure = figureProvider.getFigureByString(cf.getFirst(), oldFigure,
-                                    modelElement);
-                            attrFigure.setCurrentFigure(newFigure);
-                            lastCondition = cf.getSecond();
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+        renderingProvider = theRenderingProvider;
     }
 
     /**
@@ -93,8 +60,8 @@ public class AdvancedRenderingEditPartUtil {
      * @param editPart
      *            the editpart himself.
      */
-    public void handleNotificationEvent(final Notification notification, IFigure primaryShape,
-            EObject modelElement, GraphicalEditPart editPart) {
+    public void handleNotificationEvent(final Notification notification,
+            final IFigure primaryShape, final EObject modelElement, final GraphicalEditPart editPart) {
         if (!(notification.isTouch())) {
             if (primaryShape != null) {
                 if (primaryShape instanceof SwitchableFigure) {
@@ -111,6 +78,42 @@ public class AdvancedRenderingEditPartUtil {
                 }
             }
         }
+    }
+
+    /**
+     * Method to update a figure according to the conditions.
+     * 
+     * @param figure
+     *            the figure to be updated.
+     * @param modelElement
+     *            the modelelement the figure belongs to.
+     * @return true if the figure actually changed, false else.
+     */
+    public boolean updateFigure(final IFigure figure, final EObject modelElement) {
+        if ((figure instanceof SwitchableFigure) && (conditions != null)) {
+            if (!(conditions.isEmpty())) {
+                SwitchableFigure attrFigure = (SwitchableFigure) figure;
+                IFigure oldFigure = attrFigure.getCurrentFigure();
+                IFigure newFigure = null;
+                for (Pair<Pair<String, String>, ICondition<EObject>> cf : conditions) {
+                    if (cf.getSecond().evaluate(modelElement)) {
+                        if (lastCondition == cf.getSecond()) {
+                            return false;
+                        } else {
+
+                            newFigure = renderingProvider.getFigureByString(cf.getFirst().getFirst(), oldFigure,
+                                    modelElement);
+                            LayoutManager newLayoutManager = renderingProvider.getLayoutManagerByString(cf.getFirst().getSecond(), attrFigure.getLayoutManager(), modelElement);
+                            attrFigure.setCurrentFigure(newFigure);
+                            attrFigure.setLayoutManager(newLayoutManager);
+                            lastCondition = cf.getSecond();
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

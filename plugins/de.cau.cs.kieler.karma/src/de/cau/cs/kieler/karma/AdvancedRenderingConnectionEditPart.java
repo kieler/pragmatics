@@ -44,12 +44,12 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
     /**
      * The list of conditions and the corresponding string for generating the figure.
      */
-    private List<Pair<String, ICondition<EObject>>> conditions;
+    private List<Pair<Pair<String, String>, ICondition<EObject>>> conditions;
 
     /**
      * The figure provider for generating the figures from a string.
      */
-    private IFigureProvider figureProvider;
+    private IRenderingProvider renderingProvider;
     
     /**
      * Container for the last positive condition. Used for performance optimizations.
@@ -67,7 +67,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
         conditions = conditionProvider.getPairs(className);
-        figureProvider = conditionProvider.getFigureProvider(className);
+        renderingProvider = conditionProvider.getFigureProvider(className);
     }
 
     @Override
@@ -99,13 +99,15 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
             SplineConnection splineFigure = (SplineConnection) figure;
             IFigure oldFigure = splineFigure;
             IFigure newFigure = null;
-            for (Pair<String, ICondition<EObject>> cf : conditions) {
+            for (Pair<Pair<String, String>, ICondition<EObject>> cf : conditions) {
                 if (cf.getSecond().evaluate(this.getModelElement())) {
                     if (cf.getSecond() == lastCondition) {
                         return false;
                     } else {
-                        newFigure = figureProvider.getFigureByString(cf.getFirst(), oldFigure, this.getModelElement());
+                        newFigure = renderingProvider.getFigureByString(cf.getFirst().getFirst(), oldFigure, this.getModelElement());
                         primaryShape = newFigure;
+                        LayoutManager newLayoutManager = renderingProvider.getLayoutManagerByString(cf.getFirst().getSecond(), splineFigure.getLayoutManager(), this.getModelElement());
+                        splineFigure.setLayoutManager(newLayoutManager);
                         lastCondition = cf.getSecond();
                         return true;
                     }
