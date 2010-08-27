@@ -39,7 +39,6 @@ public class NodeDegreeAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Number of Edges analysis", 1);
-
         int numberOfNodes = 0;
         int overallNodeDegree = 0;
         int minNodeDegree = Integer.MAX_VALUE;

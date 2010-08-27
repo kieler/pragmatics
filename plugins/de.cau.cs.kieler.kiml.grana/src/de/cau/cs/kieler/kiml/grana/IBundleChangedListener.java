@@ -14,32 +14,26 @@
 package de.cau.cs.kieler.kiml.grana;
 
 /**
- * Interface for listeners to an {@code AbstractAnalysesBundle}.
+ * Interface for listeners to an {@code IAnalysesBundle}.
  * 
  * @author mri
  */
 public interface IBundleChangedListener {
 
     /**
-     * Called when an analysis is added to the bundle.
+     * Called when an analysis is added to a bundle.
      * 
-     * @param abstractAnalysisBundle
-     *            the bundle
      * @param analysis
      *            the analysis
      */
-    void analysisAdded(AbstractAnalysisBundle abstractAnalysisBundle,
-            AbstractInfoAnalysis analysis);
+    void analysisAdded(AbstractInfoAnalysis analysis);
 
     /**
-     * Called when an analysis is removed from the bundle.
+     * Called when an analysis is removed from a bundle.
      * 
-     * @param abstractAnalysisBundle
-     *            the bundle
      * @param analysis
      *            the analysis
      */
-    void analysisRemoved(AbstractAnalysisBundle abstractAnalysisBundle,
-            AbstractInfoAnalysis analysis);
+    void analysisRemoved(AbstractInfoAnalysis analysis);
 
 }

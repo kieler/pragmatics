@@ -67,7 +67,6 @@ public class EdgeLengthAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Edge Length analysis", 1);
-
         int numberOfEdges = 0;
         float overallEdgeLength = 0;
         float minEdgeLength = Float.MAX_VALUE;

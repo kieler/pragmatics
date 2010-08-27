@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.grana;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -43,24 +44,29 @@ public final class AnalysisServices implements IBundleChangedListener {
     public static final String EXTP_ID_ANALYSIS_PROVIDERS =
             "de.cau.cs.kieler.kiml.grana.analysisProviders";
     /**
-     * name of the 'analysisProvider' element in the 'analysis providers' extension point.
+     * name of the 'analysisProvider' element in the 'analysis providers'
+     * extension point.
      */
     public static final String ELEMENT_ANALYSIS_PROVIDER = "provider";
-    /** name of the 'analysisBundle' element in the 'analysis providers' extension point. */
+    /**
+     * name of the 'analysisBundle' element in the 'analysis providers'
+     * extension point.
+     */
     public static final String ELEMENT_ANALYSIS_BUNDLE = "bundle";
     /**
-     * name of the 'analysisCategory' element in the 'analysis providers' extension point.
+     * name of the 'analysisCategory' element in the 'analysis providers'
+     * extension point.
      */
     public static final String ELEMENT_ANALYSIS_CATEGORY = "category";
     /**
-     * name of the 'analysisResultVisualizer' element in the 'analysis providers'
-     * extension point.
+     * name of the 'analysisResultVisualizer' element in the 'analysis
+     * providers' extension point.
      */
     public static final String ELEMENT_ANALYSIS_RESULT_VISUALIZER =
             "resultVisualizer";
     /**
-     * name of the 'analysisDependency' element in the 'analysis providers' extension
-     * point.
+     * name of the 'analysisDependency' element in the 'analysis providers'
+     * extension point.
      */
     public static final String ELEMENT_ANALYSIS_DEPENDENCY = "dependency";
     /** name of the 'analysis' attribute in the extension points. */
@@ -111,7 +117,8 @@ public final class AnalysisServices implements IBundleChangedListener {
     }
 
     /**
-     * Creates the singleton and initializes it with the data from the extension point.
+     * Creates the singleton and initializes it with the data from the extension
+     * point.
      */
     static {
         instance = new AnalysisServices();
@@ -158,7 +165,8 @@ public final class AnalysisServices implements IBundleChangedListener {
     }
 
     /**
-     * Loads and registers all graph analyses and categories from the extension point.
+     * Loads and registers all graph analyses and categories from the extension
+     * point.
      */
     private void loadAnalysisProviderExtension() {
         IConfigurationElement[] extensions =
@@ -249,8 +257,8 @@ public final class AnalysisServices implements IBundleChangedListener {
             } else if (ELEMENT_ANALYSIS_BUNDLE.equals(element.getName())) {
                 // initialize an analysis bundle from the extension point
                 try {
-                    AbstractAnalysisBundle analysisBundle =
-                            (AbstractAnalysisBundle) element
+                    IAnalysisBundle analysisBundle =
+                            (IAnalysisBundle) element
                                     .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (analysisBundle != null) {
                         String name = element.getAttribute(ATTRIBUTE_NAME);
@@ -266,8 +274,7 @@ public final class AnalysisServices implements IBundleChangedListener {
                             for (AbstractInfoAnalysis analysis : analysisBundle
                                     .getAnalyses()) {
                                 analyses.add(analysis);
-                                analysisIdMapping.put(analysis.getID()
-                                        .toLowerCase(), analysis);
+                                analysisIdMapping.put(analysis.getID(), analysis);
                             }
                             analysisBundle.addBundleChangedListener(this);
                         }
@@ -301,7 +308,8 @@ public final class AnalysisServices implements IBundleChangedListener {
                 }
             }
         }
-        // add the analyses to the dependency graph and remove analyses which had
+        // add the analyses to the dependency graph and remove analyses which
+        // had
         // unresolved or cyclic dependencies
         List<AbstractInfoAnalysis> unresolvedAnalyses =
                 dependencyGraph.addAll(analyses);
@@ -350,6 +358,15 @@ public final class AnalysisServices implements IBundleChangedListener {
     public List<AnalysisCategory> getCategories() {
         return categories;
     }
+    
+    /**
+     * Returns the analyses.
+     * 
+     * @return the analyses
+     */
+    public Collection<AbstractInfoAnalysis> getAnalyses() {
+        return analysisIdMapping.values();
+    }
 
     /**
      * Returns the visualizers.
@@ -383,9 +400,9 @@ public final class AnalysisServices implements IBundleChangedListener {
     }
 
     /**
-     * Calls appropriate visualizers for the given result. Returns a string containing
-     * html to display the result or null if no visualizer was found which produces html
-     * for this result.
+     * Calls appropriate visualizers for the given result. Returns a string
+     * containing html to display the result or null if no visualizer was found
+     * which produces html for this result.
      * 
      * @param result
      *            the result to visualize
@@ -406,9 +423,9 @@ public final class AnalysisServices implements IBundleChangedListener {
     }
 
     /**
-     * Takes a list of analyses and returns a list that includes the given analysis and
-     * their dependencies in an order so that all dependencies of an analysis are listed
-     * before it.
+     * Takes a list of analyses and returns a list that includes the given
+     * analysis and their dependencies in an order so that all dependencies of
+     * an analysis are listed before it.
      * 
      * @param analyses
      *            the analyses
@@ -422,11 +439,10 @@ public final class AnalysisServices implements IBundleChangedListener {
     /**
      * {@inheritDoc}
      */
-    public void analysisAdded(
-            final AbstractAnalysisBundle abstractAnalysisBundle,
-            final AbstractInfoAnalysis analysis) {
+    public void analysisAdded(final AbstractInfoAnalysis analysis) {
         // check if all dependencies for the analysis are present
         if (dependencyGraph.add(analysis)) {
+            analysisIdMapping.put(analysis.getID(), analysis);
             AnalysisCategory category =
                     categoryIdMapping.get(analysis.getCategory());
             // if the category does not exist take default one
@@ -442,14 +458,13 @@ public final class AnalysisServices implements IBundleChangedListener {
     /**
      * {@inheritDoc}
      */
-    public void analysisRemoved(
-            final AbstractAnalysisBundle abstractAnalysisBundle,
-            final AbstractInfoAnalysis analysis) {
+    public void analysisRemoved(final AbstractInfoAnalysis analysis) {
         List<AbstractInfoAnalysis> removedAnalyses =
                 dependencyGraph.remove(analysis);
         for (AnalysisCategory category : categories) {
             category.getAnalyses().removeAll(removedAnalyses);
         }
+        analysisIdMapping.remove(analysis.getID());
     }
 
     /**
@@ -513,8 +528,8 @@ public final class AnalysisServices implements IBundleChangedListener {
     }
 
     /**
-     * This class is a wrapper for analyses to attach additional informations received
-     * through the extension point.
+     * This class is a wrapper for analyses to attach additional informations
+     * received through the extension point.
      */
     private class InfoAnalysis extends AbstractInfoAnalysis {
 

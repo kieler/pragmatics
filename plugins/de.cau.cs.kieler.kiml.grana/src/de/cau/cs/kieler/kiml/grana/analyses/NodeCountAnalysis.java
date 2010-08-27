@@ -37,7 +37,6 @@ public class NodeCountAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Number of Nodes analysis", 1);
-
         Integer numberOfNodes = 0;
         List<KNode> nodes = new LinkedList<KNode>();
         nodes.add(parentNode);

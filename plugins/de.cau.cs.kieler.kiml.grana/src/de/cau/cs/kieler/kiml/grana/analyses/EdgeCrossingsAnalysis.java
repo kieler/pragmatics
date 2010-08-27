@@ -130,7 +130,7 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
-
+        progressMonitor.begin("Edge Crossings analysis", 1);
         int numberOfCrossings = 0;
         List<KNode> nodes = new LinkedList<KNode>();
         nodes.add(parentNode);

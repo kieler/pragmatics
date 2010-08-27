@@ -61,6 +61,13 @@
             id="de.cau.cs.kieler.kiml.grana.edgeCrossings"
             name="Number of Edge Crossings">
       </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
+            class="de.cau.cs.kieler.kiml.grana.analyses.NodeCrossingsAnalysis"
+            description="The number of crossings between nodes and edges on all hierarchy levels."
+            id="de.cau.cs.kieler.kiml.grana.nodeCrossings"
+            name="Number of Node Crossings">
+      </provider>
       <resultVisualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.ToStringVisualizer"
             priority="1">
@@ -120,6 +127,15 @@
                style="push">
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.grana.ui.GranaGeneralPreferencePage"
+            id="de.cau.cs.kieler.kiml.grana.general"
+            name="Graph Analysis">
+      </page>
    </extension>
 
 </plugin>
