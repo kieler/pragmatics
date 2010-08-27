@@ -41,7 +41,7 @@ public interface IBigNodeHandler extends IAlgorithm {
 
     /**
      * This method removes all edges previously added to the graph to fixate big nodes in their
-     * segments. This removal is necessary, since that edges are not part of the original graph, but
+     * segments. This removal is necessary, since that edges are not part of the original graph and
      * will reduce the quality of the result of the crossing minimization phase.
      */
     void removeFixationEdges();

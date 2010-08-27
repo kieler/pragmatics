@@ -36,7 +36,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
 
     // ===================================== Enums ================================================
 
-    /** An {@code Enum} defining the traversal direction in the graph. */
+    /** An {@code Enum} indicating a traversal direction in the graph. */
     private enum Direction {
 
         /** The direction from source to target node of an each. */
@@ -92,13 +92,17 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
     private int[] height;
 
     /**
-     * Note. that these attributes do not consider any layers that have to be added after the fixing
-     * edges have been inserted.(Determined layering might be wider (more layers) due to adding
-     * fixing edges).
+     * Note that these attributes do not consider any layers that have to be added after the
+     * fixating edges have been inserted.(Determined layering might be wider (more layers) due to
+     * adding fixing edges).
      */
     private int[] leftLayer;
 
     private int[] rightLayer;
+
+    private LNode[] leftSubnode;
+
+    private LNode[] rightSubnode;
 
     /** The minimal spacing between two objects in the drawn graph. */
     private float minSpacing;
@@ -106,7 +110,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
     /**
      * The ID of each wide node. Each dummy node, a wide node is split into, will share the same ID.
      */
-    private int[] wideNodeID;
+    // private int[] wideNodeID;
 
     /**
      * The length of the longest path in the graph from a source to sink node, which is defined as
@@ -114,6 +118,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
      */
     private int longestPath;
 
+    private ArrayList<LinkedList<LNode>> dummyNodes;
 
     // ================================== Constructor =============================================
 
@@ -154,18 +159,27 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
         }
         layeredGraph = theLayeredGraph;
 
-        // precompute the number of nodes including all dummy nodes still to add
+        // precompute the total number of nodes including all dummy nodes still to add
         int numNodes = nodes.size() + computeNodeWidth();
 
         // initialize node attributes
         if (width == null || width.length < nodes.size()) {
             width = new int[nodes.size()];
+            dummyNodes = new ArrayList<LinkedList<LNode>>();
+            for (int i = 0; i < nodes.size(); i++) {
+                dummyNodes.add(new LinkedList<LNode>());
+            }
+        } else {
+            for (int i = 0; i < nodes.size(); i++) {
+                dummyNodes.set(i, new LinkedList<LNode>());
+            }
         }
         if (height == null || height.length < numNodes) {
             height = new int[numNodes];
-            wideNodeID = new int[numNodes];
             leftLayer = new int[numNodes];
             rightLayer = new int[numNodes];
+            leftSubnode = new LNode[numNodes];
+            rightSubnode = new LNode[numNodes];
         } else {
             Arrays.fill(height, -1);
             Arrays.fill(leftLayer, 0);
@@ -220,8 +234,12 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
         getMonitor().done();
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public void removeFixationEdges() {
-        
+
         Iterator<LPort> iterator = null;
         for (LNode node : nodes) {
             iterator = node.getPorts().iterator();
@@ -234,7 +252,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
     }
 
     /**
-     * Helper method for the Proprocessing Big-Node-Splitter. It fixates all wide nodes among
+     * Helper method for the Avarage Position Big-Node-Handler. It fixates all wide nodes among
      * themselves to prevent the layering from becoming improper. Two wide nodes are either disjoint
      * regarding the layers, they are assigned to, or the smaller of the two nodes is assigned to
      * all layers, the larger node is also assigned to.
@@ -245,72 +263,76 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
 
         // the list of positions each wide is assigned to in the graph
         ArrayList<LNode> assignmentMap = new ArrayList<LNode>(longestPath << 1);
-        // a temporal list for efficient element insertion
-        ArrayList<LNode> temp = new ArrayList<LNode>(longestPath);
-
+        // the number of added layers during position assignment
         int addedLayers = 0;
-        // the leftmost layer the left edge of the wide node is assigned to on average
-        int avgLeft, avgRight;
-        // counting variables to determine, with which other wide nodes this nodes shares the most
-        // layers on average
-        int segment1, nullSeg, segment3;
-        LNode nodeSeg1, nodeSeg3, chosen;
+        // helper variables
+        int avgLeft, avgRight, segment1, nullSeg, segment3, correction;
+        LNode chosen = null;
+
         for (LNode node : wideNodes) {
             // determine the layer, the node's leftmost subnode will be assigned to on average
             avgLeft = (rightLayer[node.id] + addedLayers - leftLayer[node.id] - width[node.id]) >> 1;
             avgRight = avgLeft + width[node.id];
-            // determine other wide nodes, also assigned to this layer segment
-            segment1 = 1;
+            // determine other wide nodes, also assigned to this segment
+            segment1 = 0;
+            segment3 = 0;
             nullSeg = 0;
-            segment3 = 1;
-            nodeSeg1 = assignmentMap.get(avgLeft);
-            nodeSeg3 = assignmentMap.get(avgRight);
-
-            chosen = null;
-
-            // determine the wide node, the node shares the most layers with (on average)
-            if (wideNodeID[nodeSeg1.id] == wideNodeID[nodeSeg3.id]) {
-                chosen = nodeSeg1;
-            } else {
-                for (int layer = avgLeft + 1; layer < avgRight; layer++) {
-                    if (wideNodeID[assignmentMap.get(layer).id] == wideNodeID[nodeSeg1.id]) {
-                        segment1++;
-                    } else if (wideNodeID[assignmentMap.get(layer).id] == wideNodeID[nodeSeg3.id]) {
-                        segment3++;
-                    } else {
-                        nullSeg++;
+            // count segment overlappings
+            for (int layer = avgLeft; layer <= avgRight; layer++) {
+                if (assignmentMap.get(layer) == null) {
+                    nullSeg++;
+                } else if (leftSubnode[assignmentMap.get(layer).id] == leftSubnode[assignmentMap
+                        .get(avgLeft).id]) {
+                    segment1++;
+                } else {
+                    segment3++;
+                }
+            }
+            // determine wide node with most layer overlappings
+            if (segment1 > segment3 && segment1 > nullSeg) {
+                chosen = assignmentMap.get(avgLeft);
+            } else if (segment3 > nullSeg) {
+                chosen = assignmentMap.get(avgRight);
+            }
+            // assign wide node to their position in the list
+            if (chosen == null) {
+                // insert wide node into assignment map
+                correction = clearSpace(assignmentMap, avgLeft, avgRight);
+                // correct positions due to changed list size
+                avgLeft += correction;
+                avgRight += correction;
+                addedLayers += correction;
+                // add wide node to list
+                int i = avgLeft;
+                assignmentMap.set(i++, node);
+                for (LNode dummy : dummyNodes.get(node.id)) {
+                    assignmentMap.set(i++, dummy);
+                }
+                // add fixation edge to left node in the list
+                for (int j = avgLeft - 1; j >= 0; j--) {
+                    if (assignmentMap.get(j) != null) {
+                        addEdge(assignmentMap.get(j), assignmentMap.get(avgLeft), true);
+                        break;
                     }
                 }
-                if (segment1 > segment3 && segment1 > nullSeg) {
-                    chosen = nodeSeg1;
-                } else if (segment3 > nullSeg) {
-                    chosen = nodeSeg3;
+                // add fixation edge to right node in the list
+                for (int j = avgRight + 1; j < assignmentMap.size(); j++) {
+                    if (assignmentMap.get(j) != null) {
+                        addEdge(assignmentMap.get(avgRight), assignmentMap.get(j), true);
+                        break;
+                    }
                 }
+            } else {
+                // add fixation edges
+                addEdge(dummyNodes.get(chosen.id).getFirst(), dummyNodes.get(node.id).get(1), true);
+                addEdge(dummyNodes.get(node.id).get(dummyNodes.get(node.id).size() - 1), dummyNodes
+                        .get(chosen.id).getLast(), true);
             }
-
-
-            if (chosen == null) {
-                if (nodeSeg1 == null && nodeSeg3 == null) {
-                   int a = 2; 
-                }
-                
-                
-                // no other wide node has already been assigned to that area
-                if (nodeSeg1 == null && nodeSeg3 != null) {
-                    // for (int layer = avgLeft; layer > avgLeft - ; layer++) {
-                }
-                // place wide node in list of assigned wide nodes
-                for (int layer = avgLeft; layer <= avgRight; layer++) {
-                    assignmentMap.set(layer, node);
-                }
-            }
-            // fixate node to the wide node, it shares the most layers with
-            // TODO
         }
     }
 
     /**
-     * Helper method for the Preprocessing Big Node Handler. It computes the width of each node
+     * Helper method for the Avarage Position Big-Node-Handler. It computes the width of each node
      * (i.e. the number of layers required to layer the node, which is the floor of the its width in
      * pixel devided by the width in pixel of the narrowest node in the graph). This value will be
      * stored in {@code width}. Furthermore, it fills the list of wide nodes in the graph
@@ -324,7 +346,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
      */
     private int computeNodeWidth() {
 
-        // determine width of the smallest node
+        // determine width of the narrowest node
         double minWidth = Float.MAX_VALUE;
         for (LNode node : nodes) {
             if (node.getSize().x < minWidth) {
@@ -351,13 +373,13 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
     }
 
     /**
-     * Helper method for the Preprocessing Big-Nodes-Splitter. It splits all wide nodes in the graph
-     * into smaller, equal sized nodes by the insertion of dummy nodes. All incoming edges incident
-     * to the original wide node will remain on the node, but outgoing back edges will be moved to
-     * the rightmost inserted dummy node. A unique and consistent ID will be assigned to each
-     * created dummy node. The wide node ID {@code wideNodeID} of each dummy node will be equal to
-     * the ID of the wide node, they originate from. Note that after a wide node has been split, its
-     * width in layers stored in {@code width} will not be updated.
+     * Helper method for the Avarage Position Big-Node-Handler. It splits all wide nodes in the
+     * graph into smaller, equal sized nodes by the insertion of dummy nodes. All incoming edges
+     * incident to the original wide node will remain on the node, but outgoing back edges will be
+     * moved to the rightmost inserted dummy node. A unique and consistent ID will be assigned to
+     * each created dummy node. The wide node ID {@code wideNodeID} of each dummy node will be equal
+     * to the ID of the wide node, they originate from. Note that after a wide node has been split,
+     * its width in layers stored in {@code width} will not be updated.
      * 
      * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#wideNodes wideNodes
      * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#width width
@@ -367,14 +389,13 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
      */
     public void splitWideNodes() {
 
-        // List of dummy nodes to be inserted in the graph
+        // list of dummy nodes to be inserted in the graph
         LinkedList<LNode> addNodes = new LinkedList<LNode>();
         // the ID of the next dummy node
         int addID = nodes.size();
 
         // determine wide nodes
         for (LNode node : wideNodes) {
-            wideNodeID[node.id] = node.id;
             // All nodes in the segment get the same width (temporarily)
             double newWidth = (node.getSize().x - ((width[node.id] - 1) * minSpacing))
                     / width[node.id];
@@ -384,7 +405,6 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
                 LNode addNode = new LNode();
                 // assign IDs
                 addNode.id = addID++;
-                wideNodeID[addNode.id] = node.id;
                 // set new size
                 addNode.getSize().y = node.getSize().y;
                 addNode.getSize().x = newWidth;
@@ -397,24 +417,55 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
                     port.setNode(addNode);
                 }
                 // add edge to link the nodes
-                LPort outPort = new LPort(PortType.OUTPUT);
-                LPort inPort = new LPort(PortType.INPUT);
-                outPort.setNode(node);
-                inPort.setNode(addNode);
-                LEdge edge = new LEdge();
-                edge.setSource(outPort);
-                edge.setTarget(inPort);
-                addNodes.add(addNode);
+                addEdge(node, addNode, false);
+                addNodes.addLast(addNode);
             }
+            for (LNode dummy : addNodes) {
+                // set references
+                leftSubnode[dummy.id] = node;
+                rightSubnode[dummy.id] = addNodes.getLast();
+                // add new dummy nodes to the graph
+                nodes.add(dummy);
+                dummyNodes.get(node.id).add(dummy);
+            }
+            addNodes = new LinkedList<LNode>();
         }
-        // add all new nodes to the graph
-        nodes.addAll(addNodes);
     }
 
     /**
-     * Helper method for the Preprocessing Big Node Handler. It determines the maximal shiftability
-     * of each node in the graph, i.e. the leftmost and rightmost layer each node might be assigned
-     * to in the layering phase indicated by {@code leftLayer}, resp. {@code rightLayer}.
+     * Helper method for the Avarage Position Big-Node-Handler. It adds a new edge to the graph
+     * connecting {@code source} and {@code target}.
+     * 
+     * @param source
+     *            the source node of the edge to create
+     * @param target
+     *            the target node of the edge to create
+     * @param fixationEdge
+     *            If {@code true}, the created ports, that link the edge with its source and target
+     *            node, will be marked as a fixation port meaning, that the the only purpose of the
+     *            inserted edge is to prevent wide edges from causing layering violations.
+     */
+    private void addEdge(final LNode source, final LNode target, final boolean fixationEdge) {
+
+        // add ports
+        LPort outPort = new LPort(PortType.OUTPUT);
+        LPort inPort = new LPort(PortType.INPUT);
+        outPort.setNode(source);
+        inPort.setNode(target);
+        // add edge
+        LEdge edge = new LEdge();
+        edge.setSource(outPort);
+        edge.setTarget(inPort);
+        // set properties
+        inPort.setProperty(Properties.FIXATION_PORT, fixationEdge);
+        outPort.setProperty(Properties.FIXATION_PORT, fixationEdge);
+    }
+
+    /**
+     * Helper method for the Avarage Position Big-Node-Handler. It determines the maximal
+     * shiftability of each node in the graph, i.e. the leftmost and rightmost layer each node might
+     * be assigned to in the layering phase indicated by {@code leftLayer}, resp. {@code rightLayer}
+     * .
      * 
      * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#leftLayer leftLayer
      * @see de.cau.cs.kieler.klay.layered.impl.AvgPositionBigNodeHandler#rightLayer rightLayer
@@ -443,7 +494,6 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
                 sources.add(node);
             }
         }
-
         // determine shiftability of each node
         Arrays.fill(rightLayer, longestPath);
         for (LNode node : sources) {
@@ -455,6 +505,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
     }
 
     /**
+     * Helper method for the Avarage Position Big-Node-Handler.
      * 
      * @param node
      *            the root of the DFS-subtree
@@ -494,7 +545,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
     }
 
     /**
-     * Helper method for the preprocessing Big-Node-Splitter. It sorts the list of wide nodes
+     * Helper method for the Avarage Position Big-Node-Handler. It sorts the list of wide nodes
      * {@code wideNodes} according to a non-decreasing width persueing the bucket sort strategy,
      * which guarantees a linear execution time. During sorting, the list {@code wideNodes} will be
      * completely cleared and rebuilt.
@@ -527,9 +578,9 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
     }
 
     /**
-     * Helper method for the Big-Node-Splitter. It determines the length of the longest path in the
-     * graph after splitting all wide nodes into smaller, equal sized ones, which is defined as the
-     * number of nodes in the path minus one.
+     * Helper method for the Avarage Position Big-Node-Handler. It determines the length of the
+     * longest path in the graph after splitting all wide nodes into smaller, equal sized ones,
+     * which is defined as the number of nodes in the path minus one.
      * 
      * @return the length of the longest path in the graph
      * 
@@ -571,68 +622,67 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
         height[node.id] = maxHeight;
         return maxHeight;
     }
-    
-    
+
+    /**
+     * Helper method for the Avarage Position Big-Node-Handler.
+     * 
+     * @param list
+     * @param leftIndex
+     * @param rightIndex
+     * @return
+     */
     private int clearSpace(final ArrayList<LNode> list, final int leftIndex, final int rightIndex) {
-        
-        if (leftIndex == rightIndex) {
-            return 0;
+
+        if (rightIndex < leftIndex) {
+            throw new IllegalArgumentException(
+                    "Input argument leftIndex is greater than rightIndex.");
         }
         if (leftIndex < 0) {
             throw new IndexOutOfBoundsException("Input argument leftIndex is less than zero.");
         }
-        
+
         int median = (leftIndex + rightIndex) >> 1;
-        int correction = 0;
         int shiftLeft = 0;
         int shiftRight = 0;
-        // median gehört zu links!
         int i = leftIndex;
+        // determine number of elements within that segment, that have to be shifted
         while (i <= median) {
-            if (list.get(i) != null) {
+            if (list.get(i++) != null) {
                 shiftLeft++;
             }
-            i++;
         }
         while (i <= rightIndex) {
-            if (list.get(i) != null) {
+            if (list.get(i++) != null) {
                 shiftRight++;
             }
-            i++;
         }
         // determine all nodes to shift to the left
         int shiftUpTo = median;
-        i = shiftUpTo;
-        while (i >= 0 && shiftLeft > 0) {
-            if (list.get(i) == null) {
+        while (shiftUpTo >= 0 && shiftLeft > 0) {
+            if (list.get(shiftUpTo--) == null) {
                 shiftLeft--;
             }
-            shiftUpTo--;
         }
-        correction = shiftLeft;
-        shiftRight += correction;
+        // the nodes, that cannot be shifted, because the beginning of the list has been reached
+        shiftRight += shiftLeft;
         // shift nodes to the left
         int current = shiftUpTo;
         while (current <= median) {
             while (list.get(current) == null) {
-                current--;
+                current++;
             }
-            list.set(shiftUpTo, list.get(current));
-            shiftUpTo++;
-            current++;
+            list.set(shiftUpTo++, list.get(current++));
         }
         // determine all nodes to shift to the right
         shiftUpTo = median + 1;
-        i = shiftUpTo;
-        while (i < list.size() && shiftRight > 0) {
-            if (list.get(i) == null) {
+        while (shiftUpTo < list.size() && shiftRight > 0) {
+            if (list.get(shiftUpTo++) == null) {
                 shiftRight--;
             }
-            shiftUpTo++;
         }
-        // add additional space, if necessary
-        if (i == list.size()) {
-            while (shiftRight > 0) {
+        // add additional slots to list, if necessary
+        if (shiftUpTo == list.size()) {
+            while (shiftRight-- > 0) {
                 list.add(null);
                 shiftUpTo++;
             }
@@ -643,12 +693,26 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
             while (list.get(current) == null) {
                 current--;
             }
-            list.set(shiftUpTo, list.get(current));
-            shiftUpTo--;
-            current--;
+            list.set(shiftUpTo--, list.get(current--));
         }
-        
-        return correction;
+
+        return shiftLeft;
+    }
+
+    /**
+     * 
+     * @param node
+     * @param direction
+     * @return
+     */
+    private LNode getAdjacentDummyNode(final LNode node, final Direction direction) {
+
+        if (direction == Direction.NATURAL) {
+            return node.getPorts(PortType.OUTPUT).iterator().next().getEdges().get(0).getTarget()
+                    .getNode();
+        }
+        return node.getPorts(PortType.INPUT).iterator().next().getEdges().get(0).getSource()
+                .getNode();
     }
 
 }
