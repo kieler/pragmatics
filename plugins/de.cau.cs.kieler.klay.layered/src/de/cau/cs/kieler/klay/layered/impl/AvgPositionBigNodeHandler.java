@@ -150,17 +150,16 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
 
         // reindex nodes and layers
         int counter = 0;
-        for (LNode node : nodes) {
+        for (LNode node : theNodes) {
             node.id = counter++;
         }
         counter = 0;
-        for (Layer theLayer : layeredGraph.getLayers()) {
+        for (Layer theLayer : theLayeredGraph.getLayers()) {
             theLayer.id = counter++;
         }
-        layeredGraph = theLayeredGraph;
 
-        // precompute the total number of nodes including all dummy nodes still to add
-        int numNodes = nodes.size() + computeNodeWidth();
+        nodes = theNodes;
+        layeredGraph = theLayeredGraph;
 
         // initialize node attributes
         if (width == null || width.length < nodes.size()) {
@@ -170,10 +169,15 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
                 dummyNodes.add(new LinkedList<LNode>());
             }
         } else {
-            for (int i = 0; i < nodes.size(); i++) {
+            for (int i = 0; i < theNodes.size(); i++) {
                 dummyNodes.set(i, new LinkedList<LNode>());
             }
         }
+        wideNodes = new LinkedList<LNode>();
+
+        // precompute the total number of nodes including all dummy nodes still to add
+        int numNodes = nodes.size() + computeNodeWidth();
+
         if (height == null || height.length < numNodes) {
             height = new int[numNodes];
             leftLayer = new int[numNodes];
@@ -181,11 +185,9 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
             leftSubnode = new LNode[numNodes];
             rightSubnode = new LNode[numNodes];
         } else {
-            Arrays.fill(height, -1);
             Arrays.fill(leftLayer, 0);
         }
-        wideNodes = new LinkedList<LNode>();
-        nodes = theNodes;
+        Arrays.fill(height, -1);
 
         // the object spacing in the drawn graph
         minSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
@@ -209,7 +211,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
         if (theNodes == null) {
             throw new NullPointerException("Input collection of nodes is null.");
         }
-        if (layeredGraph == null) {
+        if (theLayeredGraph == null) {
             throw new NullPointerException("Input graph is null.");
         }
 
@@ -224,6 +226,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
         splitWideNodes();
         // determine longest path
         longestPath = longestPath();
+        System.out.println("LongestPath = " + longestPath);
         // determine each node's leftmost and rightmost position in a layering
         shiftability();
         // sort wide nodes according to a non decreasing width
@@ -263,19 +266,25 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
 
         // the list of positions each wide is assigned to in the graph
         ArrayList<LNode> assignmentMap = new ArrayList<LNode>(longestPath << 1);
+        for (int i = 0; i <= longestPath; i++) {
+            assignmentMap.add(null);
+        }
         // the number of added layers during position assignment
         int addedLayers = 0;
         // helper variables
-        int avgLeft, avgRight, segment1, nullSeg, segment3, correction;
+        int avgLeft, avgRight, segment1, segment2, nullSeg, correction;
         LNode chosen = null;
 
         for (LNode node : wideNodes) {
+            System.out.println(node.toString() + " : leftLayer = " + leftLayer[node.id]
+                    + " rightLayer = " + rightLayer[node.id] + " width = " + width[node.id]);
             // determine the layer, the node's leftmost subnode will be assigned to on average
-            avgLeft = (rightLayer[node.id] + addedLayers - leftLayer[node.id] - width[node.id]) >> 1;
-            avgRight = avgLeft + width[node.id];
+            // FIXME avg berechnung falsch
+            avgLeft = (rightLayer[node.id] + addedLayers + leftLayer[node.id]) >> 1;
+            avgRight = avgLeft + width[node.id] - 1;
             // determine other wide nodes, also assigned to this segment
             segment1 = 0;
-            segment3 = 0;
+            segment2 = 0;
             nullSeg = 0;
             // count segment overlappings
             for (int layer = avgLeft; layer <= avgRight; layer++) {
@@ -285,13 +294,13 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
                         .get(avgLeft).id]) {
                     segment1++;
                 } else {
-                    segment3++;
+                    segment2++;
                 }
             }
             // determine wide node with most layer overlappings
-            if (segment1 > segment3 && segment1 > nullSeg) {
+            if (segment1 > segment2 && segment1 > nullSeg) {
                 chosen = assignmentMap.get(avgLeft);
-            } else if (segment3 > nullSeg) {
+            } else if (segment2 > nullSeg) {
                 chosen = assignmentMap.get(avgRight);
             }
             // assign wide node to their position in the list
@@ -349,6 +358,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
         // determine width of the narrowest node
         double minWidth = Float.MAX_VALUE;
         for (LNode node : nodes) {
+            System.out.println(node.toString() + " original size = " + node.getSize().x);
             if (node.getSize().x < minWidth) {
                 minWidth = node.getSize().x;
             }
@@ -356,15 +366,16 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
         // the number of total dummy nodes to be inserted
         int totalDummies = 0;
         // determine number of layers necessary to layer the node
-        double threshold = (2 * minWidth) + minSpacing;
+        double threshold;
         for (LNode node : nodes) {
-            width[node.id] = 0;
+            width[node.id] = 1;
+            threshold = (2 * minWidth) /* + minSpacing */;
             while (threshold <= node.getSize().x) {
                 width[node.id]++;
                 threshold += minWidth + minSpacing;
             }
-            totalDummies += width[node.id];
-            if (width[node.id] > 0) {
+            totalDummies += width[node.id] - 1;
+            if (width[node.id] > 1) {
                 // node is a wide node
                 wideNodes.add(node);
             }
@@ -395,38 +406,38 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
         int addID = nodes.size();
 
         // determine wide nodes
-        for (LNode node : wideNodes) {
+        for (LNode wideNode : wideNodes) {
             // All nodes in the segment get the same width (temporarily)
-            double newWidth = (node.getSize().x - ((width[node.id] - 1) * minSpacing))
-                    / width[node.id];
-            node.getSize().x = newWidth;
+            double newWidth = (wideNode.getSize().x - ((width[wideNode.id] - 1) * minSpacing))
+                    / width[wideNode.id];
+            wideNode.getSize().x = newWidth;
             // expand node by one dummy node, if node is wide
-            for (int d = 1; d < width[node.id]; d++) {
+            for (int d = 1; d < width[wideNode.id]; d++) {
                 LNode addNode = new LNode();
                 // assign IDs
                 addNode.id = addID++;
                 // set new size
-                addNode.getSize().y = node.getSize().y;
+                addNode.getSize().y = wideNode.getSize().y;
                 addNode.getSize().x = newWidth;
                 // reassign ports
                 LinkedList<LPort> ports = new LinkedList<LPort>();
-                for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                for (LPort port : wideNode.getPorts(PortType.OUTPUT)) {
                     ports.add(port);
                 }
                 for (LPort port : ports) {
                     port.setNode(addNode);
                 }
                 // add edge to link the nodes
-                addEdge(node, addNode, false);
+                addEdge(wideNode, addNode, false);
                 addNodes.addLast(addNode);
             }
             for (LNode dummy : addNodes) {
                 // set references
-                leftSubnode[dummy.id] = node;
+                leftSubnode[dummy.id] = wideNode;
                 rightSubnode[dummy.id] = addNodes.getLast();
                 // add new dummy nodes to the graph
                 nodes.add(dummy);
-                dummyNodes.get(node.id).add(dummy);
+                dummyNodes.get(wideNode.id).add(dummy);
             }
             addNodes = new LinkedList<LNode>();
         }
@@ -522,14 +533,14 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
     private void shiftabilityDFS(final LNode node, final Direction direction) {
 
         LNode target = null;
-        if (direction == Direction.NATURAL) {
+        if (direction == Direction.REVERSE) {
             // traverse paths from sink to source node
             for (LPort port : node.getPorts(PortType.INPUT)) {
                 for (LEdge edge : port.getEdges()) {
                     target = edge.getSource().getNode();
                     rightLayer[target.id] = Math
                             .min(rightLayer[target.id], rightLayer[node.id] - 1);
-                    shiftabilityDFS(target, Direction.NATURAL);
+                    shiftabilityDFS(target, Direction.REVERSE);
                 }
             }
         } else {
@@ -538,7 +549,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
                 for (LEdge edge : port.getEdges()) {
                     target = edge.getTarget().getNode();
                     leftLayer[target.id] = Math.max(leftLayer[target.id], leftLayer[node.id] + 1);
-                    shiftabilityDFS(target, Direction.REVERSE);
+                    shiftabilityDFS(target, Direction.NATURAL);
                 }
             }
         }
@@ -613,14 +624,14 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
             // node has already been visited
             return height[node.id];
         }
-        int maxHeight = 0;
+        int maxLength = 0;
         for (LPort port : node.getPorts(PortType.OUTPUT)) {
             for (LEdge edge : port.getEdges()) {
-                maxHeight = Math.max(maxHeight, 1 + longestPathDFS(edge.getTarget().getNode()));
+                maxLength = Math.max(maxLength, 1 + longestPathDFS(edge.getTarget().getNode()));
             }
         }
-        height[node.id] = maxHeight;
-        return maxHeight;
+        height[node.id] = maxLength;
+        return maxLength;
     }
 
     /**
@@ -668,7 +679,7 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
         // shift nodes to the left
         int current = shiftUpTo;
         while (current <= median) {
-            while (list.get(current) == null) {
+            while (current < list.size() - 1 && list.get(current) == null) {
                 current++;
             }
             list.set(shiftUpTo++, list.get(current++));
@@ -690,29 +701,13 @@ public class AvgPositionBigNodeHandler extends AbstractAlgorithm implements IBig
         // shift nodes to the right
         current = shiftUpTo;
         while (current > median) {
-            while (list.get(current) == null) {
+            while (current > 0 && list.get(current) == null) {
                 current--;
             }
             list.set(shiftUpTo--, list.get(current--));
         }
 
         return shiftLeft;
-    }
-
-    /**
-     * 
-     * @param node
-     * @param direction
-     * @return
-     */
-    private LNode getAdjacentDummyNode(final LNode node, final Direction direction) {
-
-        if (direction == Direction.NATURAL) {
-            return node.getPorts(PortType.OUTPUT).iterator().next().getEdges().get(0).getTarget()
-                    .getNode();
-        }
-        return node.getPorts(PortType.INPUT).iterator().next().getEdges().get(0).getSource()
-                .getNode();
     }
 
 }

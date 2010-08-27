@@ -23,11 +23,13 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.modules.IBigNodeHandler;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 
 /**
@@ -364,9 +366,14 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
         layeredGraph = theLayeredGraph;
 
+        IBigNodeHandler bigNodeHandler = new AvgPositionBigNodeHandler();
+        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
+            bigNodeHandler.handleBigNodes(theNodes, theLayeredGraph);
+        }
+        
         // layer graph, each connected component separately
         for (LinkedList<LNode> connComp : connectedComponents(theNodes)) {
-
+            
             initialize(connComp);
             // determine optimal layering
             feasibleTree();
@@ -375,8 +382,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 // current layering is not optimal
                 exchange(e, enterEdge(e));
             }
-
-            balance(normalize(false));
+            
+            if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
+                bigNodeHandler.removeFixationEdges();
+                normalize(false);
+            } else {
+                balance(normalize(false));
+            }
             // put nodes into their assigned layers
             for (LNode node : nodes) {
                 putNode(node);
