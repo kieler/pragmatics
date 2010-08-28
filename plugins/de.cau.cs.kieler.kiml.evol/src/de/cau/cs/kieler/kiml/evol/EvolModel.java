@@ -97,13 +97,11 @@ public final class EvolModel {
 
     // private fields
     private BasicEvolutionaryAlgorithm evolAlg;
-
     private int position;
     private String layoutProviderId;
     private String layoutTypeId;
     private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
     private Population weightWatchers;
-
     private BasicEvolutionaryAlgorithm weightEvolAlg;
 
     /**
@@ -147,6 +145,13 @@ public final class EvolModel {
             final Genome ind = getCurrentIndividual();
             final int rating = ind.getUserRating() + delta;
             ind.setUserRating(rating);
+
+            // Punish predictor
+            final Genome predictor = weightWatchers.get(0);
+            final int predictorRating = predictor.getUserRating();
+            predictor.setUserRating(predictorRating - Math.abs(delta));
+            weightEvolAlg.step();
+            weightWatchers = weightEvolAlg.getPopulation();
 
             afterChange("changeCurrentRating");
         }
@@ -196,6 +201,8 @@ public final class EvolModel {
 
             final Runnable runnable = new AutoRaterRunnable(unrated, wg, monitor, scale);
             MonitoredOperation.runInUI(runnable, true);
+            // reward predictor
+            wg.setUserRating(wg.getUserRating() + 10);
             monitor.worked(autoRateWork * scale);
 
             // Notify listeners.
@@ -267,7 +274,7 @@ public final class EvolModel {
 
     /**
      *
-     * @return the weights genome
+     * @return the population of rating predictors
      */
     public Population getWeightWatchers() {
         return this.weightWatchers;
