@@ -4,18 +4,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
-import de.cau.cs.kieler.kex.model.ExportResource;
+import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExampleExportWizard extends Wizard implements IExportWizard {
@@ -64,16 +64,14 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			validateElement(categories, 1, "Categories");
 			result.put(ExampleElement.CATEGORIES, categories);
 
-			result.put(ExampleElement.CREATE_EXAMPLE_FOLDER,
-					exRePage.createExampleFolder());
+			result.put(ExampleElement.CREATE_EXAMPLE_FOLDER, exRePage
+					.createExampleFolder());
 
 			rePage.buildResourceStructure();
 			List<ExportResource> exportedResources = rePage
 					.getExportedResources();
 			validateElement(exportedResources, 1, "Exported Resources");
 			result.put(ExampleElement.RESOURCES, exportedResources);
-
-			result.put(ExampleElement.HEAD_RESOURCE, rePage.getHeadFile());
 
 			List<String> creatableCategories = exRePage
 					.getCreatableCategories();
@@ -101,50 +99,38 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 
 	private void addAttributes(Map<ExampleElement, Object> map)
 			throws KielerException {
-		String exampleId = examplePage.getId();
-		validateField(exampleId, 4, "Example Id");
-		map.put(ExampleElement.ID, exampleId);
+		String exampleTitle = examplePage.getTitle();
+		validateField(exampleTitle, 4, "Example Title");
+		map.put(ExampleElement.TITLE, exampleTitle);
 
-		String exampleName = examplePage.getExampleName();
-		validateField(exampleName, 4, "Example Name");
-		map.put(ExampleElement.NAME, exampleName);
+		String author = examplePage.getAuthor();
+		validateField(author, 3, "Author");
+		map.put(ExampleElement.AUTHOR, author);
 
 		String exampleDescription = examplePage.getExampleDescription();
 		validateField(exampleDescription, 10, "Example Description");
 		map.put(ExampleElement.DESCRIPTION, exampleDescription);
 
-		String exampleVersion = examplePage.getVersion();
-		validateVersion(exampleVersion);
-		map.put(ExampleElement.VERSION, exampleVersion);
-
 		String exampleContact = examplePage.getContact();
 		// min 5 chars a@b.c
 		validateField(exampleContact, 5, "Example Contact");
 		map.put(ExampleElement.CONTACT, exampleContact);
+
+		IPath overviewPicPath = exRePage.getOverviewPicPath();
+		if (overviewPicPath != null) {
+			map.put(ExampleElement.OVERVIEW_PIC, overviewPicPath
+					.toPortableString());
+		}
+
 	}
 
 	private void validateElement(List<?> list, int minLength, String listName)
 			throws KielerException {
 		if (list == null || list.size() < minLength) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("No ").append(listName)
-					.append(" has been selected.\n")
-					.append("Please choose at least ")
+			errorMsg.append("No ").append(listName).append(
+					" has been selected.\n").append("Please choose at least ")
 					.append(String.valueOf(minLength));
-			throw new KielerException(errorMsg.toString());
-		}
-	}
-
-	private void validateVersion(String exampleVersion) throws KielerException {
-		try {
-			if (Version.emptyVersion.equals(Version
-					.parseVersion(exampleVersion)))
-				throw new IllegalArgumentException();
-		} catch (IllegalArgumentException e) {
-			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("The field ")
-					.append("Example Version")
-					.append(" has to be set and a correct version like 1.0 or 1.4.");
 			throw new KielerException(errorMsg.toString());
 		}
 	}
@@ -153,9 +139,9 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			String checkableName) throws KielerException {
 		if (checkable == null || checkable.length() < minLength) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("The field ").append(checkableName)
-					.append(" has to be set with at least ")
-					.append(String.valueOf(minLength)).append(" characters.");
+			errorMsg.append("The field ").append(checkableName).append(
+					" has to be set with at least ").append(
+					String.valueOf(minLength)).append(" characters.");
 			throw new KielerException(errorMsg.toString());
 		}
 	}

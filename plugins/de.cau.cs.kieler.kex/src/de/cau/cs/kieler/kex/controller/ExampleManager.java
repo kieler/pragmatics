@@ -101,7 +101,7 @@ public class ExampleManager {
 				.get(ExampleElement.SOURCETYPE))) {
 			// TODO online schnittstelle bauen...
 		} else
-			throw new KielerException("No ExportType was set.");
+			throw new KielerException("No Sourcetype defined.");
 	}
 
 	public void createCategory(List<String> creatableCategories,

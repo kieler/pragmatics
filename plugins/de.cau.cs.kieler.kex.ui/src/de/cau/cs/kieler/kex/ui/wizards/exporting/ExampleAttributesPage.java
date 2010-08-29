@@ -11,15 +11,13 @@ import org.eclipse.swt.widgets.Text;
 
 public class ExampleAttributesPage extends WizardPage {
 
-	private Text id;
+	private Text exampleTitle;
 
-	private Text exampleName;
-
-	private Text version;
-
-	private Text exampleDescription;
+	private Text author;
 
 	private Text contact;
+
+	private Text exampleDescription;
 
 	public ExampleAttributesPage(String pageName, IStructuredSelection selection) {
 		super(pageName);
@@ -46,59 +44,38 @@ public class ExampleAttributesPage extends WizardPage {
 
 	private void addAttributeFields(Composite composite) {
 		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		new Label(composite, SWT.NONE).setText("Title:");
+		exampleTitle = new Text(composite, SWT.BORDER);
+		exampleTitle.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		new Label(composite, SWT.NONE).setText("Id:");
-		Text idText = new Text(composite, SWT.BORDER);
-		idText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		setId(idText);
-
-		new Label(composite, SWT.NONE).setText("Name:");
-		Text nameText = new Text(composite, SWT.BORDER);
-		nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		setExampleName(nameText);
-
-		new Label(composite, SWT.NONE).setText("Version:");
-		Text versionText = new Text(composite, SWT.BORDER);
-		versionText.setText("1.0");
-		// TODO mom. noch 1.0.0 wenn geladen wird, da version type Version of
-		// example, vlt. ein trim hier...
-		versionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		setVersion(versionText);
+		new Label(composite, SWT.NONE).setText("Author:");
+		author = new Text(composite, SWT.BORDER);
+		author.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		new Label(composite, SWT.NONE).setText("Contact:");
-		Text contactText = new Text(composite, SWT.BORDER);
-		contactText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		setContact(contactText);
+		contact = new Text(composite, SWT.BORDER);
+		contact.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		new Label(composite, SWT.NONE).setText("Description:");
-		Text descText = new Text(composite, SWT.BORDER | SWT.MULTI
+		exampleDescription = new Text(composite, SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL | SWT.H_SCROLL);
-		descText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		setExampleDescription(descText);
+		exampleDescription.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
-	public void setId(Text id) {
-		this.id = id;
+	public void setExampleTitle(Text exampleTitle) {
+		this.exampleTitle = exampleTitle;
 	}
 
-	public String getId() {
-		return id.getText();
+	public String getExampleTitle() {
+		return exampleTitle.getText();
 	}
 
-	public void setVersion(Text version) {
-		this.version = version;
+	public void setAuthor(Text author) {
+		this.author = author;
 	}
 
-	public String getVersion() {
-		return version.getText();
-	}
-
-	public void setExampleName(Text exampleName) {
-		this.exampleName = exampleName;
-	}
-
-	public String getExampleName() {
-		return this.exampleName.getText();
+	public String getAuthor() {
+		return this.author.getText();
 	}
 
 	public void setExampleDescription(Text exampleDescription) {

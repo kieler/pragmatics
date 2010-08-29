@@ -1,6 +1,7 @@
 package de.cau.cs.kieler.kex.controller.util;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,9 +11,10 @@ import org.osgi.framework.Version;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
+import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
-import de.cau.cs.kieler.kex.model.ExportResource;
+import de.cau.cs.kieler.kex.model.ExampleResource;
 import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.model.extensionpoint.ExtPointExampleCreator;
 
@@ -29,17 +31,16 @@ public class ExampleExportUtil {
 	@SuppressWarnings("unchecked")
 	public static Example mapToExample(Map<ExampleElement, Object> properties,
 			String rootResource) {
-		Example result = new Example(
-				(String) properties.get(ExampleElement.ID), (String) properties
-						.get(ExampleElement.NAME), Version
-						.parseVersion((String) properties
-								.get(ExampleElement.VERSION)),
+		Example result = new Example((String) properties
+				.get(ExampleElement.TITLE), Version
+				.parseVersion((String) properties.get(ExampleElement.VERSION)),
 				(SourceType) properties.get(ExampleElement.SOURCETYPE));
 		result.setDescription((String) properties
 				.get(ExampleElement.DESCRIPTION));
 		result.setContact((String) properties.get(ExampleElement.CONTACT));
-		result.setCategories((List<String>) properties
+		result.addCategories((List<String>) properties
 				.get(ExampleElement.CATEGORIES));
+		result.setAuthor((String) properties.get(ExampleElement.AUTHOR));
 		result.setRootResource(rootResource);
 		return result;
 	}
@@ -49,12 +50,12 @@ public class ExampleExportUtil {
 	 * @param example
 	 * @throws KielerException
 	 */
-	public static void checkDuplicate(Example example,
+	public static void checkDuplicate(String exampleTitle,
 			ExampleCollector... collectors) throws KielerException {
-		if (example.getId() == null)
+		if (exampleTitle == null)
 			throw new KielerException("ID of an example could not be null.");
 		for (ExampleCollector collector : collectors) {
-			if (collector.getExamplePool().containsKey(example.getId()))
+			if (collector.getExamplePool().containsKey(exampleTitle))
 				throw new KielerException(
 						"Duplicate example id. Please choose an other one!");
 		}
@@ -65,28 +66,29 @@ public class ExampleExportUtil {
 			ExtPointExampleCreator extensionCreator,
 			final ExampleCollector... collectors) throws KielerException {
 
+		ExampleExportUtil.checkDuplicate((String) properties
+				.get(ExampleElement.TITLE), collectors);
+
 		Example mappedExample = ExampleExportUtil.mapToExample(properties,
 				(String) properties.get(ExampleElement.DEST_LOCATION));
-		ExampleExportUtil.checkDuplicate(mappedExample, collectors);
 
 		File destFile = new File(mappedExample.getRootResource());
-		// TODO that has to be made updatable.
 		if (!destFile.exists())
 			throw new KielerException(
 					"There is no file at destination location:"
 							+ mappedExample.getRootResource());
 
-		List<ExportResource> resources = (List<ExportResource>) properties
+		List<ExportResource> exportResources = (List<ExportResource>) properties
 				.get(ExampleElement.RESOURCES);
-		boolean createExampleFolder = (Boolean) properties
-				.get(ExampleElement.CREATE_EXAMPLE_FOLDER);
-		List<IPath> destResources = extensionCreator
-				.copyResources(destFile, resources,
-						(createExampleFolder ? mappedExample.getId() : null));
+		extensionCreator.copyResources(destFile, exportResources);
+
+		mappedExample.addResources(ExampleExportUtil
+				.mapToExampleResource(exportResources));
 		try {
 			extensionCreator.addExtension(destFile, mappedExample,
-					destResources, properties
-							.get(ExampleElement.CREATE_CATEGORIES), properties
+					(List<String>) properties
+							.get(ExampleElement.CREATE_CATEGORIES),
+					(List<String>) properties
 							.get(ExampleElement.DELETE_CATEGORIES));
 		} catch (KielerModelException e) {
 			if (e.getModelObject() instanceof List<?>) {
@@ -95,5 +97,19 @@ public class ExampleExportUtil {
 			}
 			throw e;
 		}
+	}
+
+	private static List<ExampleResource> mapToExampleResource(
+			List<ExportResource> exportResources) {
+		List<ExampleResource> result = new ArrayList<ExampleResource>();
+		for (ExportResource exRe : exportResources) {
+			ExampleResource resultItem = new ExampleResource(exRe
+					.getLocalPath().toPortableString(), ExampleResource.Type
+					.valueOf(exRe.getResource().getClass().getName()
+							.toLowerCase()));
+			resultItem.setDirectOpen(exRe.isDirectOpen());
+			result.add(resultItem);
+		}
+		return result;
 	}
 }

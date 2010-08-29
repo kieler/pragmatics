@@ -17,24 +17,22 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import de.cau.cs.kieler.kex.model.ExportResource;
+import de.cau.cs.kieler.kex.controller.ExportResource;
 
 @SuppressWarnings("restriction")
 public class ExampleResourcesPage extends WizardPage {
 
-	private Combo headFileCombo;
+	private Tree directOpenTree;
 
 	private ResourceTreeAndListGroup resourceGroup;
 
@@ -66,23 +64,14 @@ public class ExampleResourcesPage extends WizardPage {
 	private void createHeadFileComposite(Composite composite) {
 		Composite headResourceComposite = new Composite(composite, SWT.BORDER);
 		GridLayout data = new GridLayout();
-		data.numColumns = 2;
+		data.numColumns = 1;
 		headResourceComposite.setLayout(data);
 		headResourceComposite.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
-		new Label(headResourceComposite, SWT.NONE).setText("Head File:");
-		this.headFileCombo = new Combo(headResourceComposite, SWT.READ_ONLY);
-		this.headFileCombo
-				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.headFileCombo
-				.setToolTipText("Choose one of selected files to make it the headfile.");
-		headFileCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// e.data;
-			}
-		});
-
+		this.directOpenTree = new Tree(headResourceComposite, SWT.CHECK
+				| SWT.BORDER);
+		directOpenTree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fillDirectOpenTree();
 	}
 
 	/**
@@ -117,11 +106,11 @@ public class ExampleResourcesPage extends WizardPage {
 	 */
 	private void initResourceGroup(Composite parent, List<Object> input) {
 		this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
-				getResourceProvider(IResource.FOLDER),
-				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-				getResourceProvider(IResource.FILE),
-				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-				SWT.BORDER, DialogUtil.inRegularFontMode(parent));
+				getResourceProvider(IResource.FOLDER), WorkbenchLabelProvider
+						.getDecoratingWorkbenchLabelProvider(),
+				getResourceProvider(IResource.FILE), WorkbenchLabelProvider
+						.getDecoratingWorkbenchLabelProvider(), SWT.BORDER,
+				DialogUtil.inRegularFontMode(parent));
 		this.resourceGroup.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -139,26 +128,29 @@ public class ExampleResourcesPage extends WizardPage {
 						getExportedProjects().remove(element);
 				}
 
-				fillHeadFileCombo();
+				fillDirectOpenTree();
 			}
 
 		});
 
 	}
 
-	protected void fillHeadFileCombo() {
+	private void fillDirectOpenTree() {
+
+		this.directOpenTree.removeAll();
+
 		@SuppressWarnings("unchecked")
 		List<IFile> allCheckedListItems = this.resourceGroup
 				.getAllCheckedListItems();
 		int size = allCheckedListItems.size();
-		String[] items = new String[size];
 		for (int i = 0; i < size; i++) {
 			Object object = allCheckedListItems.get(i);
 			if (object instanceof IFile) {
-				items[i] = ((IFile) object).getFullPath().toString();
+				TreeItem item = new TreeItem(this.directOpenTree, SWT.CHECK);
+				item.setText(((IFile) object).getFullPath().toString());
 			}
 		}
-		headFileCombo.setItems(items);
+
 	}
 
 	/**
@@ -299,8 +291,8 @@ public class ExampleResourcesPage extends WizardPage {
 
 	/**
 	 * Adds the path of given folder resource to a given list of {@link IPath}.<br>
-	 * Filters than all member resources of that folder and uses
-	 * {@code makeRelativePath()}<br>
+	 * Filters than all member resources of that folder and uses {@code
+	 * makeRelativePath()}<br>
 	 * to create paths which will be added to result.<br>
 	 * All resource will be add to duplicateChecker list.
 	 * 
@@ -351,5 +343,15 @@ public class ExampleResourcesPage extends WizardPage {
 		IPath resourcePath = resource.getFullPath();
 		return resourcePath
 				.removeFirstSegments(resourcePath.segmentCount() - 1);
+	}
+
+	private List<String> getDirectOpenFiles() {
+		List<String> result = new ArrayList<String>();
+		for (TreeItem item : this.directOpenTree.getItems()) {
+			if (item.getChecked()) {
+				result.add(item.getText());
+			}
+		}
+		return result;
 	}
 }

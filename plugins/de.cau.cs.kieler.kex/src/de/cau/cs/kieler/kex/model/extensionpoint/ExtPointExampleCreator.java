@@ -32,9 +32,10 @@ import org.xml.sax.SAXException;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
+import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.controller.util.IOHandler;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.model.ExportResource;
+import de.cau.cs.kieler.kex.model.ExampleResource;
 
 /**
  * can be used for creating new extensions for KEX extension point.<br>
@@ -48,7 +49,9 @@ public class ExtPointExampleCreator {
 
 	private final IPath workspacePath = Platform.getLocation();
 
-	private Document parsedXML = null;
+	private Document parsedXML;
+
+	private File pluginXML;
 
 	/**
 	 * parses the given file.
@@ -63,7 +66,7 @@ public class ExtPointExampleCreator {
 	 * @throws ParserConfigurationException
 	 *             , could be thrown by DOM framework
 	 */
-	private Document parserPluginXML(final File file) throws SAXException,
+	private Document parsePluginXML(final File file) throws SAXException,
 			IOException, ParserConfigurationException {
 		return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
 				file);
@@ -81,68 +84,59 @@ public class ExtPointExampleCreator {
 	 * @throws KielerException
 	 */
 	public void addExtension(File location, Object parseElement,
-			List<IPath> destResources, Object creatableCategories,
-			Object deletableCategories) throws KielerException {
+			List<String> creatableCategories, List<String> deletableCategories)
+			throws KielerException {
+		Node pluginNode = getPluginNode(location, creatableCategories,
+				deletableCategories);
+
+		editPluginCategories(pluginNode, creatableCategories,
+				deletableCategories);
+
+		Node extensionKEX = filterExtensionKEX(pluginNode);
+
+		Node parentNode = extensionKEX.getParentNode();
+		System.out.println("parent von extensionKEX: "
+				+ parentNode.getNodeName());
+
+		if (parseElement instanceof Example) {
+			makeRootSource(location, parseElement);
+			extensionKEX.appendChild(toNode((Example) parseElement));
+		} else if (parseElement instanceof String) {
+			extensionKEX.appendChild(toNode((String) parseElement));
+		} else {
+			throw new KielerException(
+					"PluginXMLHandler: wrong parameter for parseElement.");
+		}
+		writePluginXML(pluginXML.getAbsolutePath());
+	}
+
+	private void makeRootSource(File location, Object parseElement)
+			throws KielerException {
+		File project = IOHandler.searchUP(location, IOHandler.PROJECT_FILE)
+				.getParentFile();
+		String relativeLocation = location.getPath().substring(
+				project.getPath().length());
+		((Example) parseElement)
+				.setRootResource((relativeLocation.length() > 0) ? relativeLocation
+						.substring(1)
+						: relativeLocation);
+	}
+
+	private Node getPluginNode(File locationFile,
+			List<String> creatableCategories, List<String> deletableCategories)
+			throws KielerException {
+
+		File pluginXML = null;
+		File filteredFile;
 		try {
-			File pluginXML = null;
-			File filteredFile = IOHandler.filterPluginXML(location);
+			filteredFile = IOHandler.filterPluginXML(locationFile);
 			if (!IOHandler.PLUGIN_XML.equals(filteredFile.getName())) {
 				pluginXML = createPluginXML(filteredFile);
 			} else {
 				pluginXML = filteredFile;
 			}
-			parsedXML = parserPluginXML(pluginXML);
-
-			NodeList plugins = this.parsedXML
-					.getElementsByTagName(PluginConstants.PLUGIN);
-			int pluginsLength = plugins.getLength();
-			if (pluginsLength == 0 || pluginsLength > 1) {
-				// dann fehlerfall ï¿½berlegen, oder sogar drauf reagieren
-				// kï¿½nnen,
-				// evtl
-				// dann anlegen.
-			}
-			Node pluginNode = plugins.item(0);
-
-			editPluginCategories(pluginNode, creatableCategories,
-					deletableCategories);
-
-			Node extensionKEX = filterExtensionKEX(pluginNode.getChildNodes());
-
-			if (extensionKEX == null) {
-				extensionKEX = parsedXML
-						.createElement(ExtPointConstants.EXT_POINT);
-				pluginNode.appendChild(extensionKEX);
-
-				// parent von extensionKEX ist plugin... muss also gehen
-				// TODO test createElement, kann sein, dass noch an root knoten
-				// angeschlossen werden muss. getestet GEHT NICHT, muss nochmal
-				// ueberschaut werden.
-			}
-
-			Node parentNode = extensionKEX.getParentNode();
-			System.out.println("parent von extensionKEX: "
-					+ parentNode.getNodeName());
-
-			if (parseElement instanceof Example) {
-				// FIXME schöner machen.
-				// make relative root object
-				File project = IOHandler.searchUP(location,
-						IOHandler.PROJECT_FILE).getParentFile();
-				String relativeLocation = location.getPath().substring(
-						project.getPath().length());
-				((Example) parseElement).setRootResource((relativeLocation
-						.length() > 0) ? relativeLocation.substring(1)
-						: relativeLocation);
-				extensionKEX.appendChild(toNode((Example) parseElement,
-						destResources));
-			} else if (parseElement instanceof String) {
-				extensionKEX.appendChild(toNode((String) parseElement));
-			} else {
-				throw new RuntimeException(
-						"PluginXMLHandler: wrong parameter for parseElement.");
-			}
-			writePluginXML(pluginXML.getAbsolutePath());
+			setPluginXML(pluginXML);
+			parsedXML = parsePluginXML(pluginXML);
 		} catch (ParserConfigurationException e) {
 			// TODO KexConstants einfuehren, d.h. eigene Klasse und diese
 			// meldungen hier drin sammeln. (siehe visor constants)
@@ -158,6 +152,126 @@ public class ExtPointExampleCreator {
 					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		}
+
+		NodeList plugins = this.parsedXML
+				.getElementsByTagName(ExtPointConstants.PLUGIN);
+		int pluginsLength = plugins.getLength();
+		if (pluginsLength == 0 || pluginsLength > 1) {
+			// dann fehlerfall ueberlegen, oder sogar drauf reagieren
+			// koennen,
+			// evtl
+			// dann anlegen.
+		}
+		return plugins.item(0);
+	}
+
+	private void setPluginXML(File pluginXML) {
+		this.pluginXML = pluginXML;
+	}
+
+	private File getPluginXML() {
+		return this.pluginXML;
+	}
+
+	private Node filterExtensionKEX(Node pluginNode) {
+		Node extensionKEX = null;
+		NodeList extensions = pluginNode.getChildNodes();
+		int length = extensions.getLength();
+		for (int i = 0; i < length; i++) {
+			Node node = extensions.item(i);
+			if (ExtPointConstants.EXTENSION.equals(node.getNodeName())) {
+				NamedNodeMap attributes = node.getAttributes();
+				Node namedItem = attributes
+						.getNamedItem(ExtPointConstants.POINT);
+				if (ExtPointConstants.EXT_POINT
+						.equals(namedItem.getNodeValue())) {
+					extensionKEX = node;
+					break;
+				}
+			}
+		}
+		if (extensionKEX == null) {
+			extensionKEX = parsedXML.createElement(ExtPointConstants.EXT_POINT);
+			pluginNode.appendChild(extensionKEX);
+			// parent von extensionKEX ist plugin... muss also gehen
+			// TODO test createElement, kann sein, dass noch an root knoten
+			// angeschlossen werden muss. getestet GEHT NICHT, muss nochmal
+			// ueberschaut werden.
+		}
+
+		return extensionKEX;
+	}
+
+	// TODO eclipse version mit reinkriegen momentan steht da standalone no!
+	@SuppressWarnings("restriction")
+	private File createPluginXML(File parent) {
+		String path = parent.getAbsolutePath() + File.separatorChar
+				+ IOHandler.PLUGIN_XML;
+		XMLOutputFactory factory = XMLOutputFactory.newInstance();
+		XMLStreamWriter writer;
+		try {
+			writer = factory.createXMLStreamWriter(new FileOutputStream(path));
+			writer.writeStartDocument();
+			writer.writeStartElement(ExtPointConstants.PLUGIN);
+			writer.writeStartElement(ExtPointConstants.EXTENSION);
+			writer.writeAttribute(ExtPointConstants.POINT,
+					ExtPointConstants.EXT_POINT);
+			writer.writeEndElement();
+			writer.writeEndElement();
+			writer.writeEndDocument();
+			writer.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new File(path);
+
+	}
+
+	/**
+	 * creates example files to given location
+	 * 
+	 * @param exampleId
+	 * 
+	 * @param sourceProject
+	 */
+	public void copyResources(File destFile, List<ExportResource> resources)
+			throws KielerException {
+		List<IPath> errorList = new ArrayList<IPath>();
+		try {
+			for (ExportResource resource : resources) {
+				copyFile(resource, destFile.getPath(), errorList);
+			}
+		} catch (KielerException e) {
+			throw new KielerModelException(e.getLocalizedMessage(), errorList);
+		}
+	}
+
+	private void copyFile(ExportResource resource, String destPath,
+			List<IPath> errorList) throws KielerException {
+		StringBuffer destLocation = new StringBuffer();
+		try {
+
+			String sourcePath = this.workspacePath.toPortableString()
+					+ resource.getResource().getFullPath().toOSString();
+
+			destLocation.append(destPath).append(File.separatorChar).append(
+					resource.getLocalPath());
+			Path destination = new Path(destLocation.toString());
+			errorList.add(destination);
+
+			IOHandler.writeFile(new File(sourcePath), destination.toFile());
+		} catch (IOException e) {
+			// TODO ErrorHandling ï¿½berlegen.
+		}
+	}
+
+	public void deleteExampleResource(List<IPath> resources) {
+		for (IPath path : resources)
+			IOHandler.deleteFile(path.toFile());
 	}
 
 	private void editPluginCategories(Node pluginNode,
@@ -198,115 +312,6 @@ public class ExtPointExampleCreator {
 			}
 		}
 
-	}
-
-	// TODO eclipse version mit reinkriegen momentan steht da standalone no!
-	@SuppressWarnings("restriction")
-	private File createPluginXML(File parent) {
-		String path = parent.getAbsolutePath() + File.separatorChar
-				+ IOHandler.PLUGIN_XML;
-		XMLOutputFactory factory = XMLOutputFactory.newInstance();
-		XMLStreamWriter writer;
-		try {
-			writer = factory.createXMLStreamWriter(new FileOutputStream(path));
-			writer.writeStartDocument();
-			writer.writeStartElement(PluginConstants.PLUGIN);
-			writer.writeStartElement(PluginConstants.EXTENSION);
-			writer.writeAttribute(PluginConstants.POINT,
-					ExtPointConstants.EXT_POINT);
-			writer.writeEndElement();
-			writer.writeEndElement();
-			writer.writeEndDocument();
-			writer.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new File(path);
-
-	}
-
-	private Node filterExtensionKEX(NodeList plugins) {
-		Node extensionKEX = null;
-		int length = plugins.getLength();
-		for (int i = 0; i < length; i++) {
-			Node node = plugins.item(i);
-			if (PluginConstants.EXTENSION.equals(node.getNodeName())) {
-				NamedNodeMap attributes = node.getAttributes();
-				Node namedItem = attributes.getNamedItem(PluginConstants.POINT);
-				if (ExtPointConstants.EXT_POINT
-						.equals(namedItem.getNodeValue())) {
-					extensionKEX = node;
-					break;
-				}
-			}
-		}
-
-		// if (item.getLocalName().equals("de.cau.cs.kieler.kex")) {
-		// TODO ggf zusï¿½tzlichen check einbauen, ob exampleId schon
-		// existiert, normalerweise wird vorher geprï¿½ft.
-		// es kï¿½nnen aber mehrere examples exportiert werden
-		// ohne zwischendurch neu zu bauen.
-		if (extensionKEX == null) {
-			// create extension KEX
-		}
-		return extensionKEX;
-	}
-
-	/**
-	 * creates example files to given location
-	 * 
-	 * @param exampleId
-	 * 
-	 * @param sourceProject
-	 */
-	public List<IPath> copyResources(File destFile,
-			List<ExportResource> resources, String exampleId)
-			throws KielerException {
-		List<IPath> errorList = new ArrayList<IPath>();
-		List<IPath> result = new ArrayList<IPath>();
-		try {
-			if (exampleId != null) {
-				destFile = new File(destFile.getPath() + "/" + exampleId + "/");
-				destFile.mkdir();
-				result.add(new Path(exampleId + "/"));
-			}
-			for (ExportResource resource : resources) {
-				copyFile(resource, destFile.getPath(), errorList);
-				result.add(new Path(exampleId + "/"
-						+ resource.getLocalPath().toPortableString()));
-			}
-		} catch (KielerException e) {
-			throw new KielerModelException(e.getLocalizedMessage(), errorList);
-		}
-		return result;
-	}
-
-	private void copyFile(ExportResource resource, String destPath,
-			List<IPath> errorList) throws KielerException {
-		StringBuffer destLocation = new StringBuffer();
-		try {
-
-			String sourcePath = this.workspacePath.toPortableString()
-					+ resource.getResource().getFullPath().toPortableString();
-
-			destLocation.append(destPath).append(File.separatorChar).append(
-					resource.getLocalPath());
-			Path destination = new Path(destLocation.toString());
-			errorList.add(destination);
-
-			IOHandler.writeFile(new File(sourcePath), destination.toFile());
-		} catch (IOException e) {
-			// TODO ErrorHandling ï¿½berlegen.
-		}
-	}
-
-	public void deleteExampleResource(List<IPath> resources) {
-		for (IPath path : resources)
-			IOHandler.deleteFile(path.toFile());
 	}
 
 	private void writePluginXML(String pluginPath) throws KielerException {
@@ -351,28 +356,40 @@ public class ExtPointExampleCreator {
 		return createdElement;
 	}
 
-	private Node toNode(Example example, List<IPath> resources) {
-		// TODO check nullpointer, they shouldnï¿½t set to plugin.xml
+	private Node toNode(Example example) {
 		Element createdExample = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE);
-		createdExample.setAttribute(ExtPointConstants.ID, example.getId());
-		createdExample.setAttribute(ExtPointConstants.CONTACT, example
-				.getContact());
+		createdExample
+				.setAttribute(ExtPointConstants.TITLE, example.getTitle());
 		createdExample.setAttribute(ExtPointConstants.DESCRIPTION, example
 				.getDescription());
-		createdExample.setAttribute(ExtPointConstants.NAME, example.getName());
+		createdExample.setAttribute(ExtPointConstants.GENERATION_DATE, example
+				.getGenerationDate().toString());
 		createdExample.setAttribute(ExtPointConstants.VERSION, example
 				.getVersion().toString());
-		createdExample.setAttribute(ExtPointConstants.HEAD_FILE, example
-				.getHeadResource());
-		createdExample.setAttribute(ExtPointConstants.ROOT_RESOURCE, example
-				.getRootResource());
+
+		String overviewPicPath = example.getOverViewPicPath();
+		if (overviewPicPath != null)
+			createdExample.setAttribute(ExtPointConstants.OVERVIEW_PIC,
+					overviewPicPath);
+		String author = example.getAuthor();
+		if (author != null)
+			createdExample.setAttribute(ExtPointConstants.AUTHOR, author);
+
+		String contact = example.getContact();
+		if (contact != null)
+			createdExample.setAttribute(ExtPointConstants.CONTACT, contact);
+
+		String rootResource = example.getRootResource();
+		if (rootResource != null)
+			createdExample.setAttribute(ExtPointConstants.ROOT_DIRECTORY,
+					rootResource);
 
 		for (String category : example.getCategories()) {
 			createdExample.appendChild(toNode(category));
 		}
 
-		for (IPath exResource : resources) {
+		for (ExampleResource exResource : example.getResources()) {
 			createdExample.appendChild(toNode(example.getRootResource(),
 					exResource));
 		}
@@ -380,12 +397,17 @@ public class ExtPointExampleCreator {
 
 	}
 
-	private Node toNode(String relativePath, IPath exResource) {
+	private Node toNode(String relativePath, ExampleResource exResource) {
 		Element createdExResource = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE_RESOURCE);
-		createdExResource.setAttribute(ExtPointConstants.RESOURCE, relativePath
-				+ "/" + exResource.toPortableString());
+		createdExResource.setAttribute(ExtPointConstants.LOCAL_PATH,
+				relativePath + "/" + exResource.toString());
+		createdExResource.setAttribute(ExtPointConstants.RESOURCE_TYPE,
+				ExampleResource.Type.map(exResource.getResourceType()));
+		createdExResource.setAttribute(ExtPointConstants.DIRECT_OPEN, Boolean
+				.toString(exResource.isDirectOpen()));
 		return createdExResource;
+
 	}
 
 }

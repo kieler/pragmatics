@@ -4,10 +4,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -23,11 +24,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.dialogs.WizardResourceImportPage;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.SourceType;
 
-public class ExampleExportPage extends WizardPage {
+public class ExampleExportPage extends WizardResourceImportPage {
 
 	private Text destPath;
 
@@ -41,15 +43,16 @@ public class ExampleExportPage extends WizardPage {
 	private final List<String> creatableCategories;
 	private final List<String> deletableCategories;
 
-	protected ExampleExportPage(String pageName, IStructuredSelection selection) {
-		super(pageName);
-		setTitle(pageName);
+	protected ExampleExportPage(String name, IStructuredSelection selection) {
+		super(name, selection);
+		setTitle(name);
 		setDescription("Set destination for exported Example and determine Example Resources.");
 		checkedCategories = new ArrayList<String>();
 		creatableCategories = new ArrayList<String>();
 		deletableCategories = new ArrayList<String>();
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -82,7 +85,8 @@ public class ExampleExportPage extends WizardPage {
 						.getShell());
 
 				dirDiag.setText("Choose destination directory");
-				dirDiag.setMessage("Select a directory in a java plugin project.");
+				dirDiag
+						.setMessage("Select a directory in a java plugin project.");
 				String dir = dirDiag.open();
 				// TODO ueberlegen, ob hier direkt eine pruefung eingebaut
 				// werden kann.
@@ -175,23 +179,17 @@ public class ExampleExportPage extends WizardPage {
 	}
 
 	private void createBottomGroup(Composite composite) {
-		// TODO think about: exampleFolderButton kann ich glaube ich nicht
-		// machen, nachdenken was damit passiert bis zum import
 		Group bottomGroup = new Group(composite, SWT.NONE);
 		GridLayout bottomLayout = new GridLayout();
-		bottomLayout.numColumns = 1;
-		bottomGroup.setText("Options");
+		bottomGroup.setText("Set Preview Picture");
+		bottomGroup
+				.setToolTipText("Enter a picture like a screenshot of example diagram.");
 		bottomGroup.setLayout(bottomLayout);
 		bottomGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		createExampleFolder = new Button(bottomGroup, SWT.CHECK);
-		createExampleFolder.setText("create folder with example name");
-		createExampleFolder.setSelection(true);
-		// Button copyHiddenFilesButton = new Button(bottomGroup, SWT.CHECK);
-		// copyHiddenFilesButton.setText("copy hidden files");
-
+		super.createControl(bottomGroup);
 	}
 
-	void createCheckedTree(Composite parent) {
+	private void createCheckedTree(Composite parent) {
 		this.categoryTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		categoryTree.setLayoutData(data);
@@ -217,7 +215,6 @@ public class ExampleExportPage extends WizardPage {
 
 		});
 		fillTree(categoryTree);
-
 	}
 
 	/**
@@ -271,5 +268,29 @@ public class ExampleExportPage extends WizardPage {
 
 	public boolean createExampleFolder() {
 		return this.createExampleFolder.getSelection();
+	}
+
+	@Override
+	protected void createSourceGroup(Composite parent) {
+		// no sourceGroup
+	}
+
+	@Override
+	protected ITreeContentProvider getFileProvider() {
+		return null;
+	}
+
+	@Override
+	protected ITreeContentProvider getFolderProvider() {
+		return null;
+	}
+
+	@Override
+	protected void createOptionsGroup(Composite parent) {
+		// no options
+	}
+
+	public IPath getOverviewPicPath() {
+		return super.getContainerFullPath();
 	}
 }

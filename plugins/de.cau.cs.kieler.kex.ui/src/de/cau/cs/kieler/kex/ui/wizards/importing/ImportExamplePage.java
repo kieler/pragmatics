@@ -43,6 +43,8 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
 	private static final String EXAMPLE_DATA_KEY = "example";
 
+	private boolean fastStart = false;
+
 	protected ImportExamplePage(String name, IStructuredSelection selection) {
 		super(name, selection);
 		setTitle(name);
@@ -189,7 +191,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		for (Example example : ExampleManager.get().getExamples().values()) {
 			if (example.contains(category)) {
 				TreeItem item = new TreeItem(tItem, SWT.NONE);
-				item.setText(example.getName());
+				item.setText(example.getTitle());
 				item.setData("example", example);
 			}
 		}
@@ -239,7 +241,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 			Object data = selected.getData(EXAMPLE_DATA_KEY);
 			if (data instanceof Example) {
 				Example selectedExample = (Example) data;
-				getExampleTitle().setText(selectedExample.getId());
+				getExampleTitle().setText(selectedExample.getTitle());
 				getExampleDescription().setText(
 						selectedExample.getDescription());
 				String contact = selectedExample.getContact();
@@ -255,16 +257,8 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		return this.checkedExamples;
 	}
 
-	public void setExampleDescription(Text exampleDescription) {
-		this.exampleDescription = exampleDescription;
-	}
-
 	public Text getExampleDescription() {
 		return exampleDescription;
-	}
-
-	public void setExampleVersion(Text version) {
-		this.exampleVersion = version;
 	}
 
 	public Text getExampleVersion() {
@@ -289,7 +283,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
 	@Override
 	protected void createSourceGroup(Composite parent) {
-
+		// no sourceGroup
 	}
 
 	@Override
@@ -306,4 +300,10 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		return super.getContainerFullPath();
 	}
 
+	public boolean isFastStart() {
+		boolean result = super.getContainerFullPath() == null
+				&& checkedExamples.size() == 0;
+		this.fastStart = result;
+		return result;
+	}
 }

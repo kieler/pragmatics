@@ -12,17 +12,24 @@ import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
+import de.cau.cs.kieler.kex.model.ExampleResource;
 
 public class ExampleImportUtil {
 
 	private final static String workspaceLocation = Platform.getLocation()
 			.toString();
 
+	/**
+	 * 
+	 * @param selectedResource
+	 * @param selectedExamples
+	 * @throws KielerException
+	 */
 	public static void importExamples(IPath selectedResource,
 			List<Example> selectedExamples) throws KielerException {
 		for (Example example : selectedExamples) {
 
-			List<String> resources = example.getResources();
+			List<ExampleResource> resources = example.getResources();
 			String destFolder = workspaceLocation + selectedResource.toString()
 					+ "/";
 			// not permantly create a example parent folder with its name.
@@ -35,17 +42,19 @@ public class ExampleImportUtil {
 				exampleBeginIndex = rootResource.length();
 			}
 
-			for (String path : resources) {
+			for (ExampleResource resource : resources) {
 				try {
-					String destPath = path.substring(exampleBeginIndex);
+					String localPath = resource.getLocalPath();
+					String destPath = localPath.substring(exampleBeginIndex);
 					// searching for subfiles and folders.
-					Enumeration<?> dict = bundle.findEntries(path, null, false);
+					Enumeration<?> dict = bundle.findEntries(localPath, null,
+							false);
 					if (dict != null) {
 						// geht nur wenn das ganze committed ist, denn dann ist
 						// auch in jedem folder eine .svn datei.
 						IOHandler.createFolder(destFolder + "/" + destPath);
 					} else {
-						URL entry = bundle.getEntry(path);
+						URL entry = bundle.getEntry(localPath);
 						IOHandler.writeFile(entry, destFolder + destPath, true);
 					}
 				} catch (FileNotFoundException e) {

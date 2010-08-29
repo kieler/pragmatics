@@ -13,6 +13,7 @@ import org.osgi.framework.Version;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
+import de.cau.cs.kieler.kex.model.ExampleResource;
 import de.cau.cs.kieler.kex.model.SourceType;
 
 public class ExtPointExampleCollector extends ExampleCollector {
@@ -48,16 +49,16 @@ public class ExtPointExampleCollector extends ExampleCollector {
 			try {
 				String elementName = element.getName();
 				if (ExtPointConstants.EXAMPLE.equals(elementName)) {
-					String exampleId = element
-							.getAttribute(ExtPointConstants.ID);
-					if (getExamplePool().containsKey(exampleId)) {
+					String exampleTitle = element
+							.getAttribute(ExtPointConstants.TITLE);
+					if (getExamplePool().containsKey(exampleTitle)) {
 						// TODO darf eigentlich nicht passieren
 						// RUNTIME Exception schmei�en...
 						// oder einfach annehmen, dass dies nicht geschieht
 						continue;
 					}
 					Example example = toExample(element);
-					this.examplePool.put(exampleId, example);
+					this.examplePool.put(exampleTitle, example);
 				} else if (ExtPointConstants.CATEGORY.equals(elementName)) {
 					collectCategory(element);
 				}
@@ -124,36 +125,30 @@ public class ExtPointExampleCollector extends ExampleCollector {
 			throws InvalidRegistryObjectException, IllegalArgumentException,
 			KielerException {
 
-		String idAttribute = exampleElement.getAttribute(ExtPointConstants.ID);
-		String nameAttribute = exampleElement
-				.getAttribute(ExtPointConstants.NAME);
-		String versionAttribute = exampleElement
+		String titleAttr = exampleElement.getAttribute(ExtPointConstants.TITLE);
+		String versionAttr = exampleElement
 				.getAttribute(ExtPointConstants.VERSION);
 		// FIXME IllegalArgumentException sehr wahrscheinlich, da das
 		// version feld
 		// ein freier string, min. default besser noch regex.
-		Example example = new Example(idAttribute, nameAttribute, Version
-				.parseVersion(versionAttribute), SourceType.KIELER);
+		Example example = new Example(titleAttr, Version
+				.parseVersion(versionAttr), SourceType.KIELER);
 		example.setDescription(exampleElement
 				.getAttribute(ExtPointConstants.DESCRIPTION));
 		example.setContact(exampleElement
 				.getAttribute(ExtPointConstants.CONTACT));
+		example
+				.setAuthor(exampleElement
+						.getAttribute(ExtPointConstants.AUTHOR));
 		String exNamespaceId = exampleElement.getNamespaceIdentifier();
 		example.setNamespaceId(exNamespaceId);
+		example.setRootResource(exampleElement
+				.getAttribute(ExtPointConstants.ROOT_DIRECTORY));
+
 		List<String> categories = filterElement(exampleElement,
 				ExtPointConstants.CATEGORY, ExtPointConstants.ID);
 		example.addCategories(categories);
-		// TODO Pr�fung, ob head_resource schon in resources enthalten
-		// ansonsten
-		// hinzuf�gen.
-		example.setHeadResource(exampleElement
-				.getAttribute(ExtPointConstants.HEAD_FILE));
-		example.setRootResource(exampleElement
-				.getAttribute(ExtPointConstants.ROOT_RESOURCE));
-		example
-				.addResources(filterElement(exampleElement,
-						ExtPointConstants.EXAMPLE_RESOURCE,
-						ExtPointConstants.RESOURCE));
+		example.addResources(filterExampleResource(exampleElement));
 		return example;
 	}
 
@@ -168,4 +163,19 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		return result;
 	}
 
+	private static List<ExampleResource> filterExampleResource(
+			IConfigurationElement exampleElement) {
+		List<ExampleResource> result = new ArrayList<ExampleResource>();
+		for (IConfigurationElement configurationElement : exampleElement
+				.getChildren(ExtPointConstants.EXAMPLE_RESOURCE)) {
+			ExampleResource exRe = new ExampleResource(configurationElement
+					.getAttribute(ExtPointConstants.LOCAL_PATH),
+					ExampleResource.Type.valueOf(configurationElement
+							.getAttribute(ExtPointConstants.RESOURCE_TYPE)));
+			exRe.setDirectOpen(Boolean.parseBoolean(configurationElement
+					.getAttribute(ExtPointConstants.DIRECT_OPEN)));
+			result.add(exRe);
+		}
+		return result;
+	}
 }
