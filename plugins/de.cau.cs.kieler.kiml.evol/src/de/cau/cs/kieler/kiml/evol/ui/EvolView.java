@@ -48,11 +48,39 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  */
 public class EvolView extends ViewPart {
     private final IEvolModelListener modelListener = new IEvolModelListener() {
+
+        /**
+         * Refresh the layout according to selected individual.
+         *
+         */
+        private void applySelectedIndividual() {
+            final EvolModel em = EvolView.this.getEvolModel();
+            Assert.isNotNull(em);
+
+            if (!em.isValid()) {
+                return;
+            }
+
+            // Get the current individual from the model.
+            final Genome currentIndividual = em.getCurrentIndividual();
+            Assert.isNotNull(currentIndividual);
+
+            // Get the expected layout provider id.
+            final String expectedLayoutProviderId = em.getLayoutProviderId();
+            Assert.isNotNull(expectedLayoutProviderId);
+
+            // Adopt, layout and measure the current individual.
+            EvolUtil.syncApplyIndividual(currentIndividual, expectedLayoutProviderId);
+
+            // Refresh the layout view, if it can be found.
+            EvolUtil.asyncRefreshLayoutView();
+        }
+
         public void afterChange(final EvolModel source, final String cause) {
             System.out.println("afterChange: " + cause);
             if ("setPosition".equalsIgnoreCase(cause)) {
                 System.out.println("setPosition occurred");
-                // TODO: apply selected individual
+                applySelectedIndividual();
                 return;
             }
             // TODO: what if currentEditor is null?
@@ -201,9 +229,9 @@ public class EvolView extends ViewPart {
                 MonitoredOperation.runInUI(elementUpdaterRunnable, true);
 
                 // Refresh the layout according to the selected individual.
-                System.out.println("before applySelectedIndividual");
-                applySelectedIndividual();
-                System.out.println("after applySelectedIndividual");
+                // System.out.println("before applySelectedIndividual");
+                // applySelectedIndividual();
+                // System.out.println("after applySelectedIndividual");
                 System.out.println(oldPos + " -> " + newPos);
 
 
@@ -221,35 +249,6 @@ public class EvolView extends ViewPart {
                 System.out.println();
                 this.oldElement = element;
             }
-        }
-
-        /**
-         * Refresh the layout according to selected individual.
-         *
-         * @deprecated
-         */
-        @Deprecated
-        private void applySelectedIndividual() {
-            final EvolModel em = getEvolModel();
-            Assert.isNotNull(em);
-
-            if (!em.isValid()) {
-                return;
-            }
-
-            // Get the current individual from the model.
-            final Genome currentIndividual = em.getCurrentIndividual();
-            Assert.isNotNull(currentIndividual);
-
-            // Get the expected layout provider id.
-            final String expectedLayoutProviderId = em.getLayoutProviderId();
-            Assert.isNotNull(expectedLayoutProviderId);
-
-            // Adopt, layout and measure the current individual.
-            EvolUtil.syncApplyIndividual(currentIndividual, expectedLayoutProviderId);
-
-            // Refresh the layout view, if it can be found.
-            EvolUtil.asyncRefreshLayoutView();
         }
 
         SelectorTableViewer getTableViewer() {
