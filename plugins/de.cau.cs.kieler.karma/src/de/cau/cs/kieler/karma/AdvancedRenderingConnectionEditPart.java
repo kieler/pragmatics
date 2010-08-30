@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
+import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
@@ -38,7 +39,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
     /**
      * Figure that that represents the model element.
      */
-    //SUPPRESS CHECKSTYLE NEXT VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT VisibilityModifier
     protected IFigure primaryShape;
 
     /**
@@ -50,7 +51,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
      * The figure provider for generating the figures from a string.
      */
     private IRenderingProvider renderingProvider;
-    
+
     /**
      * Container for the last positive condition. Used for performance optimizations.
      */
@@ -76,13 +77,13 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
         if (!(notification.isTouch())) {
             primaryShape = this.getFigure();
             if (primaryShape != null) {
-                if (primaryShape instanceof SplineConnection) {
-                    SplineConnection splineFigure = (SplineConnection) primaryShape;
-                    boolean changed = this.updateFigure(splineFigure);
+                if (primaryShape instanceof PolylineConnection) {
+                    PolylineConnection polyFigure = (PolylineConnection) primaryShape;
+                    boolean changed = this.updateFigure(polyFigure);
                     if (changed) {
-                        LayoutManager layoutManager = splineFigure.getLayoutManager();
+                        LayoutManager layoutManager = polyFigure.getLayoutManager();
                         if (layoutManager != null) {
-                            layoutManager.layout(splineFigure);
+                            layoutManager.layout(polyFigure);
                         }
                     }
                 }
@@ -94,26 +95,29 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
      * {@inheritDoc}
      */
     public boolean updateFigure(final IFigure figure) {
-        if ((figure instanceof SplineConnection) && (conditions != null)) {
+        if ((figure instanceof PolylineConnection) && (conditions != null)) {
             if (!(conditions.isEmpty())) {
-            SplineConnection splineFigure = (SplineConnection) figure;
-            IFigure oldFigure = splineFigure;
-            IFigure newFigure = null;
-            for (Pair<Pair<String, String>, ICondition<EObject>> cf : conditions) {
-                if (cf.getSecond().evaluate(this.getModelElement())) {
-                    if (cf.getSecond() == lastCondition) {
-                        return false;
-                    } else {
-                        newFigure = renderingProvider.getFigureByString(cf.getFirst().getFirst(), oldFigure, this.getModelElement());
-                        primaryShape = newFigure;
-                        LayoutManager newLayoutManager = renderingProvider.getLayoutManagerByString(cf.getFirst().getSecond(), splineFigure.getLayoutManager(), this.getModelElement());
-                        splineFigure.setLayoutManager(newLayoutManager);
-                        lastCondition = cf.getSecond();
-                        return true;
+                PolylineConnection polyFigure = (PolylineConnection) figure;
+                IFigure oldFigure = polyFigure;
+                IFigure newFigure = null;
+                for (Pair<Pair<String, String>, ICondition<EObject>> cf : conditions) {
+                    if (cf.getSecond().evaluate(this.getModelElement())) {
+                        if (cf.getSecond() == lastCondition) {
+                            return false;
+                        } else {
+                            newFigure = renderingProvider.getFigureByString(cf.getFirst()
+                                    .getFirst(), oldFigure, this.getModelElement());
+                            primaryShape = newFigure;
+                            LayoutManager newLayoutManager = renderingProvider
+                                    .getLayoutManagerByString(cf.getFirst().getSecond(),
+                                            polyFigure.getLayoutManager(), this.getModelElement());
+                            polyFigure.setLayoutManager(newLayoutManager);
+                            lastCondition = cf.getSecond();
+                            return true;
+                        }
                     }
                 }
             }
-        }
         }
         return false;
     }

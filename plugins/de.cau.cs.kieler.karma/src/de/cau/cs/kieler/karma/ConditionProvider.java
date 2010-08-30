@@ -341,9 +341,9 @@ public final class ConditionProvider {
                 IRenderingProvider figureProvider = null;
                 try {
                     figureProvider = (IRenderingProvider) settings
-                            .createExecutableExtension("FigureProvider");
+                            .createExecutableExtension("RenderingProvider");
                 } catch (CoreException e1) {
-                    throw new RuntimeException("figureProvider filed to load.");
+                    throw new RuntimeException("figureProvider failed to load.");
                     // System.out.println("figureProvider failed to load");
                     // e1.printStackTrace();
                 }
