@@ -158,7 +158,9 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		List<String> result = new ArrayList<String>();
 		for (IConfigurationElement configurationElement : exampleElement
 				.getChildren(elementName)) {
-			result.add(configurationElement.getAttribute(attributeName));
+			String catName = configurationElement.getAttribute(attributeName);
+			if (catName != null)
+				result.add(configurationElement.getAttribute(catName));
 		}
 		return result;
 	}
@@ -168,13 +170,19 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		List<ExampleResource> result = new ArrayList<ExampleResource>();
 		for (IConfigurationElement configurationElement : exampleElement
 				.getChildren(ExtPointConstants.EXAMPLE_RESOURCE)) {
-			ExampleResource exRe = new ExampleResource(configurationElement
-					.getAttribute(ExtPointConstants.LOCAL_PATH),
-					ExampleResource.Type.valueOf(configurationElement
-							.getAttribute(ExtPointConstants.RESOURCE_TYPE)));
-			exRe.setDirectOpen(Boolean.parseBoolean(configurationElement
-					.getAttribute(ExtPointConstants.DIRECT_OPEN)));
-			result.add(exRe);
+			String resourceType = configurationElement
+					.getAttribute(ExtPointConstants.RESOURCE_TYPE);
+			String localPath = configurationElement
+					.getAttribute(ExtPointConstants.LOCAL_PATH);
+			if (resourceType != null && localPath != null) {
+				ExampleResource exRe = new ExampleResource(localPath,
+						ExampleResource.Type.valueOf(resourceType));
+				String direct_open = configurationElement
+						.getAttribute(ExtPointConstants.DIRECT_OPEN);
+				if (direct_open != null)
+					exRe.setDirectOpen(Boolean.parseBoolean(direct_open));
+				result.add(exRe);
+			}
 		}
 		return result;
 	}

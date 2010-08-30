@@ -20,7 +20,6 @@ public class ExampleImportUtil {
 			.toString();
 
 	/**
-	 * 
 	 * @param selectedResource
 	 * @param selectedExamples
 	 * @throws KielerException
