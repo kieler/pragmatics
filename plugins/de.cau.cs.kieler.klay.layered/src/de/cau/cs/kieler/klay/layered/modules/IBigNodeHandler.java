@@ -37,12 +37,12 @@ public interface IBigNodeHandler extends IAlgorithm {
      * @param layeredGraph
      *            the layered Graph
      */
-    void handleBigNodes(Collection<LNode> nodes, LayeredGraph layeredGraph);
+    void splitWideNodes(Collection<LNode> nodes, LayeredGraph layeredGraph);
 
     /**
      * This method removes all edges previously added to the graph to fixate big nodes in their
      * segments. This removal is necessary, since that edges are not part of the original graph and
      * will reduce the quality of the result of the crossing minimization phase.
      */
-    void removeFixationEdges();
+    void correctLayering();
 }

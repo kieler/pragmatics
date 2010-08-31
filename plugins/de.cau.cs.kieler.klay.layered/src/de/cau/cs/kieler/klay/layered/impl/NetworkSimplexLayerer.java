@@ -366,9 +366,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
         layeredGraph = theLayeredGraph;
 
-        IBigNodeHandler bigNodeHandler = new AvgPositionBigNodeHandler();
+        // support wide nodes, if requested
+        IBigNodeHandler bigNodeHandler = new BigNodeHandler();
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
-            bigNodeHandler.handleBigNodes(theNodes, theLayeredGraph);
+            bigNodeHandler.splitWideNodes(theNodes, theLayeredGraph);
         }
         
         // layer graph, each connected component separately
@@ -384,7 +385,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
             
             if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
-                bigNodeHandler.removeFixationEdges();
                 normalize(false);
             } else {
                 balance(normalize(false));
@@ -393,6 +393,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             for (LNode node : nodes) {
                 putNode(node);
             }
+        }
+        // correct layering concerning wide nodes
+        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
+            bigNodeHandler.correctLayering();
         }
 
         getMonitor().done();
@@ -501,7 +505,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 for (LEdge edge : port.getEdges()) {
                     target = edge.getSource().getNode();
                     revLayer[target.id] = Math.min(revLayer[target.id], revLayer[node.id] - 1);
-                    layeringDFS(target, reverse);
+                    layeringDFS(target, true);
                 }
             }
         } else {
@@ -509,7 +513,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 for (LEdge edge : port.getEdges()) {
                     target = edge.getTarget().getNode();
                     layer[target.id] = Math.max(layer[target.id], layer[node.id] + 1);
-                    layeringDFS(target, reverse);
+                    layeringDFS(target, false);
                 }
             }
         }

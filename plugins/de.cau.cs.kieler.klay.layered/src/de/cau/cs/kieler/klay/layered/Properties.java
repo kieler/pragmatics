@@ -63,9 +63,6 @@ public final class Properties {
             "minEdgeAngle", 0);
     /** flag for reversed edges. */
     public static final Property<Boolean> REVERSED = new Property<Boolean>("reversed", false);
-    /** flag indicating, whether a port is incident to fixationEdge. */
-    public static final Property<Boolean> FIXATION_PORT = new Property<Boolean>("fixationPort",
-            false);
 
     /**
      * Hidden default constructor.
