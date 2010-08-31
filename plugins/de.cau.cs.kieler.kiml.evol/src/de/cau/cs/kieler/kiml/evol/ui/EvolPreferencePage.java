@@ -38,20 +38,21 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         implements
             IWorkbenchPreferencePage {
 
+    private Group miscGroup = null;
+    private BooleanFieldEditor useLayoutHint = null;
+    private BooleanFieldEditor useDifferentTypeLayoutHint = null;
+
     @Override
     public void propertyChange(final PropertyChangeEvent event) {
         super.propertyChange(event);
-
-        System.out.println(event.getProperty() + ": " + event.getOldValue() + " -> "
-                + event.getNewValue());
 
         final Object source = event.getSource();
         if (source instanceof BooleanFieldEditor) {
             final String preferenceName = ((BooleanFieldEditor) source).getPreferenceName();
             if (EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME.equals(preferenceName)) {
                 final boolean booleanValue = ((BooleanFieldEditor) source).getBooleanValue();
-                final Composite parent = getFieldEditorParent();
 
+                this.useDifferentTypeLayoutHint.setEnabled(booleanValue, this.miscGroup);
             }
         }
 
@@ -88,8 +89,8 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         addField(popSizeEditor);
 
         // miscellaneous parameters
-        final Group miscGroup = new Group(parent, SWT.NONE);
-        miscGroup.setText("Misc parameters");
+        this.miscGroup = new Group(parent, SWT.NONE);
+        this.miscGroup.setText("Misc parameters");
         // final RadioGroupFieldEditor editorsEditor =
         // new RadioGroupFieldEditor(EvolPlugin.PREF_EDITORS, "Use editors", 1,
         // new String[][] { { "all editors", EvolPlugin.ALL_EDITORS },
@@ -97,20 +98,35 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         // true /* useGroup */);
         // addField(editorsEditor);
 
-        final BooleanFieldEditor useLayoutHint =
+        final String useLayoutHintText = "Adopt layout hint from genome";
+        final String useDifferentTypeLayoutText = "... also for different types";
+        this.useLayoutHint =
                 new BooleanFieldEditor(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME,
-                        "Adopt layout hint from genome", miscGroup);
+                        useLayoutHintText, this.miscGroup);
+        this.useLayoutHint
+.getDescriptionControl(this.miscGroup)
+                .setToolTipText(
+                "If this option is checked, layout hints from the individuals are "
+                        + "transferred to the diagram editor(s). For editors with "
+                        + "incompatible layout type, the layout hint is only changed "
+                        + "if the option '" + useDifferentTypeLayoutText + "' is checked.");
+        addField(this.useLayoutHint);
 
-        final BooleanFieldEditor useDifferentTypeLayoutHint =
+        this.useDifferentTypeLayoutHint =
                 new BooleanFieldEditor(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT,
-                        "... also for different types", miscGroup);
-
-        addField(useDifferentTypeLayoutHint);
-        addField(useLayoutHint);
+                        useDifferentTypeLayoutText, this.miscGroup);
+        this.useDifferentTypeLayoutHint
+                .getDescriptionControl(this.miscGroup)
+                .setToolTipText(
+                "If this option is checked, layout hints from individuals "
+                        + "are transferred to editors regardless of the type. "
+                        + "This option is only available if '" + useLayoutHintText + "'"
+                        + " is checked.");
+        addField(this.useDifferentTypeLayoutHint);
 
         // layout
         algorithmGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
-        miscGroup.setLayout(new GridLayout(1, false));
+        this.miscGroup.setLayout(new GridLayout(1, false));
         parent.setLayout(new FillLayout());
     }
 
