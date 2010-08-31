@@ -87,11 +87,19 @@ public class ExampleManager {
 		return result;
 	}
 
-	public void importExamples(IPath selectedResource,
+	public List<String> importExamples(IPath selectedResource,
 			List<Example> selectedExamples) throws KielerException {
-		ExampleImportUtil.importExamples(selectedResource, selectedExamples);
+		return ExampleImportUtil.importExamples(selectedResource,
+				selectedExamples);
 	}
 
+	/**
+	 * Exports a given example. Created and deleted categories will managed,
+	 * too.
+	 * 
+	 * @param properties
+	 * @throws KielerException
+	 */
 	public void export(Map<ExampleElement, Object> properties)
 			throws KielerException {
 		// TODO validate von ui zu service verlegen.
@@ -103,12 +111,6 @@ public class ExampleManager {
 			// TODO build online interface
 		} else
 			throw new KielerException("No Sourcetype defined.");
-	}
-
-	public void createCategory(List<String> creatableCategories,
-			Map<ExampleElement, Object> result) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
