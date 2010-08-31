@@ -21,8 +21,8 @@ import de.cau.cs.kieler.kex.model.SourceType;
 public class ExampleExportWizard extends Wizard implements IExportWizard {
 
 	private ExampleAttributesPage examplePage;
-	private ExampleExportPage exRePage;
-	private ExampleResourcesPage rePage;
+	private ExampleResourcesPage resourcePage;
+	private ExampleExportPage exportPage;
 
 	public ExampleExportWizard() {
 		super();
@@ -32,16 +32,16 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 		setWindowTitle("Kieler Example Export");
 		setNeedsProgressMonitor(true);
 		examplePage = new ExampleAttributesPage("Example Export", selection);
-		exRePage = new ExampleExportPage("Destination Choice", selection);
-		rePage = new ExampleResourcesPage("Example Resources", selection);
+		resourcePage = new ExampleResourcesPage("Example Resources", selection);
+		exportPage = new ExampleExportPage("Destination Choice", selection);
 	}
 
 	@Override
 	public void addPages() {
 		super.addPages();
 		addPage(examplePage);
-		addPage(exRePage);
-		addPage(rePage);
+		addPage(resourcePage);
+		addPage(exportPage);
 	}
 
 	@Override
@@ -51,36 +51,36 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 
 			addAttributes(result);
 
-			SourceType exportType = exRePage.getExportType();
+			SourceType exportType = exportPage.getExportType();
 			if (exportType == null)
 				throw new KielerException("Export type was not set.");
 			result.put(ExampleElement.SOURCETYPE, exportType);
 
-			String destLocation = exRePage.getDestLocation();
+			String destLocation = exportPage.getDestLocation();
 			validateField(destLocation, 2, "Destination Location");
 			result.put(ExampleElement.DEST_LOCATION, destLocation);
 
-			List<String> categories = exRePage.getCheckedCategories();
+			List<String> categories = exportPage.getCheckedCategories();
 			validateElement(categories, 1, "Categories");
 			result.put(ExampleElement.CATEGORIES, categories);
 
-			result.put(ExampleElement.CREATE_EXAMPLE_FOLDER, exRePage
+			result.put(ExampleElement.CREATE_EXAMPLE_FOLDER, exportPage
 					.createExampleFolder());
 
-			rePage.buildResourceStructure();
-			List<ExportResource> exportedResources = rePage
+			resourcePage.buildResourceStructure();
+			List<ExportResource> exportedResources = resourcePage
 					.getExportedResources();
 			validateElement(exportedResources, 1, "Exported Resources");
 			result.put(ExampleElement.RESOURCES, exportedResources);
 
-			List<String> creatableCategories = exRePage
+			List<String> creatableCategories = exportPage
 					.getCreatableCategories();
 			if (creatableCategories.size() > 0) {
 				result.put(ExampleElement.CREATE_CATEGORIES,
 						creatableCategories);
 			}
 
-			List<String> deletableCategories = exRePage
+			List<String> deletableCategories = exportPage
 					.getDeletableCategories();
 			if (deletableCategories.size() > 0) {
 				result.put(ExampleElement.DELETE_CATEGORIES,
@@ -116,7 +116,7 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 		validateField(exampleContact, 5, "Example Contact");
 		map.put(ExampleElement.CONTACT, exampleContact);
 
-		IPath overviewPicPath = exRePage.getOverviewPicPath();
+		IPath overviewPicPath = exportPage.getOverviewPicPath();
 		if (overviewPicPath != null) {
 			map.put(ExampleElement.OVERVIEW_PIC, overviewPicPath
 					.toPortableString());

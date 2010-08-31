@@ -107,11 +107,8 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 						page.openEditor(new FileEditorInput(files[0]),
 								defaultEditor.getId());
 					} catch (PartInitException e) {
-						// that should not happen, but at this time it
-						// cannot be
-						// handled. maybe with a messagebox can´t open
-						// editor,
-						// that´s all.
+						MessageDialog.openError(getShell(), "Opening Editor", e
+								.getLocalizedMessage());
 					}
 				}
 			}

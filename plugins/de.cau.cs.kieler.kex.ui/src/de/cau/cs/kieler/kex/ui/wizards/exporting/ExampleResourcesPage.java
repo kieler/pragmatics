@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.internal.ide.DialogUtil;
@@ -57,19 +58,18 @@ public class ExampleResourcesPage extends WizardPage {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(parent.getFont());
 		createResourcesGroup(composite);
-		createHeadFileComposite(composite);
+		createDirectOpenComposite(composite);
 		setControl(composite);
 	}
 
-	private void createHeadFileComposite(Composite composite) {
-		Composite headResourceComposite = new Composite(composite, SWT.BORDER);
-		GridLayout data = new GridLayout();
-		data.numColumns = 1;
-		headResourceComposite.setLayout(data);
-		headResourceComposite.setLayoutData(new GridData(
-				GridData.FILL_HORIZONTAL));
-		this.directOpenTree = new Tree(headResourceComposite, SWT.CHECK
-				| SWT.BORDER);
+	private void createDirectOpenComposite(Composite composite) {
+		Composite childComp = new Composite(composite, SWT.BORDER);
+		childComp.setLayout(new GridLayout());
+		childComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Label directOpenDesc = new Label(childComp, SWT.NONE);
+		directOpenDesc
+				.setText("Select files, that should open directly after finishing import wizard:");
+		this.directOpenTree = new Tree(childComp, SWT.CHECK | SWT.BORDER);
 		directOpenTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fillDirectOpenTree();
 	}
@@ -91,6 +91,8 @@ public class ExampleResourcesPage extends WizardPage {
 				input.add(projects[i]);
 			}
 		}
+		Label resourceDesc = new Label(parent, SWT.NONE);
+		resourceDesc.setText("Choose resources to export:");
 		initResourceGroup(parent, input);
 	}
 
@@ -127,7 +129,8 @@ public class ExampleResourcesPage extends WizardPage {
 					else
 						getExportedProjects().remove(element);
 				}
-
+				// TODO update tree muss implementiert werden, nicht immer alles
+				// neu machen...
 				fillDirectOpenTree();
 			}
 
