@@ -14,7 +14,9 @@
 package de.cau.cs.kieler.kiml.evol;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -42,6 +44,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
@@ -200,7 +203,7 @@ public final class EvolUtil {
             result =
                     new UniversalGene(theId, floatValue, UniversalGene.BOOLEAN_TYPE_INFO,
                             mutationInfo);
-            System.out.println(theId + ": " + result);
+            EvolPlugin.logStatus(theId + ": " + result);
             return result;
         }
 
@@ -219,10 +222,27 @@ public final class EvolUtil {
             final Class<? extends Enum<?>> enumClass =
                     (Class<? extends Enum<?>>) layoutOptionData.getOptionClass();
             Assert.isNotNull(enumClass);
-            Assert.isTrue(enumClass.getEnumConstants().length == choicesCount);
-            final Integer value = Integer.valueOf(theRawValue.toString());
+            final Enum<?>[] constants = enumClass.getEnumConstants();
+            Assert.isTrue(constants.length == choicesCount);
+            Integer value = null;
+            if (theRawValue instanceof Integer) {
+                value = Integer.valueOf(theRawValue.toString());
+            } else if (theRawValue instanceof String) {
+                final List<Enum<?>> constantsList = Arrays.asList(constants);
+                for (final Enum<?> enum1 : constantsList) {
+                    if (enum1.toString().equals(theRawValue)) {
+                        value = enum1.ordinal();
+                        break;
+                    }
+                }
+                if (value == null) {
+                    value = 0;
+                }
+            } else {
+                value = ((Enum<Type>) theRawValue).ordinal();
+            }
             result = new EnumGene(theId, value.intValue(), enumClass, theMutationProbability);
-            System.out.println("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
+            EvolPlugin.logStatus("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
                     + enumClass.getEnumConstants()[value.intValue()] + " (" + value + ")");
             return result;
         }
@@ -278,15 +298,7 @@ public final class EvolUtil {
                 formatter = UniversalGene.FLOAT_FORMATTER;
             }
 
-            if (value < lowerBound) {
-                System.err.println("WARNING: value < lower bound for " + theId);
-                value = lowerBound;
-            }
-
-            if (value > upperBound) {
-                System.err.println("WARNING: value > upper bound for " + theId);
-                value = upperBound;
-            }
+            value = keepValueWithinBounds(value, lowerBound, upperBound, (String) theId);
 
             final TypeInfo<Float> typeInfo =
                     new FloatTypeInfo(value, lowerBound, upperBound, formatter, Float.class);
@@ -294,7 +306,35 @@ public final class EvolUtil {
             final MutationInfo mutationInfo =
                     new MutationInfo(theMutationProbability, variance, distr);
             result = new UniversalGene(theId, value, typeInfo, mutationInfo);
-            System.out.println(theId + ": " + result);
+            EvolPlugin.logStatus(theId + ": " + result);
+            return result;
+        }
+
+        /**
+         * @param theValue
+         * @param theLowerBound
+         * @param theUpperBound
+         * @param id
+         * @return
+         */
+        private Float keepValueWithinBounds(
+                final Float value, final Float lowerBound, final Float upperBound, final String id) {
+
+            Float result = value;
+
+            // enforce that the value is within the legal bounds
+            if (value < lowerBound) {
+                System.err.println("WARNING: value: " + value + " < lower bound: " + lowerBound
+                        + ") for " + id);
+                result = lowerBound;
+            }
+
+            if (value > upperBound) {
+                System.err.println("WARNING: value: " + value + " > upper bound: " + upperBound
+                        + ") for " + id);
+                result = upperBound;
+            }
+
             return result;
         }
 
@@ -313,7 +353,7 @@ public final class EvolUtil {
                 final double theMutationProbability, final String lowerBoundAttr,
                 final String upperBoundAttr, final String varianceAttr, final Distribution distr) {
             IGene<?> result;
-            final Integer value = Integer.valueOf((String) theRawValue);
+            Integer value = Integer.valueOf((String) theRawValue);
 
             final double variance;
             if (varianceAttr != null) {
@@ -334,6 +374,11 @@ public final class EvolUtil {
 
             final IValueFormatter formatter = UniversalGene.INTEGER_FORMATTER;
 
+            // enforce that the value is within the legal bounds
+            value =
+                    (keepValueWithinBounds(value.floatValue(), lowerBound.floatValue(),
+                            upperBound.floatValue(), (String) theId).intValue());
+
             final TypeInfo<Float> typeInfo =
                     new FloatTypeInfo(Float.valueOf(value.floatValue()), Float.valueOf(lowerBound
                             .floatValue()), Float.valueOf(upperBound.floatValue()), formatter,
@@ -344,7 +389,7 @@ public final class EvolUtil {
             result =
                     new UniversalGene(theId, Float.valueOf(value.floatValue()), typeInfo,
                             mutationInfo);
-            System.out.println(theId + ": " + result);
+            EvolPlugin.logStatus(theId + ": " + result);
             return result;
         }
     }
@@ -443,12 +488,22 @@ public final class EvolUtil {
                 final String layoutTypeId = data.getType();
 
                 if (!expectedLayoutTypeId.equalsIgnoreCase(layoutTypeId)) {
-                    // The editor is not compatible to the current population.
-                    // --> skip it
-                    System.err.println("Cannot adopt " + individual.getId() + " to "
-                            + layoutProviderId + ", expecting an editor for "
-                            + expectedLayoutTypeId);
-                    continue;
+                    // The type in the editor is not compatible to the current
+                    // population.
+
+                    // FIXME: accept this only if option
+                    // PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT is set, else skip
+                    // this editor.
+
+                    System.err.println("The editor " + editor.getTitle() + " is set to "
+                            + layoutTypeId + ". Expecting an editor for " + expectedLayoutTypeId
+                            + ".");
+
+                    // EvolPlugin.showError("Cannot adopt " + individual.getId()
+                    // + " to "
+                    // + layoutProviderId + ", expecting an editor for "
+                    // + expectedLayoutTypeId, null);
+                    // continue;
                 }
 
                 // Use the options that are encoded in the individual.
@@ -891,7 +946,7 @@ public final class EvolUtil {
             return;
         }
 
-        System.out.println("adopt " + individual.toString());
+        EvolPlugin.logStatus("adopt " + individual.toString());
         final LayoutServices layoutServices = LayoutServices.getInstance();
         final EvolutionServices evolServices = EvolutionServices.getInstance();
         final Set<String> metricIds = evolServices.getLayoutMetricsIds();
@@ -928,7 +983,7 @@ public final class EvolUtil {
                 try {
                     propertySource.setPropertyValue(id, value);
                 } catch (final NullPointerException e) {
-                    System.out.println("WARNING: enum property could not be set: " + id);
+                    EvolPlugin.showError("WARNING: enum property could not be set: " + id, e);
                     Assert.isTrue(false);
                 }
                 break;
@@ -950,9 +1005,46 @@ public final class EvolUtil {
                     // TODO: LayoutPropertySource#setPropertyValue needs to be
                     // modified in order to accept a layout provider ID as
                     // value.
-                    final String layoutHintId = gene.toString();
-                    System.out.println(" ##### Setting layout hint: " + layoutHintId);
-                    propertySource.setPropertyValue(id, layoutHintId);
+                    final String newLayoutHintId = gene.toString();
+
+                    final Set<Object> oldLayoutHintIds =
+                            getPropertyValues(Collections.singletonList(propertySource),
+                                    LayoutOptions.LAYOUT_HINT_ID);
+
+                    Assert.isTrue(!oldLayoutHintIds.isEmpty());
+                    final String oldLayoutHintId = (String) oldLayoutHintIds.iterator().next();
+
+                    final LayoutProviderData providerData =
+                            layoutServices.getLayoutProviderData(newLayoutHintId, null);
+
+                    final String newType = providerData.getType();
+                    final String newProviderId = providerData.getId();
+
+                    // Are we allowed to set the layout hint?
+                    final boolean canSetLayoutHint =
+                            EvolPlugin.getDefault().getPreferenceStore()
+                                    .getBoolean(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
+
+                    // Even for different types?
+                    final boolean canSetForDifferentType =
+                            EvolPlugin.getDefault().getPreferenceStore()
+                                    .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
+
+                    if (!canSetLayoutHint) {
+                        EvolPlugin.showError(
+                                "Changing the layout provider not allowed. See preferences.",
+                                null);
+                    } else if ((canSetForDifferentType || isCompatibleLayoutProvider(
+                                    oldLayoutHintId, newType))) {
+                        EvolPlugin.logStatus(" ##### Setting layout hint: " + newLayoutHintId);
+                        propertySource.setPropertyValue(id, newLayoutHintId);
+                    } else {
+                        EvolPlugin.showError(
+                                "Attempt to set the layout hint to incompatible type: "
+                                + newLayoutHintId, null);
+                    }
+
+
                 } else {
                     propertySource.setPropertyValue(id, value.toString());
                 }
@@ -1040,9 +1132,24 @@ public final class EvolUtil {
         normalize(weightsMap);
 
         final KNode layoutGraph = calculateLayout(manager, editor);
-        final int rating = measure(layoutGraph, weightsMap);
+
+        final Map<String, Object> measurements = measure(layoutGraph, weightsMap);
+        final int rating = weight(measurements, weightsMap);
+
+
 
         return rating;
+    }
+
+    /**
+     * @param measurements
+     * @param weightsMap
+     * @return
+     */
+    private static int weight(
+            final Map<String, Object> measurements, final Map<String, Double> weightsMap) {
+
+        return 0;
     }
 
     /**
@@ -1120,7 +1227,7 @@ public final class EvolUtil {
 
         if (!status.isOK()) {
             // TODO: what to do about the layouting failure? Log it? Abort?
-            System.err.println(status.getMessage());
+            StatusManager.getManager().handle(status, StatusManager.SHOW);
             return null;
         }
 
@@ -1244,7 +1351,7 @@ public final class EvolUtil {
     }
 
     /**
-     * Obtain the layout hint identifier from the given property descriptor.
+     * Obtains the layout hint identifier from the given property descriptor.
      *
      * @param descriptor
      * @param value
@@ -1276,7 +1383,7 @@ public final class EvolUtil {
             text = "*** EXCEPTION";
         }
 
-        System.out.println("--- LAYOUT_HINT: " + value + "=" + text);
+        EvolPlugin.logStatus("--- LAYOUT_HINT: " + value + "=" + text);
         return hintId;
     }
 
@@ -1412,10 +1519,8 @@ public final class EvolUtil {
         final Set<Object> result = new LinkedHashSet<Object>();
 
         for (final LayoutPropertySource source : propertySources) {
-
             Object value;
             try {
-
                 value = source.getPropertyValue(id);
             } catch (final NullPointerException exception) {
                 // getPropertyValue has a problem
@@ -1424,7 +1529,7 @@ public final class EvolUtil {
 
             if (LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
                 // "Layout hint" options have an index as value.
-                // But we want the the layout hint identifier instead of its
+                // But we want the layout hint identifier instead of its
                 // index.
 
                 if (value == null) {
@@ -1438,25 +1543,46 @@ public final class EvolUtil {
                     continue;
                 }
 
-                // Get the property descriptor.
-                final IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
-                IPropertyDescriptor descriptor = null;
-                for (final IPropertyDescriptor desc : descriptors) {
-                    if (LayoutOptions.LAYOUT_HINT_ID.equals(desc.getId())) {
-                        descriptor = desc;
-                        break;
-                    }
-                }
+                final String item = getLayoutHintId(source, value);
 
-                if (descriptor != null) {
-                    // Get the layout hint identifier.
-                    final String layoutHintId = getLayoutHintId(descriptor, value);
-                    result.add(layoutHintId);
+                if (item != null) {
+                    result.add(item);
                 }
 
             } else {
                 result.add(value);
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * Obtains the layout hint identifier from the given
+     * {@link LayoutPropertySource}.
+     *
+     * @param source
+     * @param value
+     *            the integer value indicating the layout hint
+     * @return the layout hint id
+     */
+    private static String getLayoutHintId(final LayoutPropertySource source, final Object value) {
+
+        // Get the property descriptor.
+        final IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
+        IPropertyDescriptor descriptor = null;
+        for (final IPropertyDescriptor desc : descriptors) {
+            if (LayoutOptions.LAYOUT_HINT_ID.equals(desc.getId())) {
+                descriptor = desc;
+                break;
+            }
+        }
+
+        String result = null;
+        if (descriptor != null) {
+            // Get the layout hint identifier.
+            final String layoutHintId = getLayoutHintId(descriptor, value);
+            result = layoutHintId;
         }
 
         return result;
@@ -1503,16 +1629,17 @@ public final class EvolUtil {
      *            {@code null}
      * @return a rating proposal
      */
-    private static int measure(final KNode parentNode, final Map<String, Double> theWeightsMap) {
+    private static Map<String, Object> measure(
+            final KNode parentNode, final Map<String, Double> theWeightsMap) {
         Assert.isLegal(theWeightsMap != null);
 
         if ((parentNode == null) || (theWeightsMap == null)) {
-            return 0;
+            return Collections.emptyMap();
         }
 
         // TODO: Discuss: How should metrics be weighted per default?
         // TODO: What if weightsMap is empty?
-        final double defaultScale = 0.0;
+        final Double defaultScale = 0.0;
 
         // Get the metric IDs.
         final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
@@ -1542,7 +1669,7 @@ public final class EvolUtil {
 
         // Do we have anything to measure?
         if (metricsList.isEmpty()) {
-            return 0;
+            return Collections.emptyMap();
         }
 
         // Perform the measurement.
@@ -1575,7 +1702,7 @@ public final class EvolUtil {
         }
 
         final int newRating = (int) Math.round((scaledSum * 1000));
-        return newRating;
+        return analysisResults;
     }
 
     /**

@@ -7,16 +7,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
-import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.evol.EvolUtil.GeneFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
@@ -100,7 +100,7 @@ final class GenomeFactory {
         // Determine uniformly distributed mutation probability.
         final double uniformProb = uniformProbability(presentLearnables.size());
 
-        System.out.println("Creating genome of " + presentLearnables.size()
+        EvolPlugin.logStatus("Creating genome of " + presentLearnables.size()
                 + " layout property genes ...");
 
         // Collect the property values from the layout property sources.
@@ -126,7 +126,7 @@ final class GenomeFactory {
                 Assert.isNotNull(gene, "Failed to create gene for " + id);
                 result.add(gene);
             } else {
-                System.out.println("Option not registered as evolutionData: " + id);
+                EvolPlugin.logStatus("Option not registered as evolutionData: " + id);
             }
         }
 
@@ -163,7 +163,7 @@ final class GenomeFactory {
 
         // Create the layout hint gene.
         final RadioGene hintGene = createLayoutHintGene(providerIds, providerId);
-        Assert.isNotNull(hintGene, "Failed to create layout hint gene.");
+        Assert.isNotNull(hintGene, "Failed to create layout hint gene for " + typeId);
         result.add(hintGene);
 
         // Collect all learnable layout options that are known by the
@@ -177,9 +177,7 @@ final class GenomeFactory {
 
         result.addAll(extraGenes);
 
-
-        System.out.println("Created genome: " + result.size() + " genes.");
-        System.out.println();
+        EvolPlugin.logStatus("Created genome: " + result.size() + " genes.");
 
         return result;
     }
@@ -200,9 +198,10 @@ final class GenomeFactory {
     }
 
     /**
-     * Collects the property values from the given layout property sources.
-     * If a property is present in more than one of the sources, the value
-     * defined in its first occurrence prevails.
+     * Collects the property values from the given layout property sources. If a
+     * property is present in more than one of the sources, the value defined in
+     * its first occurrence prevails. Property values that contain layout hints
+     * are ignored.
      *
      * @param propertySources
      *            a list of layout property sources
@@ -234,7 +233,7 @@ final class GenomeFactory {
                     propertyId2ValueMap.put(id, value);
                 } else {
                     // already added this option
-                    System.out.println("Duplicate property: " + id);
+                    EvolPlugin.logStatus("Duplicate property: " + id);
                 }
             }
         }
@@ -324,6 +323,7 @@ final class GenomeFactory {
                 final LayoutOptionData<?> optionData =
                         LayoutServices.getInstance().getLayoutOptionData(optionId);
                 final Object value = optionData.getDefault();
+                EvolPlugin.logStatus("Creating gene for " + optionId);
                 final IGene<?> gene = gf.newGene(optionId, value.toString(), prob);
                 Assert.isNotNull(gene, "Failed to create gene for " + optionId);
                 extraGenes.add(gene);
@@ -415,7 +415,7 @@ final class GenomeFactory {
         if (choicesCount > 0) {
             uniformProb = 1.0 / choicesCount;
         } else {
-            System.err.println("No learnable properties found.");
+            EvolPlugin.showError("No learnable properties found.", null);
             uniformProb = 0.0;
         }
         return uniformProb;

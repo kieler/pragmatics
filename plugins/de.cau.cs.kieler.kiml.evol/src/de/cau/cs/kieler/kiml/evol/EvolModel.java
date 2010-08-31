@@ -81,7 +81,7 @@ public final class EvolModel {
 
         public void run() {
             EvolUtil.autoRate(this.unrated, new SubProgressMonitor(this.monitor, 1 * this.scale),
-                    weightsGenome);
+                    this.weightsGenome);
         }
     }
 
@@ -93,6 +93,7 @@ public final class EvolModel {
         this.layoutProviderId = null;
         this.layoutTypeId = null;
         this.weightWatchers = null;
+        this.weightEvolAlg = null;
     }
 
     // private fields
@@ -111,7 +112,9 @@ public final class EvolModel {
      *            the {@link IEvolModelListener} to add
      */
     public void addListener(final IEvolModelListener listener) {
-        this.listeners.add(listener);
+        if (listener != null) {
+            this.listeners.add(listener);
+        }
     }
 
     /**
@@ -147,11 +150,11 @@ public final class EvolModel {
             ind.setUserRating(rating);
 
             // Punish predictor
-            final Genome predictor = weightWatchers.get(0);
+            final Genome predictor = this.weightWatchers.get(0);
             final int predictorRating = predictor.getUserRating();
             predictor.setUserRating(predictorRating - Math.abs(delta));
-            weightEvolAlg.step();
-            weightWatchers = weightEvolAlg.getPopulation();
+            this.weightEvolAlg.step();
+            this.weightWatchers = this.weightEvolAlg.getPopulation();
 
             afterChange("changeCurrentRating");
         }
@@ -202,7 +205,8 @@ public final class EvolModel {
             final Runnable runnable = new AutoRaterRunnable(unrated, wg, monitor, scale);
             MonitoredOperation.runInUI(runnable, true);
             // reward predictor
-            wg.setUserRating(wg.getUserRating() + 10);
+            final int reward = 100;
+            wg.setUserRating(wg.getUserRating() + reward);
             monitor.worked(autoRateWork * scale);
 
             // Notify listeners.
@@ -265,6 +269,7 @@ public final class EvolModel {
     }
 
     /**
+     * Returns the current position.
      *
      * @return the current position.
      */
@@ -288,17 +293,17 @@ public final class EvolModel {
      */
     public boolean isValid() {
         if (this.evolAlg == null) {
-            System.out.println("Algorithm is not set.");
+            EvolPlugin.logStatus("Algorithm is not set.");
             return false;
         }
 
         if (this.weightWatchers == null) {
-            System.out.println("Weights genome is not set.");
+            EvolPlugin.logStatus("Weights genome is not set.");
             return false;
         }
 
         if (this.weightEvolAlg == null) {
-            System.out.println("Weights algorithm is not set.");
+            EvolPlugin.logStatus("Weights algorithm is not set.");
             return false;
         }
 
@@ -307,13 +312,13 @@ public final class EvolModel {
         Assert.isNotNull(pop, "Population is not set.");
 
         if (pop.isEmpty()) {
-            System.out.println("Population is empty.");
+            EvolPlugin.logStatus("Population is empty.");
             return false;
         }
 
         final Genome currentIndividual = getCurrentIndividual();
         if (currentIndividual == null) {
-            System.out.println("No individual selected.");
+            EvolPlugin.logStatus("No individual selected.");
             return false;
         }
 
@@ -377,7 +382,7 @@ public final class EvolModel {
         if (!sourcePopulation.isEmpty()) {
 
             // Add meta-evolution genes for the layout metrics.
-            System.out.println("Creating metric weights ...");
+            EvolPlugin.logStatus("Creating metric weights ...");
             final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
             final Genome weightGenes = EvolUtil.createWeightGenes(metricIds, null);
             Assert.isNotNull(weightGenes);
@@ -400,6 +405,8 @@ public final class EvolModel {
     }
 
     /**
+     * Sets the current position.
+     *
      * @param thePosition
      *            the new position.
      */
@@ -408,9 +415,9 @@ public final class EvolModel {
         Assert.isLegal((thePosition <= getPopulation().size()));
 
         final int oldPosition = this.position;
-        this.position = thePosition;
 
         if (oldPosition != thePosition) {
+            this.position = thePosition;
             afterChange("setPosition");
         }
     }

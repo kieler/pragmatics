@@ -77,9 +77,9 @@ public class EvolView extends ViewPart {
         }
 
         public void afterChange(final EvolModel source, final String cause) {
-            System.out.println("afterChange: " + cause);
+            EvolPlugin.logStatus("afterChange: " + cause);
             if ("setPosition".equalsIgnoreCase(cause)) {
-                System.out.println("setPosition occurred");
+                EvolPlugin.logStatus("setPosition occurred");
                 applySelectedIndividual();
                 return;
             }
@@ -228,15 +228,9 @@ public class EvolView extends ViewPart {
                 };
                 MonitoredOperation.runInUI(elementUpdaterRunnable, true);
 
-                // Refresh the layout according to the selected individual.
-                // System.out.println("before applySelectedIndividual");
-                // applySelectedIndividual();
-                // System.out.println("after applySelectedIndividual");
-                System.out.println(oldPos + " -> " + newPos);
+                EvolPlugin.logStatus(oldPos + " -> " + newPos);
 
-
-
-                System.out.println("updating row");
+                EvolPlugin.logStatus("updating row");
                 final Object oldElement1 = this.tv.getElementAt(oldPos);
 
                 if (this.oldElement != null) {

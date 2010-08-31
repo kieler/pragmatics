@@ -43,6 +43,8 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
         // is value within bounds?
         Assert.isLegal(theTypeInfo.isValueWithinBounds(theValue), "value out of bounds: "
                 + theValue);
+
+        // TODO discuss: make constructor private + factory method instead?
         this.id = theId;
         this.value = theValue;
         this.typeInfo = theTypeInfo;
@@ -101,6 +103,7 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
      *         genes.
      */
     public IGene<T> recombineWith(final IGene<T>... otherGenes) {
+        // TODO: discuss: rather use a static recombine() method?
         IGene<T> result;
         final int pos = (int) (getRandomGenerator().nextDouble() * (otherGenes.length + 1));
         if (pos < otherGenes.length) {

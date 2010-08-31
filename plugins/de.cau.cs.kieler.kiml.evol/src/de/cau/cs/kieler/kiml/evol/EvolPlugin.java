@@ -13,7 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -80,6 +83,31 @@ public class EvolPlugin extends AbstractUIPlugin {
      */
     public EvolPlugin() {
         // Intentionally left empty.
+    }
+    
+    /**
+     * Show the given error message.
+     * 
+     * @param message
+     *            the message
+     * @param exception
+     *            a low-level exception, or {@code null} if not applicable
+     */
+    public static void showError(final String message, final Throwable exception) {
+        final Status myStatus =
+                new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID, message, exception);
+        StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
+    }
+
+    /**
+     * Log the given status message.
+     *
+     * @param message
+     *            the message
+     */
+    public static final void logStatus(final String message) {
+        StatusManager.getManager().handle(new Status(IStatus.INFO, PLUGIN_ID, message, null),
+                StatusManager.LOG);
     }
 
     /**
