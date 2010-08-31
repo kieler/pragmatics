@@ -160,7 +160,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 				.getChildren(elementName)) {
 			String catName = configurationElement.getAttribute(attributeName);
 			if (catName != null)
-				result.add(configurationElement.getAttribute(catName));
+				result.add(catName);
 		}
 		return result;
 	}
@@ -176,7 +176,8 @@ public class ExtPointExampleCollector extends ExampleCollector {
 					.getAttribute(ExtPointConstants.LOCAL_PATH);
 			if (resourceType != null && localPath != null) {
 				ExampleResource exRe = new ExampleResource(localPath,
-						ExampleResource.Type.valueOf(resourceType));
+						ExampleResource.Type
+								.valueOf(resourceType.toUpperCase()));
 				String direct_open = configurationElement
 						.getAttribute(ExtPointConstants.DIRECT_OPEN);
 				if (direct_open != null)

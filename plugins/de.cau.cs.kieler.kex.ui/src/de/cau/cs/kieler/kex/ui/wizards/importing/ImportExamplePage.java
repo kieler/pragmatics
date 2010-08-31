@@ -43,7 +43,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
 	private static final String EXAMPLE_DATA_KEY = "example";
 
-	private boolean fastStart = false;
+	private boolean quickStart = false;
 
 	protected ImportExamplePage(String name, IStructuredSelection selection) {
 		super(name, selection);
@@ -300,10 +300,10 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		return super.getContainerFullPath();
 	}
 
-	public boolean isFastStart() {
+	public boolean isQuickStart() {
 		boolean result = super.getContainerFullPath() == null
 				&& checkedExamples.size() == 0;
-		this.fastStart = result;
+		this.quickStart = result;
 		return result;
 	}
 }

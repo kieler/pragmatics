@@ -3,7 +3,6 @@ package de.cau.cs.kieler.kex.controller.util;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
@@ -46,15 +45,18 @@ public class ExampleImportUtil {
 					String localPath = resource.getLocalPath();
 					String destPath = localPath.substring(exampleBeginIndex);
 					// searching for subfiles and folders.
-					Enumeration<?> dict = bundle.findEntries(localPath, null,
-							false);
-					if (dict != null) {
-						// geht nur wenn das ganze committed ist, denn dann ist
-						// auch in jedem folder eine .svn datei.
+					switch (resource.getResourceType()) {
+					case PROJECT:
+						// TODO vielleicht geht das auch ohne project datei, da
+						// man programmatisch bestimmt projecte erstellen kann.
+						break;
+					case FOLDER:
 						IOHandler.createFolder(destFolder + "/" + destPath);
-					} else {
+						break;
+					case FILE:
 						URL entry = bundle.getEntry(localPath);
 						IOHandler.writeFile(entry, destFolder + destPath, true);
+						break;
 					}
 				} catch (FileNotFoundException e) {
 					throw new KielerException("Can't import example!", e);

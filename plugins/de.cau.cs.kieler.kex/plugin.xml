@@ -13,7 +13,7 @@
             title="QuickStart"
             version="1.0">
          <category
-               id="de.cau.cs.kieler.kex.syncchart">
+               id="de.cau.cs.kieler.syncchart">
          </category>
          <example_resource
                direct_open="false"

@@ -70,6 +70,7 @@ public class ExampleManager {
 		// TODO exception pool aufbauen und alle examples laden die gehen, rest
 		// als messagebox anzeigen.
 		this.extensionCollector.loadExamples();
+		// test impl of an online interface.
 		this.databaseCollector.loadExamples();
 	}
 
@@ -99,7 +100,7 @@ public class ExampleManager {
 					this.extensionCollector, this.databaseCollector);
 		else if (SourceType.PUBLIC.equals(properties
 				.get(ExampleElement.SOURCETYPE))) {
-			// TODO online schnittstelle bauen...
+			// TODO build online interface
 		} else
 			throw new KielerException("No Sourcetype defined.");
 	}

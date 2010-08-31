@@ -40,7 +40,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 
 	@Override
 	public boolean canFinish() {
-		if (mainPage.isFastStart())
+		if (mainPage.isQuickStart())
 			return true;
 		return super.canFinish();
 	}

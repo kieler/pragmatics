@@ -10,7 +10,7 @@ public class ExtPointConstants {
 
 	// example constants
 	public static final String EXAMPLE = "example";
-	public static final String TITLE = "Title";
+	public static final String TITLE = "title";
 	public static final String GENERATION_DATE = "generation_date";
 	public static final String VERSION = "version";
 	public static final String DESCRIPTION = "description";
@@ -27,7 +27,7 @@ public class ExtPointConstants {
 	public static final String LOCAL_PATH = "local_path";
 	public static final String DIRECT_OPEN = "direct_open";
 	public static final String RESOURCE_TYPE = "resource_type";
-	public static final String ROOT_DIRECTORY = "root_directory_path";
+	public static final String ROOT_DIRECTORY = "root_directory";
 
 	/**
 	 * should not be called.
