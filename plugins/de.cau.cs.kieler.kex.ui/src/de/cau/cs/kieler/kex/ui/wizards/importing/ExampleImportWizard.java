@@ -63,7 +63,8 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 		List<String> directOpens = null;
 		try {
 			directOpens = ExampleManager.get().importExamples(
-					mainPage.getContainerPath(), mainPage.getCheckedExamples());
+					mainPage.getContainerPath(), mainPage.getCheckedExamples(),
+					mainPage.isQuickStart());
 		} catch (KielerException e) {
 			// Messagebox ausgabe
 			return false;
@@ -79,13 +80,6 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 		} catch (CoreException e1) {
 			// do nothing
 		}
-
-		// create a new project
-		// IProgressMonitor progressMonitor = new NullProgressMonitor();
-		// IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		// IProject project = root.getProject("DesiredProjectName");
-		// project.create(progressMonitor);
-		// project.open(progressMonitor);
 
 		// open direct opens
 		if (directOpens != null) {

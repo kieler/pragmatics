@@ -88,9 +88,10 @@ public class ExampleManager {
 	}
 
 	public List<String> importExamples(IPath selectedResource,
-			List<Example> selectedExamples) throws KielerException {
+			List<Example> selectedExamples, boolean isQuickStart)
+			throws KielerException {
 		return ExampleImportUtil.importExamples(selectedResource,
-				selectedExamples);
+				selectedExamples, isQuickStart);
 	}
 
 	/**
