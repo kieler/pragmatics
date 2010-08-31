@@ -107,14 +107,14 @@ It will be unique.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="generation_date" type="string" use="required">
+         <attribute name="description" type="string">
             <annotation>
                <documentation>
                   
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="description" type="string">
+         <attribute name="generation_date" type="string" use="required">
             <annotation>
                <documentation>
                   
