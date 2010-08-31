@@ -24,15 +24,16 @@ import org.eclipse.core.runtime.Platform;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 
 /**
- * This class is responsible for reading the evolution extensions.
+ * This singleton class is responsible for reading the evolution extensions.
  *
  * @author bdu
  *
  */
 public final class EvolutionServices {
-    /** identifier of the extension point for evolution data. */
+    /** Identifier of the extension point for evolution data. */
     private static final String EXTP_ID_EVOLUTION_DATA = "de.cau.cs.kieler.kiml.evol.evolutionData";
 
+    /** Identifier of the element "data". */
     private static final String ELEMENT_DATA = "data";
 
     /**
@@ -41,9 +42,12 @@ public final class EvolutionServices {
     private static EvolutionServices instance;
 
     /**
-     * Builds the extension data.
+     * Builds the extension data. This method must be called exactly once before
+     * the extension data can be accessed.
      */
-    public static void createExtensionData() {
+    public static synchronized void createExtensionData() {
+        Assert.isTrue(instance == null, "EvolutionServices data already loaded.");
+
         // create instance of the evolution data holder class
         instance = new EvolutionServices();
 
@@ -53,8 +57,9 @@ public final class EvolutionServices {
     }
 
     /**
+     * Returns the singleton instance of this class.
      *
-     * {@code createExtensionData()} must be called before this method.
+     * {@link #createExtensionData()} must be called before this method.
      *
      * @return the singleton instance
      */
@@ -71,21 +76,21 @@ public final class EvolutionServices {
         // nothing
     }
 
-    /** set of registered evolution data. */
+    /** Set of registered evolution data. */
     private HashMap<String, IConfigurationElement> evolutionDataMap;
 
-    /** set of registered layout metrics. */
+    /** Set of registered layout metrics. */
     private HashMap<String, IConfigurationElement> layoutMetricsMap;
 
     /**
      *
-     * Returns the evolution data element with the given id.
-     * {@code createEvolutionData()} must be called before this method,
+     * Returns the evolution data element with the given ID. The method
+     * {@link #createExtensionData()} must be called before this method,
      * otherwise an exception is thrown.
      *
      * @param id
-     *            the id of the evolution data element
-     * @return the evolution data with the given id, or {@code null} if none is
+     *            the ID of the evolution data element
+     * @return the evolution data with the given ID, or {@code null} if none is
      *         found.
      */
     public IConfigurationElement getEvolutionData(final String id) {
@@ -95,13 +100,25 @@ public final class EvolutionServices {
     }
 
     /**
-     * Returns the layout metric element with the given id. The method
+     * Returns a copy of the registered evolution data IDs.
      * {@code createEvolutionData()} must be called before this method,
      * otherwise an exception is thrown.
      *
+     * @return a copy of the registered evolution data IDs.
+     */
+    public Set<String> getEvolutionDataIds() {
+        Assert.isNotNull(this.evolutionDataMap);
+        return Collections.unmodifiableSet(this.evolutionDataMap.keySet());
+    }
+
+    /**
+     * Returns the layout metric element with the given ID. The method
+     * {@link #createExtensionData()} must be called before this method,
+     * otherwise an exception is thrown.
+     *
      * @param id
-     *            the id of the layout metric element
-     * @return the layout metric element with the given id, or {@code null} if
+     *            the ID of the layout metric element
+     * @return the layout metric element with the given ID, or {@code null} if
      *         none is found.
      */
     public IConfigurationElement getLayoutMetric(final String id) {
@@ -111,23 +128,11 @@ public final class EvolutionServices {
     }
 
     /**
-     * Returns a copy of the registered evolution data ids.
-     * {@code createEvolutionData()} must be called before this method,
+     * Returns a copy of the registered layout metrics IDs.
+     * {@link #createExtensionData()} must be called before this method,
      * otherwise an exception is thrown.
      *
-     * @return a copy of the registered evolution data ids.
-     */
-    public Set<String> getEvolutionDataIds() {
-        Assert.isNotNull(this.evolutionDataMap);
-        return Collections.unmodifiableSet(this.evolutionDataMap.keySet());
-    }
-
-    /**
-     * Returns a copy of the registered layout metrics ids.
-     * {@code createEvolutionData()} must be called before this method,
-     * otherwise an exception is thrown.
-     *
-     * @return a copy of the registered layout metrics ids.
+     * @return a copy of the registered layout metrics IDs.
      */
     public Set<String> getLayoutMetricsIds() {
         Assert.isNotNull(this.layoutMetricsMap);
@@ -141,7 +146,7 @@ public final class EvolutionServices {
         this.evolutionDataMap = new HashMap<String, IConfigurationElement>();
         final IConfigurationElement[] extensions =
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
-EXTP_ID_EVOLUTION_DATA);
+                        EXTP_ID_EVOLUTION_DATA);
 
         for (final IConfigurationElement element : extensions) {
             if (ELEMENT_DATA.equals(element.getName())) {
