@@ -17,6 +17,7 @@ import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,6 +37,25 @@ import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 public class EvolPreferencePage extends FieldEditorPreferencePage
         implements
             IWorkbenchPreferencePage {
+
+    @Override
+    public void propertyChange(final PropertyChangeEvent event) {
+        super.propertyChange(event);
+
+        System.out.println(event.getProperty() + ": " + event.getOldValue() + " -> "
+                + event.getNewValue());
+
+        final Object source = event.getSource();
+        if (source instanceof BooleanFieldEditor) {
+            final String preferenceName = ((BooleanFieldEditor) source).getPreferenceName();
+            if (EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME.equals(preferenceName)) {
+                final boolean booleanValue = ((BooleanFieldEditor) source).getBooleanValue();
+                final Composite parent = getFieldEditorParent();
+
+            }
+        }
+
+    }
 
     /**
      * Creates a new preference page.
@@ -80,12 +100,13 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         final BooleanFieldEditor useLayoutHint =
                 new BooleanFieldEditor(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME,
                         "Adopt layout hint from genome", miscGroup);
-        addField(useLayoutHint);
 
         final BooleanFieldEditor useDifferentTypeLayoutHint =
                 new BooleanFieldEditor(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT,
                         "... also for different types", miscGroup);
+
         addField(useDifferentTypeLayoutHint);
+        addField(useLayoutHint);
 
         // layout
         algorithmGroup.setLayout(new GridLayout(NUM_COLUMNS, false));
