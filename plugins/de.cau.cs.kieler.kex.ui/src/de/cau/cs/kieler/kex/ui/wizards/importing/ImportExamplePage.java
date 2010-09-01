@@ -207,12 +207,10 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		exampleGroup.setToolTipText("Selected Example");
 		createEmptyLine(exampleGroup, columnCount);
 		new Label(exampleGroup, SWT.NONE).setText("Title:");
-		Text text = new Text(exampleGroup, SWT.NONE);
-		text.setText(this.dummyText);
-		this.setExampleTitle(text);
-		this.getExampleTitle().setEditable(false);
-		this.getExampleTitle().setLayoutData(
-				new GridData(GridData.FILL_HORIZONTAL));
+		this.exampleTitle = new Text(exampleGroup, SWT.NONE);
+		this.exampleTitle.setText(this.dummyText);
+		this.exampleTitle.setEditable(false);
+		this.exampleTitle.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		createEmptyLine(exampleGroup, columnCount);
 		new Label(exampleGroup, SWT.NONE).setText("Version:");
 		this.exampleVersion = new Text(exampleGroup, SWT.NONE);
