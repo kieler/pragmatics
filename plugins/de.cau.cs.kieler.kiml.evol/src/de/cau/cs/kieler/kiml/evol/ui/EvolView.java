@@ -47,14 +47,20 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
  *
  */
 public class EvolView extends ViewPart {
+    /**
+     * A listener to the evolution model.
+     */
     private final IEvolModelListener modelListener = new IEvolModelListener() {
-
+        
         /**
-         * Refresh the layout according to selected individual.
-         *
+         * Refreshes the layout according to the selected individual in the
+         * model.
+         * 
+         * @param em
+         *            the evolution model
+         * 
          */
-        private void applySelectedIndividual() {
-            final EvolModel em = EvolView.this.getEvolModel();
+        private void applySelectedIndividual(final EvolModel em) {
             Assert.isNotNull(em);
 
             if (!em.isValid()) {
@@ -76,16 +82,19 @@ public class EvolView extends ViewPart {
             EvolUtil.asyncRefreshLayoutView();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void afterChange(final EvolModel source, final String cause) {
             EvolPlugin.logStatus("afterChange: " + cause);
             if ("setPosition".equalsIgnoreCase(cause)) {
                 EvolPlugin.logStatus("setPosition occurred");
-                applySelectedIndividual();
+                applySelectedIndividual(source);
                 return;
             }
             // TODO: what if currentEditor is null?
             if (EvolUtil.getCurrentEditor() == null) {
-                System.err.println("We are not in the UI thread.");
+                System.err.println("We are not in the UI thread: " + cause);
             }
 
             // Refresh the table viewer.
