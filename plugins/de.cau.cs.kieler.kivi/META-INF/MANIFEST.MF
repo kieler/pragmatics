@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: KVM
 Bundle-SymbolicName: de.cau.cs.kieler.kivi;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.cau.cs.kieler.kivi.Activator
+Bundle-Activator: de.cau.cs.kieler.kivi.KiViPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.gef;bundle-version="3.6.0"

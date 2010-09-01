@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kivi.core.Viewmanagement;
  * 
  * @author mmu
  */
-public class Activator extends AbstractUIPlugin implements IStartup {
+public class KiViPlugin extends AbstractUIPlugin implements IStartup {
 
     /**
      * The plug-in ID.
@@ -32,12 +32,12 @@ public class Activator extends AbstractUIPlugin implements IStartup {
     public static final String PLUGIN_ID = "de.cau.cs.kieler.kivi"; //$NON-NLS-1$
 
     // The shared instance
-    private static Activator plugin;
+    private static KiViPlugin plugin;
 
     /**
      * The constructor.
      */
-    public Activator() {
+    public KiViPlugin() {
     }
 
     /**
@@ -61,7 +61,7 @@ public class Activator extends AbstractUIPlugin implements IStartup {
      * 
      * @return the shared instance
      */
-    public static Activator getDefault() {
+    public static KiViPlugin getDefault() {
         return plugin;
     }
 
@@ -70,7 +70,6 @@ public class Activator extends AbstractUIPlugin implements IStartup {
      */
     public void earlyStartup() {
         Viewmanagement.getInstance().initialize();
-        Viewmanagement.getInstance().setActive(true); // FIXME
     }
 
 }

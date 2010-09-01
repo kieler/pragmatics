@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Comparator;
 import java.text.Collator;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -44,6 +45,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import de.cau.cs.kieler.kivi.KiViPlugin;
 import de.cau.cs.kieler.kivi.core.Descriptor;
 import de.cau.cs.kieler.kivi.core.Viewmanagement;
 
@@ -84,11 +86,13 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
      */
     public boolean performOk() {
         if (super.performOk()) {
+            getPreferenceStore()
+                    .setValue(Viewmanagement.PROPERTY_ACTIVE, kiviActive.getSelection());
             Viewmanagement.getInstance().setActive(kiviActive.getSelection());
             for (Descriptor d : combinations) {
                 boolean checked = checkboxViewer.getChecked(d);
+                getPreferenceStore().setValue(d.getClazz().getCanonicalName() + ".active", checked);
                 d.setActive(checked);
-
             }
             Viewmanagement.getInstance().updateCombinationsByGUI();
             return true;
@@ -266,6 +270,13 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
             return;
         }
         descriptionText.setText(""); //$NON-NLS-1$
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected IPreferenceStore doGetPreferenceStore() {
+        return KiViPlugin.getDefault().getPreferenceStore();
     }
 
 }

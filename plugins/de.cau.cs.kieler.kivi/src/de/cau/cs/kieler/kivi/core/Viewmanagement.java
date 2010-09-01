@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.RegistryFactory;
 
+import de.cau.cs.kieler.kivi.KiViPlugin;
+
 /**
  * Core controller for the view management.
  * 
@@ -34,6 +36,12 @@ import org.eclipse.core.runtime.RegistryFactory;
 public class Viewmanagement {
 
     private static final Viewmanagement INSTANCE = new Viewmanagement();
+
+    /**
+     * The property key holding the active value.
+     */
+    public static final String PROPERTY_ACTIVE = Viewmanagement.class.getCanonicalName()
+            + ".active";
 
     private CombinationsWorker combinationsWorker = new CombinationsWorker();
 
@@ -53,7 +61,6 @@ public class Viewmanagement {
     public Viewmanagement() {
         combinationsWorker.start();
         effectsWorker.start();
-        loadExtensionPoints();
     }
 
     /**
@@ -69,8 +76,8 @@ public class Viewmanagement {
      * Called on eclipse startup to do a short initialization.
      */
     public void initialize() {
-        // TODO whatever initialization requires that can't go into <init>
-        // check preferences, load default/selected combinations?
+        setActive(KiViPlugin.getDefault().getPreferenceStore().getBoolean(PROPERTY_ACTIVE));
+        loadExtensionPoints();
     }
 
     /**
@@ -80,7 +87,6 @@ public class Viewmanagement {
      *            true if activating
      */
     public void setActive(final boolean a) {
-        System.out.println("setting kivi state to " + a);
         if (active && !a) {
             // deactivate triggers
             synchronized (combinationsByTrigger) {
@@ -293,10 +299,14 @@ public class Viewmanagement {
                 .getConfigurationElementsFor("de.cau.cs.kieler.kivi.combinations");
         for (IConfigurationElement element : elements) {
             try {
+                Object o = element.createExecutableExtension("class");
                 Descriptor descriptor = new Descriptor(element.getAttribute("name"),
-                        element.getAttribute("description"), element.createExecutableExtension(
-                                "class").getClass());
+                        element.getAttribute("description"), o.getClass());
                 availableCombinations.add(descriptor);
+                if (KiViPlugin.getDefault().getPreferenceStore()
+                        .getBoolean(descriptor.getClazz().getCanonicalName() + ".active")) {
+                    ((ICombination) o).setActive(true);
+                }
             } catch (InvalidRegistryObjectException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
