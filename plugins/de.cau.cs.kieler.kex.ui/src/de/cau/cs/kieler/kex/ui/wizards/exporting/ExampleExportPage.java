@@ -85,8 +85,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 						.getShell());
 
 				dirDiag.setText("Choose destination directory");
-				dirDiag
-						.setMessage("Select a directory in a java plugin project.");
+				dirDiag.setMessage("Select a directory in a java plugin project.");
 				String dir = dirDiag.open();
 				// TODO ueberlegen, ob hier direkt eine pruefung eingebaut
 				// werden kann.
@@ -145,21 +144,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
 				TreeItem item = new TreeItem(categoryTree, SWT.NONE);
 				item.setText(value);
 				creatableCategories.add(value);
-			}
-		});
-
-		Button deleteCategory = new Button(buttonCompo, SWT.NONE);
-		deleteCategory.setText("Delete");
-		// deleteCategory.setToolTipText("Deletes selected categories.");
-		deleteCategory.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selection = categoryTree.getSelection();
-				for (TreeItem item : selection) {
-					getDeletableCategories().add(item.getText());
-					item.setGrayed(true);
-				}
 			}
 		});
 
