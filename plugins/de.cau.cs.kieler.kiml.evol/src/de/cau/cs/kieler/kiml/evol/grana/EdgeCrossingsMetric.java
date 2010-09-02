@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -53,14 +55,31 @@ public class EdgeCrossingsMetric implements IAnalysis {
             // TODO: consider bend points as pseudo nodes
         }
 
-        final int impossibleCrossingsCount = sum / 2;
+        // In straight-line drawings of connected graphs with at most one edge
+        // between nodes, adjacent edges cannot cross.
+        // [H. C. Purchase, "Metrics for Graph Drawing Aesthetics", 2002]
+
+        // In general, this is not guaranteed, so we don't know how many
+        // crossings are impossible.
+        final int impossibleCrossingsCount = 0;
+        // TODO: if graph is connected and graph is not a multi graph, we
+        // can use
+        // impossibleCrossingsCount = sum / 2;
+
         final int maxCrossingsCount =
                 (edgesAuxCount * (edgesAuxCount - 1)) / 2 - impossibleCrossingsCount;
-        if (maxCrossingsCount > 0) {
+
+        Assert.isTrue(crossingsCount <= maxCrossingsCount);
+
+        if (crossingsCount > maxCrossingsCount) {
+            result = 0.0f;
+        } else if (maxCrossingsCount > 0) {
             result = 1.0f - (float) ((double) crossingsCount / maxCrossingsCount);
         } else {
             result = 1.0f;
         }
+
+        Assert.isTrue((result >= 0.0) && (result <= 1.0));
 
         return result;
 
