@@ -87,6 +87,7 @@ public class Genome extends ArrayList<IGene<?>> {
                     this.add(gene);
                 }
             }
+            this.userRating = theGenome.getUserRating();
         }
         this.generation = theGeneration;
         System.out.println("Created individual " + toString());
@@ -189,7 +190,7 @@ public class Genome extends ArrayList<IGene<?>> {
      *            An integer value (may be negative). A higher value means a
      *            better rating.
      */
-    public void setUserRating(final int theRating) {
+    public synchronized void setUserRating(final int theRating) {
         System.out.println("Assign rating " + theRating + " to individual" + ": " + getId());
         // compare new rating to previous one
         if (hasUserRating()) {
@@ -200,7 +201,9 @@ public class Genome extends ArrayList<IGene<?>> {
                 System.out.println("Ind. was over-rated (" + oldRating + " -> " + theRating + ")");
             }
         }
-
+        if (theRating < 0) {
+            System.out.println("rating < 0");
+        }
         this.userRating = theRating;
     }
 
@@ -261,6 +264,7 @@ public class Genome extends ArrayList<IGene<?>> {
                 final IGene<?> newGene = oldGene.recombineWith(otherGenes);
                 result.add(newGene);
             }
+            // determine the rating
             int ratingSum = 0;
             for (final Genome genome : genomes) {
                 ratingSum += genome.getUserRating();

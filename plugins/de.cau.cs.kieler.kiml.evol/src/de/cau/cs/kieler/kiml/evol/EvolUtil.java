@@ -610,6 +610,7 @@ public final class EvolUtil {
      * @param theMonitor
      *            a progress monitor; may be {@code null}
      * @param theWeightsGenome
+     *            a genome encoding the metric weights
      */
     public static void autoRate(
             final Population thePopulation, final IProgressMonitor theMonitor,
@@ -1018,7 +1019,7 @@ public final class EvolUtil {
                             layoutServices.getLayoutProviderData(newLayoutHintId, null);
 
                     final String newType = providerData.getType();
-                    final String newProviderId = providerData.getId();
+                    // final String newProviderId = providerData.getId();
 
                     // Are we allowed to set the layout hint?
                     final boolean canSetLayoutHint =
@@ -1072,10 +1073,7 @@ public final class EvolUtil {
             final Genome individual, final IEditorPart editor, final Genome weightsGenome) {
         Assert.isLegal(individual != null);
 
-        final Set<IEditorPart> editors = new HashSet<IEditorPart>(1);
-        editors.add(editor);
-
-        autoRateIndividual(individual, editors, weightsGenome);
+        autoRateIndividual(individual, Collections.singleton(editor), weightsGenome);
     }
 
     /**
@@ -1112,20 +1110,22 @@ public final class EvolUtil {
      *            an {@link IEditorPart}
      * @param manager
      *            a {@link DiagramLayoutManager}
-     * @param source
+     * @param propertySource
      *            a {@link LayoutPropertySource}
      * @param weightsGenome
      * @return the rating proposal
      */
     private static int calculateAutoRating(
             final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
-            final LayoutPropertySource source, final Genome weightsGenome) {
-        Assert.isLegal((ind != null) && (source != null));
-        if ((ind == null) || (source == null)) {
+            final LayoutPropertySource propertySource, final Genome weightsGenome) {
+        Assert.isLegal((ind != null) && (propertySource != null));
+        if ((ind == null) || (propertySource == null)) {
             return 0;
         }
 
-        adoptIndividual(ind, source);
+        // Transfer layout options from the individual to the layout property
+        // source.
+        adoptIndividual(ind, propertySource);
 
         final Map<String, Double> weightsMap = extractMetricWeights(weightsGenome);
         Assert.isNotNull(weightsMap);
@@ -1134,6 +1134,9 @@ public final class EvolUtil {
         final KNode layoutGraph = calculateLayout(manager, editor);
 
         final Map<String, Object> measurements = measure(layoutGraph, weightsMap);
+        // Attention: The measurements may contain additional intermediate
+        // results we did not ask for. See #1152.
+
         final int rating = weight(measurements, weightsMap);
 
 
@@ -1149,7 +1152,47 @@ public final class EvolUtil {
     private static int weight(
             final Map<String, Object> measurements, final Map<String, Double> weightsMap) {
 
-        return 0;
+        // TODO: Discuss: How should metrics be weighted per default?
+        // TODO: What if weightsMap is empty?
+        // Attention: The measurements can contain additional intermediate
+        // results we did not ask for.
+        final Double defaultScale = 0.0;
+
+
+
+        for (final String metricId : measurements.keySet()) {
+            if (!weightsMap.containsKey(metricId)) {
+                weightsMap.put(metricId, defaultScale);
+            }
+        }
+
+        double scaledSum = 0;
+
+        // scale results
+        for (final Entry<String, Object> measurement : measurements.entrySet()) {
+            final String metricId = measurement.getKey();
+            final String metricResult = measurement.getValue().toString();
+
+            Assert.isTrue(weightsMap.containsKey(metricId));
+            final double coeff = weightsMap.get(metricId).doubleValue();
+
+            double val;
+            try {
+
+                final double parsedResult = Double.parseDouble(metricResult);
+                val = parsedResult;
+
+            } catch (final NumberFormatException exception) {
+                val = 0.0;
+            }
+
+            final double scaled = val * coeff;
+            scaledSum += scaled;
+        }
+
+        final int newRating = (int) Math.round((scaledSum * 1000));
+
+        return newRating;
     }
 
     /**
@@ -1193,6 +1236,10 @@ public final class EvolUtil {
                     Math.round(totalRating / Integer.valueOf(editorCount).floatValue());
             return averageRating;
         }
+        if (totalRating < 0) {
+            System.out.println("rating < 0");
+        }
+
         return totalRating;
     }
 
@@ -1637,10 +1684,6 @@ public final class EvolUtil {
             return Collections.emptyMap();
         }
 
-        // TODO: Discuss: How should metrics be weighted per default?
-        // TODO: What if weightsMap is empty?
-        final Double defaultScale = 0.0;
-
         // Get the metric IDs.
         final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
 
@@ -1655,7 +1698,8 @@ public final class EvolUtil {
             Assert.isNotNull(metric, "Could not find analysis: " + metricId);
 
             if (!weightsMap.containsKey(metricId)) {
-                weightsMap.put(metricId, defaultScale);
+                // Skip this analysis.
+                continue;
             }
             final double coeff = weightsMap.get(metricId).doubleValue();
 
@@ -1677,31 +1721,13 @@ public final class EvolUtil {
         final Map<String, Object> analysisResults =
                 DiagramAnalyser.analyse(parentNode, metricsList, showProgressBar);
 
-        double scaledSum = 0;
+        for (final String metricId : metricIds) {
+            final Float value = (Float) analysisResults.get(metricId);
+            System.out.println("result: " + metricId + ": " + value);
 
-        // scale results
-        for (final AbstractInfoAnalysis metric : metricsList) {
-            final String metricId = metric.getID();
-            final String metricResult = analysisResults.get(metricId).toString();
-
-            Assert.isNotNull(weightsMap.containsKey(metricId));
-            final double coeff = weightsMap.get(metricId).doubleValue();
-
-            double val;
-            try {
-
-                final double parsedResult = Double.parseDouble(metricResult);
-                val = parsedResult;
-
-            } catch (final NumberFormatException exception) {
-                val = 0.0;
-            }
-
-            final double scaled = val * coeff;
-            scaledSum += scaled;
+            Assert.isTrue((value >= 0.0) && (value <= 1.0));
         }
 
-        final int newRating = (int) Math.round((scaledSum * 1000));
         return analysisResults;
     }
 

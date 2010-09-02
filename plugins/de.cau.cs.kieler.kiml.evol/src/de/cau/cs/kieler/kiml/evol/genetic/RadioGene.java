@@ -23,9 +23,9 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * A gene that can mutate over the elements of a list.
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public class RadioGene extends AbstractGene<Integer> {
 
@@ -55,8 +55,6 @@ public class RadioGene extends AbstractGene<Integer> {
         }
 
     };
-
-// private final List<?> list;
 
     /**
      * Creates a new {@link RadioGene} instance.
@@ -92,10 +90,6 @@ public class RadioGene extends AbstractGene<Integer> {
                 radioTemplate.getTypeInfo(), radioTemplate.getMutationInfo());
     }
 
-// private List<?> getList() {
-    // return Collections.unmodifiableList(getTypeInfo().getList());
-    // }
-
     /**
      * {@inheritDoc}
      */
@@ -123,7 +117,9 @@ public class RadioGene extends AbstractGene<Integer> {
                             .intValue());
         }
 
-        result = new RadioGene(this.getId(), newInt, this.getTypeInfo(), this.getMutationInfo());
+        result =
+                new RadioGene(this.getId(), Integer.valueOf(newInt), this.getTypeInfo(),
+                        this.getMutationInfo());
 
         return result;
     }
