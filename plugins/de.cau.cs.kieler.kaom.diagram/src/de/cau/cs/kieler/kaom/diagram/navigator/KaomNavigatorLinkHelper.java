@@ -31,92 +31,96 @@ import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
  */
 public class KaomNavigatorLinkHelper implements ILinkHelper {
 
-    /**
-     * @generated
-     */
-    private static IEditorInput getEditorInput(Diagram diagram) {
-        Resource diagramResource = diagram.eResource();
-        for (EObject nextEObject : diagramResource.getContents()) {
-            if (nextEObject == diagram) {
-                return new FileEditorInput(WorkspaceSynchronizer.getFile(diagramResource));
-            }
-            if (nextEObject instanceof Diagram) {
-                break;
-            }
-        }
-        URI uri = EcoreUtil.getURI(diagram);
-        String editorName = uri.lastSegment() + '#'
-            + diagram.eResource().getContents().indexOf(diagram);
-        IEditorInput editorInput = new URIEditorInput(uri, editorName);
-        return editorInput;
-    }
+	/**
+	 * @generated
+	 */
+	private static IEditorInput getEditorInput(Diagram diagram) {
+		Resource diagramResource = diagram.eResource();
+		for (EObject nextEObject : diagramResource.getContents()) {
+			if (nextEObject == diagram) {
+				return new FileEditorInput(
+						WorkspaceSynchronizer.getFile(diagramResource));
+			}
+			if (nextEObject instanceof Diagram) {
+				break;
+			}
+		}
+		URI uri = EcoreUtil.getURI(diagram);
+		String editorName = uri.lastSegment() + '#'
+				+ diagram.eResource().getContents().indexOf(diagram);
+		IEditorInput editorInput = new URIEditorInput(uri, editorName);
+		return editorInput;
+	}
 
-    /**
-     * @generated
-     */
-    public IStructuredSelection findSelection(IEditorInput anInput) {
-        IDiagramDocument document = KaomDiagramEditorPlugin.getInstance().getDocumentProvider()
-            .getDiagramDocument(anInput);
-        if (document == null) {
-            return StructuredSelection.EMPTY;
-        }
-        Diagram diagram = document.getDiagram();
-        IFile file = WorkspaceSynchronizer.getFile(diagram.eResource());
-        if (file != null) {
-            KaomNavigatorItem item = new KaomNavigatorItem(diagram, file, false);
-            return new StructuredSelection(item);
-        }
-        return StructuredSelection.EMPTY;
-    }
+	/**
+	 * @generated
+	 */
+	public IStructuredSelection findSelection(IEditorInput anInput) {
+		IDiagramDocument document = KaomDiagramEditorPlugin.getInstance()
+				.getDocumentProvider().getDiagramDocument(anInput);
+		if (document == null) {
+			return StructuredSelection.EMPTY;
+		}
+		Diagram diagram = document.getDiagram();
+		IFile file = WorkspaceSynchronizer.getFile(diagram.eResource());
+		if (file != null) {
+			KaomNavigatorItem item = new KaomNavigatorItem(diagram, file, false);
+			return new StructuredSelection(item);
+		}
+		return StructuredSelection.EMPTY;
+	}
 
-    /**
-     * @generated
-     */
-    public void activateEditor(IWorkbenchPage aPage, IStructuredSelection aSelection) {
-        if (aSelection == null || aSelection.isEmpty()) {
-            return;
-        }
-        if (false == aSelection.getFirstElement() instanceof KaomAbstractNavigatorItem) {
-            return;
-        }
+	/**
+	 * @generated
+	 */
+	public void activateEditor(IWorkbenchPage aPage,
+			IStructuredSelection aSelection) {
+		if (aSelection == null || aSelection.isEmpty()) {
+			return;
+		}
+		if (false == aSelection.getFirstElement() instanceof KaomAbstractNavigatorItem) {
+			return;
+		}
 
-        KaomAbstractNavigatorItem abstractNavigatorItem = (KaomAbstractNavigatorItem) aSelection
-            .getFirstElement();
-        View navigatorView = null;
-        if (abstractNavigatorItem instanceof KaomNavigatorItem) {
-            navigatorView = ((KaomNavigatorItem) abstractNavigatorItem).getView();
-        } else if (abstractNavigatorItem instanceof KaomNavigatorGroup) {
-            KaomNavigatorGroup navigatorGroup = (KaomNavigatorGroup) abstractNavigatorItem;
-            if (navigatorGroup.getParent() instanceof KaomNavigatorItem) {
-                navigatorView = ((KaomNavigatorItem) navigatorGroup.getParent()).getView();
-            }
-        }
-        if (navigatorView == null) {
-            return;
-        }
-        IEditorInput editorInput = getEditorInput(navigatorView.getDiagram());
-        IEditorPart editor = aPage.findEditor(editorInput);
-        if (editor == null) {
-            return;
-        }
-        aPage.bringToTop(editor);
-        if (editor instanceof DiagramEditor) {
-            DiagramEditor diagramEditor = (DiagramEditor) editor;
-            ResourceSet diagramEditorResourceSet = diagramEditor.getEditingDomain()
-                .getResourceSet();
-            EObject selectedView = diagramEditorResourceSet.getEObject(
-                EcoreUtil.getURI(navigatorView), true);
-            if (selectedView == null) {
-                return;
-            }
-            GraphicalViewer graphicalViewer = (GraphicalViewer) diagramEditor
-                .getAdapter(GraphicalViewer.class);
-            EditPart selectedEditPart = (EditPart) graphicalViewer.getEditPartRegistry().get(
-                selectedView);
-            if (selectedEditPart != null) {
-                graphicalViewer.select(selectedEditPart);
-            }
-        }
-    }
+		KaomAbstractNavigatorItem abstractNavigatorItem = (KaomAbstractNavigatorItem) aSelection
+				.getFirstElement();
+		View navigatorView = null;
+		if (abstractNavigatorItem instanceof KaomNavigatorItem) {
+			navigatorView = ((KaomNavigatorItem) abstractNavigatorItem)
+					.getView();
+		} else if (abstractNavigatorItem instanceof KaomNavigatorGroup) {
+			KaomNavigatorGroup navigatorGroup = (KaomNavigatorGroup) abstractNavigatorItem;
+			if (navigatorGroup.getParent() instanceof KaomNavigatorItem) {
+				navigatorView = ((KaomNavigatorItem) navigatorGroup.getParent())
+						.getView();
+			}
+		}
+		if (navigatorView == null) {
+			return;
+		}
+		IEditorInput editorInput = getEditorInput(navigatorView.getDiagram());
+		IEditorPart editor = aPage.findEditor(editorInput);
+		if (editor == null) {
+			return;
+		}
+		aPage.bringToTop(editor);
+		if (editor instanceof DiagramEditor) {
+			DiagramEditor diagramEditor = (DiagramEditor) editor;
+			ResourceSet diagramEditorResourceSet = diagramEditor
+					.getEditingDomain().getResourceSet();
+			EObject selectedView = diagramEditorResourceSet.getEObject(
+					EcoreUtil.getURI(navigatorView), true);
+			if (selectedView == null) {
+				return;
+			}
+			GraphicalViewer graphicalViewer = (GraphicalViewer) diagramEditor
+					.getAdapter(GraphicalViewer.class);
+			EditPart selectedEditPart = (EditPart) graphicalViewer
+					.getEditPartRegistry().get(selectedView);
+			if (selectedEditPart != null) {
+				graphicalViewer.select(selectedEditPart);
+			}
+		}
+	}
 
 }

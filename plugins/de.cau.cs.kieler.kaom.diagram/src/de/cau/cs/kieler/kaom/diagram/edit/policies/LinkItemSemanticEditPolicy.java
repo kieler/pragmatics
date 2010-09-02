@@ -11,18 +11,18 @@ import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
  */
 public class LinkItemSemanticEditPolicy extends KaomBaseItemSemanticEditPolicy {
 
-    /**
-     * @generated
-     */
-    public LinkItemSemanticEditPolicy() {
-        super(KaomElementTypes.Link_4001);
-    }
+	/**
+	 * @generated
+	 */
+	public LinkItemSemanticEditPolicy() {
+		super(KaomElementTypes.Link_4001);
+	}
 
-    /**
-     * @generated
-     */
-    protected Command getDestroyElementCommand(DestroyElementRequest req) {
-        return getGEFWrapper(new DestroyElementCommand(req));
-    }
+	/**
+	 * @generated
+	 */
+	protected Command getDestroyElementCommand(DestroyElementRequest req) {
+		return getGEFWrapper(new DestroyElementCommand(req));
+	}
 
 }

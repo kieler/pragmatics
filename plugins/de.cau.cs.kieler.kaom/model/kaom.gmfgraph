@@ -23,12 +23,7 @@
               bottom="5"
               right="5"/>
         </border>
-        <children
-            xsi:type="gmfgraph:Label"
-            name="EntityNameLabel"/>
       </actualFigure>
-      <accessors
-          figure="//@figures.0/@descriptors.0/@actualFigure/@children.0"/>
     </descriptors>
     <descriptors
         name="PortFigure">
@@ -136,6 +131,17 @@
             height="8"/>
       </actualFigure>
     </descriptors>
+    <descriptors
+        name="EntityNameFigure">
+      <actualFigure
+          xsi:type="gmfgraph:Label"
+          name="EntityNameLabel">
+        <font
+            xsi:type="gmfgraph:BasicFont"
+            faceName="Sans"
+            height="8"/>
+      </actualFigure>
+    </descriptors>
   </figures>
   <nodes
       name="EntityNode"
@@ -158,10 +164,9 @@
       collapsible="true"/>
   <labels
       name="EntityNameLabel"
-      figure="EntityFigure"
+      figure="EntityNameFigure"
       affixedParentSide="SOUTH"
-      elementIcon="false"
-      accessor="//@figures.0/@descriptors.0/@accessors.0"/>
+      elementIcon="false"/>
   <labels
       name="PortNameLabel"
       figure="PortNameFigure"

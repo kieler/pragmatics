@@ -30,5 +30,21 @@ main() {
 	
 	// use our own category for the "new" wizard
 	model.diagram.creationWizardCategoryID := "de.cau.cs.kieler";
+	
+	// change body text of nodes and links to enable rendering with karma
+	model.diagram.allSubobjectsOfType(InnerClassViewmap)[InnerClassViewmap] ->map changeExtension();
+	
 }
+	
+// change extension to SwitchableFigure
+mapping inout InnerClassViewmap::changeExtension(){
+	var name : String := self.className;
+	if (name = "EntityFigure") then {
+    	var temp : String := self.classBody;
+    	temp := temp.replace("org.eclipse.draw2d.RectangleFigure", "de.cau.cs.kieler.karma.SwitchableFigure");
+		self.classBody := temp;
+    } endif;
+	
+}
+	
 

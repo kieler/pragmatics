@@ -1,0 +1,49 @@
+﻿/*
+ * Copyright (c) 2006, 2010 Borland Software Corporation and others
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Dmitry Stadnik (Borland) - initial API and implementation
+ *    Alexander Shatalin (Borland) - initial API and implementation
+ */
+
+«IMPORT 'http://www.eclipse.org/gmf/2009/GenModel'»
+«EXTENSION xpt::diagram::ViewmapAttributesUtils»
+«EXTENSION xpt::diagram::editparts::Utils»
+«EXTENSION xpt::diagram::Utils»
+
+
+«DEFINE extendsListContents FOR gmfgen::GenNode-»
+«REM» Exchanged ussual edit parts for KARMA edit parts «ENDREM»
+«REM» «IF hasBorderItems(self)»org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart«ELSE»org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart«ENDIF-» «ENDREM»
+«IF hasBorderItems(self)»de.cau.cs.kieler.karma.AdvancedRenderingBorderedShapeEditPart«ELSE»de.cau.cs.kieler.karma.AdvancedRenderingShapeNodeEditPart«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE extendsListContents FOR gmfgen::GenChildSideAffixedNode-»
+«REM» Exchanged ussual edit parts for KARMA edit parts «ENDREM»
+«REM» «IF hasBorderItems(self)»org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart«ELSE»org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart«ENDIF-» «ENDREM»
+«IF hasBorderItems(self)»de.cau.cs.kieler.karma.AdvancedRenderingBorderedBorderItemEditPart«ELSE»org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE createNodeShape(node : gmfgen::GenNode) FOR gmfgen::InnerClassViewmap-»
+	«EXPAND xpt::Common::generatedMemberComment»
+	protected org.eclipse.draw2d.IFigure createNodeShape() {
+		primaryShape = new «className»()«IF node.childNodes->notEmpty() and node.getLayoutType() = gmfgen::ViewmapLayoutType::XY_LAYOUT»«EXPAND forceUseLocalCoordinates»«ENDIF»;
+		«REM» Added call to updateFigure «ENDREM»
+		updateFigure(primaryShape);
+		return primaryShape;
+	}
+
+	«EXPAND getPrimaryShapeMethod FOR className-»
+«ENDDEFINE»
+
+«DEFINE getPrimaryShapeMethod FOR String-»
+	«EXPAND xpt::Common::generatedMemberComment»
+	public «self» getPrimaryShape() {
+		return («self») primaryShape;
+	}
+«ENDDEFINE»

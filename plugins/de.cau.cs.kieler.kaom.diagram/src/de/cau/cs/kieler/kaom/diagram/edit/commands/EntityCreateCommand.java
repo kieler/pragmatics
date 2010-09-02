@@ -20,63 +20,67 @@ import de.cau.cs.kieler.kaom.KaomFactory;
  */
 public class EntityCreateCommand extends EditElementCommand {
 
-    /**
-     * @generated
-     */
-    public EntityCreateCommand(CreateElementRequest req) {
-        super(req.getLabel(), null, req);
-    }
+	/**
+	 * @generated
+	 */
+	public EntityCreateCommand(CreateElementRequest req) {
+		super(req.getLabel(), null, req);
+	}
 
-    /**
-     * FIXME: replace with setElementToEdit()
-     * @generated
-     */
-    protected EObject getElementToEdit() {
-        EObject container = ((CreateElementRequest) getRequest()).getContainer();
-        if (container instanceof View) {
-            container = ((View) container).getElement();
-        }
-        return container;
-    }
+	/**
+	 * FIXME: replace with setElementToEdit()
+	 * @generated
+	 */
+	protected EObject getElementToEdit() {
+		EObject container = ((CreateElementRequest) getRequest())
+				.getContainer();
+		if (container instanceof View) {
+			container = ((View) container).getElement();
+		}
+		return container;
+	}
 
-    /**
-     * @generated
-     */
-    public boolean canExecute() {
-        return true;
+	/**
+	 * @generated
+	 */
+	public boolean canExecute() {
+		return true;
 
-    }
+	}
 
-    /**
-     * @generated
-     */
-    protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-        throws ExecutionException {
-        Entity newElement = KaomFactory.eINSTANCE.createEntity();
+	/**
+	 * @generated
+	 */
+	protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
+			IAdaptable info) throws ExecutionException {
+		Entity newElement = KaomFactory.eINSTANCE.createEntity();
 
-        Entity owner = (Entity) getElementToEdit();
-        owner.getChildEntities().add(newElement);
+		Entity owner = (Entity) getElementToEdit();
+		owner.getChildEntities().add(newElement);
 
-        doConfigure(newElement, monitor, info);
+		doConfigure(newElement, monitor, info);
 
-        ((CreateElementRequest) getRequest()).setNewElement(newElement);
-        return CommandResult.newOKCommandResult(newElement);
-    }
+		((CreateElementRequest) getRequest()).setNewElement(newElement);
+		return CommandResult.newOKCommandResult(newElement);
+	}
 
-    /**
-     * @generated
-     */
-    protected void doConfigure(Entity newElement, IProgressMonitor monitor, IAdaptable info)
-        throws ExecutionException {
-        IElementType elementType = ((CreateElementRequest) getRequest()).getElementType();
-        ConfigureRequest configureRequest = new ConfigureRequest(getEditingDomain(), newElement,
-            elementType);
-        configureRequest.setClientContext(((CreateElementRequest) getRequest()).getClientContext());
-        configureRequest.addParameters(getRequest().getParameters());
-        ICommand configureCommand = elementType.getEditCommand(configureRequest);
-        if (configureCommand != null && configureCommand.canExecute()) {
-            configureCommand.execute(monitor, info);
-        }
-    }
+	/**
+	 * @generated
+	 */
+	protected void doConfigure(Entity newElement, IProgressMonitor monitor,
+			IAdaptable info) throws ExecutionException {
+		IElementType elementType = ((CreateElementRequest) getRequest())
+				.getElementType();
+		ConfigureRequest configureRequest = new ConfigureRequest(
+				getEditingDomain(), newElement, elementType);
+		configureRequest.setClientContext(((CreateElementRequest) getRequest())
+				.getClientContext());
+		configureRequest.addParameters(getRequest().getParameters());
+		ICommand configureCommand = elementType
+				.getEditCommand(configureRequest);
+		if (configureCommand != null && configureCommand.canExecute()) {
+			configureCommand.execute(monitor, info);
+		}
+	}
 
 }

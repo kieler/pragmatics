@@ -14,51 +14,55 @@ import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
 /**
  * @generated
  */
-public class EntityItemSemanticEditPolicy extends KaomBaseItemSemanticEditPolicy {
+public class EntityItemSemanticEditPolicy extends
+		KaomBaseItemSemanticEditPolicy {
 
-    /**
-     * @generated
-     */
-    public EntityItemSemanticEditPolicy() {
-        super(KaomElementTypes.Entity_1000);
-    }
+	/**
+	 * @generated
+	 */
+	public EntityItemSemanticEditPolicy() {
+		super(KaomElementTypes.Entity_1000);
+	}
 
-    /**
-     * @generated
-     */
-    protected Command getCreateCommand(CreateElementRequest req) {
-        if (KaomElementTypes.Entity_2001 == req.getElementType()) {
-            return getGEFWrapper(new EntityCreateCommand(req));
-        }
-        if (KaomElementTypes.Relation_2002 == req.getElementType()) {
-            return getGEFWrapper(new RelationCreateCommand(req));
-        }
-        return super.getCreateCommand(req);
-    }
+	/**
+	 * @generated
+	 */
+	protected Command getCreateCommand(CreateElementRequest req) {
+		if (KaomElementTypes.Entity_2001 == req.getElementType()) {
+			return getGEFWrapper(new EntityCreateCommand(req));
+		}
+		if (KaomElementTypes.Relation_2002 == req.getElementType()) {
+			return getGEFWrapper(new RelationCreateCommand(req));
+		}
+		return super.getCreateCommand(req);
+	}
 
-    /**
-     * @generated
-     */
-    protected Command getDuplicateCommand(DuplicateElementsRequest req) {
-        TransactionalEditingDomain editingDomain = ((IGraphicalEditPart) getHost())
-            .getEditingDomain();
-        return getGEFWrapper(new DuplicateAnythingCommand(editingDomain, req));
-    }
+	/**
+	 * @generated
+	 */
+	protected Command getDuplicateCommand(DuplicateElementsRequest req) {
+		TransactionalEditingDomain editingDomain = ((IGraphicalEditPart) getHost())
+				.getEditingDomain();
+		return getGEFWrapper(new DuplicateAnythingCommand(editingDomain, req));
+	}
 
-    /**
-     * @generated
-     */
-    private static class DuplicateAnythingCommand extends DuplicateEObjectsCommand {
+	/**
+	 * @generated
+	 */
+	private static class DuplicateAnythingCommand extends
+			DuplicateEObjectsCommand {
 
-        /**
-         * @generated
-         */
-        public DuplicateAnythingCommand(TransactionalEditingDomain editingDomain,
-            DuplicateElementsRequest req) {
-            super(editingDomain, req.getLabel(), req.getElementsToBeDuplicated(), req
-                .getAllDuplicatedElementsMap());
-        }
+		/**
+		 * @generated
+		 */
+		public DuplicateAnythingCommand(
+				TransactionalEditingDomain editingDomain,
+				DuplicateElementsRequest req) {
+			super(editingDomain, req.getLabel(), req
+					.getElementsToBeDuplicated(), req
+					.getAllDuplicatedElementsMap());
+		}
 
-    }
+	}
 
 }
