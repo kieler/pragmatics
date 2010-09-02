@@ -71,5 +71,4 @@ public class KiViPlugin extends AbstractUIPlugin implements IStartup {
     public void earlyStartup() {
         Viewmanagement.getInstance().initialize();
     }
-
 }

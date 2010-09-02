@@ -63,6 +63,10 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
     private CheckboxTableViewer checkboxViewer;
 
     private Button kiviActive;
+    
+    private SelectionListener kiviActiveListener;
+    
+    private Composite combinationsComposite;
 
     private List<Descriptor> combinations = Viewmanagement.getInstance().getAvailableCombinations();
 
@@ -77,8 +81,7 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
      * {@inheritDoc}
      */
     public void init(final IWorkbench workbench) {
-        // TODO Auto-generated method stub
-
+        setPreferenceStore(KiViPlugin.getDefault().getPreferenceStore());
     }
 
     /**
@@ -99,6 +102,14 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
         }
         return false;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected void performDefaults() {
+        kiviActive.setSelection(getPreferenceStore().getDefaultBoolean(Viewmanagement.PROPERTY_ACTIVE));
+        enableComposites(getPreferenceStore().getDefaultBoolean(Viewmanagement.PROPERTY_ACTIVE));
+    }
 
     @Override
     protected Control createContents(final Composite parent) {
@@ -108,6 +119,7 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
         Composite mainComposite = new Composite(parent, SWT.NONE);
         mainComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+        // TODO check how much of all this layout stuff is actually needed
         GridLayout layout = new GridLayout();
         layout.marginWidth = 0;
         layout.marginHeight = 0;
@@ -115,21 +127,20 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
         mainComposite.setLayout(layout);
 
         kiviActive = new Button(mainComposite, SWT.CHECK);
-        final Composite combinationsComposite = new Composite(mainComposite, SWT.NONE);
+        combinationsComposite = new Composite(mainComposite, SWT.NONE);
 
         kiviActive.setText("Enable view management");
         kiviActive.setSelection(Viewmanagement.getInstance().isActive());
-        kiviActive.addSelectionListener(new SelectionListener() {
+        kiviActiveListener = new SelectionListener() {
 
             public void widgetSelected(final SelectionEvent e) {
-                combinationsComposite.setEnabled(((Button) e.widget).getSelection());
+                enableComposites(((Button) e.widget).getSelection());
             }
 
             public void widgetDefaultSelected(final SelectionEvent e) {
             }
-        });
-
-        combinationsComposite.setEnabled(Viewmanagement.getInstance().isActive());
+        };
+        kiviActive.addSelectionListener(kiviActiveListener);
 
         Label topLabel = new Label(combinationsComposite, SWT.NONE);
         topLabel.setText("Combinations");
@@ -210,8 +221,16 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
         createDescriptionArea(combinationsComposite);
 
         populateDescriptors();
+        
+        enableComposites(Viewmanagement.getInstance().isActive());
 
         return null;
+    }
+    
+    private void enableComposites(final boolean b) {
+        combinationsComposite.setEnabled(b);
+        checkboxViewer.setAllGrayed(!b);
+        
     }
 
     private void createDescriptionArea(final Composite composite) {
@@ -233,6 +252,7 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
                 | SWT.H_SCROLL);
         descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));
         descriptionText.setFont(mainFont);
+        descriptionText.setText("\n\n\n");
     }
 
     /**
