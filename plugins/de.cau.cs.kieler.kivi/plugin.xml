@@ -26,12 +26,26 @@
       </combination>
    </extension>
    <extension
+         point="de.cau.cs.kieler.kivi.combinations">
+      <combination
+            class="de.cau.cs.kieler.kivi.examples.ZoomCombination"
+            description="Listens to automatic layout and zooms to fit the diagram into the view port."
+            name="Zoom-To-Fit Combination">
+      </combination>
+   </extension>
+   <extension
          point="de.cau.cs.kieler.kivi.effects">
       <effect
             class="de.cau.cs.kieler.kivi.examples.TextEffect"
             description="An effect for displaying text."
             name="Text Effect">
       </effect>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutListeners">
+      <layoutListener
+            class="de.cau.cs.kieler.kivi.examples.LayoutTrigger">
+      </layoutListener>
    </extension>
 
 </plugin>

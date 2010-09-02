@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kivi.core;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +26,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.ConnectionEditPart;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
+import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.kivi.KiViPlugin;
 
@@ -218,6 +225,25 @@ public class Viewmanagement {
             }
         }
     }
+    
+    /**
+     * Change the trigger object used by the view management. Hack to allow KIML to create its
+     * layout listener itself at the first layout, use that new instance now instead.
+     * 
+     * @param trigger the trigger to swap in
+     */
+    public void swapTrigger(final ITrigger trigger) {
+        synchronized (combinationsByTrigger) {
+            for (ITrigger t : combinationsByTrigger.keySet()) {
+                if (trigger.getClass().isInstance(t)) {
+                    List<ICombination> list = combinationsByTrigger.remove(t);
+                    combinationsByTrigger.put(trigger, list);
+                    trigger.setActive(t.isActive());
+                    return;
+                }
+            }
+        }
+    }
 
     /**
      * Inform the view management about an event received by the given trigger.
@@ -396,17 +422,9 @@ public class Viewmanagement {
             if (list == null) {
                 list = new ArrayList<ICombination>();
                 // create trigger
-                try {
-                    ITrigger t = (ITrigger) trigger.newInstance();
-                    t.setActive(isActive());
-                    combinationsByTrigger.put(t, list);
-                } catch (InstantiationException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                ITrigger t = getTrigger(trigger);
+                t.setActive(isActive());
+                combinationsByTrigger.put(t, list);
             }
             list.add(combination);
         }
@@ -429,12 +447,82 @@ public class Viewmanagement {
                         list.remove(combination);
                         // check if trigger is still required
                         if (list.size() == 0) {
-                            combinationsByTrigger.remove(list);
+                            combinationsByTrigger.remove(t);
                             t.setActive(false);
                         }
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Finds an EditPart for a given EObject in a DiagramEditPart.
+     * 
+     * FIXME move elsewhere
+     * 
+     * @param diagram
+     *            the diagram to look in
+     * @param eObject
+     *            the object to look for
+     * @return the EditPart corresponding to the EObject
+     */
+    public static EditPart myFindEditPart(final DiagramEditPart diagram, final EObject eObject) {
+        EditPart found = diagram.findEditPart(null, eObject);
+        if (found != null) {
+            return found;
+        } else {
+            @SuppressWarnings("unchecked")
+            // the list always contains ConnectionEditParts
+            List<ConnectionEditPart> connections = diagram.getConnections();
+            for (ConnectionEditPart connection : connections) {
+                if (eObject.equals(((View) connection.getModel()).getElement())) {
+                    return connection;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get a new ITrigger object for the given Class, or the faux-singleton if there is any.
+     * 
+     * @param clazz
+     *            the Class of the trigger
+     * @return the trigger
+     */
+    private static ITrigger getTrigger(final Class<?> clazz) {
+        try {
+            Method getInstance = clazz.getMethod("getInstance");
+            Object trigger = getInstance.invoke(null);
+            if (trigger instanceof ITrigger) {
+                return (ITrigger) trigger;
+            }
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            // this can happen, falls through to newInstance()
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
+            return (ITrigger) clazz.newInstance();
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // something went wrong here
+        throw new RuntimeException("Can't get a trigger object for " + clazz.getCanonicalName());
     }
 }
