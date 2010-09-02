@@ -51,14 +51,14 @@ public class EvolView extends ViewPart {
      * A listener to the evolution model.
      */
     private final IEvolModelListener modelListener = new IEvolModelListener() {
-        
+
         /**
          * Refreshes the layout according to the selected individual in the
          * model.
-         * 
+         *
          * @param em
          *            the evolution model
-         * 
+         *
          */
         private void applySelectedIndividual(final EvolModel em) {
             Assert.isNotNull(em);
@@ -229,23 +229,26 @@ public class EvolView extends ViewPart {
                 final int newPos = ((PopulationTableEntry) element).getIndex();
                 em.setPosition(newPos);
 
-                // Update the table viewer.
-                final Runnable elementUpdaterRunnable = new Runnable() {
-                    public void run() {
-                        SelectionChangedListener.this.getTableViewer().update(element, null);
+                if (oldPos != newPos) {
+                    // Update the table viewer.
+                    final Runnable elementUpdaterRunnable = new Runnable() {
+                        public void run() {
+                            SelectionChangedListener.this.getTableViewer().update(element, null);
+                        }
+                    };
+                    // MonitoredOperation.runInUI(elementUpdaterRunnable, true);
+
+                    EvolPlugin.logStatus("Current row: " + oldPos + " -> " + newPos);
+                    final Object oldElement1 = this.tv.getElementAt(oldPos);
+                    if ((oldElement1 != element) && (oldElement1 != this.oldElement)) {
+                        this.tv.update(oldElement1, null);
                     }
-                };
-                MonitoredOperation.runInUI(elementUpdaterRunnable, true);
+                }
 
-                EvolPlugin.logStatus(oldPos + " -> " + newPos);
-
-                EvolPlugin.logStatus("updating row");
-                final Object oldElement1 = this.tv.getElementAt(oldPos);
-
-                if (this.oldElement != null) {
+                if ((this.oldElement != null) && (this.oldElement != element)) {
                     this.tv.update(this.oldElement, null);
                 }
-                this.tv.update(oldElement1, null);
+
                 this.tv.update(element, null);
 
                 this.tv.addPostSelectionChangedListener(this);

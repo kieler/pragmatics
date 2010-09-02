@@ -18,8 +18,12 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
+import de.cau.cs.kieler.kiml.evol.genetic.IGene;
+import de.cau.cs.kieler.kiml.evol.genetic.RadioGene;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -86,8 +90,19 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
             return ((PopulationTableEntry) element).getId();
         case 1:
             final Genome individual = ((PopulationTableEntry) element).getIndividual();
+            final IGene<?> hintGene = individual.find(LayoutOptions.LAYOUT_HINT_ID);
+            String providerName = null;
+            if (hintGene instanceof RadioGene) {
+                final String hintId = hintGene.toString();
+                final LayoutProviderData provider =
+                        LayoutServices.getInstance().getLayoutProviderData(hintId);
+                if (provider != null) {
+                    providerName = provider.getName();
+                }
+            }
+
             return ("Rating: " + individual.getUserRating() + ", genes: " + individual.size()
-                    + ", layout hint: " + individual.find(LayoutOptions.LAYOUT_HINT_ID));
+                    + ", layout: " + providerName);
         default: // do nothing
             return null;
         }
