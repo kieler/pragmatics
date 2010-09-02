@@ -34,15 +34,14 @@ import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
  * 
  * @author mim
  * 
- * @kieler.rating 2010-03-22 proposed yellow 
+ * @kieler.rating 2010-03-22 proposed yellow
  */
 public class TransformationUtils implements ITransformationEventListener {
     /** The object to select after the transformation has been executed. **/
     private static volatile EObject selection = null;;
 
     /**
-     * Sets the object that should be selected after the transformation has been
-     * executed.
+     * Sets the object that should be selected after the transformation has been executed.
      * 
      * @param e
      *            The object to select
@@ -50,6 +49,20 @@ public class TransformationUtils implements ITransformationEventListener {
     public static void setPostTransformationSelection(final Object e) {
         TransformationUtils.selection = (EObject) e;
     }
+
+    /**
+     * Get the object that is selected after the execution of the transformation.
+     * 
+     * @return the selected EObject
+     */
+    public static EObject getPostTransformationSelection() {
+        return selection;
+    }
+
+    /**
+     * Remember the last selection performed after a transformation to avoid selecting it again.
+     */
+    private EObject lastSelection;
 
     /**
      * Pre-transformation code, empty right now.
@@ -65,30 +78,26 @@ public class TransformationUtils implements ITransformationEventListener {
      * Sets the diagram editor selection to the selection object.
      * 
      * @param args
-     *            The transformation arguments, see
-     *            {@link TransformationUIManager}
+     *            The transformation arguments, see {@link TransformationUIManager}
      * 
      */
     public void transformationExecuted(final Object[] args) {
-        if (selection != null) {
-            if (args != null && args.length == 2
-                    && args[1] instanceof IEditorPart) {
+        if (selection != null && selection != lastSelection) {
+            if (args != null && args.length == 2 && args[1] instanceof IEditorPart) {
                 IEditorPart activeEditor = (IEditorPart) args[1];
                 if (activeEditor instanceof IDiagramWorkbenchPart) {
                     EditPart p = ModelingUtil.getEditPart(selection,
-                            ((IDiagramWorkbenchPart) activeEditor)
-                                    .getDiagramGraphicalViewer()
+                            ((IDiagramWorkbenchPart) activeEditor).getDiagramGraphicalViewer()
                                     .getRootEditPart());
                     if (p != null) {
-                        ((IEditorPart) args[1]).getEditorSite()
-                                .getSelectionProvider().setSelection(
-                                        new StructuredSelection(p));
+                        ((IEditorPart) args[1]).getEditorSite().getSelectionProvider()
+                                .setSelection(new StructuredSelection(p));
                     }
                 }
             }
-            // Clear selection so we don't automatically select this object
-            // again.
-            selection = null;
+            // Remember selection so we don't automatically select this object again.
+            // Don't set to null to let others use the selection as well.
+            lastSelection = selection;
         }
     }
 

@@ -467,7 +467,7 @@ public class Viewmanagement {
      *            the object to look for
      * @return the EditPart corresponding to the EObject
      */
-    public static EditPart myFindEditPart(final DiagramEditPart diagram, final EObject eObject) {
+    public static EditPart findEditPart(final DiagramEditPart diagram, final EObject eObject) {
         EditPart found = diagram.findEditPart(null, eObject);
         if (found != null) {
             return found;

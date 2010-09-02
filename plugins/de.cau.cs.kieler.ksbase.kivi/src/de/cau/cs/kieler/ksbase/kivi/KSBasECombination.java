@@ -34,7 +34,7 @@ public class KSBasECombination extends AbstractCombination {
 
     @Override
     public void execute() {
-        EditPart eP = Viewmanagement.myFindEditPart(diagramEditor.getDiagramEditPart(), selection);
+        EditPart eP = Viewmanagement.findEditPart(diagramEditor.getDiagramEditPart(), selection);
         Viewmanagement.getInstance().executeEffect(new LayoutEffect(diagramEditor, eP));
     }
     
