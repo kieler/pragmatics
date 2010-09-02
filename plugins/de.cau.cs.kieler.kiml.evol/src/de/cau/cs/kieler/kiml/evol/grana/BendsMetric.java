@@ -13,6 +13,8 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -43,30 +45,39 @@ public class BendsMetric implements IAnalysis {
     public Object doAnalysis(
             final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) throws KielerException {
+
         progressMonitor.begin("Bend metric analysis", 1);
 
-        // load numbers from analyses
-        final Object edgesResult = results.get(GRANA_EDGE_COUNT);
-        final Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
-        final int edgesCount = (Integer) edgesResult;
-        final int bendsCount = (Integer) bendsResult;
-
-        // System.out.println("edges: " + edgesCount + " bends: " + bendsCount);
-
-        progressMonitor.done();
-
-        // FIXME: For some reason, the bends count in the layout graph may be
-        // reduced after the layout is applied. This means the result that is
-        // produced by auto-rating differs from the information shown in the
-        // Grana dialog. However, this seems to happen only for graphs that
-        // contain self-loops.
-
-        // normalize
         Float result;
-        if (edgesCount + bendsCount > 0) {
-            result = 1.0f - (float) bendsCount / (float) (edgesCount + bendsCount);
-        } else {
-            result = 1.0f;
+        try {
+            // load numbers from analyses
+            final Object edgesResult = results.get(GRANA_EDGE_COUNT);
+            final Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
+            final int edgesCount = (Integer) edgesResult;
+            final int bendsCount = (Integer) bendsResult;
+
+            // System.out.println("edges: " + edgesCount + " bends: " +
+            // bendsCount);
+
+            // FIXME: For some reason, the bends count in the layout graph may
+            // be
+            // reduced after the layout is applied. This means the result that
+            // is
+            // produced by auto-rating differs from the information shown in the
+            // Grana dialog. However, this seems to happen only for graphs that
+            // contain self-loops.
+
+            // normalize
+            if (edgesCount + bendsCount > 0) {
+                result = 1.0f - (float) bendsCount / (float) (edgesCount + bendsCount);
+            } else {
+                result = 1.0f;
+            }
+            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
+                    + result);
+
+        } finally {
+            progressMonitor.done();
         }
 
         return result;

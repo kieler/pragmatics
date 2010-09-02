@@ -2,6 +2,8 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -27,29 +29,37 @@ public class AreaMetric implements IAnalysis {
             throws KielerException {
         progressMonitor.begin("Area metric analysis", 1);
         final Float result;
-        final Object dimsResult = results.get("de.cau.cs.kieler.kiml.grana.dimensions");
-        final Pair<Float, Float> dims;
-        final float xdim;
-        final float ydim;
-        if (dimsResult instanceof Pair) {
-            dims = (Pair<Float, Float>) dimsResult;
-            xdim = dims.getFirst();
-            ydim = dims.getSecond();
-        } else {
-            xdim = 0.0f;
-            ydim = 0.0f;
+
+        try {
+            final Object dimsResult = results.get("de.cau.cs.kieler.kiml.grana.dimensions");
+            final Pair<Float, Float> dims;
+            final float xdim;
+            final float ydim;
+            if (dimsResult instanceof Pair) {
+                dims = (Pair<Float, Float>) dimsResult;
+                xdim = dims.getFirst();
+                ydim = dims.getSecond();
+            } else {
+                xdim = 0.0f;
+                ydim = 0.0f;
+            }
+
+            final double area = xdim * ydim;
+
+            // normalize
+            if (area < 1.0) {
+                result = 0.0f;
+            } else {
+                final double exponent = 0.08;
+                result = (float) (1.0f - (1.0f / Math.pow(area, exponent)));
+            }
+            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
+                    + result);
+
+        } finally {
+            progressMonitor.done();
         }
 
-        final double area = xdim * ydim;
-
-        // normalize
-        if (area < 1.0) {
-            result = 0.0f;
-        } else {
-            final double exponent = 0.08;
-            result = (float) (1.0f - (1.0f / Math.pow(area, exponent)));
-        }
-        progressMonitor.done();
         return result;
     }
 }

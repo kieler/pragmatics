@@ -36,50 +36,62 @@ public class EdgeCrossingsMetric implements IAnalysis {
     public Object doAnalysis(
             final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) throws KielerException {
+
         progressMonitor.begin("Edge crossings metric analysis", 1);
+
         final Float result;
-        final Object crossingsResult = results.get("de.cau.cs.kieler.kiml.grana.edgeCrossings");
-        final Object edgesResult = results.get("de.cau.cs.kieler.kiml.grana.edgeCount");
-        final Object bendsResult = results.get("de.cau.cs.kieler.kiml.grana.bendpointCount");
-        final int edgesCount = (Integer) edgesResult;
-        final int bendsCount = (Integer) bendsResult;
-        final int crossingsCount = (Integer) crossingsResult;
 
-        final int edgesAuxCount = edgesCount + bendsCount;
+        try {
+            final Object crossingsResult =
+                    results.get("de.cau.cs.kieler.kiml.grana.edgeCrossings");
+            final Object edgesResult = results.get("de.cau.cs.kieler.kiml.grana.edgeCount");
+            final Object bendsResult = results.get("de.cau.cs.kieler.kiml.grana.bendpointCount");
+            final int edgesCount = (Integer) edgesResult;
+            final int bendsCount = (Integer) bendsResult;
+            final int crossingsCount = (Integer) crossingsResult;
 
-        int sum = 0;
-        for (final KNode node : parentNode.getChildren()) {
-            final int degree = node.getOutgoingEdges().size() + node.getIncomingEdges().size();
-            sum += degree * (degree - 1);
-            // FIXME: this only works for highest level, not for hierarchies
-            // TODO: consider bend points as pseudo nodes
+            final int edgesAuxCount = edgesCount + bendsCount;
+
+            int sum = 0;
+            for (final KNode node : parentNode.getChildren()) {
+                final int degree =
+                        node.getOutgoingEdges().size() + node.getIncomingEdges().size();
+                sum += degree * (degree - 1);
+                // FIXME: this only works for highest level, not for hierarchies
+                // TODO: consider bend points as pseudo nodes
+            }
+
+            // In straight-line drawings of connected graphs with at most one
+            // edge
+            // between nodes, adjacent edges cannot cross.
+            // [H. C. Purchase, "Metrics for Graph Drawing Aesthetics", 2002]
+
+            // In general, this is not guaranteed, so we don't know how many
+            // crossings are impossible.
+            final int impossibleCrossingsCount = 0;
+            // TODO: if graph is connected and graph is not a multi graph, we
+            // can use
+            // impossibleCrossingsCount = sum / 2;
+
+            final int maxCrossingsCount =
+                    (edgesAuxCount * (edgesAuxCount - 1)) / 2 - impossibleCrossingsCount;
+
+            Assert.isTrue(crossingsCount <= maxCrossingsCount);
+
+            if (crossingsCount > maxCrossingsCount) {
+                result = Float.valueOf(0.0f);
+            } else if (maxCrossingsCount > 0) {
+                result = 1.0f - (float) ((double) crossingsCount / maxCrossingsCount);
+            } else {
+                result = Float.valueOf(1.0f);
+            }
+
+            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
+                    + result);
+
+        } finally {
+            progressMonitor.done();
         }
-
-        // In straight-line drawings of connected graphs with at most one edge
-        // between nodes, adjacent edges cannot cross.
-        // [H. C. Purchase, "Metrics for Graph Drawing Aesthetics", 2002]
-
-        // In general, this is not guaranteed, so we don't know how many
-        // crossings are impossible.
-        final int impossibleCrossingsCount = 0;
-        // TODO: if graph is connected and graph is not a multi graph, we
-        // can use
-        // impossibleCrossingsCount = sum / 2;
-
-        final int maxCrossingsCount =
-                (edgesAuxCount * (edgesAuxCount - 1)) / 2 - impossibleCrossingsCount;
-
-        Assert.isTrue(crossingsCount <= maxCrossingsCount);
-
-        if (crossingsCount > maxCrossingsCount) {
-            result = 0.0f;
-        } else if (maxCrossingsCount > 0) {
-            result = 1.0f - (float) ((double) crossingsCount / maxCrossingsCount);
-        } else {
-            result = 1.0f;
-        }
-
-        Assert.isTrue((result >= 0.0) && (result <= 1.0));
 
         return result;
 

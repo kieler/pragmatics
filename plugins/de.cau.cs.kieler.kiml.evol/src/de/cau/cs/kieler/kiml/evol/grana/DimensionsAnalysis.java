@@ -46,32 +46,40 @@ public class DimensionsAnalysis implements IAnalysis {
             throws KielerException {
         progressMonitor.begin("Dimensions analysis", 1);
 
-        float xmin = Float.MAX_VALUE;
-        float ymin = Float.MAX_VALUE;
-        float xmax = 0.0f;
-        float ymax = 0.0f;
-        for (final KNode node : parentNode.getChildren()) {
-            final KShapeLayout nodeLayout = KimlUtil.getShapeLayout(node);
-            final float xpos = nodeLayout.getXpos();
-            final float ypos = nodeLayout.getYpos();
-            Assert.isTrue((xpos >= 0.0f) && (ypos >= 0.0f), "negative node positions");
-            if (xpos > xmax) {
-                xmax = xpos;
+        final Pair<Float, Float> result;
+        try {
+            float xmin = Float.MAX_VALUE;
+            float ymin = Float.MAX_VALUE;
+            float xmax = 0.0f;
+            float ymax = 0.0f;
+            for (final KNode node : parentNode.getChildren()) {
+                final KShapeLayout nodeLayout = KimlUtil.getShapeLayout(node);
+                final float xpos = nodeLayout.getXpos();
+                final float ypos = nodeLayout.getYpos();
+                Assert.isTrue((xpos >= 0.0f) && (ypos >= 0.0f), "negative node positions");
+                if (xpos > xmax) {
+                    xmax = xpos;
+                }
+                if (ypos > ymax) {
+                    ymax = ypos;
+                }
+                if (xpos < xmin) {
+                    xmin = xpos;
+                }
+                if (ypos < ymin) {
+                    ymin = ypos;
+                }
             }
-            if (ypos > ymax) {
-                ymax = ypos;
-            }
-            if (xpos < xmin) {
-                xmin = xpos;
-            }
-            if (ypos < ymin) {
-                ymin = ypos;
-            }
+            final float xdim = xmax - xmin;
+            final float ydim = ymax - ymin;
+            final float epsilon = 0.1f;
+            Assert.isTrue((xdim >= epsilon) || (ydim >= epsilon), "Very small dimension.");
+            result = new Pair<Float, Float>(Float.valueOf(xdim), Float.valueOf(ydim));
+
+        } finally {
+            progressMonitor.done();
         }
-        final float xdim = xmax - xmin;
-        final float ydim = ymax - ymin;
-        Assert.isTrue((xdim >= 0.1f) || (ydim >= 0.1f), "Very small dimension.");
-        final Pair<Float, Float> result = new Pair<Float, Float>(xdim, ydim);
+
         return result;
     }
 }

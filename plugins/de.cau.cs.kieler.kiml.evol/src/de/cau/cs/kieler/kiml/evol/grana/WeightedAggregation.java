@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kiml.evol.grana;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.Assert;
+
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -39,24 +41,32 @@ public class WeightedAggregation implements IAnalysis {
 
         progressMonitor.begin("Weighted aggregation", 1);
 
-        // TODO: read and use weights
-        double sum = 0.0;
-        int count = 0;
-        for (final Entry<String, Object> entry : results.entrySet()) {
-            if (entry.getKey().toLowerCase().contains("metric")) {
-                final Object val = entry.getValue();
-                if (val instanceof Float) {
-                    sum += (Float) val;
-                    count++;
-                    System.out.println(entry.getKey() + ": " + val + " ");
+        try {
+            // TODO: read and use weights
+            double sum = 0.0;
+            int count = 0;
+            for (final Entry<String, Object> entry : results.entrySet()) {
+                if (entry.getKey().toLowerCase().contains("metric")) {
+                    final Object val = entry.getValue();
+                    if (val instanceof Float) {
+                        sum += (Float) val;
+                        count++;
+                        System.out.println(entry.getKey() + ": " + val + " ");
+                    }
                 }
             }
-        }
-        System.out.println();
+            System.out.println();
+            if (count == 0) {
+                return Float.valueOf(Float.NaN);
+            }
 
-        if (count == 0) {
-            return Float.NaN;
+            final double result = (sum / count);
+            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
+                    + result);
+            return Double.valueOf(result);
+
+        } finally {
+            progressMonitor.done();
         }
-        return sum / count;
     }
 }

@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -39,37 +41,48 @@ public class FlatnessMetric implements IAnalysis {
             final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
+
         progressMonitor.begin("Flatness metric analysis", 1);
+
         final Float result;
-        final Object dimsResult = results.get("de.cau.cs.kieler.kiml.grana.dimensions");
-        final Pair<Float, Float> dims;
-        final float xdim;
-        final float ydim;
-        if (dimsResult instanceof Pair<?, ?>) {
-            dims = (Pair<Float, Float>) dimsResult;
-            xdim = dims.getFirst();
-            ydim = dims.getSecond();
-        } else {
-            // This should happen only when the dims analysis failed.
-            xdim = 0.0f;
-            ydim = 0.0f;
-        }
-        final boolean isXdimZero = (xdim == 0.0f);
-        final boolean isYdimZero = (ydim == 0.0f);
-        if (isXdimZero && isYdimZero) {
-            throw new KielerException("Flatness metric analysis failed.");
+        try {
+            final Object dimsResult = results.get("de.cau.cs.kieler.kiml.grana.dimensions");
+            final Pair<Float, Float> dims;
+            final float xdim;
+            final float ydim;
+            if (dimsResult instanceof Pair<?, ?>) {
+                dims = (Pair<Float, Float>) dimsResult;
+                xdim = dims.getFirst();
+                ydim = dims.getSecond();
+            } else {
+                // This should happen only when the dims analysis failed.
+                xdim = 0.0f;
+                ydim = 0.0f;
+            }
+            final boolean isXdimZero = (xdim == 0.0f);
+            final boolean isYdimZero = (ydim == 0.0f);
+            if (isXdimZero && isYdimZero) {
+                throw new KielerException("Flatness metric analysis failed.");
+            }
+
+            final float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
+            final float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
+            final float half = .5f;
+            if (widthToHeightRatio < 1.0f) {
+                // narrow
+                result = widthToHeightRatio * half;
+            } else {
+                // wide
+                result = 1.0f - (heightToWidthRatio * half);
+            }
+
+            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
+                    + result);
+
+        } finally {
+            progressMonitor.done();
         }
 
-        final float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
-        final float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
-        if (widthToHeightRatio < 1.0) {
-            // narrow
-            result = widthToHeightRatio * .5f;
-        } else {
-            // wide
-            result = 1.0f - (heightToWidthRatio * .5f);
-        }
-        progressMonitor.done();
         return result;
     }
 }

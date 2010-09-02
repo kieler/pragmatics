@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -42,34 +44,43 @@ public class NarrownessMetric implements IAnalysis {
 
         progressMonitor.begin("Narrowness metric analysis", 1);
         final Float result;
-        final Object dimsResult = results.get("de.cau.cs.kieler.kiml.grana.dimensions");
-        final Pair<Float, Float> dims;
-        final float xdim;
-        final float ydim;
-        if (dimsResult instanceof Pair) {
-            dims = (Pair<Float, Float>) dimsResult;
-            xdim = dims.getFirst();
-            ydim = dims.getSecond();
-        } else {
-            // this should not happen
-            xdim = 0.0f;
-            ydim = 0.0f;
+
+        try {
+            final Object dimsResult = results.get("de.cau.cs.kieler.kiml.grana.dimensions");
+            final Pair<Float, Float> dims;
+            final float xdim;
+            final float ydim;
+            if (dimsResult instanceof Pair) {
+                dims = (Pair<Float, Float>) dimsResult;
+                xdim = dims.getFirst();
+                ydim = dims.getSecond();
+            } else {
+                // this should not happen
+                xdim = 0.0f;
+                ydim = 0.0f;
+            }
+            final boolean isXdimZero = (xdim == 0.0f);
+            final boolean isYdimZero = (ydim == 0.0f);
+            if (isXdimZero && isYdimZero) {
+                throw new KielerException("Narrowness metric analysis failed.");
+            }
+            final float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
+            final float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
+            final float half = .5f;
+            if (heightToWidthRatio < 1.0) {
+                // wide
+                result = heightToWidthRatio * half;
+            } else {
+                // narrow
+                result = 1.0f - (widthToHeightRatio * half);
+            }
+            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
+                    + result);
+
+        } finally {
+            progressMonitor.done();
         }
-        final boolean isXdimZero = (xdim == 0.0f);
-        final boolean isYdimZero = (ydim == 0.0f);
-        if (isXdimZero && isYdimZero) {
-            throw new KielerException("Narrowness metric analysis failed.");
-        }
-        final float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
-        final float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
-        if (heightToWidthRatio < 1.0) {
-            // wide
-            result = heightToWidthRatio * .5f;
-        } else {
-            // narrow
-            result = 1.0f - (widthToHeightRatio * .5f);
-        }
-        progressMonitor.done();
+
         return result;
     }
 }
