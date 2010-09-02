@@ -60,4 +60,11 @@ public abstract class AbstractInfoAnalysis implements IAnalysis,
     public List<String> getDependencies() {
         return null;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return getName();
+    }
 }
