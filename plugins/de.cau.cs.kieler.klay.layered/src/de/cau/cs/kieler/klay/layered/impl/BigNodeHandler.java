@@ -69,9 +69,8 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
     private int[] width;
 
     /**
-     * Note that these attributes do not consider any layers that have to be added after the
-     * fixating edges have been inserted.(Determined layering might be wider (more layers) due to
-     * adding fixing edges).
+     * The index of the layer, each node is currently assigned to. The lesser the index, the more to
+     * the left will a node be located in the final drawing of the graph.
      */
     private int[] layer;
 
@@ -81,6 +80,9 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
      */
     private int longestPath;
 
+    /**
+     * A map, in which 
+     */
     private LinkedHashMap<LNode, Integer> nodeIDs;
 
     // ================================== Constructor =============================================
@@ -94,99 +96,6 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
     }
 
     // ============================== Big-Node-Handling Algorithm ================================
-
-    /**
-     * 
-     */
-    public void correctLayering() {
-
-        // restore previous node indices
-        Integer id = null;
-        if (nodes.size() != nodeIDs.size()) {
-            throw new RuntimeException(
-                    "The set of nodes have changed illegally since the invokation of 'splitWideNodes()'.");
-        }
-        for (LNode node : nodes) {
-            id = nodeIDs.get(node);
-            if (id == null) {
-                throw new RuntimeException(
-                        "The set of nodes have changed illegally since the invokation of 'splitWideNodes()'.");
-            }
-            node.id = id;
-        }
-        // get current layer assignment
-        convertLayering();
-
-        // create buckets for wide nodes
-        ArrayList<LinkedList<LNode>> buckets = new ArrayList<LinkedList<LNode>>(longestPath << 1);
-        for (int i = 0; i < (longestPath << 1); i++) {
-            buckets.add(new LinkedList<LNode>());
-        }
-        // put all wide nodes into their bucket
-        LinkedList<LNode> bucket = null;
-        for (LNode node : nodes) {
-            if (node.id < width.length && width[node.id] > 1) {
-                // node is a wide node
-                bucket = buckets.get(layer[node.id]);
-                // put widest node at the top
-                if (bucket.isEmpty() || width[bucket.getFirst().id] < width[node.id]) {
-                    bucket.addFirst(node);
-                } else {
-                    bucket.addLast(node);
-                }
-            }
-        }
-        System.out.println("------ Bucket sizes ------");
-        for (int i = 0; i < buckets.size(); i++)
-            System.out.println(i + ": " + buckets.get(i).size());
-        // correct layering by shifting violating nodes to the right
-        int curIndex = 0, targetIndex = -1, restrIndex = -1;
-        LinkedList<LNode> curBucket, targetBucket;
-        LNode curNode = null;
-        while (curIndex < buckets.size()) {
-            curBucket = buckets.get(curIndex);
-            // check all wide nodes for layering violations
-            if (!curBucket.isEmpty()) {
-                // update restriction index
-                if (restrIndex < curIndex) {
-                    restrIndex = curIndex + width[curBucket.getFirst().id] - 1;
-                    System.out.println("curIndex: " + curIndex + ", restriction index: "
-                            + restrIndex);
-                }
-                Iterator<LNode> iterator = curBucket.iterator();
-                while (iterator.hasNext()) {
-                    curNode = iterator.next();
-                    targetIndex = -1;
-                    if (curIndex + width[curNode.id] - 1 > restrIndex) {
-                        // node violates the layering, put it into a fitting layer
-                        targetIndex = restrIndex + 1;
-                    } else if (layer[curNode.id] > curIndex) {
-                        // node is placed into wrong bucket
-                        targetIndex = layer[curNode.id];
-                    }
-                    System.out.println("curNode " + curNode.toString() + ", target index: "
-                            + targetIndex);
-                    if (targetIndex != -1) {
-                        // put node into a new bucket
-                        targetBucket = buckets.get(targetIndex);
-                        if (targetBucket.isEmpty()
-                                || width[targetBucket.getFirst().id] < width[curNode.id]) {
-                            targetBucket.addFirst(curNode);
-                        } else {
-                            targetBucket.addLast(curNode);
-                        }
-                        // remove node from current bucket
-                        iterator.remove();
-                        // update leftmost assignable layer of each connected node
-                        minimalLayer(curNode, targetIndex);
-                    }
-                }
-            }
-            curIndex++;
-        }
-        // put all nodes into their new layers
-        putNodes();
-    }
 
     /**
      * Helper method for the Average Position Big-Node-Handler. It splits all wide nodes in the
@@ -206,7 +115,7 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
     public void splitWideNodes(final Collection<LNode> theNodes, final LayeredGraph theLayeredGraph) {
 
         if (theNodes == null) {
-            throw new NullPointerException("Input collection of nodes is null.");
+            throw new NullPointerException("Input set of nodes is null.");
         }
         if (theLayeredGraph == null) {
             throw new NullPointerException("Input graph is null.");
@@ -255,8 +164,6 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
             double newWidth = (node.getSize().x - ((width[node.id] - 1) * minSpacing))
                     / (width[node.id]);
             node.getSize().x = newWidth;
-            // TODO warum muss ne neue Breite zugewiesen werden?
-
             if (width[node.id] > 1) {
                 // save outgoing ports of wide node to reassign them later
                 ports = new LinkedList<LPort>();
@@ -291,22 +198,110 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
         }
         // add all dummy nodes to the nodes of the graph
         nodes.addAll(dummyNodes);
-        // save current node IDs to restore them, when the layerer finished execution
+        // save current node IDs to restore them in 'correctLayering()'
         nodeIDs = new LinkedHashMap<LNode, Integer>(nodes.size());
         for (LNode node : nodes) {
             nodeIDs.put(node, new Integer(node.id));
         }
-
-        System.out.println("Width-Array: " + Arrays.toString(width));
-
-        for (LNode nodea : this.nodes) {
-            System.out.print(nodea.id);
-        }
-        System.out.println();
     }
 
     /**
-     * Helper method for the Average Position Big-Node-Handler.
+     * 
+     */
+    public void correctLayering() {
+
+        if (nodeIDs == null) {
+            throw new RuntimeException("Illegal invokation of correctLayering(). "
+                    + "splitWideNodes() has not been invoked before.");
+        }
+        // restore previous node indices
+        Integer id = null;
+        if (nodes.size() != nodeIDs.size()) {
+            throw new RuntimeException("correctLayering(): The set of nodes has changed illegally "
+                    + "since the invokation of splitWideNodes().");
+        }
+        for (LNode node : nodes) {
+            id = nodeIDs.get(node);
+            if (id == null) {
+                throw new RuntimeException(
+                        "correctLayering(): The set of nodes has changed illegally "
+                                + "since the invokation of splitWideNodes().");
+            }
+            node.id = id;
+        }
+        // get current layer assignment
+        convertLayering();
+        // create buckets for wide nodes
+        ArrayList<LinkedList<LNode>> buckets = new ArrayList<LinkedList<LNode>>(longestPath << 1);
+        for (int i = 0; i < (longestPath << 1); i++) {
+            buckets.add(new LinkedList<LNode>());
+        }
+        // put all wide nodes into their bucket
+        LinkedList<LNode> bucket = null;
+        for (LNode node : nodes) {
+            if (node.id < width.length && width[node.id] > 1) {
+                // node is a wide node
+                bucket = buckets.get(layer[node.id]);
+                // put widest node at the top
+                if (bucket.isEmpty() || width[bucket.getFirst().id] < width[node.id]) {
+                    bucket.addFirst(node);
+                } else {
+                    bucket.addLast(node);
+                }
+            }
+        }
+        // correct layering by shifting violating nodes to the right
+        int curIndex = 0, targetIndex = -1, restrIndex = -1;
+        LinkedList<LNode> curBucket, targetBucket;
+        LNode curNode = null;
+        Iterator<LNode> iterator = null;
+        while (curIndex < buckets.size()) {
+            curBucket = buckets.get(curIndex);
+            // check all wide nodes for layering violations
+            if (!curBucket.isEmpty()) {
+                // update restriction index
+                if (restrIndex < curIndex) {
+                    restrIndex = curIndex + width[curBucket.getFirst().id] - 1;
+                }
+                iterator = curBucket.iterator();
+                while (iterator.hasNext()) {
+                    curNode = iterator.next();
+                    targetIndex = -1;
+                    if (curIndex + width[curNode.id] - 1 > restrIndex) {
+                        // node violates the layering, put it into a fitting layer
+                        targetIndex = restrIndex + 1;
+                    } else if (layer[curNode.id] > curIndex) {
+                        // node is placed in wrong bucket
+                        targetIndex = layer[curNode.id];
+                    }
+                    if (targetIndex != -1) {
+                        // add more buckets, if necessary
+                        while (targetIndex >= buckets.size()) {
+                            buckets.add(new LinkedList<LNode>());
+                        }
+                        // put node into the new bucket
+                        targetBucket = buckets.get(targetIndex);
+                        if (targetBucket.isEmpty()
+                                || width[targetBucket.getFirst().id] < width[curNode.id]) {
+                            targetBucket.addFirst(curNode);
+                        } else {
+                            targetBucket.addLast(curNode);
+                        }
+                        // remove node from current bucket
+                        iterator.remove();
+                        // update leftmost assignable layer of each connected node
+                        minimalLayer(curNode, targetIndex);
+                    }
+                }
+            }
+            curIndex++;
+        }
+        // put all nodes into their new layers
+        putNodes();
+    }
+
+    /**
+     * Helper method for the Big-Node-Handler.
      * 
      * @param node
      *            the root of the DFS-subtree
@@ -328,12 +323,18 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
         longestPath = Math.max(longestPath, layer[node.id]);
     }
 
+    /**
+     * Helper method for the Big-Node-Handler. It re-indexes all layers contained in
+     * {@code layeredGraph}, determines the current longest path in the graph and retrieves the
+     * index of the layer, each node of the graph is assigned to and stores this value at the
+     * position equal to the node's {@code id} in {@code layer}. If this array does not exist or its
+     * size to small to store the value of each node, a (new) instance of this attribute will be
+     * created. Otherwise, the old instance will be reused. After this step is done, all layers will
+     * be removed from {@code layeredGraph}.
+     * 
+     * TODO
+     */
     private void convertLayering() {
-
-        for (LNode nodea : this.nodes) {
-            System.out.print(nodea.id);
-        }
-        System.out.println();
 
         // initialize layer attribute
         if (layer == null || layer.length < nodes.size()) {
@@ -356,8 +357,10 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
     }
 
     /**
-     * Helper method for the LpSolve-layerer. It puts the specified node into its assigned layer in
-     * the layered graph.
+     * Helper method for the Big-Node-Handler. It puts all node of the graph into their assigned
+     * layers as stated in {@code layer}. At this stage, {@code layeredGraph} does not contain any
+     * layers, not even empty ones. So all necessary layers will be added to it by this method. No
+     * layer stays empty after layer assignment.
      * 
      * @param node
      *            the node to put into the layered graph
@@ -366,25 +369,19 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
 
         List<Layer> layers = layeredGraph.getLayers();
         // add additional layers to match required amount
-        int ID = 0;
         while (longestPath-- >= 0) {
-            Layer l = new Layer(layeredGraph);
-            layers.add(l);
-            l.id = ID++;
+            layers.add(new Layer(layeredGraph));
         }
         // put nodes into their assigned layers
         for (LNode node : nodes) {
             node.setLayer(layers.get(layer[node.id]));
         }
-        // System.out.println("layer assignment:");
-        for (LNode node : nodes) {
-            // System.out.println(node.toString() + ", " + node.getLayer().id);
+        
+        System.out.println("The number of nodes in each layer: ");
+        for (Layer l : layers) {
+            System.out.print(l.getNodes().size() + ",");
         }
-
-        for (LNode nodea : this.nodes) {
-            System.out.print(nodea.id);
-        }
-        System.out.println();
+        System.out.print("\n");
     }
 
 }

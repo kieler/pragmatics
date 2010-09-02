@@ -278,7 +278,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             outDegree = new int[numNodes];
             layer = new int[numNodes];
             revLayer = new int[numNodes];
-            Arrays.fill(revLayer, numNodes);
             treeNode = new boolean[numNodes];
             poID = new int[numNodes];
             lowestPoID = new int[numNodes];
@@ -286,9 +285,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             Arrays.fill(inDegree, 0);
             Arrays.fill(outDegree, 0);
             Arrays.fill(layer, 0);
-            Arrays.fill(revLayer, numNodes);
             Arrays.fill(treeNode, false);
         }
+        Arrays.fill(revLayer, numNodes);
+
         sources = new LinkedList<LNode>();
         sinks = new LinkedList<LNode>();
         nodes = theNodes;
@@ -359,7 +359,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             throw new NullPointerException("Input graph is null.");
         }
 
-        getMonitor().begin("network-simplex layering", 1);
+        getMonitor().begin("Network-Simplex-Layering", 1);
         if (theNodes.size() < 1) {
             getMonitor().done();
             return;
@@ -761,7 +761,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                                 // edge is tree edge
                                 if (source.equals(edge.getSource().getNode())
                                         || target.equals(edge.getTarget().getNode())) {
-                                    // edge has the same direction as toDetermine
+                                    // edge has not the same direction as toDetermine
                                     cutvalue[toDetermine.id] -= cutvalue[edge.id] - 1;
                                 } else {
                                     cutvalue[toDetermine.id] += cutvalue[edge.id] - 1;
@@ -1022,7 +1022,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     /**
      * Helper method for the network simplex layerer. It puts the specified node into its assigned
      * layer indicated by {@code layer} in the layered graph. If the layered graph does not contain
-     * the specified layer (i.e. the number of layers in {@code layeredGraph} is less than the
+     * the specified layer (i.e. the number of layers in {@code layeredGraph} is lesser than the
      * supposed height in the layering), additional layers will be added to match the required
      * amount.
      * 
