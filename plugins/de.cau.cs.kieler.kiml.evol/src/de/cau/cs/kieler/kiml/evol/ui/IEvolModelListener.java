@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.evol.EvolModel;
  *
  */
 public interface IEvolModelListener {
-    
+
     /**
      * Notifies that a model change has been performed.
      *
@@ -35,6 +35,6 @@ public interface IEvolModelListener {
      *            a string explaining the cause
      */
     void afterChange(EvolModel source, String cause);
-
+    // TODO: discuss: should cause be an enum element instead of a string?
 
 }

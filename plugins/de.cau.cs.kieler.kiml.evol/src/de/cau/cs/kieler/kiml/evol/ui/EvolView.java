@@ -95,6 +95,7 @@ public class EvolView extends ViewPart {
             // TODO: what if currentEditor is null?
             if (EvolUtil.getCurrentEditor() == null) {
                 System.err.println("We are not in the UI thread: " + cause);
+
             }
 
             // Refresh the table viewer.
@@ -188,7 +189,11 @@ public class EvolView extends ViewPart {
         }
 
         public void run() {
-            this.tableViewer.setInput(this.population);
+            if (this.tableViewer.getInput() != this.population) {
+                this.tableViewer.setInput(this.population);
+            } else {
+                System.err.println("TableViewer: input already set.");
+            }
         }
     }
 
@@ -231,13 +236,6 @@ public class EvolView extends ViewPart {
 
                 if (oldPos != newPos) {
                     // Update the table viewer.
-                    final Runnable elementUpdaterRunnable = new Runnable() {
-                        public void run() {
-                            SelectionChangedListener.this.getTableViewer().update(element, null);
-                        }
-                    };
-                    // MonitoredOperation.runInUI(elementUpdaterRunnable, true);
-
                     EvolPlugin.logStatus("Current row: " + oldPos + " -> " + newPos);
                     final Object oldElement1 = this.tv.getElementAt(oldPos);
                     if ((oldElement1 != element) && (oldElement1 != this.oldElement)) {
@@ -255,10 +253,6 @@ public class EvolView extends ViewPart {
                 System.out.println();
                 this.oldElement = element;
             }
-        }
-
-        SelectorTableViewer getTableViewer() {
-            return this.tv;
         }
     }
 
@@ -363,7 +357,9 @@ public class EvolView extends ViewPart {
         final TableColumn column = new TableColumn(table, SWT.NONE);
         column.setWidth(DEFAULT_COLUMN_WIDTH);
         final TableColumn column2 = new TableColumn(table, SWT.NONE);
-        column2.setWidth(2 * DEFAULT_COLUMN_WIDTH);
+        column2.setWidth(DEFAULT_COLUMN_WIDTH);
+        final TableColumn column3 = new TableColumn(table, SWT.NONE);
+        column3.setWidth(DEFAULT_COLUMN_WIDTH);
 
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
@@ -376,11 +372,9 @@ public class EvolView extends ViewPart {
         final ISelectionChangedListener listener = new SelectionChangedListener(tv);
         tv.addPostSelectionChangedListener(listener);
 
-        final IToolBarManager tm = this.getViewSite().getActionBars().getToolBarManager();
-
-        final IAction multipleEditorsAction = new MultipleEditorsAction("Multiple editors");
-
         // Add the toggle button
+        final IToolBarManager tm = this.getViewSite().getActionBars().getToolBarManager();
+        final IAction multipleEditorsAction = new MultipleEditorsAction("Multiple editors");
         tm.add(multipleEditorsAction);
         // XXX too bad all the other buttons are added later via extension point
         // so we can't change their order as we would like
@@ -436,7 +430,7 @@ public class EvolView extends ViewPart {
      * @param thePopulation
      *            new source population
      */
-    void setInput(final Population thePopulation) {
+    private void setInput(final Population thePopulation) {
         Assert.isNotNull(this.evolModel);
 
         final SelectorTableViewer tv = this.getTableViewer();

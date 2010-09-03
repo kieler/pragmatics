@@ -85,24 +85,27 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
     public String getColumnText(final Object element, final int columnIndex) {
         // TODO: use CellLabelProviders
 
+        final Genome individual = ((PopulationTableEntry) element).getIndividual();
         switch (columnIndex) {
         case 0:
             return ((PopulationTableEntry) element).getId();
         case 1:
-            final Genome individual = ((PopulationTableEntry) element).getIndividual();
+
+            return ("Rating: " + individual.getUserRating() + ", genes: " + individual.size());
+        case 2:
             final IGene<?> hintGene = individual.find(LayoutOptions.LAYOUT_HINT_ID);
             String providerName = null;
             if (hintGene instanceof RadioGene) {
                 final String hintId = hintGene.toString();
+
                 final LayoutProviderData provider =
                         LayoutServices.getInstance().getLayoutProviderData(hintId);
                 if (provider != null) {
                     providerName = provider.getName();
                 }
             }
+            return (providerName);
 
-            return ("Rating: " + individual.getUserRating() + ", genes: " + individual.size()
-                    + ", layout: " + providerName);
         default: // do nothing
             return null;
         }
