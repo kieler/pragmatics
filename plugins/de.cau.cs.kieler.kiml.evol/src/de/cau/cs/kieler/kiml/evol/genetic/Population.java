@@ -142,6 +142,9 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
                 result.append(gene.getId() + ": " + gene.toString() + newLine);
             }
             result.append(newLine);
+            result.append("Features:" + newLine);
+            result.append(ind.getFeatures() + newLine);
+            result.append(newLine);
         }
         return result.toString();
     }

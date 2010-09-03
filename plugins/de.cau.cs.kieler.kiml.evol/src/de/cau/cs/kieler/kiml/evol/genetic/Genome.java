@@ -14,9 +14,11 @@
 package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -64,21 +66,20 @@ public class Genome extends ArrayList<IGene<?>> {
      *            template genome; must not be {@code null}
      */
     public Genome(final Genome genome) {
-        this(null, genome, genome.generation);
+        this(genome, genome.generation);
     }
 
     /**
-     * Constructor for an Individual with the given id and the given genome.
+     * Constructor for an individual with the given genome and the given
+     * generation.
      *
-     * @param theId
-     *            an id for this individual
      * @param theGenome
      *            initial genome for this individual
      * @param theGeneration
      *            the generation
      *
      */
-    public Genome(final String theId, final Genome theGenome, final int theGeneration) {
+    public Genome(final Genome theGenome, final int theGeneration) {
 
         Assert.isLegal(theGenome != null);
         if (theGenome != null) {
@@ -88,6 +89,7 @@ public class Genome extends ArrayList<IGene<?>> {
                 }
             }
             this.userRating = theGenome.getUserRating();
+            this.features = theGenome.getFeatures();
         }
         this.generation = theGeneration;
         System.out.println("Created individual " + toString());
@@ -117,6 +119,27 @@ public class Genome extends ArrayList<IGene<?>> {
     }
 
     /**
+     * The features are a collection of measurable properties that the
+     * individual sports in its phenotype. Automatic rating of the individual is
+     * based on these features.
+     *
+     * @return an unmodifiable view of the map of features
+     */
+    public Map<String, Object> getFeatures() {
+        return Collections.unmodifiableMap(this.features);
+    }
+
+    /**
+     * Sets the features.
+     *
+     * @param theFeatures
+     *            the features to set.
+     */
+    public void setFeatures(final Map<String, Object> theFeatures) {
+        this.features = theFeatures;
+    }
+
+    /**
      * Generation the individual belongs to.
      *
      * @return Generation.
@@ -140,7 +163,7 @@ public class Genome extends ArrayList<IGene<?>> {
      * @return the user-defined rating. A higher value means a better rating.
      *         The value may be negative.
      */
-    public int getUserRating() {
+    public synchronized int getUserRating() {
         return this.userRating;
     }
 
@@ -201,9 +224,7 @@ public class Genome extends ArrayList<IGene<?>> {
                 System.out.println("Ind. was over-rated (" + oldRating + " -> " + theRating + ")");
             }
         }
-        if (theRating < 0) {
-            System.out.println("rating < 0");
-        }
+
         this.userRating = theRating;
     }
 
@@ -279,6 +300,8 @@ public class Genome extends ArrayList<IGene<?>> {
     private final int generation;
     private int userRating;
     private int automaticRating;
+
+    private Map<String, Object> features = Collections.emptyMap();
 
     /**
      * Find a gene with the given ID.

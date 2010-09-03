@@ -28,6 +28,12 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
 public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     /**
+     * A preference that indicates whether parthenogenesis (reproduction from
+     * only one parent) may take place or not.
+     */
+    private static final boolean PREF_IS_PARTHENOGENESIS_ALLOWED = false;
+
+    /**
      * Constructor for an evolutionary algorithm with the given initial
      * population. Creates and initializes the algorithm instance.
      *
@@ -56,6 +62,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     protected void crossOver() {
         System.out.println("*** cross over");
         if (!selection.isEmpty()) {
+            final boolean isParthenogenesisAllowed = PREF_IS_PARTHENOGENESIS_ALLOWED;
             final int proposal = (int) Math.round(selection.size() * CROSS_OVER_RATIO);
             final int min = MIN_CROSS_OVERS;
             final int max = MAX_CROSS_OVERS;
@@ -64,14 +71,26 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
             System.out.println(" -- generate " + crossOvers + " out of " + selection.size());
 
             for (int i = 0; i < crossOvers; i++) {
-                final Genome parent1 = selection.pick();
-                final Genome parent2 = selection.pick();
 
-                // it is not ensured that both parents are different
+                if ((selection.size() < 2) && !isParthenogenesisAllowed) {
+                    // Selection too small -- No crossover possible.
+                    System.err.println("Selection too small.");
+                    break;
+                }
+
+                Genome parent1;
+                Genome parent2;
+                do {
+                    parent1 = selection.pick();
+                    parent2 = selection.pick();
+                    // If parthenogenesis is allowed, it is not guaranteed that
+                    // both parents are different.
+                } while ((parent1 == parent2) && !PREF_IS_PARTHENOGENESIS_ALLOWED);
+
                 final Genome newGenome = parent1.newRecombination(parent2);
                 System.out.println(" -- cross over of " + parent1);
                 System.out.println("              and " + parent2);
-                offspring.add(new Genome(null, newGenome, getGeneration()));
+                offspring.add(new Genome(newGenome, getGeneration()));
             }
 
             // add offspring to survivors
