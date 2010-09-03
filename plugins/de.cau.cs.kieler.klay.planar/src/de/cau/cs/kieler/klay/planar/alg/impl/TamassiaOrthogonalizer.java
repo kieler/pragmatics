@@ -141,7 +141,6 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
         solver.findFlow(network);
 
         // Create orthogonal representation based on flow
-        // TODO
         TamassiaOrthogonalRepresentation orthogonal = new TamassiaOrthogonalRepresentation();
         for (IEdge arc : this.faceArcs) {
             IFace face1 = (IFace) arc.getSource().getProperty(NETWORKTOGRAPH);
@@ -166,6 +165,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             INode node = (INode) arc.getSource().getProperty(NETWORKTOGRAPH);
             IFace face = (IFace) arc.getTarget().getProperty(NETWORKTOGRAPH);
             int angleInNode = arc.getProperty(IFlowNetworkSolver.FLOW);
+            // TODO set angle in orthogonal representation
         }
 
         getMonitor().done();

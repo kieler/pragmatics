@@ -125,6 +125,10 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
             }
         }
 
+        IOrthogonalizer orthogonalizer = new TamassiaOrthogonalizer();
+        IOrthogonalRepresentation representation;
+        representation = orthogonalizer.orthogonalize(graph);
+
         // TODO force cages as rectangles
 
         // Remove the cages from the graph
@@ -132,7 +136,7 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
             cage.remove();
         }
 
-        return null; // TODO orthogonal representation
+        return representation;
     }
 
 }
