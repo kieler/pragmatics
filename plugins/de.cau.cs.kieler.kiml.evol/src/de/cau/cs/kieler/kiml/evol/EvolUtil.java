@@ -400,23 +400,23 @@ public final class EvolUtil {
      * @author bdu
      *
      */
-    private static final class AutoRateIndividualRunnable implements Runnable {
+    private static final class IndividualAutoRaterRunnable implements Runnable {
         /**
-         * Creates a new {@link AutoRateIndividualRunnable} instance.
+         * Creates a new {@link IndividualAutoRaterRunnable} instance.
          *
          * @param theIndividual
-         * @param theEditor
+         * @param theWeightsGenomes
          */
-        AutoRateIndividualRunnable(final Genome theIndividual, final Genome theWeightsGenome) {
+        IndividualAutoRaterRunnable(final Genome theIndividual, final Population theWeightsGenomes) {
             this.individual = theIndividual;
-            this.weightsGenome = theWeightsGenome;
+            this.weightsGenomes = theWeightsGenomes;
         }
 
         /**
         *
         */
         private final Genome individual;
-        private final Genome weightsGenome;
+        private final Population weightsGenomes;
 
         public void run() {
             // Must be run in the UI thread.
@@ -425,7 +425,7 @@ public final class EvolUtil {
 
             final Set<IEditorPart> editorsSet = new HashSet<IEditorPart>(editors);
 
-            autoRateIndividual(this.individual, editorsSet, weightsGenome);
+            autoRateIndividual(this.individual, editorsSet, this.weightsGenomes);
 
         }
     }
@@ -609,12 +609,12 @@ public final class EvolUtil {
      *            the {@link Population} to be rated
      * @param theMonitor
      *            a progress monitor; may be {@code null}
-     * @param theWeightsGenome
-     *            a genome encoding the metric weights
+     * @param theWeightsGenomes
+     *            a population of genomes encoding the metric weights
      */
     public static void autoRate(
             final Population thePopulation, final IProgressMonitor theMonitor,
-            final Genome theWeightsGenome) {
+            final Population theWeightsGenomes) {
         Assert.isLegal((thePopulation != null));
         if (thePopulation == null) {
             return;
@@ -637,7 +637,7 @@ public final class EvolUtil {
                     throw new OperationCanceledException();
                 }
 
-                syncAutoRate(ind, theWeightsGenome);
+                syncAutoRate(ind, theWeightsGenomes);
                 monitor.worked(1 * scale);
             }
 
@@ -1019,7 +1019,6 @@ public final class EvolUtil {
                             layoutServices.getLayoutProviderData(newLayoutHintId, null);
 
                     final String newType = providerData.getType();
-                    // final String newProviderId = providerData.getId();
 
                     // Are we allowed to set the layout hint?
                     final boolean canSetLayoutHint =
@@ -1032,19 +1031,16 @@ public final class EvolUtil {
                                     .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
 
                     if (!canSetLayoutHint) {
-                        EvolPlugin.showError(
-                                "Changing the layout provider not allowed. See preferences.",
-                                null);
+                        // ok, we are not allowed to set it
+                        break;
                     } else if ((canSetForDifferentType || isCompatibleLayoutProvider(
-                                    oldLayoutHintId, newType))) {
-                        EvolPlugin.logStatus(" ##### Setting layout hint: " + newLayoutHintId);
+                            oldLayoutHintId, newType))) {
                         propertySource.setPropertyValue(id, newLayoutHintId);
                     } else {
                         EvolPlugin.showError(
                                 "Attempt to set the layout hint to incompatible type: "
                                 + newLayoutHintId, null);
                     }
-
 
                 } else {
                     propertySource.setPropertyValue(id, value.toString());
@@ -1059,24 +1055,6 @@ public final class EvolUtil {
     }
 
     /**
-     * Layouts the given individual in the given editor and calculates automatic
-     * ratings for it. This must be run in the UI thread.
-     *
-     * @param individual
-     *            the {@link Genome} to be rated; must not be {@code null}
-     * @param editor
-     *            Specifies the editor in which the individual shall be laid
-     *            out.
-     * @param weightsGenome
-     */
-    private static void autoRateIndividual(
-            final Genome individual, final IEditorPart editor, final Genome weightsGenome) {
-        Assert.isLegal(individual != null);
-
-        autoRateIndividual(individual, Collections.singleton(editor), weightsGenome);
-    }
-
-    /**
      * Layouts the given individual in the given editors and calculates
      * automatic ratings for it.
      *
@@ -1084,17 +1062,17 @@ public final class EvolUtil {
      *            the {@link Genome} to be rated; must not be {@code null}
      * @param editors
      *            Specifies the editors in which the individual shall be laid
-     *            out.
-     * @param weightsGenome
+     *            out; must not be {@code null}.
+     * @param weightsGenomes
      */
     private static void autoRateIndividual(
-            final Genome ind, final Set<IEditorPart> editors, final Genome weightsGenome) {
-        Assert.isLegal((ind != null) && (editors != null));
-        if ((ind == null) || (editors == null)) {
+            final Genome ind, final Set<IEditorPart> editors, final Population weightsGenomes) {
+        Assert.isLegal((ind != null) && (editors != null) && (weightsGenomes != null));
+        if ((ind == null) || (editors == null) || (weightsGenomes == null)) {
             return;
         }
 
-        final int rating = calculateAutoRating(ind, editors, weightsGenome);
+        final int rating = calculateAutoRating(ind, editors, weightsGenomes);
         ind.setUserRating(rating);
     }
 
@@ -1105,21 +1083,22 @@ public final class EvolUtil {
      * individual.
      *
      * @param ind
-     *            a {@link Genome}
+     *            a {@link Genome}; may not be {@code null}
      * @param editor
      *            an {@link IEditorPart}
      * @param manager
      *            a {@link DiagramLayoutManager}
      * @param propertySource
-     *            a {@link LayoutPropertySource}
+     *            a {@link LayoutPropertySource}; may not be {@code null}
      * @param weightsGenome
+     *            a weights genome
      * @return the rating proposal
      */
     private static int calculateAutoRating(
             final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
             final LayoutPropertySource propertySource, final Genome weightsGenome) {
-        Assert.isLegal((ind != null) && (propertySource != null));
-        if ((ind == null) || (propertySource == null)) {
+        Assert.isLegal((ind != null) && (propertySource != null) && (weightsGenome != null));
+        if ((ind == null) || (propertySource == null) || (weightsGenome == null)) {
             return 0;
         }
 
@@ -1137,9 +1116,10 @@ public final class EvolUtil {
         // Attention: The measurements may contain additional intermediate
         // results we did not ask for. See #1152.
 
+        ind.setFeatures(measurements);
+        // TODO: don't set features here. This works only for one editor.
+
         final int rating = weight(measurements, weightsMap);
-
-
 
         return rating;
     }
@@ -1190,7 +1170,7 @@ public final class EvolUtil {
             scaledSum += scaled;
         }
 
-        final int newRating = (int) Math.round((scaledSum * 1000));
+        final int newRating = (int) Math.round((scaledSum * 10000));
 
         return newRating;
     }
@@ -1203,14 +1183,16 @@ public final class EvolUtil {
      * @param ind
      *            a {@link Genome}
      * @param editors
-     * @param weightsGenome
+     *            set of editors
+     * @param weightsGenomes
+     *            the weights genomes
      *
      * @return the rating proposal
      */
     private static int calculateAutoRating(
-            final Genome ind, final Set<IEditorPart> editors, final Genome weightsGenome) {
-        Assert.isLegal((ind != null) && (editors != null));
-        if ((ind == null) || (editors == null)) {
+            final Genome ind, final Set<IEditorPart> editors, final Population weightsGenomes) {
+        Assert.isLegal((ind != null) && (editors != null) && (weightsGenomes != null));
+        if ((ind == null) || (editors == null) || (weightsGenomes == null)) {
             return 0;
         }
 
@@ -1227,7 +1209,18 @@ public final class EvolUtil {
             final LayoutPropertySource source = getLayoutPropertySource(editor, null);
             Assert.isNotNull(source);
 
-            final int rating = calculateAutoRating(ind, editor, manager, source, weightsGenome);
+            // TODO: what if weights genomes is empty?
+            final Genome wg = weightsGenomes.get(0);
+            Assert.isNotNull(wg);
+            
+            /* TODO: get measurements instead of rating, then get rating
+               proposal from each weight genome.
+               For more than one editor: rate average measurements, or use
+               average ratings instead? */
+            final int rating = calculateAutoRating(ind, editor, manager, source, wg);
+            wg.setFeatures(Collections.singletonMap("proposedRating", (Object) rating));
+
+
             totalRating += rating;
         }
 
@@ -1235,9 +1228,6 @@ public final class EvolUtil {
             final int averageRating =
                     Math.round(totalRating / Integer.valueOf(editorCount).floatValue());
             return averageRating;
-        }
-        if (totalRating < 0) {
-            System.out.println("rating < 0");
         }
 
         return totalRating;
@@ -1315,10 +1305,7 @@ public final class EvolUtil {
         Assert.isLegal(propertySource != null);
         Assert.isLegal(size >= 0);
 
-        final List<LayoutPropertySource> sources = new ArrayList<LayoutPropertySource>(1);
-        sources.add(propertySource);
-
-        return createPopulation(sources, size);
+        return createPopulation(Collections.singletonList(propertySource), size);
     }
 
     /**
@@ -1767,9 +1754,10 @@ public final class EvolUtil {
      * Synchronously auto-rates the given individual.
      *
      * @param individual
+     * @param weightsGenomes
      */
-    private static void syncAutoRate(final Genome individual, final Genome weightsGenome) {
-        MonitoredOperation.runInUI(new AutoRateIndividualRunnable(individual, weightsGenome),
+    private static void syncAutoRate(final Genome individual, final Population weightsGenomes) {
+        MonitoredOperation.runInUI(new IndividualAutoRaterRunnable(individual, weightsGenomes),
                 true);
     }
 

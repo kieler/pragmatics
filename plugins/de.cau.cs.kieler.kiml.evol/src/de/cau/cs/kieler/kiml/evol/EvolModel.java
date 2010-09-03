@@ -47,21 +47,23 @@ public final class EvolModel {
      *
      */
     private static final class AutoRaterRunnable implements Runnable {
-        private final Genome weightsGenome;
+        private final Population weightsGenomes;
 
-        /** Creates a new {@link AutoRaterRunnable} instance.
+        /**
+         * Creates a new {@link AutoRaterRunnable} instance.
          *
          * @param theUnrated
+         * @param theWeightsGenomes
          * @param theMonitor
          * @param theScale
          */
         AutoRaterRunnable(
                 final Population theUnrated,
-                final Genome theWeightsGenome,
+                final Population theWeightsGenomes,
                 final IProgressMonitor theMonitor,
                 final int theScale) {
             this.unrated = theUnrated;
-            this.weightsGenome = theWeightsGenome;
+            this.weightsGenomes = theWeightsGenomes;
             this.monitor = theMonitor;
             this.scale = theScale;
         }
@@ -81,7 +83,7 @@ public final class EvolModel {
 
         public void run() {
             EvolUtil.autoRate(this.unrated, new SubProgressMonitor(this.monitor, 1 * this.scale),
-                    this.weightsGenome);
+                    this.weightsGenomes);
         }
     }
 
@@ -128,10 +130,10 @@ public final class EvolModel {
         final Population population = getPopulation();
         Assert.isNotNull(population);
 
-        final Genome wg = getWeightWatchers().get(0);
-        Assert.isNotNull(wg);
+        final Population wgs = getWeightWatchers();
+        Assert.isNotNull(wgs);
 
-        EvolUtil.autoRate(population, theMonitor, wg);
+        EvolUtil.autoRate(population, theMonitor, wgs);
 
         // Notify listeners.
         afterChange("autoRate");
@@ -199,14 +201,17 @@ public final class EvolModel {
             final Population ww = this.weightWatchers;
             Assert.isNotNull(ww);
             Assert.isTrue(!ww.isEmpty());
-            final Genome wg = ww.get(0);
-            Assert.isNotNull(wg);
 
-            final Runnable runnable = new AutoRaterRunnable(unrated, wg, monitor, scale);
+            final Runnable runnable = new AutoRaterRunnable(unrated, ww, monitor, scale);
             MonitoredOperation.runInUI(runnable, true);
-            // reward predictor
-            final int reward = 100;
-            wg.setUserRating(wg.getUserRating() + reward);
+
+            // reward predictors
+            final int reward = 10;
+            for (final Genome wg : ww) {
+                Assert.isNotNull(wg);
+                wg.setUserRating(wg.getUserRating() + reward);
+            }
+
             monitor.worked(autoRateWork * scale);
 
             // Notify listeners.
