@@ -9,5 +9,25 @@
             value="de.cau.cs.kieler.layout.diagrams.dataFlow">
       </option>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.karma">
+      <configuration
+            RenderingProvider="de.cau.cs.kieler.kaom.custom.KaomFigureProvider">
+         <conditions>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                  figureParam="ptolemyObject"
+                  key="ptolemyClass"
+                  layoutParam="ptolemyObject"
+                  value="ptolemyClass">
+            </customCondition></conditions>
+         <editPart
+               editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart">
+         </editPart>
+         <editPart
+               editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart">
+         </editPart>
+      </configuration>
+   </extension>
 
 </plugin>
