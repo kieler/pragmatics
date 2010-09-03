@@ -14,9 +14,9 @@
  *****************************************************************************/
 package de.cau.cs.kieler.karma;
 
-import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Color;
 
@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Color;
  * @author ckru
  * 
  */
-public class SwitchableFigure extends Figure { // implements IAttributeAwareFigure {
+public class SwitchableFigure extends Shape { // implements IAttributeAwareFigure {
 
     /**
      * The figure that will actually be displayed.
@@ -68,7 +68,7 @@ public class SwitchableFigure extends Figure { // implements IAttributeAwareFigu
     public void setCurrentFigure(final IFigure figure) {
         currentFigure = figure;
         currentFigure.setBounds(super.getBounds());
-        this.repaint();
+        //this.repaint();
     }
 
     /**
@@ -126,4 +126,47 @@ public class SwitchableFigure extends Figure { // implements IAttributeAwareFigu
         super.setBounds(rect);
     }
 
+    @Override
+    protected void fillShape(Graphics graphics) {
+       
+    }
+
+    @Override
+    protected void outlineShape(Graphics graphics) {
+        
+    }
+    
+    @Override
+    public void setLineWidth(int w) {
+        if (currentFigure instanceof Shape) {
+            ((Shape)currentFigure).setLineWidth(w);
+        }
+    }
+    
+    @Override
+    public int getLineWidth() {
+        if (currentFigure instanceof Shape) {
+            return ((Shape)currentFigure).getLineWidth();
+        } else {
+            return -1;
+        }
+    }
+    
+    @Override
+    public void setLineWidthFloat(float value) {
+        if (currentFigure instanceof Shape) {
+            ((Shape)currentFigure).setLineWidthFloat(value);
+        }
+    }
+    
+    @Override
+    public float getLineWidthFloat() {
+        if (currentFigure instanceof Shape) {
+            return ((Shape)currentFigure).getLineWidthFloat();
+        } else {
+            return -1;
+        }
+    }
+    
+    
 }
