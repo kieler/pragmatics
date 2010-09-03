@@ -36,7 +36,6 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         IMinimumCostFlowSolver {
     // TODO Handle multi edges in network
     // TODO different path costs for forward and backward edges in residual network
-    // TODO handle lower bounds on edges
 
     /**
      * {@inheritDoc}
@@ -82,6 +81,13 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             cost += potential[edge.getSource().getID()];
             cost -= potential[edge.getTarget().getID()];
             edge.setProperty(IPathFinder.PATHCOST, cost);
+        }
+
+        // Augment flow on arcs with lower bounds
+        for (IEdge edge : network.getEdges()) {
+            int value = edge.getProperty(LOWERBOUND);
+            int flow = edge.getProperty(FLOW);
+            edge.setProperty(FLOW, flow + value);
         }
 
         // Initialize path finder
