@@ -66,6 +66,7 @@ public class ExampleExportUtil {
 			ExtPointExampleCreator extensionCreator,
 			final ExampleCollector... collectors) throws KielerException {
 
+		// first duplicate check
 		ExampleExportUtil.checkDuplicate((String) properties
 				.get(ExampleElement.TITLE), collectors);
 
@@ -87,9 +88,7 @@ public class ExampleExportUtil {
 		try {
 			extensionCreator.addExtension(destFile, mappedExample,
 					(List<String>) properties
-							.get(ExampleElement.CREATE_CATEGORIES),
-					(List<String>) properties
-							.get(ExampleElement.DELETE_CATEGORIES));
+							.get(ExampleElement.CREATE_CATEGORIES));
 		} catch (KielerModelException e) {
 			if (e.getModelObject() instanceof List<?>) {
 				extensionCreator.deleteExampleResource((List<IPath>) e

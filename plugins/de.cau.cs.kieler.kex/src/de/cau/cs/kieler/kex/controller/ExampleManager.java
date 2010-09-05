@@ -26,10 +26,6 @@ public class ExampleManager {
 
 	private final ExtPointExampleCreator extensionCreator;
 
-	// TODO in bachelor arbeit eine einfuehrung ueber kieler geben;
-	// wie ein zitat/ witz der vorweg kommt.
-	// siehe projekt seite
-
 	// TODO KEXMessages einbauen als statische klasse, die alle konstanten hält.
 
 	// TODO wenn in ui ein editor offen ist, dann macht er den wizard nicht auf.
@@ -111,7 +107,7 @@ public class ExampleManager {
 				.get(ExampleElement.SOURCETYPE))) {
 			// TODO build online interface
 		} else
-			throw new KielerException("No Sourcetype defined.");
+			throw new KielerException(ErrorMessage.NO_SOURCETYPE);
 	}
 
 }

@@ -32,6 +32,7 @@ import org.xml.sax.SAXException;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
+import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.controller.util.IOHandler;
 import de.cau.cs.kieler.kex.model.Example;
@@ -83,14 +84,19 @@ public class ExtPointExampleCreator {
 	 * @param creatableCategories
 	 * @throws KielerException
 	 */
-	public void addExtension(File location, Object parseElement,
-			List<String> creatableCategories, List<String> deletableCategories)
-			throws KielerException {
-		Node pluginNode = getPluginNode(location, creatableCategories,
-				deletableCategories);
+	public void addExtension(File location, Example parseElement,
+			List<String> creatableCategories) throws KielerException {
 
-		editPluginCategories(pluginNode, creatableCategories,
-				deletableCategories);
+		Node pluginNode = getPluginNode(location, creatableCategories);
+
+		editPluginCategories(pluginNode, creatableCategories);
+
+		boolean isDuplicate = false;
+		checkDuplicate(ExtPointConstants.TITLE, parseElement.getTitle(),
+				pluginNode, isDuplicate);
+		if (isDuplicate) {
+			// fehlerfall überlegen
+		}
 
 		Node extensionKEX = filterExtensionKEX(pluginNode);
 
@@ -98,16 +104,34 @@ public class ExtPointExampleCreator {
 		System.out.println("parent von extensionKEX: "
 				+ parentNode.getNodeName());
 
-		if (parseElement instanceof Example) {
-			makeRootSource(location, parseElement);
-			extensionKEX.appendChild(toNode((Example) parseElement));
-		} else if (parseElement instanceof String) {
-			extensionKEX.appendChild(toNode((String) parseElement));
-		} else {
-			throw new KielerException(
-					"PluginXMLHandler: wrong parameter for parseElement.");
-		}
+		makeRootSource(location, parseElement);
+		extensionKEX.appendChild(toNode(parseElement));
 		writePluginXML(pluginXML.getAbsolutePath());
+	}
+
+	/**
+	 * 
+	 * @param searchKey
+	 * @param searchValue
+	 * @param searchNode
+	 * @return true if a duplicate has been found, otherwise false;
+	 */
+	private void checkDuplicate(String searchKey, String searchValue,
+			Node searchNode, boolean result) {
+		if (result) {
+			return;
+		}
+		NodeList childNodes = searchNode.getChildNodes();
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node item = childNodes.item(i);
+			if (searchKey.equals(item.getNodeName())) {
+				if (searchValue.equals(item.getNodeValue()))
+					result = true;
+			}
+			if (item.hasChildNodes()) {
+				checkDuplicate(searchKey, searchValue, item, result);
+			}
+		}
 	}
 
 	private void makeRootSource(File location, Object parseElement)
@@ -123,8 +147,7 @@ public class ExtPointExampleCreator {
 	}
 
 	private Node getPluginNode(File locationFile,
-			List<String> creatableCategories, List<String> deletableCategories)
-			throws KielerException {
+			List<String> creatableCategories) throws KielerException {
 
 		File pluginXML = null;
 		File filteredFile;
@@ -138,17 +161,15 @@ public class ExtPointExampleCreator {
 			setPluginXML(pluginXML);
 			parsedXML = parsePluginXML(pluginXML);
 		} catch (ParserConfigurationException e) {
-			// TODO KexConstants einfuehren, d.h. eigene Klasse und diese
-			// meldungen hier drin sammeln. (siehe visor constants)
-			String msg = "Could not parse plugin.xml: "
+			String msg = ErrorMessage.NOT_PARSE_PLUGIN
 					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		} catch (SAXException e) {
-			String msg = "Could not parse plugin.xml: "
+			String msg = ErrorMessage.NOT_PARSE_PLUGIN
 					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		} catch (IOException e) {
-			String msg = "Could not parse plugin.xml: "
+			String msg = ErrorMessage.NOT_PARSE_PLUGIN
 					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		}
@@ -167,10 +188,6 @@ public class ExtPointExampleCreator {
 
 	private void setPluginXML(File pluginXML) {
 		this.pluginXML = pluginXML;
-	}
-
-	private File getPluginXML() {
-		return this.pluginXML;
 	}
 
 	private Node filterExtensionKEX(Node pluginNode) {
@@ -210,7 +227,9 @@ public class ExtPointExampleCreator {
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		XMLStreamWriter writer;
 		try {
-			writer = factory.createXMLStreamWriter(new FileOutputStream(path));
+			writer = factory.createXMLStreamWriter(new FileOutputStream(path),
+					"UTF-8");
+			writer.writeCharacters("<?eclipse version=\"3.4\"?>");
 			writer.writeStartDocument();
 			writer.writeStartElement(ExtPointConstants.PLUGIN);
 			writer.writeStartElement(ExtPointConstants.EXTENSION);
@@ -220,6 +239,7 @@ public class ExtPointExampleCreator {
 			writer.writeEndElement();
 			writer.writeEndDocument();
 			writer.close();
+			// java dom create example, transformer benutzen
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -228,7 +248,6 @@ public class ExtPointExampleCreator {
 			e.printStackTrace();
 		}
 		return new File(path);
-
 	}
 
 	/**
@@ -265,7 +284,7 @@ public class ExtPointExampleCreator {
 
 			IOHandler.writeFile(new File(sourcePath), destination.toFile());
 		} catch (IOException e) {
-			// TODO ErrorHandling ï¿½berlegen.
+			// TODO ErrorHandling ueberlegen.
 		}
 	}
 
@@ -275,40 +294,26 @@ public class ExtPointExampleCreator {
 	}
 
 	private void editPluginCategories(Node pluginNode,
-			Object creatableCategories, Object deletableCategories) {
+			List<String> creatableCategories) {
+		boolean isDuplicate = false;
+		for (String category : creatableCategories) {
+			checkDuplicate(ExtPointConstants.ID, category, pluginNode,
+					isDuplicate);
+		}
+
+		if (isDuplicate) {
+			// TODO fehlerfall überlegen
+		}
+
 		if (creatableCategories != null) {
 			@SuppressWarnings("unchecked")
-			List<String> creates = (List<String>) creatableCategories;
+			List<String> creates = creatableCategories;
 			for (String creatable : creates) {
 				Element createdCategory = parsedXML
 						.createElement(ExtPointConstants.CATEGORY);
 				createdCategory.setAttribute(ExtPointConstants.ID, creatable);
 				pluginNode.appendChild(createdCategory);
 
-			}
-		}
-
-		// TODO geht so nicht, da wir nur die category kennen NICHT aber das
-		// project, muss erst gesucht werden, verbinden mit der suche von todo
-		// eine zeile tiefer
-		// TODO prï¿½fen, ob es noch examples damit gibt, bevor geloescht werden
-		// kann.
-		if (deletableCategories != null) {
-			@SuppressWarnings("unchecked")
-			List<String> deletes = (List<String>) deletableCategories;
-			NodeList childNodes = pluginNode.getChildNodes();
-			for (String category : deletes) {
-				for (int i = 0; i < childNodes.getLength(); i++) {
-					Node item = childNodes.item(0);
-					if (item.getNodeName().equals(ExtPointConstants.CATEGORY)) {
-						NamedNodeMap attributes = item.getAttributes();
-						Node namedItem = attributes
-								.getNamedItem(ExtPointConstants.ID);
-						if (category.equals(namedItem.getNodeValue())) {
-							pluginNode.removeChild(item);
-						}
-					}
-				}
 			}
 		}
 
@@ -324,13 +329,13 @@ public class ExtPointExampleCreator {
 			StreamResult result = new StreamResult(os);
 			transformer.transform(source, result);
 		} catch (TransformerConfigurationException e) {
-			throwPluginError(e);
+			throwWritePluginError(e);
 		} catch (TransformerFactoryConfigurationError e) {
-			throwPluginError(e);
+			throwWritePluginError(e);
 		} catch (FileNotFoundException e) {
-			throwPluginError(e);
+			throwWritePluginError(e);
 		} catch (TransformerException e) {
-			throwPluginError(e);
+			throwWritePluginError(e);
 		}
 
 	}
@@ -343,10 +348,10 @@ public class ExtPointExampleCreator {
 		}
 	}
 
-	private void throwPluginError(Throwable e) throws KielerException {
-		throw new KielerException(
-				"Could not write to plugin.xml of given project.\n"
-						+ e.getLocalizedMessage());
+	private void throwWritePluginError(Throwable e) throws KielerException {
+		throw new KielerException(new StringBuffer().append(
+				ErrorMessage.NOT_WRITE_PLUGIN).append(e.getLocalizedMessage())
+				.toString());
 	}
 
 	private Node toNode(String categoryId) {

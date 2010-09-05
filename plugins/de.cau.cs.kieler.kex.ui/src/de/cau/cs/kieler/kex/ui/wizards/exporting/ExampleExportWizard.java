@@ -48,7 +48,6 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 	public boolean performFinish() {
 		try {
 			Map<ExampleElement, Object> result = new HashMap<ExampleElement, Object>();
-
 			addAttributes(result);
 
 			SourceType exportType = exportPage.getExportType();
@@ -78,13 +77,6 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			if (creatableCategories.size() > 0) {
 				result.put(ExampleElement.CREATE_CATEGORIES,
 						creatableCategories);
-			}
-
-			List<String> deletableCategories = exportPage
-					.getDeletableCategories();
-			if (deletableCategories.size() > 0) {
-				result.put(ExampleElement.DELETE_CATEGORIES,
-						deletableCategories);
 			}
 
 			ExampleManager.get().export(result);

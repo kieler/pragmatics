@@ -1,9 +1,9 @@
 package de.cau.cs.kieler.kex.ui.wizards.exporting;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -36,12 +37,13 @@ public class ExampleExportPage extends WizardResourceImportPage {
 	private Button createExampleFolder;
 
 	private final int THREE_COLUMNS = 3;
-	private List<URL> resources;
 
 	private Tree categoryTree;
 	private final List<String> checkedCategories;
 	private final List<String> creatableCategories;
-	private final List<String> deletableCategories;
+
+	private final String WORKSPACE_DIR = ResourcesPlugin.getWorkspace()
+			.getRoot().getLocation().toOSString();
 
 	protected ExampleExportPage(String name, IStructuredSelection selection) {
 		super(name, selection);
@@ -49,7 +51,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		setDescription("Set destination for exported Example and determine Example Resources.");
 		checkedCategories = new ArrayList<String>();
 		creatableCategories = new ArrayList<String>();
-		deletableCategories = new ArrayList<String>();
 	}
 
 	@Override
@@ -76,7 +77,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		this.destPath = new Text(topGroup, SWT.BORDER);
 		this.destPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Button addDestPath = new Button(topGroup, SWT.NONE);
-		addDestPath.setText("Add...");
+		addDestPath.setText("Browse...");
 
 		addDestPath.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -85,10 +86,10 @@ public class ExampleExportPage extends WizardResourceImportPage {
 						.getShell());
 
 				dirDiag.setText("Choose destination directory");
-				dirDiag.setMessage("Select a directory in a java plugin project.");
+				dirDiag
+						.setMessage("Select a directory in a java plugin project.");
+				dirDiag.setFilterPath(WORKSPACE_DIR);
 				String dir = dirDiag.open();
-				// TODO ueberlegen, ob hier direkt eine pruefung eingebaut
-				// werden kann.
 				if (dir != null) {
 					destPath.setText(dir);
 				}
@@ -99,9 +100,9 @@ public class ExampleExportPage extends WizardResourceImportPage {
 	private void createMiddleGroup(final Composite composite) {
 		Group middleGroup = new Group(composite, SWT.NONE);
 		GridLayout middleLayout = new GridLayout();
-		middleGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+		middleGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		middleLayout.numColumns = 1;
-		middleGroup.setText("Add Example Category");
+		middleGroup.setText("Add Example Categories");
 		middleGroup.setToolTipText("Please select one or more cateogies.");
 		middleGroup.setLayout(middleLayout);
 		createCheckedTree(middleGroup);
@@ -155,7 +156,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
 				categoryTree.removeAll();
 				fillTree(categoryTree);
 				creatableCategories.clear();
-				deletableCategories.clear();
 				super.widgetSelected(e);
 			}
 		});
@@ -165,12 +165,34 @@ public class ExampleExportPage extends WizardResourceImportPage {
 	private void createBottomGroup(Composite composite) {
 		Group bottomGroup = new Group(composite, SWT.NONE);
 		GridLayout bottomLayout = new GridLayout();
+		bottomLayout.numColumns = 3;
 		bottomGroup.setText("Set Preview Picture");
 		bottomGroup
 				.setToolTipText("Enter a picture like a screenshot of example diagram.");
 		bottomGroup.setLayout(bottomLayout);
-		bottomGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		super.createControl(bottomGroup);
+		bottomGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		final FileDialog picDialog = new FileDialog(bottomGroup.getShell());
+		// ResourcesPlugin.getWorkspace().getRoot(), "Search a picture!"
+		picDialog.setFilterPath(WORKSPACE_DIR);
+		Label label = new Label(bottomGroup, SWT.NONE);
+		label.setText("Set Picture:");
+		final Text text = new Text(bottomGroup, SWT.BORDER);
+		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button browse = new Button(bottomGroup, SWT.NONE);
+		browse.setText("Browse...");
+		browse.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				String pic = picDialog.open();
+				if (pic != null) {
+					text.setText(pic);
+				}
+			}
+
+		});
+
 	}
 
 	private void createCheckedTree(Composite parent) {
@@ -227,10 +249,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		return this.destPath.getText();
 	}
 
-	public List<URL> getExampleResources() {
-		return this.resources;
-	}
-
 	public SourceType getExportType() {
 		// TODO muss der user entscheiden wohin das gehen soll
 		// für feld wurde SourceType.map gebaut.
@@ -244,10 +262,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
 	public List<String> getCreatableCategories() {
 		return creatableCategories;
-	}
-
-	public List<String> getDeletableCategories() {
-		return deletableCategories;
 	}
 
 	public boolean createExampleFolder() {
