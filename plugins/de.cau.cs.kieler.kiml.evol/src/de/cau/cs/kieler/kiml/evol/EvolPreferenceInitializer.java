@@ -33,5 +33,6 @@ public class EvolPreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(EvolPlugin.PREF_EDITORS, EvolPlugin.DEF_EDITORS);
         store.setDefault(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME, true);
         store.setDefault(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT, false);
+        store.setDefault(EvolPlugin.PREF_IS_PARTHENOGENESIS_ALLOWED, true);
     }
 }

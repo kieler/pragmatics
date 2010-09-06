@@ -58,7 +58,14 @@ public class EvolPlugin extends AbstractUIPlugin {
      */
     public static final String PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT =
             "de.cau.cs.kieler.kiml.evol.useDifferentTypeLayoutHint";
-
+    
+    /**
+     * Preference constant for option "Allow parthenogenesis". A preference that
+     * indicates whether parthenogenesis (reproduction from only one parent) may
+     * take place or not.
+     */
+    public static final String PREF_IS_PARTHENOGENESIS_ALLOWED =
+            "de.cau.cs.kieler.kiml.evol.isParthenogenesisAllowed";
 
     /**
      * Preference value for editor selection: all editors.
@@ -75,6 +82,7 @@ public class EvolPlugin extends AbstractUIPlugin {
      */
     public static final String DEF_EDITORS = CURRENT_EDITOR;
 
+
     // The shared instance
     private static EvolPlugin plugin;
 
@@ -84,10 +92,10 @@ public class EvolPlugin extends AbstractUIPlugin {
     public EvolPlugin() {
         // Intentionally left empty.
     }
-    
+
     /**
      * Show the given error message.
-     * 
+     *
      * @param message
      *            the message
      * @param exception

@@ -16,6 +16,9 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Arrays;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
@@ -28,12 +31,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.Population;
 public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     /**
-     * A preference that indicates whether parthenogenesis (reproduction from
-     * only one parent) may take place or not.
-     */
-    private static final boolean PREF_IS_PARTHENOGENESIS_ALLOWED = false;
-
-    /**
      * Constructor for an evolutionary algorithm with the given initial
      * population. Creates and initializes the algorithm instance.
      *
@@ -44,14 +41,24 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         this.population = new Population(thePopulation);
         this.offspring = null;
         this.selection = null;
+        final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
+        this.isParthenogenesisAllowed =
+                store.getBoolean(EvolPlugin.PREF_IS_PARTHENOGENESIS_ALLOWED);
+
         initialize();
         System.out.println("Optimal surr:" + surv());
     }
-
+    
+    /**
+     * Indicates whether parthenogenesis (reproduction from only one parent) may
+     * take place.
+     */
+    private final boolean isParthenogenesisAllowed;
+    
     /**
      * Returns a shallow copy of the population. (The elements themselves are
      * not copied.)
-     *
+     * 
      * @return a shallow copy of the population
      */
     public Population getPopulation() {
@@ -62,7 +69,6 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     protected void crossOver() {
         System.out.println("*** cross over");
         if (!selection.isEmpty()) {
-            final boolean isParthenogenesisAllowed = PREF_IS_PARTHENOGENESIS_ALLOWED;
             final int proposal = (int) Math.round(selection.size() * CROSS_OVER_RATIO);
             final int min = MIN_CROSS_OVERS;
             final int max = MAX_CROSS_OVERS;
@@ -85,7 +91,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
                     parent2 = selection.pick();
                     // If parthenogenesis is allowed, it is not guaranteed that
                     // both parents are different.
-                } while ((parent1 == parent2) && !PREF_IS_PARTHENOGENESIS_ALLOWED);
+                } while ((parent1 == parent2) && !isParthenogenesisAllowed);
 
                 final Genome newGenome = parent1.newRecombination(parent2);
                 System.out.println(" -- cross over of " + parent1);
