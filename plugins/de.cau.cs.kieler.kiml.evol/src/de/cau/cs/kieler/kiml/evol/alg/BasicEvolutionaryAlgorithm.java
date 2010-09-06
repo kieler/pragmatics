@@ -48,17 +48,17 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         initialize();
         System.out.println("Optimal surr:" + surv());
     }
-    
+
     /**
      * Indicates whether parthenogenesis (reproduction from only one parent) may
      * take place.
      */
     private final boolean isParthenogenesisAllowed;
-    
+
     /**
      * Returns a shallow copy of the population. (The elements themselves are
      * not copied.)
-     * 
+     *
      * @return a shallow copy of the population
      */
     public Population getPopulation() {
@@ -94,6 +94,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
                 } while ((parent1 == parent2) && !isParthenogenesisAllowed);
 
                 final Genome newGenome = parent1.newRecombination(parent2);
+                newGenome.setUserRating(0);
                 System.out.println(" -- cross over of " + parent1);
                 System.out.println("              and " + parent2);
                 offspring.add(new Genome(newGenome, getGeneration()));
@@ -194,11 +195,17 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         System.out.println(" -- keep " + keep + " of " + count);
         for (final Genome ind : individuals) {
             if (survivors.size() < keep) {
-                survivors.add(ind);
-                System.out.println(" -- keep: " + ind.toString());
+                final Genome comp = survivors.pick();
+                if ((comp == null) || (Genome.distance(ind, comp) > 4)) {
+                    survivors.add(ind);
+                    System.out.println(" -- keep: " + ind.toString());
+                }
             } else {
                 break;
             }
+        }
+        if (survivors.size() < keep) {
+            System.out.println(survivors.size());
         }
         population = new Population(survivors);
     }

@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +52,37 @@ public class Genome extends ArrayList<IGene<?>> {
                     return -1;
                 }
             };
+
+    /**
+     * Returns the distance between the given genomes. The genomes must be
+     * compatible, i.e. have the same gene types in the same order.
+     *
+     * @param g0
+     *            a {@link Genome}
+     * @param g1
+     *            another {@link Genome}
+     * @return the distance between the genomes
+     */
+    public static final double distance(final Genome g0, final Genome g1) {
+
+        Assert.isLegal((g0 != null) && (g1 != null));
+        Assert.isLegal(g0.size() == g1.size());
+
+        Iterator iter0;
+        Iterator iter1;
+        double dist = 0.0;
+        for (iter0 = g0.iterator(), iter1 = g1.iterator(); iter0.hasNext() && iter1.hasNext();) {
+            final IGene<?> gene0 = (IGene<?>) iter0.next();
+            final IGene<?> gene1 = (IGene<?>) iter1.next();
+
+            if (!gene0.equals(gene1)) {
+                System.out.println(gene0 + " !equals " + gene1);
+                dist++;
+            }
+        }
+        System.out.println(dist + " differences.");
+        return dist;
+    }
 
     /**
      * Constructs an empty genome.
@@ -257,6 +290,7 @@ public class Genome extends ArrayList<IGene<?>> {
             newGenome.add(newGene);
         }
         newGenome.setUserRating(this.userRating);
+        newGenome.automaticRating = 0;
 
         return newGenome;
     }
@@ -307,7 +341,8 @@ public class Genome extends ArrayList<IGene<?>> {
      * Find a gene with the given ID.
      *
      * @param theId
-     * @return
+     *            an ID
+     * @return a gene with the given ID; or {@code null} if none can be found
      */
     public IGene find(final String theId) {
         for (final IGene gene : this) {
@@ -328,6 +363,29 @@ public class Genome extends ArrayList<IGene<?>> {
             result.add((String) gene.getId());
         }
         return result;
+    }
+
+    /**
+     * Adds a feature to the map of features.
+     *
+     * @param key
+     *            the key; must not be {@code null}
+     * @param value
+     *            the value of the feature
+     * @return the previous value associated with key, or {@code null} if there
+     *         was no mapping for key.
+     */
+    public Object addFeature(final String key, final Object value) {
+        Assert.isLegal(key != null);
+        Assert.isNotNull(this.features);
+
+        if (this.features != null) {
+            this.features = new HashMap<String, Object>(this.features);
+
+            return this.features.put(key, value);
+        }
+
+        return null;
     }
 
 }

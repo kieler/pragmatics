@@ -104,7 +104,6 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
      */
     public IGene<T> recombineWith(final IGene<T>... otherGenes) {
         // TODO: discuss: rather use a static recombine() method?
-        // TODO: re-implement average recombination for float and int genes
         IGene<T> result;
         final int pos = (int) (getRandomGenerator().nextDouble() * (otherGenes.length + 1));
         if (pos < otherGenes.length) {

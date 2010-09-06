@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
@@ -87,6 +88,8 @@ public final class EvolModel {
         }
     }
 
+    private static final int NUM_WEIGHT_GENOMES = 5;
+
     /**
      * Creates a new {@link EvolModel} instance.
      */
@@ -94,18 +97,16 @@ public final class EvolModel {
         this.position = 0;
         this.layoutProviderId = null;
         this.layoutTypeId = null;
-        this.weightWatchers = null;
         this.weightEvolAlg = null;
     }
 
     // private fields
     private BasicEvolutionaryAlgorithm evolAlg;
+    private BasicEvolutionaryAlgorithm weightEvolAlg;
     private int position;
     private String layoutProviderId;
     private String layoutTypeId;
     private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
-    private Population weightWatchers;
-    private BasicEvolutionaryAlgorithm weightEvolAlg;
 
     /**
      * Adds a model listener.
@@ -151,12 +152,20 @@ public final class EvolModel {
             final int rating = ind.getUserRating() + delta;
             ind.setUserRating(rating);
 
-            // Punish predictor
-            final Genome predictor = this.weightWatchers.get(0);
-            final int predictorRating = predictor.getUserRating();
-            predictor.setUserRating(predictorRating - Math.abs(delta));
+            // Punish predictors
+            for (final Genome predictor : this.getWeightWatchers()) {
+                final Map<String, Object> features = predictor.getFeatures();
+                final String key = "proposedRating:" + ind.getId();
+                if ((features != null) && !features.isEmpty() && features.containsKey(key)) {
+                    final Integer prediction = (Integer) features.get(key);
+                    final int diff = rating - prediction;
+                    final int predictorRating = predictor.getUserRating();
+                    predictor.setUserRating(predictorRating - Math.abs(diff));
+                }
+
+            }
+
             this.weightEvolAlg.step();
-            this.weightWatchers = this.weightEvolAlg.getPopulation();
 
             afterChange("changeCurrentRating");
         }
@@ -198,7 +207,7 @@ public final class EvolModel {
             final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
             Assert.isNotNull(unrated);
 
-            final Population ww = this.weightWatchers;
+            final Population ww = this.getWeightWatchers();
             Assert.isNotNull(ww);
             Assert.isTrue(!ww.isEmpty());
 
@@ -287,7 +296,10 @@ public final class EvolModel {
      * @return the population of rating predictors
      */
     public Population getWeightWatchers() {
-        return this.weightWatchers;
+        if (this.weightEvolAlg == null) {
+            return new Population();
+        }
+        return this.weightEvolAlg.getPopulation();
     }
 
     /**
@@ -302,13 +314,13 @@ public final class EvolModel {
             return false;
         }
 
-        if (this.weightWatchers == null) {
-            EvolPlugin.logStatus("Weights genome is not set.");
+        if (this.weightEvolAlg == null) {
+            EvolPlugin.logStatus("Weights algorithm is not set.");
             return false;
         }
 
-        if (this.weightEvolAlg == null) {
-            EvolPlugin.logStatus("Weights algorithm is not set.");
+        if (this.weightEvolAlg.getPopulation() == null) {
+            EvolPlugin.logStatus("Weights genome is not set.");
             return false;
         }
 
@@ -326,13 +338,6 @@ public final class EvolModel {
             EvolPlugin.logStatus("No individual selected.");
             return false;
         }
-
-        // // Must be in UI thread.
-        // final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
-        // if (layoutViewPart == null) {
-        // System.out.println("LayoutView not found.");
-        // return false;
-        // }
 
         if (!isCompatibleLayoutProvider()) {
             // need to reset
@@ -389,12 +394,14 @@ public final class EvolModel {
             // Add meta-evolution genes for the layout metrics.
             EvolPlugin.logStatus("Creating metric weights ...");
             final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
-            final Genome weightGenes = EvolUtil.createWeightGenes(metricIds, null);
-            Assert.isNotNull(weightGenes);
 
             final Population ww = new Population();
-            ww.add(weightGenes);
-            this.weightWatchers = ww;
+            for (int i = 0; i < NUM_WEIGHT_GENOMES; i++) {
+                final Genome weightGenes = EvolUtil.createWeightGenes(metricIds, null);
+                Assert.isNotNull(weightGenes);
+                ww.add(weightGenes);
+            }
+
             this.weightEvolAlg = new BasicEvolutionaryAlgorithm(ww);
             this.weightEvolAlg.step();
 

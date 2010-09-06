@@ -1225,7 +1225,8 @@ public final class EvolUtil {
                 }
 
                 final int rating = weight(measurements, weightsMap);
-                wg.setFeatures(Collections.singletonMap("proposedRating", (Object) rating));
+
+                wg.addFeature("proposedRating:" + ind.getId(), rating);
 
                 editorRating += rating;
             }

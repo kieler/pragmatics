@@ -182,4 +182,28 @@ public final class EnumGene extends AbstractGene<Integer> {
             return null;
         }
     };
+
+    @Override
+    public boolean equals(final Object theObj) {
+        if (!(theObj instanceof EnumGene)) {
+            return false;
+        }
+
+        final EnumGene eg2 = (EnumGene) theObj;
+
+        return (eg2.getEnumClass().equals(this.getEnumClass())
+                && (eg2.getId().equals(this.getId())) && eg2.getValue().equals(
+                this.getValue()));
+    }
+
+    @Override
+    public int hashCode() {
+        // TODO cache hash value
+        final int f1 = 17881;
+        final int f2 = 41;
+        return this.getEnumClass().hashCode() * f1 + this.getId().hashCode() * f2
+                + this.getValue().hashCode();
+
+    }
+
 }

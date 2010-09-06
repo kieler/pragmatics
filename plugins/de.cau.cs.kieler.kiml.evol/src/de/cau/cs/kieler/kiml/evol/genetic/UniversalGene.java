@@ -152,6 +152,42 @@ public class UniversalGene extends AbstractGene<Float> {
         return result;
     }
 
+    @Override
+    public IGene<Float> recombineWith(final IGene<Float>... theOtherGenes) {
+
+        final Class<?> clazz = getTypeInfo().getTypeClass();
+        Float average = null;
+        if ((clazz == Float.class) || (clazz == Integer.class)) {
+            // return average of genes and this gene
+            Float sum = 0.0f;
+            for (final IGene<Float> gene : theOtherGenes) {
+                sum += gene.getValue();
+            }
+            sum += getValue();
+            final int count = theOtherGenes.length + 1;
+            average = sum / count;
+            Assert.isTrue(getTypeInfo().isValueWithinBounds(average));
+        }
+
+        if (average != null) {
+            final Float value;
+            if (clazz == Integer.class) {
+                value =
+                        Integer.valueOf(Math.round(average.floatValue())).floatValue();
+            } else {
+                value = average;
+            }
+
+            final IGene<Float> result =
+                    new UniversalGene(getId(), value, getTypeInfo(),
+                            getMutationInfo());
+
+            return result;
+        }
+
+        return super.recombineWith(theOtherGenes);
+    }
+
     /**
      * Mutates the value. The mutation details are specified in
      * <code>theMutationInfo</code>.
@@ -373,5 +409,37 @@ public class UniversalGene extends AbstractGene<Float> {
     }
 
     private static final double EPSILON = 1.0e-5;
+
+    @Override
+    public int hashCode() {
+        // TODO cache hash value
+        final int f1 = 17881;
+        final int f2 = 41;
+        return this.getTypeInfo().getTypeClass().hashCode() * f1 + this.getId().hashCode() * f2
+                + this.getValue().hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object theObj) {
+        if (!(theObj instanceof UniversalGene)) {
+            return false;
+        }
+
+        final UniversalGene ug2 = (UniversalGene) theObj;
+        
+        if (this.getTypeInfo().getTypeClass() != ug2.getTypeInfo().getTypeClass()) {
+            return false;
+        }
+
+        if (this.getTypeInfo().getTypeClass() == Float.class) {
+            if (!ug2.getId().equals(this.getId())) {
+                return false;
+            }
+            final float diff = Math.abs(ug2.getValue() - this.getValue());
+            return (diff < EPSILON);
+        }
+
+        return (ug2.getId().equals(this.getId())) && ug2.getValue().equals(this.getValue());
+    }
 
 }
