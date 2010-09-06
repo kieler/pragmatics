@@ -81,9 +81,12 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
     private int longestPath;
 
     /**
-     * A map, in which 
+     * A map, in which for every node in the graph its ID will be saved. Since the layerer invoked
+     * right after
      */
     private LinkedHashMap<LNode, Integer> nodeIDs;
+    
+    private static final double GRANULARITY = 3;
 
     // ================================== Constructor =============================================
 
@@ -98,15 +101,18 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
     // ============================== Big-Node-Handling Algorithm ================================
 
     /**
-     * Helper method for the Average Position Big-Node-Handler. It splits all wide nodes in the
-     * graph into smaller, equal sized nodes by insertion of dummy nodes. All incoming edges
-     * incident to the original wide node will remain on the node, but outgoing back edges will be
-     * moved to the rightmost inserted dummy node. A unique and consistent ID will be assigned to
-     * each created dummy node. The wide node ID {@code wideNodeID} of each dummy node will be equal
-     * to the ID of the wide node, they originate from. Note that after a wide node has been split,
-     * its width in layers stored in {@code width} will not be updated.
+     * Main method for the Big-Node-Handler. It splits all wide nodes in the graph into smaller,
+     * equal sized nodes by insertion of dummy nodes. All incoming edges incident to the original
+     * wide node will remain on the node, but outgoing back edges will be moved to the rightmost
+     * inserted dummy node. Note that after a wide node has been split, its width in layers stored
+     * in {@code width} will not be updated, i.e. it keeps its value of 1 plus the number of
+     * inserted dummy nodes to split the specific wide node.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.BigNodeHandler#wideNodes wideNodes
+     * @param theNodes
+     *            a {@code Collection} containing all nodes of the graph
+     * @param theLayeredGraph
+     *            the (empty) layered graph to put all nodes into
+     * 
      * @see de.cau.cs.kieler.klay.layered.impl.BigNodeHandler#width width
      * 
      * 
@@ -153,11 +159,13 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
         Arrays.fill(width, 1);
         // determine width in layers of each node
         double threshold;
+        double graMinWidth = minWidth / GRANULARITY;
+        double graMinSpacing = minSpacing / GRANULARITY;
         for (LNode node : nodes) {
-            threshold = (2 * minWidth) + minSpacing;
+            threshold = ((2 * graMinWidth) + graMinSpacing);
             while (threshold <= node.getSize().x) {
                 width[node.id]++;
-                threshold += minWidth + minSpacing;
+                threshold += (graMinWidth + graMinSpacing);
             }
 
             // all nodes in the segment get the same width (temporarily)
@@ -206,13 +214,17 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
     }
 
     /**
-     * 
+     * Main method of the Big-Node-Splitter. It corrects the layering after layerer execution
+     * concerning a correct layer assignment of wide nodes. Two wide nodes (i.e. nodes with a
+     * {@code width} > 1) violate a layering, if they are not disjunct regarding the layers, they
+     * are assigned to, and the narrower of the two nodes is not assigned to all layers, the wider
+     * nodes is also placed in. 
      */
     public void correctLayering() {
 
         if (nodeIDs == null) {
             throw new RuntimeException("Illegal invokation of correctLayering(). "
-                    + "splitWideNodes() has not been invoked before.");
+                    + "splitWideNodes() has not been invoked yet.");
         }
         // restore previous node indices
         Integer id = null;
@@ -357,10 +369,11 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
     }
 
     /**
-     * Helper method for the Big-Node-Handler. It puts all node of the graph into their assigned
-     * layers as stated in {@code layer}. At this stage, {@code layeredGraph} does not contain any
-     * layers, not even empty ones. So all necessary layers will be added to it by this method. No
-     * layer stays empty after layer assignment.
+     * Helper method for the Big-Node-Handler. It puts all nodes of the graph into their assigned
+     * layers in the layered graph ({@code layeredGraph}) as stated in {@code layer}. Since at this
+     * stage, the graph does not contain any layers, not even empty ones, all necessary layers will
+     * be added to it by this method. After execution, each layer is assigned at least one
+     * node.
      * 
      * @param node
      *            the node to put into the layered graph
@@ -376,8 +389,8 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
         for (LNode node : nodes) {
             node.setLayer(layers.get(layer[node.id]));
         }
-        
-        System.out.println("The number of nodes in each layer: ");
+
+        System.out.println("The number of nodes in each layer from left to right: ");
         for (Layer l : layers) {
             System.out.print(l.getNodes().size() + ",");
         }

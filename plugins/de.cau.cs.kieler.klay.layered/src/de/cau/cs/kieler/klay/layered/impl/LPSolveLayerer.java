@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -121,7 +123,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      */
     private class LpSolveLayererException extends RuntimeException {
 
-        /** The generated serial version UID. */
+        /** The generated serial version UID for serialization. */
         private static final long serialVersionUID = 5549313074239264699L;
 
         /**
