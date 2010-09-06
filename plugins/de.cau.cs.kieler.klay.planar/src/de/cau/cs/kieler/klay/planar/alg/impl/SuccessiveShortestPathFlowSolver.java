@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.planar.alg.impl;
 
-import java.util.Arrays;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -21,7 +20,6 @@ import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.IPathFinder;
 import de.cau.cs.kieler.klay.planar.alg.IFlowNetworkSolver.IMinimumCostFlowSolver;
-import de.cau.cs.kieler.klay.planar.alg.IPathFinder.IShortestPathFinder;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
@@ -58,31 +56,6 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             }
         }
 
-        // Initialize arrays for potentials and residual capacity
-        final int[] potential = new int[network.getNodeCount()];
-        Arrays.fill(potential, -1);
-        potential[source.getID()] = 0;
-
-        // Initialize node potentials using Bellman-Ford-Algorithm
-        for (int i = 1; i < network.getNodeCount(); i++) {
-            for (IEdge edge : source.getParent().getEdges()) {
-                int iNeighbor = edge.getTarget().getID();
-                Integer cost = edge.getProperty(IPathFinder.PATHCOST);
-                cost += potential[edge.getSource().getID()];
-                if (cost < potential[iNeighbor]) {
-                    potential[iNeighbor] = cost;
-                }
-            }
-        }
-
-        // Initialize path costs based on potentials
-        for (IEdge edge : network.getEdges()) {
-            int cost = edge.getProperty(IPathFinder.PATHCOST);
-            cost += potential[edge.getSource().getID()];
-            cost -= potential[edge.getTarget().getID()];
-            edge.setProperty(IPathFinder.PATHCOST, cost);
-        }
-
         // Augment flow on arcs with lower bounds
         for (IEdge edge : network.getEdges()) {
             int value = edge.getProperty(LOWERBOUND);
@@ -90,9 +63,23 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             edge.setProperty(FLOW, flow + value);
         }
 
+        // Initialize node potentials using Bellman-Ford-Algorithm
+        IPathFinder pathFinder = new BellmanFordPathFinder();
+        pathFinder.findPath(source, sink);
+        int[] potentials = new int[network.getNodeCount()];
+        for (INode node : network.getNodes()) {
+            potentials[node.getID()] = node.getProperty(IPathFinder.DISTANCE);
+        }
+        for (IEdge edge : network.getEdges()) {
+            int cost = edge.getProperty(IPathFinder.PATHCOST);
+            cost += potentials[edge.getSource().getID()];
+            cost -= potentials[edge.getTarget().getID()];
+            edge.setProperty(IPathFinder.PATHCOST, cost);
+        }
+
         // Initialize path finder
         // Condition describes residual network
-        IShortestPathFinder pathFinder = new DijkstraPathFinder();
+        pathFinder = new DijkstraPathFinder();
         ICondition<Pair<INode, IEdge>> cond = new ICondition<Pair<INode, IEdge>>() {
             public boolean evaluate(final Pair<INode, IEdge> object) {
                 INode node = object.getFirst();
@@ -114,8 +101,8 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             // Update path costs based on potentials
             for (IEdge edge : network.getEdges()) {
                 int cost = edge.getProperty(IPathFinder.PATHCOST);
-                cost += potential[edge.getSource().getID()];
-                cost -= potential[edge.getTarget().getID()];
+                cost += potentials[edge.getSource().getID()];
+                cost -= potentials[edge.getTarget().getID()];
                 edge.setProperty(IPathFinder.PATHCOST, cost);
             }
 

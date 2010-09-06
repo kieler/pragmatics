@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.planar.alg.impl;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -41,7 +40,9 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
     public List<IEdge> findPath(final INode source, final INode target) {
         return this.findPath(source, target, new ICondition<Pair<INode, IEdge>>() {
             public boolean evaluate(final Pair<INode, IEdge> object) {
-                return true;
+                INode node = object.getFirst();
+                IEdge edge = object.getSecond();
+                return !(edge.isDirected() && (node == edge.getTarget()));
             }
         });
     }
@@ -52,13 +53,11 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
     public List<IEdge> findPath(final INode source, final INode target,
             final ICondition<Pair<INode, IEdge>> condition) {
 
-        // Initialize arrays
+        // Initialize array
         int size = source.getParent().getNodeCount();
-        final int[] distance = new int[size];
         IEdge[] edges = new IEdge[size];
 
-        Arrays.fill(distance, Integer.MAX_VALUE);
-        distance[source.getID()] = 0;
+        source.setProperty(DISTANCE, 0);
 
         // Initialize set of nodes
         Set<INode> nodes = new HashSet<INode>(size * 2);
@@ -69,17 +68,16 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
         // Comparator to find node of smallest distance value
         Comparator<INode> comp = new Comparator<INode>() {
             public int compare(final INode arg0, final INode arg1) {
-                return distance[arg0.getID()] - distance[arg1.getID()];
+                return arg0.getProperty(DISTANCE) - arg1.getProperty(DISTANCE);
             }
         };
 
         // Main loop
         while (!nodes.isEmpty()) {
             INode current = Collections.min(nodes, comp);
-            int iCurrent = current.getID();
 
             // Remaining nodes are unreachable
-            if (distance[iCurrent] == Integer.MAX_VALUE) {
+            if (current.getProperty(DISTANCE) == Integer.MAX_VALUE) {
                 break;
             }
 
@@ -101,7 +99,6 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
             // Traverse all neighbors
             for (IEdge edge : current.adjacentEdges()) {
                 INode neighbor = current.getAdjacentNode(edge);
-                int iNeighbor = neighbor.getID();
 
                 // Skip already visited nodes
                 if (!nodes.contains(neighbor)) {
@@ -114,12 +111,12 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
                 }
 
                 // Get edge cost property
-                Integer cost = edge.getProperty(PATHCOST);
-                cost += distance[iCurrent];
+                int cost = edge.getProperty(PATHCOST);
+                cost += edge.getProperty(DISTANCE);
 
-                if (cost < distance[iNeighbor]) {
-                    distance[iNeighbor] = cost;
-                    edges[iNeighbor] = edge;
+                if (cost < neighbor.getProperty(DISTANCE)) {
+                    neighbor.setProperty(DISTANCE, cost);
+                    edges[neighbor.getID()] = edge;
                 }
             }
         }

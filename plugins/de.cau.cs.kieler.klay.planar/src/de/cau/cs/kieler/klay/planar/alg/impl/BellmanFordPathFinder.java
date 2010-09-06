@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.planar.alg.impl;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,7 +38,9 @@ public class BellmanFordPathFinder extends AbstractAlgorithm implements IShortes
     public List<IEdge> findPath(final INode source, final INode target) {
         return this.findPath(source, target, new ICondition<Pair<INode, IEdge>>() {
             public boolean evaluate(final Pair<INode, IEdge> object) {
-                return true;
+                INode node = object.getFirst();
+                IEdge edge = object.getSecond();
+                return !(edge.isDirected() && (node == edge.getTarget()));
             }
         });
     }
@@ -50,33 +51,30 @@ public class BellmanFordPathFinder extends AbstractAlgorithm implements IShortes
     public List<IEdge> findPath(final INode source, final INode target,
             final ICondition<Pair<INode, IEdge>> condition) {
 
-        // Initialize arrays
+        // Initialize array
         int size = source.getParent().getNodeCount();
-        final int[] distance = new int[size];
         IEdge[] edges = new IEdge[size];
 
-        Arrays.fill(distance, Integer.MAX_VALUE);
-        distance[source.getID()] = 0;
+        source.setProperty(DISTANCE, 0);
 
         // Relax edges
         for (int i = 1; i < size; i++) {
             for (IEdge edge : source.getParent().getEdges()) {
-                int iNeighbor = edge.getTarget().getID();
-                Integer cost = edge.getProperty(PATHCOST);
-                cost += distance[edge.getSource().getID()];
-                if (cost < distance[iNeighbor]) {
-                    distance[iNeighbor] = cost;
-                    edges[iNeighbor] = edge;
+                INode neighbor = edge.getTarget();
+                int cost = edge.getProperty(PATHCOST);
+                cost += edge.getProperty(DISTANCE);
+                if (cost < neighbor.getProperty(DISTANCE)) {
+                    neighbor.setProperty(DISTANCE, cost);
+                    edges[neighbor.getID()] = edge;
                 }
             }
         }
 
         // Detect negative cycles
         for (IEdge edge : source.getParent().getEdges()) {
-            int iNeighbor = edge.getTarget().getID();
-            Integer cost = edge.getProperty(PATHCOST);
-            cost += distance[edge.getSource().getID()];
-            if (cost < distance[iNeighbor]) {
+            int cost = edge.getProperty(PATHCOST);
+            cost += edge.getSource().getProperty(DISTANCE);
+            if (cost < edge.getTarget().getProperty(DISTANCE)) {
                 throw new IllegalArgumentException("The graph contains a negative cycle.");
             }
         }

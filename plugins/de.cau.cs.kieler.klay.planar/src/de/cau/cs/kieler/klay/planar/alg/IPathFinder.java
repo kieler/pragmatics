@@ -38,10 +38,17 @@ public interface IPathFinder extends IAlgorithm {
             "de.cau.cs.kieler.klay.planar.properties.pathcost", 1);
 
     /**
+     * A property defining the distance of a node to the source of a path. This property should be
+     * set by shortest path finding algorithms for nodes.
+     */
+    Property<Integer> DISTANCE = new Property<Integer>(
+            "de.cau.cs.kieler.klay.planar.properties.pathdistance", Integer.MAX_VALUE);
+
+    /**
      * Find a path in a graph between two nodes. The algorithm looks for a valid path in the parent
      * graph of the source node. If the target node is not reachable from the source node, the
-     * algorithm returns {@code null}. This default version ignores edge directions and traverses
-     * edges always in both ways.
+     * algorithm returns {@code null}. Directed edges are only traversed in the right direction,
+     * undirected edges are traversed in both directions.
      * 
      * @param source
      *            the source node of the path
@@ -55,7 +62,7 @@ public interface IPathFinder extends IAlgorithm {
      * Find a path in a graph between two node. The algorithm looks for a valid path in the parent
      * graph of the source node. If the target node is not reachable from the source node, the
      * algorithm returns {@code null}. An additional condition defines in which cases an edge can be
-     * entered from a specific node. This condition can be used to explicitly handle directed edges.
+     * entered from a specific node.
      * 
      * @param source
      *            the source node of the path

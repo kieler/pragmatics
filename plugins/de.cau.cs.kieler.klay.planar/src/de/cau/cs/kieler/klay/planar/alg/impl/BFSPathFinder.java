@@ -37,7 +37,9 @@ public class BFSPathFinder extends AbstractAlgorithm implements IPathFinder {
     public List<IEdge> findPath(final INode source, final INode target) {
         return this.findPath(source, target, new ICondition<Pair<INode, IEdge>>() {
             public boolean evaluate(final Pair<INode, IEdge> object) {
-                return true;
+                INode node = object.getFirst();
+                IEdge edge = object.getSecond();
+                return !(edge.isDirected() && (node == edge.getTarget()));
             }
         });
     }
