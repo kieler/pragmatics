@@ -88,22 +88,24 @@ public class EvolView extends ViewPart {
         public void afterChange(final EvolModel source, final String cause) {
             EvolPlugin.logStatus("afterChange: " + cause);
             if ("setPosition".equalsIgnoreCase(cause)) {
-                EvolPlugin.logStatus("setPosition occurred");
                 applySelectedIndividual(source);
                 return;
             }
-            // TODO: what if currentEditor is null?
+
             if (EvolUtil.getCurrentEditor() == null) {
                 System.err.println("We are not in the UI thread: " + cause);
-
+                // TODO: treat this
             }
 
             // Refresh the table viewer.
             final SelectorTableViewer tv = EvolView.this.getTableViewer();
+            if (tv == null) {
+                System.err.println("tableViewer is null");
+                return;
+            }
 
             final boolean isOnlyCurrent = ("changeCurrentRating".equalsIgnoreCase(cause));
 
-            if (tv != null) {
                 if (!isOnlyCurrent) {
                     // Set the new population as input.
                     EvolView.this.setInput(source.getPopulation());
@@ -120,7 +122,7 @@ public class EvolView extends ViewPart {
                         EvolView.this.refresh(isOnlyCurrent);
                     }
                 }, true);
-            }
+
         }
     };
 
@@ -360,6 +362,8 @@ public class EvolView extends ViewPart {
         column2.setWidth(DEFAULT_COLUMN_WIDTH);
         final TableColumn column3 = new TableColumn(table, SWT.NONE);
         column3.setWidth(DEFAULT_COLUMN_WIDTH);
+
+        column.setText("Title1");
 
         table.setHeaderVisible(true);
         table.setLinesVisible(true);

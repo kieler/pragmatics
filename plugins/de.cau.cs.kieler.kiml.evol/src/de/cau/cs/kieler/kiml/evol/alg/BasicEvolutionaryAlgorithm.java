@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Arrays;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
@@ -182,6 +183,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     protected void survive() {
         System.out.println("*** survive");
         final int count = population.size();
+        Assert.isTrue(count > 0);
         final Genome[] individuals = new Genome[count];
         population.toArray(individuals);
         Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
@@ -191,12 +193,17 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         final int max = MAX_SURVIVORS;
         final int proposal = (int) Math.round((count * SURVIVAL_RATIO));
         final int keep = ((proposal < min) ? min : (proposal > max ? max : proposal));
+        final double minDist = individuals[0].size() * .2;
         final Population survivors = new Population();
         System.out.println(" -- keep " + keep + " of " + count);
         for (final Genome ind : individuals) {
             if (survivors.size() < keep) {
                 final Genome comp = survivors.pick();
-                if ((comp == null) || (Genome.distance(ind, comp) > 4)) {
+                final Genome comp2 = survivors.pick();
+                if ((comp == null)
+                        || ((Genome.distance(ind, comp) > minDist) && ((comp == comp2) || (Genome
+                                .distance(ind,
+                                comp2) > minDist)))) {
                     survivors.add(ind);
                     System.out.println(" -- keep: " + ind.toString());
                 }

@@ -215,7 +215,7 @@ public final class EvolModel {
             MonitoredOperation.runInUI(runnable, true);
 
             // reward predictors
-            final int reward = 10;
+            final int reward = 25;
             for (final Genome wg : ww) {
                 Assert.isNotNull(wg);
                 wg.setUserRating(wg.getUserRating() + reward);

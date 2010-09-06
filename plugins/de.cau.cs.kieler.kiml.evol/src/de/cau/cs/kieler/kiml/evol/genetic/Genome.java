@@ -77,7 +77,11 @@ public class Genome extends ArrayList<IGene<?>> {
 
             if (!gene0.equals(gene1)) {
                 System.out.println(gene0 + " !equals " + gene1);
-                dist++;
+                if (gene0 instanceof RadioGene) {
+                    dist += 2;
+                } else {
+                    dist++;
+                }
             }
         }
         System.out.println(dist + " differences.");
