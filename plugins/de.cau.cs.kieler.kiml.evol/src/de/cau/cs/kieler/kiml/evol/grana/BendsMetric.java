@@ -60,12 +60,10 @@ public class BendsMetric implements IAnalysis {
             // bendsCount);
 
             // FIXME: For some reason, the bends count in the layout graph may
-            // be
-            // reduced after the layout is applied. This means the result that
-            // is
-            // produced by auto-rating differs from the information shown in the
-            // Grana dialog. However, this seems to happen only for graphs that
-            // contain self-loops.
+            // be reduced after the layout is applied. This means the result
+            // that is produced by auto-rating differs from the information
+            // shown in the Grana dialog. However, this seems to happen only for
+            // graphs that contain self-loops.
 
             // normalize
             if (edgesCount + bendsCount > 0) {

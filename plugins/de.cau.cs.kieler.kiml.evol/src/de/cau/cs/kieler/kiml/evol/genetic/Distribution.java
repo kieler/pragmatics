@@ -22,6 +22,7 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 public enum Distribution {
     /** Normal distribution (Gaussian). **/
     GAUSSIAN,
-    /** uniform distribution (does not regard previous values). **/
+
+    /** Uniform distribution (does not regard previous values). **/
     UNIFORM
 }

@@ -35,6 +35,6 @@ public interface IEvolModelListener {
      *            a string explaining the cause
      */
     void afterChange(EvolModel source, String cause);
-    // TODO: discuss: should cause be an enum element instead of a string?
+    // TODO: discuss: should "cause" be an enum constant instead of a string?
 
 }
