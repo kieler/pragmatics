@@ -149,7 +149,7 @@ public abstract class DiagramLayoutManager {
      * @param nodeCount
      *            the number of nodes in the layouted diagram
      */
-    private void applyAnimatedLayout(final boolean animate, final boolean cacheLayout,
+    public void applyAnimatedLayout(final boolean animate, final boolean cacheLayout,
             final int nodeCount) {
         // transfer layout to the diagram
         transferLayout(cacheLayout);
