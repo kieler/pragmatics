@@ -440,6 +440,7 @@ public class Viewmanagement {
      */
     private void removeCombination(final Class<?> trigger, final ICombination combination) {
         synchronized (combinationsByTrigger) {
+            List<ITrigger> toRemove = new ArrayList<ITrigger>();
             for (ITrigger t : combinationsByTrigger.keySet()) {
                 if (trigger.isInstance(t)) {
                     List<ICombination> list = combinationsByTrigger.get(t);
@@ -447,11 +448,14 @@ public class Viewmanagement {
                         list.remove(combination);
                         // check if trigger is still required
                         if (list.size() == 0) {
-                            combinationsByTrigger.remove(t);
+                            toRemove.add(t); // TODO refactor with better iterator allowing removal
                             t.setActive(false);
                         }
                     }
                 }
+            }
+            for (ITrigger t : toRemove) {
+                combinationsByTrigger.remove(t);
             }
         }
     }

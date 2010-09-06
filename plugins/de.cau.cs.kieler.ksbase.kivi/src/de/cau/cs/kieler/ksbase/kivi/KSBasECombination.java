@@ -19,6 +19,7 @@ import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 
 import de.cau.cs.kieler.kivi.core.Viewmanagement;
 import de.cau.cs.kieler.kivi.core.impl.AbstractCombination;
+import de.cau.cs.kieler.kivi.examples.LayoutEffect;
 
 /**
  * A Combination handling KSBasE-related effects after transformations.
