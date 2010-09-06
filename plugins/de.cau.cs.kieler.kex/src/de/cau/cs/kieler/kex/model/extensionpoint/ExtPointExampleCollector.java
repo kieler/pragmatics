@@ -44,7 +44,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		}
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
-						ExtPointConstants.EXT_POINT);
+						ExtPointConstants.KEX_EXT_POINT);
 		for (IConfigurationElement element : configElements) {
 			try {
 				String elementName = element.getName();
@@ -108,7 +108,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	private void loadCategories() {
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
-						ExtPointConstants.EXT_POINT);
+						ExtPointConstants.KEX_EXT_POINT);
 		for (IConfigurationElement element : configElements) {
 			if (ExtPointConstants.CATEGORY.equals(element.getName())) {
 				collectCategory(element);

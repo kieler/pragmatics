@@ -26,7 +26,7 @@ public class ExampleManager {
 
 	private final ExtPointExampleCreator extensionCreator;
 
-	// TODO KEXMessages einbauen als statische klasse, die alle konstanten hält.
+	// TODO KEXMessages einbauen als statische klasse, die alle konstanten hï¿½lt.
 
 	// TODO wenn in ui ein editor offen ist, dann macht er den wizard nicht auf.
 
@@ -99,7 +99,6 @@ public class ExampleManager {
 	 */
 	public void export(Map<ExampleElement, Object> properties)
 			throws KielerException {
-		// TODO validate von ui zu service verlegen.
 		if (SourceType.KIELER.equals(properties.get(ExampleElement.SOURCETYPE)))
 			ExampleExportUtil.export(properties, this.extensionCreator,
 					this.extensionCollector, this.databaseCollector);

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -50,7 +49,7 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			Map<ExampleElement, Object> result = new HashMap<ExampleElement, Object>();
 			addAttributes(result);
 
-			SourceType exportType = exportPage.getExportType();
+			SourceType exportType = exportPage.getSourceType();
 			if (exportType == null)
 				throw new KielerException("Export type was not set.");
 			result.put(ExampleElement.SOURCETYPE, exportType);
@@ -62,9 +61,6 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			List<String> categories = exportPage.getCheckedCategories();
 			validateElement(categories, 1, "Categories");
 			result.put(ExampleElement.CATEGORIES, categories);
-
-			result.put(ExampleElement.CREATE_EXAMPLE_FOLDER, exportPage
-					.createExampleFolder());
 
 			resourcePage.buildResourceStructure();
 			List<ExportResource> exportedResources = resourcePage
@@ -91,11 +87,12 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 
 	private void addAttributes(Map<ExampleElement, Object> map)
 			throws KielerException {
-		String exampleTitle = examplePage.getTitle();
+		String exampleTitle = examplePage.getExampleTitle();
 		validateField(exampleTitle, 4, "Example Title");
 		map.put(ExampleElement.TITLE, exampleTitle);
 
 		String author = examplePage.getAuthor();
+		// min. uni abbreviations like pkl
 		validateField(author, 3, "Author");
 		map.put(ExampleElement.AUTHOR, author);
 
@@ -108,10 +105,9 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 		validateField(exampleContact, 5, "Example Contact");
 		map.put(ExampleElement.CONTACT, exampleContact);
 
-		IPath overviewPicPath = exportPage.getOverviewPicPath();
+		String overviewPicPath = exportPage.getOverviewPic().getText();
 		if (overviewPicPath != null) {
-			map.put(ExampleElement.OVERVIEW_PIC, overviewPicPath
-					.toPortableString());
+			map.put(ExampleElement.OVERVIEW_PIC, overviewPicPath);
 		}
 
 	}
@@ -120,8 +116,9 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			throws KielerException {
 		if (list == null || list.size() < minLength) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("No ").append(listName).append(
-					" has been selected.\n").append("Please choose at least ")
+			errorMsg.append("No ").append(listName)
+					.append(" has been selected.\n")
+					.append("Please choose at least ")
 					.append(String.valueOf(minLength));
 			throw new KielerException(errorMsg.toString());
 		}
@@ -131,9 +128,9 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			String checkableName) throws KielerException {
 		if (checkable == null || checkable.length() < minLength) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("The field ").append(checkableName).append(
-					" has to be set with at least ").append(
-					String.valueOf(minLength)).append(" characters.");
+			errorMsg.append("The field ").append(checkableName)
+					.append(" has to be set with at least ")
+					.append(String.valueOf(minLength)).append(" characters.");
 			throw new KielerException(errorMsg.toString());
 		}
 	}

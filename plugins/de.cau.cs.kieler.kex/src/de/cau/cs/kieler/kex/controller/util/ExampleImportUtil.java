@@ -36,14 +36,14 @@ public class ExampleImportUtil {
 		List<String> directOpens = new ArrayList<String>();
 		if (isQuickStart) {
 
-			// wurde example gewählt? ansonsten standard example nutzen.
+			// wurde example gewï¿½hlt? ansonsten standard example nutzen.
 
 		}
 		for (Example example : selectedExamples) {
 
 			// check contain project,
 			// falls ja projekt erzeuge und alle example dateien da rein
-			// schmeißen.
+			// schmeiï¿½en.
 
 			List<ExampleResource> resources = example.getResources();
 			String destFolder = workspaceLocation
@@ -72,7 +72,7 @@ public class ExampleImportUtil {
 				String destPath = localPath.substring(exampleBeginIndex);
 				// searching for subfiles and folders.
 				switch (resource.getResourceType()) {
-				case PROJECT:
+				case Project:
 					// creates a new project
 					IProgressMonitor progressMonitor = new NullProgressMonitor();
 					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
@@ -81,10 +81,10 @@ public class ExampleImportUtil {
 					project.create(progressMonitor);
 					project.open(progressMonitor);
 					break;
-				case FOLDER:
+				case Folder:
 					IOHandler.createFolder(destFolder + "/" + destPath);
 					break;
-				case FILE:
+				case File:
 					URL entry = bundle.getEntry(localPath);
 					IOHandler.writeFile(entry, destFolder + destPath, true);
 					if (resource.isDirectOpen())

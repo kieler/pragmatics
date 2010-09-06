@@ -3,7 +3,7 @@ package de.cau.cs.kieler.kex.model.extensionpoint;
 public class ExtPointConstants {
 
 	// global constants
-	public static final String EXT_POINT = "de.cau.cs.kieler.kex";
+	public static final String KEX_EXT_POINT = "de.cau.cs.kieler.kex";
 	public static final String PLUGIN = "plugin";
 	public static final String EXTENSION = "extension";
 	public static final String POINT = "point";

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -33,6 +32,8 @@ import de.cau.cs.kieler.kex.model.SourceType;
 public class ExampleExportPage extends WizardResourceImportPage {
 
 	private Text destPath;
+
+	private Text overviewPic;
 
 	private Button createExampleFolder;
 
@@ -64,6 +65,31 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		createBottomGroup(composite);
 	}
 
+	@Override
+	public boolean isPageComplete() {
+		return true;
+	}
+
+	@Override
+	protected void createSourceGroup(Composite parent) {
+		// no sourceGroup
+	}
+
+	@Override
+	protected ITreeContentProvider getFileProvider() {
+		return null;
+	}
+
+	@Override
+	protected ITreeContentProvider getFolderProvider() {
+		return null;
+	}
+
+	@Override
+	protected void createOptionsGroup(Composite parent) {
+		// no options
+	}
+
 	private void createTopGroup(final Composite composite) {
 
 		Group topGroup = new Group(composite, SWT.NONE);
@@ -86,8 +112,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 						.getShell());
 
 				dirDiag.setText("Choose destination directory");
-				dirDiag
-						.setMessage("Select a directory in a java plugin project.");
+				dirDiag.setMessage("Select a directory in a java plugin project.");
 				dirDiag.setFilterPath(WORKSPACE_DIR);
 				String dir = dirDiag.open();
 				if (dir != null) {
@@ -119,7 +144,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		Button addCategory = new Button(buttonCompo, SWT.NONE);
 		addCategory.setText("New...");
 		// addCategory.setToolTipText("Creates a new Category");
-		// FIXME schöner noch mit dem tree editing mechanismus.
+		// FIXME schï¿½ner noch mit dem tree editing mechanismus.
 		addCategory.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -176,8 +201,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		picDialog.setFilterPath(WORKSPACE_DIR);
 		Label label = new Label(bottomGroup, SWT.NONE);
 		label.setText("Set Picture:");
-		final Text text = new Text(bottomGroup, SWT.BORDER);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.overviewPic = new Text(bottomGroup, SWT.BORDER);
+		overviewPic.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Button browse = new Button(bottomGroup, SWT.NONE);
 		browse.setText("Browse...");
 		browse.addSelectionListener(new SelectionAdapter() {
@@ -187,7 +212,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 				super.widgetSelected(e);
 				String pic = picDialog.open();
 				if (pic != null) {
-					text.setText(pic);
+					getOverviewPic().setText(pic);
 				}
 			}
 
@@ -249,15 +274,11 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		return this.destPath.getText();
 	}
 
-	public SourceType getExportType() {
-		// TODO muss der user entscheiden wohin das gehen soll
-		// für feld wurde SourceType.map gebaut.
+	public SourceType getSourceType() {
+		// TODO for extending KEX with database,
+		// there have to define a second type
+		// and the user has to choose which type it is.
 		return SourceType.KIELER;
-	}
-
-	@Override
-	public boolean isPageComplete() {
-		return true;
 	}
 
 	public List<String> getCreatableCategories() {
@@ -268,27 +289,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		return this.createExampleFolder.getSelection();
 	}
 
-	@Override
-	protected void createSourceGroup(Composite parent) {
-		// no sourceGroup
-	}
-
-	@Override
-	protected ITreeContentProvider getFileProvider() {
-		return null;
-	}
-
-	@Override
-	protected ITreeContentProvider getFolderProvider() {
-		return null;
-	}
-
-	@Override
-	protected void createOptionsGroup(Composite parent) {
-		// no options
-	}
-
-	public IPath getOverviewPicPath() {
-		return super.getContainerFullPath();
+	public Text getOverviewPic() {
+		return this.overviewPic;
 	}
 }

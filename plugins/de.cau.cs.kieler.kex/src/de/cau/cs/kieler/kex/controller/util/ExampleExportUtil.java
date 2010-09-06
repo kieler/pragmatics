@@ -10,6 +10,7 @@ import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
+import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.model.Example;
@@ -31,9 +32,10 @@ public class ExampleExportUtil {
 	@SuppressWarnings("unchecked")
 	public static Example mapToExample(Map<ExampleElement, Object> properties,
 			String rootResource) {
-		Example result = new Example((String) properties
-				.get(ExampleElement.TITLE), Version
-				.parseVersion((String) properties.get(ExampleElement.VERSION)),
+		Example result = new Example(
+				(String) properties.get(ExampleElement.TITLE),
+				Version.parseVersion((String) properties
+						.get(ExampleElement.VERSION)),
 				(SourceType) properties.get(ExampleElement.SOURCETYPE));
 		result.setDescription((String) properties
 				.get(ExampleElement.DESCRIPTION));
@@ -67,17 +69,16 @@ public class ExampleExportUtil {
 			final ExampleCollector... collectors) throws KielerException {
 
 		// first duplicate check
-		ExampleExportUtil.checkDuplicate((String) properties
-				.get(ExampleElement.TITLE), collectors);
+		ExampleExportUtil.checkDuplicate(
+				(String) properties.get(ExampleElement.TITLE), collectors);
 
 		Example mappedExample = ExampleExportUtil.mapToExample(properties,
 				(String) properties.get(ExampleElement.DEST_LOCATION));
 
 		File destFile = new File(mappedExample.getRootResource());
 		if (!destFile.exists())
-			throw new KielerException(
-					"There is no file at destination location:"
-							+ mappedExample.getRootResource());
+			throw new KielerException(ErrorMessage.DESTFILE_NOT_EXIST
+					+ mappedExample.getRootResource());
 
 		List<ExportResource> exportResources = (List<ExportResource>) properties
 				.get(ExampleElement.RESOURCES);
@@ -103,9 +104,9 @@ public class ExampleExportUtil {
 		List<ExampleResource> result = new ArrayList<ExampleResource>();
 		for (ExportResource exRe : exportResources) {
 			ExampleResource resultItem = new ExampleResource(exRe
-					.getLocalPath().toPortableString(), ExampleResource.Type
-					.valueOf(exRe.getResource().getClass().getName()
-							.toLowerCase()));
+					.getLocalPath().toPortableString(),
+					ExampleResource.Type.valueOf(exRe.getResource().getClass()
+							.getSimpleName()));
 			resultItem.setDirectOpen(exRe.isDirectOpen());
 			result.add(resultItem);
 		}
