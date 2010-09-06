@@ -126,21 +126,31 @@ public final class EvolUtil {
 
             final IConfigurationElement evolutionData =
                     EvolutionServices.getInstance().getEvolutionData((String) theId);
-            // FIXME: evolutionData might be null
-            Assert.isNotNull(evolutionData, "Not registered: " + theId);
+            if (evolutionData == null) {
+                throw new IllegalArgumentException("No evolution data registered for " + theId);
+            }
 
             final String lowerBoundAttr = evolutionData.getAttribute(ATTRIBUTE_LOWER_BOUND);
             final String upperBoundAttr = evolutionData.getAttribute(ATTRIBUTE_UPPER_BOUND);
             final String distrNameAttr = evolutionData.getAttribute(ATTRIBUTE_DISTRIBUTION);
             final String varianceAttr = evolutionData.getAttribute(ATTRIBUTE_VARIANCE);
 
-            final Distribution distr = Distribution.valueOf(distrNameAttr);
-            // FIXME: distrNameAttr might be wrong
+            Distribution distr = null;
+            try {
+                distr = Distribution.valueOf(distrNameAttr);
+            } catch (final NullPointerException npe) {
+                throw new IllegalArgumentException("Distribution attribute missing or empty for "
+                        + theId, npe);
+            } catch (final IllegalArgumentException iae) {
+                throw new IllegalArgumentException("Invalid evolution data for " + theId + ": "
+                        + distrNameAttr, iae);
+            }
 
             final LayoutOptionData<?> layoutOptionData =
                     LayoutServices.getInstance().getLayoutOptionData((String) theId);
-            // FIXME: layoutOptionData might be null
-            Assert.isNotNull(layoutOptionData);
+            if (layoutOptionData == null) {
+                throw new IllegalArgumentException("No layout option data for " + theId);
+            }
 
             final Type layoutOptionDataType = layoutOptionData.getType();
 
@@ -290,7 +300,7 @@ public final class EvolUtil {
 
             final IValueFormatter formatter;
             if (lowerBound.floatValue() >= 0.0f) {
-                // we need a strictly positive float gene
+                // we use a strictly positive float gene
                 formatter = UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER;
 
             } else {
@@ -517,24 +527,9 @@ public final class EvolUtil {
 
                 final KNode layoutGraph = EvolUtil.calculateLayout(manager, editor);
 
-                // // Update the rating.
-                // // XXX: This should not be done here.
-                // if ((editor == currentEditor) && !individual.hasUserRating())
-                // {
-                //
-                // // Get the metric weights.
-                // final Map<String, Double> weightsMap =
-                // EvolUtil.extractMetricWeights(individual);
-                // Assert.isNotNull(weightsMap);
-                // EvolUtil.normalize(weightsMap);
-                //
-                // final int rating = EvolUtil.measure(layoutGraph, weightsMap);
-                // System.err.println("Updating rating.");
-                // individual.setUserRating(rating);
-                // }
-
                 // Apply the layout to the diagram in the editor.
-                // XXX it would be more straightforward to call
+
+                // XXX Discuss: it would be more straightforward to call
                 // manager.applyLayout();
                 // directly, but that method is protected
 
@@ -1077,10 +1072,8 @@ public final class EvolUtil {
     }
 
     /**
-     * Lays out the given individual in the given editor and calculates
-     * automatic ratings for it, using the given manager and layout property
-     * source. <strong>Note</strong>: The rating is not stored in the
-     * individual.
+     * Lays out the given individual in the given editor and measures its
+     * features, using the given manager and layout property source.
      *
      * @param ind
      *            a {@link Genome}; may not be {@code null}
@@ -1090,25 +1083,23 @@ public final class EvolUtil {
      *            a {@link DiagramLayoutManager}
      * @param propertySource
      *            a {@link LayoutPropertySource}; may not be {@code null}
-     * @param weightsGenome
-     *            a weights genome
-     * @return the rating proposal
+     * @param weightsMap
+     *            a map that associates weights to metric IDs; must not be
+     *            {@code null}. This map indicates which features shall be
+     *            measured.
+     * @return the measured features
      */
-    private static int calculateAutoRating(
+    private static Map<String, Object> measure(
             final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
-            final LayoutPropertySource propertySource, final Genome weightsGenome) {
-        Assert.isLegal((ind != null) && (propertySource != null) && (weightsGenome != null));
-        if ((ind == null) || (propertySource == null) || (weightsGenome == null)) {
-            return 0;
+            final LayoutPropertySource propertySource, final Map<String, Double> weightsMap) {
+        Assert.isLegal((ind != null) && (propertySource != null) && (weightsMap != null));
+        if ((ind == null) || (propertySource == null) || (weightsMap == null)) {
+            return null;
         }
 
         // Transfer layout options from the individual to the layout property
         // source.
         adoptIndividual(ind, propertySource);
-
-        final Map<String, Double> weightsMap = extractMetricWeights(weightsGenome);
-        Assert.isNotNull(weightsMap);
-        normalize(weightsMap);
 
         final KNode layoutGraph = calculateLayout(manager, editor);
 
@@ -1116,12 +1107,7 @@ public final class EvolUtil {
         // Attention: The measurements may contain additional intermediate
         // results we did not ask for. See #1152.
 
-        ind.setFeatures(measurements);
-        // TODO: don't set features here. This works only for one editor.
-
-        final int rating = weight(measurements, weightsMap);
-
-        return rating;
+        return measurements;
     }
 
     /**
@@ -1210,24 +1196,54 @@ public final class EvolUtil {
             Assert.isNotNull(source);
 
             // TODO: what if weights genomes is empty?
-            final Genome wg = weightsGenomes.get(0);
-            Assert.isNotNull(wg);
-            
-            /* TODO: get measurements instead of rating, then get rating
-               proposal from each weight genome.
-               For more than one editor: rate average measurements, or use
-               average ratings instead? */
-            final int rating = calculateAutoRating(ind, editor, manager, source, wg);
-            wg.setFeatures(Collections.singletonMap("proposedRating", (Object) rating));
+            Assert.isTrue(!weightsGenomes.isEmpty());
 
+            int editorRating = 0;
+            Map<String, Object> measurements = null;
 
-            totalRating += rating;
+            final int weightsGenomesCount = weightsGenomes.size();
+            for (final Genome wg : weightsGenomes) {
+                Assert.isNotNull(wg);
+
+                final Map<String, Double> weightsMap = extractMetricWeights(wg);
+                Assert.isNotNull(weightsMap);
+                normalize(weightsMap);
+
+                // Get measurements, then get rating proposal from each weight
+                // genome.
+
+                // TODO Discuss: For more than one editor: rate average
+                // measurements, or use average ratings instead?
+
+                if (measurements == null) {
+                    measurements = measure(ind, editor, manager, source, weightsMap);
+
+                    ind.setFeatures(measurements);
+                    // TODO: don't set features here. This works only for one
+                    // editor. For more editors, average measurements must be
+                    // calculated.
+                }
+
+                final int rating = weight(measurements, weightsMap);
+                wg.setFeatures(Collections.singletonMap("proposedRating", (Object) rating));
+
+                editorRating += rating;
+            }
+
+            if (weightsGenomesCount > 1) {
+                final int averageEditorRating =
+                    Math.round(editorRating / Integer.valueOf(weightsGenomesCount).floatValue());
+                totalRating += averageEditorRating;
+            } else {
+                totalRating += editorRating;
+            }
         }
 
         if (editorCount > 1) {
-            final int averageRating =
+            // return average rating of all editors
+            final int averageTotalRating =
                     Math.round(totalRating / Integer.valueOf(editorCount).floatValue());
-            return averageRating;
+            return averageTotalRating;
         }
 
         return totalRating;
@@ -1263,7 +1279,7 @@ public final class EvolUtil {
         final IStatus status = manager.layout(monitor, layoutAncestors);
 
         if (!status.isOK()) {
-            // TODO: what to do about the layouting failure? Log it? Abort?
+            // Something went wrong. Report the status.
             StatusManager.getManager().handle(status, StatusManager.SHOW);
             return null;
         }

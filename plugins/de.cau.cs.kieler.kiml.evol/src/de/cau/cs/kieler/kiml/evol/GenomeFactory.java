@@ -122,9 +122,15 @@ final class GenomeFactory {
 
             // learnable option?
             if (this.learnableOptions.contains(id)) {
-                final IGene<?> gene = this.geneFactory.newGene(id, value, uniformProb);
-                Assert.isNotNull(gene, "Failed to create gene for " + id);
-                result.add(gene);
+                IGene<?> gene = null;
+                try {
+                    gene = this.geneFactory.newGene(id, value, uniformProb);
+                    Assert.isNotNull(gene, "Failed to create gene for " + id);
+                    result.add(gene);
+                } catch (final IllegalArgumentException exception) {
+                    EvolPlugin.showError("Failed to create gene for " + id, exception);
+                }
+
             } else {
                 EvolPlugin.logStatus("Option not registered as evolutionData: " + id);
             }
