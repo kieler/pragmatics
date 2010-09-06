@@ -528,13 +528,7 @@ public final class EvolUtil {
                 final KNode layoutGraph = EvolUtil.calculateLayout(manager, editor);
 
                 // Apply the layout to the diagram in the editor.
-
-                // XXX Discuss: it would be more straightforward to call
-                // manager.applyLayout();
-                // directly, but that method is protected
-
-                EclipseLayoutServices.getInstance().layout(editor, null,
-                        false /* showAnimation */, false /* showProgressBar */);
+                manager.applyAnimatedLayout(false /* animate */, false /* cacheLayout */, 0);
             }
         }
 
@@ -1125,9 +1119,9 @@ public final class EvolUtil {
         final Double defaultScale = 0.0;
 
 
-
         for (final String metricId : measurements.keySet()) {
             if (!weightsMap.containsKey(metricId)) {
+                // add additional metrics
                 weightsMap.put(metricId, defaultScale);
             }
         }
