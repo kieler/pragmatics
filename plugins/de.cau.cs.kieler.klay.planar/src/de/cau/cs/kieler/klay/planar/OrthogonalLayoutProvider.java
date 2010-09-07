@@ -22,17 +22,18 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.planar.alg.IOrthogonalizer;
-import de.cau.cs.kieler.klay.planar.alg.IPlanarityTester;
-import de.cau.cs.kieler.klay.planar.alg.IPlanarizer;
-import de.cau.cs.kieler.klay.planar.alg.impl.BoyerMyrvoldPlanarityTester;
-import de.cau.cs.kieler.klay.planar.alg.impl.EdgeInsertionPlanarization;
-import de.cau.cs.kieler.klay.planar.alg.impl.LRPlanarityTester;
-import de.cau.cs.kieler.klay.planar.alg.impl.QuodOrthogonalizer;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.QuodOrthogonalizer;
+import de.cau.cs.kieler.klay.planar.alg.planarity.BoyerMyrvoldPlanarityTester;
+import de.cau.cs.kieler.klay.planar.alg.planarity.EdgeInsertionPlanarization;
+import de.cau.cs.kieler.klay.planar.alg.planarity.IPlanarityTester;
+import de.cau.cs.kieler.klay.planar.alg.planarity.IPlanarizer;
+import de.cau.cs.kieler.klay.planar.alg.planarity.LRPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
+import de.cau.cs.kieler.klay.planar.options.PlanarityTestAlgorithm;
 
 /**
  * Layout provider for an orthogonal layout.
@@ -49,7 +50,7 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
             "de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm");
 
     /** The default algorithm for planar testing. */
-    private static final PlanarTestingAlgorithm DEFAULT_ALGORITHM = PlanarTestingAlgorithm.BOYER_MYRVOLD_ALGORITHM;
+    private static final PlanarityTestAlgorithm DEFAULT_ALGORITHM = PlanarityTestAlgorithm.BOYER_MYRVOLD_ALGORITHM;
 
     /**
      * {@inheritDoc}
@@ -86,8 +87,8 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
 
         // Get layout options
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
-        PlanarTestingAlgorithm algorithm = LayoutOptions.getEnum(parentLayout,
-                PlanarTestingAlgorithm.class);
+        PlanarityTestAlgorithm algorithm = LayoutOptions.getEnum(parentLayout,
+                PlanarityTestAlgorithm.class);
         switch (algorithm) {
         case BOYER_MYRVOLD_ALGORITHM:
             if (!(this.tester instanceof BoyerMyrvoldPlanarityTester)) {

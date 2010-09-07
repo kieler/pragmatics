@@ -13,7 +13,7 @@
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.planar.PlanarTestingAlgorithm"
+            class="de.cau.cs.kieler.klay.planar.options.PlanarityTestAlgorithm"
             default="BOYER_MYRVOLD_ALGORITHM"
             description="Defines which algorithm to use for planar testing."
             id="de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm"
