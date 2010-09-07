@@ -67,7 +67,7 @@ public class ExtPointExampleCreator {
 	 * @throws ParserConfigurationException
 	 *             , could be thrown by DOM framework
 	 */
-	private Document parsePluginXML(final File file) throws SAXException,
+	private Document parseDocument(final File file) throws SAXException,
 			IOException, ParserConfigurationException {
 		return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
 				file);
@@ -146,54 +146,45 @@ public class ExtPointExampleCreator {
 	private Node getPluginNode(File locationFile,
 			List<String> creatableCategories) throws KielerException {
 
-		File pluginXML = null;
-		File filteredFile;
 		try {
-			filteredFile = IOHandler.filterPluginXML(locationFile);
-			if (!IOHandler.PLUGIN_XML.equals(filteredFile.getName())) {
-				pluginXML = createTransformPlugin(filteredFile
-						.getAbsolutePath());
+			this.pluginXML = IOHandler.filterPluginXML(locationFile);
+			if (IOHandler.PLUGIN_XML.equals(this.pluginXML.getName())) {
+				parsedXML = parseDocument(this.pluginXML);
 			} else {
-				pluginXML = filteredFile;
+				// project path + .project file as path
+				this.pluginXML = new File(this.pluginXML.getAbsolutePath()
+						+ File.separatorChar + IOHandler.PLUGIN_XML);
+				parsedXML = createPluginDocument();
 			}
-			setPluginXML(pluginXML);
-			parsedXML = parsePluginXML(pluginXML);
 		} catch (ParserConfigurationException e) {
-			String msg = ErrorMessage.NOT_PARSE_PLUGIN
+			String msg = ErrorMessage.NOT_PARSE_PLUGIN + "\n"
 					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		} catch (SAXException e) {
-			String msg = ErrorMessage.NOT_PARSE_PLUGIN
+			String msg = ErrorMessage.NOT_PARSE_PLUGIN + "\n"
 					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		} catch (IOException e) {
-			String msg = ErrorMessage.NOT_PARSE_PLUGIN
+			String msg = ErrorMessage.NOT_PARSE_PLUGIN + "\n"
 					+ e.getLocalizedMessage();
 			throw new KielerException(msg, e);
 		}
 
 		NodeList plugins = this.parsedXML
 				.getElementsByTagName(ExtPointConstants.PLUGIN);
-		int pluginsLength = plugins.getLength();
-		if (pluginsLength == 0 || pluginsLength > 1) {
-			// dann fehlerfall ueberlegen, oder sogar drauf reagieren
-			// koennen,
-			// evtl
-			// dann anlegen.
+		if (plugins.getLength() == 1) {
+			return plugins.item(0);
 		}
-		return plugins.item(0);
-	}
-
-	private void setPluginXML(File pluginXML) {
-		this.pluginXML = pluginXML;
+		// TODO
+		throw new KielerException("");
 	}
 
 	private Node filterExtensionKEX(Node pluginNode) {
 		Node extensionKEX = null;
-		NodeList extensions = pluginNode.getChildNodes();
-		int length = extensions.getLength();
+		NodeList nodes = pluginNode.getChildNodes();
+		int length = nodes.getLength();
 		for (int i = 0; i < length; i++) {
-			Node node = extensions.item(i);
+			Node node = nodes.item(i);
 			if (ExtPointConstants.EXTENSION.equals(node.getNodeName())) {
 				NamedNodeMap attributes = node.getAttributes();
 				Node namedItem = attributes
@@ -206,20 +197,19 @@ public class ExtPointExampleCreator {
 			}
 		}
 		if (extensionKEX == null) {
-			extensionKEX = parsedXML
-					.createElement(ExtPointConstants.KEX_EXT_POINT);
-			pluginNode.appendChild(extensionKEX);
-			// parent von extensionKEX ist plugin... muss also gehen
-			// TODO test createElement, kann sein, dass noch an root knoten
-			// angeschlossen werden muss. getestet GEHT NICHT, muss nochmal
-			// ueberschaut werden.
+
+			Element extElement = pluginNode.getOwnerDocument().createElement(
+					ExtPointConstants.EXTENSION);
+			extElement.setAttribute(ExtPointConstants.POINT,
+					ExtPointConstants.KEX_EXT_POINT);
+			pluginNode.appendChild(extElement);
+			return filterExtensionKEX(pluginNode);
 		}
 
 		return extensionKEX;
 	}
 
-	private File createTransformPlugin(String parentPath)
-			throws KielerException {
+	private Document createPluginDocument() throws KielerException {
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(true);
@@ -241,29 +231,7 @@ public class ExtPointExampleCreator {
 		child.setAttribute(ExtPointConstants.POINT,
 				ExtPointConstants.KEX_EXT_POINT);
 		root.appendChild(child);
-
-		String path = parentPath + File.separatorChar + IOHandler.PLUGIN_XML;
-
-		try {
-			DOMSource domSource = new DOMSource(doc);
-			TransformerFactory tf = TransformerFactory.newInstance();
-			Transformer transformer = tf.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-			transformer.setParameter("eclipse version", "3.4");
-			StreamResult sr = new StreamResult(new FileOutputStream(path));
-			transformer.transform(domSource, sr);
-		} catch (FileNotFoundException f) {
-			throw new KielerException(ErrorMessage.TRANSFORM_ERROR + ", "
-					+ f.getLocalizedMessage());
-		} catch (TransformerException t) {
-			throw new KielerException(ErrorMessage.TRANSFORM_ERROR + ", "
-					+ t.getLocalizedMessage());
-		}
-		return new File(path);
-
+		return doc;
 	}
 
 	/**
@@ -340,9 +308,13 @@ public class ExtPointExampleCreator {
 			Transformer transformer = TransformerFactory.newInstance()
 					.newTransformer();
 			DOMSource source = new DOMSource(parsedXML);
-			test();
 			FileOutputStream os = new FileOutputStream(new File(pluginPath));
 			StreamResult result = new StreamResult(os);
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+			transformer.setParameter("eclipse version", "3.4");
 			transformer.transform(source, result);
 		} catch (TransformerConfigurationException e) {
 			throwWritePluginError(e);
@@ -356,13 +328,25 @@ public class ExtPointExampleCreator {
 
 	}
 
-	private void test() {
-		NodeList childNodes = parsedXML.getChildNodes();
-		int length = childNodes.getLength();
-		for (int i = 0; i < length; i++) {
-			System.out.println(childNodes.item(i).getNodeName());
-		}
-	}
+	// try {
+	// DOMSource domSource = new DOMSource(doc);
+	// TransformerFactory tf = TransformerFactory.newInstance();
+	// Transformer transformer = tf.newTransformer();
+	// transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	// transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	// transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+	// transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+	// transformer.setParameter("eclipse version", "3.4");
+	// StreamResult sr = new StreamResult(new FileOutputStream(path));
+	// transformer.transform(domSource, sr);
+	// } catch (FileNotFoundException f) {
+	// throw new KielerException(ErrorMessage.TRANSFORM_ERROR + ", "
+	// + f.getLocalizedMessage());
+	// } catch (TransformerException t) {
+	// throw new KielerException(ErrorMessage.TRANSFORM_ERROR + ", "
+	// + t.getLocalizedMessage());
+	// }
+	// return new File(path);
 
 	private void throwWritePluginError(Throwable e) throws KielerException {
 		throw new KielerException(new StringBuffer().append(
