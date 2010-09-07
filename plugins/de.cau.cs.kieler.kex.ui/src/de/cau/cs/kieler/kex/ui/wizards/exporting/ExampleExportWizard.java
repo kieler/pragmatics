@@ -68,12 +68,8 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			validateElement(exportedResources, 1, "Exported Resources");
 			result.put(ExampleElement.RESOURCES, exportedResources);
 
-			List<String> creatableCategories = exportPage
-					.getCreatableCategories();
-			if (creatableCategories.size() > 0) {
-				result.put(ExampleElement.CREATE_CATEGORIES,
-						creatableCategories);
-			}
+			result.put(ExampleElement.CREATE_CATEGORIES, exportPage
+					.getCreatableCategories());
 
 			ExampleManager.get().export(result);
 		} catch (KielerException e) {
@@ -116,9 +112,8 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			throws KielerException {
 		if (list == null || list.size() < minLength) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("No ").append(listName)
-					.append(" has been selected.\n")
-					.append("Please choose at least ")
+			errorMsg.append("No ").append(listName).append(
+					" has been selected.\n").append("Please choose at least ")
 					.append(String.valueOf(minLength));
 			throw new KielerException(errorMsg.toString());
 		}
@@ -128,9 +123,9 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			String checkableName) throws KielerException {
 		if (checkable == null || checkable.length() < minLength) {
 			StringBuffer errorMsg = new StringBuffer();
-			errorMsg.append("The field ").append(checkableName)
-					.append(" has to be set with at least ")
-					.append(String.valueOf(minLength)).append(" characters.");
+			errorMsg.append("The field ").append(checkableName).append(
+					" has to be set with at least ").append(
+					String.valueOf(minLength)).append(" characters.");
 			throw new KielerException(errorMsg.toString());
 		}
 	}

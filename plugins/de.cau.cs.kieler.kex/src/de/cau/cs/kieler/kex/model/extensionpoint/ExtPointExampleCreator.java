@@ -4,16 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -26,7 +22,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.w3c.dom.Comment;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -73,8 +69,8 @@ public class ExtPointExampleCreator {
 	 */
 	private Document parsePluginXML(final File file) throws SAXException,
 			IOException, ParserConfigurationException {
-		return DocumentBuilderFactory.newInstance().newDocumentBuilder()
-				.parse(file);
+		return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
+				file);
 	}
 
 	/**
@@ -93,9 +89,11 @@ public class ExtPointExampleCreator {
 
 		Node pluginNode = getPluginNode(location, creatableCategories);
 
-		editPluginCategories(pluginNode, creatableCategories);
-
+		if (creatableCategories != null && creatableCategories.size() > 0) {
+			addExampleCategories(pluginNode, creatableCategories);
+		}
 		boolean isDuplicate = false;
+		// TODO duplicate checker überprüfen mitteles debug
 		checkDuplicate(ExtPointConstants.TITLE, parseElement.getTitle(),
 				pluginNode, isDuplicate);
 		if (isDuplicate) {
@@ -104,12 +102,7 @@ public class ExtPointExampleCreator {
 
 		Node extensionKEX = filterExtensionKEX(pluginNode);
 
-		Node parentNode = extensionKEX.getParentNode();
-		System.out.println("parent von extensionKEX: "
-				+ parentNode.getNodeName());
-
-		makeRootSource(location, parseElement);
-		extensionKEX.appendChild(toNode(parseElement));
+		extensionKEX.appendChild(toNode(parseElement, location));
 		writePluginXML(pluginXML.getAbsolutePath());
 	}
 
@@ -138,15 +131,16 @@ public class ExtPointExampleCreator {
 		}
 	}
 
-	private void makeRootSource(File location, Object parseElement)
+	private void makeRootSource(File location, Example example)
 			throws KielerException {
 		File project = IOHandler.searchUP(location, IOHandler.PROJECT_FILE)
 				.getParentFile();
 		String relativeLocation = location.getPath().substring(
 				project.getPath().length());
-		((Example) parseElement)
+		example
 				.setRootResource((relativeLocation.length() > 0) ? relativeLocation
-						.substring(1) : relativeLocation);
+						.substring(1)
+						: relativeLocation);
 	}
 
 	private Node getPluginNode(File locationFile,
@@ -157,7 +151,8 @@ public class ExtPointExampleCreator {
 		try {
 			filteredFile = IOHandler.filterPluginXML(locationFile);
 			if (!IOHandler.PLUGIN_XML.equals(filteredFile.getName())) {
-				pluginXML = createPluginXML(filteredFile.getAbsolutePath());
+				pluginXML = createTransformPlugin(filteredFile
+						.getAbsolutePath());
 			} else {
 				pluginXML = filteredFile;
 			}
@@ -223,90 +218,51 @@ public class ExtPointExampleCreator {
 		return extensionKEX;
 	}
 
-	// TODO eclipse version mit reinkriegen momentan steht da standalone no!
-	@SuppressWarnings("restriction")
-	private File createPluginXML(String parentPath) {
-		String path = parentPath + File.separatorChar + IOHandler.PLUGIN_XML;
-		XMLOutputFactory factory = XMLOutputFactory.newInstance();
-		XMLStreamWriter writer;
-		try {
-			writer = factory.createXMLStreamWriter(new FileOutputStream(path),
-					"UTF-8");
-			writer.writeCharacters("<?eclipse version=\"3.4\"?>");
-			writer.writeStartDocument();
-			writer.writeStartElement(ExtPointConstants.PLUGIN);
-			writer.writeStartElement(ExtPointConstants.EXTENSION);
-			writer.writeAttribute(ExtPointConstants.POINT,
-					ExtPointConstants.KEX_EXT_POINT);
-			writer.writeEndElement();
-			writer.writeEndElement();
-			writer.writeEndDocument();
-			writer.close();
-			// java dom create example, transformer benutzen
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new File(path);
-	}
+	private File createTransformPlugin(String parentPath)
+			throws KielerException {
 
-	private void createTransformPlugin(String parentPath) {
-		// We need a Document
-		DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setValidating(true);
+
 		DocumentBuilder docBuilder = null;
 		try {
-			docBuilder = dbfac.newDocumentBuilder();
-		} catch (ParserConfigurationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			docBuilder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException p) {
+			throw new KielerException(ErrorMessage.DOC_BUILDER_NEW_ERROR + ", "
+					+ p.getLocalizedMessage());
 		}
-		Document doc = docBuilder.newDocument();
 
-		// //////////////////////
-		// Creating the XML tree
-
-		// create the root element and add it to the document
+		DOMImplementation impl = docBuilder.getDOMImplementation();
+		Document doc = impl.createDocument(null, null, null);
 		Element root = doc.createElement(ExtPointConstants.PLUGIN);
 		doc.appendChild(root);
 
-		// create a comment and put it in the root element
-		Comment comment = doc.createComment("<?eclipse version=\"3.4\"?>");
-		root.appendChild(comment);
-
-		// create child element, add an attribute, and add to root
 		Element child = doc.createElement(ExtPointConstants.EXTENSION);
 		child.setAttribute(ExtPointConstants.POINT,
 				ExtPointConstants.KEX_EXT_POINT);
 		root.appendChild(child);
 
-		// ///////////////
-		// Output the XML
 		String path = parentPath + File.separatorChar + IOHandler.PLUGIN_XML;
 
-		// set up a transformer
-		TransformerFactory transfac = TransformerFactory.newInstance();
-		Transformer trans;
 		try {
-			trans = transfac.newTransformer();
-			trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			trans.setOutputProperty(OutputKeys.INDENT, "yes");
-			// create string from xml tree
-			StringWriter sw = new StringWriter();
-			StreamResult result = new StreamResult(sw);
-			result.setOutputStream(new FileOutputStream(path));
-			DOMSource source = new DOMSource(doc);
-			trans.transform(source, result);
-			String xmlString = sw.toString();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			DOMSource domSource = new DOMSource(doc);
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer = tf.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+			transformer.setParameter("eclipse version", "3.4");
+			StreamResult sr = new StreamResult(new FileOutputStream(path));
+			transformer.transform(domSource, sr);
+		} catch (FileNotFoundException f) {
+			throw new KielerException(ErrorMessage.TRANSFORM_ERROR + ", "
+					+ f.getLocalizedMessage());
+		} catch (TransformerException t) {
+			throw new KielerException(ErrorMessage.TRANSFORM_ERROR + ", "
+					+ t.getLocalizedMessage());
 		}
+		return new File(path);
 
 	}
 
@@ -337,14 +293,16 @@ public class ExtPointExampleCreator {
 			String sourcePath = this.workspacePath.toPortableString()
 					+ resource.getResource().getFullPath().toOSString();
 
-			destLocation.append(destPath).append(File.separatorChar)
-					.append(resource.getLocalPath());
+			destLocation.append(destPath).append(File.separatorChar).append(
+					resource.getLocalPath());
 			Path destination = new Path(destLocation.toString());
 			errorList.add(destination);
 
 			IOHandler.writeFile(new File(sourcePath), destination.toFile());
 		} catch (IOException e) {
-			// TODO ErrorHandling ueberlegen.
+			throw new KielerException(ErrorMessage.PLUGIN_WRITE_ERROR
+					+ ",\ndestination: " + destPath + ", resource: "
+					+ resource.getLocalPath().toPortableString());
 		}
 	}
 
@@ -353,10 +311,12 @@ public class ExtPointExampleCreator {
 			IOHandler.deleteFile(path.toFile());
 	}
 
-	private void editPluginCategories(Node pluginNode,
+	private void addExampleCategories(Node pluginNode,
 			List<String> creatableCategories) {
+
 		boolean isDuplicate = false;
 		for (String category : creatableCategories) {
+
 			checkDuplicate(ExtPointConstants.ID, category, pluginNode,
 					isDuplicate);
 		}
@@ -364,17 +324,13 @@ public class ExtPointExampleCreator {
 		if (isDuplicate) {
 			// TODO fehlerfall ï¿½berlegen
 		}
+		List<String> creates = creatableCategories;
+		for (String creatable : creates) {
+			Element createdCategory = parsedXML
+					.createElement(ExtPointConstants.CATEGORY);
+			createdCategory.setAttribute(ExtPointConstants.ID, creatable);
+			pluginNode.appendChild(createdCategory);
 
-		if (creatableCategories != null) {
-			@SuppressWarnings("unchecked")
-			List<String> creates = creatableCategories;
-			for (String creatable : creates) {
-				Element createdCategory = parsedXML
-						.createElement(ExtPointConstants.CATEGORY);
-				createdCategory.setAttribute(ExtPointConstants.ID, creatable);
-				pluginNode.appendChild(createdCategory);
-
-			}
 		}
 
 	}
@@ -409,9 +365,9 @@ public class ExtPointExampleCreator {
 	}
 
 	private void throwWritePluginError(Throwable e) throws KielerException {
-		throw new KielerException(new StringBuffer()
-				.append(ErrorMessage.NOT_WRITE_PLUGIN)
-				.append(e.getLocalizedMessage()).toString());
+		throw new KielerException(new StringBuffer().append(
+				ErrorMessage.NOT_WRITE_PLUGIN).append(e.getLocalizedMessage())
+				.toString());
 	}
 
 	private Node toNode(String categoryId) {
@@ -421,17 +377,19 @@ public class ExtPointExampleCreator {
 		return createdElement;
 	}
 
-	private Node toNode(Example example) {
+	private Node toNode(Example example, File location) throws KielerException {
 		Element createdExample = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE);
 		createdExample
 				.setAttribute(ExtPointConstants.TITLE, example.getTitle());
-		createdExample.setAttribute(ExtPointConstants.DESCRIPTION,
-				example.getDescription());
+		createdExample.setAttribute(ExtPointConstants.DESCRIPTION, example
+				.getDescription());
 		createdExample.setAttribute(ExtPointConstants.GENERATION_DATE, example
 				.getGenerationDate().toString());
 		createdExample.setAttribute(ExtPointConstants.VERSION, example
 				.getVersion().toString());
+
+		makeRootSource(location, example);
 
 		String overviewPicPath = example.getOverViewPicPath();
 		if (overviewPicPath != null)
@@ -466,11 +424,11 @@ public class ExtPointExampleCreator {
 		Element createdExResource = parsedXML
 				.createElement(ExtPointConstants.EXAMPLE_RESOURCE);
 		createdExResource.setAttribute(ExtPointConstants.LOCAL_PATH,
-				relativePath + "/" + exResource.toString());
+				relativePath + "/" + exResource.getLocalPath());
 		createdExResource.setAttribute(ExtPointConstants.RESOURCE_TYPE,
 				ExampleResource.Type.map(exResource.getResourceType()));
-		createdExResource.setAttribute(ExtPointConstants.DIRECT_OPEN,
-				Boolean.toString(exResource.isDirectOpen()));
+		createdExResource.setAttribute(ExtPointConstants.DIRECT_OPEN, Boolean
+				.toString(exResource.isDirectOpen()));
 		return createdExResource;
 
 	}
