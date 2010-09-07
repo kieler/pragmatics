@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kiml.evol;
 
 import java.util.Arrays;
@@ -198,6 +211,10 @@ final class GenomeFactory {
         Assert.isLegal((providerIds != null) && !providerIds.isEmpty());
         Assert.isLegal(defaultProviderId != null);
 
+        if (providerIds == null) {
+            return null;
+        }
+
         final int indexOfProviderId = providerIds.indexOf(defaultProviderId);
         Assert.isTrue(indexOfProviderId >= 0);
         return createLayoutHintGene(providerIds, indexOfProviderId);
@@ -370,15 +387,20 @@ final class GenomeFactory {
             final List<String> providerIds, final int defaultEntry) {
 
         Assert.isLegal(providerIds != null);
+        if (providerIds == null) {
+            return null;
+        }
         Assert.isLegal((defaultEntry >= 0) && (defaultEntry < providerIds.size()),
                 "Index out of range.");
 
-        final RadioTypeInfo typeInfo = new RadioTypeInfo(defaultEntry, providerIds);
+        final RadioTypeInfo typeInfo =
+                new RadioTypeInfo(Integer.valueOf(defaultEntry), providerIds);
         final double prob = 0.05;
         final MutationInfo mutationInfo = new MutationInfo(prob);
 
         final RadioGene hintGene =
-                new RadioGene(LayoutOptions.LAYOUT_HINT_ID, defaultEntry, typeInfo,
+                new RadioGene(LayoutOptions.LAYOUT_HINT_ID, Integer.valueOf(defaultEntry),
+                        typeInfo,
                         mutationInfo);
         return hintGene;
     }

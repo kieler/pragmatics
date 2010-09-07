@@ -159,13 +159,13 @@ public class UniversalGene extends AbstractGene<Float> {
         Float average = null;
         if ((clazz == Float.class) || (clazz == Integer.class)) {
             // return average of genes and this gene
-            Float sum = 0.0f;
+            float sum = 0.0f;
             for (final IGene<Float> gene : theOtherGenes) {
-                sum += gene.getValue();
+                sum += gene.getValue().floatValue();
             }
-            sum += getValue();
+            sum += getValue().floatValue();
             final int count = theOtherGenes.length + 1;
-            average = sum / count;
+            average = Float.valueOf(sum / count);
             Assert.isTrue(getTypeInfo().isValueWithinBounds(average));
         }
 
@@ -173,7 +173,8 @@ public class UniversalGene extends AbstractGene<Float> {
             final Float value;
             if (clazz == Integer.class) {
                 value =
-                        Integer.valueOf(Math.round(average.floatValue())).floatValue();
+                        Float.valueOf(Integer.valueOf(Math.round(average.floatValue()))
+                                .floatValue());
             } else {
                 value = average;
             }
@@ -377,8 +378,8 @@ public class UniversalGene extends AbstractGene<Float> {
                     break;
                 case UNIFORM:
                     newInt =
-                            (r.nextInt((upperBound.intValue() - lowerBound.intValue() + 1)) + lowerBound
-                                    .intValue());
+                            Integer.valueOf((r.nextInt((upperBound.intValue()
+                                    - lowerBound.intValue() + 1)) + lowerBound.intValue()));
                     break;
                 default:
                     // execution should never reach this line.
@@ -426,7 +427,7 @@ public class UniversalGene extends AbstractGene<Float> {
         }
 
         final UniversalGene ug2 = (UniversalGene) theObj;
-        
+
         if (this.getTypeInfo().getTypeClass() != ug2.getTypeInfo().getTypeClass()) {
             return false;
         }
@@ -435,7 +436,8 @@ public class UniversalGene extends AbstractGene<Float> {
             if (!ug2.getId().equals(this.getId())) {
                 return false;
             }
-            final float diff = Math.abs(ug2.getValue() - this.getValue());
+            final float diff =
+                    Math.abs(ug2.getValue().floatValue() - this.getValue().floatValue());
             return (diff < EPSILON);
         }
 

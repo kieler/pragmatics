@@ -37,6 +37,7 @@ public class NarrownessMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public Object doAnalysis(
             final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor)
@@ -52,8 +53,8 @@ public class NarrownessMetric implements IAnalysis {
             final float ydim;
             if (dimsResult instanceof Pair) {
                 dims = (Pair<Float, Float>) dimsResult;
-                xdim = dims.getFirst();
-                ydim = dims.getSecond();
+                xdim = dims.getFirst().floatValue();
+                ydim = dims.getSecond().floatValue();
             } else {
                 // this should not happen
                 xdim = 0.0f;
@@ -69,13 +70,13 @@ public class NarrownessMetric implements IAnalysis {
             final float half = .5f;
             if (heightToWidthRatio < 1.0) {
                 // wide
-                result = heightToWidthRatio * half;
+                result = Float.valueOf(heightToWidthRatio * half);
             } else {
                 // narrow
-                result = 1.0f - (widthToHeightRatio * half);
+                result = Float.valueOf(1.0f - (widthToHeightRatio * half));
             }
-            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
-                    + result);
+            Assert.isTrue((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f),
+                    "Metric result out of bounds: " + result);
 
         } finally {
             progressMonitor.done();

@@ -166,6 +166,7 @@ public final class EnumGene extends AbstractGene<Integer> {
                 return result;
             } else if (o instanceof UniversalGene) {
                 final Class<?> enumClass = ((UniversalGene) o).getTypeInfo().getTypeClass();
+                @SuppressWarnings("unchecked")
                 final Enum<?>[] constants =
                         ((Class<? extends Enum<?>>) enumClass).getEnumConstants();
 
@@ -174,8 +175,8 @@ public final class EnumGene extends AbstractGene<Integer> {
                 if (constants == null) {
                     return value.toString();
                 }
-                Assert.isTrue((value >= 0) && (value < constants.length));
-                final String result = constants[value].toString();
+                Assert.isTrue((value.intValue() >= 0) && (value.intValue() < constants.length));
+                final String result = constants[value.intValue()].toString();
 
                 return result;
             }

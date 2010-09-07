@@ -45,8 +45,11 @@ public final class EnumTypeInfo extends TypeInfo<Integer> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Class<? extends Enum<?>> getTypeClass() {
-        return (Class<? extends Enum<?>>) super.getTypeClass();
+        final Class<? extends Enum<?>> typeClass =
+                (Class<? extends Enum<?>>) super.getTypeClass();
+        return typeClass;
     }
 
     /**

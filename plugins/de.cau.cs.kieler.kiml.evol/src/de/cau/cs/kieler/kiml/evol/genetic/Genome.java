@@ -53,6 +53,9 @@ public class Genome extends ArrayList<IGene<?>> {
                 }
             };
 
+    private static final double RADIO_GENE_DISTANCE = 2.5;
+
+
     /**
      * Returns the distance between the given genomes. The genomes must be
      * compatible, i.e. have the same gene types in the same order.
@@ -65,11 +68,13 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public static final double distance(final Genome g0, final Genome g1) {
 
-        Assert.isLegal((g0 != null) && (g1 != null));
-        Assert.isLegal(g0.size() == g1.size());
+        Assert.isLegal((g0 != null) && (g1 != null) && (g0.size() == g1.size()));
+        if ((g0 == null) || (g1 == null)) {
+            return 0.0;
+        }
 
-        Iterator iter0;
-        Iterator iter1;
+        Iterator<?> iter0;
+        Iterator<?> iter1;
         double dist = 0.0;
         for (iter0 = g0.iterator(), iter1 = g1.iterator(); iter0.hasNext() && iter1.hasNext();) {
             final IGene<?> gene0 = (IGene<?>) iter0.next();
@@ -78,7 +83,7 @@ public class Genome extends ArrayList<IGene<?>> {
             if (!gene0.equals(gene1)) {
                 System.out.println(gene0 + " !equals " + gene1);
                 if (gene0 instanceof RadioGene) {
-                    dist += 2;
+                    dist += RADIO_GENE_DISTANCE;
                 } else {
                     dist++;
                 }
@@ -294,7 +299,6 @@ public class Genome extends ArrayList<IGene<?>> {
             newGenome.add(newGene);
         }
         newGenome.setUserRating(this.userRating);
-        newGenome.automaticRating = 0;
 
         return newGenome;
     }
@@ -318,8 +322,10 @@ public class Genome extends ArrayList<IGene<?>> {
                         geneList.add(genome.get(g));
                     }
                 }
+                @SuppressWarnings("rawtypes" /* otherGenes is a mixture */)
                 final IGene[] otherGenes = geneList.toArray(new IGene[geneList.size()]);
                 final IGene<?> oldGene = oldGenome.get(g);
+                @SuppressWarnings("unchecked")
                 final IGene<?> newGene = oldGene.recombineWith(otherGenes);
                 result.add(newGene);
             }
@@ -337,7 +343,6 @@ public class Genome extends ArrayList<IGene<?>> {
     // private fields
     private final int generation;
     private int userRating;
-    private int automaticRating;
 
     private Map<String, Object> features = Collections.emptyMap();
 
@@ -348,12 +353,11 @@ public class Genome extends ArrayList<IGene<?>> {
      *            an ID
      * @return a gene with the given ID; or {@code null} if none can be found
      */
-    public IGene find(final String theId) {
-        for (final IGene gene : this) {
+    public IGene<?> find(final String theId) {
+        for (final IGene<?> gene : this) {
             if (gene.getId().equals(theId)) {
                 return gene;
             }
-
         }
         return null;
     }
@@ -363,7 +367,7 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public List<String> getIds() {
         final List<String> result = new LinkedList<String>();
-        for (final IGene gene : this) {
+        for (final IGene<?> gene : this) {
             result.add((String) gene.getId());
         }
         return result;

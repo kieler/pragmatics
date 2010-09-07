@@ -88,7 +88,10 @@ public final class EvolModel {
         }
     }
 
-    private static final int NUM_WEIGHT_GENOMES = 5;
+    /**
+     * Number of weight genomes.
+     */
+    private static final int NUM_WEIGHT_GENOMES = 15;
 
     /**
      * Creates a new {@link EvolModel} instance.
@@ -158,7 +161,7 @@ public final class EvolModel {
                 final String key = "proposedRating:" + ind.getId();
                 if ((features != null) && !features.isEmpty() && features.containsKey(key)) {
                     final Integer prediction = (Integer) features.get(key);
-                    final int diff = rating - prediction;
+                    final int diff = rating - prediction.intValue();
                     final int predictorRating = predictor.getUserRating();
                     predictor.setUserRating(predictorRating - Math.abs(diff));
                 }

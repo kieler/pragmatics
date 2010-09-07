@@ -44,6 +44,74 @@ public class EvolveHandler extends AbstractHandler {
      * @author bdu
      *
      */
+    private static final class EvolutionJobChangeAdapter extends JobChangeAdapter {
+        /**
+         *
+         */
+        private final EvolveJob evolveJob;
+        /**
+         *
+         */
+        private final IProgressMonitor monitor;
+        /**
+         *
+         */
+        private final EvolModel model;
+
+        /** Creates a new {@link EvolutionJobChangeAdapter} instance.
+         *
+         * @param theEvolveJob
+         * @param theMonitor
+         * @param theModel
+         */
+        EvolutionJobChangeAdapter(
+                final EvolveJob theEvolveJob,
+                final IProgressMonitor theMonitor,
+                final EvolModel theModel) {
+            this.evolveJob = theEvolveJob;
+            this.monitor = theMonitor;
+            this.model = theModel;
+        }
+
+        @Override
+        public void done(final IJobChangeEvent event) {
+            if (event.getResult().isOK()) {
+                // The current individual has changed.
+
+                // Get the current individual from the model.
+                final Genome individual = this.model.getCurrentIndividual();
+                Assert.isNotNull(individual);
+
+                // Get the expected layout provider id.
+                final String expectedLayoutProviderId = this.model.getLayoutProviderId();
+                Assert.isNotNull(expectedLayoutProviderId);
+
+                // Adopt and layout the current individual.
+                EvolUtil.syncApplyIndividual(individual, expectedLayoutProviderId);
+
+                // Refresh the layout view.
+                EvolUtil.asyncRefreshLayoutView();
+
+                if (this.evolveJob.isAutoRatingEnabled()) {
+                    // Calculate auto-rating in the current editor for
+                    // all individuals.
+                    final int ticks = 100;
+                    this.model.autoRateAll(new SubProgressMonitor(this.monitor, ticks));
+                }
+
+                Assert.isNotNull(this.model.getPopulation());
+
+            } else {
+                EvolPlugin.showError("The evolution job did not complete successfully.",
+                        null);
+            }
+        }
+    }
+
+    /**
+     * @author bdu
+     *
+     */
     private static final class EvolveJob extends Job {
         boolean isAutoRatingEnabled() {
             return this.isAutoRatingEnabled;
@@ -74,7 +142,8 @@ public class EvolveHandler extends AbstractHandler {
         @Override
         protected IStatus run(final IProgressMonitor theMonitor) {
 
-            this.model.evolve(new SubProgressMonitor(theMonitor, 100));
+            final int work = 100;
+            this.model.evolve(new SubProgressMonitor(theMonitor, work));
 
             return new Status(IStatus.OK, EvolPlugin.PLUGIN_ID,
                     "Evolve job completed successfully.");
@@ -94,22 +163,10 @@ public class EvolveHandler extends AbstractHandler {
     private static final String PARAM_MAX_STEPS = "de.cau.cs.kieler.kiml.evol.steps";
 
     /**
-     * Number of evolution steps.
-     */
-    private static final int NUMBER_OF_STEPS = 5;
-    /**
      * Auto-rate all individuals after how many steps?
      */
     private static final int STEPS_PER_AUTO_RATING = 5;
-    /**
-     * Lowest percentaged increase still considered as non-steady.
-     */
-    private static final double MIN_INCREASE = 0.005;
 
-    /**
-     * After this number of steady steps, the execution is stopped.
-     */
-    private static final int STEADY_STEPS = 100;
     /**
      * Total maximum steps. Execution is stopped in any case after this number
      * of steps.
@@ -119,7 +176,7 @@ public class EvolveHandler extends AbstractHandler {
     /**
      * {@inheritDoc}
      */
-    public Object execute(final ExecutionEvent event) throws ExecutionException {
+    public Object execute(final ExecutionEvent executionEvent) throws ExecutionException {
         final EvolView view =
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
@@ -133,15 +190,14 @@ public class EvolveHandler extends AbstractHandler {
             return null;
         }
 
-        final String maxStepsAttr = event.getParameter(PARAM_MAX_STEPS);
+        final String maxStepsAttr = executionEvent.getParameter(PARAM_MAX_STEPS);
         final int maxSteps = (maxStepsAttr == null ? MAX_STEPS : Integer.parseInt(maxStepsAttr));
 
-        final String stepsBeforeAutoRatingAttr = event.getParameter(PARAM_STEPS_PER_AUTO_RATING);
+        final String stepsBeforeAutoRatingAttr =
+                executionEvent.getParameter(PARAM_STEPS_PER_AUTO_RATING);
         final int stepsBeforeAutoRating =
                 (stepsBeforeAutoRatingAttr == null ? STEPS_PER_AUTO_RATING : Integer
                         .parseInt(stepsBeforeAutoRatingAttr));
-
-        final int steady = 0;
 
         final EvolveJob evolveJob = new EvolveJob("Evolving", model, false);
 
@@ -156,46 +212,7 @@ public class EvolveHandler extends AbstractHandler {
 
             evolveJob.setAutoRatingEnabled(wantAutoRating);
 
-            evolveJob.addJobChangeListener(new JobChangeAdapter() {
-                @Override
-                public void done(final IJobChangeEvent event) {
-                    if (event.getResult().isOK()) {
-                        // The current individual has changed.
-
-                        // Get the current individual from the model.
-                        final Genome individual = model.getCurrentIndividual();
-                        Assert.isNotNull(individual);
-
-                        // Get the expected layout provider id.
-                        final String expectedLayoutProviderId = model.getLayoutProviderId();
-                        Assert.isNotNull(expectedLayoutProviderId);
-
-                        // Adopt and layout the current individual.
-                        EvolUtil.syncApplyIndividual(individual, expectedLayoutProviderId);
-
-                        // Refresh the layout view.
-                        EvolUtil.asyncRefreshLayoutView();
-
-                        if (evolveJob.isAutoRatingEnabled()) {
-                            // Calculate auto-rating in the current editor for
-                            // all individuals.
-                            model.autoRateAll(new SubProgressMonitor(monitor, 100));
-                        }
-
-                        // BasicNetwork b = new BasicNetwork();
-                        // b.addLayer(new BasicLayer(2));
-                        // b.addLayer(new BasicLayer(3));
-                        // b.addLayer(new BasicLayer(6));
-                        // b.addLayer(new BasicLayer(1));
-                        // b.getStructure().finalizeStructure();
-                        // System.out.println(b.calculateNeuronCount());
-
-                        Assert.isNotNull(model.getPopulation());
-                    } else {
-                        System.err.println("The evolve job did not complete successfully.");
-                    }
-                }
-            });
+            evolveJob.addJobChangeListener(new EvolutionJobChangeAdapter(evolveJob, monitor, model));
 
             evolveJob.schedule();
 
@@ -203,28 +220,7 @@ public class EvolveHandler extends AbstractHandler {
                 evolveJob.join();
             } catch (final InterruptedException exception) {
                 exception.printStackTrace();
-            }
-
-            // // Examine difference.
-            // final double after =
-            // model.getPopulation().getAverageRating().doubleValue();
-            // final double relDiff = (after - before) / after;
-            // System.out.println("Average rating before: " + before);
-            // System.out.println("Average rating now: " + after);
-            // final double relDiffPercent = (relDiff * 100);
-            // System.out.println("rel. Diff (%): " + relDiffPercent);
-
-            // // Do we have significant improvement?
-            // if (relDiff < MIN_INCREASE) {
-            // steady++;
-            // System.out.println("Steady: " + steady);
-            // } else {
-            // if (steady > 0) {
-            // steady--;
-            // }
-            // }
-            if (steady >= STEADY_STEPS) {
-                break;
+                EvolPlugin.showError("The evolution job was interrupted.", exception);
             }
         }
 

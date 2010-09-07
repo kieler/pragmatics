@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.Assert;
 /**
  * A type info describes the parameters of a type that is used in an
  * {@link IGene}.
- * 
+ *
  * @author bdu
- * 
+ *
  * @param <T>
  */
 public abstract class TypeInfo<T extends Comparable<? super T>> {
@@ -55,7 +55,8 @@ public abstract class TypeInfo<T extends Comparable<? super T>> {
                 .isLegal(theLowerBound.compareTo(theDefaultValue) <= 0,
                         "default value < lower bound");
 
-        Assert.isLegal(theDefaultValue.compareTo(theUpperBound) <= 0, "default value > upper bound");
+        Assert.isLegal((theDefaultValue != null)
+                && (theDefaultValue.compareTo(theUpperBound) <= 0), "default value > upper bound");
 
         this.defaultValue = theDefaultValue;
         this.lowerBound = theLowerBound;

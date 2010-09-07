@@ -60,9 +60,13 @@ public class RadioGene extends AbstractGene<Integer> {
      * Creates a new {@link RadioGene} instance.
      *
      * @param theId
+     *            the id
      * @param theValue
+     *            the value
      * @param theTypeInfo
+     *            the type info
      * @param theMutationInfo
+     *            the mutation info
      */
     public RadioGene(
             final Object theId,
@@ -70,7 +74,6 @@ public class RadioGene extends AbstractGene<Integer> {
             final TypeInfo<Integer> theTypeInfo,
             final MutationInfo theMutationInfo) {
         super(theId, theValue, theTypeInfo, theMutationInfo);
-        // this.list = theList;
     }
 
     @Override
@@ -132,7 +135,7 @@ public class RadioGene extends AbstractGene<Integer> {
         }
         return result;
     }
-    
+
     @Override
     public int hashCode() {
         // TODO cache hash value
@@ -141,15 +144,15 @@ public class RadioGene extends AbstractGene<Integer> {
         return this.getTypeInfo().getList().hashCode() * f1 + this.getId().hashCode() * f2
                 + this.getValue().hashCode();
     }
-    
+
     @Override
     public boolean equals(final Object theObj) {
         if (!(theObj instanceof RadioGene)) {
             return false;
         }
-        
+
         final RadioGene rg2 = (RadioGene) theObj;
-        
+
         return (rg2.getTypeInfo().getList().equals(this.getTypeInfo().getList())
                 && (rg2.getId().equals(this.getId())) && rg2.getValue().equals(this.getValue()));
     }

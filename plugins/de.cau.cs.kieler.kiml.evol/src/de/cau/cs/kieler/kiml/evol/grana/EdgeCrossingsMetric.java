@@ -46,9 +46,9 @@ public class EdgeCrossingsMetric implements IAnalysis {
                     results.get("de.cau.cs.kieler.kiml.grana.edgeCrossings");
             final Object edgesResult = results.get("de.cau.cs.kieler.kiml.grana.edgeCount");
             final Object bendsResult = results.get("de.cau.cs.kieler.kiml.grana.bendpointCount");
-            final int edgesCount = (Integer) edgesResult;
-            final int bendsCount = (Integer) bendsResult;
-            final int crossingsCount = (Integer) crossingsResult;
+            final int edgesCount = ((Integer) edgesResult).intValue();
+            final int bendsCount = ((Integer) bendsResult).intValue();
+            final int crossingsCount = ((Integer) crossingsResult).intValue();
 
             final int edgesAuxCount = edgesCount + bendsCount;
 
@@ -81,13 +81,14 @@ public class EdgeCrossingsMetric implements IAnalysis {
             if (crossingsCount > maxCrossingsCount) {
                 result = Float.valueOf(0.0f);
             } else if (maxCrossingsCount > 0) {
-                result = 1.0f - (float) ((double) crossingsCount / maxCrossingsCount);
+                result =
+                        Float.valueOf(1.0f - (float) ((double) crossingsCount / maxCrossingsCount));
             } else {
                 result = Float.valueOf(1.0f);
             }
 
-            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
-                    + result);
+            Assert.isTrue((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f),
+                    "Metric result out of bounds: " + result);
 
         } finally {
             progressMonitor.done();

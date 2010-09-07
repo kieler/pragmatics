@@ -37,6 +37,7 @@ public class FlatnessMetric implements IAnalysis {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public Object doAnalysis(
             final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor)
@@ -52,8 +53,8 @@ public class FlatnessMetric implements IAnalysis {
             final float ydim;
             if (dimsResult instanceof Pair<?, ?>) {
                 dims = (Pair<Float, Float>) dimsResult;
-                xdim = dims.getFirst();
-                ydim = dims.getSecond();
+                xdim = dims.getFirst().floatValue();
+                ydim = dims.getSecond().floatValue();
             } else {
                 // This should happen only when the dims analysis failed.
                 xdim = 0.0f;
@@ -70,14 +71,14 @@ public class FlatnessMetric implements IAnalysis {
             final float half = .5f;
             if (widthToHeightRatio < 1.0f) {
                 // narrow
-                result = widthToHeightRatio * half;
+                result = Float.valueOf(widthToHeightRatio * half);
             } else {
                 // wide
-                result = 1.0f - (heightToWidthRatio * half);
+                result = Float.valueOf(1.0f - (heightToWidthRatio * half));
             }
 
-            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
-                    + result);
+            Assert.isTrue((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f),
+                    "Metric result out of bounds: " + result);
 
         } finally {
             progressMonitor.done();

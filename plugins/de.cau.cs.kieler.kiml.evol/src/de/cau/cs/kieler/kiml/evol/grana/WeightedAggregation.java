@@ -49,7 +49,7 @@ public class WeightedAggregation implements IAnalysis {
                 if (entry.getKey().toLowerCase().contains("metric")) {
                     final Object val = entry.getValue();
                     if (val instanceof Float) {
-                        sum += (Float) val;
+                        sum += ((Float) val).doubleValue();
                         count++;
                         System.out.println(entry.getKey() + ": " + val + " ");
                     }

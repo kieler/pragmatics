@@ -81,7 +81,7 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
         for (final Genome ind : this) {
             ratingSum += ind.getUserRating();
         }
-        return (double) (ratingSum / (double) this.size());
+        return Double.valueOf((ratingSum / (double) this.size()));
     }
 
     /**

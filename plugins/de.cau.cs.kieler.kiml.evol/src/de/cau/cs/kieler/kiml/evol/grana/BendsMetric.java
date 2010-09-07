@@ -53,8 +53,8 @@ public class BendsMetric implements IAnalysis {
             // load numbers from analyses
             final Object edgesResult = results.get(GRANA_EDGE_COUNT);
             final Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
-            final int edgesCount = (Integer) edgesResult;
-            final int bendsCount = (Integer) bendsResult;
+            final int edgesCount = ((Integer) edgesResult).intValue();
+            final int bendsCount = ((Integer) bendsResult).intValue();
 
             // System.out.println("edges: " + edgesCount + " bends: " +
             // bendsCount);
@@ -67,12 +67,14 @@ public class BendsMetric implements IAnalysis {
 
             // normalize
             if (edgesCount + bendsCount > 0) {
-                result = 1.0f - (float) bendsCount / (float) (edgesCount + bendsCount);
+                result =
+                        Float.valueOf(1.0f - (float) bendsCount
+                                / (float) (edgesCount + bendsCount));
             } else {
-                result = 1.0f;
+                result = Float.valueOf(1.0f);
             }
-            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
-                    + result);
+            Assert.isTrue((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f),
+                    "Metric result out of bounds: " + result);
 
         } finally {
             progressMonitor.done();

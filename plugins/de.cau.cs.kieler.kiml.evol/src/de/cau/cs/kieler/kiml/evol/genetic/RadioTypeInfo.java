@@ -43,13 +43,14 @@ public class RadioTypeInfo extends TypeInfo<Integer> {
             final Integer theDefaultValue,
             final IValueFormatter theFormatter,
             final List<?> theList) {
-        super(theDefaultValue, 0, theList.size() - 1, theFormatter, theList.getClass());
+        super(theDefaultValue, Integer.valueOf(0), Integer.valueOf(theList.size() - 1),
+                theFormatter, theList.getClass());
         this.list = theList;
     }
 
     /**
      * Creates a new {@link RadioTypeInfo} instance.
-     * 
+     *
      * @param theDefaultValue
      *            the default value
      * @param theList
@@ -59,9 +60,11 @@ public class RadioTypeInfo extends TypeInfo<Integer> {
         this(theDefaultValue, RadioGene.RADIO_GENE_FORMATTER, theList);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Class<List<?>> getTypeClass() {
-        return (Class<List<?>>) super.getTypeClass();
+        final Class<List<?>> typeClass = (Class<List<?>>) super.getTypeClass();
+        return (typeClass);
     }
 
     /**
