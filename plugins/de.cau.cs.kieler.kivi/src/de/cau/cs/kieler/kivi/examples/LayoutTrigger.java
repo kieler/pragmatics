@@ -31,6 +31,9 @@ public class LayoutTrigger extends AbstractTrigger implements ILayoutListener {
 
     /**
      * Default constructor.
+     * 
+     * FIXME check if actually needed, and if yes then split up trigger and layout listener into two
+     * classes to avoid the instantiation hassle.
      */
     public LayoutTrigger() {
         if (instance != null) {
