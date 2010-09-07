@@ -36,6 +36,10 @@ import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
  * follow this path with the faces in the given graph and splits up every edge to cross with a new
  * node. Then these nodes get connected and build a path which presents the given insertion edge. So
  * the graph is still planar.
+ * A special case is, when a hyperedge is crossed. In this case the new edge is layed through the
+ * hypernode of this hyperedge. Then the hypernode is splitted up in 2 hypernodes. Now we have the
+ * edge between these 2 new hypernodes. This edge is now crossed as usual, by adding a new node
+ * and connect the new edge to this.
  * 
  * @author cku
  * 
