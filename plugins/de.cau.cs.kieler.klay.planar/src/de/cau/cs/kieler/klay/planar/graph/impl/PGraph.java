@@ -340,15 +340,23 @@ class PGraph extends PNode implements IGraph, Serializable {
      * information, this graph structure may not be good for you.
      */
     void generateFaces() {
-        // TODO generating faces does not work properly
-        // in large random graphs an infinite loop may occur here
 
+        // Reset changed faces flag
         if (!this.changedFaces) {
             return;
         } else {
             this.changedFaces = false;
         }
 
+        // Clear old face data
+        this.faces.clear();
+        this.faceIndex = 0;
+        for (IEdge edge : this.edges) {
+            ((PEdge) edge).setLeftFace(null);
+            ((PEdge) edge).setRightFace(null);
+        }
+
+        // Generate new face data
         for (IEdge edge : this.edges) {
             // Check for left face
             if (edge.getLeftFace() == null) {
