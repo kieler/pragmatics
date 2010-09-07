@@ -1105,7 +1105,28 @@ public final class EvolUtil {
         // Attention: The measurements may contain additional intermediate
         // results we did not ask for. See #1152.
 
+        // add the execution speed
+        final double time = monitor.getExecutionTime();
+
+        final double normedSpeed = normedSpeed(time);
+
+        measurements.put("executionSpeed", Double.valueOf(normedSpeed));
+
         return measurements;
+    }
+
+    /**
+     * Returns a normed speed value for the given time. The result is between
+     * {@code +0.0} and {@code +1.0}. It is {@code +0.0} if {@code time} is
+     * positive infinity and {@code 1.0} if {@code time} is zero.
+     *
+     * @param time
+     *            time; must be positive
+     * @return normed speed value
+     */
+    private static double normedSpeed(final double time) {
+        Assert.isLegal(time >= 0.0, "The value of 'time' must be positive:" + time);
+        return (Math.exp(-time));
     }
 
     /**
