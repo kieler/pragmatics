@@ -473,9 +473,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         while (!nodes.isEmpty()) {
 
             // find the node with smalles weight in nodes
-
-            //TODO check initialisation
-            int minEdgeWeight = 0;
+            int minEdgeWeight = Integer.MAX_VALUE;
             for (INode neighborNode : currentNode.adjacentNodes()) {
                 IEdge connectingEdge = currentNode.getEdge(neighborNode);
                 int edgeWeight = connectingEdge.getProperty(PATHCOST);
