@@ -7,7 +7,6 @@ import de.cau.cs.kieler.core.annotations.Annotation;
 
 public class AnnotationExistsCondition extends ICustomCondition<EObject> {
 
-    @Override
     public boolean evaluate(final EObject object) {
         if (object instanceof Annotatable) {
             Annotatable annotatable = ((Annotatable) object);
