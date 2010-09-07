@@ -153,9 +153,9 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      * Mutates offspring, depending on some mutation strategy.
      **/
     protected abstract void mutate();
-
+    
     /**
-     * Selects individuals that shall be preserved and proceed to next
+     * Selects individuals that shall be preserved and proceeds to the next
      * generation. According to the implemented survivors' selection strategy,
      * only newly generated individuals or also parent individuals may be
      * considered.

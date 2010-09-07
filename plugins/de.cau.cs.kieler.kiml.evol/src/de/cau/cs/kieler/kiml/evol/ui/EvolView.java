@@ -41,16 +41,51 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
- * Test view for EvolPlugin.
+ * View for EvolPlugin.
  *
  * @author bdu
  *
  */
 public class EvolView extends ViewPart {
     /**
-     * A listener to the evolution model.
+     * An implementation of {@link IEvolModelListener} that is associated to an
+     * {@link EvolView}.
+     * 
+     * @author bdu
+     * 
      */
-    private final IEvolModelListener modelListener = new IEvolModelListener() {
+    private abstract static class EvolModelListener implements IEvolModelListener {
+        private final EvolView evolView;
+
+        /**
+         *
+         * @return the associated {@link EvolView}
+         */
+        public EvolView getEvolView() {
+            return this.evolView;
+        }
+
+        /**
+         * Creates a new {@link EvolView.EvolModelListener} instance.
+         *
+         * @param theEvolView
+         *
+         */
+        public EvolModelListener(final EvolView theEvolView) {
+            this.evolView = theEvolView;
+        }
+
+        /**
+         *
+         * @param pop
+         * @param tv
+         */
+        void populationChange(final Population pop, final SelectorTableViewer tv) {
+            if (pop != null) {
+                final Runnable inputSetterRunnable = new InputSetterRunnable(pop, tv);
+                MonitoredOperation.runInUI(inputSetterRunnable, true);
+            }
+        }
 
         /**
          * Refreshes the layout according to the selected individual in the
@@ -60,7 +95,7 @@ public class EvolView extends ViewPart {
          *            the evolution model
          *
          */
-        private void applySelectedIndividual(final EvolModel em) {
+        protected void applySelectedIndividual(final EvolModel em) {
             Assert.isNotNull(em);
 
             if (!em.isValid()) {
@@ -82,19 +117,30 @@ public class EvolView extends ViewPart {
             EvolUtil.asyncRefreshLayoutView();
         }
 
+    }
+
+    /**
+     * A listener to the evolution model.
+     */
+    private final EvolModelListener modelListener = new EvolModelListener(this) {
+
         /**
          * {@inheritDoc}
          */
         public void afterChange(final EvolModel source, final String cause) {
+
             EvolPlugin.logStatus("afterChange: " + cause);
-            if ("setPosition".equalsIgnoreCase(cause)) {
-                applySelectedIndividual(source);
-                return;
-            }
+
+            Assert.isNotNull(source);
 
             if (EvolUtil.getCurrentEditor() == null) {
                 System.err.println("We are not in the UI thread: " + cause);
-                // TODO: treat this
+                // TODO: eliminate these cases
+            }
+
+            if ("setPosition".equalsIgnoreCase(cause)) {
+                applySelectedIndividual(source);
+                return;
             }
 
             // Refresh the table viewer.
@@ -106,23 +152,24 @@ public class EvolView extends ViewPart {
 
             final boolean isOnlyCurrent = ("changeCurrentRating".equalsIgnoreCase(cause));
 
-                if (!isOnlyCurrent) {
-                    // Set the new population as input.
-                    EvolView.this.setInput(source.getPopulation());
+            if (!isOnlyCurrent) {
+                // Set the new population as input.
+
+                final Population newPop = source.getPopulation();
+                populationChange(newPop, tv);
+            }
+
+            final int row = source.getPosition();
+            if ("reset".equalsIgnoreCase(cause)) {
+                Assert.isTrue(row == 0);
+            }
+
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    tv.selectRow(row);
+                    getEvolView().refresh(isOnlyCurrent);
                 }
-
-                final int row = source.getPosition();
-                if ("reset".equalsIgnoreCase(cause)) {
-                    Assert.isTrue(source.getPosition() == 0);
-                }
-
-                MonitoredOperation.runInUI(new Runnable() {
-                    public void run() {
-                        tv.selectRow(row);
-                        EvolView.this.refresh(isOnlyCurrent);
-                    }
-                }, true);
-
+            }, true);
         }
     };
 
@@ -140,7 +187,8 @@ public class EvolView extends ViewPart {
      *
      */
     private static final class MultipleEditorsAction extends Action {
-        /** Creates a new {@link MultipleEditorsAction} instance.
+        /**
+         * Creates a new {@link MultipleEditorsAction} instance.
          *
          * @param theText
          */
@@ -169,7 +217,7 @@ public class EvolView extends ViewPart {
      * @author bdu
      *
      */
-    private static final class SetInputRunnable implements Runnable {
+    private static final class InputSetterRunnable implements Runnable {
         /**
          *
          */
@@ -180,21 +228,24 @@ public class EvolView extends ViewPart {
         private final TableViewer tableViewer;
 
         /**
-         * Creates a new {@link SetInputRunnable} instance.
+         * Creates a new {@link InputSetterRunnable} instance.
          *
          * @param thePopulation
          * @param theTableViewer
          */
-        SetInputRunnable(final Population thePopulation, final TableViewer theTableViewer) {
+        InputSetterRunnable(final Population thePopulation, final TableViewer theTableViewer) {
             this.population = thePopulation;
             this.tableViewer = theTableViewer;
         }
 
+        /**
+         * Sets the population as input for the table viewer.
+         */
         public void run() {
             if (this.tableViewer.getInput() != this.population) {
                 this.tableViewer.setInput(this.population);
             } else {
-                System.err.println("TableViewer: input already set.");
+                EvolPlugin.showError("TableViewer: input already set.", null);
             }
         }
     }
@@ -238,7 +289,6 @@ public class EvolView extends ViewPart {
 
                 if (oldPos != newPos) {
                     // Update the table viewer.
-                    EvolPlugin.logStatus("Current row: " + oldPos + " -> " + newPos);
                     final Object oldElement1 = this.tv.getElementAt(oldPos);
                     if ((oldElement1 != element) && (oldElement1 != this.oldElement)) {
                         this.tv.update(oldElement1, null);
@@ -286,7 +336,7 @@ public class EvolView extends ViewPart {
         }
 
         @Override
-        protected void doSetSelection(final int[] indices) {
+        public void doSetSelection(final int[] indices) {
             super.doSetSelection(indices);
         }
 
@@ -304,7 +354,7 @@ public class EvolView extends ViewPart {
             Display.getCurrent().syncExec(new Runnable() {
                 public void run() {
                     final int[] indices = new int[] { row };
-                    SelectorTableViewer.this.doSetSelection(indices);
+                    doSetSelection(indices);
                 }
             });
         }
@@ -384,7 +434,7 @@ public class EvolView extends ViewPart {
         // so we can't change their order as we would like
 
         // Set the population as input in order to populate the view.
-        setInput(this.evolModel.getPopulation());
+        this.modelListener.populationChange(this.evolModel.getPopulation(), this.tableViewer);
     }
 
     /**
@@ -425,28 +475,6 @@ public class EvolView extends ViewPart {
     @Override
     public void setFocus() {
         this.tableViewer.getControl().setFocus();
-    }
-
-    /**
-     * Sets a population as the input of the viewer. Has no effect if the
-     * population is {@code null} or if the table viewer is {@code null}.
-     *
-     * @param thePopulation
-     *            new source population
-     */
-    private void setInput(final Population thePopulation) {
-        Assert.isNotNull(this.evolModel);
-
-        final SelectorTableViewer tv = this.getTableViewer();
-
-        if (((thePopulation != null) && (tv != null))) {
-            final Population modelPop = this.evolModel.getPopulation();
-            Assert.isTrue((thePopulation.equals(modelPop)),
-                    "Attempt to set a population that is not in the model.");
-
-            final Runnable runnable = new SetInputRunnable(thePopulation, tv);
-            MonitoredOperation.runInUI(runnable, true);
-        }
     }
 
 }

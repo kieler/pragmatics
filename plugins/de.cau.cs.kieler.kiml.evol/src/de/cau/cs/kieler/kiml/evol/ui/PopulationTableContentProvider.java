@@ -58,7 +58,7 @@ public class PopulationTableContentProvider implements IStructuredContentProvide
      * {@inheritDoc}
      */
     public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-        System.out.println("Viewer " + viewer.toString() + " input changed from " + oldInput
-                + " to " + newInput);
+        System.out.println("Viewer " + viewer.toString() + " input changed.");
+        System.out.println(newInput);
     }
 }

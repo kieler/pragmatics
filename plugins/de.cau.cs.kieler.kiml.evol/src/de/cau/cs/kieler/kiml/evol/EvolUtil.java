@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -481,7 +482,13 @@ public final class EvolUtil {
             // Get the current editor (may be null).
             final IEditorPart currentEditor = getCurrentEditor();
 
-            // Do the layout in each appropriate editor.
+            final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
+
+            final boolean useDifferentType =
+                    store.getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
+
+            // Iterate the editors and perform layout in each appropriate
+            // editor.
             for (final IEditorPart editor : editors) {
                 System.out.println();
                 System.out.print("--- Editor: " + editor.getTitle() + " ");
@@ -501,19 +508,13 @@ public final class EvolUtil {
                     // The type in the editor is not compatible to the current
                     // population.
 
-                    // FIXME: accept this only if option
-                    // PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT is set, else skip
-                    // this editor.
-
-                    System.err.println("The editor " + editor.getTitle() + " is set to "
-                            + layoutTypeId + ". Expecting an editor for " + expectedLayoutTypeId
-                            + ".");
-
-                    // EvolPlugin.showError("Cannot adopt " + individual.getId()
-                    // + " to "
-                    // + layoutProviderId + ", expecting an editor for "
-                    // + expectedLayoutTypeId, null);
-                    // continue;
+                    if (!useDifferentType) {
+                        // We skip this editor.
+                        System.err.println("The editor " + editor.getTitle() + " is set to "
+                                + layoutTypeId + ". Expecting an editor for "
+                                + expectedLayoutTypeId + ".");
+                        continue;
+                    }
                 }
 
                 // Use the options that are encoded in the individual.
@@ -525,7 +526,8 @@ public final class EvolUtil {
                         EclipseLayoutServices.getInstance().getManager(editor, null);
                 Assert.isNotNull(manager);
 
-                final KNode layoutGraph = EvolUtil.calculateLayout(manager, editor);
+                final IKielerProgressMonitor monitor = EvolUtil.calculateLayout(manager, editor);
+                final KNode layoutGraph = manager.getLayoutGraph();
 
                 // Apply the layout to the diagram in the editor.
                 manager.applyAnimatedLayout(false /* animate */, false /* cacheLayout */, 0);
@@ -1095,7 +1097,9 @@ public final class EvolUtil {
         // source.
         adoptIndividual(ind, propertySource);
 
-        final KNode layoutGraph = calculateLayout(manager, editor);
+        final IKielerProgressMonitor monitor = calculateLayout(manager, editor);
+
+        final KNode layoutGraph = manager.getLayoutGraph();
 
         final Map<String, Object> measurements = measure(layoutGraph, weightsMap);
         // Attention: The measurements may contain additional intermediate
@@ -1247,15 +1251,15 @@ public final class EvolUtil {
     /**
      * Builds the layout graph for the given editor, using the given manager,
      * and performs layout on it. <strong>NOTE</strong>: The resulting layout is
-     * not applied to the diagram.
+     * not applied to the diagram. It can be obtained from the {@code manager}.
      *
      * @param manager
      *            a {@link DiagramLayoutManager}
      * @param editor
      *            an {@link IEditorPart}
-     * @return the layout graph, or {@code null} in case of an error.
+     * @return the progress monitor, or {@code null} in case of an error.
      */
-    private static KNode calculateLayout(
+    private static IKielerProgressMonitor calculateLayout(
             final DiagramLayoutManager manager, final IEditorPart editor) {
         if ((editor == null) || (manager == null)) {
             // We cannot perform the layout.
@@ -1270,8 +1274,8 @@ public final class EvolUtil {
         // gets closed.
         final IKielerProgressMonitor monitor =
                 new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
-        final boolean layoutAncestors = false;
-        final IStatus status = manager.layout(monitor, layoutAncestors);
+
+        final IStatus status = manager.layout(monitor, false /* layoutAncestors */);
 
         if (!status.isOK()) {
             // Something went wrong. Report the status.
@@ -1281,7 +1285,8 @@ public final class EvolUtil {
 
         final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
         Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
-        return layoutGraphAfterLayout;
+
+        return monitor;
     }
 
     /**

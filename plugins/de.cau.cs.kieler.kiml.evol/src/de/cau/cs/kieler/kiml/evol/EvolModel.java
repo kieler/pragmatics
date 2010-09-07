@@ -340,11 +340,8 @@ public final class EvolModel {
         }
 
         if (!isCompatibleLayoutProvider()) {
-            // need to reset
-            System.out
-                    .println("The current population is not compatible to the layout provider.");
-            System.out.println("Reset the population or select " + this.getLayoutProviderId());
-            return false;
+            // this is ok.
+            System.out.println("The current population is not compatible to the layout type.");
         }
 
         return true;
