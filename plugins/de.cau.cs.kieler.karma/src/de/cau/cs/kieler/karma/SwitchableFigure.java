@@ -17,6 +17,7 @@ package de.cau.cs.kieler.karma;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Shape;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Color;
 
@@ -31,6 +32,8 @@ public class SwitchableFigure extends Shape { // implements IAttributeAwareFigur
      * The figure that will actually be displayed.
      */
     private IFigure currentFigure;
+
+    private boolean resizeable = true;
 
     /**
      * The constructor. Sets default figure.
@@ -55,6 +58,7 @@ public class SwitchableFigure extends Shape { // implements IAttributeAwareFigur
 
     /**
      * Getter for the currently displayed figure.
+     * 
      * @return the current figure
      */
     public IFigure getCurrentFigure() {
@@ -63,12 +67,15 @@ public class SwitchableFigure extends Shape { // implements IAttributeAwareFigur
 
     /**
      * Setter for the currently displayed figure.
-     * @param figure new figure to be displayed
+     * 
+     * @param figure
+     *            new figure to be displayed
      */
     public void setCurrentFigure(final IFigure figure) {
         currentFigure = figure;
         currentFigure.setBounds(super.getBounds());
-        //this.repaint();
+        // currentFigure.setParent(this.getParent());
+        // this.repaint();
     }
 
     /**
@@ -101,20 +108,18 @@ public class SwitchableFigure extends Shape { // implements IAttributeAwareFigur
     public void setBounds(final Rectangle rect) {
         // Notifier target = getTarget();
         /*
-        LayoutManager layoutManager = getLayoutManager();
-        if (((StateLayout) layoutManager).getNotifier() instanceof State
-                && layoutManager instanceof StateLayout) {
-            ((StateLayout) layoutManager).checkNewSize(this,
-                    (State) ((StateLayout) layoutManager).getNotifier(), rect);
-        }
+         * LayoutManager layoutManager = getLayoutManager(); if (((StateLayout)
+         * layoutManager).getNotifier() instanceof State && layoutManager instanceof StateLayout) {
+         * ((StateLayout) layoutManager).checkNewSize(this, (State) ((StateLayout)
+         * layoutManager).getNotifier(), rect); }
          */
-        super.setBounds(rect);
-        if (currentFigure != null) {
-            this.currentFigure.setBounds(rect);
+        if (resizeable) {
+            super.setBounds(rect);
+            if (currentFigure != null) {
+                this.currentFigure.setBounds(rect);
+            }
         }
     }
-    
-    
 
     /**
      * Directly set the bounds of this figure, without further checks.
@@ -123,50 +128,83 @@ public class SwitchableFigure extends Shape { // implements IAttributeAwareFigur
      *            the new bounds
      */
     public void setBoundsDirect(final Rectangle rect) {
-        super.setBounds(rect);
+        if (resizeable) {
+            super.setBounds(rect);
+            if (currentFigure != null) {
+                this.currentFigure.setBounds(rect);
+            }
+        }
+    }
+
+    @Override
+    public void setMinimumSize(Dimension d) {
+        if (resizeable) {
+            super.setMinimumSize(d);
+        }
+    }
+
+    @Override
+    public void setMaximumSize(Dimension d) {
+        if (resizeable) {
+            super.setMaximumSize(d);
+        }
+    }
+
+    @Override
+    public void setPreferredSize(Dimension d) {
+        if (resizeable) {
+            super.setPreferredSize(d);
+        }
     }
 
     @Override
     protected void fillShape(Graphics graphics) {
-       
+
     }
 
     @Override
     protected void outlineShape(Graphics graphics) {
-        
+
     }
-    
+
     @Override
     public void setLineWidth(int w) {
         if (currentFigure instanceof Shape) {
-            ((Shape)currentFigure).setLineWidth(w);
+            ((Shape) currentFigure).setLineWidth(w);
         }
     }
-    
+
     @Override
     public int getLineWidth() {
         if (currentFigure instanceof Shape) {
-            return ((Shape)currentFigure).getLineWidth();
+            return ((Shape) currentFigure).getLineWidth();
         } else {
             return -1;
         }
     }
-    
+
     @Override
     public void setLineWidthFloat(float value) {
         if (currentFigure instanceof Shape) {
-            ((Shape)currentFigure).setLineWidthFloat(value);
+            ((Shape) currentFigure).setLineWidthFloat(value);
         }
     }
-    
+
     @Override
     public float getLineWidthFloat() {
         if (currentFigure instanceof Shape) {
-            return ((Shape)currentFigure).getLineWidthFloat();
+            return ((Shape) currentFigure).getLineWidthFloat();
         } else {
             return -1;
         }
     }
-    
-    
+
+    public boolean getResizeable() {
+        return resizeable;
+    }
+
+    public void setResizeable(Boolean b) {
+        resizeable = b;
+    }
+
 }

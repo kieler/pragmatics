@@ -1,12 +1,14 @@
 package de.cau.cs.kieler.karma;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
+import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
@@ -28,7 +30,7 @@ public class AdvancedRenderingEditPartUtil {
     /**
      * The list of conditions and the corresponding string for generating the figure.
      */
-    private List<Pair<Pair<String, String>, ICondition<EObject>>> conditions;
+    private List<HashMap<String, Object>> conditions;
 
     /**
      * The figure provider for generating the figures from a string.
@@ -42,8 +44,7 @@ public class AdvancedRenderingEditPartUtil {
      * @param theRenderingProvider
      *            The figure provider for generating the figures from a string.
      */
-    public AdvancedRenderingEditPartUtil(
-            final List<Pair<Pair<String, String>, ICondition<EObject>>> theConditions,
+    public AdvancedRenderingEditPartUtil(final List<HashMap<String, Object>> theConditions,
             final IRenderingProvider theRenderingProvider) {
         conditions = theConditions;
         renderingProvider = theRenderingProvider;
@@ -61,21 +62,19 @@ public class AdvancedRenderingEditPartUtil {
      *            the editpart himself.
      */
     public void handleNotificationEvent(final Notification notification,
-            final IFigure primaryShape, final EObject modelElement, final GraphicalEditPart editPart) {
+            final IFigure primaryShape, final EObject modelElement,
+            final AbstractGraphicalEditPart editPart) {
         if (!(notification.isTouch())) {
             if (primaryShape != null) {
-                if (primaryShape instanceof SwitchableFigure) {
-                    SwitchableFigure attrFigure = (SwitchableFigure) primaryShape;
-                    // attrFigure.setCurrentFigure(figureProvider.getDefaultFigure());
-                    boolean changed = this.updateFigure(attrFigure, modelElement);
-                    if (changed) {
-                        LayoutManager layoutManager = attrFigure.getLayoutManager();
-                        if (layoutManager != null) {
-                            layoutManager.layout(attrFigure);
-                        }
-                        editPart.refresh();
+                IFigure attrFigure = primaryShape;
+                boolean changed = this.updateFigure(attrFigure, modelElement, editPart);
+                if (changed) {
+                    LayoutManager layoutManager = attrFigure.getLayoutManager();
+                    if (layoutManager != null) {
+                        layoutManager.layout(attrFigure);
                     }
                 }
+
             }
         }
     }
@@ -89,26 +88,59 @@ public class AdvancedRenderingEditPartUtil {
      *            the modelelement the figure belongs to.
      * @return true if the figure actually changed, false else.
      */
-    public boolean updateFigure(final IFigure figure, final EObject modelElement) {
-        if ((figure instanceof SwitchableFigure) && (conditions != null)) {
-            if (!(conditions.isEmpty())) {
-                SwitchableFigure attrFigure = (SwitchableFigure) figure;
-                IFigure oldFigure = attrFigure.getCurrentFigure();
-                IFigure newFigure = null;
-                for (Pair<Pair<String, String>, ICondition<EObject>> cf : conditions) {
-                    if (cf.getSecond().evaluate(modelElement)) {
-                        if (lastCondition == cf.getSecond()) {
-                            return false;
+    public boolean updateFigure(final IFigure figure, final EObject modelElement,
+            final AbstractGraphicalEditPart editPart) {
+        if (conditions != null) {
+            IFigure oldFigure;
+            SwitchableFigure attrFigure = null;
+            if ((figure instanceof SwitchableFigure)) {
+                attrFigure = (SwitchableFigure) figure;
+                oldFigure = attrFigure.getCurrentFigure();
+            } else {
+                oldFigure = figure;
+            }
+            IFigure newFigure = null;
+            for (HashMap<String, Object> conditionElement : conditions) {
+                @SuppressWarnings("unchecked")
+                ICondition<EObject> condition = (ICondition<EObject>) conditionElement
+                        .get("condition");
+
+                if (condition.evaluate(modelElement)) {
+                    if (lastCondition == condition) {
+                        return false;
+                    } else {
+                        @SuppressWarnings("unchecked")
+                        Pair<Integer, Integer> figureSize = (Pair<Integer, Integer>) conditionElement
+                                .get("figureSize");
+                        String figureParam = (String) conditionElement.get("figureParam");
+                        String layoutParam = (String) conditionElement.get("layoutParam");
+
+                        newFigure = renderingProvider.getFigureByString(figureParam, oldFigure,
+                                modelElement);
+                        LayoutManager newLayoutManager = renderingProvider
+                                .getLayoutManagerByString(layoutParam, figure.getLayoutManager(),
+                                        modelElement);
+                        if (attrFigure != null) {
+                            attrFigure.setCurrentFigure(newFigure);
                         } else {
 
-                            newFigure = renderingProvider.getFigureByString(cf.getFirst().getFirst(), oldFigure,
-                                    modelElement);
-                            LayoutManager newLayoutManager = renderingProvider.getLayoutManagerByString(cf.getFirst().getSecond(), attrFigure.getLayoutManager(), modelElement);
-                            attrFigure.setCurrentFigure(newFigure);
-                            attrFigure.setLayoutManager(newLayoutManager);
-                            lastCondition = cf.getSecond();
-                            return true;
                         }
+                        figure.setLayoutManager(newLayoutManager);
+
+                        if ((figureSize.getFirst() >= 0) && (figureSize.getSecond() >= 0)) {
+                            Dimension dim = new Dimension(figureSize.getFirst(),
+                                    figureSize.getSecond());
+                            figure.getBounds().setSize(dim);
+                            figure.setMaximumSize(dim.getCopy());
+                            figure.setMinimumSize(dim.getCopy());
+                            // attrFigure.setPreferredSize(dim.getCopy());
+                            if (attrFigure != null) {
+                                attrFigure.setResizeable(false);
+                            }
+                        }
+
+                        lastCondition = condition;
+                        return true;
                     }
                 }
             }

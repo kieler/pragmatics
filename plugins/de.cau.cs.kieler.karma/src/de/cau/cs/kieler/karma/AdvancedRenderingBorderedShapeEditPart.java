@@ -15,6 +15,7 @@
 
 package de.cau.cs.kieler.karma;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
@@ -22,9 +23,6 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
-
-import de.cau.cs.kieler.core.util.ICondition;
-import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * @author ckru
@@ -52,7 +50,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
         super(view);
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
-        List<Pair<Pair<String, String>, ICondition<EObject>>> conditions = conditionProvider.getPairs(className);
+        List<HashMap<String, Object>> conditions = conditionProvider.getPairs(className);
         IRenderingProvider figureProvider = conditionProvider.getFigureProvider(className);
         util = new AdvancedRenderingEditPartUtil(conditions, figureProvider);
     }
@@ -67,7 +65,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
      * {@inheritDoc}
      */
     public boolean updateFigure(final IFigure figure) {
-        return util.updateFigure(figure, this.getModelElement());
+        return util.updateFigure(figure, this.getModelElement(), this);
     }
 
     /**

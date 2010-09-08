@@ -78,14 +78,21 @@
          <attribute name="figureParam" type="string">
             <annotation>
                <documentation>
-                  This string will be given to te figure provider. The figure provider should be able to handle the string and return a figure according to this string.
+                  This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a figure according to this string.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="layoutParam" type="string">
             <annotation>
                <documentation>
-                  
+                  This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a layout according to this string.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="figureSize" type="string">
+            <annotation>
+               <documentation>
+                  The non resizeable size of the figure in the form of width,height. In case of negative numbers or empty it will be user resizeable.
                </documentation>
             </annotation>
          </attribute>
@@ -123,14 +130,21 @@
          <attribute name="figureParam" type="string">
             <annotation>
                <documentation>
-                  This string will be given to te figure provider. The figure provider should be able to handle the string and return a figure according to this string.
+                  This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a figure according to this string.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="layoutParam" type="string">
             <annotation>
                <documentation>
-                  
+                  This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a layout according to this string.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="figureSize" type="string">
+            <annotation>
+               <documentation>
+                  The non resizeable size of the figure in the form of width,height. In case of negative numbers or empty it will be user resizeable.
                </documentation>
             </annotation>
          </attribute>
@@ -153,14 +167,21 @@
          <attribute name="figureParam" type="string">
             <annotation>
                <documentation>
-                  This string will be given to te figure provider. The figure provider should be able to handle the string and return a figure according to this string.
+                  This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a figure according to this string.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="layoutParam" type="string">
             <annotation>
                <documentation>
-                  
+                  This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a layout according to this string.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="figureSize" type="string">
+            <annotation>
+               <documentation>
+                  The non resizeable size of the figure in the form of width,height. In case of negative numbers or empty it will be user resizeable.
                </documentation>
             </annotation>
          </attribute>
@@ -187,7 +208,7 @@
          <attribute name="figureParam" type="string">
             <annotation>
                <documentation>
-                  This string will be given to te figure provider. The figure provider should be able to handle the string and return a figure according to this string.
+                  This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a figure according to this string.
                </documentation>
             </annotation>
          </attribute>
@@ -208,7 +229,14 @@
          <attribute name="layoutParam" type="string">
             <annotation>
                <documentation>
-                  
+                  This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a layout according to this string.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="figureSize" type="string">
+            <annotation>
+               <documentation>
+                  The non resizeable size of the figure in the form of width,height. In case of negative numbers or empty it will be user resizeable.
                </documentation>
             </annotation>
          </attribute>
@@ -225,7 +253,7 @@
          <attribute name="RenderingProvider" type="string" use="required">
             <annotation>
                <documentation>
-                  The figure string  from the conditions will be given to this class and will return the figure that will be displayed.
+                  The figure and layout strings  from the conditions will be given to this class and will return the figure that will be displayed and a layout.
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.karma.IRenderingProvider"/>

@@ -14,5 +14,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.mwe.core;bundle-version="1.0.0",
  de.cau.cs.kieler.core.annotations;bundle-version="0.1.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.karma

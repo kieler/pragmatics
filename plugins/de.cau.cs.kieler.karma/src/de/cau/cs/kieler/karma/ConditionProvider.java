@@ -15,7 +15,7 @@
 
 package de.cau.cs.kieler.karma;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,19 +51,20 @@ public final class ConditionProvider {
      * HashTable for caching condition pairs so that the ExtensionPoint is parsed only once per edit
      * part.
      */
-    private Hashtable<String, List<Pair<Pair<String, String>, ICondition<EObject>>>> hashTableConditions = new Hashtable<String, List<Pair<Pair<String, String>, ICondition<EObject>>>>();
+    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = new HashMap<String, List<HashMap<String, Object>>>();
 
     /**
      * HashTable for caching figure providers so that the ExtensionPoint is parsed only once per
      * edit part.
      */
-    private Hashtable<String, IRenderingProvider> hashTableFigureProviders = new Hashtable<String, IRenderingProvider>();
+    private HashMap<String, IRenderingProvider> hashTableFigureProviders = new HashMap<String, IRenderingProvider>();
 
     /**
-     * HashTable for caching the relevant features and feature ids. Not yet used, will probably removed again. 
+     * HashTable for caching the relevant features and feature ids. Not yet used, will probably
+     * removed again.
      */
-    private Hashtable<Integer, EStructuralFeature> hashTableRelevantFeatures = new Hashtable<Integer, EStructuralFeature>();
-    
+    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = new HashMap<Integer, EStructuralFeature>();
+
     /**
      * Constructor set to private to ensure usage of singleton instance.
      */
@@ -101,11 +102,14 @@ public final class ConditionProvider {
      *            the editor for which the returned conditions will be defined
      * @return list of all condition figure pairs that fit the given editor
      */
-    public List<Pair<Pair<String, String>, ICondition<EObject>>> getPairs(final String callingEditPart) {
+    public List<HashMap<String, Object>> /* List<Pair<Pair<String, String>, ICondition<EObject>>> */getPairs(
+            final String callingEditPart) {
         if (hashTableConditions.containsKey(callingEditPart)) {
             return hashTableConditions.get(callingEditPart);
         }
-        List<Pair<Pair<String, String>, ICondition<EObject>>> conditionFigurePairs = new LinkedList<Pair<Pair<String, String>, ICondition<EObject>>>();
+        List<HashMap<String, Object>> conditionsList = new LinkedList<HashMap<String, Object>>();
+        // List<Pair<Pair<String, String>, ICondition<EObject>>> conditionFigurePairs = new
+        // LinkedList<Pair<Pair<String, String>, ICondition<EObject>>>();
         IConfigurationElement[] configurations = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTENSION_POINT_ID);
         for (IConfigurationElement settings : configurations) {
@@ -119,34 +123,44 @@ public final class ConditionProvider {
                 IConfigurationElement[] packages = settings.getChildren("package");
                 IConfigurationElement[] conditionsContainer = settings.getChildren("conditions");
                 /*
-                IConfigurationElement[] mutatableObjectContainer = settings
-                        .getChildren("mutatableObject");
-                if (mutatableObjectContainer.length != 0) {
-                    // TODO support for mutatable objects, probably wont make it into final version since 
-                    //      annotations also work with conditions.
-                } else {*/ 
-                    for (IConfigurationElement conditionContainer : conditionsContainer) {
-                        IConfigurationElement[] conditions = conditionContainer.getChildren();
-                        for (IConfigurationElement condition : conditions) {
-                            String figureParam = condition.getAttribute("figureParam");
-                            String layoutParam = condition.getAttribute("layoutParam");
-                            // IFigure figure = figureProvider.getFigureByString(figureParam);
-                            ICondition<EObject> cond = getCondition(condition, packages);
-                            if ((cond != null) /* && (figure != null) */) {
-                                Pair<Pair<String, String>, ICondition<EObject>> pair = new Pair<Pair<String, String> , ICondition<EObject>>(
-                                        new Pair <String, String>(figureParam, layoutParam), cond);
-                                conditionFigurePairs.add(pair);
-                            } else {
-                                throw new RuntimeException(
-                                        "A failure occured while getting Conditions");
-                                // System.out.println("Couldnt get condition. Condition was skipped.");
-                            }
+                 * IConfigurationElement[] mutatableObjectContainer = settings
+                 * .getChildren("mutatableObject"); if (mutatableObjectContainer.length != 0) { //
+                 * TODO support for mutatable objects, probably wont make it into final version
+                 * since // annotations also work with conditions. } else {
+                 */
+                for (IConfigurationElement conditionContainer : conditionsContainer) {
+                    IConfigurationElement[] conditions = conditionContainer.getChildren();
+                    for (IConfigurationElement condition : conditions) {
+                        HashMap<String, Object> conditionElement = new HashMap<String, Object>();
+
+                        String figureParam = condition.getAttribute("figureParam");
+                        conditionElement.put("figureParam", figureParam);
+
+                        String layoutParam = condition.getAttribute("layoutParam");
+                        conditionElement.put("layoutParam", layoutParam);
+
+                        String figureSizeString = condition.getAttribute("figureSize");
+                        Pair<Integer, Integer> figureSize = this.parseFigureSize(figureSizeString);
+                        conditionElement.put("figureSize", figureSize);
+
+                        ICondition<EObject> cond = getCondition(condition, packages);
+                        if ((cond != null)) {
+                            /*
+                             * Pair<Pair<String, String>, ICondition<EObject>> pair = new
+                             * Pair<Pair<String, String> , ICondition<EObject>>( new Pair <String,
+                             * String>(figureParam, layoutParam), cond);
+                             * conditionFigurePairs.add(pair);
+                             */
+                            conditionElement.put("condition", cond);
+                            conditionsList.add(conditionElement);
+                        } else {
+                            throw new RuntimeException("A failure occured while getting Conditions");
                         }
                     }
+                }
 
-                
-                hashTableConditions.put(callingEditPart, conditionFigurePairs);
-                return conditionFigurePairs;
+                hashTableConditions.put(callingEditPart, conditionsList);
+                return conditionsList;
             }
         }
         return null;
@@ -168,7 +182,7 @@ public final class ConditionProvider {
             String typeString = condition.getAttribute("type");
             EStructuralFeature feature = getFeatureFromPackages(packages, featureString, typeString);
             if (feature != null) {
-                if(!(hashTableRelevantFeatures.containsKey(feature.getFeatureID()))) {
+                if (!(hashTableRelevantFeatures.containsKey(feature.getFeatureID()))) {
                     hashTableRelevantFeatures.put(feature.getFeatureID(), feature);
                 }
                 Object value = getValueByFeature(feature, condition.getAttribute("value"));
@@ -252,7 +266,7 @@ public final class ConditionProvider {
             EAttributeImpl attr = (EAttributeImpl) feature;
             EClassifier type = attr.getEType();
             if (type instanceof EEnum) {
-                EEnum eenum = (EEnum) ((EAttribute) feature).getEType();               
+                EEnum eenum = (EEnum) ((EAttribute) feature).getEType();
                 EEnumLiteral literal = eenum.getEEnumLiteral(value);
                 return literal.getInstance();
             } else if (type.getName().equals("EBoolean")) {
@@ -382,5 +396,24 @@ public final class ConditionProvider {
         int number = Integer.parseInt(numberString);
         result = new Pair<String, Integer>(operator, number);
         return result;
+    }
+
+    private Pair<Integer, Integer> parseFigureSize(final String input) {
+        if ((input != null) && !(input.isEmpty())) {
+            String[] xandy = input.split(",");
+            if (xandy.length == 2) {
+                try {
+                    int x = Integer.parseInt(xandy[0]);
+                    int y = Integer.parseInt(xandy[1]);
+                    return new Pair<Integer, Integer>(x, y);
+                } catch (Exception e) {
+                    throw new RuntimeException("couldnt parse figure sizes");
+                }
+            } else {
+                throw new RuntimeException("wrong format of figure size");
+            }
+        } else {
+            return new Pair<Integer, Integer>(-1, -1);
+        }
     }
 }
