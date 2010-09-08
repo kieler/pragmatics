@@ -58,11 +58,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
@@ -98,9 +96,11 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
     /** map of layout graph elements to edit parts. */
-    private Map<KGraphElement, IGraphicalEditPart> graphElem2EditPartMap = new LinkedHashMap<KGraphElement, IGraphicalEditPart>();
+    private Map<KGraphElement, IGraphicalEditPart> graphElem2EditPartMap
+            = new LinkedHashMap<KGraphElement, IGraphicalEditPart>();
     /** map of edit parts to layout graph elements. */
-    private Map<IGraphicalEditPart, KGraphElement> editPart2GraphElemMap = new HashMap<IGraphicalEditPart, KGraphElement>();
+    private Map<IGraphicalEditPart, KGraphElement> editPart2GraphElemMap
+            = new HashMap<IGraphicalEditPart, KGraphElement>();
     /** list of connection edit parts that were found in the diagram. */
     private LinkedList<ConnectionEditPart> connections = new LinkedList<ConnectionEditPart>();
     /** editor part of the currently layouted diagram. */
@@ -183,7 +183,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /** map of editor change listeners to all editors for which they have registered. */
-    private Map<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>> listenerMap = new HashMap<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>>();
+    private Map<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>> listenerMap
+            = new HashMap<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>>();
 
     /**
      * {@inheritDoc}
@@ -304,6 +305,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * Recursively search parents of the source and target node to find the most common parent. Then
      * add a dummy edge between the corresponding children within this common parent. Also consider
      * that hierarchy levels of parent and target might be asymmetric.
+     * 
+     * FIXME this is the wrong place for doing such thing (msp)
      * 
      * @author haf, cmot
      */
@@ -491,7 +494,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      */
     private void buildLayoutGraphRecursively(final IGraphicalEditPart parentEditPart,
         final KNode parentLayoutNode, final IGraphicalEditPart currentEditPart) {
-        boolean hasChildNodes = false, hasChildCompartments = false, hasPorts = false, isCollapsed = false;
+        boolean hasChildNodes = false, hasChildCompartments = false,
+                hasPorts = false, isCollapsed = false;
         KInsets kinsets = null;
         IFigure parentFigure = parentEditPart.getFigure();
 
@@ -565,7 +569,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 if (!KimlUiUtil.isNoLayout(compartment)) {
                     IFigure compartmentFigure = compartment.getFigure();
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
-                        ResizableCompartmentFigure resizableCompartmentFigure = (ResizableCompartmentFigure) compartmentFigure;
+                        ResizableCompartmentFigure resizableCompartmentFigure
+                                = (ResizableCompartmentFigure) compartmentFigure;
                         // check whether the compartment is collapsed
                         if (!resizableCompartmentFigure.isExpanded()) {
                             isCollapsed = true;
@@ -658,15 +663,14 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
         KShapeLayout nodeLayout = KimlUtil.getShapeLayout(parentLayoutNode);
         // set default fixed size option
-        if (!hasChildNodes && !hasChildCompartments && !isCollapsed) {
-            LayoutOptions.setBoolean(nodeLayout, LayoutOptions.FIXED_SIZE_ID, true);
-        }
+        nodeLayout.setProperty(LayoutOptions.FIXED_SIZE,
+                !hasChildNodes && !hasChildCompartments && !isCollapsed);
         // set default port constraints option
         if (hasPorts) {
             if (hasChildNodes || hasChildCompartments) {
-                LayoutOptions.setEnum(nodeLayout, PortConstraints.FREE);
+                nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
             } else {
-                LayoutOptions.setEnum(nodeLayout, PortConstraints.FIXED_POS);
+                nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
             }
         }
     }
@@ -934,7 +938,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 for (KNode child : parent.getChildren()) {
                     if (child != previousNode) {
                         KShapeLayout childLayout = KimlUtil.getShapeLayout(child);
-                        LayoutOptions.setBoolean(childLayout, LayoutOptions.FIXED_SIZE_ID, true);
+                        childLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
                         removeFromLayout(child);
                     }
                 }

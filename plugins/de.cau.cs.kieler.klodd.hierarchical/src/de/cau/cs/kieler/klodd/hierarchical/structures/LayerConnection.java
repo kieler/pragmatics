@@ -118,7 +118,7 @@ public class LayerConnection {
                 }
             }
             if (targetPort != null && targetPort.getNode() == layeredGraph.getParentNode()) {
-                PortSide targetSide = LayoutOptions.getEnum(targetPortLayout, PortSide.class);
+                PortSide targetSide = targetPortLayout.getProperty(LayoutOptions.PORT_SIDE);
                 if (targetSide == PortSide.NORTH || targetSide == PortSide.SOUTH) {
                     subTargetXInset = true;
                 } else {
@@ -154,8 +154,8 @@ public class LayerConnection {
                         bendPoint.setY(bendPoint.getY() - insets.getTop());
                     }
                 }
-                toExternalEndpoint(sourcePoint, LayoutOptions.getEnum(sourcePortLayout,
-                        PortSide.class), insets);
+                toExternalEndpoint(sourcePoint, sourcePortLayout.getProperty(LayoutOptions.PORT_SIDE),
+                        insets);
             } else {
                 sourcePoint.setX(sourcePortLayout.getXpos() + sourcePortLayout.getWidth() / 2
                         + sourceElement.getPosition().getX() + sourceElement.getPosOffset().getX());
@@ -196,8 +196,8 @@ public class LayerConnection {
                         bendPoint.setY(bendPoint.getY() - insets.getTop());
                     }
                 }
-                toExternalEndpoint(targetPoint, LayoutOptions.getEnum(targetPortLayout,
-                        PortSide.class), insets);
+                toExternalEndpoint(targetPoint, targetPortLayout.getProperty(LayoutOptions.PORT_SIDE),
+                        insets);
             } else {
                 targetPoint.setX(targetPortLayout.getXpos() + targetPortLayout.getWidth() / 2
                         + targetElement.getPosition().getX() + targetElement.getPosOffset().getX());

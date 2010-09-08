@@ -57,8 +57,8 @@ public class BoxPlacer extends AbstractAlgorithm {
                 - insets.getLeft() - insets.getRight(), 0);
         float minHeight = Math.max(parentLayout.getProperty(LayoutOptions.MIN_HEIGHT)
                 - insets.getTop() - insets.getBottom(), 0);
-        float aspectRatio = LayoutOptions.getFloat(parentLayout, LayoutOptions.ASPECT_RATIO_ID);
-        if (Float.isNaN(aspectRatio) || aspectRatio <= 0) {
+        float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
+        if (aspectRatio <= 0) {
             aspectRatio = DEF_ASPECT_RATIO;
         }
 
@@ -94,7 +94,7 @@ public class BoxPlacer extends AbstractAlgorithm {
         float totalArea = 0.0f;
         for (KNode box : sortedBoxes) {
             KShapeLayout boxLayout = KimlUtil.getShapeLayout(box);
-            if (!LayoutOptions.getBoolean(boxLayout, LayoutOptions.FIXED_SIZE_ID)) {
+            if (!boxLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
                 KimlUtil.resizeNode(box);
             }
             maxRowWidth = Math.max(maxRowWidth, boxLayout.getWidth());

@@ -19,17 +19,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.draw2d.geometry.Point;
-
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
-import de.cau.cs.kieler.core.ui.util.SplineUtilities;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
+import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -65,7 +62,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
     /** Label placer. */
     private ILabelPlacer labelPlacer = new SimpleLabelPlacer();
     /** the DebugCanvas to use for debug-drawings. **/
-    private DebugCanvas debugCanvas;
+    private IDebugCanvas debugCanvas;
 
     /** Spline being stored temporarily. */
     private BezierSpline globSpline = new BezierSpline();
@@ -87,7 +84,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
     /**
      * {@inheritDoc}
      */
-    public void routeEdges(final LayeredGraph layeredGraph, final DebugCanvas theDebugCanvas) {
+    public void routeEdges(final LayeredGraph layeredGraph, final IDebugCanvas theDebugCanvas) {
         debugCanvas = theDebugCanvas;
         spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         routeEdges(layeredGraph);
@@ -139,7 +136,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
         boxCalculator.initialize(layeredGraph, debugCanvas);
 
         // get user defined minimal angle for straigt edges heading in and out nodes.
-        int minimalAngle = layeredGraph.getProperty(Properties.MINIMAL_EDGE_ANGLE);
+        int minimalAngle = layeredGraph.getProperty(Properties.MIN_EDGE_ANGLE);
         // check all short edges
         if (minimalAngle != 0) {
             for (LEdge edge : shortEdges) {
@@ -593,16 +590,12 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
             for (Line2D.Double line : lArray) {
                 // first check if we are in range
                 if (line != null && line.x1 < maxX) {
-                    double dist1 = Math.abs(SplineUtilities.distanceFromSpline(new Point(
-                            curve.start.x, curve.start.y), new Point(curve.fstControlPnt.x,
-                            curve.fstControlPnt.y), new Point(curve.sndControlPnt.x,
-                            curve.sndControlPnt.y), new Point(curve.end.x, curve.end.y), new Point(
-                            line.getP1().getX(), line.getP1().getY())));
-                    double dist2 = Math.abs(SplineUtilities.distanceFromSpline(new Point(
-                            curve.start.x, curve.start.y), new Point(curve.fstControlPnt.x,
-                            curve.fstControlPnt.y), new Point(curve.sndControlPnt.x,
-                            curve.sndControlPnt.y), new Point(curve.end.x, curve.end.y), new Point(
-                            line.getP2().getX(), line.getP2().getY())));
+                    double dist1 = Math.abs(KielerMath.distanceFromSpline(curve.start,
+                            curve.fstControlPnt, curve.sndControlPnt, curve.end,
+                            new KVector(line.getP1().getX(), line.getP1().getY())));
+                    double dist2 = Math.abs(KielerMath.distanceFromSpline(curve.start,
+                            curve.fstControlPnt, curve.sndControlPnt, curve.end,
+                            new KVector(line.getP2().getX(), line.getP2().getY())));
                     // minimal distance from the line with the maximum distance!
                     double currMaxDist = Math.min(dist1, dist2);
                     if (currMaxDist > maxDist) {

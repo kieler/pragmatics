@@ -110,7 +110,7 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRo
         layeredGraph.getSize().x = xpos - spacing;
 
         // get user defined minimal angle for straigt edges heading in and out nodes.
-        int minimalAngle = layeredGraph.getProperty(Properties.MINIMAL_EDGE_ANGLE);
+        int minimalAngle = layeredGraph.getProperty(Properties.MIN_EDGE_ANGLE);
         // check all short edges
         if (minimalAngle != 0) {
             for (LEdge edge : shortEdges) {

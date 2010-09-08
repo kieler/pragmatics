@@ -322,7 +322,7 @@ public class LayoutServices {
     public final AbstractLayoutProvider getLayoutProvider(final KNode layoutNode)
             throws KielerException {
         KShapeLayout nodeLayout = KimlUtil.getShapeLayout(layoutNode);
-        String layoutHint = LayoutOptions.getString(nodeLayout, LayoutOptions.LAYOUT_HINT_ID);
+        String layoutHint = nodeLayout.getProperty(LayoutOptions.LAYOUTER_HINT);
         String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
         LayoutProviderData providerData = getLayoutProviderData(layoutHint, diagramType);
         if (providerData != null) {
@@ -387,7 +387,7 @@ public class LayoutServices {
         List<LayoutOptionData<?>> optionDataList = new ArrayList<LayoutOptionData<?>>();
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
             if (providerData.knowsOption(optionData.getId())
-                    || LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
+                    || LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
                 if (optionData.hasTarget(target)) {
                     optionDataList.add(optionData);
                 }

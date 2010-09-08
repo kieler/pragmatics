@@ -76,9 +76,8 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
         // get the currently configured modules
         updateModules();
         // set option for minimal distance
-        float minDist = LayoutOptions.getFloat(KimlUtil.getShapeLayout(layoutNode),
-                LayoutOptions.MIN_SPACING_ID);
-        if (Float.isNaN(minDist)) {
+        float minDist = KimlUtil.getShapeLayout(layoutNode).getProperty(LayoutOptions.OBJ_SPACING);
+        if (minDist < 0) {
             minDist = DEF_MIN_DIST;
         }
 
@@ -140,7 +139,7 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
         parentLayout.setHeight(insets.getTop() + currentYpos + insets.getBottom());
 
         // update layout options of the parent layout node
-        LayoutOptions.setEnum(parentLayout, PortConstraints.FIXED_POS);
+        parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
     }
 
 }

@@ -47,21 +47,17 @@ public class PlanarizationLayouter extends OgdfLayouter {
     protected void prepareLayouter(final KNode layoutNode) {
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
         // get page ratio
-        float pageRatio =
-                LayoutOptions
-                        .getFloat(parentLayout, LayoutOptions.ASPECT_RATIO_ID);
-        if (Float.isNaN(pageRatio)) {
+        float pageRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
+        if (pageRatio <= 0) {
             pageRatio = DEF_PAGE_RATIO;
         }
         // get separation
-        float minSpacing =
-                LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
-        if (Float.isNaN(minSpacing)) {
+        float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        if (minSpacing < 0) {
             minSpacing = DEF_MINSPACING;
         }
         // get layout direction
-        LayoutDirection direction =
-                LayoutOptions.getEnum(parentLayout, LayoutDirection.class);
+        LayoutDirection direction = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
         int layoutDirection;
         switch (direction) {
         case UP:
@@ -97,21 +93,21 @@ public class PlanarizationLayouter extends OgdfLayouter {
     public Object getDefault(final String optionId) {
         if (optionId.equals(LayoutOptions.LAYOUT_DIRECTION_ID)) {
             return LayoutDirection.UP;
-        } else if (optionId.equals(LayoutOptions.MIN_SPACING_ID)) {
+        } else if (optionId.equals(LayoutOptions.OBJ_SPACING_ID)) {
             return DEF_MINSPACING;
         } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
         } else if (optionId.equals(LayoutOptions.ASPECT_RATIO_ID)) {
             return DEF_PAGE_RATIO;
-        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
             return DEF_LABEL_SPACING;
-        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
             return DEF_LABEL_MARGIN_DISTANCE;
         } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
             return DEF_LABEL_SPACING;
-        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
             return DEF_LABEL_MARGIN_DISTANCE;
         } else {
             return null;

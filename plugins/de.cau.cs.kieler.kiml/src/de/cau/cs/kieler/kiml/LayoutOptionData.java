@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml;
 
 import java.util.StringTokenizer;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
 
 /**
@@ -264,18 +263,6 @@ public class LayoutOptionData<T> implements IProperty<T> {
     }
 
     /**
-     * Sets the given value of this layout option in the given layout data.
-     * 
-     * @param layoutData layout data for which the option shall be set
-     * @param value the new value of this option
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#setProperty(IProperty, Object)}
-     *     instead
-     */
-    public void setValue(final KGraphData layoutData, final Object value) {
-        layoutData.setProperty(this, value);
-    }
-
-    /**
      * Sets the targets property of this layout option data.
      * 
      * @param targetsString comma separated list of targets
@@ -389,12 +376,26 @@ public class LayoutOptionData<T> implements IProperty<T> {
     }
 
     /**
-     * Sets the data type.
+     * Sets the data type. If the option class can be derived from the class, it is also set.
      *
      * @param thetype the data type to set
      */
     public void setType(final Type thetype) {
         this.type = thetype;
+        switch (thetype) {
+        case STRING:
+            clazz = String.class;
+            break;
+        case BOOLEAN:
+            clazz = Boolean.class;
+            break;
+        case INT:
+            clazz = Integer.class;
+            break;
+        case FLOAT:
+            clazz = Float.class;
+            break;
+        }
     }
 
     /**
@@ -466,7 +467,7 @@ public class LayoutOptionData<T> implements IProperty<T> {
     }
 
     /**
-     * Returns the option type class, which may be {@code null}.
+     * Returns the option type class.
      * 
      * @return the type class
      */

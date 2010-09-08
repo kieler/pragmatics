@@ -127,7 +127,7 @@ final class GenomeFactory {
             final Object value = entry.getValue();
 
             // Check the property descriptor id.
-            Assert.isTrue(!LayoutOptions.LAYOUT_HINT_ID.equals(id),
+            Assert.isTrue(!LayoutOptions.LAYOUTER_HINT_ID.equals(id),
                     "There should be no layout hint in the collected options.");
 
             // There should not be a gene for this option yet.
@@ -247,7 +247,7 @@ final class GenomeFactory {
                 final String id = (String) desc.getId();
                 final Object value = source.getPropertyValue(id);
 
-                if (LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
+                if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                     // Property is a layout hint --> skip
                     Assert.isNotNull(value, "layout hint value is null");
                     continue;
@@ -298,7 +298,7 @@ final class GenomeFactory {
         for (final IPropertyDescriptor p : descriptors) {
             final String id = (String) p.getId();
             // check property descriptor id
-            if (!LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
+            if (!LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                 final LayoutOptionData<?> data = layoutServices.getLayoutOptionData(id);
                 Assert.isNotNull(data, "Layout option not registered: " + id);
 
@@ -399,7 +399,7 @@ final class GenomeFactory {
         final MutationInfo mutationInfo = new MutationInfo(prob);
 
         final RadioGene hintGene =
-                new RadioGene(LayoutOptions.LAYOUT_HINT_ID, Integer.valueOf(defaultEntry),
+                new RadioGene(LayoutOptions.LAYOUTER_HINT_ID, Integer.valueOf(defaultEntry),
                         typeInfo,
                         mutationInfo);
         return hintGene;

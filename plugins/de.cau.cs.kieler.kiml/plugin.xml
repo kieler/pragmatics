@@ -72,17 +72,26 @@
       </layoutType>
       <layoutOption
             appliesTo="parents"
-            description="Select either a specific layout algorithm or a layout type"
-            id="de.cau.cs.kieler.layout.options.layoutHint"
-            name="Layout Provider or Type"
-            type="string">
+            default="0.0"
+            description="The aimed aspect ratio of the drawing, that is the quotient of width by height"
+            id="de.cau.cs.kieler.layout.options.aspectRatio"
+            name="Aspect Ratio"
+            type="float">
       </layoutOption>
       <layoutOption
-            appliesTo="parents,nodes,edges,ports,labels"
+            appliesTo="parents"
+            default="-1.0"
+            description="Minimal amount of space to be left to the border"
+            id="de.cau.cs.kieler.layout.options.borderSpacing"
+            name="Border Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
             default="false"
-            description="Indicates that no layout should be done for the diagram part"
-            id="de.cau.cs.kieler.layout.options.noLayout"
-            name="No Layout"
+            description="Whether additional debug information shall be displayed"
+            id="de.cau.cs.kieler.layout.options.debugMode"
+            name="Debug Mode"
             type="boolean">
       </layoutOption>
       <layoutOption
@@ -101,22 +110,21 @@
             type="enum">
       </layoutOption>
       <layoutOption
-            appliesTo="parents"
-            class="de.cau.cs.kieler.kiml.options.LayoutDirection"
-            default="UNDEFINED"
-            description="Overall direction of edges: horizontal or vertical"
-            id="de.cau.cs.kieler.layout.options.layoutDirection"
-            name="Layout Direction"
+            appliesTo="edges"
+            class="de.cau.cs.kieler.kiml.options.EdgeType"
+            default="NONE"
+            description="The type of the edge."
+            id="de.cau.cs.kieler.layout.options.edgeType"
+            name="Edge Type"
             type="enum">
       </layoutOption>
       <layoutOption
-            appliesTo="nodes"
-            class="de.cau.cs.kieler.kiml.options.PortConstraints"
-            default="UNDEFINED"
-            description="Defines constraints of the position of the ports of a node"
-            id="de.cau.cs.kieler.layout.options.portConstraints"
-            name="Port Constraints"
-            type="enum">
+            appliesTo="parents"
+            default="false"
+            description="If active, nodes are expanded to fill the area of their parent"
+            id="de.cau.cs.kieler.layout.options.expandNodes"
+            name="Expand Nodes"
+            type="boolean">
       </layoutOption>
       <layoutOption
             appliesTo="nodes"
@@ -128,19 +136,11 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            default="-1.0"
-            description="Minimal amount of space to be left between objects"
-            id="de.cau.cs.kieler.layout.options.minSpacing"
-            name="Object Spacing"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="-1.0"
-            description="Minimal amount of space to be left to the border"
-            id="de.cau.cs.kieler.layout.options.borderSpacing"
-            name="Border Spacing"
-            type="float">
+            default="false"
+            description="Optimize the layout for user interaction by considering previous layout"
+            id="de.cau.cs.kieler.layout.options.interactive"
+            name="Interactive"
+            type="boolean">
       </layoutOption>
       <layoutOption
             appliesTo="edges"
@@ -151,6 +151,55 @@
             type="float">
       </layoutOption>
       <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.options.LayoutDirection"
+            default="UNDEFINED"
+            description="Overall direction of edges: horizontal or vertical"
+            id="de.cau.cs.kieler.layout.options.layoutDirection"
+            name="Layout Direction"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            description="Whether the selected layouter should consider the full hierarchy"
+            id="de.cau.cs.kieler.layout.options.layoutHierarchy"
+            name="Layout Hierarchy"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            description="Select either a specific layout algorithm or a layout type"
+            id="de.cau.cs.kieler.layout.options.layoutHint"
+            name="Layout Provider or Type"
+            type="string">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents,nodes,edges,ports,labels"
+            default="false"
+            description="Indicates that no layout should be done for the diagram part"
+            id="de.cau.cs.kieler.layout.options.noLayout"
+            name="No Layout"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="-1.0"
+            description="Minimal amount of space to be left between objects"
+            id="de.cau.cs.kieler.layout.options.minSpacing"
+            name="Object Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="nodes"
+            class="de.cau.cs.kieler.kiml.options.PortConstraints"
+            default="UNDEFINED"
+            description="Defines constraints of the position of the ports of a node"
+            id="de.cau.cs.kieler.layout.options.portConstraints"
+            name="Port Constraints"
+            type="enum">
+      </layoutOption>
+      <layoutOption
             appliesTo="nodes,edges"
             description="Defines the priority of an object; its meaning depends on the specific layout algorithm"
             id="de.cau.cs.kieler.layout.options.priority"
@@ -159,51 +208,10 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            default="false"
-            description="If active, nodes are expanded to fill the area of their parent"
-            id="de.cau.cs.kieler.layout.options.expandNodes"
-            name="Expand Nodes"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
             description="Seed used for pseudo-random number generators to control the layout algorithm"
             id="de.cau.cs.kieler.layout.options.randomSeed"
             name="Randomization Seed"
             type="int">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
-            description="Optimize the layout for user interaction by considering previous layout"
-            id="de.cau.cs.kieler.layout.options.interactive"
-            name="Interactive"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="edges"
-            class="de.cau.cs.kieler.kiml.options.EdgeType"
-            default="NONE"
-            description="The type of the edge."
-            id="de.cau.cs.kieler.layout.options.edgeType"
-            name="Edge Type"
-            type="enum">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="0.0"
-            description="The aimed aspect ratio of the drawing, that is the quotient of width by height"
-            id="de.cau.cs.kieler.layout.options.aspectRatio"
-            name="Aspect Ratio"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
-            description="Defines whether the layouter should also layout all decendants of the parent node."
-            id="de.cau.cs.kieler.layout.options.layoutDescendants"
-            name="Layout Descendants"
-            type="boolean">
       </layoutOption>
    </extension>
    <extension

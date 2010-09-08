@@ -25,7 +25,6 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.orthogonal.impl.ec.EmbeddingConstraint;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer;
@@ -78,7 +77,7 @@ public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPla
         for (KSlimNode node : graph.getNodes()) {
             KNode layoutNode = (KNode) node.getObject();
             KShapeLayout nodeLayout = KimlUtil.getShapeLayout(layoutNode);
-            PortConstraints portConstraints = LayoutOptions.getEnum(nodeLayout, PortConstraints.class);
+            PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
             TSMNode tsmNode = (TSMNode) node;
             if (!layoutNode.getPorts().isEmpty()) {
                 if (portConstraints == PortConstraints.FIXED_POS

@@ -52,13 +52,6 @@
       <layoutOption
             appliesTo="parents"
             default="false"
-            id="de.cau.cs.kieler.klay.layered.debugInfo"
-            name="Debug Info"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
             description="If enabled, edges with priority &gt; 0 are drawn straight instead of keeping the connected nodes in line.ne."
             id="de.cau.cs.kieler.klay.layered.straightEdges"
             name="Straight Edges"
@@ -66,7 +59,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            default="-1"
+            default="0"
             description="Defines the minimal angle that short edges may have."
             id="de.cau.cs.kieler.klay.layered.minimalAngle"
             name="Minimal Angle"
@@ -82,7 +75,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.LayeredNodeLayering"
+            class="de.cau.cs.kieler.klay.layered.NodeLayering"
             default="NETWORK_SIMPLEX"
             description="Style of the node layering"
             id="de.cau.cs.kieler.klay.layered.nodeLayering"

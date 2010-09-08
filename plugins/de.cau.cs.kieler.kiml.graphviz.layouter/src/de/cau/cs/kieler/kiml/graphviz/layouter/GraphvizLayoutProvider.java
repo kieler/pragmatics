@@ -70,7 +70,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             return LayoutDirection.RIGHT;
         } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
             return GraphvizLayouter.DEF_MIN_SPACING / 2;
-        } else if (LayoutOptions.MIN_SPACING_ID.equals(optionId)) {
+        } else if (LayoutOptions.OBJ_SPACING_ID.equals(optionId)) {
             return GraphvizLayouter.DEF_MIN_SPACING;
         } else if (LayoutOptions.FIXED_SIZE_ID.equals(optionId)) {
             return false;
@@ -80,7 +80,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             return 1.0f;
         } else if (LayoutOptions.EDGE_ROUTING_ID.equals(optionId)) {
             return EdgeRouting.SPLINES;
-        } else if (GraphvizLayouter.OPT_LABEL_DISTANCE.equals(optionId)) {
+        } else if (GraphvizLayouter.LABEL_DISTANCE_ID.equals(optionId)) {
             return 1.0f;
         } else {
             return null;

@@ -26,16 +26,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class RadialTreeLayouter extends OgdfLayouter {
 
-    /** the minimum level distance option. */
-    private static final String MIN_DIST_LEVEL =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel";
-    /** the minimum connected component distance option. */
-    private static final String MIN_DIST_CC =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC";
-    /** default value for the minimum level distance. */
-    private static final float DEF_MIN_DIST_LEVEL = 50.0f;
-    /** default value for minimum connected component distance. */
-    private static final float DEF_MIN_DIST_CC = 50.0f;
+    /** default value for the minimum level and connected components distance. */
+    private static final float DEF_MIN_DIST = 50.0f;
     /** default value for border spacing. */
     private static final float DEF_BORDER_SPACING = 15;
     /** default value for label edge distance. */
@@ -53,18 +45,12 @@ public class RadialTreeLayouter extends OgdfLayouter {
 
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
         // get the minimum level distance
-        float minDistLevel =
-                LayoutOptions.getFloat(parentLayout, MIN_DIST_LEVEL);
-        if (Float.isNaN(minDistLevel)) {
-            minDistLevel = DEF_MIN_DIST_LEVEL;
-        }
-        // get the minimum connected component distance
-        float minDistCC = LayoutOptions.getFloat(parentLayout, MIN_DIST_CC);
-        if (Float.isNaN(minDistCC)) {
-            minDistCC = DEF_MIN_DIST_CC;
+        float minDist = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        if (minDist < 0) {
+            minDist = DEF_MIN_DIST;
         }
         
-        Ogdf.createRadialTreeLayouter(minDistLevel, minDistCC);
+        Ogdf.createRadialTreeLayouter(minDist, minDist);
         
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
@@ -81,15 +67,13 @@ public class RadialTreeLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     public Object getDefault(final String optionId) {
-        if (optionId.equals(MIN_DIST_LEVEL)) {
-            return DEF_MIN_DIST_LEVEL;
-        } else if (optionId.equals(MIN_DIST_CC)) {
-            return DEF_MIN_DIST_CC;
+        if (optionId.equals(LayoutOptions.OBJ_SPACING_ID)) {
+            return DEF_MIN_DIST;
         } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
             return DEF_LABEL_SPACING;
-        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
             return DEF_LABEL_MARGIN_DISTANCE;
         } else {
             return null;

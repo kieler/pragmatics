@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 
 /**
  * Abstract superclass for managers of diagram layout.
@@ -43,8 +44,11 @@ public abstract class DiagramLayoutManager {
     /** maximal number of recursion levels for which progress is displayed. */
     public static final int MAX_PROGRESS_LEVELS = 2;
 
+    /** the debug canvas to use. */
+    private static final DebugCanvas DEBUG_CANVAS = new DebugCanvas();
     /** the layouter engine used to layout diagrams. */
-    private RecursiveLayouterEngine layouterEngine = new RecursiveLayouterEngine();
+    private static final RecursiveLayouterEngine LAYOUTER_ENGINE = new RecursiveLayouterEngine(
+            DEBUG_CANVAS);
     /** the configured priority of the layout manager. */
     private int priority;
 
@@ -191,7 +195,8 @@ public abstract class DiagramLayoutManager {
             layoutServices.layoutRequested(layoutGraph);
 
             // perform layout on the layout graph
-            layouterEngine.layout(layoutGraph, progressMonitor, layoutAncestors);
+            DEBUG_CANVAS.setManager(this);
+            LAYOUTER_ENGINE.layout(layoutGraph, progressMonitor, layoutAncestors);
             if (progressMonitor.isCanceled()) {
                 return new Status(IStatus.CANCEL, KimlUiPlugin.PLUGIN_ID, 0,
                         null, null);
@@ -207,10 +212,8 @@ public abstract class DiagramLayoutManager {
 
         } catch (Throwable exception) {
             String message = Messages.getString("kiml.ui.1");
-            if (layouterEngine != null
-                    && layouterEngine.getLastLayoutProvider() != null) {
-                message += " ("
-                        + layouterEngine.getLastLayoutProvider().getClass()
+            if (LAYOUTER_ENGINE.getLastLayoutProvider() != null) {
+                message += " (" + LAYOUTER_ENGINE.getLastLayoutProvider().getClass()
                                 .getSimpleName() + ")";
             }
             return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID, message,

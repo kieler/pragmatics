@@ -25,76 +25,11 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            default="-1"
+            default="400"
             description="The number of iterations performed by the algorithm."
             id="de.cau.cs.kieler.kiml.ogdf.option.iterations"
             name="Iterations"
             type="int">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="-1"
-            description="The minimal distance between nodes on a circle."
-            id="de.cau.cs.kieler.kiml.ogdf.option.minDistCircle"
-            name="Minimum Circle Distance"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="-1"
-            description="The minimal distance between levels."
-            id="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel"
-            name="Minimum Level Distance"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="-1"
-            description="The minimal distance between siblings on the same level. "
-            id="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling"
-            name="Minimum Sibling Distance"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="-1"
-            description="The minimal distance between connected components. "
-            id="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
-            name="Minimum CC Distance"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="-1"
-            description="The horizontal spacing between adjacent subtrees."
-            id="de.cau.cs.kieler.kiml.ogdf.option.minDistSubtree"
-            name="Minimum Subtree Distance"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="-1"
-            description="The horizontal spacing between adjacent trees in a forest. "
-            id="de.cau.cs.kieler.kiml.ogdf.option.minDistTree"
-            name="Minimum Tree Distance"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            class="de.cau.cs.kieler.kiml.ogdf.Orientation"
-            default="TOP_TO_BOTTOM"
-            description="Determines if the graph is laid out in a top-to-bottom, bottom-to-top, left-to-right, or right-to-left fashion."
-            id="de.cau.cs.kieler.kiml.ogdf.option.orientation"
-            name="Orientation"
-            type="enum">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
-            description="Determines whether edges are routed in an orthogonal or straight-line fashion. "
-            id="de.cau.cs.kieler.kiml.ogdf.option.orthogonal"
-            name="Orthogonal"
-            type="boolean">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
@@ -112,22 +47,6 @@
             id="de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed"
             name="Quality vs Speed"
             type="enum">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="-1"
-            description="The unit edge length."
-            id="de.cau.cs.kieler.kiml.ogdf.option.fmmm.unitEdgeLength"
-            name="Unit Edge Length"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="-1"
-            description="The edge length this algorithm is aiming to."
-            id="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.desiredEdgeLength"
-            name="Desired Edge Length"
-            type="float">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
@@ -212,7 +131,7 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.unitEdgeLength">
+               option="de.cau.cs.kieler.layout.options.minSpacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement">
@@ -244,13 +163,13 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacingde.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -310,22 +229,13 @@
             parameter="TREE"
             type="de.cau.cs.kieler.layout.types.tree">
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel">
+               option="de.cau.cs.kieler.layout.options.minSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling">
+               option="de.cau.cs.kieler.layout.options.layoutDirection">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistSubtree">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistTree">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.orientation">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.orthogonal">
+               option="de.cau.cs.kieler.layout.options.edgeRouting">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
@@ -345,10 +255,7 @@
             parameter="RADIAL_TREE"
             type="de.cau.cs.kieler.layout.types.tree">
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC">
+               option="de.cau.cs.kieler.layout.options.minSpacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">

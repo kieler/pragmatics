@@ -18,7 +18,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.math.BezierSpline;
-import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
+import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
@@ -45,7 +45,7 @@ public interface IBoxCalculator {
      * @param debugCanvas
      *            the canvas to debug, may be null
      */
-    void initialize(final LayeredGraph graph, final DebugCanvas debugCanvas);
+    void initialize(final LayeredGraph graph, final IDebugCanvas debugCanvas);
 
     /**
      * compute a box array for a given edge. compute_bboxes computes the space actually taken up by

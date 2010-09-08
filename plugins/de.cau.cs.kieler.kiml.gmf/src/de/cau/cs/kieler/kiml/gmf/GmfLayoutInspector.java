@@ -363,7 +363,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
         String partLayoutHint = null;
         if (optionStyle != null) {
             for (KOption koption : optionStyle.getOptions()) {
-                if (LayoutOptions.LAYOUT_HINT_ID.equals(koption.getKey())) {
+                if (LayoutOptions.LAYOUTER_HINT_ID.equals(koption.getKey())) {
                     partLayoutHint = koption.getValue();
                 }
                 LayoutOptionData<?> optionData = LayoutServices.getInstance()
@@ -377,7 +377,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
             DiagramEditPart diagramEditPart = getDiagramEditPart(containerEditPart);
             if (diagramEditPart != null) {
                 KOption koption = getKOption(diagramEditPart,
-                        LayoutOptions.LAYOUT_HINT_ID);
+                        LayoutOptions.LAYOUTER_HINT_ID);
                 if (koption != null && koption.isDefault()) {
                     partLayoutHint = koption.getValue();
                 }
@@ -398,12 +398,12 @@ public class GmfLayoutInspector implements ILayoutInspector {
         KOption containerLayoutHintOption = getKOption(
                 (containerEditPart instanceof CompartmentEditPart
                         ? (IGraphicalEditPart) containerEditPart.getParent() : containerEditPart),
-                LayoutOptions.LAYOUT_HINT_ID);
+                LayoutOptions.LAYOUTER_HINT_ID);
         if (containerLayoutHintOption == null) {
             DiagramEditPart diagramEditPart = getDiagramEditPart(containerEditPart);
             if (diagramEditPart != null) {
                 KOption koption = getKOption(diagramEditPart,
-                        LayoutOptions.LAYOUT_HINT_ID);
+                        LayoutOptions.LAYOUTER_HINT_ID);
                 if (koption != null && koption.isDefault()) {
                     containerLayoutHintOption = koption;
                 }
@@ -623,7 +623,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
             }
             
             // set the new option value
-            if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
+            if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
                 koption.setValue(LayoutPropertySource.getLayoutHint((String) value));
             } else {
                 koption.setValue(value.toString());

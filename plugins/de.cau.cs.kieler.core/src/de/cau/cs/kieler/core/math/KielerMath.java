@@ -168,6 +168,316 @@ public final class KielerMath {
         return result;
     }
     
+    /** degree of splines equation to find roots. */
+    private static final int W_DEGREE = 5;
+    
+    /**
+     * Calculate the distance from a cubic spline curve to the point needle.
+     * 
+     * @param start starting point
+     * @param c1 control point 1
+     * @param c2 control point 2
+     * @param end end point
+     * @param needle point to look for
+     * @return distance from needle to curve
+     */
+    public static double distanceFromSpline(final KVector start, final KVector c1, final KVector c2,
+            final KVector end, final KVector needle) {
+        double[] tCandidate = new double[W_DEGREE]; // possible roots
+        KVector[] v = { start, c1, c2, end };
+
+        // convert problem to 5th-degree Bezier form
+        KVector[] w = convertToBezierForm(v, needle);
+
+        // Find all possible roots of 5th-degree equation
+        int nSolutions = findRoots(w, W_DEGREE, tCandidate, 0);
+
+        // Compare distances of P5 to all candidates, and to t=0, and t=1
+        // Check distance to beginning of curve, where t = 0
+        double minDistance = needle.distance(start);
+        double t = 0.0;
+
+        // Find distances for candidate points
+        for (int i = 0; i < nSolutions; i++) {
+            KVector p = bezier(v, DEGREE, tCandidate[i], null, null);
+            double distance = needle.distance(p);
+            if (distance < minDistance) {
+                minDistance = distance;
+                t = tCandidate[i];
+            }
+        }
+
+        // Finally, look at distance to end point, where t = 1.0
+        double distance = needle.distance(end);
+        if (distance < minDistance) {
+            minDistance = distance;
+            t = 1.0;
+        }
+
+        // Return the point on the curve at parameter value t
+        KVector pn = new KVector(bezier(v, DEGREE, t, null, null));
+        return Math.sqrt(pn.distance(needle));
+    }
+    
+    /** cubic Bezier curves. */
+    private static final int DEGREE = 3;
+    /** precomputed "z" for cubics. */
+    private static final double[][] CUBIC_Z = { { 1.0, 0.6, 0.3, 0.1 },
+        { 0.4, 0.6, 0.6, 0.4 }, { 0.1, 0.3, 0.6, 1.0 }, };
+    
+    /**
+     * Given a point and a Bezier curve, generate a 5th-degree Bezier-format
+     * equation whose solution finds the point on the curve nearest the
+     * user-defined point.
+     */
+    private static KVector[] convertToBezierForm(final KVector[] v, final KVector pa) {
+        KVector[] c = new KVector[DEGREE + 1]; // v(i) - pa
+        KVector[] d = new KVector[DEGREE]; // v(i+1) - v(i)
+        double[][] cdTable = new double[DEGREE][DEGREE + 1]; // dot product of c, d
+        KVector[] w = new KVector[W_DEGREE + 1]; // ctl pts of 5th-degree curve
+
+        // Determine the c's -- these are vectors created by subtracting
+        // point pa from each of the control points
+        for (int i = 0; i <= DEGREE; i++) {
+            c[i] = new KVector(v[i].x - pa.x, v[i].y - pa.y);
+        }
+
+        // Determine the d's -- these are vectors created by subtracting
+        // each control point from the next
+        double s = DEGREE;
+        for (int i = 0; i <= DEGREE - 1; i++) {
+            d[i] = new KVector(s * (v[i + 1].x - v[i].x), s
+                    * (v[i + 1].y - v[i].y));
+        }
+
+        // Create the c,d table -- this is a table of dot products of the
+        // c's and d's */
+        for (int row = 0; row <= DEGREE - 1; row++) {
+            for (int column = 0; column <= DEGREE; column++) {
+                cdTable[row][column] = (d[row].x * c[column].x)
+                        + (d[row].y * c[column].y);
+            }
+        }
+
+        // Now, apply the z's to the dot products, on the skew diagonal
+        // Also, set up the x-values, making these "points"
+        for (int i = 0; i <= W_DEGREE; i++) {
+            w[i] = new KVector((double) (i) / W_DEGREE, 0.0);
+        }
+
+        int n = DEGREE;
+        int m = DEGREE - 1;
+        for (int k = 0; k <= n + m; k++) {
+            int lb = Math.max(0, k - m);
+            int ub = Math.min(k, n);
+            for (int i = lb; i <= ub; i++) {
+                int j = k - i;
+                w[i + j].y = w[i + j].y + cdTable[j][i] * CUBIC_Z[j][i];
+            }
+        }
+
+        return w;
+    }
+    
+    /** maximum depth for recursion. */
+    private static final int MAXDEPTH = 64;
+    
+    /**
+     * Given a 5th-degree equation in Bernstein-Bezier form, find all of the
+     * roots in the interval [0, 1].
+     * 
+     * @return the number of roots found.
+     */
+    private static int findRoots(final KVector[] w, final int degree, final double[] t,
+            final int depth) {
+        switch (crossingCount(w, degree)) {
+        case 0: // No solutions here
+            return 0;
+        case 1: // Unique solution
+            // Stop recursion when the tree is deep enough
+            // if deep enough, return 1 solution at midpoint
+            if (depth >= MAXDEPTH) {
+                t[0] = (w[0].x + w[W_DEGREE].x) / 2.0;
+                return 1;
+            }
+            if (controlPolygonFlatEnough(w, degree)) {
+                t[0] = computeXIntercept(w, degree);
+                return 1;
+            }
+            break;
+        default: // nothing
+        }
+
+        // Otherwise, solve recursively after subdividing control polygon
+        KVector[] left = new KVector[W_DEGREE + 1]; // New left and right
+        KVector[] right = new KVector[W_DEGREE + 1]; // control polygons
+        double[] leftT = new double[W_DEGREE + 1]; // Solutions from kids
+        double[] rightT = new double[W_DEGREE + 1];
+
+        // start in the middle of the bezier curve, t=0.5
+        bezier(w, degree, 1.0 / 2, left, right);
+        int leftCount = findRoots(left, degree, leftT, depth + 1);
+        int rightCount = findRoots(right, degree, rightT, depth + 1);
+
+        // Gather solutions together
+        for (int i = 0; i < leftCount; i++) {
+            t[i] = leftT[i];
+        }
+        for (int i = 0; i < rightCount; i++) {
+            t[i + leftCount] = rightT[i];
+        }
+
+        // Send back total number of solutions */
+        return leftCount + rightCount;
+    }
+    
+    /** Flatness. */
+    private static final double EPSILON = 1.0 * Math.pow(2, -MAXDEPTH - 1);
+    
+    /**
+     * Check if the control polygon of a Bezier curve is flat enough for
+     * recursive subdivision to bottom out.
+     */
+    private static boolean controlPolygonFlatEnough(final KVector[] v, final int degree) {
+
+        // Find the perpendicular distance from each interior control point to
+        // line connecting v[0] and v[degree]
+
+        // Derive the implicit equation for line connecting first
+        // and last control points
+        double a = v[0].y - v[degree].y;
+        double b = v[degree].x - v[0].x;
+        double c = v[0].x * v[degree].y - v[degree].x * v[0].y;
+
+        double abSquared = (a * a) + (b * b);
+        double[] distance = new double[degree + 1]; // Distances from pts to line
+
+        for (int i = 1; i < degree; i++) {
+            // Compute distance from each of the points to that line
+            distance[i] = a * v[i].x + b * v[i].y + c;
+            if (distance[i] > 0.0) {
+                distance[i] = (distance[i] * distance[i]) / abSquared;
+            }
+            if (distance[i] < 0.0) {
+                distance[i] = -((distance[i] * distance[i]) / abSquared);
+            }
+        }
+
+        // Find the largest distance
+        double maxDistanceAbove = 0.0;
+        double maxDistanceBelow = 0.0;
+        for (int i = 1; i < degree; i++) {
+            if (distance[i] < 0.0) {
+                maxDistanceBelow = Math.min(maxDistanceBelow, distance[i]);
+            }
+            if (distance[i] > 0.0) {
+                maxDistanceAbove = Math.max(maxDistanceAbove, distance[i]);
+            }
+        }
+
+        // Implicit equation for zero line
+        double a1 = 0.0;
+        double b1 = 1.0;
+        double c1 = 0.0;
+
+        // Implicit equation for "above" line
+        double a2 = a;
+        double b2 = b;
+        double c2 = c + maxDistanceAbove;
+
+        double det = a1 * b2 - a2 * b1;
+        double dInv = 1.0 / det;
+
+        double intercept1 = (b1 * c2 - b2 * c1) * dInv;
+
+        // Implicit equation for "below" line
+        a2 = a;
+        b2 = b;
+        c2 = c + maxDistanceBelow;
+
+        det = a1 * b2 - a2 * b1;
+        dInv = 1.0 / det;
+
+        double intercept2 = (b1 * c2 - b2 * c1) * dInv;
+
+        // Compute intercepts of bounding box
+        double leftIntercept = Math.min(intercept1, intercept2);
+        double rightIntercept = Math.max(intercept1, intercept2);
+
+        double error = (rightIntercept - leftIntercept) / 2;
+
+        return error < EPSILON;
+    }
+    
+    /**
+     * Compute intersection of chord from first control point to last with 0-axis.
+     */
+    private static double computeXIntercept(final KVector[] v, final int degree) {
+        double xnm = v[degree].x - v[0].x;
+        double ynm = v[degree].y - v[0].y;
+        double xmk = v[0].x;
+        double ymk = v[0].y;
+
+        double detInv = -1.0 / ynm;
+
+        return (xnm * ymk - ynm * xmk) * detInv;
+    }
+    
+    /**
+     * Count the number of times a Bezier control polygon crosses the 0-axis.
+     * This number is >= the number of roots.
+     */
+    private static int crossingCount(final KVector[] v, final int degree) {
+        int nCrossings = 0;
+        int sign = v[0].y < 0 ? -1 : 1;
+        int oldSign = sign;
+        for (int i = 1; i <= degree; i++) {
+            sign = v[i].y < 0 ? -1 : 1;
+            if (sign != oldSign) {
+                nCrossings++;
+            }
+            oldSign = sign;
+        }
+        return nCrossings;
+    }
+    
+    /**
+     * Compute bezier curve.
+     * 
+     * @param c control points
+     * @param degree degree of curve
+     * @param t parameter for bezier function
+     */
+    private static KVector bezier(final KVector[] c, final int degree,
+            final double t, final KVector[] left, final KVector[] right) {
+        KVector[][] p = new KVector[W_DEGREE + 1][W_DEGREE + 1];
+
+        for (int j = 0; j <= degree; j++) {
+            p[0][j] = new KVector(c[j]);
+        }
+
+        for (int i = 1; i <= degree; i++) {
+            for (int j = 0; j <= degree - i; j++) {
+                p[i][j] = new KVector((1.0 - t) * p[i - 1][j].x + t
+                        * p[i - 1][j + 1].x, (1.0 - t) * p[i - 1][j].y + t
+                        * p[i - 1][j + 1].y);
+            }
+        }
+
+        if (left != null) {
+            for (int j = 0; j <= degree; j++) {
+                left[j] = p[j][0];
+            }
+        }
+
+        if (right != null) {
+            for (int j = 0; j <= degree; j++) {
+                right[j] = p[degree - j][j];
+            }
+        }
+        return p[degree][0];
+    }
+    
     /**
      * Determines the maximum for an arbitrary number of integers.
      * 

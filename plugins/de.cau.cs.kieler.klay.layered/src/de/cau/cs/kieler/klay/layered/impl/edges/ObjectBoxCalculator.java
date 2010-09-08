@@ -24,8 +24,10 @@ import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
+import de.cau.cs.kieler.kiml.util.IDebugCanvas;
+import de.cau.cs.kieler.kiml.util.IDebugCanvas.Color;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -77,7 +79,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
     private static final int BOX_WIDTH_DIVISION_FACTOR = 2;
 
     /** The DebugCanvas to use for debug-drawings. **/
-    private DebugCanvas debugCanvas;
+    private IDebugCanvas debugCanvas;
     
     /**
      * {@inheritDoc}
@@ -182,7 +184,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                             (currentSource.getNode().getPos().y + currentSource.getPos().y),
                             (currentTarget.getNode().getPos().x + currentTarget.getPos().x),
                             (currentTarget.getNode().getPos().y + currentTarget.getPos().y)),
-                    DebugCanvas.Color.YELLOW, false);
+                            Color.YELLOW, false);
 
             if (currentTarget.getNode().getProperty(Properties.NODE_TYPE)
                     == Properties.NodeType.LONG_EDGE) {
@@ -193,7 +195,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                                 (currentTarget.getNode().getPos().y + currentTarget.getPos().y
                                         - DUMMY_NODE_DEBUG_SIZE / 2),
                                 DUMMY_NODE_DEBUG_SIZE, DUMMY_NODE_DEBUG_SIZE),
-                        DebugCanvas.Color.CYAN, true);
+                                Color.CYAN, true);
 
             }
 
@@ -240,7 +242,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 }
 
                 // show our initial position
-                drawOnDebug(newBox.clone(), DebugCanvas.Color.GREEN, true);
+                drawOnDebug(newBox.clone(), Color.GREEN, true);
 
                 // remember on which lines we were starting... maybe have to cross them
                 for (Line2D.Double intLine : allIntersectingLines(newBox, edges)) {
@@ -271,7 +273,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 }
 
                 if (runagainst != null) { // there is a node/edge above the box
-                    drawOnDebug(runagainst, DebugCanvas.Color.RED, true); // show us the bad boy
+                    drawOnDebug(runagainst, Color.RED, true); // show us the bad boy
                     if (runagainst instanceof Rectangle2D) {
                         newBox = ceilBox(newBox, (Rectangle2D.Double) runagainst);
                     } else { // run against a another edge
@@ -283,7 +285,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     newBox.y = lowerBound;
                 }
 
-                drawOnDebug(newBox.clone(), DebugCanvas.Color.GRAY, false);
+                drawOnDebug(newBox.clone(), Color.GRAY, false);
 
                 // remember on which lines we were starting
                 ignoredEdges.addAll(allIntersectingLines(newBox, edges));
@@ -309,7 +311,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
 
                 if (runagainst != null) {
                     // show bad boy
-                    drawOnDebug(runagainst, DebugCanvas.Color.RED, true);
+                    drawOnDebug(runagainst, Color.RED, true);
                     if (runagainst instanceof Rectangle2D) {
                         newBox = floorBox(newBox, (Rectangle2D.Double) runagainst);
                     } else { // run against a another edge
@@ -320,7 +322,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                     newBox.height = upperBound - newBox.y;
                 }
 
-                drawOnDebug(newBox, DebugCanvas.Color.ORANGE, false);
+                drawOnDebug(newBox, Color.ORANGE, false);
 
                 // ensure that the new box is intersecting the previous box
                 if (previousBox != null) {
@@ -364,7 +366,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                 reachedx += newBox.width;
 
                 // and draw the new box
-                drawOnDebug(newBox, DebugCanvas.Color.BLUE, false);
+                drawOnDebug(newBox, Color.BLUE, false);
             }
 
             currentSource = currentTarget;
@@ -432,7 +434,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      *            draw if filled or not
      * @return true if it could be painted
      */
-    private boolean drawOnDebug(final Object o, final DebugCanvas.Color c, final boolean fill) {
+    private boolean drawOnDebug(final Object o, final IDebugCanvas.Color c, final boolean fill) {
         if (debugCanvas != null) {
             if (o instanceof Rectangle2D) {
                 Rectangle2D rec = (Rectangle2D) o;
@@ -484,7 +486,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
                             intersectBox.getY(), intersectBox.getX(), intersectBox.getY()
                                     + intersectBox.getHeight());
                     larray.add(line);
-                    drawOnDebug(line, DebugCanvas.Color.GREEN, false);
+                    drawOnDebug(line, Color.GREEN, false);
                 }
             }
 
@@ -500,7 +502,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
     /**
      * {@inheritDoc}
      */
-    public void initialize(final LayeredGraph graph, final DebugCanvas dc) {
+    public void initialize(final LayeredGraph graph, final IDebugCanvas dc) {
         this.debugCanvas = dc;
         initialize(graph);
     }

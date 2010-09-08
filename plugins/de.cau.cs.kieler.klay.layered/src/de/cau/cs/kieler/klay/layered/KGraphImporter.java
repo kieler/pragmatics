@@ -93,7 +93,7 @@ public class KGraphImporter implements IGraphImporter {
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         for (KNode child : layoutNode.getChildren()) {
             KShapeLayout nodeLayout = KimlUtil.getShapeLayout(child);
-            PortConstraints portConstraints = LayoutOptions.getEnum(nodeLayout, PortConstraints.class);
+            PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
             LNode newNode = new LNode(child.getLabel().getText());
             newNode.setProperty(Properties.ORIGIN, child);
             newNode.getSize().x = nodeLayout.getWidth();
@@ -173,12 +173,10 @@ public class KGraphImporter implements IGraphImporter {
                         newEdge.getLabels().add(newLabel);
                     }
                     // set properties of the new edge
-                    int priority = LayoutOptions.getInt(edgeLayout, LayoutOptions.PRIORITY_ID);
-                    if (priority > 0) {
-                        newEdge.setProperty(Properties.PRIORITY, Integer.valueOf(priority));
-                    }
+                    newEdge.setProperty(Properties.PRIORITY,
+                            edgeLayout.getProperty(LayoutOptions.PRIORITY));
                 } else {
-                    LayoutOptions.setBoolean(edgeLayout, LayoutOptions.NO_LAYOUT_ID, true);
+                    edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
@@ -193,8 +191,8 @@ public class KGraphImporter implements IGraphImporter {
     public void applyLayout() {
         KNode parentNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
-        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING_ID);
-        if (Float.isNaN(borderSpacing) || borderSpacing < 0) {
+        float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        if (borderSpacing < 0) {
             borderSpacing = Properties.DEF_SPACING;
         }
         KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x, borderSpacing
@@ -251,7 +249,7 @@ public class KGraphImporter implements IGraphImporter {
         }
         
         // process the edges
-        LayeredEdgeRouting routing = LayoutOptions.getEnum(parentLayout, LayeredEdgeRouting.class);
+        LayeredEdgeRouting routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
         boolean splinesActive = routing == LayeredEdgeRouting.SIMPLE_SPLINES
                 || routing == LayeredEdgeRouting.COMPLEX_SPLINES;
         for (Map.Entry<KEdge, List<LEdge>> edgeEntry : edgeMap.entrySet()) {
@@ -288,7 +286,7 @@ public class KGraphImporter implements IGraphImporter {
             }
             // set spline option
             if (splinesActive) {
-                LayoutOptions.setEnum(edgeLayout, EdgeRouting.SPLINES);
+                edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
             }
         }
 
@@ -298,7 +296,7 @@ public class KGraphImporter implements IGraphImporter {
                 + insets.getLeft() + insets.getRight());
         parentLayout.setHeight((float) layeredGraph.getSize().y + 2 * borderSpacing
                 + insets.getTop() + insets.getBottom());
-        LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE_ID, true);
+        parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
     }
 
     /**

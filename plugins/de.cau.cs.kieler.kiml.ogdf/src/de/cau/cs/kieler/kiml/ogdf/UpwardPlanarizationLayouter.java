@@ -96,9 +96,8 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
         
         // get the minimum spacing and layer distance
-        float minSpacing =
-                LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
-        if (Float.isNaN(minSpacing)) {
+        float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
         
@@ -119,13 +118,13 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     public Object getDefault(final String optionId) {
-        if (optionId.equals(LayoutOptions.MIN_SPACING_ID)) {
+        if (optionId.equals(LayoutOptions.OBJ_SPACING_ID)) {
             return DEF_MIN_SPACING;
         } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
             return DEF_LABEL_SPACING;
-        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
             return DEF_LABEL_MARGIN_DISTANCE;
         } else {
             return null;

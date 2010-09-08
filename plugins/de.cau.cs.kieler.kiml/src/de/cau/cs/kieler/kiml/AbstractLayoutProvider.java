@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
  * A layout provider executes a layout algorithm to layout the child elements of
@@ -31,6 +32,9 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  */
 public abstract class AbstractLayoutProvider {
 
+    /** the debug canvas to use. */
+    private IDebugCanvas debugCanvas;
+    
     /**
      * Initialize the layout provider with the given parameter. The default
      * implementation does nothing.
@@ -74,6 +78,24 @@ public abstract class AbstractLayoutProvider {
      */
     public boolean supportsHierarchy(final KNode layoutNode) {
         return false;
+    }
+    
+    /**
+     * Sets the current debug canvas.
+     * 
+     * @param thedebugCanvas the debug canvas
+     */
+    public final void setDebugCanvas(final IDebugCanvas thedebugCanvas) {
+        this.debugCanvas = thedebugCanvas;
+    }
+
+    /**
+     * Returns the current debug canvas.
+     * 
+     * @return the debug canvas
+     */
+    public final IDebugCanvas getDebugCanvas() {
+        return debugCanvas;
     }
 
 }

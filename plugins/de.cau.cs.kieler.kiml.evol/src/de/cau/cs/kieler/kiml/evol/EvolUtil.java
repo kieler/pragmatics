@@ -989,7 +989,7 @@ public final class EvolUtil {
                 break;
 
             case STRING:
-                if (LayoutOptions.LAYOUT_HINT_ID.equalsIgnoreCase((String) id)) {
+                if (LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id)) {
                     // Cannot use the int value of the gene because it is the
                     // index for the internal list in the gene, not for the
                     // layout hint array in the property source which we would
@@ -1001,7 +1001,7 @@ public final class EvolUtil {
 
                     final Set<Object> oldLayoutHintIds =
                             getPropertyValues(Collections.singletonList(propertySource),
-                                    LayoutOptions.LAYOUT_HINT_ID);
+                                    LayoutOptions.LAYOUTER_HINT_ID);
 
                     Assert.isTrue(!oldLayoutHintIds.isEmpty());
                     final String oldLayoutHintId = (String) oldLayoutHintIds.iterator().next();
@@ -1376,7 +1376,7 @@ public final class EvolUtil {
         final Population result = new Population();
 
         final Set<Object> layoutHintIds =
-                getPropertyValues(propertySources, LayoutOptions.LAYOUT_HINT_ID);
+                getPropertyValues(propertySources, LayoutOptions.LAYOUTER_HINT_ID);
 
         // Create the individuals one by one.
         final GenomeFactory genomeFactory = new GenomeFactory(null);
@@ -1598,7 +1598,7 @@ public final class EvolUtil {
                 value = null;
             }
 
-            if (LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
+            if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                 // "Layout hint" options have an index as value.
                 // But we want the layout hint identifier instead of its
                 // index.
@@ -1643,7 +1643,7 @@ public final class EvolUtil {
         final IPropertyDescriptor[] descriptors = source.getPropertyDescriptors();
         IPropertyDescriptor descriptor = null;
         for (final IPropertyDescriptor desc : descriptors) {
-            if (LayoutOptions.LAYOUT_HINT_ID.equals(desc.getId())) {
+            if (LayoutOptions.LAYOUTER_HINT_ID.equals(desc.getId())) {
                 descriptor = desc;
                 break;
             }

@@ -116,7 +116,7 @@ public class LayerElement {
             // the layer element is a layout node
             KNode node = (KNode) obj;
             KShapeLayout nodeLayout = KimlUtil.getShapeLayout(node);
-            portConstraints = LayoutOptions.getEnum(nodeLayout, PortConstraints.class);
+            portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
             rankWidth = Math.max(node.getPorts().size(), 1);
             realWidth = nodeLayout.getWidth();
             realHeight = nodeLayout.getHeight();

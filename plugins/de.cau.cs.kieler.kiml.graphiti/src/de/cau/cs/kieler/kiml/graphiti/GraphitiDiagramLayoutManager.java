@@ -185,10 +185,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     shapeLayout.setWidth(containerGa.getWidth());
 
                     // TODO how to get minimal size of the shape
-                    LayoutOptions.setFloat(shapeLayout,
-                            LayoutOptions.MIN_WIDTH_ID, 20.0f);
-                    LayoutOptions.setFloat(shapeLayout,
-                            LayoutOptions.MIN_HEIGHT_ID, 20.0f);
+                    shapeLayout.setProperty(LayoutOptions.MIN_WIDTH, 20.0f);
+                    shapeLayout.setProperty(LayoutOptions.MIN_HEIGHT, 20.0f);
 
                     pictElem2GraphElemMap.put(cs, childnode);
                     graphElemHeightWidth.put(cs,
@@ -196,8 +194,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                             containerGa.getWidth()});
                     boolean state = buildLayoutGraphRecursively(cs, childnode);
 
-                    LayoutOptions.setBoolean(shapeLayout,
-                            LayoutOptions.FIXED_SIZE_ID, state);
+                    shapeLayout.setProperty(LayoutOptions.FIXED_SIZE, state);
                     // }
                     if (cs.getAnchors().size() != 0) {
                         EList<Anchor> childAnchors = cs.getAnchors();

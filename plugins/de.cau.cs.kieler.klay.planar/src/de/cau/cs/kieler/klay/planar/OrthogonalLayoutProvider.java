@@ -18,9 +18,10 @@ import java.util.List;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.alg.orthogonal.QuodOrthogonalizer;
@@ -46,23 +47,10 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
     // ======================== Layout Options =====================================================
 
     /** The layout option ID for the planar testing algorithm option. */
-    public static final String PLANAR_TESTING_ALGORITHM = new String(
-            "de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm");
-
-    /** The default algorithm for planar testing. */
-    private static final PlanarityTestAlgorithm DEFAULT_ALGORITHM = PlanarityTestAlgorithm.BOYER_MYRVOLD_ALGORITHM;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getDefault(final String option) {
-        if (OrthogonalLayoutProvider.PLANAR_TESTING_ALGORITHM.equals(option)) {
-            return DEFAULT_ALGORITHM;
-        } else {
-            return super.getDefault(option);
-        }
-    }
+    public static final String PLANAR_TESTING_ALGORITHM_ID = "de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm";
+    /** property for planar testing algorithm. */
+    public static final IProperty<PlanarityTestAlgorithm> PLANAR_TESTING_ALGORITHM = new Property<PlanarityTestAlgorithm>(
+            PLANAR_TESTING_ALGORITHM_ID, PlanarityTestAlgorithm.BOYER_MYRVOLD_ALGORITHM);
 
     // ======================== Attributes =========================================================
 
@@ -87,8 +75,7 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
 
         // Get layout options
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
-        PlanarityTestAlgorithm algorithm = LayoutOptions.getEnum(parentLayout,
-                PlanarityTestAlgorithm.class);
+        PlanarityTestAlgorithm algorithm = parentLayout.getProperty(PLANAR_TESTING_ALGORITHM);
         switch (algorithm) {
         case BOYER_MYRVOLD_ALGORITHM:
             if (!(this.tester instanceof BoyerMyrvoldPlanarityTester)) {

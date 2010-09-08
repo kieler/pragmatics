@@ -214,14 +214,12 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         }
 
         // set all layout options for the node
-        if (graphNode.getChildren().isEmpty()) {
-            LayoutOptions.setBoolean(nodeLayout, LayoutOptions.FIXED_SIZE_ID, true);
-        }
+        nodeLayout.setProperty(LayoutOptions.FIXED_SIZE, graphNode.getChildren().isEmpty());
         if (!graphNode.getPorts().isEmpty()) {
             if (graphNode.getChildren().isEmpty()) {
-                LayoutOptions.setEnum(nodeLayout, PortConstraints.FIXED_POS);
+                nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
             } else {
-                LayoutOptions.setEnum(nodeLayout, PortConstraints.FREE);
+                nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
             }
         }
         if (((Node) graphNode).isIsHypernode()) {

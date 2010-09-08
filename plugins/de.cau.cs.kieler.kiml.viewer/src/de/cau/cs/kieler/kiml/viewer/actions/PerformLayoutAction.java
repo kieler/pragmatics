@@ -74,7 +74,7 @@ public class PerformLayoutAction extends Action {
             if (LayoutServices.getInstance() == null) {
                 EclipseLayoutServices.createLayoutServices();
             }
-            final RecursiveLayouterEngine layouterEngine = new RecursiveLayouterEngine();
+            final RecursiveLayouterEngine layouterEngine = new RecursiveLayouterEngine(null);
 
             // copy the layout graph
             final KNode layoutGraphCopy = (KNode) EcoreUtil.copy(layoutGraph);

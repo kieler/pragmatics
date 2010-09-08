@@ -29,8 +29,8 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
+import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -38,132 +38,52 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * 
  * @author mri
  */
-public class DebugCanvas {
-
-    /** color definitions. */
-    public enum Color {
-        /** the color black. */
-        BLACK,
-        /** the color blue. */
-        BLUE,
-        /** the color cyan. */
-        CYAN,
-        /** the color gray. */
-        GRAY,
-        /** the color green. */
-        GREEN,
-        /** the color orange. */
-        ORANGE,
-        /** the color red. */
-        RED,
-        /** the color white. */
-        WHITE,
-        /** the color yellow. */
-        YELLOW
-
-    }
-
-    /** the available drawing modes. */
-    public enum DrawingMode {
-        /** figures are drawn immediately. */
-        IMMEDIATE,
-        /** drawn figures are buffered. */
-        BUFFERED
-    }
+public class DebugCanvas implements IDebugCanvas {
 
     /** the layer that is drawn on. */
-    private IFigure layer = null;
-
+    private IFigure layer;
+    /** whether the canvas has currently any figures on it. */
+    private boolean isDirty;
     /** the x-Offset of this canvas. */
-    private float xOffset = 0;
-
+    private float xOffset;
     /** the y-Offset of this canvas. */
-    private float yOffset = 0;
-
-    /** the custom x-Offset of this canvas. */
-    private float customXOffset = 0;
-
-    /** the custom y-Offset of this canvas. */
-    private float customYOffset = 0;
-
-    /** the selected drawing mode. */
-    private DrawingMode selectedDrawingMode = DrawingMode.IMMEDIATE;
-
+    private float yOffset;
+    /** whether buffered mode is active. */
+    private boolean isBuffered;
+    /** the buffer of figures to be drawn. */
     private List<IFigure> figureBuffer = new LinkedList<IFigure>();
 
     /**
-     * Constructs a debug canvas.
+     * Sets the canvas up for the given layout manager. This Method must be called
+     * before any drawing can be done.
      * 
-     * @param parentNode
-     *            the parentNode this canvas is relative to
-     * @param drawingMode
-     *            the drawing mode
+     * @param layoutManager the current diagram layout manager
      */
-    public DebugCanvas(final KNode parentNode, final DrawingMode drawingMode) {
-        DiagramLayoutManager layoutManager = EclipseLayoutServices.getInstance().getLastManager();
+    public void setManager(final DiagramLayoutManager layoutManager) {
+        clear();
         ILayoutInspector inspector = layoutManager.getInspector(layoutManager.getCurrentEditPart());
         layer = inspector.getDrawingLayer();
-        if (layer != null) {
+    }
 
-            // calculate the offset
-            KNode currentNode = parentNode;
-            while (currentNode != null) {
-                KShapeLayout currentLayout = KimlUtil
-                        .getShapeLayout(currentNode);
-                xOffset += currentLayout.getXpos();
-                yOffset += currentLayout.getYpos();
-                currentNode = currentNode.getParent();
-            }
+    /**
+     * {@inheritDoc}
+     */
+    public void setOffset(final KNode parentNode, final float addx, final float addy) {
+        xOffset = addx;
+        yOffset = addy;
+        KNode currentNode = parentNode;
+        while (currentNode != null) {
+            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(currentNode);
+            xOffset += nodeLayout.getXpos();
+            yOffset += nodeLayout.getYpos();
+            currentNode = currentNode.getParent();
         }
-
-        selectedDrawingMode = drawingMode;
-    }
-
-    /**
-     * Sets a custom x-Offset for this canvas.
-     * 
-     * @param x
-     *            the x-Offset
-     */
-    public void setCustomXOffset(final float x) {
-        xOffset += x - customXOffset;
-        customXOffset = x;
-    }
-
-    /**
-     * Returns the custom x-Offset for this canvas.
-     * 
-     * @return the x-Offset
-     */
-    public float getCustomXOffset() {
-        return customXOffset;
-    }
-
-    /**
-     * Sets a custom y-Offset for this canvas.
-     * 
-     * @param y
-     *            the y-Offset
-     */
-    public void setCustomYOffset(final float y) {
-        yOffset += y - customYOffset;
-        customYOffset = y;
-    }
-
-    /**
-     * Returns the custom y-Offset for this canvas.
-     * 
-     * @return the y-Offset
-     */
-    public float getCustomYOffset() {
-        return customYOffset;
     }
 
     /**
      * Translates colors into swt colors.
      * 
-     * @param color
-     *            the color
+     * @param color the color
      * @return the swt color
      */
     private org.eclipse.swt.graphics.Color translateColor(final Color color) {
@@ -189,20 +109,26 @@ public class DebugCanvas {
             return ColorConstants.black;
         }
     }
+    
+    /**
+     * Draws the given figure depending on the buffered mode.
+     * 
+     * @param figure the figure to be drawn
+     */
+    private void drawFigure(final IFigure figure) {
+        if (isBuffered) {
+            figureBuffer.add(figure);
+        } else {
+            PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+                public void run() {
+                    layer.add(figure);
+                }
+            });
+        }
+    }
 
     /**
-     * Draws a filled rectangle on the canvas.
-     * 
-     * @param x
-     *            the x-coordinate
-     * @param y
-     *            the y-coordinate
-     * @param w
-     *            the width
-     * @param h
-     *            the height
-     * @param color
-     *            the color
+     * {@inheritDoc}
      */
     public void drawFilledRectangle(final float x, final float y,
             final float w, final float h, final Color color) {
@@ -214,36 +140,12 @@ public class DebugCanvas {
             rect.setBackgroundColor(translateColor(color));
             rect.setFill(true);
             rect.setBounds(bounds);
-            switch (selectedDrawingMode) {
-            case IMMEDIATE:
-                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                    public void run() {
-                        layer.add(rect);
-                    }
-                });
-                break;
-            case BUFFERED:
-                figureBuffer.add(rect);
-                break;
-            default:
-            }
+            drawFigure(rect);
         }
     }
 
     /**
-     * 
-     * Draws a non-filled rectangle one the canvas.
-     * 
-     * @param x
-     *            the x-coordinate
-     * @param y
-     *            the y-coordinate
-     * @param w
-     *            the width
-     * @param h
-     *            the height
-     * @param color
-     *            the color
+     * {@inheritDoc}
      */
     public void drawRectangle(final float x, final float y, final float w,
             final float h, final Color color) {
@@ -254,35 +156,12 @@ public class DebugCanvas {
             rect.setForegroundColor(translateColor(color));
             rect.setFill(false);
             rect.setBounds(bounds);
-            switch (selectedDrawingMode) {
-            case IMMEDIATE:
-                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                    public void run() {
-                        layer.add(rect);
-                    }
-                });
-                break;
-            case BUFFERED:
-                figureBuffer.add(rect);
-                break;
-            default:
-            }
+            drawFigure(rect);
         }
     }
 
     /**
-     * Draws a filled ellipse on the canvas.
-     * 
-     * @param x
-     *            the x-coordinate
-     * @param y
-     *            the y-coordinate
-     * @param w
-     *            the width
-     * @param h
-     *            the height
-     * @param color
-     *            the color
+     * {@inheritDoc}
      */
     public void drawFilledEllipse(final float x, final float y, final float w,
             final float h, final Color color) {
@@ -294,35 +173,12 @@ public class DebugCanvas {
             ellipse.setBackgroundColor(translateColor(color));
             ellipse.setFill(true);
             ellipse.setBounds(bounds);
-            switch (selectedDrawingMode) {
-            case IMMEDIATE:
-                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                    public void run() {
-                        layer.add(ellipse);
-                    }
-                });
-                break;
-            case BUFFERED:
-                figureBuffer.add(ellipse);
-                break;
-            default:
-            }
+            drawFigure(ellipse);
         }
     }
 
     /**
-     * Draws a non-filled ellipse on the canvas.
-     * 
-     * @param x
-     *            the x-coordinate
-     * @param y
-     *            the y-coordinate
-     * @param w
-     *            the width
-     * @param h
-     *            the height
-     * @param color
-     *            the color
+     * {@inheritDoc}
      */
     public void drawEllipse(final float x, final float y, final float w,
             final float h, final Color color) {
@@ -333,33 +189,12 @@ public class DebugCanvas {
             ellipse.setForegroundColor(translateColor(color));
             ellipse.setFill(false);
             ellipse.setBounds(bounds);
-            switch (selectedDrawingMode) {
-            case IMMEDIATE:
-                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                    public void run() {
-                        layer.add(ellipse);
-                    }
-                });
-                break;
-            case BUFFERED:
-                figureBuffer.add(ellipse);
-                break;
-            default:
-            }
+            drawFigure(ellipse);
         }
     }
 
     /**
-     * Draws a filled circle on the canvas.
-     * 
-     * @param x
-     *            the x-coordinate
-     * @param y
-     *            the y-coordinate
-     * @param d
-     *            the diameter
-     * @param color
-     *            the color
+     * {@inheritDoc}
      */
     public void drawFilledCircle(final float x, final float y, final float d,
             final Color color) {
@@ -371,33 +206,12 @@ public class DebugCanvas {
             ellipse.setBackgroundColor(translateColor(color));
             ellipse.setFill(true);
             ellipse.setBounds(bounds);
-            switch (selectedDrawingMode) {
-            case IMMEDIATE:
-                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                    public void run() {
-                        layer.add(ellipse);
-                    }
-                });
-                break;
-            case BUFFERED:
-                figureBuffer.add(ellipse);
-                break;
-            default:
-            }
+            drawFigure(ellipse);
         }
     }
 
     /**
-     * Draws a non-filled circle on the canvas.
-     * 
-     * @param x
-     *            the x-coordinate
-     * @param y
-     *            the y-coordinate
-     * @param d
-     *            the diameter
-     * @param color
-     *            the color
+     * {@inheritDoc}
      */
     public void drawCircle(final float x, final float y, final float d,
             final Color color) {
@@ -408,35 +222,12 @@ public class DebugCanvas {
             ellipse.setForegroundColor(translateColor(color));
             ellipse.setFill(false);
             ellipse.setBounds(bounds);
-            switch (selectedDrawingMode) {
-            case IMMEDIATE:
-                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                    public void run() {
-                        layer.add(ellipse);
-                    }
-                });
-                break;
-            case BUFFERED:
-                figureBuffer.add(ellipse);
-                break;
-            default:
-            }
+            drawFigure(ellipse);
         }
     }
 
     /**
-     * Draws a line on the canvas.
-     * 
-     * @param x1
-     *            the x-coordinate of the start point
-     * @param y1
-     *            the y-coordinate of the start point
-     * @param x2
-     *            the x-coordinate of the end point
-     * @param y2
-     *            the y-coordinate of the end point
-     * @param color
-     *            the color
+     * {@inheritDoc}
      */
     public void drawLine(final float x1, final float y1, final float x2,
             final float y2, final Color color) {
@@ -445,33 +236,12 @@ public class DebugCanvas {
             line.addPoint(new Point(x1 + xOffset, y1 + yOffset));
             line.addPoint(new Point(x2 + xOffset, y2 + yOffset));
             line.setForegroundColor(translateColor(color));
-            switch (selectedDrawingMode) {
-            case IMMEDIATE:
-                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                    public void run() {
-                        layer.add(line);
-                    }
-                });
-                break;
-            case BUFFERED:
-                figureBuffer.add(line);
-                break;
-            default:
-            }
+            drawFigure(line);
         }
     }
 
     /**
-     * Draws a string on the canvas.
-     * 
-     * @param string
-     *            the string
-     * @param x
-     *            the x-coordinate
-     * @param y
-     *            the y-coordinate
-     * @param color
-     *            the color
+     * {@inheritDoc}
      */
     public void drawString(final String string, final float x, final float y,
             final Color color) {
@@ -480,28 +250,15 @@ public class DebugCanvas {
             label.setText(string);
             label.setForegroundColor(translateColor(color));
             label.setLocation(new Point(x + xOffset, y + yOffset));
-            switch (selectedDrawingMode) {
-            case IMMEDIATE:
-                PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-                    public void run() {
-                        layer.add(label);
-                        label.setSize(label.getPreferredSize());
-                    }
-                });
-                break;
-            case BUFFERED:
-                figureBuffer.add(label);
-                break;
-            default:
-            }
+            drawFigure(label);
         }
     }
 
     /**
-     * Clears the canvas and the figure buffer.
+     * {@inheritDoc}
      */
     public void clear() {
-        if (layer != null) {
+        if (layer != null && isDirty) {
             PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
                     int i = 0;
@@ -517,12 +274,13 @@ public class DebugCanvas {
                 }
             });
 
-            figureBuffer.clear();
+            isDirty = false;
         }
+        figureBuffer.clear();
     }
 
     /**
-     * Draws the buffered figures and clears the buffer.
+     * {@inheritDoc}
      */
     public void drawBuffer() {
         if (layer != null) {
@@ -542,4 +300,12 @@ public class DebugCanvas {
             });
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setBuffered(final boolean buffered) {
+        this.isBuffered = buffered;
+    }
+    
 }

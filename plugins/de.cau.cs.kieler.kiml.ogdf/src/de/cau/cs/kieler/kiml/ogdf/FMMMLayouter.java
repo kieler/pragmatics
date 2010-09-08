@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.ogdf;
 
 import net.ogdf.lib.Ogdf;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -26,21 +28,22 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class FMMMLayouter extends OgdfLayouter {
 
-    /** the quality vs speed option. */
-    static final String QUALITY_VS_SPEED =
-            "de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed";
-    /** the unit edge length option. */
-    private static final String UNIT_EDGE_LENGTH =
-            "de.cau.cs.kieler.kiml.ogdf.option.fmmm.unitEdgeLength";
-    /** the new initial placement option. */
-    private static final String NEW_INITIAL_PLACEMENT =
-            "de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement";
-    /** the default value for quality vs speed. */
-    private static final int DEF_QUALITY_VS_SPEED = Ogdf.BEAUTIFUL_AND_FAST;
+    /** the quality vs speed option identifier. */
+    private static final String QUALITY_VS_SPEED_ID
+            = "de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed";
+    /** quality vs speed property. */
+    private static final IProperty<QualityVsSpeed> QUALITY_VS_SPEED = new Property<QualityVsSpeed>(
+            QUALITY_VS_SPEED_ID, QualityVsSpeed.BEAUTIFULANDFAST);
+    
+    /** the new initial placement option identifier. */
+    private static final String NEW_INITIAL_PLACEMENT_ID
+            = "de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement";
+    /** new initial placement property. */
+    private static final IProperty<Boolean> NEW_INITIAL_PLACEMENT = new Property<Boolean>(
+            NEW_INITIAL_PLACEMENT_ID, false);
+    
     /** the default value for unit edge length. */
     private static final float DEF_UNIT_EDGE_LENGTH = 50.0f;
-    /** the default value for new initial placement. */
-    private static final boolean DEF_NEW_INITIAL_PLACEMENT = false;
     /** default value for border spacing. */
     private static final float DEF_BORDER_SPACING = 15;
     /** default value for label edge distance. */
@@ -59,8 +62,7 @@ public class FMMMLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
 
         // get quality vs speed
-        QualityVsSpeed qualityVsSpeed =
-                LayoutOptions.getEnum(parentLayout, QualityVsSpeed.class);
+        QualityVsSpeed qualityVsSpeed = parentLayout.getProperty(QUALITY_VS_SPEED);
         int qvs;
         switch (qualityVsSpeed) {
         case GORGEOUSANDEFFICIENT:
@@ -75,14 +77,12 @@ public class FMMMLayouter extends OgdfLayouter {
             break;
         }
         // get the unit edge length
-        float unitEdgeLength =
-                LayoutOptions.getFloat(parentLayout, UNIT_EDGE_LENGTH);
-        if (Float.isNaN(unitEdgeLength)) {
+        float unitEdgeLength = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        if (unitEdgeLength <= 0) {
             unitEdgeLength = DEF_UNIT_EDGE_LENGTH;
         }
         // get new initial placement
-        boolean newInitialPlacement =
-                LayoutOptions.getBoolean(parentLayout, NEW_INITIAL_PLACEMENT);
+        boolean newInitialPlacement = parentLayout.getProperty(NEW_INITIAL_PLACEMENT);
 
         Ogdf.createFMMMLayouter(unitEdgeLength, newInitialPlacement, qvs);
         
@@ -101,21 +101,17 @@ public class FMMMLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     public Object getDefault(final String optionId) {
-        if (optionId.equals(QUALITY_VS_SPEED)) {
-            return DEF_QUALITY_VS_SPEED;
-        } else if (optionId.equals(UNIT_EDGE_LENGTH)) {
+        if (optionId.equals(LayoutOptions.OBJ_SPACING_ID)) {
             return DEF_UNIT_EDGE_LENGTH;
-        } else if (optionId.equals(NEW_INITIAL_PLACEMENT)) {
-            return DEF_NEW_INITIAL_PLACEMENT;
-        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
             return DEF_LABEL_SPACING;
-        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
             return DEF_LABEL_MARGIN_DISTANCE;
         } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
             return DEF_LABEL_SPACING;
-        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
             return DEF_LABEL_MARGIN_DISTANCE;
         } else {
             return null;

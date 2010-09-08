@@ -76,7 +76,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             switch (optionData.getType()) {
             case STRING:
                 LayoutServices layoutServices = LayoutServices.getInstance();
-                if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
+                if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
                     String layoutHint = layoutHintValues[(Integer) element];
                     String layoutType = layoutServices.getLayoutTypeName(layoutHint);
                     if (layoutType != null) {
@@ -134,7 +134,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     public CellEditor createPropertyEditor(final Composite parent) {
         switch (optionData.getType()) {
         case STRING:
-            if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
+            if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
                 return new ComboBoxCellEditor(parent, layoutHintChoices, SWT.READ_ONLY);
             } else {
                 return new TextCellEditor(parent);

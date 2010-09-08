@@ -92,7 +92,9 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public Object getDefault(final String optionId) {
-        if (LayoutOptions.MIN_SPACING_ID.equals(optionId)) {
+        if (LayoutOptions.OBJ_SPACING_ID.equals(optionId)) {
+            return DEF_MIN_SPACING;
+        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
             return DEF_MIN_SPACING;
         } else if (LayoutOptions.LAYOUT_DIRECTION_ID.equals(optionId)) {
             return LayoutDirection.DOWN;
@@ -115,13 +117,17 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         
         // set layout options for the graph
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
-        float minSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
-        if (Float.isNaN(minSpacing)) {
+        float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
         graph.setDefaultPadding(new Insets((int) minSpacing));
-        graph.setMargin(new Insets((int) minSpacing));
-        LayoutDirection layoutDirection = LayoutOptions.getEnum(parentLayout, LayoutDirection.class);
+        float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        if (borderSpacing < 0) {
+            borderSpacing = DEF_MIN_SPACING;
+        }
+        graph.setMargin(new Insets((int) borderSpacing));
+        LayoutDirection layoutDirection = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
         switch (layoutDirection) {
         case RIGHT:
         case LEFT:
@@ -137,7 +143,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         for (KNode knode : layoutNode.getChildren()) {
             Node draw2dNode = new Node(knode);
             KShapeLayout nodeLayout = KimlUtil.getShapeLayout(knode);
-            if (!LayoutOptions.getBoolean(nodeLayout, LayoutOptions.FIXED_SIZE_ID)) {
+            if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
                 KimlUtil.resizeNode(knode);
             }
             draw2dNode.width = (int) nodeLayout.getWidth();

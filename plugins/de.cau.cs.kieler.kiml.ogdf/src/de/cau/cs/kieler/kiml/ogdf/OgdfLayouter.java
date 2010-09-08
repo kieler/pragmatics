@@ -25,6 +25,8 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
@@ -43,13 +45,21 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public abstract class OgdfLayouter {
 
     /** layout option identifier for label edge distance. */
-    public static final String OPT_LABEL_EDGE_DISTANCE =
-            "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance";
+    public static final String LABEL_EDGE_DIST_ID
+            = "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance";
+    /** label edge distance property. */
+    private static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
+            LABEL_EDGE_DIST_ID, -1.0f);
+    
     /** layout option identifier for label margin distance. */
-    public static final String OPT_LABEL_MARGIN_DISTANCE =
-            "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance";
+    public static final String LABEL_MARGIN_DIST_ID
+            = "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance";
+    /** label margin distance property. */
+    private static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
+            LABEL_MARGIN_DIST_ID, -1.0f);
+    
     /** the minimal distance between the source point and the first bend point. */
-    private static final float SOURCE_POINT_FIRST_BEND_DISTANCE = 2;
+    private static final float SOURCE_POINT_FIRST_BEND_DISTANCE = 4;
 
     /**
      * Layouts the given graph.
@@ -121,12 +131,10 @@ public abstract class OgdfLayouter {
         // create the label layouter
         Ogdf.createLabelLayouter();
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
-        // TODO as soon as ogdf provides a better label layouter this should be
-        // reworked
-        float edgeDistance =
-                LayoutOptions.getFloat(parentLayout, OPT_LABEL_EDGE_DISTANCE);
-        if (Float.isNaN(edgeDistance)) {
-            Object edgeDistanceObj = getDefault(OPT_LABEL_EDGE_DISTANCE);
+        // TODO as soon as OGDF provides a better label layouter this should be reworked
+        float edgeDistance = parentLayout.getProperty(LABEL_EDGE_DIST);
+        if (edgeDistance < 0) {
+            Object edgeDistanceObj = getDefault(LABEL_EDGE_DIST_ID);
             if (edgeDistanceObj instanceof Float) {
                 edgeDistance = (Float) edgeDistanceObj;
             } else {
@@ -136,10 +144,9 @@ public abstract class OgdfLayouter {
         Ogdf.LabelLayouter_setEdgeDistance(edgeDistance);
 
         // get the margin distance
-        float marginDistance =
-                LayoutOptions.getFloat(parentLayout, OPT_LABEL_MARGIN_DISTANCE);
-        if (Float.isNaN(marginDistance)) {
-            Object marginDistanceObj = getDefault(OPT_LABEL_MARGIN_DISTANCE);
+        float marginDistance = parentLayout.getProperty(LABEL_MARGIN_DIST);
+        if (marginDistance < 0) {
+            Object marginDistanceObj = getDefault(LABEL_MARGIN_DIST_ID);
             if (marginDistanceObj instanceof Float) {
                 marginDistance = (Float) marginDistanceObj;
             } else {
@@ -340,10 +347,8 @@ public abstract class OgdfLayouter {
         float boundingBoxWidth = Ogdf.Graph_getBoundingBoxWidth();
         float boundingBoxHeight = Ogdf.Graph_getBoundingBoxHeight();
         // get the border spacing
-        float borderSpacing =
-                LayoutOptions.getFloat(parentNodeLayout,
-                        LayoutOptions.BORDER_SPACING_ID);
-        if (Float.isNaN(borderSpacing)) {
+        float borderSpacing = parentNodeLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        if (borderSpacing < 0) {
             Object borderSpacingObj = getDefault(LayoutOptions.BORDER_SPACING_ID);
             if (borderSpacingObj instanceof Float) {
                 borderSpacing = (Float) borderSpacingObj;

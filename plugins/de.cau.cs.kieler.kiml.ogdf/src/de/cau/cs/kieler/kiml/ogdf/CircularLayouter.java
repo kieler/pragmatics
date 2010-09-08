@@ -26,26 +26,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class CircularLayouter extends OgdfLayouter {
 
-    /** the minimum circle distance option. */
-    private static final String MIN_DIST_CIRCLE =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCircle";
-    /** the minimum level distance option. */
-    private static final String MIN_DIST_LEVEL =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel";
-    /** the minimum sibling distance option. */
-    private static final String MIN_DIST_SIBLING =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistSibling";
-    /** the minimum connected component distance option. */
-    private static final String MIN_DIST_CC =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC";
-    /** default value for minimum circle distance. */
-    private static final float DEF_MIN_DIST_CIRCLE = 20.0f;
-    /** default value for minimum level distance. */
-    private static final float DEF_MIN_DIST_LEVEL = 20.0f;
-    /** default value for minimum sibling distance. */
-    private static final float DEF_MIN_DIST_SIBLING = 10.0f;
-    /** default value for minimum connected component distance. */
-    private static final float DEF_MIN_DIST_CC = 20.0f;
+    /** default value for minimal distance. */
+    private static final float DEF_MIN_DIST = 15;    
     /** default value for border spacing. */
     private static final float DEF_BORDER_SPACING = 15;
     /** default value for label edge distance. */
@@ -63,32 +45,14 @@ public class CircularLayouter extends OgdfLayouter {
 
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
 
-        // get the minimum circle distance
-        float minDistCircle =
-                LayoutOptions.getFloat(parentLayout, MIN_DIST_CIRCLE);
-        if (Float.isNaN(minDistCircle)) {
-            minDistCircle = DEF_MIN_DIST_CIRCLE;
-        }
-        // get the minimum level distance
-        float minDistLevel =
-                LayoutOptions.getFloat(parentLayout, MIN_DIST_LEVEL);
-        if (Float.isNaN(minDistLevel)) {
-            minDistLevel = DEF_MIN_DIST_LEVEL;
-        }
-        // get the minimum sibling distance
-        float minDistSibling =
-                LayoutOptions.getFloat(parentLayout, MIN_DIST_SIBLING);
-        if (Float.isNaN(minDistSibling)) {
-            minDistSibling = DEF_MIN_DIST_SIBLING;
-        }
-        // get the minimum connected component distance
-        float minDistCC = LayoutOptions.getFloat(parentLayout, MIN_DIST_CC);
-        if (Float.isNaN(minDistCC)) {
-            minDistCC = DEF_MIN_DIST_CC;
+        // get the general minimum distance
+        float minDist = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        if (minDist < 0) {
+            minDist = DEF_MIN_DIST;
         }
 
-        Ogdf.createCircularLayouter(minDistCircle, minDistLevel,
-                minDistSibling, minDistCC);
+        Ogdf.createCircularLayouter(2 * minDist, 2 * minDist,
+                minDist, 2 * minDist);
         
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
@@ -105,19 +69,13 @@ public class CircularLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     public Object getDefault(final String optionId) {
-        if (optionId.equals(MIN_DIST_CIRCLE)) {
-            return DEF_MIN_DIST_CIRCLE;
-        } else if (optionId.equals(MIN_DIST_LEVEL)) {
-            return DEF_MIN_DIST_LEVEL;
-        } else if (optionId.equals(MIN_DIST_SIBLING)) {
-            return DEF_MIN_DIST_SIBLING;
-        } else if (optionId.equals(MIN_DIST_CC)) {
-            return DEF_MIN_DIST_CC;
-        } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
+        if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+        } else if (optionId.equals(LayoutOptions.OBJ_SPACING_ID)) {
+            return DEF_MIN_DIST;
+        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
             return DEF_LABEL_SPACING;
-        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
             return DEF_LABEL_MARGIN_DISTANCE;
         } else {
             return null;

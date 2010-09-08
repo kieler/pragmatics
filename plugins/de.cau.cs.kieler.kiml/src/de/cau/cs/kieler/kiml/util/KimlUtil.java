@@ -26,7 +26,6 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
@@ -251,8 +250,8 @@ public final class KimlUtil {
         }
 
         // determine port placement from the incident edges
-        LayoutDirection layoutDirection = LayoutOptions.getEnum(getShapeLayout(
-                port.getNode().getParent()), LayoutDirection.class);
+        LayoutDirection layoutDirection = getShapeLayout(port.getNode().getParent())
+                .getProperty(LayoutOptions.LAYOUT_DIRECTION);
         int flow = calcFlow(port);
         switch (layoutDirection) {
         case DOWN:
@@ -388,7 +387,7 @@ public final class KimlUtil {
      */
     public static void fillPortInfo(final KNode node, final LayoutDirection layoutDirection) {
         KGraphData layoutData = getShapeLayout(node);
-        PortConstraints portConstraints = LayoutOptions.getEnum(layoutData, PortConstraints.class);
+        PortConstraints portConstraints = layoutData.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         if (portConstraints == PortConstraints.FREE) {
             // set port sides according to layout direction
             switch (layoutDirection) {
@@ -417,7 +416,7 @@ public final class KimlUtil {
                 }
                 break;
             }
-            LayoutOptions.setEnum(layoutData, PortConstraints.FIXED_SIDE);
+            layoutData.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
         } else if (portConstraints != PortConstraints.UNDEFINED) {
             // set port sides and ranks according to relative position
             boolean ranksUndefined = false;

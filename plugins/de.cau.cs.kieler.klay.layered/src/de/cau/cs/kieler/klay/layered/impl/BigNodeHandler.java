@@ -25,10 +25,10 @@ import java.util.List;
 
 import javax.management.RuntimeErrorException;
 
-import org.eclipse.gmf.runtime.diagram.ui.internal.editparts.DummyEditPart;
 import org.w3c.dom.Node;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;

@@ -182,8 +182,8 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 float sourcePos = connection.calcSourcePos(minDist);
                 float targetPos = connection.calcTargetPos(minDist);
                 if (layer.getRank() == 0 && connection.getSourcePort() != null) {
-                    PortSide placement = LayoutOptions.getEnum(KimlUtil
-                            .getShapeLayout(connection.getSourcePort()), PortSide.class);
+                    PortSide placement = KimlUtil.getShapeLayout(connection.getSourcePort())
+                            .getProperty(LayoutOptions.PORT_SIDE);
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             sourcePos = 0.0f;
@@ -202,8 +202,8 @@ public class ToponumLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                         }
                     }
                 } else if (layer.getHeight() == 1 && connection.getTargetPort() != null) {
-                    PortSide placement = LayoutOptions.getEnum(KimlUtil
-                            .getShapeLayout(connection.getTargetPort()), PortSide.class);
+                    PortSide placement = KimlUtil.getShapeLayout(connection.getTargetPort())
+                            .getProperty(LayoutOptions.PORT_SIDE);
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
                             targetPos = 0.0f;

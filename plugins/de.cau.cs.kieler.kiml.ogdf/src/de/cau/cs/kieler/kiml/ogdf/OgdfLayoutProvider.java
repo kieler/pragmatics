@@ -35,8 +35,6 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         UMLPLANARIZATION,
         /** The fmmm layout algorithm. */
         FMMM,
-        /** The fmmm layout algorithm with low level options. */
-        FMMM_DETAIL,
         /** The Davidson-Harel layout algorithm. */
         DAVIDSON_HAREL,
         /** The Fruchterman-Reingold algorithm. */
@@ -74,9 +72,6 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
                 break;
             case FMMM:
                 layoutAlgorithm = new FMMMLayouter();
-                break;
-            case FMMM_DETAIL:
-                layoutAlgorithm = new FMMMDetailLayouter();
                 break;
             case DAVIDSON_HAREL:
                 layoutAlgorithm = new DavidsonHarelLayouter();

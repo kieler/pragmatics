@@ -18,6 +18,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -33,7 +34,18 @@ public class RecursiveLayouterEngine {
 
     /** the last used layout provider. */
     private AbstractLayoutProvider lastLayoutProvider;
+    /** the debug canvas to use. */
+    private IDebugCanvas debugCanvas;
 
+    /**
+     * Creates a recursive layouter engine with the given debug canvas.
+     * 
+     * @param thedebugCanvas the debug canvas to use
+     */
+    public RecursiveLayouterEngine(final IDebugCanvas thedebugCanvas) {
+        this.debugCanvas = thedebugCanvas;
+    }
+    
     /**
      * Performs recursive layout on the given layout graph.
      * 
@@ -100,6 +112,7 @@ public class RecursiveLayouterEngine {
 
             // perform layout on the current hierarchy level
             lastLayoutProvider = layoutProvider;
+            layoutProvider.setDebugCanvas(debugCanvas);
             layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
             checkLayout(layoutNode);
         }
@@ -121,8 +134,7 @@ public class RecursiveLayouterEngine {
         if (parentLayout.getHeight() < minHeight) {
             parentLayout.setHeight(minHeight);
         }
-        LayoutOptions.setBoolean(parentLayout, LayoutOptions.FIXED_SIZE_ID, true);
-
+        parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
     }
 
     /**

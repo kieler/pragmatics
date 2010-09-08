@@ -90,7 +90,7 @@ public class LayoutPropertySource implements IPropertySource {
         LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData((String) id);
         Object value = translateValue(layoutInspector.getOption(optionData), optionData);
         if (value == null) {
-            if (LayoutOptions.LAYOUT_HINT_ID.equals(id)) {
+            if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                 value = layoutInspector.getFocusLayouterData().getId();
             } else {
                 if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
@@ -118,7 +118,7 @@ public class LayoutPropertySource implements IPropertySource {
         }
         switch (optionData.getType()) {
         case STRING:
-            if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
+            if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
                 return layoutHintIndexMap.get(value);
             } else {
                 return value;
@@ -154,7 +154,7 @@ public class LayoutPropertySource implements IPropertySource {
                 Object value = thevalue;
                 LayoutOptionData<?> optionData = LayoutServices.getInstance()
                         .getLayoutOptionData((String) id);
-                if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())) {
+                if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
                     layoutInspector.setOption(optionData,
                             layoutHintValues[((Integer) value).intValue()]);
                     LayoutViewPart layoutView = LayoutViewPart.findView();
@@ -213,7 +213,7 @@ public class LayoutPropertySource implements IPropertySource {
         };
         KimlUiUtil.runModelChange(modelChange, layoutInspector.getEditingDomain(),
                 Messages.getString("kiml.ui.12"));
-        if (LayoutOptions.LAYOUT_HINT_ID.equals(optionData.getId())
+        if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())
                 || optionData.getType() == LayoutOptionData.Type.BOOLEAN
                 || optionData.getType() == LayoutOptionData.Type.ENUM) {
             LayoutViewPart layoutView = LayoutViewPart.findView();

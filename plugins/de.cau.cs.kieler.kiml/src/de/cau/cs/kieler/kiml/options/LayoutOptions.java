@@ -13,18 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.options;
 
-import org.eclipse.emf.ecore.EObject;
-
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 
 /**
- * Definition of layout options and utility methods to get and set these
- * options.
+ * Definition of layout options. Layout options are divided into programmatic options,
+ * which are defined by static code, and user interface options, which are defined by
+ * extension point. The former can be accessed with static variables, while the latter
+ * are accessed with methods.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
@@ -37,54 +34,66 @@ public final class LayoutOptions {
     public static final String DIAGRAM_TYPE_ID = "de.cau.cs.kieler.layout.options.diagramType";
     /** diagram type property. */
     public static final IProperty<String> DIAGRAM_TYPE = new Property<String>(DIAGRAM_TYPE_ID);
+    
     /** layout option key: placement positions for edge labels (enum). */
     public static final String EDGE_LABEL_PLACEMENT_ID =
         "de.cau.cs.kieler.layout.options.edgeLabelPlacement";
     /** edge label placement property. */
     public static final IProperty<EdgeLabelPlacement> EDGE_LABEL_PLACEMENT
             = new Property<EdgeLabelPlacement>(EDGE_LABEL_PLACEMENT_ID, EdgeLabelPlacement.UNDEFINED);
+    
     /** layout option key: edge type (enum). */
     public static final String EDGE_TYPE_ID = "de.cau.cs.kieler.layout.options.edgeType";
     /** edge type property. */
     public static final IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>(
             EDGE_TYPE_ID, EdgeType.NONE);
+    
     /** layout option key: font name (string). */
     public static final String FONT_NAME_ID = "de.cau.cs.kieler.layout.options.fontName";
     /** font name property. */
     public static final IProperty<String> FONT_NAME = new Property<String>(FONT_NAME_ID);
+    
     /** layout option key: font size (integer). */
     public static final String FONT_SIZE_ID = "de.cau.cs.kieler.layout.options.fontSize";
     /** font size property. */
     public static final IProperty<Integer> FONT_SIZE = new Property<Integer>(FONT_SIZE_ID, 0);
+    
     /** layout option key: hypernode (boolean). */
     public static final String HYPERNODE_ID = "de.cau.cs.kieler.layout.options.hypernode";
     /** hypernode property. */
     public static final IProperty<Boolean> HYPERNODE = new Property<Boolean>(HYPERNODE_ID, false);
+    
     /** layout option key: distance of node contents to the boundary (float). */
     public static final String INSETS_ID = "de.cau.cs.kieler.layout.options.insets";
     /** insets property. */
     public static final IProperty<KInsets> INSETS = new Property<KInsets>(INSETS_ID);
+    
     /** layout option key: minimal height (float). */
     public static final String MIN_HEIGHT_ID = "de.cau.cs.kieler.layout.options.minHeight";
     /** minimal height property. */
     public static final IProperty<Float> MIN_HEIGHT = new Property<Float>(MIN_HEIGHT_ID, 0f);
+    
     /** layout option key: minimal width (float). */
     public static final String MIN_WIDTH_ID = "de.cau.cs.kieler.layout.options.minWidth";
     /** minimal width property. */
     public static final IProperty<Float> MIN_WIDTH = new Property<Float>(MIN_WIDTH_ID, 0f);
+    
     /** layout option key: no layout (boolean). */
     public static final String NO_LAYOUT_ID = "de.cau.cs.kieler.layout.options.noLayout";
     /** 'no layout' property. */
     public static final IProperty<Boolean> NO_LAYOUT = new Property<Boolean>(NO_LAYOUT_ID, false);
+    
     /** layout option key: side of a port on its node's boundary (enum). */
     public static final String PORT_SIDE_ID = "de.cau.cs.kieler.layout.options.portSide";
     /** port side property. */
     public static final IProperty<PortSide> PORT_SIDE = new Property<PortSide>(PORT_SIDE_ID,
             PortSide.UNDEFINED);
+    
     /** layout option key: rank of a port (integer). */
     public static final String PORT_RANK_ID = "de.cau.cs.kieler.layout.options.portRank";
     /** port rank property. */
     public static final IProperty<Integer> PORT_RANK = new Property<Integer>(PORT_RANK_ID, -1);
+    
     /** layout option key: shape of a node (enum). */
     public static final String SHAPE_ID = "de.cau.cs.kieler.layout.options.shape";
     /** node shape property. */
@@ -95,220 +104,91 @@ public final class LayoutOptions {
     
     /** layout option key: aimed aspect ratio (float). */
     public static final String ASPECT_RATIO_ID = "de.cau.cs.kieler.layout.options.aspectRatio";
+    /** aspect ratio property. */
+    public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(ASPECT_RATIO_ID, 0.0f);
+    
     /** layout option key: distance to border of the drawing (float). */
     public static final String BORDER_SPACING_ID = "de.cau.cs.kieler.layout.options.borderSpacing";
+    /** border spacing property. */
+    public static final IProperty<Float> BORDER_SPACING = new Property<Float>(
+            BORDER_SPACING_ID, -1.0f);
+    
+    /** layout option key: debug mode (boolean). */
+    public static final String DEBUG_MODE_ID = "de.cau.cs.kieler.layout.options.debugMode";
+    /** debug mode property. */
+    public static final IProperty<Boolean> DEBUG_MODE = new Property<Boolean>(DEBUG_MODE_ID, false);
+    
     /** layout option key: edge routing style (enum). */
     public static final String EDGE_ROUTING_ID = "de.cau.cs.kieler.layout.options.edgeRouting";
+    /** edge routing property. */
+    public static final IProperty<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
+            EDGE_ROUTING_ID, EdgeRouting.UNDEFINED);
+    
     /** layout option key: expand nodes to fill their parent (boolean). */
     public static final String EXPAND_NODES_ID = "de.cau.cs.kieler.layout.options.expandNodes";
+    /** expand nodes property. */
+    public static final IProperty<Boolean> EXPAND_NODES = new Property<Boolean>(
+            EXPAND_NODES_ID, false);
+
     /** layout option key: size constraint for nodes (boolean). */
     public static final String FIXED_SIZE_ID = "de.cau.cs.kieler.layout.options.fixedSize";
+    /** fixed size property. */
+    public static final IProperty<Boolean> FIXED_SIZE = new Property<Boolean>(FIXED_SIZE_ID, true);
+
     /** layout option key: optimize layout for user interaction (boolean). */
-    public static final String INTERACTIVE_ID = "de.cau.cs.kieler.layout.options.interactive";    
+    public static final String INTERACTIVE_ID = "de.cau.cs.kieler.layout.options.interactive";
+    /** interaction property. */
+    public static final IProperty<Boolean> INTERACTIVE = new Property<Boolean>(INTERACTIVE_ID, false);
+    
     /** layout option key: spacing of edge labels to edges (float). */
     public static final String LABEL_SPACING_ID = "de.cau.cs.kieler.layout.options.labelSpacing";
-    /** layout option key: layout descendants (boolean). */
-    public static final String LAYOUT_DESCENDANTS_ID
-            = "de.cau.cs.kieler.layout.options.layoutDescendants";
+    /** label spacing property. */
+    public static final IProperty<Float> LABEL_SPACING = new Property<Float>(LABEL_SPACING_ID, -1.0f);
+
+    /** layout option key: layout hierarchy (boolean). */
+    public static final String LAYOUT_HIERARCHY_ID
+            = "de.cau.cs.kieler.layout.options.layoutHierarchy";
+    /** layout hierarchy property. */
+    public static final IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
+            LAYOUT_HIERARCHY_ID, false);
+    
     /** layout option key: direction of layout (enum). */
     public static final String LAYOUT_DIRECTION_ID = "de.cau.cs.kieler.layout.options.layoutDirection";
-    /** layout option key: layout hint (string). */
-    public static final String LAYOUT_HINT_ID = "de.cau.cs.kieler.layout.options.layoutHint";
+    /** layout direction property. */
+    public static final IProperty<LayoutDirection> LAYOUT_DIRECTION = new Property<LayoutDirection>(
+            LAYOUT_DIRECTION_ID, LayoutDirection.UNDEFINED);
+
+    /** layout option key: layouter hint (string). */
+    public static final String LAYOUTER_HINT_ID = "de.cau.cs.kieler.layout.options.layoutHint";
+    /** layout provider or type property. */
+    public static final IProperty<String> LAYOUTER_HINT = new Property<String>(LAYOUTER_HINT_ID);
+    
     /** layout option key: minimal distance between elements (float). */
-    public static final String MIN_SPACING_ID = "de.cau.cs.kieler.layout.options.minSpacing";    
+    public static final String OBJ_SPACING_ID = "de.cau.cs.kieler.layout.options.minSpacing";    
+    /** object spacing property. */
+    public static final IProperty<Float> OBJ_SPACING = new Property<Float>(OBJ_SPACING_ID, -1.0f);
+
     /** layout option key: constraints for port positions (enum). */
     public static final String PORT_CONSTRAINTS_ID = "de.cau.cs.kieler.layout.options.portConstraints";
+    /** port constraints property. */
+    public static final IProperty<PortConstraints> PORT_CONSTRAINTS = new Property<PortConstraints>(
+            PORT_CONSTRAINTS_ID, PortConstraints.UNDEFINED);
+    
     /** layout option key: priority of elements (integer). */
     public static final String PRIORITY_ID = "de.cau.cs.kieler.layout.options.priority";
+    /** priority property. */
+    public static final IProperty<Integer> PRIORITY = new Property<Integer>(PRIORITY_ID);
+
     /** layout option key: randomization seed (integer). */
     public static final String RANDOM_SEED_ID = "de.cau.cs.kieler.layout.options.randomSeed";    
-    
+    /** randomization seed property. */
+    public static final IProperty<Integer> RANDOM_SEED = new Property<Integer>(RANDOM_SEED_ID);
 
 
     /**
      * Hide constructor to avoid instantiation.
      */
     private LayoutOptions() {
-    }
-
-    /**
-     * Returns a string valued option for a given layout data instance.
-     * 
-     * @param layoutData layout data for a graph element
-     * @param optionId identifier of a layout option
-     * @return the valued option for the given layout data, or {@code null} if
-     *         there is no such option
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#getProperty(IProperty)} instead
-     */
-    public static String getString(final KGraphData layoutData, final String optionId) {
-        return (String) layoutData.getProperty(LayoutServices.getInstance()
-                .getLayoutOptionData(optionId));
-    }
-
-    /**
-     * Sets a string valued option for the given layout data instance.
-     * 
-     * @param layoutData layout data for a graph element
-     * @param optionId identifier of a layout option
-     * @param value the option value to set
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#setProperty(IProperty, Object)}
-     *      instead
-     */
-    public static void setString(final KGraphData layoutData, final String optionId,
-            final String value) {
-        layoutData.setProperty(LayoutServices.getInstance().getLayoutOptionData(optionId), value);
-    }
-
-    /**
-     * Returns an integer valued option for a given layout data instance.
-     * 
-     * @param layoutData layout data for a graph element
-     * @param optionId identifier of a layout option
-     * @return the integer valued option for the given layout data, or {@code MIN_VALUE} if
-     *         there is no such option
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#getProperty(IProperty)} instead
-     */
-    public static int getInt(final KGraphData layoutData, final String optionId) {
-        Object value = layoutData.getProperty(LayoutServices.getInstance()
-                .getLayoutOptionData(optionId));
-        if (value instanceof Integer) {
-            return (Integer) value;
-        } else {
-            return Integer.MIN_VALUE;
-        }
-    }
-
-    /**
-     * Sets an integer valued option for the given layout data instance.
-     * 
-     * @param layoutData layout data for a graph element
-     * @param optionId identifier of a layout option
-     * @param value the option value to set
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#setProperty(IProperty, Object)}
-     *      instead
-     */
-    public static void setInt(final KGraphData layoutData, final String optionId,
-            final int value) {
-        layoutData.setProperty(LayoutServices.getInstance().getLayoutOptionData(optionId), value);
-    }
-    
-    /**
-     * Returns a float valued option for a given layout data instance.
-     * 
-     * @param layoutData layout data for a graph element
-     * @param optionId identifier of a layout option
-     * @return the valued option for the given layout data, or {@code NaN} if
-     *         there is no such option
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#getProperty(IProperty)} instead
-     */
-    public static float getFloat(final KGraphData layoutData, final String optionId) {
-        Object value = layoutData.getProperty(LayoutServices.getInstance()
-                .getLayoutOptionData(optionId));
-        if (value instanceof Float) {
-            return (Float) value;
-        } else {
-            return Float.NaN;
-        }
-    }
-
-    /**
-     * Sets a float valued option for the given layout data instance.
-     * 
-     * @param layoutData layout data for a graph element
-     * @param optionId identifier of a layout option
-     * @param value minimal spacing to set
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#setProperty(IProperty, Object)}
-     *      instead
-     */
-    public static void setFloat(final KGraphData layoutData, final String optionId,
-            final float value) {
-        layoutData.setProperty(LayoutServices.getInstance().getLayoutOptionData(optionId), value);
-    }
-
-    /**
-     * Returns a boolean valued option for a given layout data instance.
-     * 
-     * @param layoutData layout data for a graph element
-     * @param optionId identifier of a layout option
-     * @return the boolean valued option for the given layout data, or {@code false}
-     *         if there is no such option
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#getProperty(IProperty)} instead
-     */
-    public static boolean getBoolean(final KGraphData layoutData, final String optionId) {
-        Object value = layoutData.getProperty(LayoutServices.getInstance()
-                .getLayoutOptionData(optionId));
-        if (value instanceof Boolean) {
-            return (Boolean) value;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Sets a boolean valued option for a given layout data instance.
-     * 
-     * @param layoutData layout data for a graph element
-     * @param optionId identifier of a layout option
-     * @param value the option value to set
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#setProperty(IProperty, Object)}
-     *      instead
-     */
-    public static void setBoolean(final KGraphData layoutData, final String optionId,
-            final boolean value) {
-        layoutData.setProperty(LayoutServices.getInstance().getLayoutOptionData(optionId), value);
-    }
-
-    /**
-     * Returns an enumeration valued option for a given layout data instance.
-     * 
-     * @param <T> type of enumeration class
-     * @param layoutData layout data for a graph element
-     * @param enumClass the enumeration class
-     * @return the enumeration valued option for the given layout data, or the first
-     *         enumeration value if there is no such option
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#getProperty(IProperty)} instead
-     */
-    public static <T extends Enum<?>> T getEnum(final KGraphData layoutData,
-            final Class<T> enumClass) {
-        return (T) layoutData.getProperty(LayoutServices.getInstance()
-                .getLayoutOptionData(enumClass));
-    }
-
-    /**
-     * Sets an enumeration valued option for the given layout data instance.
-     * 
-     * @param layoutData layout data for a graph element
-     * @param value the option value to set
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#setProperty(IProperty, Object)}
-     *      instead
-     */
-    public static void setEnum(final KGraphData layoutData, final Enum<?> value) {
-        layoutData.setProperty(LayoutServices.getInstance().getLayoutOptionData(
-                value.getClass()), value);
-    }
-
-    /**
-     * Returns the insets for a given layout data instance. If no insets option
-     * is set, default values are created.
-     * 
-     * @param <T> type of object; only insets are supported
-     * @param layoutData layout data for a graph element
-     * @param clazz the object class; must equal {@code KInsets.class}
-     * @return the insets for the given layout data
-     * @deprecated use {@link de.cau.cs.kieler.core.kgraph.KGraphData#getProperty(IProperty)} instead
-     */
-    public static <T extends EObject> T getObject(final KGraphData layoutData,
-            final Class<T> clazz) {
-        if (clazz == KInsets.class) {
-            KInsets insets = (KInsets) layoutData.getProperty(INSETS);
-            if (insets == null) {
-                insets = KLayoutDataFactory.eINSTANCE.createKInsets();
-                layoutData.setProperty(INSETS, insets);
-            }
-            return clazz.cast(insets);
-        } else {
-            return null;
-        }
     }
     
 }

@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kiml.ogdf;
 import net.ogdf.lib.Ogdf;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -26,36 +28,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class TreeLayouter extends OgdfLayouter {
 
-    /** the minimum level distance option. */
-    private static final String MIN_DIST_LEVEL =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel";
-    /** the minimum sibling distance option. */
-    private static final String MIN_DIST_SIBLING =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistSibling";
-    /** the minimum subtree distance option. */
-    private static final String MIN_DIST_SUBTREE =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistSubtree";
-    /** the minimum tree distance option. */
-    private static final String MIN_DIST_TREE =
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistTree";
-    /** the orthogonal option. */
-    private static final String ORTHOGONAL =
-            "de.cau.cs.kieler.kiml.ogdf.option.orthogonal";
-    /** the orientation option. */
-    static final String ORIENTATION =
-            "de.cau.cs.kieler.kiml.ogdf.option.orientation";
     /** default value for the minimum level distance. */
-    private static final float DEF_MIN_DIST_LEVEL = 50.0f;
-    /** default value for the minimum sibling distance. */
-    private static final float DEF_MIN_DIST_SIBLING = 20.0f;
-    /** default value for the minimum subtree distance. */
-    private static final float DEF_MIN_DIST_SUBTREE = 20.0f;
-    /** default value for the minimum tree distance. */
-    private static final float DEF_MIN_DIST_TREE = 50.0f;
-    /** default value for the orthogonal. */
-    private static final boolean DEF_ORTHOGONAL = false;
-    /** default value for the orientation. */
-    private static final int DEF_ORIENTATION = Ogdf.ORIENTATION_TOP_TO_BOTTOM;
+    private static final float DEF_MIN_DIST = 22.0f;
     /** default value for border spacing. */
     private static final float DEF_BORDER_SPACING = 15;
     /** default value for label edge distance. */
@@ -73,53 +47,31 @@ public class TreeLayouter extends OgdfLayouter {
 
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
 
-        // get the minimum level distance
-        float minDistLevel =
-                LayoutOptions.getFloat(parentLayout, MIN_DIST_LEVEL);
-        if (Float.isNaN(minDistLevel)) {
-            minDistLevel = DEF_MIN_DIST_LEVEL;
-        }
-        // get the minimum sibling distance
-        float minDistSibling =
-                LayoutOptions.getFloat(parentLayout, MIN_DIST_SIBLING);
-        if (Float.isNaN(minDistSibling)) {
-            minDistSibling = DEF_MIN_DIST_SIBLING;
-        }
-        // get the minimum subtree distance
-        float minDistSubtree =
-                LayoutOptions.getFloat(parentLayout, MIN_DIST_SUBTREE);
-        if (Float.isNaN(minDistSubtree)) {
-            minDistSubtree = DEF_MIN_DIST_SUBTREE;
-        }
-        // get the minimum subtree distance
-        float minDistTree = LayoutOptions.getFloat(parentLayout, MIN_DIST_TREE);
-        if (Float.isNaN(minDistTree)) {
-            minDistTree = DEF_MIN_DIST_TREE;
+        // get the general minimum distance
+        float minDist = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        if (minDist < 0) {
+            minDist = DEF_MIN_DIST;
         }
         // get orthogonal option
-        boolean orthogonal = LayoutOptions.getBoolean(parentLayout, ORTHOGONAL);
+        EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+        boolean orthogonal = edgeRouting == EdgeRouting.ORTHOGONAL;
         // get orientation
-        Orientation orientation =
-                LayoutOptions.getEnum(parentLayout, Orientation.class);
-        int theOrientation;
-        switch (orientation) {
-        case BOTTOM_TO_TOP:
-            theOrientation = Ogdf.ORIENTATION_BOTTOM_TO_TOP;
+        LayoutDirection direction = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
+        int orientation = Ogdf.ORIENTATION_TOP_TO_BOTTOM;
+        switch (direction) {
+        case LEFT:
+            orientation = Ogdf.ORIENTATION_RIGHT_TO_LEFT;
             break;
-        case LEFT_TO_RIGHT:
-            theOrientation = Ogdf.ORIENTATION_LEFT_TO_RIGHT;
+        case RIGHT:
+            orientation = Ogdf.ORIENTATION_LEFT_TO_RIGHT;
             break;
-        case RIGHT_TO_LEFT:
-            theOrientation = Ogdf.ORIENTATION_RIGHT_TO_LEFT;
-            break;
-        case TOP_TO_BOTTOM:
-        default:
-            theOrientation = Ogdf.ORIENTATION_TOP_TO_BOTTOM;
+        case UP:
+            orientation = Ogdf.ORIENTATION_BOTTOM_TO_TOP;
             break;
         }
-
-        Ogdf.createTreeLayouter(minDistSibling, minDistSubtree, minDistLevel,
-                minDistTree, orthogonal, theOrientation);
+        
+        Ogdf.createTreeLayouter(minDist, minDist, 2 * minDist,
+                2 * minDist, orthogonal, orientation);
         
         // remove self-loops from the graph
         loopRouter.preProcess(layoutNode);
@@ -136,23 +88,17 @@ public class TreeLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     public Object getDefault(final String optionId) {
-        if (optionId.equals(MIN_DIST_LEVEL)) {
-            return DEF_MIN_DIST_LEVEL;
-        } else if (optionId.equals(MIN_DIST_SIBLING)) {
-            return DEF_MIN_DIST_SIBLING;
-        } else if (optionId.equals(MIN_DIST_SUBTREE)) {
-            return DEF_MIN_DIST_SUBTREE;
-        } else if (optionId.equals(MIN_DIST_TREE)) {
-            return DEF_MIN_DIST_TREE;
-        } else if (optionId.equals(ORTHOGONAL)) {
-            return DEF_ORTHOGONAL;
-        } else if (optionId.equals(ORIENTATION)) {
-            return DEF_ORIENTATION;
+        if (optionId.equals(LayoutOptions.OBJ_SPACING_ID)) {
+            return DEF_MIN_DIST;
+        } else if (optionId.equals(LayoutOptions.EDGE_ROUTING_ID)) {
+            return EdgeRouting.POLYLINE;
+        } else if (optionId.equals(LayoutOptions.LAYOUT_DIRECTION_ID)) {
+            return LayoutDirection.DOWN;
         } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
             return DEF_LABEL_SPACING;
-        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
             return DEF_LABEL_MARGIN_DISTANCE;
         } else {
             return null;

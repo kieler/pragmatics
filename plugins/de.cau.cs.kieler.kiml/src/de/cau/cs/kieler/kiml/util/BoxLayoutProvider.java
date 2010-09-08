@@ -50,17 +50,17 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Box layout", 2);
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
         // set option for minimal spacing
-        float objSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
-        if (Float.isNaN(objSpacing)) {
+        float objSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        if (objSpacing < 0) {
             objSpacing = DEFAULT_SPACING;
         }
         // set option for border spacing
-        float borderSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING_ID);
-        if (Float.isNaN(borderSpacing)) {
+        float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        if (borderSpacing < 0) {
             borderSpacing = DEFAULT_SPACING;
         }
         // set expand nodes option
-        boolean expandNodes = LayoutOptions.getBoolean(parentLayout, LayoutOptions.EXPAND_NODES_ID);
+        boolean expandNodes = parentLayout.getProperty(LayoutOptions.EXPAND_NODES);
 
         // sort boxes according to priority and size
         boxSorter.reset(progressMonitor.subTask(1));
@@ -77,7 +77,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public Object getDefault(final String optionId) {
-        if (LayoutOptions.MIN_SPACING_ID.equals(optionId)) {
+        if (LayoutOptions.OBJ_SPACING_ID.equals(optionId)) {
             return DEFAULT_SPACING;
         } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
             return DEFAULT_SPACING;

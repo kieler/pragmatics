@@ -48,6 +48,18 @@ public class Property<T> implements IProperty<T> {
     }
     
     /**
+     * Creates a property using another property as identifier, but changing
+     * the default value.
+     * 
+     * @param other another property
+     * @param thedefaultValue the new default value
+     */
+    public Property(final IProperty<T> other, final T thedefaultValue) {
+        this.id = other.getIdentifier().toString();
+        this.defaultValue = thedefaultValue;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public boolean equals(final Object obj) {

@@ -100,7 +100,11 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
      * @generated NOT
      */
     public void setProperty(IProperty<?> property, Object value) {
-        getProperties().put(property, value);
+        if (value == null) {
+            getProperties().removeKey(property);
+        } else {
+            getProperties().put(property, value);
+        }
     }
 
     /**

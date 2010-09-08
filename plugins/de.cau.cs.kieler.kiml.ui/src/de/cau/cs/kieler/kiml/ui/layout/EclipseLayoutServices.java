@@ -266,6 +266,12 @@ public class EclipseLayoutServices extends LayoutServices {
             return result;
         }
         
+        // fall back to default value of the option itself
+        result = optionData.getDefault();
+        if (result != null) {
+            return result;
+        }
+        
         // fall back to default-default value
         switch (optionData.getType()) {
         case STRING:
@@ -278,8 +284,7 @@ public class EclipseLayoutServices extends LayoutServices {
         case FLOAT:
             return Float.valueOf(0.0f);
         default:
-            // this should never happen
-            return null;
+            throw new IllegalArgumentException("optionData");
         }
     }
     

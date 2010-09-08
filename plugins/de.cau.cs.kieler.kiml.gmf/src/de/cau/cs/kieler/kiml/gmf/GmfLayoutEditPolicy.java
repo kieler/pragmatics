@@ -350,7 +350,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             KPoint targetPoint = edgeLayout.getTargetPoint();
             List<KPoint> bendPoints = edgeLayout.getBendPoints();
             
-            EdgeRouting edgeRouting = LayoutOptions.getEnum(edgeLayout, EdgeRouting.class);
+            EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
             boolean splineActive = false;
             if (edgeFigure instanceof SplineConnection) {
                 if (((SplineConnection) edgeFigure).getSplineMode() != SplineConnection.SPLINE_OFF) {

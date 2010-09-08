@@ -66,6 +66,8 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.core.util.Pair;
@@ -84,10 +86,12 @@ import de.cau.cs.kieler.core.util.Pair;
  */
 public class GraphvizLayouter {
 
-    // CHECKSTYLEOFF LineLength
     /** layout option identifier for label distance. */
-    public static final String OPT_LABEL_DISTANCE = "de.cau.cs.kieler.kiml.graphviz.options.labelDistance";
-    // CHECKSTYLEON LineLength
+    public static final String LABEL_DISTANCE_ID
+            = "de.cau.cs.kieler.kiml.graphviz.options.labelDistance";
+    /** label distance property. */
+    public static final IProperty<Float> LABEL_DISTANCE = new Property<Float>(LABEL_DISTANCE_ID, 1.0f);
+    
     /** command for Dot layout. */
     public static final String DOT_COMMAND = "dot";
     /** command for Neato layout. */
@@ -212,7 +216,7 @@ public class GraphvizLayouter {
         setGraphAttributes(graph, command, parentLayout);
         
         // get interactive layout option
-        boolean interactive = LayoutOptions.getBoolean(parentLayout, LayoutOptions.INTERACTIVE_ID);
+        boolean interactive = parentLayout.getProperty(LayoutOptions.INTERACTIVE);
 
         // create nodes
         for (KNode childNode : parent.getChildren()) {
@@ -226,11 +230,11 @@ public class GraphvizLayouter {
             List<Attribute> attributes = nodeStatement.getAttributes();
             KShapeLayout shapeLayout = KimlUtil.getShapeLayout(childNode);
             // set label - removed as it is currently not needed for layout
-            // KLabel label = childNode.getLabel();
-            // attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
-            // createString(label.getText())));
+/*             KLabel label = childNode.getLabel();
+               attributes.getEntries().add(createAttribute(GraphvizAPI.ATTR_LABEL,
+               createString(label.getText())));*/
             // set width and height
-            if (!LayoutOptions.getBoolean(shapeLayout, LayoutOptions.FIXED_SIZE_ID)) {
+            if (!shapeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
                 KimlUtil.resizeNode(childNode);
             }
             String width = Float.toString(shapeLayout.getWidth() / DPI);
@@ -253,7 +257,7 @@ public class GraphvizLayouter {
         }
 
         // create edges
-        LayoutDirection layoutDirection = LayoutOptions.getEnum(parentLayout, LayoutDirection.class);
+        LayoutDirection layoutDirection = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
         boolean vertical = layoutDirection == LayoutDirection.DOWN
                 || layoutDirection == LayoutDirection.UP;
         for (KNode childNode : parent.getChildren()) {
@@ -306,7 +310,7 @@ public class GraphvizLayouter {
         graphAttrStatement.setType(AttributeType.GRAPH);
         List<Attribute> graphAttrs = graphAttrStatement.getAttributes();
         // set minimal spacing
-        float minSpacing = LayoutOptions.getFloat(parentLayout, LayoutOptions.MIN_SPACING_ID);
+        float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
         if (Float.isNaN(minSpacing)) {
             minSpacing = DEF_MIN_SPACING;
         }
@@ -325,13 +329,13 @@ public class GraphvizLayouter {
             graph.getStatements().add(edgeAttrStatement);
         }
         // set offset to border
-        offset = LayoutOptions.getFloat(parentLayout, LayoutOptions.BORDER_SPACING_ID);
+        offset = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (Float.isNaN(offset)) {
             offset = DEF_MIN_SPACING / 2;
         }
         // set layout direction
         if (command.equals(DOT_COMMAND)) {
-            switch (LayoutOptions.getEnum(parentLayout, LayoutDirection.class)) {
+            switch (parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION)) {
             case DOWN:
                 graphAttrs.add(createAttribute(GraphvizAPI.ATTR_RANKDIR, "TB"));
                 break;
@@ -351,14 +355,14 @@ public class GraphvizLayouter {
             graphAttrs.add(createAttribute(GraphvizAPI.ATTR_OVERLAP, "false"));
         }
         // enable or disable drawing of splines
-        EdgeRouting edgeRouting = LayoutOptions.getEnum(parentLayout, EdgeRouting.class);
+        EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         useSplines = (edgeRouting != EdgeRouting.POLYLINE && edgeRouting != EdgeRouting.ORTHOGONAL);
         graphAttrs.add(createAttribute(GraphvizAPI.ATTR_SPLINES,
                 Boolean.toString(useSplines)));
         // configure initial placement of nodes
         if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
-            int seed = LayoutOptions.getInt(parentLayout, LayoutOptions.RANDOM_SEED_ID);
-            if (seed == Integer.MIN_VALUE) {
+            Integer seed = parentLayout.getProperty(LayoutOptions.RANDOM_SEED);
+            if (seed == null || seed < 0) {
                 seed = 1;
             }
             graphAttrs.add(createAttribute(GraphvizAPI.ATTR_START, "random" + seed));
@@ -443,9 +447,8 @@ public class GraphvizLayouter {
         if (midLabel.length() == 0) {
             midLabel.append(' ');
         } else {
-            float labelSpacing = LayoutOptions.getFloat(edgeLayout, LayoutOptions.LABEL_SPACING_ID);
-            int charsToAdd = ((Float.isNaN(labelSpacing) || labelSpacing < 1)
-                    ? 1 : (int) labelSpacing) - 1;
+            float labelSpacing = edgeLayout.getProperty(LayoutOptions.LABEL_SPACING);
+            int charsToAdd = (labelSpacing < 1 ? 1 : (int) labelSpacing) - 1;
             for (int i = 0; i < charsToAdd; i++) {
                 midLabel.append(isVertical ? "O" : "\nO");
             }
@@ -473,7 +476,7 @@ public class GraphvizLayouter {
                     Integer.toString(fontSize)));
         }
         // set label distance
-        float distance = LayoutOptions.getFloat(edgeLayout, OPT_LABEL_DISTANCE);
+        float distance = edgeLayout.getProperty(LABEL_DISTANCE);
         if (!Float.isNaN(distance) && distance >= 0.0f) {
             attributes.add(createAttribute(GraphvizAPI.ATTR_LABELDISTANCE,
                     Float.toString(distance)));
@@ -758,7 +761,7 @@ public class GraphvizLayouter {
                 edgeLayout.setSourcePoint(sourcePoint);
                 edgeLayout.setTargetPoint(targetPoint);
                 if (useSplines) {
-                    LayoutOptions.setEnum(edgeLayout, EdgeRouting.SPLINES);
+                    edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
                 }
 
                 // process the edge labels

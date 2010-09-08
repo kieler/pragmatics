@@ -93,7 +93,7 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
 
             return ("Rating: " + individual.getUserRating() + ", genes: " + individual.size());
         case 2:
-            final IGene<?> hintGene = individual.find(LayoutOptions.LAYOUT_HINT_ID);
+            final IGene<?> hintGene = individual.find(LayoutOptions.LAYOUTER_HINT_ID);
             String providerName = null;
             if (hintGene instanceof RadioGene) {
                 final String hintId = hintGene.toString();

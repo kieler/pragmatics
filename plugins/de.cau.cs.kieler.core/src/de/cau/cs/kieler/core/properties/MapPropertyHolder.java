@@ -36,7 +36,11 @@ public abstract class MapPropertyHolder implements IPropertyHolder {
         if (propertyMap == null) {
             propertyMap = new HashMap<IProperty<?>, Object>();
         }
-        propertyMap.put(property, value);
+        if (value == null) {
+            propertyMap.remove(property);
+        } else {
+            propertyMap.put(property, value);
+        }
     }
     
     /**

@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.ogdf;
 
 import net.ogdf.lib.Ogdf;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -26,15 +28,16 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class DavidsonHarelLayouter extends OgdfLayouter {
 
-    /** the desired edge length option. */
-    private static final String DESIRED_EDGE_LENGTH =
-            "de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.desiredEdgeLength";
-    /** the costs option. */
-    static final String COSTS =
-            "de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs";
-    /** the speed option. */
-    static final String SPEED =
-            "de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed";
+    /** the costs option identifier. */
+    private static final String COSTS_ID = "de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs";
+    /** costs property. */
+    private static final IProperty<Costs> COSTS = new Property<Costs>(COSTS_ID, Costs.STANDARD);
+    
+    /** the speed option identifier. */
+    private static final String SPEED_ID = "de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed";
+    /** speed property. */
+    private static final IProperty<Speed> SPEED = new Property<Speed>(SPEED_ID, Speed.MEDIUM);
+    
     /** default value for desired edge length. */
     private static final float DEF_DESIRED_EDGE_LENGTH = 0.0f;
     /** default value for costs. */
@@ -55,15 +58,13 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
 
         KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
 
-        // get the minimum spacing and layer distance
-        float desiredEdgeLength =
-                LayoutOptions.getFloat(parentLayout, DESIRED_EDGE_LENGTH);
-        if (Float.isNaN(desiredEdgeLength)) {
+        // get the minimum spacing
+        float desiredEdgeLength = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        if (desiredEdgeLength <= 0) {
             desiredEdgeLength = DEF_DESIRED_EDGE_LENGTH;
         }
         // get costs
-        Costs costs =
-                LayoutOptions.getEnum(parentLayout, Costs.class);
+        Costs costs = parentLayout.getProperty(COSTS);
         int theCosts;
         switch (costs) {
         case REPULSE:
@@ -78,8 +79,7 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
             break;
         }
         // get speed
-        Speed speed =
-                LayoutOptions.getEnum(parentLayout, Speed.class);
+        Speed speed = parentLayout.getProperty(SPEED);
         int theSpeed;
         switch (speed) {
         case FAST:
@@ -101,7 +101,7 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     public Object getDefault(final String optionId) {
-        if (optionId.equals(DESIRED_EDGE_LENGTH)) {
+        if (optionId.equals(LayoutOptions.OBJ_SPACING_ID)) {
             return DEF_DESIRED_EDGE_LENGTH;
         } else if (optionId.equals(COSTS)) {
             return DEF_COSTS;
@@ -109,9 +109,9 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
             return DEF_SPEED;
         } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
             return DEF_BORDER_SPACING;
-        } else if (optionId.equals(OPT_LABEL_EDGE_DISTANCE)) {
+        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
             return DEF_LABEL_SPACING;
-        } else if (optionId.equals(OPT_LABEL_MARGIN_DISTANCE)) {
+        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
             return DEF_LABEL_MARGIN_DISTANCE;
         } else {
             return null;

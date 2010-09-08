@@ -81,11 +81,11 @@ public class LayeredGraph {
         // get layout options from the parent group
         this.parentNode = theparentNode;
         KGraphData layoutData = KimlUtil.getShapeLayout(theparentNode);
-        layoutDirection = LayoutOptions.getEnum(layoutData, LayoutDirection.class);
+        layoutDirection = layoutData.getProperty(LayoutOptions.LAYOUT_DIRECTION);
         if (layoutDirection == LayoutDirection.UNDEFINED) {
             layoutDirection = LayoutDirection.RIGHT;
         }
-        externalPortConstraints = LayoutOptions.getEnum(layoutData, PortConstraints.class);
+        externalPortConstraints = layoutData.getProperty(LayoutOptions.PORT_CONSTRAINTS);
     }
 
     /**
@@ -286,7 +286,7 @@ public class LayeredGraph {
         parentLayout.setHeight(height);
 
         // update layout options of the parent layout node
-        LayoutOptions.setEnum(parentLayout, PortConstraints.FIXED_POS);
+        parentLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         KimlUtil.calcPortRanks(parentNode);
     }
 

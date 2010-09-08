@@ -18,7 +18,7 @@ package de.cau.cs.kieler.klay.layered;
  * 
  * @author pdo
  */
-public enum LayeredNodeLayering {
+public enum NodeLayering {
 
     /** All nodes will be layered with minimal edge length by using the network-simplex-algorithm. */
     NETWORK_SIMPLEX,
@@ -34,7 +34,7 @@ public enum LayeredNodeLayering {
      *            ordinal value
      * @return the related enumeration value
      */
-    public static LayeredNodeLayering valueOf(final int i) {
+    public static NodeLayering valueOf(final int i) {
         return values()[i];
     }
 
