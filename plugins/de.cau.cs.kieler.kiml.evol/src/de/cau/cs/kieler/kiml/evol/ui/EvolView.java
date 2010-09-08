@@ -50,9 +50,9 @@ public class EvolView extends ViewPart {
     /**
      * An implementation of {@link IEvolModelListener} that is associated to an
      * {@link EvolView}.
-     * 
+     *
      * @author bdu
-     * 
+     *
      */
     private abstract static class EvolModelListener implements IEvolModelListener {
         private final EvolView evolView;
@@ -290,12 +290,10 @@ public class EvolView extends ViewPart {
                 if (oldPos != newPos) {
                     // Update the table viewer.
                     final Object oldElement1 = this.tv.getElementAt(oldPos);
-                    if ((oldElement1 != element) && (oldElement1 != this.oldElement)) {
+                    if ((oldElement1 != element)) {
                         this.tv.update(oldElement1, null);
                     }
-                }
-
-                if ((this.oldElement != null) && (this.oldElement != element)) {
+                } else if ((this.oldElement != null) && (this.oldElement != element)) {
                     this.tv.update(this.oldElement, null);
                 }
 

@@ -57,6 +57,7 @@ public class EvolveHandler extends AbstractHandler {
          *
          */
         private final EvolModel model;
+        private final boolean isAutoRatingEnabled;
 
         /** Creates a new {@link EvolutionJobChangeAdapter} instance.
          *
@@ -67,10 +68,12 @@ public class EvolveHandler extends AbstractHandler {
         EvolutionJobChangeAdapter(
                 final EvolveJob theEvolveJob,
                 final IProgressMonitor theMonitor,
-                final EvolModel theModel) {
+                final EvolModel theModel,
+                final boolean wantAutoRating) {
             this.evolveJob = theEvolveJob;
             this.monitor = theMonitor;
             this.model = theModel;
+            this.isAutoRatingEnabled = wantAutoRating;
         }
 
         @Override
@@ -92,7 +95,7 @@ public class EvolveHandler extends AbstractHandler {
                 // Refresh the layout view.
                 EvolUtil.asyncRefreshLayoutView();
 
-                if (this.evolveJob.isAutoRatingEnabled()) {
+                if (this.isAutoRatingEnabled) {
                     // Calculate auto-rating in the current editor for
                     // all individuals.
                     final int ticks = 100;
@@ -113,19 +116,11 @@ public class EvolveHandler extends AbstractHandler {
      *
      */
     private static final class EvolveJob extends Job {
-        boolean isAutoRatingEnabled() {
-            return this.isAutoRatingEnabled;
-        }
-
-        void setAutoRatingEnabled(final boolean theIsAutoRatingEnabled) {
-            this.isAutoRatingEnabled = theIsAutoRatingEnabled;
-        }
 
         /**
          *
          */
         private final EvolModel model;
-        private boolean isAutoRatingEnabled;
 
         /**
          * Creates a new {@link EvolveJob} instance.
@@ -133,10 +128,9 @@ public class EvolveHandler extends AbstractHandler {
          * @param theName
          * @param theModel
          */
-        EvolveJob(final String theName, final EvolModel theModel, final boolean wantAutoRating) {
+        EvolveJob(final String theName, final EvolModel theModel) {
             super(theName);
             this.model = theModel;
-            this.isAutoRatingEnabled = wantAutoRating;
         }
 
         @Override
@@ -199,7 +193,7 @@ public class EvolveHandler extends AbstractHandler {
                 (stepsBeforeAutoRatingAttr == null ? STEPS_PER_AUTO_RATING : Integer
                         .parseInt(stepsBeforeAutoRatingAttr));
 
-        final EvolveJob evolveJob = new EvolveJob("Evolving", model, false);
+        final EvolveJob evolveJob = new EvolveJob("Evolving", model);
 
         final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
 
@@ -210,9 +204,8 @@ public class EvolveHandler extends AbstractHandler {
         for (int steps = 0; steps < maxSteps; steps++) {
             final boolean wantAutoRating = isAutoRatingStep(steps, stepsBeforeAutoRating);
 
-            evolveJob.setAutoRatingEnabled(wantAutoRating);
-
-            evolveJob.addJobChangeListener(new EvolutionJobChangeAdapter(evolveJob, monitor, model));
+            evolveJob.addJobChangeListener(new EvolutionJobChangeAdapter(evolveJob, monitor,
+                    model, wantAutoRating));
 
             evolveJob.schedule();
 
