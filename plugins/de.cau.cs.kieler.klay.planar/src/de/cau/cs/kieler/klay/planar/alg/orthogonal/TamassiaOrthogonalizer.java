@@ -87,28 +87,43 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
         IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(network);
 
-        // Create orthogonal representation based on flow
-        OrthogonalRepresentation orthogonal = new OrthogonalRepresentation() {
-            public List<Pair<IEdge, OrthogonalAngle[]>> evaluate(IFace element) {
-                return orthogonalData.get(element);
-            }
-        };
+        // Flow in face arcs define bends in edges
         for (IEdge arc : this.faceArcs) {
             IFace face1 = (IFace) arc.getSource().getProperty(NETWORKTOGRAPH);
             IFace face2 = (IFace) arc.getTarget().getProperty(NETWORKTOGRAPH);
-            IEdge edge = face1.getEdge(face2);
             // TODO check face1 == face2
-            OrthogonalAngle angle;
-            if (face1 == edge.getLeftFace()) {
-                angle = OrthogonalAngle.LEFT;
-            } else if (face1 == edge.getRightFace()) {
-                angle = OrthogonalAngle.RIGHT;
-            } else {
-                throw new InconsistentGraphModelException("The face (" + face1.getID()
-                        + ") is not adjacent to the face (" + face2.getID() + ").");
+
+            if (!this.orthogonalData.containsKey(face1)) {
+                this.orthogonalData.put(face1, new LinkedList<Pair<IEdge, OrthogonalAngle[]>>());
             }
-            int bends = arc.getProperty(IFlowNetworkSolver.FLOW);
+
+            boolean first = true;
+            for (IEdge edge : face1.getEdges(face2)) {
+                OrthogonalAngle[] bends;
+                if (first) {
+                    first = false;
+                    int flow = arc.getProperty(IFlowNetworkSolver.FLOW);
+                    bends = new OrthogonalAngle[flow];
+
+                    OrthogonalAngle angle;
+                    if (face1 == edge.getLeftFace()) {
+                        angle = OrthogonalAngle.LEFT;
+                    } else if (face1 == edge.getRightFace()) {
+                        angle = OrthogonalAngle.RIGHT;
+                    } else {
+                        throw new InconsistentGraphModelException("The face (" + face1.getID()
+                                + ") is not adjacent to the face (" + face2.getID() + ").");
+                    }
+
+                } else {
+                    bends = new OrthogonalAngle[0];
+                }
+                this.orthogonalData.get(face1).add(new Pair<IEdge, OrthogonalAngle[]>(edge, bends));
+            }
+
         }
+
+        // Flow in node arcs define angles in nodes
         for (IEdge arc : this.nodeArcs) {
             INode node = (INode) arc.getSource().getProperty(NETWORKTOGRAPH);
             IFace face = (IFace) arc.getTarget().getProperty(NETWORKTOGRAPH);
@@ -117,7 +132,12 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
         }
 
         getMonitor().done();
-        return orthogonal;
+
+        return new OrthogonalRepresentation() {
+            public List<Pair<IEdge, OrthogonalAngle[]>> evaluate(IFace element) {
+                return orthogonalData.get(element);
+            }
+        };
     }
 
     /**

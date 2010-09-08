@@ -55,14 +55,14 @@ public interface IFace extends IGraphElement {
     IFace getAdjacentFace(IEdge edge);
 
     /**
-     * Get the edge to an adjacent face. This returns the edge that connects this face with the
-     * given face {@code face}.
+     * Get the edges to an adjacent face. This returns the edges that separates this face with the
+     * given face {@code face}. A face can be separated to another face by several edges.
      * 
      * @param face
      *            the adjacent face
-     * @return the edge that connects this face to {@code face}
+     * @return the edges that separates this face with {@code face}
      */
-    IEdge getEdge(IFace face);
+    Iterable<IEdge> getEdges(IFace face);
 
     // ======================== Iterators ==========================================================
 

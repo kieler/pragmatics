@@ -15,6 +15,8 @@ package de.cau.cs.kieler.klay.planar.graph.impl;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
@@ -100,14 +102,14 @@ class PFace extends PGraphElement implements IFace, Serializable {
     /**
      * {@inheritDoc}
      */
-    public IEdge getEdge(final IFace face) { // TODO O(n)
+    public Iterable<IEdge> getEdges(final IFace face) { // TODO O(n)
+        List<IEdge> list = new LinkedList<IEdge>();
         for (IEdge e : this.edges) {
             if (this.getAdjacentFace(e) == face) {
-                return e;
+                list.add(e);
             }
         }
-        throw new IllegalArgumentException("The face (" + face.getID()
-                + ") is not adjacent to the face (" + this.getID() + ").");
+        return list;
     }
 
     /**
