@@ -129,14 +129,16 @@ public class PGraphFactory implements IGraphFactory {
             face.setProperty(IGraphFactory.TODUALGRAPH, node);
             map.put(face, node);
         }
+
         // Build the edges based on the neighboring faces
         for (IEdge edge : graph.getEdges()) {
-            if (graph.getFaceCount() > 1) { // TODO why this check?
-                IEdge e = dual.addEdge(map.get(edge.getLeftFace()), map.get(edge.getRightFace()));
-                e.setProperty(IGraphFactory.TODUALGRAPH, edge);
-                edge.setProperty(IGraphFactory.TODUALGRAPH, e);
-            }
+            INode source = map.get(edge.getLeftFace());
+            INode target = map.get(edge.getRightFace());
+            IEdge e = dual.addEdge(source, target, false);
+            e.setProperty(IGraphFactory.TODUALGRAPH, edge);
+            edge.setProperty(IGraphFactory.TODUALGRAPH, e);
         }
+
         return dual;
     }
 

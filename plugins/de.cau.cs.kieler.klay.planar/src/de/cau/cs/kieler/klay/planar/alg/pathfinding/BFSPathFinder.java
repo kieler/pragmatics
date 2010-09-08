@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
@@ -28,20 +27,7 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
  * 
  * @author ocl
  */
-public class BFSPathFinder extends AbstractAlgorithm implements IPathFinder {
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<IEdge> findPath(final INode source, final INode target) {
-        return this.findPath(source, target, new ICondition<Pair<INode, IEdge>>() {
-            public boolean evaluate(final Pair<INode, IEdge> object) {
-                INode node = object.getFirst();
-                IEdge edge = object.getSecond();
-                return !(edge.isDirected() && (node == edge.getTarget()));
-            }
-        });
-    }
+public class BFSPathFinder extends AbstractPathFinder {
 
     /**
      * {@inheritDoc}

@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder.IShortestPathFinder;
@@ -32,20 +31,7 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
  * 
  * @author ocl
  */
-public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPathFinder {
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<IEdge> findPath(final INode source, final INode target) {
-        return this.findPath(source, target, new ICondition<Pair<INode, IEdge>>() {
-            public boolean evaluate(final Pair<INode, IEdge> object) {
-                INode node = object.getFirst();
-                IEdge edge = object.getSecond();
-                return !(edge.isDirected() && (node == edge.getTarget()));
-            }
-        });
-    }
+public class DijkstraPathFinder extends AbstractPathFinder implements IShortestPathFinder {
 
     /**
      * {@inheritDoc}
@@ -81,10 +67,10 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
                 break;
             }
 
-            // Target node found, compute shortest path
+            // Target node found, Compute shortest path
             if (current == target) {
                 LinkedList<IEdge> path = new LinkedList<IEdge>();
-                INode pathNode = current;
+                INode pathNode = target;
                 IEdge pathEdge = edges[pathNode.getID()];
                 while (pathEdge != null) {
                     path.addFirst(pathEdge);
@@ -112,7 +98,7 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
 
                 // Get edge cost property
                 int cost = edge.getProperty(PATHCOST);
-                cost += edge.getProperty(DISTANCE);
+                cost += current.getProperty(DISTANCE);
 
                 if (cost < neighbor.getProperty(DISTANCE)) {
                     neighbor.setProperty(DISTANCE, cost);
@@ -121,7 +107,7 @@ public class DijkstraPathFinder extends AbstractAlgorithm implements IShortestPa
             }
         }
 
-        // Finished without reaching the target
+        // Target node not reached
         return null;
     }
 
