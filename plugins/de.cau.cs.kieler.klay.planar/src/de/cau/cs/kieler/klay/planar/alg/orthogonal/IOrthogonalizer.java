@@ -13,10 +13,14 @@
  */
 package de.cau.cs.kieler.klay.planar.alg.orthogonal;
 
+import java.util.List;
+
 import de.cau.cs.kieler.core.alg.IAlgorithm;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
+import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.util.IFunction;
 
 /**
  * Interface for orthogonalization algorithms. Uses the Strategy design pattern to provide a common
@@ -27,56 +31,33 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
 public interface IOrthogonalizer extends IAlgorithm {
 
     /**
-     * An interface whose implementing classes encode an orthogonal representation of a graph. An
-     * orthogonal representation defines the the angle between to edges at any node, as well as the
-     * sequence of bend angles along an edge.
+     * Defines angles in an orthogonal representation. Since in an orthogonal layout, all angles are
+     * multiples of 90 degrees, only values for 0, 90, 180 and 270 are allowed.
+     */
+    public enum OrthogonalAngle {
+        /** A 0 or 360 degree angle. */
+        NONE,
+
+        /** A 90 degree angle, or a right turn. */
+        RIGHT,
+
+        /** A 180 degree angle, or a straight line. */
+        STRAIGHT,
+
+        /** A 270 degree angle, or a left turn. */
+        LEFT,
+    }
+
+    /**
+     * An encoding class for an orthogonal representation. Formally, an orthogonal representation is
+     * a function from the set of faces of a graph, to a list of pairs containing an edge on the
+     * face and an array of angles encoding bends on the edge. The last angle in the array defines
+     * the array the edge forms with the next edge in the list.
      * 
      * @author ocl
      */
-    public interface IOrthogonalRepresentation {
-
-        /**
-         * Defines angles in an orthogonal representation. Since in an orthogonal layout, all angles
-         * are multiples of 90 degrees, only values for 0, 90, 180 and 270 are allowed.
-         */
-        enum OrthogonalAngle {
-            /** A 0 or 360 degree angle. */
-            NONE,
-
-            /** A 90 degree angle, or a right turn. */
-            RIGHT,
-
-            /** A 180 degree angle, or a straight line. */
-            STRAIGHT,
-
-            /** A 270 degree angle, or a left turn. */
-            LEFT,
-        }
-
-        /**
-         * Get the angle two edges form on a node.
-         * 
-         * @param node
-         *            the node the two edges are attached to
-         * @param edge1
-         *            the first edge
-         * @param edge2
-         *            the second edge
-         * @return the angle between the two edges
-         */
-        OrthogonalAngle getAngle(INode node, IEdge edge1, IEdge edge2);
-
-        /**
-         * Get the bends along an edge following the edge from source node to target node. The bends
-         * are encoded as an array of angles. The array should contain only angles of 90 or 270
-         * degrees, or right and left turns.
-         * 
-         * @param edge
-         *            the edge to get the bends for
-         * @return an array of bend angles
-         */
-        OrthogonalAngle[] getBends(IEdge edge);
-
+    public abstract class OrthogonalRepresentation implements
+            IFunction<IFace, List<Pair<IEdge, OrthogonalAngle[]>>> {
     }
 
     /**
@@ -87,6 +68,6 @@ public interface IOrthogonalizer extends IAlgorithm {
      *            the graph to draw as orthogonal graph
      * @return an orthogonal representation of the graph
      */
-    IOrthogonalRepresentation orthogonalize(IGraph graph);
+    OrthogonalRepresentation orthogonalize(IGraph graph);
 
 }

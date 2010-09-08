@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klay.planar.alg.orthogonal;
 
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer.IOrthogonalRepresentation;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 
 /**
@@ -40,6 +40,6 @@ public interface ICompactor {
      * @param orthogonal
      *            the orthogonal representation that restricts the graph
      */
-    void compact(IGraph graph, IOrthogonalRepresentation orthogonal);
+    void compact(IGraph graph, OrthogonalRepresentation orthogonal);
 
 }

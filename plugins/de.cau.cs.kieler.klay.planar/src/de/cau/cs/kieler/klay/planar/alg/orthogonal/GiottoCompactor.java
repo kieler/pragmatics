@@ -14,10 +14,18 @@
 package de.cau.cs.kieler.klay.planar.alg.orthogonal;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer.IOrthogonalRepresentation;
+import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.klay.planar.alg.flownetwork.IFlowNetworkSolver;
+import de.cau.cs.kieler.klay.planar.alg.flownetwork.SuccessiveShortestPathFlowSolver;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer.OrthogonalRepresentation;
+import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder;
+import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphElement;
@@ -48,36 +56,81 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
     /**
      * {@inheritDoc}
      */
-    public void compact(final IGraph g, final IOrthogonalRepresentation orthogonal) {
+    public void compact(final IGraph g, final OrthogonalRepresentation orthogonal) {
         this.graph = g;
 
-        // TODO Decompose faces into rectangles
-        // TODO Create flow network for vertical metrics
-        // TODO Create flow network for horizontal metrics
-        // TODO Solve flow networks
-        // TODO Assign coordinates based on flow
+        // Decompose faces into rectangles
+        for (IFace face : this.graph.getFaces()) {
 
-        // TODO Auto-generated method stub
+            // Create list of angles that define the face
+            List<OrthogonalAngle> faceBends = new LinkedList<OrthogonalAngle>();
+            for (Pair<IEdge, OrthogonalAngle[]> edgeBends : orthogonal.evaluate(face)) {
+                OrthogonalAngle[] angles = edgeBends.getSecond();
+                for (int i = 0; i < angles.length - 1; i++) {
+                    switch (angles[i]) {
+                    case RIGHT:
+                        faceBends.add(OrthogonalAngle.RIGHT);
+                        break;
+                    case LEFT:
+                        faceBends.add(OrthogonalAngle.LEFT);
+                        break;
+                    case NONE:
+                        faceBends.add(OrthogonalAngle.LEFT);
+                        faceBends.add(OrthogonalAngle.LEFT);
+                        break;
+                    case STRAIGHT:
+                    default:
+                    }
+                }
+            }
+
+            // Remove rectangular 'ears' from list
+
+            // TODO
+        }
+
+        // Solve flow networks
+        Pair<IGraph, IGraph> networks = this.createFlowNetworks();
+        IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
+        solver.findFlow(networks.getFirst());
+        solver.findFlow(networks.getSecond());
+
+        // TODO Assign coordinates based on flow
     }
 
     /**
-     * Create the flow network base upon the graph.
+     * Create the flow networks for vertical and horizontal metrics.
      * 
      * @return the flow network
      */
-    private IGraph createFlowNetwork() {
+    private Pair<IGraph, IGraph> createFlowNetworks() {
         IGraphFactory factory = new PGraphFactory();
-        IGraph network = factory.createEmptyGraph();
-        HashMap<IGraphElement, INode> map = new HashMap<IGraphElement, INode>();
+        IGraph vertical = factory.createEmptyGraph();
+        IGraph horizontal = factory.createEmptyGraph();
+        HashMap<IFace, INode> verticalMap = new HashMap<IFace, INode>();
+        HashMap<IFace, INode> horizontalMap = new HashMap<IFace, INode>();
 
-        // Create a node for every graph face
+        // Create nodes for every graph face
         for (IFace face : this.graph.getFaces()) {
-            INode newnode = network.addNode();
+            INode newnode;
+            newnode = vertical.addNode();
             newnode.setProperty(NETWORKTOGRAPH, face);
-            map.put(face, newnode);
+            verticalMap.put(face, newnode);
+            newnode = horizontal.addNode();
+            newnode.setProperty(NETWORKTOGRAPH, face);
+            horizontalMap.put(face, newnode);
         }
 
-        return network;
+        // Create arcs for vertical or horizontal edges
+        for (IEdge edge : this.graph.getEdges()) {
+            IEdge newedge;
+            newedge = null; // TODO
+            newedge.setProperty(IFlowNetworkSolver.LOWERBOUND, 1);
+            newedge.setProperty(IPathFinder.PATHCOST, 1);
+            // TODO capacity, supply/demand
+        }
+
+        return new Pair<IGraph, IGraph>(vertical, horizontal);
     }
 
 }
