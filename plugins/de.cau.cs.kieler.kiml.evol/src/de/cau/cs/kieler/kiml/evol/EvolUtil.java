@@ -480,7 +480,7 @@ public final class EvolUtil {
             Assert.isNotNull(editors);
 
             // Get the current editor (may be null).
-            final IEditorPart currentEditor = getCurrentEditor();
+            // final IEditorPart currentEditor = getCurrentEditor();
 
             final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
 
@@ -716,7 +716,7 @@ public final class EvolUtil {
         final TypeInfo<Float> typeInfo =
                 new FloatTypeInfo(Float.valueOf(1.0f), Float.valueOf(0.0f), Float.valueOf(10.0f),
                         UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
-        final MutationInfo mutationInfo = new MutationInfo(0.01, .05, Distribution.GAUSSIAN);
+        final MutationInfo mutationInfo = new MutationInfo(0.02, .2, Distribution.GAUSSIAN);
 
         final Genome result = new Genome();
         for (final String id : metricIds) {
@@ -1022,10 +1022,11 @@ public final class EvolUtil {
                                     .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
 
                     if (!canSetLayoutHint) {
-                        // ok, we are not allowed to set it
+                        // ok, we are NOT allowed to set it
                         break;
                     } else if ((canSetForDifferentType || isCompatibleLayoutProvider(
                             oldLayoutHintId, newType))) {
+                        // ok, we are allowed to set it
                         propertySource.setPropertyValue(id, newLayoutHintId);
                     } else {
                         EvolPlugin.showError(
@@ -1108,7 +1109,7 @@ public final class EvolUtil {
         // add the execution speed
         final double time = monitor.getExecutionTime();
 
-        final double normedSpeed = normedSpeed(time);
+        final double normedSpeed = normalizedSpeed(time);
 
         measurements.put("executionSpeed", Double.valueOf(normedSpeed));
 
@@ -1116,15 +1117,15 @@ public final class EvolUtil {
     }
 
     /**
-     * Returns a normed speed value for the given time. The result is between
-     * {@code +0.0} and {@code +1.0}. It is {@code +0.0} if {@code time} is
-     * positive infinity and {@code 1.0} if {@code time} is zero.
+     * Returns a normalized speed value for the given time. The result is
+     * between {@code +0.0} and {@code +1.0}. It is {@code +0.0} if {@code time}
+     * is positive infinity and {@code 1.0} if {@code time} is zero.
      *
      * @param time
      *            time; must be positive
      * @return normed speed value
      */
-    private static double normedSpeed(final double time) {
+    private static double normalizedSpeed(final double time) {
         Assert.isLegal(time >= 0.0, "The value of 'time' must be positive:" + time);
         return (Math.exp(-time));
     }
@@ -1174,8 +1175,8 @@ public final class EvolUtil {
             final double scaled = val * coeff;
             scaledSum += scaled;
         }
-
-        final int newRating = (int) Math.round((scaledSum * 10000));
+        final int maxNum = 5000;
+        final int newRating = (int) Math.round((scaledSum * maxNum));
 
         return newRating;
     }
@@ -1244,7 +1245,7 @@ public final class EvolUtil {
                 }
 
                 final int rating = weight(measurements, weightsMap);
-
+                System.out.println("Rated " + rating + " by " + wg.toString());
                 wg.addFeature("proposedRating:" + ind.getId(), rating);
 
                 editorRating += rating;
@@ -1454,7 +1455,7 @@ public final class EvolUtil {
             text = "*** EXCEPTION";
         }
 
-        EvolPlugin.logStatus("--- LAYOUT_HINT: " + value + "=" + text);
+// EvolPlugin.logStatus("--- LAYOUT_HINT: " + value + "=" + text);
         return hintId;
     }
 
@@ -1746,10 +1747,15 @@ public final class EvolUtil {
                 DiagramAnalyser.analyse(parentNode, metricsList, showProgressBar);
 
         for (final String metricId : metricIds) {
-            final Float value = (Float) analysisResults.get(metricId);
-            System.out.println("result: " + metricId + ": " + value);
+            final Object analysisResult = analysisResults.get(metricId);
+            if (analysisResult instanceof Float) {
+                final Float value = (Float) analysisResult;
+                System.out.println("Result: " + metricId + ": " + value);
 
-            Assert.isTrue((value >= 0.0) && (value <= 1.0));
+                Assert.isTrue((value.doubleValue() >= 0.0) && (value.doubleValue() <= 1.0));
+            } else {
+                System.err.println("Result: " + metricId + ": " + analysisResult.toString());
+            }
         }
 
         return analysisResults;

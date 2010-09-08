@@ -195,6 +195,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         final int keep = ((proposal < min) ? min : (proposal > max ? max : proposal));
         final double minDist = individuals[0].size() * .2;
         final Population survivors = new Population();
+        final Population victims = new Population(population);
         System.out.println(" -- keep " + keep + " of " + count);
         for (final Genome ind : individuals) {
             if (survivors.size() < keep) {
@@ -202,9 +203,9 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
                 final Genome comp2 = survivors.pick();
                 if ((comp == null)
                         || ((Genome.distance(ind, comp) > minDist) && ((comp == comp2) || (Genome
-                                .distance(ind,
-                                comp2) > minDist)))) {
+                                .distance(ind, comp2) > minDist)))) {
                     survivors.add(ind);
+                    victims.remove(ind);
                     System.out.println(" -- keep: " + ind.toString());
                 }
             } else {
@@ -215,6 +216,8 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
             System.out.println(survivors.size());
         }
         population = new Population(survivors);
+        System.out.println(" -- dying out: ");
+        System.out.println(victims);
     }
 
     // private fields

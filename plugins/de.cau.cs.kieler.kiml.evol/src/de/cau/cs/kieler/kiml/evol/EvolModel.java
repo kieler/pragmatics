@@ -91,7 +91,7 @@ public final class EvolModel {
     /**
      * Number of weight genomes.
      */
-    private static final int NUM_WEIGHT_GENOMES = 15;
+    private static final int NUM_WEIGHT_GENOMES = 25;
 
     /**
      * Creates a new {@link EvolModel} instance.
@@ -151,21 +151,33 @@ public final class EvolModel {
      */
     public void changeCurrentRating(final int delta) {
         if (isValid()) {
-            final Genome ind = getCurrentIndividual();
-            final int rating = ind.getUserRating() + delta;
-            ind.setUserRating(rating);
+            final Genome current = getCurrentIndividual();
+
+            final Population pop = this.getPopulation();
+            int rating = 0;
+            final int small = -delta / (10 * (pop.size() - 1));
+
+            for (final Genome g : pop) {
+                if (g == current) {
+                    rating = g.getUserRating() + delta;
+                } else {
+                    rating = g.getUserRating() + small;
+                }
+
+                g.setUserRating(rating);
+            }
 
             // Punish predictors
+            final String key = "proposedRating:" + current.getId();
+            rating = current.getUserRating();
             for (final Genome predictor : this.getWeightWatchers()) {
                 final Map<String, Object> features = predictor.getFeatures();
-                final String key = "proposedRating:" + ind.getId();
                 if ((features != null) && !features.isEmpty() && features.containsKey(key)) {
                     final Integer prediction = (Integer) features.get(key);
                     final int diff = rating - prediction.intValue();
                     final int predictorRating = predictor.getUserRating();
                     predictor.setUserRating(predictorRating - Math.abs(diff));
                 }
-
             }
 
             this.weightEvolAlg.step();
@@ -218,7 +230,7 @@ public final class EvolModel {
             MonitoredOperation.runInUI(runnable, true);
 
             // reward predictors
-            final int reward = 25;
+            final int reward = 10;
             for (final Genome wg : ww) {
                 Assert.isNotNull(wg);
                 wg.setUserRating(wg.getUserRating() + reward);

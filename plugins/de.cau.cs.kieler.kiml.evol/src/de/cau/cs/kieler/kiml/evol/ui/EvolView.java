@@ -150,7 +150,7 @@ public class EvolView extends ViewPart {
                 return;
             }
 
-            final boolean isOnlyCurrent = ("changeCurrentRating".equalsIgnoreCase(cause));
+            final boolean isOnlyCurrent = false; // ("changeCurrentRating".equalsIgnoreCase(cause));
 
             if (!isOnlyCurrent) {
                 // Set the new population as input.
@@ -451,23 +451,28 @@ public class EvolView extends ViewPart {
     }
 
     /**
-     * Refreshes the view. Must be run in UI thread.
+     * Asynchronously refreshes the view.
      *
      * @param onlyCurrent
      *            if set to {@code true}, only the current entry is refreshed.
      */
     public void refresh(final boolean onlyCurrent) {
 
-        if (!onlyCurrent) {
-            this.tableViewer.refresh();
-        }
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                final SelectorTableViewer viewer = getTableViewer();
+                if (!onlyCurrent) {
+                    viewer.refresh();
+                }
 
-        final int pos = this.getEvolModel().getPosition();
-        final Object element = this.tableViewer.selectRowAndGetElement(pos);
+                final int pos = getEvolModel().getPosition();
+                final Object element = viewer.selectRowAndGetElement(pos);
 
-        if (element != null) {
-            this.tableViewer.update(element, null);
-        }
+                if (element != null) {
+                    viewer.update(element, null);
+                }
+            }
+        });
     }
 
     @Override
