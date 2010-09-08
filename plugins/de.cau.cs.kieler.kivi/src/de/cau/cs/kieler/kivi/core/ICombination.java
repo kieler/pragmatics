@@ -73,5 +73,4 @@ public interface ICombination {
      * @param active new active status
      */
     void setActive(boolean active);
-
 }

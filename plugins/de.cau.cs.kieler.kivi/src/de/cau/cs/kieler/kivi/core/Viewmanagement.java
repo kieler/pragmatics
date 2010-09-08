@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kivi.core;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +29,8 @@ import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.omg.IOP.CodecPackage.TypeMismatchHelper;
 
 import de.cau.cs.kieler.kivi.KiViPlugin;
 
@@ -54,9 +54,9 @@ public class Viewmanagement {
 
     private EffectsWorker effectsWorker = new EffectsWorker();
 
-    private List<Descriptor> availableCombinations = new ArrayList<Descriptor>();
+    private List<CombinationDescriptor> availableCombinations = new ArrayList<CombinationDescriptor>();
 
-    private List<Descriptor> availableEffects = new ArrayList<Descriptor>();
+    private List<CombinationDescriptor> availableEffects = new ArrayList<CombinationDescriptor>();
 
     private Map<ITrigger, List<ICombination>> combinationsByTrigger = new HashMap<ITrigger, List<ICombination>>();
 
@@ -140,7 +140,7 @@ public class Viewmanagement {
         // split up to avoid breaking the loops by modifying
         // combinationsByTrigger
         synchronized (combinationsByTrigger) {
-            for (Descriptor d : availableCombinations) {
+            for (CombinationDescriptor d : availableCombinations) {
                 if (d.isActive()) {
                     boolean found = false;
                     outer: for (List<ICombination> l : combinationsByTrigger.values()) {
@@ -186,8 +186,8 @@ public class Viewmanagement {
      * 
      * @return a copied list of combinations
      */
-    public List<Descriptor> getAvailableCombinations() {
-        return new ArrayList<Descriptor>(availableCombinations);
+    public List<CombinationDescriptor> getAvailableCombinations() {
+        return new ArrayList<CombinationDescriptor>(availableCombinations);
     }
 
     /**
@@ -195,8 +195,8 @@ public class Viewmanagement {
      * 
      * @return a copied list of effects
      */
-    public List<Descriptor> getAvailableEffects() {
-        return new ArrayList<Descriptor>(availableEffects);
+    public List<CombinationDescriptor> getAvailableEffects() {
+        return new ArrayList<CombinationDescriptor>(availableEffects);
     }
 
     /**
@@ -218,32 +218,32 @@ public class Viewmanagement {
             }
         }
         boolean anyActive = isCombinationClassActive(combination.getClass());
-        for (Descriptor d : availableCombinations) {
+        for (CombinationDescriptor d : availableCombinations) {
             if (d.getClazz().equals(combination.getClass())) {
                 d.setActive(anyActive);
                 break;
             }
         }
     }
-    
-    /**
-     * Change the trigger object used by the view management. Hack to allow KIML to create its
-     * layout listener itself at the first layout, use that new instance now instead.
-     * 
-     * @param trigger the trigger to swap in
-     */
-    public void swapTrigger(final ITrigger trigger) {
-        synchronized (combinationsByTrigger) {
-            for (ITrigger t : combinationsByTrigger.keySet()) {
-                if (trigger.getClass().isInstance(t)) {
-                    List<ICombination> list = combinationsByTrigger.remove(t);
-                    combinationsByTrigger.put(trigger, list);
-                    trigger.setActive(t.isActive());
-                    return;
-                }
-            }
-        }
-    }
+
+    // /**
+    // * Change the trigger object used by the view management. Hack to allow KIML to create its
+    // * layout listener itself at the first layout, use that new instance now instead.
+    // *
+    // * @param trigger the trigger to swap in
+    // */
+    // public void swapTrigger(final ITrigger trigger) {
+    // synchronized (combinationsByTrigger) {
+    // for (ITrigger t : combinationsByTrigger.keySet()) {
+    // if (trigger.getClass().isInstance(t)) {
+    // List<ICombination> list = combinationsByTrigger.remove(t);
+    // combinationsByTrigger.put(trigger, list);
+    // trigger.setActive(t.isActive());
+    // return;
+    // }
+    // }
+    // }
+    // }
 
     /**
      * Inform the view management about an event received by the given trigger.
@@ -323,13 +323,15 @@ public class Viewmanagement {
     private void loadCombinations() {
         IConfigurationElement[] elements = RegistryFactory.getRegistry()
                 .getConfigurationElementsFor("de.cau.cs.kieler.kivi.combinations");
+        IPreferenceStore preferenceStore = KiViPlugin.getDefault().getPreferenceStore();
         for (IConfigurationElement element : elements) {
             try {
                 Object o = element.createExecutableExtension("class");
-                Descriptor descriptor = new Descriptor(element.getAttribute("name"),
+                CombinationDescriptor descriptor;
+                descriptor = new CombinationDescriptor(element.getAttribute("name"),
                         element.getAttribute("description"), o.getClass());
                 availableCombinations.add(descriptor);
-                if (KiViPlugin.getDefault().getPreferenceStore()
+                if (preferenceStore
                         .getBoolean(descriptor.getClazz().getCanonicalName() + ".active")) {
                     ((ICombination) o).setActive(true);
                 }
@@ -352,9 +354,9 @@ public class Viewmanagement {
                 .getConfigurationElementsFor("de.cau.cs.kieler.kivi.effects");
         for (IConfigurationElement element : elements) {
             try {
-                Descriptor descriptor = new Descriptor(element.getAttribute("name"),
-                        element.getAttribute("description"), element.createExecutableExtension(
-                                "class").getClass());
+                CombinationDescriptor descriptor = new CombinationDescriptor(
+                        element.getAttribute("name"), element.getAttribute("description"), element
+                                .createExecutableExtension("class").getClass());
                 availableEffects.add(descriptor);
             } catch (InvalidRegistryObjectException e) {
                 // TODO Auto-generated catch block
@@ -422,9 +424,18 @@ public class Viewmanagement {
             if (list == null) {
                 list = new ArrayList<ICombination>();
                 // create trigger
-                ITrigger t = getTrigger(trigger);
-                t.setActive(isActive());
-                combinationsByTrigger.put(t, list);
+                ITrigger t;
+                try {
+                    t = (ITrigger) trigger.newInstance();
+                    t.setActive(isActive());
+                    combinationsByTrigger.put(t, list);
+                } catch (InstantiationException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
             list.add(combination);
         }
@@ -486,47 +497,5 @@ public class Viewmanagement {
             }
         }
         return null;
-    }
-
-    /**
-     * Get a new ITrigger object for the given Class, or the faux-singleton if there is any.
-     * 
-     * @param clazz
-     *            the Class of the trigger
-     * @return the trigger
-     */
-    private static ITrigger getTrigger(final Class<?> clazz) {
-        try {
-            Method getInstance = clazz.getMethod("getInstance");
-            Object trigger = getInstance.invoke(null);
-            if (trigger instanceof ITrigger) {
-                return (ITrigger) trigger;
-            }
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // this can happen, falls through to newInstance()
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        try {
-            return (ITrigger) clazz.newInstance();
-        } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        // something went wrong here
-        throw new RuntimeException("Can't get a trigger object for " + clazz.getCanonicalName());
     }
 }

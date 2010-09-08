@@ -34,6 +34,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         IPreferenceStore preferenceStore = KiViPlugin.getDefault().getPreferenceStore();
         
         preferenceStore.setDefault(Viewmanagement.PROPERTY_ACTIVE, true);
+        
+        // TODO defaults from combinations
     }
 
 }

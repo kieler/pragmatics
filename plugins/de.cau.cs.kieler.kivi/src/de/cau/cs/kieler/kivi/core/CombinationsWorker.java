@@ -34,7 +34,11 @@ public class CombinationsWorker extends Thread {
         while (!isInterrupted()) {
             try {
                 ITrigger trigger = triggers.take();
-                Viewmanagement.getInstance().distributeTrigger(trigger);
+                try {
+                    Viewmanagement.getInstance().distributeTrigger(trigger);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

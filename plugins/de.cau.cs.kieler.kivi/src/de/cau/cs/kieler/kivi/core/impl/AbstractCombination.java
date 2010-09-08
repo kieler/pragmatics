@@ -18,6 +18,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.cau.cs.kieler.kivi.KiViPlugin;
+import de.cau.cs.kieler.kivi.core.CombinationParameter;
 import de.cau.cs.kieler.kivi.core.ICombination;
 import de.cau.cs.kieler.kivi.core.ITrigger;
 import de.cau.cs.kieler.kivi.core.Viewmanagement;
@@ -44,8 +46,8 @@ public abstract class AbstractCombination implements ICombination {
     /**
      * {@inheritDoc}
      * 
-     * Can be overridden when the default mechanism of registering triggers by
-     * implementing evaluate(ConcreteTrigger) is not wanted.
+     * Can be overridden when the default mechanism of registering triggers by implementing
+     * evaluate(ConcreteTrigger) is not wanted.
      */
     public List<Class<?>> getTriggers() {
         List<Class<?>> triggers = new ArrayList<Class<?>>();
@@ -65,8 +67,8 @@ public abstract class AbstractCombination implements ICombination {
     /**
      * {@inheritDoc}
      * 
-     * Can be overridden when the default mechanism of registering triggers by
-     * implementing evaluate(ConcreteTrigger) is not wanted.
+     * Can be overridden when the default mechanism of registering triggers by implementing
+     * evaluate(ConcreteTrigger) is not wanted.
      */
     public boolean evaluate(final ITrigger trigger) {
         try {
@@ -126,4 +128,12 @@ public abstract class AbstractCombination implements ICombination {
         active = a;
     }
 
+    /**
+     * Get the parameters for this combination.
+     * 
+     * @return the parameters
+     */
+    public static CombinationParameter[] getParameters() {
+        return new CombinationParameter[0];
+    }
 }

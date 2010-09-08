@@ -13,8 +13,18 @@
          point="org.eclipse.ui.preferencePages">
       <page
             class="de.cau.cs.kieler.kivi.preferences.ViewmanagementPreferencePage"
-            id="de.cau.cs.kieler.kivi.Viewmanagement"
-            name="Viewmanagement">
+            id="de.cau.cs.kieler.kivi"
+            name="Viewmanagement"
+            category="de.cau.cs.kieler">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.cau.cs.kieler.kivi.preferences.CombinationsPreferencePage"
+            id="de.cau.cs.kieler.kivi.Combinations"
+            name="Combinations"
+            category="de.cau.cs.kieler.kivi">
       </page>
    </extension>
    <extension

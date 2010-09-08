@@ -14,34 +14,36 @@
 package de.cau.cs.kieler.kivi.core;
 
 /**
- * A container for extension point descriptions. Contains class, name,
- * description attributes.
+ * A container for extension point descriptions. Contains class, name, description attributes.
  * 
  * @author mmu
  */
-public class Descriptor {
-    
+public class CombinationDescriptor {
+
     private String name;
-    
+
     private String description;
-    
+
     private Class<?> clazz;
-    
+
     private boolean active = false;
-    
+
     /**
      * Create a new descriptor.
      * 
-     * @param n the name
-     * @param d the description
-     * @param c the class
+     * @param n
+     *            the name
+     * @param d
+     *            the description
+     * @param c
+     *            the class
      */
-    public Descriptor(final String n, final String d, final Class<?> c) {
+    public CombinationDescriptor(final String n, final String d, final Class<?> c) {
         name = n;
         description = d;
         clazz = c;
     }
-    
+
     /**
      * Get the name.
      * 
@@ -50,7 +52,7 @@ public class Descriptor {
     public String getName() {
         return name;
     }
-    
+
     /**
      * Get the description.
      * 
@@ -59,7 +61,7 @@ public class Descriptor {
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * Get the class.
      * 
@@ -68,16 +70,17 @@ public class Descriptor {
     public Class<?> getClazz() {
         return clazz;
     }
-    
+
     /**
      * Set the element described as active or inactive.
      * 
-     * @param a true if activating
+     * @param a
+     *            true if activating
      */
     public void setActive(final boolean a) {
         active = a;
     }
-    
+
     /**
      * Get the active state of the element described.
      * 
@@ -86,5 +89,5 @@ public class Descriptor {
     public boolean isActive() {
         return active;
     }
-
+    
 }

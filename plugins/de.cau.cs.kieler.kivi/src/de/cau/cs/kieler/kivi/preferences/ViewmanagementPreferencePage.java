@@ -46,7 +46,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.kivi.KiViPlugin;
-import de.cau.cs.kieler.kivi.core.Descriptor;
+import de.cau.cs.kieler.kivi.core.CombinationDescriptor;
 import de.cau.cs.kieler.kivi.core.Viewmanagement;
 
 /**
@@ -63,12 +63,13 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
     private CheckboxTableViewer checkboxViewer;
 
     private Button kiviActive;
-    
+
     private SelectionListener kiviActiveListener;
-    
+
     private Composite combinationsComposite;
 
-    private List<Descriptor> combinations = Viewmanagement.getInstance().getAvailableCombinations();
+    private List<CombinationDescriptor> combinations = Viewmanagement.getInstance()
+            .getAvailableCombinations();
 
     /**
      * Default constructor.
@@ -92,7 +93,7 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
             getPreferenceStore()
                     .setValue(Viewmanagement.PROPERTY_ACTIVE, kiviActive.getSelection());
             Viewmanagement.getInstance().setActive(kiviActive.getSelection());
-            for (Descriptor d : combinations) {
+            for (CombinationDescriptor d : combinations) {
                 boolean checked = checkboxViewer.getChecked(d);
                 getPreferenceStore().setValue(d.getClazz().getCanonicalName() + ".active", checked);
                 d.setActive(checked);
@@ -102,12 +103,13 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
         }
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     protected void performDefaults() {
-        kiviActive.setSelection(getPreferenceStore().getDefaultBoolean(Viewmanagement.PROPERTY_ACTIVE));
+        kiviActive.setSelection(getPreferenceStore().getDefaultBoolean(
+                Viewmanagement.PROPERTY_ACTIVE));
         enableComposites(getPreferenceStore().getDefaultBoolean(Viewmanagement.PROPERTY_ACTIVE));
     }
 
@@ -159,17 +161,18 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
         checkboxViewer.getTable().setFont(combinationsComposite.getFont());
         checkboxViewer.setLabelProvider(new LabelProvider() {
             public String getText(final Object element) {
-                return ((Descriptor) element).getName();
+                return ((CombinationDescriptor) element).getName();
             }
         });
         checkboxViewer.getTable().setFont(font);
 
         checkboxViewer.setContentProvider(new IStructuredContentProvider() {
 
-            private final Comparator<Descriptor> comparer = new Comparator<Descriptor>() {
+            private Comparator<CombinationDescriptor> c = new Comparator<CombinationDescriptor>() {
                 private Collator collator = Collator.getInstance();
 
-                public int compare(final Descriptor arg0, final Descriptor arg1) {
+                public int compare(final CombinationDescriptor arg0,
+                        final CombinationDescriptor arg1) {
                     String s1 = arg0.getName();
                     String s2 = arg1.getName();
                     return collator.compare(s1, s2);
@@ -187,10 +190,10 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
 
             public Object[] getElements(final Object inputElement) {
                 // Make an entry for each descriptor
-                Descriptor[] elements = (Descriptor[]) inputElement;
-                Descriptor[] results = new Descriptor[elements.length];
+                CombinationDescriptor[] elements = (CombinationDescriptor[]) inputElement;
+                CombinationDescriptor[] results = new CombinationDescriptor[elements.length];
                 System.arraycopy(elements, 0, results, 0, elements.length);
-                Collections.sort(Arrays.asList(results), comparer);
+                Collections.sort(Arrays.asList(results), c);
                 return results;
             }
 
@@ -201,7 +204,8 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
             public void selectionChanged(final SelectionChangedEvent event) {
                 if (event.getSelection() instanceof IStructuredSelection) {
                     IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-                    Descriptor descriptor = (Descriptor) sel.getFirstElement();
+                    CombinationDescriptor descriptor = (CombinationDescriptor) sel
+                            .getFirstElement();
                     if (descriptor == null) {
                         clearDescription();
                     } else {
@@ -221,16 +225,16 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
         createDescriptionArea(combinationsComposite);
 
         populateDescriptors();
-        
+
         enableComposites(Viewmanagement.getInstance().isActive());
 
         return null;
     }
-    
+
     private void enableComposites(final boolean b) {
         combinationsComposite.setEnabled(b);
         checkboxViewer.setAllGrayed(!b);
-        
+
     }
 
     private void createDescriptionArea(final Composite composite) {
@@ -259,10 +263,10 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
      * Populates the list of descriptors.
      */
     private void populateDescriptors() {
-        Descriptor[] descriptors = Viewmanagement.getInstance().getAvailableCombinations()
-                .toArray(new Descriptor[0]);
+        CombinationDescriptor[] descriptors = Viewmanagement.getInstance()
+                .getAvailableCombinations().toArray(new CombinationDescriptor[0]);
         checkboxViewer.setInput(descriptors);
-        for (Descriptor d : descriptors) {
+        for (CombinationDescriptor d : descriptors) {
             checkboxViewer.setChecked(d, d.isActive());
         }
     }
@@ -270,7 +274,7 @@ public class ViewmanagementPreferencePage extends PreferencePage implements
     /**
      * Show the selected description in the text.
      */
-    private void showDescription(final Descriptor descriptor) {
+    private void showDescription(final CombinationDescriptor descriptor) {
         if (descriptionText == null || descriptionText.isDisposed()) {
             return;
         }

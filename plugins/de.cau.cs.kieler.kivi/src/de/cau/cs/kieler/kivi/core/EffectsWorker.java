@@ -33,7 +33,12 @@ public class EffectsWorker extends Thread {
     public void run() {
         while (!isInterrupted()) {
             try {
-                execute(effects.take());
+                IEffect effect = effects.take();
+                try {
+                    execute(effect);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

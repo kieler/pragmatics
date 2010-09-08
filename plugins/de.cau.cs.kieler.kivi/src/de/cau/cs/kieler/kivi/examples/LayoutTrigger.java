@@ -33,14 +33,14 @@ public class LayoutTrigger extends AbstractTrigger implements ILayoutListener {
      * Default constructor.
      * 
      * FIXME check if actually needed, and if yes then split up trigger and layout listener into two
-     * classes to avoid the instantiation hassle.
+     * classes to avoid the instantiation hassle, see swapTrigger etc
      */
     public LayoutTrigger() {
-        if (instance != null) {
+//        if (instance != null) {
             // KIML creates a new instance on first layout, use this instance in the view management
             // instead of the instance created by the view management on activation of a combination
-            Viewmanagement.getInstance().swapTrigger(this);
-        }
+//            Viewmanagement.getInstance().swapTrigger(this);
+//        }
         // Remember the instance created because the layout mechanism creates its own listener
         instance = this;
     }
