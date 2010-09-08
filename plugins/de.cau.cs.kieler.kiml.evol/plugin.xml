@@ -229,7 +229,13 @@
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">
+      <category
+            description="Analysis providers that yield a value between 0.0 and 1.0"
+            id="de.cau.cs.kieler.kiml.evol.metricCategory"
+            name="Normalized Metric">
+      </category>
       <provider
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.grana.AreaMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.areaMetric"
@@ -239,6 +245,7 @@
          </dependency>
       </provider>
       <provider
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.grana.BendsMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.bendsMetric"
@@ -255,6 +262,7 @@
             name="Dimensions">
       </provider>
       <provider
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.grana.FlatnessMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.flatnessMetric"
@@ -264,6 +272,7 @@
          </dependency>
       </provider>
       <provider
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.grana.NarrownessMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.narrownessMetric"
@@ -273,6 +282,7 @@
          </dependency>
       </provider>
       <provider
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
             class="de.cau.cs.kieler.kiml.evol.grana.EdgeCrossingsMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.edgeCrossingsMetric"
@@ -306,6 +316,16 @@
          </dependency>
          <dependency
                analysis="de.cau.cs.kieler.kiml.evol.narrownessMetric">
+         </dependency>
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.grana.EdgeUniformityMetric"
+            description="description"
+            id="de.cau.cs.kieler.kiml.evol.edgeUniformityMetric"
+            name="Edge Uniformity Metric">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeLength">
          </dependency>
       </provider>
    </extension>
