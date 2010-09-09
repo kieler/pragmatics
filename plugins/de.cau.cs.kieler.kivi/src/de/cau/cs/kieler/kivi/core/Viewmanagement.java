@@ -30,7 +30,6 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.omg.IOP.CodecPackage.TypeMismatchHelper;
 
 import de.cau.cs.kieler.kivi.KiViPlugin;
 
