@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
 
+import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
@@ -399,9 +400,15 @@ public final class EvolModel {
 
         // Create an initial population.
         final Set<IEditorPart> editors = EvolUtil.getEditors();
-        final Population sourcePopulation = EvolUtil.createPopulation(editors);
+        Population sourcePopulation = null;
+        try {
+            sourcePopulation = EvolUtil.createPopulation(editors);
+        } catch (final KielerException exception) {
+            exception.printStackTrace();
+            EvolPlugin.showError("A new population could not be created.", exception);
+        }
 
-        if (!sourcePopulation.isEmpty()) {
+        if ((sourcePopulation != null) && !sourcePopulation.isEmpty()) {
 
             // Add meta-evolution genes for the layout metrics.
             EvolPlugin.logStatus("Creating metric weights ...");

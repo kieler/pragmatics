@@ -26,6 +26,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
@@ -76,10 +77,12 @@ final class GenomeFactory {
      * @param layoutHintIds
      *            a set of layout hint IDs; must not be {@code null}
      * @return a genome, or {@code null}.
+     * @throws KielerException
      */
     public Genome createGenome(
             final List<LayoutPropertySource> propertySources,
-            final Set<Object> layoutHintIds) {
+ final Set<Object> layoutHintIds)
+            throws KielerException {
 
         if ((propertySources == null) || (layoutHintIds == null) || layoutHintIds.isEmpty()) {
             return null;
@@ -141,7 +144,7 @@ final class GenomeFactory {
                     Assert.isNotNull(gene, "Failed to create gene for " + id);
                     result.add(gene);
                 } catch (final IllegalArgumentException exception) {
-                    EvolPlugin.showError("Failed to create gene for " + id, exception);
+                    throw new KielerException("Failed to create gene for " + id, exception);
                 }
 
             } else {
@@ -192,9 +195,13 @@ final class GenomeFactory {
         // Add extra genes for the suitable options that have not been
         // added yet.
         final List<String> presentIds = result.getIds();
-        final Genome extraGenes = createGenes(knownOptionIds, presentIds, uniformProb, null);
 
-        result.addAll(extraGenes);
+        try {
+            final Genome extraGenes = createGenes(knownOptionIds, presentIds, uniformProb, null);
+            result.addAll(extraGenes);
+        } catch (final Exception exception) {
+            throw new KielerException("Genome could not be created.", exception);
+        }
 
         EvolPlugin.logStatus("Created genome: " + result.size() + " genes.");
 
@@ -328,10 +335,12 @@ final class GenomeFactory {
      * @param prob
      * @param theGeneFactory
      * @return
+     * @throws KielerException
      */
     private Genome createGenes(
             final Set<String> knownOptionIds, final List<String> presentIds,
-            final double prob, final GeneFactory theGeneFactory) {
+ final double prob,
+            final GeneFactory theGeneFactory) throws KielerException {
         final Genome extraGenes = new Genome();
 
         final GeneFactory gf;
@@ -343,10 +352,16 @@ final class GenomeFactory {
 
         for (final String optionId : knownOptionIds) {
             if (!presentIds.contains(optionId)) {
+                EvolPlugin.logStatus("Creating gene for " + optionId);
                 final LayoutOptionData<?> optionData =
                         LayoutServices.getInstance().getLayoutOptionData(optionId);
+
+                if (optionData == null) {
+                    throw new KielerException("Could not get layout option data: " + optionId);
+                }
+
                 final Object value = optionData.getDefault();
-                EvolPlugin.logStatus("Creating gene for " + optionId);
+
                 final IGene<?> gene = gf.newGene(optionId, value.toString(), prob);
                 Assert.isNotNull(gene, "Failed to create gene for " + optionId);
                 extraGenes.add(gene);
@@ -356,8 +371,13 @@ final class GenomeFactory {
     }
 
     /**
+     * Determines which of the registered layout options are known by the
+     * specified providers.
+     *
      * @param providerIds
-     * @return
+     *            a list of layout provider IDs
+     * @return a set containing the IDs of the layout options that are known by
+     *         the specified providers and that are registered as evolutionData
      */
     private Set<String> getLearnableKnownOptions(final List<String> providerIds) {
         final Set<String> knownOptionIds = new HashSet<String>();

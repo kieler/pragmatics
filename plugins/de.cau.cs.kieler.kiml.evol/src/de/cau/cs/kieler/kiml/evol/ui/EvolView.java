@@ -289,9 +289,9 @@ public class EvolView extends ViewPart {
 
                 if (oldPos != newPos) {
                     // Update the table viewer.
-                    final Object oldElement1 = this.tv.getElementAt(oldPos);
-                    if ((oldElement1 != element)) {
-                        this.tv.update(oldElement1, null);
+                    final Object elementAtOldPos = this.tv.getElementAt(oldPos);
+                    if ((elementAtOldPos != element)) {
+                        this.tv.update(elementAtOldPos, null);
                     }
                 } else if ((this.oldElement != null) && (this.oldElement != element)) {
                     this.tv.update(this.oldElement, null);

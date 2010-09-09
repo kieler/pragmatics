@@ -48,6 +48,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
+import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -639,38 +640,6 @@ public final class EvolUtil {
 
     /**
      * Creates a population of the default size, taking initial values from the
-     * given diagram editor and edit part.
-     *
-     * @param editor
-     *            an {@link IEditorPart}
-     * @param part
-     *            an {@link EditPart}
-     * @return a new {@link Population} of default size, or an empty
-     *         {@link Population} in case of an error
-     * @deprecated use {@link #createPopulation(Set)} instead.
-     */
-    @Deprecated
-    public static Population createPopulation(final IEditorPart editor, final EditPart part) {
-        if ((editor == null) || !(editor instanceof DiagramEditor)) {
-            return new Population();
-        }
-
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, part);
-        if (manager == null) {
-            return new Population();
-        }
-
-        final ILayoutInspector inspector = manager.getInspector(part);
-        Assert.isNotNull(inspector);
-        final LayoutPropertySource propertySource = new LayoutPropertySource(inspector);
-        final Population result = createPopulation(propertySource);
-
-        return result;
-    }
-
-    /**
-     * Creates a population of the default size, taking initial values from the
      * given diagram editors.
      *
      * @param editors
@@ -678,8 +647,11 @@ public final class EvolUtil {
      *            DiagramEditors.
      * @return a new {@link Population} of default size, or an empty
      *         {@link Population} in case of an error
+     * @throws KielerException
+     *             when the population cannot be created.
      */
-    public static Population createPopulation(final Set<IEditorPart> editors) {
+    public static Population createPopulation(final Set<IEditorPart> editors)
+            throws KielerException {
         if ((editors == null) || editors.isEmpty()) {
             return new Population();
         }
@@ -938,10 +910,10 @@ public final class EvolUtil {
             return;
         }
 
-        EvolPlugin.logStatus("adopt " + individual.toString());
+        EvolPlugin.logStatus("Adopting " + individual.toString());
         final LayoutServices layoutServices = LayoutServices.getInstance();
         final EvolutionServices evolServices = EvolutionServices.getInstance();
-        final Set<String> metricIds = evolServices.getLayoutMetricsIds();
+        // final Set<String> metricIds = evolServices.getLayoutMetricsIds();
 
         // Set layout options according to the genome.
         for (final IGene<?> gene : individual) {
@@ -950,10 +922,10 @@ public final class EvolUtil {
             final Object value = gene.getValue();
             final Object id = gene.getId();
 
-            if (metricIds.contains(id)) {
-                // it is a metric id --> skip
-                continue;
-            }
+// if (metricIds.contains(id)) {
+            // // it is a metric id --> skip
+            // continue;
+            // }
 
             final LayoutOptionData<?> data = layoutServices.getLayoutOptionData((String) id);
             Assert.isNotNull(data, "No layout option data for " + id);
@@ -1109,9 +1081,9 @@ public final class EvolUtil {
         // add the execution speed
         final double time = monitor.getExecutionTime();
 
-        final double normedSpeed = normalizedSpeed(time);
+        final double speed = normalizedSpeed(time);
 
-        measurements.put("executionSpeed", Double.valueOf(normedSpeed));
+        measurements.put("executionSpeed", Double.valueOf(speed));
 
         return measurements;
     }
@@ -1131,11 +1103,16 @@ public final class EvolUtil {
     }
 
     /**
+     * Returns the weighted sum of the given measurements, using the given
+     * weights.
+     *
      * @param measurements
+     *            a map of IDs and measurements (double values)
      * @param weightsMap
-     * @return
+     *            a map of weight IDs and weights
+     * @return the weighted sum of the given measurements
      */
-    private static int weight(
+    private static double weight(
             final Map<String, Object> measurements, final Map<String, Double> weightsMap) {
 
         // TODO: Discuss: How should metrics be weighted per default?
@@ -1143,7 +1120,6 @@ public final class EvolUtil {
         // Attention: The measurements can contain additional intermediate
         // results we did not ask for.
         final Double defaultScale = 0.0;
-
 
         for (final String metricId : measurements.keySet()) {
             if (!weightsMap.containsKey(metricId)) {
@@ -1159,12 +1135,12 @@ public final class EvolUtil {
             final String metricId = measurement.getKey();
             final String metricResult = measurement.getValue().toString();
 
+            // Get the weight.
             Assert.isTrue(weightsMap.containsKey(metricId));
             final double coeff = weightsMap.get(metricId).doubleValue();
 
             double val;
             try {
-
                 final double parsedResult = Double.parseDouble(metricResult);
                 val = parsedResult;
 
@@ -1175,10 +1151,8 @@ public final class EvolUtil {
             final double scaled = val * coeff;
             scaledSum += scaled;
         }
-        final int maxNum = 5000;
-        final int newRating = (int) Math.round((scaledSum * maxNum));
 
-        return newRating;
+        return scaledSum;
     }
 
     /**
@@ -1244,9 +1218,12 @@ public final class EvolUtil {
                     // calculated.
                 }
 
-                final int rating = weight(measurements, weightsMap);
+                final double scaledSum = weight(measurements, weightsMap);
+                final int maxNum = 5000;
+                final int rating = (int) Math.round((scaledSum * maxNum));
+
                 System.out.println("Rated " + rating + " by " + wg.toString());
-                wg.addFeature("proposedRating:" + ind.getId(), rating);
+                wg.addFeature("proposedRating:" + ind.getId(), Integer.valueOf(rating));
 
                 editorRating += rating;
             }
@@ -1288,6 +1265,8 @@ public final class EvolUtil {
             return null;
         }
 
+        EvolPlugin.logStatus("Calculating layout in editor: " + editor.getTitle());
+
         // First phase: build the layout graph.
         final KNode layoutGraph = manager.buildLayoutGraph(editor, null, false);
 
@@ -1312,48 +1291,15 @@ public final class EvolUtil {
     }
 
     /**
-     * Creates a population of the default size, taking initial values from the
-     * given {@link LayoutPropertySource}.
-     *
-     * @param propertySource
-     *            where the initial data is taken from; may not be {@code null}
-     * @return the new population
-     */
-    private static Population createPopulation(final LayoutPropertySource propertySource) {
-        Assert.isLegal(propertySource != null);
-        final int size =
-                EvolPlugin.getDefault().getPreferenceStore()
-                        .getInt(EvolPlugin.PREF_POPULATION_SIZE);
-        return createPopulation(propertySource, size);
-    }
-
-    /**
-     * Create a population of the given size, taking initial values from the
-     * given {@link LayoutPropertySource}.
-     *
-     * @param propertySource
-     *            where the initial data is taken from; may not be {@code null}
-     * @param size
-     *            a non-negative value that specifies the initial size of the
-     *            population.
-     * @return population
-     */
-    private static Population createPopulation(
-            final LayoutPropertySource propertySource, final int size) {
-        Assert.isLegal(propertySource != null);
-        Assert.isLegal(size >= 0);
-
-        return createPopulation(Collections.singletonList(propertySource), size);
-    }
-
-    /**
      * Create a population of default size, taking initial values from the given
      * list of {@link LayoutPropertySource} instances.
      *
      * @param propertySources
      * @return
+     * @throws KielerException
      */
-    private static Population createPopulation(final List<LayoutPropertySource> propertySources) {
+    private static Population createPopulation(final List<LayoutPropertySource> propertySources)
+            throws KielerException {
         Assert.isLegal(propertySources != null);
         final int size =
                 EvolPlugin.getDefault().getPreferenceStore()
@@ -1368,9 +1314,11 @@ public final class EvolUtil {
      * @param propertySources
      * @param size
      * @return a new population
+     * @throws KielerException
      */
     private static Population createPopulation(
-            final List<LayoutPropertySource> propertySources, final int size) {
+            final List<LayoutPropertySource> propertySources, final int size)
+            throws KielerException {
         Assert.isLegal(propertySources != null);
         Assert.isLegal(size >= 0);
 
@@ -1426,6 +1374,7 @@ public final class EvolUtil {
      * Obtains the layout hint identifier from the given property descriptor.
      *
      * @param descriptor
+     *            an {@link IPropertyDescriptor}
      * @param value
      *            the integer value indicating the layout hint
      * @return the layout hint id
@@ -1438,24 +1387,14 @@ public final class EvolUtil {
         String text;
         String hintId = null;
 
-        try {
-            // Get the caption.
-            text = labelProvider.getText(value);
+        // Get the caption.
+        text = labelProvider.getText(value);
 
-            // XXX @msp Is there a more elegant way to obtain the layout hint
-            // id?
-            hintId = LayoutPropertySource.getLayoutHint(text);
+        // XXX @msp Is there a more elegant way to obtain the layout hint id?
+        hintId = LayoutPropertySource.getLayoutHint(text);
 
-            Assert.isTrue(hintId.length() > 0, "Could not find layout provider id for '" + text
-                    + "'");
+        Assert.isTrue(hintId.length() > 0, "Could not find layout provider id for '" + text + "'");
 
-        } catch (final ArrayIndexOutOfBoundsException e) {
-            // This might occur for an Enum property, if value is out of the
-            // Enum's bounds.
-            text = "*** EXCEPTION";
-        }
-
-// EvolPlugin.logStatus("--- LAYOUT_HINT: " + value + "=" + text);
         return hintId;
     }
 
@@ -1473,7 +1412,7 @@ public final class EvolUtil {
             final IEditorPart theEditor, final EditPart theEditPart) {
 
         if (!(theEditor instanceof DiagramEditor)) {
-            // The editor is not a DiagramEditor.
+            // We can only handle diagram editors.
             return null;
         }
 
