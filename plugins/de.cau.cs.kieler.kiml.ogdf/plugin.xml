@@ -154,7 +154,10 @@
             parameter="DAVIDSON_HAREL"
             type="de.cau.cs.kieler.layout.types.force">
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.desiredEdgeLength">
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs">
@@ -163,10 +166,7 @@
                option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacingde.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
