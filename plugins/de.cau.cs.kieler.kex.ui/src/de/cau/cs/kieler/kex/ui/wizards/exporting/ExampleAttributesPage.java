@@ -60,6 +60,7 @@ public class ExampleAttributesPage extends WizardPage {
 		exampleDescription = new Text(composite, SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL | SWT.H_SCROLL);
 		exampleDescription.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 	}
 
 	public void setExampleTitle(Text exampleTitle) {

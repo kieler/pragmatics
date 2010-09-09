@@ -2,6 +2,7 @@ package de.cau.cs.kieler.kex.controller.util;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleResource;
 
@@ -24,6 +26,9 @@ public class ExampleImportUtil {
 
 	private final static String workspaceLocation = Platform.getLocation()
 			.toString();
+
+	private final static String standardPicPath = "files/noPreview.png";
+	private final static String kexNamespaceId = "de.cau.cs.kieler.kex";
 
 	/**
 	 * @param selectedResource
@@ -72,7 +77,7 @@ public class ExampleImportUtil {
 				String destPath = localPath.substring(exampleBeginIndex);
 				// searching for subfiles and folders.
 				switch (resource.getResourceType()) {
-				case Project:
+				case PROJECT:
 					// creates a new project
 					IProgressMonitor progressMonitor = new NullProgressMonitor();
 					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
@@ -81,10 +86,10 @@ public class ExampleImportUtil {
 					project.create(progressMonitor);
 					project.open(progressMonitor);
 					break;
-				case Folder:
+				case FOLDER:
 					IOHandler.createFolder(destFolder + "/" + destPath);
 					break;
-				case File:
+				case FILE:
 					URL entry = bundle.getEntry(localPath);
 					IOHandler.writeFile(entry, destFolder + destPath, true);
 					if (resource.isDirectOpen())
@@ -99,5 +104,29 @@ public class ExampleImportUtil {
 				throw new KielerException("Can't import example!", e2);
 			}
 		}
+	}
+
+	public static InputStream loadPreviewPic(Example example)
+			throws KielerException {
+		Bundle bundle = Platform.getBundle(example.getNamespaceId());
+		URL entry = bundle.getEntry(example.getPreviewPicPath());
+		try {
+			return entry.openStream();
+		} catch (IOException e) {
+			throw new KielerException(ErrorMessage.PREVIEW_LOAD_ERROR
+					+ example.getTitle());
+		}
+	}
+
+	public static InputStream loadStandardPic() {
+		Bundle bundle = Platform.getBundle(ExampleImportUtil.kexNamespaceId);
+		URL entry = bundle.getEntry(ExampleImportUtil.standardPicPath);
+		try {
+			return entry.openStream();
+		} catch (IOException e) {
+			// should not happen at runtime
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

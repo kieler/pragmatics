@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.kex.controller;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,8 @@ public class ExampleManager {
 
 	private final ExtPointExampleCreator extensionCreator;
 
-	// TODO KEXMessages einbauen als statische klasse, die alle konstanten h�lt.
+	// TODO KEXMessages einbauen als statische klasse, die alle konstanten
+	// h�lt.
 
 	// TODO wenn in ui ein editor offen ist, dann macht er den wizard nicht auf.
 
@@ -107,6 +109,14 @@ public class ExampleManager {
 			// TODO build online interface
 		} else
 			throw new KielerException(ErrorMessage.NO_SOURCETYPE);
+	}
+
+	public InputStream loadPreviewPic(Example example) throws KielerException {
+		return ExampleImportUtil.loadPreviewPic(example);
+	}
+
+	public InputStream loadStandardPic() {
+		return ExampleImportUtil.loadStandardPic();
 	}
 
 }

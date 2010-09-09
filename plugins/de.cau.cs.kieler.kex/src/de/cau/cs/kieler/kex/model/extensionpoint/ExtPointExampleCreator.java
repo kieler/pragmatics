@@ -375,7 +375,7 @@ public class ExtPointExampleCreator {
 
 		makeRootSource(location, example);
 
-		String overviewPicPath = example.getOverViewPicPath();
+		String overviewPicPath = example.getPreviewPicPath();
 		if (overviewPicPath != null)
 			createdExample.setAttribute(ExtPointConstants.OVERVIEW_PIC,
 					overviewPicPath);

@@ -28,15 +28,15 @@ public class ExampleResource {
 	}
 
 	public enum Type {
-		File, Folder, Project;
+		FILE, FOLDER, PROJECT;
 
 		public static String map(Type type) {
 			switch (type) {
-			case File:
+			case FILE:
 				return "file";
-			case Folder:
+			case FOLDER:
 				return "folder";
-			case Project:
+			case PROJECT:
 				return "project";
 			}
 			return null;

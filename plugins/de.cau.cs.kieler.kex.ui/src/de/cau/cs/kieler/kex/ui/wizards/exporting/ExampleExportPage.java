@@ -112,7 +112,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
 						.getShell());
 
 				dirDiag.setText("Choose destination directory");
-				dirDiag.setMessage("Select a directory in a java plugin project.");
+				dirDiag
+						.setMessage("Select a directory in a java plugin project.");
 				dirDiag.setFilterPath(WORKSPACE_DIR);
 				String dir = dirDiag.open();
 				if (dir != null) {
@@ -123,15 +124,37 @@ public class ExampleExportPage extends WizardResourceImportPage {
 	}
 
 	private void createMiddleGroup(final Composite composite) {
-		Group middleGroup = new Group(composite, SWT.NONE);
-		GridLayout middleLayout = new GridLayout();
-		middleGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		middleLayout.numColumns = 1;
-		middleGroup.setText("Add Example Categories");
-		middleGroup.setToolTipText("Please select one or more cateogies.");
-		middleGroup.setLayout(middleLayout);
-		createCheckedTree(middleGroup);
-		createButtonComposite(middleGroup);
+		Group bottomGroup = new Group(composite, SWT.NONE);
+		GridLayout bottomLayout = new GridLayout();
+		bottomLayout.numColumns = 3;
+		bottomGroup.setText("Set Preview Picture");
+		bottomGroup
+				.setToolTipText("Enter a picture like a screenshot of example diagram.");
+		bottomGroup.setLayout(bottomLayout);
+		bottomGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		final FileDialog picDialog = new FileDialog(bottomGroup.getShell());
+		// ResourcesPlugin.getWorkspace().getRoot(), "Search a picture!"
+		picDialog.setFilterPath(WORKSPACE_DIR);
+		String[] extensions = { "*.jpg", "*.png", "*.gif", "*.PNG", "*.bmp" };
+		picDialog.setFilterExtensions(extensions);
+		Label label = new Label(bottomGroup, SWT.NONE);
+		label.setText("Set Picture:");
+		this.overviewPic = new Text(bottomGroup, SWT.BORDER);
+		overviewPic.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button browse = new Button(bottomGroup, SWT.NONE);
+		browse.setText("Browse...");
+		browse.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e);
+				String pic = picDialog.open();
+				if (pic != null) {
+					getOverviewPic().setText(pic);
+				}
+			}
+
+		});
 
 	}
 
@@ -188,35 +211,15 @@ public class ExampleExportPage extends WizardResourceImportPage {
 	}
 
 	private void createBottomGroup(Composite composite) {
-		Group bottomGroup = new Group(composite, SWT.NONE);
-		GridLayout bottomLayout = new GridLayout();
-		bottomLayout.numColumns = 3;
-		bottomGroup.setText("Set Preview Picture");
-		bottomGroup
-				.setToolTipText("Enter a picture like a screenshot of example diagram.");
-		bottomGroup.setLayout(bottomLayout);
-		bottomGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		final FileDialog picDialog = new FileDialog(bottomGroup.getShell());
-		// ResourcesPlugin.getWorkspace().getRoot(), "Search a picture!"
-		picDialog.setFilterPath(WORKSPACE_DIR);
-		Label label = new Label(bottomGroup, SWT.NONE);
-		label.setText("Set Picture:");
-		this.overviewPic = new Text(bottomGroup, SWT.BORDER);
-		overviewPic.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Button browse = new Button(bottomGroup, SWT.NONE);
-		browse.setText("Browse...");
-		browse.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				super.widgetSelected(e);
-				String pic = picDialog.open();
-				if (pic != null) {
-					getOverviewPic().setText(pic);
-				}
-			}
-
-		});
+		Group middleGroup = new Group(composite, SWT.NONE);
+		GridLayout middleLayout = new GridLayout();
+		middleGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		middleLayout.numColumns = 1;
+		middleGroup.setText("Add Example Categories");
+		middleGroup.setToolTipText("Please select one or more cateogies.");
+		middleGroup.setLayout(middleLayout);
+		createCheckedTree(middleGroup);
+		createButtonComposite(middleGroup);
 
 	}
 

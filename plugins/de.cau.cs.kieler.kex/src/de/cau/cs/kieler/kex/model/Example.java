@@ -37,7 +37,7 @@ public class Example {
 
 	private String rootResource;
 
-	private String overViewPicPath;
+	private String previewPicPath;
 
 	public Example(final String title, Version version, SourceType importType) {
 		this.title = title;
@@ -141,12 +141,12 @@ public class Example {
 		return author;
 	}
 
-	public void setOverViewPicPath(String overViewPicPath) {
-		this.overViewPicPath = overViewPicPath;
+	public void setPreviewPicPath(String previewPicPath) {
+		this.previewPicPath = previewPicPath;
 	}
 
-	public String getOverViewPicPath() {
-		return overViewPicPath;
+	public String getPreviewPicPath() {
+		return previewPicPath;
 	}
 
 }
