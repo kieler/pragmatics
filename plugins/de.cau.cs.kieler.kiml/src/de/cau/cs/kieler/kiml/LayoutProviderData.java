@@ -13,9 +13,13 @@
  */
 package de.cau.cs.kieler.kiml;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Data type used to store information for a layout provider.
@@ -52,7 +56,7 @@ public class LayoutProviderData {
     private String category;
     
     /** list of known layout options. */
-    private List<String> knownOptions = new LinkedList<String>();
+    private Set<String> knownOptions = new TreeSet<String>();
     /** list of supported diagrams. */
     private List<SupportedDiagram> supportedDiagrams = new LinkedList<SupportedDiagram>();
 
@@ -77,12 +81,21 @@ public class LayoutProviderData {
      */
     public void setOption(final String layoutOption, final boolean known) {
         if (layoutOption != null) {
-            if (known && !knownOptions.contains(layoutOption)) {
+            if (known) {
                 knownOptions.add(layoutOption);
-            } else if (!known) {
+            } else {
                 knownOptions.remove(layoutOption);
             }
         }
+    }
+
+    /**
+     * Returns a collection of all known options of this layout provider.
+     * 
+     * @return the known options
+     */
+    public Collection<String> getKnownOptions() {
+        return Collections.unmodifiableCollection(knownOptions);
     }
     
     /**
