@@ -91,7 +91,7 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
             return ((PopulationTableEntry) element).getId();
         case 1:
 
-            return ("Rating: " + individual.getUserRating() + ", genes: " + individual.size());
+            return (individual.getUserRating() + "");
         case 2:
             final IGene<?> hintGene = individual.find(LayoutOptions.LAYOUTER_HINT_ID);
             String providerName = null;

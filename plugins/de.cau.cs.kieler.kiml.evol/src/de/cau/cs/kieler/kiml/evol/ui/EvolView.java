@@ -374,9 +374,14 @@ public class EvolView extends ViewPart {
     public static final String ID = "de.cau.cs.kieler.kiml.evol.evolView";
 
     /**
-     * Column width for columns in viewer table.
+     * Width for wide columns in the viewer table.
      */
-    private static final int DEFAULT_COLUMN_WIDTH = 150;
+    private static final int WIDE_COLUMN_WIDTH = 150;
+
+    /**
+     * Width for narrow columns in the viewer table.
+     */
+    private static final int NARROW_COLUMN_WIDTH = 80;
 
     /**
      *
@@ -405,13 +410,15 @@ public class EvolView extends ViewPart {
         // SWT.FULL_SELECTION);
         // Table table = tableViewer.getTable();
         final TableColumn column = new TableColumn(table, SWT.NONE);
-        column.setWidth(DEFAULT_COLUMN_WIDTH);
+        column.setWidth(WIDE_COLUMN_WIDTH);
         final TableColumn column2 = new TableColumn(table, SWT.NONE);
-        column2.setWidth(DEFAULT_COLUMN_WIDTH);
+        column2.setWidth(NARROW_COLUMN_WIDTH);
         final TableColumn column3 = new TableColumn(table, SWT.NONE);
-        column3.setWidth(DEFAULT_COLUMN_WIDTH);
+        column3.setWidth(WIDE_COLUMN_WIDTH);
 
-        column.setText("Title1");
+        column.setText("Genome");
+        column2.setText("Rating");
+        column3.setText("Layout provider");
 
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
@@ -454,7 +461,8 @@ public class EvolView extends ViewPart {
      * Asynchronously refreshes the view.
      *
      * @param onlyCurrent
-     *            if set to {@code true}, only the current entry is refreshed.
+     *            if set to {@code true}, only the currently selected entry is
+     *            refreshed.
      */
     public void refresh(final boolean onlyCurrent) {
 
