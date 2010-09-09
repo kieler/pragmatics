@@ -54,6 +54,7 @@ import org.eclipse.ui.views.properties.IPropertySourceProvider;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -99,6 +100,26 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
      * @return the active layout view, or {@code null} if there is none
      */
     public static LayoutViewPart findView() {
+        if (Display.getCurrent() == null) {
+            final Maybe<LayoutViewPart> part = new Maybe<LayoutViewPart>();
+            Display.getDefault().syncExec(new Runnable() {
+                public void run() {
+                    part.set(findViewUI());
+                }
+            });
+            return part.get();
+        } else {
+            return findViewUI();
+        }
+    }
+    
+    /**
+     * Finds the active layout view, if it exists. This method works only if called
+     * from the user interface thread.
+     * 
+     * @return the active layout view, or {@code null} if there is none
+     */
+    private static LayoutViewPart findViewUI() {
         IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         if (activeWindow != null) {
             IWorkbenchPage activePage = activeWindow.getActivePage();
