@@ -36,6 +36,9 @@ import de.cau.cs.kieler.kiml.grana.views.AnalysisResultViewPart;
 public class AutomaticAnalysisLayoutListener extends AbstractAnalysisHandler
         implements ILayoutListener {
 
+    /** the view. */
+    private AnalysisResultViewPart view;
+    
     /**
      * {@inheritDoc}
      */
@@ -48,22 +51,29 @@ public class AutomaticAnalysisLayoutListener extends AbstractAnalysisHandler
      */
     public void layoutPerformed(final KNode layoutGraph,
             final IKielerProgressMonitor monitor) {
-        monitor.begin("Performing graph analysis", 1);
-        // let the user select the analyses
-        final List<AbstractInfoAnalysis> analyses = getLastAnalysesSelection();
-        // perform the analyses on the active diagram
-        final Map<String, Object> results =
-                DiagramAnalyser.analyse(layoutGraph, analyses, false);
-        // refresh the result view
         MonitoredOperation.runInUI(new Runnable() {
             public void run() {
-                AnalysisResultViewPart view = AnalysisResultViewPart.findView();
-                if (view != null) {
+                view = AnalysisResultViewPart.findView();
+                
+            }
+        }, true);
+        if (view != null) {
+            System.out.println("check");
+            monitor.begin("Performing graph analysis", 1);
+            // let the user select the analyses
+            final List<AbstractInfoAnalysis> analyses =
+                    getLastAnalysesSelection();
+            // perform the analyses on the active diagram
+            final Map<String, Object> results =
+                    DiagramAnalyser.analyse(layoutGraph, analyses, false);
+            // refresh the result view
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
                     view.setAnalysisResults(analyses, results);
                 }
-            }
-        }, false);
-        monitor.done();
+            }, false);
+            monitor.done();
+        }
     }
 
     /**
