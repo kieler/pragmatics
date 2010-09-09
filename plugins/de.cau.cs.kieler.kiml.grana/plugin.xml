@@ -137,5 +137,23 @@
             name="Graph Analysis">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.grana.views.AnalysisResultViewPart"
+            icon="icons/menu16/analyzediagramquick.gif"
+            id="de.cau.cs.kieler.kiml.grana.views.analysisResults"
+            name="Analysis Results"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutListeners">
+      <layoutListener
+            class="de.cau.cs.kieler.kiml.grana.handlers.AutomaticAnalysisLayoutListener">
+      </layoutListener>
+   </extension>
 
 </plugin>

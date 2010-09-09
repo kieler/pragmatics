@@ -14,8 +14,9 @@
 package de.cau.cs.kieler.kiml.grana;
 
 /**
- * An analysis should return a subclass of this class if it failed to analyse the graph
- * and provide meaningful information through the {@code toString} method.
+ * An analysis should return a subclass of this class if it failed to analyse
+ * the graph and provide meaningful information through the {@code toString}
+ * method.
  * 
  * @author mri
  */
@@ -32,14 +33,16 @@ public class AnalysisFailed {
     }
 
     /** the message for a failed analysis. */
-    private static final String MESSAGE_ANALYSIS_FAILED =
-            "Analysis failed";
+    private static final String MESSAGE_ANALYSIS_FAILED = "Analysis failed";
     /** the message for a canceled analysis. */
     private static final String MESSAGE_ANALYSIS_CANCELED = "Analysis canceled";
     /** the message for a missing or wrong typed dependency result. */
-    private static final String MESSAGE_ANALYSIS_DEPENDENCY = "Analysis canceled";
+    private static final String MESSAGE_ANALYSIS_DEPENDENCY =
+            "Analysis canceled";
     /** the analysis failed type. */
     private Type type;
+    /** the associated exception. */
+    private Exception exception = null;
 
     /**
      * Constructs a new analysis failed object.
@@ -52,6 +55,19 @@ public class AnalysisFailed {
     }
 
     /**
+     * Constructs a new analysis failed object.
+     * 
+     * @param theType
+     *            the type
+     * @param e
+     *            the exception
+     */
+    public AnalysisFailed(final Type theType, final Exception e) {
+        type = theType;
+        exception = e;
+    }
+
+    /**
      * Returns the type.
      * 
      * @return the type
@@ -61,10 +77,20 @@ public class AnalysisFailed {
     }
 
     /**
+     * Returns the associated exception.
+     * 
+     * @return the exception or null if no exception is associated with this
+     *         instance
+     */
+    public Exception getException() {
+        return exception;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public String toString() {
-        switch(type) {
+        switch (type) {
         case Canceled:
             return MESSAGE_ANALYSIS_CANCELED;
         case Dependency:

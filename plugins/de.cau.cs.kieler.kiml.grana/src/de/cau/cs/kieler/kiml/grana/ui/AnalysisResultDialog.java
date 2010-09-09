@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 
 /**
  * The dialog for presenting the results of a set of analyses.
@@ -46,38 +45,24 @@ public class AnalysisResultDialog extends Dialog {
 
     /** the html this dialog is displaying. */
     private String html;
-    /** is something there to display? */
-    private boolean empty = true;
-    
+
     /**
      * Constructs the dialog.
      * 
      * @param parentShell
      *            the parent shell
-     * @param infoAnalyses 
+     * @param analyses
      *            the perfomed analyses
      * @param results
      *            the analysis results to display
      */
     public AnalysisResultDialog(final Shell parentShell,
-            final List<AbstractInfoAnalysis> infoAnalyses, final Map<String, Object> results) {
+            final List<AbstractInfoAnalysis> analyses,
+            final Map<String, Object> results) {
         super(parentShell);
         // build the html content
-        html = "<HTML><HEAD></HEAD><BODY><TABLE border=0 cellpadding='10'>";
-        for (AbstractInfoAnalysis analysis : infoAnalyses) {
-            Object obj = results.get(analysis.getID());
-            String analysisHtml = AnalysisServices.getInstance().visualizeResult(obj);
-            if (analysisHtml != null) {
-                empty = false;
-                html += "<TR><TD><b>";
-                html += analysis.getName();
-                html += "</b></TD><TD>";
-                html += analysisHtml;
-                html += "</TD></TR>";
-            }
-        }
-        html += "</TABLE></BODY></HTML>";
-        
+        html = HtmlResultGenerator.generate(analyses, results);
+
         setShellStyle(SWT.CLOSE | SWT.TITLE | SWT.BORDER
                 | SWT.APPLICATION_MODAL | SWT.RESIZE);
     }
@@ -94,12 +79,14 @@ public class AnalysisResultDialog extends Dialog {
         GridData data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = 2;
         composite.setLayoutData(data);
-        
+
         Browser browser;
         try {
             browser = new Browser(composite, SWT.NONE);
             browser.setLayoutData(new GridData(GridData.FILL_BOTH));
-            browser.setText(html);
+            if (html != null) {
+                browser.setText(html);
+            }
         } catch (SWTError e) {
             System.out.println("Could not instantiate Browser: "
                     + e.getMessage());
@@ -147,13 +134,13 @@ public class AnalysisResultDialog extends Dialog {
     protected Control getButtonBar() {
         return super.getButtonBar();
     }
-    
+
     /**
      * Returns whether this dialog is empty.
      * 
      * @return true if this dialog is empty
      */
     public boolean isEmpty() {
-        return empty;
+        return html == null;
     }
 }

@@ -81,7 +81,7 @@ public class NodeCrossingsAnalysis implements IAnalysis {
     /**
      * Compute the outcode for the point and rectangle that is the nodes
      * bounding box.<br>
-     * The outcode belongs to the Cohen-Sutherland algorithm and is show in the
+     * The outcode belongs to the Cohen-Sutherland algorithm and is shown in the
      * following illustration:<br>
      * <br>
      * <code>

@@ -264,7 +264,7 @@ public final class DiagramAnalyser {
                 }
             } catch (Exception e) {
                 results.put(analysis.getID(), new AnalysisFailed(
-                        AnalysisFailed.Type.Failed));
+                        AnalysisFailed.Type.Failed, e));
             }
         }
         return results;
