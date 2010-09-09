@@ -13,14 +13,18 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
+import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 
 /**
@@ -35,6 +39,9 @@ public final class EvolutionServices {
 
     /** Identifier of the element "data". */
     private static final String ELEMENT_DATA = "data";
+
+    /** Identifier of the analysis category "metric" */
+    private static final String METRICS_CATEGORY = "de.cau.cs.kieler.kiml.evol.metricCategory";
 
     /**
      * The shared instance.
@@ -164,11 +171,25 @@ public final class EvolutionServices {
         final IConfigurationElement[] extensions =
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
                         AnalysisServices.EXTP_ID_ANALYSIS_PROVIDERS);
+
+        // get the metrics via the respective analysis category
+        final AnalysisCategory metricsCategory =
+                AnalysisServices.getInstance().getCategoryById(METRICS_CATEGORY);
+        final List<AbstractInfoAnalysis> metrics = metricsCategory.getAnalyses();
+        Assert.isNotNull(metrics);
+        final List<String> metricIds = new ArrayList<String>(metrics.size());
+
+        for (final AbstractInfoAnalysis metric : metrics) {
+            metricIds.add(metric.getID());
+        }
+
+        // Store the configuration elements of the metrics.
+        // TODO: discuss: we have the metrics here, should we cache them instead
+        // of storing their configuration element?
         for (final IConfigurationElement element : extensions) {
             if (AnalysisServices.ELEMENT_ANALYSIS_PROVIDER.equals(element.getName())) {
                 final String id = element.getAttribute("id");
-                // XXX ugly hack to get rid of the non-normalized analyses
-                if (id.toLowerCase().contains("metric")) {
+                if (metricIds.contains(id)) {
                     this.layoutMetricsMap.put(id, element);
                 }
             }
