@@ -62,7 +62,7 @@ public class AutomaticAnalysisLayoutListener extends AbstractAnalysisHandler
                     view.setAnalysisResults(analyses, results);
                 }
             }
-        }, true);
+        }, false);
         monitor.done();
     }
 
