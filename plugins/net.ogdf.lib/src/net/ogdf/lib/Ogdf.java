@@ -94,6 +94,7 @@ public class Ogdf {
 				System.loadLibrary("libstdc++-6");
 			}
 			System.loadLibrary("ogdf");
+			loaded = true;
 		}
 	}
 

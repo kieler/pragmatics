@@ -90,14 +90,33 @@ public abstract class KGraphElementImpl extends EObjectImpl implements KGraphEle
 
     /**
      * <!-- begin-user-doc -->
+     * {@inheritDoc}
      * <!-- end-user-doc -->
      * @generated NOT
      */
     public KGraphData getData(EClass type) {
         if (type != null) {
             for (KGraphData graphData : getData()) {
-                if (graphData.eClass() == type || type.isInstance(graphData))
+                if (type.equals(graphData.eClass()) || type.isInstance(graphData)) {
                     return graphData;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public <T extends KGraphData> T getData(Class<T> type) {
+        if (type != null) {
+            for (KGraphData graphData : getData()) {
+                if (type.isInstance(graphData)) {
+                    return type.cast(graphData);
+                }
             }
         }
         return null;

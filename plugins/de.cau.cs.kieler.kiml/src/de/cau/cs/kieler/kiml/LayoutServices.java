@@ -32,7 +32,6 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.Shape;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Singleton class for access to the KIML layout services. This class is used
@@ -321,7 +320,7 @@ public class LayoutServices {
      */
     public final AbstractLayoutProvider getLayoutProvider(final KNode layoutNode)
             throws KielerException {
-        KShapeLayout nodeLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
         String layoutHint = nodeLayout.getProperty(LayoutOptions.LAYOUTER_HINT);
         String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
         LayoutProviderData providerData = getLayoutProviderData(layoutHint, diagramType);

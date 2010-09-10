@@ -115,7 +115,7 @@ public class LayerElement {
         if (obj instanceof KNode) {
             // the layer element is a layout node
             KNode node = (KNode) obj;
-            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(node);
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
             rankWidth = Math.max(node.getPorts().size(), 1);
             realWidth = nodeLayout.getWidth();
@@ -127,7 +127,7 @@ public class LayerElement {
             List<KPort> southPortList = new LinkedList<KPort>();
             List<KPort> westPortList = new LinkedList<KPort>();
             for (KPort port : node.getPorts()) {
-                PortSide portSide = KimlUtil.getShapeLayout(port)
+                PortSide portSide = port.getData(KShapeLayout.class)
                         .getProperty(LayoutOptions.PORT_SIDE);
                 switch (portSide) {
                 case NORTH:
@@ -152,8 +152,8 @@ public class LayerElement {
                     || portConstraints == PortConstraints.FIXED_ORDER) {
                 Comparator<KPort> portComparator = new Comparator<KPort>() {
                     public int compare(final KPort port1, final KPort port2) {
-                        KShapeLayout layout1 = KimlUtil.getShapeLayout(port1);
-                        KShapeLayout layout2 = KimlUtil.getShapeLayout(port2);
+                        KShapeLayout layout1 = port1.getData(KShapeLayout.class);
+                        KShapeLayout layout2 = port2.getData(KShapeLayout.class);
                         int rank1 = layout1.getProperty(LayoutOptions.PORT_RANK);
                         int rank2 = layout2.getProperty(LayoutOptions.PORT_RANK);
                         return rank1 - rank2;
@@ -167,7 +167,7 @@ public class LayerElement {
         } else if (obj instanceof KPort) {
             // the layer element is a port
             KPort port = (KPort) obj;
-            KShapeLayout shapeLayout = KimlUtil.getShapeLayout(port);
+            KShapeLayout shapeLayout = port.getData(KShapeLayout.class);
             portConstraints = PortConstraints.FIXED_POS;
             rankWidth = 1;
             realWidth = shapeLayout.getWidth();
@@ -297,11 +297,11 @@ public class LayerElement {
         position.setX(position.getX() + offset.getX());
         position.setY(position.getY() + offset.getY());
         if (elemObj instanceof KNode) {
-            KShapeLayout shapeLayout = KimlUtil.getShapeLayout(elemObj);
+            KShapeLayout shapeLayout = elemObj.getData(KShapeLayout.class);
             shapeLayout.setXpos(position.getX() + posOffset.getX());
             shapeLayout.setYpos(position.getY() + posOffset.getY());
         } else if (elemObj instanceof KPort) {
-            KShapeLayout shapeLayout = KimlUtil.getShapeLayout(elemObj);
+            KShapeLayout shapeLayout = elemObj.getData(KShapeLayout.class);
             switch (shapeLayout.getProperty(LayoutOptions.PORT_SIDE)) {
             case NORTH:
                 if (layer.getLayeredGraph().getExternalPortConstraints() == PortConstraints.FIXED_POS) {
@@ -697,8 +697,8 @@ public class LayerElement {
             Double arank1 = abstractPortRanks.get(port1);
             Double arank2 = abstractPortRanks.get(port2);
             if (arank1 == null && arank2 == null) {
-                int rank1 = KimlUtil.getShapeLayout(port1).getProperty(LayoutOptions.PORT_RANK);
-                int rank2 = KimlUtil.getShapeLayout(port2).getProperty(LayoutOptions.PORT_RANK);
+                int rank1 = port1.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_RANK);
+                int rank2 = port2.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_RANK);
                 return rank1 - rank2;
             } else if (arank1 == null) {
                 return definedFirst ? 1 : -1;
@@ -805,19 +805,19 @@ public class LayerElement {
     private void assignPortRanks() {
         int portrank = 0;
         for (KPort port : northPorts) {
-            KimlUtil.getShapeLayout(port).setProperty(LayoutOptions.PORT_RANK,
+            port.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_RANK,
                     portrank++);
         }
         for (KPort port : eastPorts) {
-            KimlUtil.getShapeLayout(port).setProperty(LayoutOptions.PORT_RANK,
+            port.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_RANK,
                     portrank++);
         }
         for (KPort port : southPorts) {
-            KimlUtil.getShapeLayout(port).setProperty(LayoutOptions.PORT_RANK,
+            port.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_RANK,
                     portrank++);
         }
         for (KPort port : westPorts) {
-            KimlUtil.getShapeLayout(port).setProperty(LayoutOptions.PORT_RANK,
+            port.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_RANK,
                     portrank++);
         }
     }
@@ -842,7 +842,7 @@ public class LayerElement {
             // determine new bounds for the contained node
             float minX = 0.0f, minY = 0.0f, maxX = width, maxY = height;
             for (KPort port : node.getPorts()) {
-                KShapeLayout portLayout = KimlUtil.getShapeLayout(port);
+                KShapeLayout portLayout = port.getData(KShapeLayout.class);
                 minX = Math.min(minX, portLayout.getXpos());
                 minY = Math.min(minY, portLayout.getYpos());
                 maxX = Math.max(maxX, portLayout.getXpos() + portLayout.getWidth());
@@ -879,7 +879,7 @@ public class LayerElement {
         }
         for (KPort port : ports) {
             pos += incr;
-            KShapeLayout portLayout = KimlUtil.getShapeLayout(port);
+            KShapeLayout portLayout = port.getData(KShapeLayout.class);
             portLayout.setXpos(vertical ? startX - (subPortDim ? portLayout.getWidth() : 0) : pos);
             portLayout.setYpos(vertical ? pos : startY - (subPortDim ? portLayout.getHeight() : 0));
         }

@@ -468,7 +468,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      */
     protected KNode doBuildLayoutGraph(final IGraphicalEditPart rootPart) {
         KNode topNode = KimlUtil.createInitializedNode();
-        KShapeLayout shapeLayout = KimlUtil.getShapeLayout(topNode);
+        KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
         Rectangle rootBounds = rootPart.getFigure().getBounds();
         // start with the whole diagram as root for layout
         if (rootPart instanceof DiagramEditPart) {
@@ -532,7 +532,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 port.setNode(parentLayoutNode);
 
                 // set the port's layout, relative to the node position
-                KShapeLayout portLayout = KimlUtil.getShapeLayout(port);
+                KShapeLayout portLayout = port.getData(KShapeLayout.class);
                 Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(borderItem.getFigure());
                 Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(currentEditPart.getFigure());
                 portLayout.setXpos(portBounds.x - nodeBounds.x);
@@ -560,7 +560,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                             KLabel portLabel = port.getLabel();
                             portLabel.setText(text);
                             // set the port label's layout
-                            KShapeLayout labelLayout = KimlUtil.getShapeLayout(portLabel);
+                            KShapeLayout labelLayout = portLabel.getData(KShapeLayout.class);
                             Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
                             labelLayout.setXpos(labelBounds.x - portBounds.x);
                             labelLayout.setYpos(labelBounds.y - portBounds.y);
@@ -604,7 +604,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     Rectangle childBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure);
                     Rectangle containerBounds = KimlUiUtil
                         .getAbsoluteBounds(nodeFigure.getParent());
-                    KShapeLayout nodeLayout = KimlUtil.getShapeLayout(childLayoutNode);
+                    KShapeLayout nodeLayout = childLayoutNode.getData(KShapeLayout.class);
                     nodeLayout.setXpos(childBounds.x - containerBounds.x);
                     nodeLayout.setYpos(childBounds.y - containerBounds.y);
                     nodeLayout.setHeight(childBounds.height);
@@ -615,7 +615,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
                     // set insets if not yet defined
                     if (kinsets == null) {
-                        kinsets = KimlUtil.getShapeLayout(parentLayoutNode).getProperty(
+                        kinsets = parentLayoutNode.getData(KShapeLayout.class).getProperty(
                             LayoutOptions.INSETS);
                         Insets insets = KimlUiUtil.calcInsets(parentFigure, nodeFigure);
                         kinsets.setLeft(insets.left);
@@ -657,7 +657,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     KLabel label = parent.getLabel();
                     if (label.getText() == null || label.getText().length() == 0) {
                         label.setText(text);
-                        KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
+                        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                         labelLayout.setWidth(labelFigure.getPreferredSize().width);
                         labelLayout.setHeight(labelFigure.getPreferredSize().height);
                         labelLayout.setProperty(LayoutOptions.FONT_NAME,
@@ -669,7 +669,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
         }
 
-        KShapeLayout nodeLayout = KimlUtil.getShapeLayout(parentLayoutNode);
+        KShapeLayout nodeLayout = parentLayoutNode.getData(KShapeLayout.class);
         // set default fixed size option
         nodeLayout.setProperty(LayoutOptions.FIXED_SIZE,
                 !hasChildNodes && !hasChildCompartments && !isCollapsed);
@@ -760,7 +760,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // calculate offset for edge and label coordinates
             IGraphicalEditPart sourceParent = graphElem2EditPartMap.get(sourceNode.getParent());
             Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParent.getFigure());
-            KInsets insets = KimlUtil.getShapeLayout(sourceNode.getParent()).getProperty(
+            KInsets insets = sourceNode.getParent().getData(KShapeLayout.class).getProperty(
                 LayoutOptions.INSETS);
             float offsetx = sourceParentBounds.x + insets.getLeft();
             float offsety = sourceParentBounds.y + insets.getTop();
@@ -800,7 +800,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 editPart2GraphElemMap.put(connection, edge);
 
                 // store the current coordinates of the edge
-                KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                 setEdgeLayout(edgeLayout, connection, offsetx, offsety);
 
                 // set user defined layout options for the edge
@@ -892,7 +892,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                         labelText = ".";
                     }
                     KLabel label = KimlUtil.createInitializedLabel(edge);
-                    KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
+                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
                         switch (labelEditPart.getKeyPoint()) {
                         case ConnectionLocator.SOURCE:
@@ -945,7 +945,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             while (parent != null) {
                 for (KNode child : parent.getChildren()) {
                     if (child != previousNode) {
-                        KShapeLayout childLayout = KimlUtil.getShapeLayout(child);
+                        KShapeLayout childLayout = child.getData(KShapeLayout.class);
                         childLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
                         removeFromLayout(child);
                     }

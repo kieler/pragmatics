@@ -20,7 +20,6 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The FMMM layouter from the OGDF library.
@@ -60,7 +59,7 @@ public class FMMMLayouter extends OgdfLayouter {
      */
     @Override
     protected void prepareLayouter(final KNode layoutNode) {
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
 
         // get quality vs speed
         QualityVsSpeed qualityVsSpeed = parentLayout.getProperty(QUALITY_VS_SPEED);

@@ -25,7 +25,6 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that computes the number of edge-node crossings. It assumes
@@ -100,7 +99,7 @@ public class NodeCrossingsAnalysis implements IAnalysis {
      * @return the outcode
      */
     private static int computeOutCode(final KPoint point, final KNode node) {
-        KShapeLayout nodeLayout = KimlUtil.getShapeLayout(node);
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         int code = 0;
         if (point.getY() > nodeLayout.getYpos() + nodeLayout.getHeight()) {
             code |= TOP;
@@ -150,7 +149,7 @@ public class NodeCrossingsAnalysis implements IAnalysis {
      */
     private static boolean hasIntersection(final KPoint p1, final KPoint p2,
             final KNode node) {
-        KShapeLayout nodeLayout = KimlUtil.getShapeLayout(node);
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         int p1OutCode = computeOutCode(p1, node);
         int p2OutCode = computeOutCode(p2, node);
 
@@ -209,7 +208,7 @@ public class NodeCrossingsAnalysis implements IAnalysis {
             if (edge.getTarget() == node2) {
                 continue;
             }
-            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
+            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             KPoint p1 = edgeLayout.getSourcePoint();
             for (KPoint p2 : edgeLayout.getBendPoints()) {
                 if (hasIntersection(p1, p2, node2)) {

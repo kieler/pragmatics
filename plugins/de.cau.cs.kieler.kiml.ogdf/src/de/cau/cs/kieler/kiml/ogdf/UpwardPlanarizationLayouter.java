@@ -19,11 +19,11 @@ import java.util.Queue;
 import java.util.Set;
 
 import net.ogdf.lib.Ogdf;
+import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The upward-planarization layout algorithm from the OGDF library.
@@ -90,10 +90,10 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
         
         // the layouter crashes on not connected graphs
         if (!isConnected(layoutNode)) {
-            throw new RuntimeException("Layouter does not support not-connected graphs.");
+            throw new KielerRuntimeException("Layouter does not support not-connected graphs.");
         }
         
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         
         // get the minimum spacing and layer distance
         float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);

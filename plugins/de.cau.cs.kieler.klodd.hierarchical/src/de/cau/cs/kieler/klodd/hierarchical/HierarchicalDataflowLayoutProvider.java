@@ -144,7 +144,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
                 SMALL_TASK + SMALL_TASK + SMALL_TASK + LARGE_TASK + LARGE_TASK
                 + LARGE_TASK + LARGE_TASK);
         // get the currently configured modules
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         updateModules(parentLayout);
         // set option for minimal object spacing
         float objSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
@@ -304,7 +304,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
      * @param parentNode parent layout node
      */
     private void preProcess(final KNode parentNode) {
-        KGraphData parentLayout = KimlUtil.getShapeLayout(parentNode);
+        KGraphData parentLayout = parentNode.getData(KShapeLayout.class);
         LayoutDirection layoutDirection = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
 
         for (KNode node : parentNode.getChildren()) {
@@ -313,7 +313,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
 
             // set node size if not fixed
             if (node.getChildren().isEmpty()
-                    && !KimlUtil.getShapeLayout(node).getProperty(LayoutOptions.FIXED_SIZE)) {
+                    && !node.getData(KShapeLayout.class).getProperty(LayoutOptions.FIXED_SIZE)) {
                 KimlUtil.resizeNode(node);
             }
         }
@@ -329,7 +329,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         List<KSlimEdge> reversedEdges = cycleRemover.getReversedEdges();
         for (KSlimEdge slimEdge : reversedEdges) {
             KEdge layoutEdge = (KEdge) slimEdge.getObject();
-            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(layoutEdge);
+            KEdgeLayout edgeLayout = layoutEdge.getData(KEdgeLayout.class);
             // reverse bend points
             List<KPoint> bendPoints = new LinkedList<KPoint>();
             for (KPoint point : edgeLayout.getBendPoints()) {

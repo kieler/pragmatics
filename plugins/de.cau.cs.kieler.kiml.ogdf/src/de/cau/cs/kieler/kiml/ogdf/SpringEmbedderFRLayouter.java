@@ -19,7 +19,6 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The Spring Embedder algorithm by Fruchterman and Reingold.
@@ -48,7 +47,7 @@ public class SpringEmbedderFRLayouter extends OgdfLayouter {
      */
     protected void prepareLayouter(final KNode layoutNode) {
 
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         
         // get the number of iterations
         int iter = parentLayout.getProperty(ITERATIONS);

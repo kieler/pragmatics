@@ -27,7 +27,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A router for self-loops.
@@ -84,8 +83,8 @@ public class SelfLoopRouter {
             lastNode = node;
             edge.setSource(node);
             edge.setTarget(node);
-            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(node);
-            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             edgeLayout.getBendPoints().clear();
             KPoint sourcePoint = createPoint(nodeLayout, side, relStart);
             edgeLayout.setSourcePoint(sourcePoint);
@@ -111,9 +110,9 @@ public class SelfLoopRouter {
             KNode node = selfLoop.getSecond();
             edge.setSource(node);
             edge.setTarget(node);
-            KimlUtil.getEdgeLayout(edge).setProperty(LayoutOptions.NO_LAYOUT, true);
+            edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
             for (KLabel label : edge.getLabels()) {
-                KimlUtil.getShapeLayout(label).setProperty(LayoutOptions.NO_LAYOUT, true);
+                label.getData(KShapeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
             }
         }
     }
@@ -211,7 +210,7 @@ public class SelfLoopRouter {
      * @param distance to the node
      */
     private void layoutLabels(final KEdge edge, final PortSide side, final float distance) {
-        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         KPoint sourcePoint = edgeLayout.getSourcePoint();
         KPoint targetPoint = edgeLayout.getTargetPoint();
         List<KLabel> centerLabels = new LinkedList<KLabel>();
@@ -220,7 +219,7 @@ public class SelfLoopRouter {
         float centerHeight = 0, centerWidth = 0, tailHeight = 0, tailWidth = 0,
                 headHeight = 0, headWidth = 0;
         for (KLabel label : edge.getLabels()) {
-            KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
+            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             switch (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)) {
             case CENTER:
                 centerLabels.add(label);
@@ -303,7 +302,7 @@ public class SelfLoopRouter {
     private void putLabels(final List<KLabel> labels, final float xpos, final float ypos) {
         float y = ypos;
         for (KLabel label : labels) {
-            KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
+            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             labelLayout.setXpos(xpos);
             labelLayout.setYpos(y);
             y += labelLayout.getHeight();

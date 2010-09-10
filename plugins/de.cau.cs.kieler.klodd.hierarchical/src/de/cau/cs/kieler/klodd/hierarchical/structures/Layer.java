@@ -20,6 +20,7 @@ import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -184,7 +185,7 @@ public class Layer {
             int portrank = 0;
             for (LayerElement element : elements) {
                 KPort port = (KPort) element.getElemObj();
-                KimlUtil.getShapeLayout(port).setProperty(LayoutOptions.PORT_RANK,
+                port.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_RANK,
                         portrank++);
             }
         }
@@ -203,7 +204,7 @@ public class Layer {
             int portrank = 0;
             for (LayerElement element : elements) {
                 KPort port = (KPort) element.getElemObj();
-                KimlUtil.getShapeLayout(port).setProperty(LayoutOptions.PORT_RANK,
+                port.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_RANK,
                         portrank++);
             }
         }

@@ -72,4 +72,16 @@ public interface KGraphElement extends EObject {
      */
     KGraphData getData(EClass type);
 
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Returns the first data instance that matches the given class.
+     * @return graph data for the given type, or {@code null} if there is none
+     * <!-- end-model-doc -->
+     * @model
+     * @generated
+     */
+    <T extends KGraphData> T getData(Class<T> type);
+
 } // KGraphElement

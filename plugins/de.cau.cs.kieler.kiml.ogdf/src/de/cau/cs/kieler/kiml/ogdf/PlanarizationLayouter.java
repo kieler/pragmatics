@@ -18,7 +18,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The Mixed-Upward Planarization layouter from the OGDF library.
@@ -45,7 +44,7 @@ public class PlanarizationLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     protected void prepareLayouter(final KNode layoutNode) {
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // get page ratio
         float pageRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
         if (pageRatio <= 0) {

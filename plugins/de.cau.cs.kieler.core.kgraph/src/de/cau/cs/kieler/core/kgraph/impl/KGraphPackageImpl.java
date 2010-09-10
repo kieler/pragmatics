@@ -605,6 +605,17 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         EOperation op = addEOperation(kGraphElementEClass, this.getKGraphData(), "getData", 0, 1, IS_UNIQUE, IS_ORDERED);
         addEParameter(op, ecorePackage.getEClass(), "type", 0, 1, IS_UNIQUE, IS_ORDERED);
 
+        op = addEOperation(kGraphElementEClass, null, "getData", 0, 1, IS_UNIQUE, IS_ORDERED);
+        ETypeParameter t1 = addETypeParameter(op, "T");
+        EGenericType g1 = createEGenericType(this.getKGraphData());
+        t1.getEBounds().add(g1);
+        g1 = createEGenericType(ecorePackage.getEJavaClass());
+        EGenericType g2 = createEGenericType(t1);
+        g1.getETypeArguments().add(g2);
+        addEParameter(op, g1, "type", 0, 1, IS_UNIQUE, IS_ORDERED);
+        g1 = createEGenericType(t1);
+        initEOperation(op, g1);
+
         initEClass(kGraphDataEClass, KGraphData.class, "KGraphData", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
         initEClass(kNodeEClass, KNode.class, "KNode", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -635,8 +646,8 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         initEReference(getEMapPropertyHolder_Properties(), this.getIPropertyToObjectMap(), null, "properties", null, 0, -1, EMapPropertyHolder.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(iPropertyToObjectMapEClass, Map.Entry.class, "IPropertyToObjectMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-        EGenericType g1 = createEGenericType(this.getIProperty());
-        EGenericType g2 = createEGenericType();
+        g1 = createEGenericType(this.getIProperty());
+        g2 = createEGenericType();
         g1.getETypeArguments().add(g2);
         initEAttribute(getIPropertyToObjectMap_Key(), g1, "key", null, 1, 1, Map.Entry.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getIPropertyToObjectMap_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -651,7 +662,7 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         addEParameter(op, ecorePackage.getEJavaObject(), "value", 0, 1, IS_UNIQUE, IS_ORDERED);
 
         op = addEOperation(iPropertyHolderEClass, null, "getProperty", 0, 1, IS_UNIQUE, IS_ORDERED);
-        ETypeParameter t1 = addETypeParameter(op, "T");
+        t1 = addETypeParameter(op, "T");
         g1 = createEGenericType(this.getIProperty());
         g2 = createEGenericType(t1);
         g1.getETypeArguments().add(g2);

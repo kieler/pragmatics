@@ -23,7 +23,6 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that counts the number of bendpoints.
@@ -48,7 +47,7 @@ public class BendsAnalysis implements IAnalysis {
             // pop first element
             KNode node = nodes.remove(0);
             for (KEdge edge : node.getOutgoingEdges()) {
-                KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                 numberOfBends += edgeLayout.getBendPoints().size();
             }
             for (KNode childNode : node.getChildren()) {

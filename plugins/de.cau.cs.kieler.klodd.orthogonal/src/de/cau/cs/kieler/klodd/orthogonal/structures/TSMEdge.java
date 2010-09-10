@@ -20,7 +20,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimEdge;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
@@ -72,11 +71,11 @@ public class TSMEdge extends KSlimEdge {
      */
     public void applyLayout(final float offsetX, final float offsetY) {
         KEdge layoutEdge = (KEdge) getObject();
-        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(layoutEdge);
-        KShapeLayout sourceLayout = KimlUtil.getShapeLayout(layoutEdge.getSource());
-        KShapeLayout targetLayout = KimlUtil.getShapeLayout(layoutEdge.getTarget());
-        KShapeLayout sourcePortLayout = KimlUtil.getShapeLayout(layoutEdge.getSourcePort());
-        KShapeLayout targetPortLayout = KimlUtil.getShapeLayout(layoutEdge.getTargetPort());
+        KEdgeLayout edgeLayout = layoutEdge.getData(KEdgeLayout.class);
+        KShapeLayout sourceLayout = layoutEdge.getSource().getData(KShapeLayout.class);
+        KShapeLayout targetLayout = layoutEdge.getTarget().getData(KShapeLayout.class);
+        KShapeLayout sourcePortLayout = layoutEdge.getSourcePort().getData(KShapeLayout.class);
+        KShapeLayout targetPortLayout = layoutEdge.getTargetPort().getData(KShapeLayout.class);
 
         // find the first edge in a series of edges
         TSMEdge currentEdge = this;

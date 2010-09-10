@@ -23,10 +23,10 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.modules.ILayerwiseEdgePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayerConnection;
@@ -109,7 +109,7 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 float sourcePos = connection.calcSourcePos(minDist);
                 float targetPos = connection.calcTargetPos(minDist);
                 if (layer.getRank() == 0) {
-                    PortSide placement = KimlUtil.getShapeLayout(connection.getSourcePort())
+                    PortSide placement = connection.getSourcePort().getData(KShapeLayout.class)
                             .getProperty(LayoutOptions.PORT_SIDE);
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {
@@ -129,7 +129,7 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                         }
                     }
                 } else if (layer.getHeight() == 1) {
-                    PortSide placement = KimlUtil.getShapeLayout(connection.getTargetPort())
+                    PortSide placement = connection.getTargetPort().getData(KShapeLayout.class)
                             .getProperty(LayoutOptions.PORT_SIDE);
                     if (layoutDirection == LayoutDirection.DOWN) {
                         if (placement == PortSide.WEST) {

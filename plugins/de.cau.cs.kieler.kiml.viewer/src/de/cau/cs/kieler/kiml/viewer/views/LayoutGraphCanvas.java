@@ -337,7 +337,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     public void addLayoutGraph(final KNode thelayoutGraph) {
         // set new size values for the canvas
         if (thelayoutGraph != null) {
-            KShapeLayout shapeLayout = KimlUtil.getShapeLayout(thelayoutGraph);
+            KShapeLayout shapeLayout = thelayoutGraph.getData(KShapeLayout.class);
             setSize(new Point((int) shapeLayout.getWidth() + 1, (int) shapeLayout.getHeight() + 1));
         }
 
@@ -442,7 +442,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         for (KPort port : layoutNode.getPorts()) {
             PaintRectangle rect = boundsMap.get(port);
             if (rect == null) {
-                rect = new PaintRectangle(KimlUtil.getShapeLayout(port), offset);
+                rect = new PaintRectangle(port.getData(KShapeLayout.class), offset);
                 boundsMap.put(port, rect);
             }
             if (!rect.painted && rect.intersects(area)) {
@@ -456,7 +456,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
                 portOffset.setY(rect.y);
                 rect = boundsMap.get(port.getLabel());
                 if (rect == null) {
-                    rect = new PaintRectangle(KimlUtil.getShapeLayout(port.getLabel()),
+                    rect = new PaintRectangle(port.getLabel().getData(KShapeLayout.class),
                             portOffset);
                     boundsMap.put(port.getLabel(), rect);
                 }
@@ -468,7 +468,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         }
 
         // add insets to offset value
-        KInsets insets = KimlUtil.getShapeLayout(layoutNode)
+        KInsets insets = layoutNode.getData(KShapeLayout.class)
                 .getProperty(LayoutOptions.INSETS);
         KPoint subOffset = KLayoutDataFactory.eINSTANCE.createKPoint();
         subOffset.setX(offset.getX() + insets.getLeft());
@@ -481,7 +481,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
             graphics.setAlpha(NODE_ALPHA[color % NODE_ALPHA.length]);
             PaintRectangle rect = boundsMap.get(child);
             if (rect == null) {
-                rect = new PaintRectangle(KimlUtil.getShapeLayout(child), subOffset);
+                rect = new PaintRectangle(child.getData(KShapeLayout.class), subOffset);
                 boundsMap.put(child, rect);
             }
             KPoint childOffset = KLayoutDataFactory.eINSTANCE.createKPoint();
@@ -496,12 +496,12 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
             if (paintLabels && child.getLabel() != null) {
                 graphics.setFont(nodeFont);
                 rect = boundsMap.get(child.getLabel());
-                KShapeLayout labelLayout = KimlUtil.getShapeLayout(child.getLabel());
+                KShapeLayout labelLayout = child.getLabel().getData(KShapeLayout.class);
                 if (rect == null && labelLayout != null) {
                     rect = new PaintRectangle(labelLayout, childOffset);
                     boundsMap.put(child.getLabel(), rect);
                 } else if (rect == null && labelLayout == null) {
-                    rect = new PaintRectangle(KimlUtil.getEdgeLayout(child), subOffset);
+                    rect = new PaintRectangle(child.getData(KEdgeLayout.class), subOffset);
                 }
                 if (!rect.painted && rect.intersects(area)) {
                     graphics.drawString(child.getLabel().getText(), rect.x, rect.y, true);
@@ -540,7 +540,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
      */
     private void paintEdge(final KEdge edge, final GC graphics, final PaintRectangle area,
             final KPoint offset) {
-        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         boolean hasPorts = edge.getSourcePort() != null && edge.getTargetPort() != null;
         BendsIterator sourceIter = null, targetIter = null;
         List<BendsIterator> sourceBends = null, targetBends = null;
@@ -609,7 +609,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
             for (KLabel edgeLabel : edge.getLabels()) {
                 rect = boundsMap.get(edgeLabel);
                 if (rect == null) {
-                    rect = new PaintRectangle(KimlUtil.getShapeLayout(edgeLabel), offset);
+                    rect = new PaintRectangle(edgeLabel.getData(KShapeLayout.class), offset);
                     boundsMap.put(edgeLabel, rect);
                 }
                 if (!rect.painted && rect.intersects(area)) {

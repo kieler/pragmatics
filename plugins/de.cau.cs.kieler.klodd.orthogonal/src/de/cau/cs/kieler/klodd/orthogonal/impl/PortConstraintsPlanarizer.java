@@ -25,7 +25,6 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.orthogonal.impl.ec.EmbeddingConstraint;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IPlanarizer;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMEdge;
@@ -76,7 +75,7 @@ public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPla
     private void createConstraints(final KSlimGraph graph) {
         for (KSlimNode node : graph.getNodes()) {
             KNode layoutNode = (KNode) node.getObject();
-            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(layoutNode);
+            KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
             PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
             TSMNode tsmNode = (TSMNode) node;
             if (!layoutNode.getPorts().isEmpty()) {
@@ -86,8 +85,8 @@ public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPla
                     KPort[] sortedPorts = layoutNode.getPorts().toArray(new KPort[0]);
                     Arrays.sort(sortedPorts, new Comparator<KPort>() {
                         public int compare(final KPort port1, final KPort port2) {
-                            KShapeLayout layout1 = KimlUtil.getShapeLayout(port1);
-                            KShapeLayout layout2 = KimlUtil.getShapeLayout(port2);
+                            KShapeLayout layout1 = port1.getData(KShapeLayout.class);
+                            KShapeLayout layout2 = port2.getData(KShapeLayout.class);
                             int rank1 = layout1.getProperty(LayoutOptions.PORT_RANK);
                             int rank2 = layout2.getProperty(LayoutOptions.PORT_RANK);
                             return rank1 - rank2;
@@ -114,7 +113,7 @@ public class PortConstraintsPlanarizer extends AbstractAlgorithm implements IPla
                     for (KPort port : layoutNode.getPorts()) {
                         EmbeddingConstraint constraint = createConstraintFor(port, null, tsmNode);
                         if (constraint != null) {
-                            switch (KimlUtil.getShapeLayout(port)
+                            switch (port.getData(KShapeLayout.class)
                                     .getProperty(LayoutOptions.PORT_SIDE)) {
                             case NORTH:
                                 if (northConstraint == null) {

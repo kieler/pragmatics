@@ -27,7 +27,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.modules.INodewiseEdgePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.ElementLoop;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
@@ -134,7 +133,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
         float nodeHeight = element.getRealHeight();
 
         for (KPort port1 : node.getPorts()) {
-            KShapeLayout portLayout = KimlUtil.getShapeLayout(port1);
+            KShapeLayout portLayout = port1.getData(KShapeLayout.class);
             PortSide placement = portLayout.getProperty(LayoutOptions.PORT_SIDE);
             float xPos1 = portLayout.getXpos() + portLayout.getWidth() / 2;
             float yPos1 = portLayout.getYpos() + portLayout.getHeight() / 2;
@@ -144,7 +143,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
                     KPort port2 = edge.getTargetPort();
                     ElementLoop loop = new ElementLoop(edge, element, port1, port2);
                     element.getLoops().add(loop);
-                    KShapeLayout targetLayout = KimlUtil.getShapeLayout(port2);
+                    KShapeLayout targetLayout = port2.getData(KShapeLayout.class);
                     PortSide placement2 = targetLayout.getProperty(LayoutOptions.PORT_SIDE);
                     float xPos2 = targetLayout.getXpos() + targetLayout.getWidth() / 2;
                     float yPos2 = targetLayout.getYpos() + targetLayout.getHeight() / 2;
@@ -358,7 +357,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
             for (LayerConnection connection : element.getIncomingConnections()) {
                 KPort port = connection.getTargetPort();
                 if (port != null) {
-                    switch (KimlUtil.getShapeLayout(port).getProperty(LayoutOptions.PORT_SIDE)) {
+                    switch (port.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE)) {
                     case EAST:
                         int rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
                         connection.setTargetSidePos(rank);
@@ -379,7 +378,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
             for (LayerConnection connection : element.getOutgoingConnections()) {
                 KPort port = connection.getSourcePort();
                 if (port != null) {
-                    switch (KimlUtil.getShapeLayout(port).getProperty(LayoutOptions.PORT_SIDE)) {
+                    switch (port.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE)) {
                     case NORTH:
                         int rank = getRankFor(port, eastSlots, element.getRanks(PortSide.EAST));
                         connection.setSourceSidePos(rank);
@@ -401,7 +400,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
             for (LayerConnection connection : element.getIncomingConnections()) {
                 KPort port = connection.getTargetPort();
                 if (port != null) {
-                    switch (KimlUtil.getShapeLayout(port).getProperty(LayoutOptions.PORT_SIDE)) {
+                    switch (port.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE)) {
                     case SOUTH:
                         int rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
                         connection.setTargetSidePos(rank);
@@ -422,7 +421,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
             for (LayerConnection connection : element.getOutgoingConnections()) {
                 KPort port = connection.getSourcePort();
                 if (port != null) {
-                    switch (KimlUtil.getShapeLayout(port).getProperty(LayoutOptions.PORT_SIDE)) {
+                    switch (port.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE)) {
                     case WEST:
                         int rank = getRankFor(port, southSlots, element.getRanks(PortSide.SOUTH));
                         connection.setSourceSidePos(rank);
@@ -444,9 +443,9 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
 
         // calculate edge routing for all element loops
         for (ElementLoop loop : element.getLoops()) {
-            PortSide placement1 = KimlUtil.getShapeLayout(loop.getSourcePort())
+            PortSide placement1 = loop.getSourcePort().getData(KShapeLayout.class)
                     .getProperty(LayoutOptions.PORT_SIDE);
-            PortSide placement2 = KimlUtil.getShapeLayout(loop.getTargetPort())
+            PortSide placement2 = loop.getTargetPort().getData(KShapeLayout.class)
                     .getProperty(LayoutOptions.PORT_SIDE);
             if (placement1 == PortSide.NORTH || placement2 == PortSide.NORTH) {
                 int rank = getRankFor(loop.getSourcePort(), northSlots,

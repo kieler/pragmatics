@@ -80,7 +80,7 @@ public class LayeredGraph {
 
         // get layout options from the parent group
         this.parentNode = theparentNode;
-        KGraphData layoutData = KimlUtil.getShapeLayout(theparentNode);
+        KGraphData layoutData = theparentNode.getData(KShapeLayout.class);
         layoutDirection = layoutData.getProperty(LayoutOptions.LAYOUT_DIRECTION);
         if (layoutDirection == LayoutDirection.UNDEFINED) {
             layoutDirection = LayoutDirection.RIGHT;
@@ -244,7 +244,7 @@ public class LayeredGraph {
      * Applies the layout of this layered graph to the contained layout graph.
      */
     public void applyLayout() {
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
         // apply the new layout to the contained elements
         for (Layer layer : layers) {
@@ -460,10 +460,10 @@ public class LayeredGraph {
         List<KLabel> tailLabels = new LinkedList<KLabel>();
         List<KLabel> centerLabels = new LinkedList<KLabel>();
         List<KLabel> headLabels = new LinkedList<KLabel>();
-        KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         int midBendPoint = edgeLayout.getBendPoints().size() / 2;
         for (KLabel edgeLabel : edge.getLabels()) {
-            switch (KimlUtil.getShapeLayout(edgeLabel)
+            switch (edgeLabel.getData(KShapeLayout.class)
                     .getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)) {
             case CENTER:
                 if (midBendPoint > 0) {
@@ -485,7 +485,7 @@ public class LayeredGraph {
         float xpos = edgeLayout.getSourcePoint().getX() + LABEL_SPACING;
         float ypos = edgeLayout.getSourcePoint().getY() + LABEL_SPACING;
         for (KLabel edgeLabel : tailLabels) {
-            KShapeLayout labelLayout = KimlUtil.getShapeLayout(edgeLabel);
+            KShapeLayout labelLayout = edgeLabel.getData(KShapeLayout.class);
             labelLayout.setXpos(xpos);
             labelLayout.setYpos(ypos);
             ypos += labelLayout.getHeight() + LABEL_SPACING;
@@ -497,7 +497,7 @@ public class LayeredGraph {
             xpos = point.getX() + LABEL_SPACING;
             ypos = point.getY() + LABEL_SPACING;
             for (KLabel edgeLabel : centerLabels) {
-                KShapeLayout labelLayout = KimlUtil.getShapeLayout(edgeLabel);
+                KShapeLayout labelLayout = edgeLabel.getData(KShapeLayout.class);
                 labelLayout.setXpos(xpos);
                 labelLayout.setYpos(ypos);
                 ypos += labelLayout.getHeight() + LABEL_SPACING;
@@ -508,7 +508,7 @@ public class LayeredGraph {
         xpos = edgeLayout.getTargetPoint().getX() - LABEL_SPACING;
         ypos = edgeLayout.getTargetPoint().getY();
         for (KLabel edgeLabel : headLabels) {
-            KShapeLayout labelLayout = KimlUtil.getShapeLayout(edgeLabel);
+            KShapeLayout labelLayout = edgeLabel.getData(KShapeLayout.class);
             ypos -= labelLayout.getHeight() - LABEL_SPACING;
             labelLayout.setXpos(xpos - labelLayout.getWidth());
             labelLayout.setYpos(ypos);

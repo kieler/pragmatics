@@ -67,7 +67,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Layered layout", 1);
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
 
         // check which EdgeRouter to use
         LayeredEdgeRouting routing = parentLayout.getProperty(Properties.EDGE_ROUTING);

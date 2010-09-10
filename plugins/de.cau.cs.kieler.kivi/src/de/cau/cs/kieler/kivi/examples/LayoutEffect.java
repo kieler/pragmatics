@@ -29,7 +29,6 @@ import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kivi.core.impl.AbstractEffect;
 
 /**
@@ -79,7 +78,7 @@ public class LayoutEffect extends AbstractEffect {
                 while (current.eContainer() != null && current.eContainer() instanceof KNode) {
                     current = (KNode) current.eContainer();
                 }
-                KShapeLayout layout = KimlUtil.getShapeLayout(current);
+                KShapeLayout layout = current.getData(KShapeLayout.class);
                 Dimension available = zoomManager.getViewport().getClientArea().getSize();
                 Dimension desired = new Dimension((int) layout.getWidth(), (int) layout.getHeight());
                 double scaleX = Math.min(available.width / (double) desired.width,

@@ -22,9 +22,9 @@ import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.orthogonal.Messages;
 import de.cau.cs.kieler.klodd.orthogonal.modules.IOrthogonalizer;
 import de.cau.cs.kieler.klodd.orthogonal.structures.TSMEdge;
@@ -396,13 +396,13 @@ public class KandinskyLPOrthogonalizer extends AbstractAlgorithm implements IOrt
                     if (edgeEntry.getType() == KSlimNode.IncEntry.Type.OUT) {
                         if (layoutEdge.getSourcePort() != null) {
                             addSideConstraint(edgeEntry.getEdge(),
-                                    KimlUtil.getShapeLayout(layoutEdge.getSourcePort())
+                                    layoutEdge.getSourcePort().getData(KShapeLayout.class)
                                     .getProperty(LayoutOptions.PORT_SIDE), ilp, false);
                         }
                     } else {
                         if (layoutEdge.getTargetPort() != null) {
                             addSideConstraint(edgeEntry.getEdge(),
-                                    KimlUtil.getShapeLayout(layoutEdge.getTargetPort())
+                                    layoutEdge.getTargetPort().getData(KShapeLayout.class)
                                     .getProperty(LayoutOptions.PORT_SIDE), ilp, true);
                         }
                     }

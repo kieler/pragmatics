@@ -22,7 +22,6 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.alg.orthogonal.QuodOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.alg.planarity.BoyerMyrvoldPlanarityTester;
@@ -74,7 +73,7 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
         monitor.begin("Orthogonal Layout", 1);
 
         // Get layout options
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         PlanarityTestAlgorithm algorithm = parentLayout.getProperty(PLANAR_TESTING_ALGORITHM);
         switch (algorithm) {
         case BOYER_MYRVOLD_ALGORITHM:

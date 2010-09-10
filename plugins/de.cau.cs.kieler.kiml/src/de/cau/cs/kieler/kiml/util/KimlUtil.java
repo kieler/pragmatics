@@ -77,8 +77,8 @@ public final class KimlUtil {
          * {@inheritDoc}
          */
         public int compare(final KPort port1, final KPort port2) {
-            KShapeLayout layout1 = getShapeLayout(port1);
-            KShapeLayout layout2 = getShapeLayout(port2);
+            KShapeLayout layout1 = port1.getData(KShapeLayout.class);
+            KShapeLayout layout2 = port2.getData(KShapeLayout.class);
             int rank1 = layout1.getProperty(LayoutOptions.PORT_RANK);
             int rank2 = layout2.getProperty(LayoutOptions.PORT_RANK);
             PortSide side1 = layout1.getProperty(LayoutOptions.PORT_SIDE);
@@ -118,6 +118,7 @@ public final class KimlUtil {
      * 
      * @param graphElement the graph element
      * @return related shape layout data
+     * @deprecated use {@code graphElement.getData(KShapeLayout.class)} instead
      */
     public static KShapeLayout getShapeLayout(final KGraphElement graphElement) {
         KShapeLayout layoutData = (KShapeLayout) graphElement.getData(KLayoutDataPackage.eINSTANCE
@@ -136,6 +137,7 @@ public final class KimlUtil {
      * 
      * @param graphElement the graph element
      * @return related edge layout data
+     * @deprecated use {@code graphElement.getData(KEdgeLayout.class)} instead
      */
     public static KEdgeLayout getEdgeLayout(final KGraphElement graphElement) {
         KEdgeLayout layoutData = (KEdgeLayout) graphElement.getData(KLayoutDataPackage.eINSTANCE
@@ -213,8 +215,8 @@ public final class KimlUtil {
      * @return port placement
      */
     public static PortSide calcPortSide(final KPort port) {
-        KShapeLayout nodeLayout = getShapeLayout(port.getNode());
-        KShapeLayout portLayout = getShapeLayout(port);
+        KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
+        KShapeLayout portLayout = port.getData(KShapeLayout.class);
         PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
         if (portSide != PortSide.UNDEFINED) {
             return portSide;
@@ -250,7 +252,7 @@ public final class KimlUtil {
         }
 
         // determine port placement from the incident edges
-        LayoutDirection layoutDirection = getShapeLayout(port.getNode().getParent())
+        LayoutDirection layoutDirection = port.getNode().getParent().getData(KShapeLayout.class)
                 .getProperty(LayoutOptions.LAYOUT_DIRECTION);
         int flow = calcFlow(port);
         switch (layoutDirection) {
@@ -300,10 +302,10 @@ public final class KimlUtil {
         KPort[] ports = node.getPorts().toArray(new KPort[node.getPorts().size()]);
         Arrays.sort(ports, new Comparator<KPort>() {
             public int compare(final KPort port1, final KPort port2) {
-                KShapeLayout port1Layout = getShapeLayout(port1);
+                KShapeLayout port1Layout = port1.getData(KShapeLayout.class);
                 PortSide port1Side = port1Layout.getProperty(LayoutOptions.PORT_SIDE);
                 int port1Rank = port1Layout.getProperty(LayoutOptions.PORT_RANK);
-                KShapeLayout port2Layout = getShapeLayout(port2);
+                KShapeLayout port2Layout = port2.getData(KShapeLayout.class);
                 PortSide port2Side = port2Layout.getProperty(LayoutOptions.PORT_SIDE);
                 int port2Rank = port2Layout.getProperty(LayoutOptions.PORT_RANK);
                 int result = 0;
@@ -374,7 +376,7 @@ public final class KimlUtil {
         KPort[] ports = getSortedPorts(node);
         // assign ranks according to the new order
         for (int i = 0; i < ports.length; i++) {
-            getShapeLayout(ports[i]).setProperty(LayoutOptions.PORT_RANK, i);
+            ports[i].getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_RANK, i);
         }
     }
 
@@ -386,32 +388,36 @@ public final class KimlUtil {
      * @param layoutDirection layout direction
      */
     public static void fillPortInfo(final KNode node, final LayoutDirection layoutDirection) {
-        KGraphData layoutData = getShapeLayout(node);
+        KGraphData layoutData = node.getData(KShapeLayout.class);
         PortConstraints portConstraints = layoutData.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         if (portConstraints == PortConstraints.FREE) {
             // set port sides according to layout direction
             switch (layoutDirection) {
             case DOWN:
                 for (KPort port : node.getPorts()) {
-                    getShapeLayout(port).setProperty(LayoutOptions.PORT_SIDE, calcFlow(port) < 0
+                    port.getData(KShapeLayout.class).setProperty(
+                            LayoutOptions.PORT_SIDE, calcFlow(port) < 0
                             ? PortSide.NORTH : PortSide.SOUTH);
                 }
                 break;
             case UP:
                 for (KPort port : node.getPorts()) {
-                    getShapeLayout(port).setProperty(LayoutOptions.PORT_SIDE, calcFlow(port) < 0
+                    port.getData(KShapeLayout.class).setProperty(
+                            LayoutOptions.PORT_SIDE, calcFlow(port) < 0
                             ? PortSide.SOUTH : PortSide.NORTH);
                 }
                 break;
             case LEFT:
                 for (KPort port : node.getPorts()) {
-                    getShapeLayout(port).setProperty(LayoutOptions.PORT_SIDE, calcFlow(port) < 0
+                    port.getData(KShapeLayout.class).setProperty(
+                            LayoutOptions.PORT_SIDE, calcFlow(port) < 0
                             ? PortSide.EAST : PortSide.WEST);
                 }
                 break;
             default:
                 for (KPort port : node.getPorts()) {
-                    getShapeLayout(port).setProperty(LayoutOptions.PORT_SIDE, calcFlow(port) < 0
+                    port.getData(KShapeLayout.class).setProperty(LayoutOptions.PORT_SIDE,
+                            calcFlow(port) < 0
                             ? PortSide.WEST : PortSide.EAST);
                 }
                 break;
@@ -421,7 +427,7 @@ public final class KimlUtil {
             // set port sides and ranks according to relative position
             boolean ranksUndefined = false;
             for (KPort port : node.getPorts()) {
-                KGraphData portLayout = getShapeLayout(port);
+                KGraphData portLayout = port.getData(KShapeLayout.class);
                 if (portLayout.getProperty(LayoutOptions.PORT_RANK) < 0) {
                     ranksUndefined = true;
                 }
@@ -487,7 +493,7 @@ public final class KimlUtil {
      * @param node the node that shall be resized
      */
     public static void resizeNode(final KNode node) {
-        KShapeLayout nodeLayout = getShapeLayout(node);
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         float oldWidth = nodeLayout.getWidth();
         float oldHeight = nodeLayout.getHeight();
         float newWidth = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
@@ -495,14 +501,14 @@ public final class KimlUtil {
         if (newWidth < MIN_NODE_SIZE || newHeight < MIN_NODE_SIZE) {
             newWidth = newWidth < MIN_NODE_SIZE ? MIN_NODE_SIZE : newWidth;
             newHeight = newHeight < MIN_NODE_SIZE ? MIN_NODE_SIZE : newHeight;
-            KShapeLayout labelLayout = getShapeLayout(node.getLabel());
+            KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
             newWidth = Math.max(newWidth, labelLayout.getWidth());
             newHeight = Math.max(newHeight, labelLayout.getHeight());
     
             float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
                     minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
             for (KPort port : node.getPorts()) {
-                switch (getShapeLayout(port).getProperty(LayoutOptions.PORT_SIDE)) {
+                switch (port.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE)) {
                 case NORTH:
                     minNorth += MIN_PORT_DISTANCE;
                     break;
@@ -531,7 +537,7 @@ public final class KimlUtil {
 
         // update port positions
         for (KPort port : node.getPorts()) {
-            KShapeLayout portLayout = KimlUtil.getShapeLayout(port);
+            KShapeLayout portLayout = port.getData(KShapeLayout.class);
             switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
             case EAST:
                 portLayout.setXpos(portLayout.getXpos() + newWidth - oldWidth);
@@ -611,18 +617,18 @@ public final class KimlUtil {
      */
     public static void translate(final KNode parent, final float xoffset, final float yoffset) {
         for (KNode node : parent.getChildren()) {
-            KShapeLayout nodeLayout = getShapeLayout(node);
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             nodeLayout.setXpos(nodeLayout.getXpos() + xoffset);
             nodeLayout.setYpos(nodeLayout.getYpos() + yoffset);
             for (KEdge edge : node.getOutgoingEdges()) {
-                KEdgeLayout edgeLayout = getEdgeLayout(edge);
+                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                 translate(edgeLayout.getSourcePoint(), xoffset, yoffset);
                 for (KPoint bendPoint : edgeLayout.getBendPoints()) {
                     translate(bendPoint, xoffset, yoffset);
                 }
                 translate(edgeLayout.getTargetPoint(), xoffset, yoffset);
                 for (KLabel edgeLabel : edge.getLabels()) {
-                    KShapeLayout labelLayout = getShapeLayout(edgeLabel);
+                    KShapeLayout labelLayout = edgeLabel.getData(KShapeLayout.class);
                     labelLayout.setXpos(labelLayout.getXpos() + xoffset);
                     labelLayout.setYpos(labelLayout.getYpos() + yoffset);
                 }

@@ -62,7 +62,7 @@ public class GraphConverter extends AbstractAlgorithm {
 
         // convert nodes
         for (KNode child : parentNode.getChildren()) {
-            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(child);
+            KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
             KSlimNode newNode = new KSlimNode(slimGraph, child);
             newNode.setXpos(nodeLayout.getXpos());
             newNode.setYpos(nodeLayout.getYpos());
@@ -84,7 +84,7 @@ public class GraphConverter extends AbstractAlgorithm {
         if (includePorts) {
             // convert external ports
             for (KPort port : parentNode.getPorts()) {
-                KShapeLayout portLayout = KimlUtil.getShapeLayout(port);
+                KShapeLayout portLayout = port.getData(KShapeLayout.class);
                 KSlimNode newNode = new KSlimNode(slimGraph, port);
                 newNode.setXpos(portLayout.getXpos());
                 newNode.setYpos(portLayout.getYpos());

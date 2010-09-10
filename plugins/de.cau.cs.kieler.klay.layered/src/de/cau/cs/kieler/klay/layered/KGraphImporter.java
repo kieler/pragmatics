@@ -92,7 +92,7 @@ public class KGraphImporter implements IGraphImporter {
         // transform nodes and ports
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         for (KNode child : layoutNode.getChildren()) {
-            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(child);
+            KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
             PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
             LNode newNode = new LNode(child.getLabel().getText());
             newNode.setProperty(Properties.ORIGIN, child);
@@ -102,7 +102,7 @@ public class KGraphImporter implements IGraphImporter {
             elemMap.put(child, newNode);
             KPort[] sortedPorts = KimlUtil.getSortedPorts(child);
             for (KPort kport : sortedPorts) {
-                KShapeLayout portLayout = KimlUtil.getShapeLayout(kport);
+                KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                 PortType type = PortType.UNDEFINED;
                 int outBalance = 0;
                 for (KEdge edge : kport.getEdges()) {
@@ -136,7 +136,7 @@ public class KGraphImporter implements IGraphImporter {
         // transform edges
         for (KNode child : layoutNode.getChildren()) {
             for (KEdge kedge : child.getOutgoingEdges()) {
-                KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
+                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 // exclude edges that pass hierarchy bounds and self-loops
                 if (kedge.getTarget().getParent() == child.getParent()
                         && kedge.getSource() != kedge.getTarget()) {
@@ -165,7 +165,7 @@ public class KGraphImporter implements IGraphImporter {
                     newEdge.setSource(sourcePort);
                     newEdge.setTarget(targetPort);
                     for (KLabel klabel : kedge.getLabels()) {
-                        KShapeLayout labelLayout = KimlUtil.getShapeLayout(klabel);
+                        KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                         LLabel newLabel = new LLabel(klabel.getText());
                         newLabel.getSize().x = labelLayout.getWidth();
                         newLabel.getSize().y = labelLayout.getHeight();
@@ -190,7 +190,7 @@ public class KGraphImporter implements IGraphImporter {
      */
     public void applyLayout() {
         KNode parentNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = Properties.DEF_SPACING;
@@ -204,7 +204,7 @@ public class KGraphImporter implements IGraphImporter {
                 Object origin = lnode.getProperty(Properties.ORIGIN);
                 if (origin instanceof KNode) {
                     KNode knode = (KNode) origin;
-                    KShapeLayout nodeLayout = KimlUtil.getShapeLayout(knode);
+                    KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
                     nodeLayout.setXpos((float) (lnode.getPos().x + offset.x));
                     nodeLayout.setYpos((float) (lnode.getPos().y + offset.y));
                 }
@@ -234,7 +234,7 @@ public class KGraphImporter implements IGraphImporter {
                             // apply layout to labels
                             for (LLabel label : ledge.getLabels()) {
                                 KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
-                                KShapeLayout klabelLayout = KimlUtil.getShapeLayout(klabel);
+                                KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
                                 KVector labelPos = new KVector(ledge.getSource().getPos().x, ledge
                                         .getSource().getPos().y);
                                 labelPos.add(ledge.getSource().getNode().getPos());
@@ -254,7 +254,7 @@ public class KGraphImporter implements IGraphImporter {
                 || routing == LayeredEdgeRouting.COMPLEX_SPLINES;
         for (Map.Entry<KEdge, List<LEdge>> edgeEntry : edgeMap.entrySet()) {
             KEdge kedge = edgeEntry.getKey();
-            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
+            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             List<LEdge> edgeList = edgeEntry.getValue();
             // set source and target points, considering direction of the edge
             LEdge firstEdge = edgeList.get(0);

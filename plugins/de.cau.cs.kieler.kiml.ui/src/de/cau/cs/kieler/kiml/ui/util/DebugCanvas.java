@@ -73,7 +73,7 @@ public class DebugCanvas implements IDebugCanvas {
         yOffset = addy;
         KNode currentNode = parentNode;
         while (currentNode != null) {
-            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(currentNode);
+            KShapeLayout nodeLayout = currentNode.getData(KShapeLayout.class);
             xOffset += nodeLayout.getXpos();
             yOffset += nodeLayout.getYpos();
             currentNode = currentNode.getParent();

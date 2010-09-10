@@ -116,7 +116,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         DirectedGraph graph = new DirectedGraph();
         
         // set layout options for the graph
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
         if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
@@ -142,7 +142,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         Map<KNode, Node> nodeMap = new HashMap<KNode, Node>();
         for (KNode knode : layoutNode.getChildren()) {
             Node draw2dNode = new Node(knode);
-            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(knode);
+            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
                 KimlUtil.resizeNode(knode);
             }
@@ -162,7 +162,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
                     Edge draw2dEdge = new Edge(kedge, draw2dSource, draw2dTarget);
                     graph.edges.add(draw2dEdge);
                 } else {
-                    KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
+                    KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                     edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
@@ -183,7 +183,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
             Node node = graph.nodes.getNode(i);
             if (node.data instanceof KNode) {
                 KNode knode = (KNode) node.data;
-                KShapeLayout nodeLayout = KimlUtil.getShapeLayout(knode);
+                KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
                 nodeLayout.setXpos(node.x);
                 nodeLayout.setYpos(node.y);
             }
@@ -194,7 +194,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
             Edge edge = graph.edges.getEdge(i);
             if (edge.data instanceof KEdge) {
                 KEdge kedge = (KEdge) edge.data;
-                KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(kedge);
+                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 edgeLayout.getBendPoints().clear();
                 PointList pointList = edge.getPoints();
                 KPoint sourcekPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
@@ -217,14 +217,14 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
                 
                 // disable layout for the edge labels
                 for (KLabel label : kedge.getLabels()) {
-                    KShapeLayout labelLayout = KimlUtil.getShapeLayout(label);
+                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                     labelLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
         }
         
         // apply parent node layout
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
         Dimension layoutSize = graph.getLayoutSize();
         parentLayout.setWidth(insets.getLeft() + layoutSize.width + insets.getRight());

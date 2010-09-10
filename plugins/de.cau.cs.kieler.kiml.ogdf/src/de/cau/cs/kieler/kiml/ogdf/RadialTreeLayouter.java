@@ -17,7 +17,6 @@ import net.ogdf.lib.Ogdf;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The radial tree layouter from the OGDF library.
@@ -43,7 +42,7 @@ public class RadialTreeLayouter extends OgdfLayouter {
      */
     protected void prepareLayouter(final KNode layoutNode) {
 
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // get the minimum level distance
         float minDist = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
         if (minDist < 0) {

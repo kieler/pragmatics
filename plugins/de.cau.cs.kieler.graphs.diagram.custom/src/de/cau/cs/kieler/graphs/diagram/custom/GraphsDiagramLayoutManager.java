@@ -151,7 +151,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         
         // set location and size
         IFigure nodeFigure = editPart.getFigure();
-        KShapeLayout nodeLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
         Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure);
         Rectangle containerBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure.getParent());
         nodeLayout.setXpos(nodeBounds.x - containerBounds.x);
@@ -179,7 +179,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 graphMap.put(port, layoutPort);
                 
                 // set the port's layout, relative to the node position
-                KShapeLayout portLayout = KimlUtil.getShapeLayout(layoutPort);
+                KShapeLayout portLayout = layoutPort.getData(KShapeLayout.class);
                 Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(portEP.getFigure());
                 portLayout.setXpos(portBounds.x - nodeBounds.x);
                 portLayout.setYpos(portBounds.y - nodeBounds.y);
@@ -264,13 +264,13 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 KNode sourceParent = layoutEdge.getSource().getParent();
                 IGraphicalEditPart sourceParentEP = getGraphElem2EditPartMap().get(sourceParent);
                 Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParentEP.getFigure());
-                KInsets insets = KimlUtil.getShapeLayout(sourceParent)
+                KInsets insets = sourceParent.getData(KShapeLayout.class)
                         .getProperty(LayoutOptions.INSETS);
                 float offsetx = sourceParentBounds.x + insets.getLeft();
                 float offsety = sourceParentBounds.y + insets.getTop();
     
                 // store the current coordinates of the edge
-                KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(layoutEdge);
+                KEdgeLayout edgeLayout = layoutEdge.getData(KEdgeLayout.class);
                 setEdgeLayout(edgeLayout, connection, offsetx, offsety);
                 
                 // set edge labels

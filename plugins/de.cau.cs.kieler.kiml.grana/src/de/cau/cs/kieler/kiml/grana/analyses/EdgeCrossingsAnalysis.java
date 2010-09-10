@@ -25,7 +25,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that computes the number of edge crossings. It assumes that
@@ -84,10 +83,8 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
         for (KEdge edge1 : node1.getOutgoingEdges()) {
             for (KEdge edge2 : node2.getOutgoingEdges()) {
                 if (edge1 != edge2) {
-                    KEdgeLayout edge1Layout =
-                            KimlUtil.getEdgeLayout(edge1);
-                    KEdgeLayout edge2Layout =
-                            KimlUtil.getEdgeLayout(edge2);
+                    KEdgeLayout edge1Layout = edge1.getData(KEdgeLayout.class);
+                    KEdgeLayout edge2Layout = edge2.getData(KEdgeLayout.class);
                     KPoint p1 = edge1Layout.getSourcePoint();
                     for (KPoint p2 : edge1Layout.getBendPoints()) {
                         KPoint q1 = edge2Layout.getSourcePoint();

@@ -19,7 +19,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The tree layouter from the OGDF library.
@@ -45,7 +44,7 @@ public class TreeLayouter extends OgdfLayouter {
      */
     protected void prepareLayouter(final KNode layoutNode) {
 
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
 
         // get the general minimum distance
         float minDist = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);

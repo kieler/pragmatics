@@ -34,7 +34,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.kiml.zest.graph.AdvancedEntity;
 import de.cau.cs.kieler.kiml.zest.graph.AdvancedRelationship;
 import de.cau.cs.kieler.kiml.zest.preferences.ZestLayouterPreferencePage;
@@ -118,7 +117,7 @@ public class ZestAlgorithmWrapper {
      */
     private LayoutEntity[] buildEntities(final KNode parentNode) {
         for (KNode child : parentNode.getChildren()) {
-            KShapeLayout shapeLayout = KimlUtil.getShapeLayout(child);
+            KShapeLayout shapeLayout = child.getData(KShapeLayout.class);
             float x = shapeLayout.getXpos();
             float y = shapeLayout.getYpos();
             float width = shapeLayout.getWidth();
@@ -173,7 +172,7 @@ public class ZestAlgorithmWrapper {
         // transfer entities layouts
         for (LayoutEntity entity : entities) {
             KNode layoutNode = (KNode) ((AdvancedEntity) entity).getRealObject();
-            KShapeLayout shapeLayout = KimlUtil.getShapeLayout(layoutNode);
+            KShapeLayout shapeLayout = layoutNode.getData(KShapeLayout.class);
             float x = (float) entity.getXInLayout();
             float y = (float) entity.getYInLayout();
             float width = shapeLayout.getWidth();
@@ -191,7 +190,7 @@ public class ZestAlgorithmWrapper {
         // transfer relationships layouts
         for (LayoutRelationship relationship : relationships) {
             KEdge edge = (KEdge) ((AdvancedRelationship) relationship).getRealObject();
-            KEdgeLayout edgeLayout = KimlUtil.getEdgeLayout(edge);
+            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
             edgeLayout.getBendPoints().clear();
             for (LayoutBendPoint bendPoint : ((AdvancedRelationship) relationship).getBendPoints()) {
                 KPoint point = KLayoutDataFactory.eINSTANCE.createKPoint();
@@ -210,7 +209,7 @@ public class ZestAlgorithmWrapper {
         }
 
         // determine size of the parent group
-        KShapeLayout shapeLayout = KimlUtil.getShapeLayout(parentNode);
+        KShapeLayout shapeLayout = parentNode.getData(KShapeLayout.class);
         KInsets insets = shapeLayout.getProperty(LayoutOptions.INSETS);
         shapeLayout.setWidth(maxX + insets.getLeft() + insets.getRight() + SIZE_ADDITION);
         shapeLayout.setHeight(maxY + insets.getTop() + insets.getBottom() + SIZE_ADDITION);

@@ -51,7 +51,7 @@ public class BoxPlacer extends AbstractAlgorithm {
     public void placeBoxes(final List<KNode> sortedBoxes, final KNode parentNode,
             final float objSpacing, final float borderSpacing, final boolean expandNodes) {
         getMonitor().begin("Box placement", 1);
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(parentNode);
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
         float minWidth = Math.max(parentLayout.getProperty(LayoutOptions.MIN_WIDTH)
                 - insets.getLeft() - insets.getRight(), 0);
@@ -93,7 +93,7 @@ public class BoxPlacer extends AbstractAlgorithm {
         float maxRowWidth = 0.0f;
         float totalArea = 0.0f;
         for (KNode box : sortedBoxes) {
-            KShapeLayout boxLayout = KimlUtil.getShapeLayout(box);
+            KShapeLayout boxLayout = box.getData(KShapeLayout.class);
             if (!boxLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
                 KimlUtil.resizeNode(box);
             }
@@ -111,7 +111,7 @@ public class BoxPlacer extends AbstractAlgorithm {
         LinkedList<Float> rowHeights = new LinkedList<Float>();
         ListIterator<KNode> boxIter = sortedBoxes.listIterator();
         while (boxIter.hasNext()) {
-            KShapeLayout boxLayout = KimlUtil.getShapeLayout(boxIter.next());
+            KShapeLayout boxLayout = boxIter.next().getData(KShapeLayout.class);
             float width = boxLayout.getWidth();
             float height = boxLayout.getHeight();
             if (xpos + width > maxRowWidth) {
@@ -155,7 +155,7 @@ public class BoxPlacer extends AbstractAlgorithm {
                     nextRowIndex = rowIndexIter.next();
                 }
                 KNode box = boxIter.next();
-                KShapeLayout boxLayout = KimlUtil.getShapeLayout(box);
+                KShapeLayout boxLayout = box.getData(KShapeLayout.class);
                 boxLayout.setHeight(rowHeight);
                 if (boxIter.nextIndex() == nextRowIndex) {
                     float newWidth = broadestRow - xpos - borderSpacing;

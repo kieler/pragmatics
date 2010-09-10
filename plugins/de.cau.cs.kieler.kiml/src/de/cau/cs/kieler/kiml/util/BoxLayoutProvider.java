@@ -48,7 +48,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Box layout", 2);
-        KShapeLayout parentLayout = KimlUtil.getShapeLayout(layoutNode);
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // set option for minimal spacing
         float objSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
         if (objSpacing < 0) {

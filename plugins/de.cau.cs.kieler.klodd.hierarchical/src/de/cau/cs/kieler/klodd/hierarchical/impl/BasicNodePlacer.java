@@ -28,7 +28,6 @@ import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.modules.INodePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayerElement;
@@ -252,7 +251,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
             // process fixed external layer
             for (LayerElement element : layer.getElements()) {
                 KPort port = (KPort) element.getElemObj();
-                KShapeLayout portLayout = KimlUtil.getShapeLayout(port);
+                KShapeLayout portLayout = port.getData(KShapeLayout.class);
                 PortSide placement = portLayout.getProperty(LayoutOptions.PORT_SIDE);
                 KPoint position = element.getPosition();
                 position.setX(portLayout.getXpos());

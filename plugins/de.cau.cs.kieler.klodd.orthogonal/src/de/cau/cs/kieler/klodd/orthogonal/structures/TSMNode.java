@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klodd.orthogonal.structures;
 
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.orthogonal.impl.ec.EmbeddingConstraint;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimGraph;
 import de.cau.cs.kieler.klodd.orthogonal.structures.slimgraph.KSlimNode;
@@ -94,7 +93,7 @@ public class TSMNode extends KSlimNode {
     public void applyLayout(final float offsetX, final float offsetY) {
         if (getObject() instanceof KNode) {
             KNode layoutNode = (KNode) getObject();
-            KShapeLayout nodeLayout = KimlUtil.getShapeLayout(layoutNode);
+            KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
             nodeLayout.setXpos(getXpos() + offsetX);
             nodeLayout.setYpos(getYpos() + offsetY);
         }
