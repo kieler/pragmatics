@@ -22,6 +22,7 @@ import org.eclipse.core.commands.ExecutionException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ILayoutListener;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
@@ -36,9 +37,6 @@ import de.cau.cs.kieler.kiml.grana.views.AnalysisResultViewPart;
 public class AutomaticAnalysisLayoutListener extends AbstractAnalysisHandler
         implements ILayoutListener {
 
-    /** the view. */
-    private AnalysisResultViewPart view;
-    
     /**
      * {@inheritDoc}
      */
@@ -51,13 +49,13 @@ public class AutomaticAnalysisLayoutListener extends AbstractAnalysisHandler
      */
     public void layoutPerformed(final KNode layoutGraph,
             final IKielerProgressMonitor monitor) {
+        final Maybe<AnalysisResultViewPart> viewPart = new Maybe<AnalysisResultViewPart>();
         MonitoredOperation.runInUI(new Runnable() {
             public void run() {
-                view = AnalysisResultViewPart.findView();
-                
+                viewPart.set(AnalysisResultViewPart.findView());
             }
         }, true);
-        if (view != null) {
+        if (viewPart.get() != null) {
             System.out.println("check");
             monitor.begin("Performing graph analysis", 1);
             // let the user select the analyses
@@ -69,7 +67,7 @@ public class AutomaticAnalysisLayoutListener extends AbstractAnalysisHandler
             // refresh the result view
             MonitoredOperation.runInUI(new Runnable() {
                 public void run() {
-                    view.setAnalysisResults(analyses, results);
+                    viewPart.get().setAnalysisResults(analyses, results);
                 }
             }, false);
             monitor.done();
