@@ -84,7 +84,7 @@ public class PlanarizationLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     protected void postProcess(final KNode layoutNode) {
-        loopRouter.postProcess();
+        loopRouter.exclude();
     }
 
     /**

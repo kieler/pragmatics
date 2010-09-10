@@ -11,20 +11,20 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ogdf;
+package de.cau.cs.kieler.kiml.ogdf.options;
 
 /**
- * Definition of the costs option for the Davidson-Harel layouter.
+ * Definition of the quality vs speed option for fmmm.
  * 
  * @author mri
  */
-public enum Costs {
-    /** standard costs. */
-    STANDARD,
-    /** repulse costs. */
-    REPULSE,
-    /** planar costs. */
-    PLANAR;
+public enum QualityVsSpeed {
+    /** best quality worst speed. */
+    GORGEOUSANDEFFICIENT,
+    /** medium quality medium speed. */
+    BEAUTIFULANDFAST,
+    /** worst quality best speed. */
+    NICEANDINCREDIBLESPEED;
     
     /**
      * Returns the enumeration value related to the given ordinal.
@@ -32,7 +32,7 @@ public enum Costs {
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static Costs valueOf(final int i) {
+    public static QualityVsSpeed valueOf(final int i) {
         return values()[i];
     }
 }

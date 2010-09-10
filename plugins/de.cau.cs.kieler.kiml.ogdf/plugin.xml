@@ -41,7 +41,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.kiml.ogdf.QualityVsSpeed"
+            class="de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed"
             default="BEAUTIFULANDFAST"
             description="Specifies whether the algorithm prioritizes quality or speed."
             id="de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed"
@@ -50,7 +50,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.kiml.ogdf.Costs"
+            class="de.cau.cs.kieler.kiml.ogdf.options.Costs"
             default="STANDARD"
             description="Defines the costs used in the algorithm."
             id="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs"
@@ -59,7 +59,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.kiml.ogdf.Speed"
+            class="de.cau.cs.kieler.kiml.ogdf.options.Speed"
             default="MEDIUM"
             description="Defines the temperature and the number of iterations."
             id="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed"

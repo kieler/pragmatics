@@ -11,22 +11,20 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.ogdf;
+package de.cau.cs.kieler.kiml.ogdf.options;
 
 /**
- * Definition of orientation of a layouter.
+ * Definition of the costs option for the Davidson-Harel layouter.
  * 
  * @author mri
  */
-public enum Orientation {
-    /** top-to-bottom. */
-    TOP_TO_BOTTOM,
-    /** bottom-to-top. */
-    BOTTOM_TO_TOP,
-    /** left-to-right. */
-    LEFT_TO_RIGHT,
-    /** right-to-left. */
-    RIGHT_TO_LEFT;
+public enum Costs {
+    /** standard costs. */
+    STANDARD,
+    /** repulse costs. */
+    REPULSE,
+    /** planar costs. */
+    PLANAR;
     
     /**
      * Returns the enumeration value related to the given ordinal.
@@ -34,7 +32,7 @@ public enum Orientation {
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static Orientation valueOf(final int i) {
+    public static Costs valueOf(final int i) {
         return values()[i];
     }
 }

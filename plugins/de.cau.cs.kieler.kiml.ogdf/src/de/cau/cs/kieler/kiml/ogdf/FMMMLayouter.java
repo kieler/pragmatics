@@ -18,6 +18,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -94,7 +95,7 @@ public class FMMMLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     protected void postProcess(final KNode layoutNode) {
-        loopRouter.postProcess();
+        loopRouter.exclude();
     }
 
     /**

@@ -25,7 +25,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -60,15 +59,15 @@ public class SelfLoopRouter {
         }
     }
     
-    /** fixed distance of self loops to their node. */
-    private static final float LOOP_DIST = 12.0f;
     /** starting relative position of self loops. */
     private static final float START_POS = 0.6f;
     
     /**
      * Layouts all self-loops that were removed during pre-processing.
+     * 
+     * @param loopDist default distance of self-loops from the node
      */
-    public void postProcess() {
+    public void postProcess(final float loopDist) {
         // manually layout all self loops
         PortSide side = PortSide.UNDEFINED;
         float relStart = 0, relEnd = 0, distance = 0;
@@ -80,7 +79,7 @@ public class SelfLoopRouter {
                 side = PortSide.NORTH;
                 relStart = START_POS;
                 relEnd = 1 - START_POS;
-                distance = LOOP_DIST;
+                distance = loopDist;
             }
             lastNode = node;
             edge.setSource(node);
@@ -98,7 +97,23 @@ public class SelfLoopRouter {
             if (side == PortSide.NORTH) {
                 relEnd = relEnd / 2;
                 relStart = 1 - relEnd;
-                distance += LOOP_DIST;
+                distance += loopDist;
+            }
+        }
+    }
+    
+    /**
+     * Excludes all self-loops from the layout instead of calculating a routing.
+     */
+    public void exclude() {
+        for (Pair<KEdge, KNode> selfLoop : selfLoops) {
+            KEdge edge = selfLoop.getFirst();
+            KNode node = selfLoop.getSecond();
+            edge.setSource(node);
+            edge.setTarget(node);
+            KimlUtil.getEdgeLayout(edge).setProperty(LayoutOptions.NO_LAYOUT, true);
+            for (KLabel label : edge.getLabels()) {
+                KimlUtil.getShapeLayout(label).setProperty(LayoutOptions.NO_LAYOUT, true);
             }
         }
     }

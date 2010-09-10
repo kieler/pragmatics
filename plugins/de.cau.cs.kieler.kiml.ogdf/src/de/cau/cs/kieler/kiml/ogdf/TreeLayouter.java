@@ -81,7 +81,7 @@ public class TreeLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     protected void postProcess(final KNode layoutNode) {
-        loopRouter.postProcess();
+        loopRouter.exclude();
     }
 
     /**

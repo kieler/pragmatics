@@ -17,8 +17,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-
 /**
  * The activator class controls the plug-in life cycle.
  * 

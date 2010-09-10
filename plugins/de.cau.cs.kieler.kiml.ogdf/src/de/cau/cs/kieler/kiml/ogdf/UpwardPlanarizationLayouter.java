@@ -111,7 +111,7 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
      * {@inheritDoc}
      */
     protected void postProcess(final KNode layoutNode) {
-        loopRouter.postProcess();
+        loopRouter.exclude();
     }
 
     /**

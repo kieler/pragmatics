@@ -86,15 +86,12 @@ public abstract class OgdfLayouter {
             Ogdf.layout();
             // include intersections with the nodes bounding boxes in the bends
             Ogdf.Graph_addNodeCenter2Bends();
-            // calculate new label positions and assign them to the mapped
-            // labels
+            // calculate new label positions and assign them to the mapped labels
             layoutLabels(layoutNode);
             // apply the layout back to the original graph
             applyLayout(layoutNode);
             // perform post-processing
             postProcess(layoutNode);
-        } catch (Exception e) {
-            throw new KielerException(e.getMessage(), e);
         } finally {
             // deallocate objects in the library
             Ogdf.cleanup();
@@ -363,7 +360,7 @@ public abstract class OgdfLayouter {
         for (Map.Entry<KNode, Long> entry : knode2ogdfNodeMap.entrySet()) {
             KShapeLayout nodeLayout =
                     KimlUtil.getShapeLayout(entry.getKey());
-            Long ogdfNode = entry.getValue();
+            long ogdfNode = entry.getValue();
             toKShape(nodeLayout, Ogdf.Graph_getNodeX(ogdfNode) + offsetX,
                     Ogdf.Graph_getNodeY(ogdfNode) + offsetY,
                     nodeLayout.getWidth(), nodeLayout.getHeight());
