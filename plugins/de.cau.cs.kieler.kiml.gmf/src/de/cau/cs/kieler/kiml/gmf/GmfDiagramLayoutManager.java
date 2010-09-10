@@ -452,6 +452,14 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public EditPart getEditPart(final KNode knode) {
+        return graphElem2EditPartMap.get(knode);
+    }
+
+    /**
      * Builds the layout graph for the given root edit part.
      * 
      * @param rootPart the root edit part for layout

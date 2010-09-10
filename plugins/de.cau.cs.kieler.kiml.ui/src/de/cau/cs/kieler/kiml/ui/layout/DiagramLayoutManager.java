@@ -263,6 +263,14 @@ public abstract class DiagramLayoutManager {
      * @return the currently processed edit part
      */
     public abstract EditPart getCurrentEditPart();
+    
+    /**
+     * Returns the edit part associated with the given layout node.
+     * 
+     * @param knode a node from the layout graph
+     * @return the corresponding edit part, or {@code null}
+     */
+    public abstract EditPart getEditPart(KNode knode);
 
     /**
      * Determines whether this layout manager is able to perform layout for the
