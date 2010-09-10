@@ -12,6 +12,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -153,9 +154,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
 	private void createPreviewComp(Composite composite) {
 		previewComp = new Composite(composite, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		previewComp.setLayout(layout);
-		previewComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		previewComp.setLayout(new FormLayout());
 		new Label(previewComp, SWT.NONE).setText("Example Preview");
 		imageLabel = new Label(previewComp, SWT.BORDER);
 		imageLabel.setBounds(exampleTree.getBounds());
@@ -208,10 +207,11 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
 	private void updateDescriptionLabel(Example selectedExample) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Title:       ").append(selectedExample.getTitle()).append(
-				"\n").append("Author:   ").append(selectedExample.getAuthor())
-				.append("\n").append("Contact: ").append(
-						selectedExample.getContact()).append("\n").append("\n")
+		sb.append("Title:       ").append(selectedExample.getTitle())
+				.append("\n").append("Author:   ")
+				.append(selectedExample.getAuthor()).append("\n")
+				.append("Contact: ").append(selectedExample.getContact())
+				.append("\n").append("\n")
 				.append(selectedExample.getDescription());
 		getExampleDescription().setText(sb.toString());
 	}

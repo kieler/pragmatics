@@ -51,6 +51,7 @@ public class ExampleAttributesPage extends WizardPage {
 		new Label(composite, SWT.NONE).setText("Author:");
 		author = new Text(composite, SWT.BORDER);
 		author.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		author.setText(System.getProperty("user.name"));
 
 		new Label(composite, SWT.NONE).setText("Contact:");
 		contact = new Text(composite, SWT.BORDER);
