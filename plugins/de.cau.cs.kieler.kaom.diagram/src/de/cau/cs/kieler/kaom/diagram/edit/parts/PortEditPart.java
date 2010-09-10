@@ -119,10 +119,7 @@ public class PortEditPart extends AdvancedRenderingBorderedBorderItemEditPart {
 	 * @generated
 	 */
 	protected IFigure createNodeShape() {
-		primaryShape = new PortFigure();
-
-		updateFigure(primaryShape);
-		return primaryShape;
+		return primaryShape = new PortFigure();
 	}
 
 	/**

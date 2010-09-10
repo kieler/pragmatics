@@ -77,4 +77,11 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
         return this.getNotationView().getElement();
     }
 
+    @Override
+    public IFigure getFigure() {
+        IFigure figure = super.getFigure();
+        updateFigure(primaryShape);
+        return figure;
+    }
+    
 }

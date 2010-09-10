@@ -51,19 +51,22 @@ public final class ConditionProvider {
      * HashTable for caching condition pairs so that the ExtensionPoint is parsed only once per edit
      * part.
      */
-    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = new HashMap<String, List<HashMap<String, Object>>>();
+    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = 
+        new HashMap<String, List<HashMap<String, Object>>>();
 
     /**
      * HashTable for caching figure providers so that the ExtensionPoint is parsed only once per
      * edit part.
      */
-    private HashMap<String, IRenderingProvider> hashTableFigureProviders = new HashMap<String, IRenderingProvider>();
+    private HashMap<String, IRenderingProvider> hashTableFigureProviders = 
+        new HashMap<String, IRenderingProvider>();
 
     /**
      * HashTable for caching the relevant features and feature ids. Not yet used, will probably
      * removed again.
      */
-    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = new HashMap<Integer, EStructuralFeature>();
+    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = 
+        new HashMap<Integer, EStructuralFeature>();
 
     /**
      * Constructor set to private to ensure usage of singleton instance.
@@ -102,14 +105,12 @@ public final class ConditionProvider {
      *            the editor for which the returned conditions will be defined
      * @return list of all condition figure pairs that fit the given editor
      */
-    public List<HashMap<String, Object>> /* List<Pair<Pair<String, String>, ICondition<EObject>>> */getPairs(
+    public List<HashMap<String, Object>> getPairs(
             final String callingEditPart) {
         if (hashTableConditions.containsKey(callingEditPart)) {
             return hashTableConditions.get(callingEditPart);
         }
         List<HashMap<String, Object>> conditionsList = new LinkedList<HashMap<String, Object>>();
-        // List<Pair<Pair<String, String>, ICondition<EObject>>> conditionFigurePairs = new
-        // LinkedList<Pair<Pair<String, String>, ICondition<EObject>>>();
         IConfigurationElement[] configurations = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTENSION_POINT_ID);
         for (IConfigurationElement settings : configurations) {
@@ -117,17 +118,10 @@ public final class ConditionProvider {
                 System.out.println("faulty extensionpoint");
                 continue;
             }
-            // String editorId = settings.getAttribute("editorId");
             IConfigurationElement[] parts = settings.getChildren("editPart");
             if (checkCompatibleEditParts(parts, callingEditPart)) {
                 IConfigurationElement[] packages = settings.getChildren("package");
                 IConfigurationElement[] conditionsContainer = settings.getChildren("conditions");
-                /*
-                 * IConfigurationElement[] mutatableObjectContainer = settings
-                 * .getChildren("mutatableObject"); if (mutatableObjectContainer.length != 0) { //
-                 * TODO support for mutatable objects, probably wont make it into final version
-                 * since // annotations also work with conditions. } else {
-                 */
                 for (IConfigurationElement conditionContainer : conditionsContainer) {
                     IConfigurationElement[] conditions = conditionContainer.getChildren();
                     for (IConfigurationElement condition : conditions) {
@@ -145,12 +139,6 @@ public final class ConditionProvider {
 
                         ICondition<EObject> cond = getCondition(condition, packages);
                         if ((cond != null)) {
-                            /*
-                             * Pair<Pair<String, String>, ICondition<EObject>> pair = new
-                             * Pair<Pair<String, String> , ICondition<EObject>>( new Pair <String,
-                             * String>(figureParam, layoutParam), cond);
-                             * conditionFigurePairs.add(pair);
-                             */
                             conditionElement.put("condition", cond);
                             conditionsList.add(conditionElement);
                         } else {
@@ -191,13 +179,9 @@ public final class ConditionProvider {
                     return cond;
                 } else {
                     throw new RuntimeException("Could not parse value to type of feature.");
-                    // System.out.println("Could not parse value to type of feature.");
-                    // return null;
                 }
             } else {
                 throw new RuntimeException("Could not find specified feature.");
-                // System.out.println("Could not find specified feature");
-                // return null;
             }
         } else if (condition.getName().equals("listSizeCondition")) {
             String featureString = condition.getAttribute("feature");
@@ -214,8 +198,6 @@ public final class ConditionProvider {
                 return cond;
             } else {
                 throw new RuntimeException("Could not find specified feature.");
-                // System.out.println("Could not find specified feature");
-                // return null;
             }
         } else if (condition.getName().equals("compoundCondition")) {
             IConfigurationElement[] compounds = condition.getChildren();
@@ -226,7 +208,6 @@ public final class ConditionProvider {
                     compoundList.add(compCond);
                 } else {
                     throw new RuntimeException("Could build compound.");
-                    // System.out.println("Couldnt get compound. Compound was skipped.");
                 }
             }
             CompoundCondition<EObject> cond = new CompoundCondition<EObject>(compoundList);
@@ -239,14 +220,13 @@ public final class ConditionProvider {
                 String value = condition.getAttribute("value");
                 if (customConditionObject instanceof ICustomCondition<?>) {
                     @SuppressWarnings("unchecked")
-                    ICustomCondition<EObject> customCondition = (ICustomCondition<EObject>) customConditionObject;
+                    ICustomCondition<EObject> customCondition = 
+                        (ICustomCondition<EObject>) customConditionObject;
                     customCondition.initialize(key, value);
                     return customCondition;
                 }
             } catch (CoreException e) {
                 throw new RuntimeException("customCondition failed to load.");
-                // System.out.println("customCondition failed to load.");
-                // e.printStackTrace();
             }
         }
         return null;
@@ -358,8 +338,6 @@ public final class ConditionProvider {
                             .createExecutableExtension("RenderingProvider");
                 } catch (CoreException e1) {
                     throw new RuntimeException("figureProvider failed to load.");
-                    // System.out.println("figureProvider failed to load");
-                    // e1.printStackTrace();
                 }
                 hashTableFigureProviders.put(callingEditPart, figureProvider);
                 return figureProvider;

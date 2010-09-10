@@ -117,10 +117,7 @@ public class Relation2EditPart extends AdvancedRenderingBorderedShapeEditPart {
 	 * @generated
 	 */
 	protected IFigure createNodeShape() {
-		primaryShape = new RelationFigure();
-
-		updateFigure(primaryShape);
-		return primaryShape;
+		return primaryShape = new RelationFigure();
 	}
 
 	/**

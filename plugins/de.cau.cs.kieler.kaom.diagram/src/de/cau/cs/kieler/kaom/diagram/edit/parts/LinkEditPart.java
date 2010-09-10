@@ -53,10 +53,7 @@ public class LinkEditPart extends AdvancedRenderingConnectionEditPart implements
 	 */
 
 	protected Connection createConnectionFigure() {
-		LinkFigure linkFigure = new LinkFigure();
-
-		updateFigure(linkFigure);
-		return linkFigure;
+		return new LinkFigure();
 	}
 
 	/**

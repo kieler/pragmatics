@@ -77,5 +77,12 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
     public EObject getModelElement() {
         return this.getNotationView().getElement();
     }
+    
+    @Override
+    public IFigure getFigure() {
+        IFigure figure = super.getFigure();
+        updateFigure(primaryShape);
+        return figure;
+    }
 
 }

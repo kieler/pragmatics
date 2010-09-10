@@ -131,10 +131,7 @@ public class Entity3EditPart extends AdvancedRenderingBorderedShapeEditPart {
 	 * @generated
 	 */
 	protected IFigure createNodeShape() {
-		primaryShape = new EntityFigure();
-
-		updateFigure(primaryShape);
-		return primaryShape;
+		return primaryShape = new EntityFigure();
 	}
 
 	/**

@@ -15,10 +15,7 @@
 
 «DEFINE createLinkFigure(link : gmfgen::GenLink) FOR gmfgen::InnerClassViewmap»
 	protected org.eclipse.draw2d.Connection createConnectionFigure() {
-		LinkFigure linkFigure = new «className»();
-		«REM»  Added call to updateFigure «ENDREM»
-		updateFigure(linkFigure);
-		return linkFigure;
+		return new «className»();
 	}
 
 	«EXPAND xpt::Common::generatedMemberComment»

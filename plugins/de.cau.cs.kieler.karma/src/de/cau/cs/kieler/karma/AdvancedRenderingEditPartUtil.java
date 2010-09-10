@@ -8,7 +8,13 @@ import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.ConnectionEditPart;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.EditPartListener;
+import org.eclipse.gef.NodeListener;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
+import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
@@ -133,11 +139,14 @@ public class AdvancedRenderingEditPartUtil {
                             figure.getBounds().setSize(dim);
                             figure.setMaximumSize(dim.getCopy());
                             figure.setMinimumSize(dim.getCopy());
-                            // attrFigure.setPreferredSize(dim.getCopy());
+                            figure.setPreferredSize(dim.getCopy());
+                            if (figure.getParent() instanceof DefaultSizeNodeFigure) {
+                                ((DefaultSizeNodeFigure)figure.getParent()).setDefaultSize(figure.getSize().getCopy());
+                            }
                             if (attrFigure != null) {
                                 attrFigure.setResizeable(false);
                             }
-                        }
+                        } 
 
                         lastCondition = condition;
                         return true;
@@ -147,5 +156,29 @@ public class AdvancedRenderingEditPartUtil {
         }
         return false;
     }
-
+    
+    public void setSize(IFigure figure, final EObject modelElement, final AbstractGraphicalEditPart editPart) {
+        if (figure instanceof SwitchableFigure) {
+            if (!((SwitchableFigure)figure).getResizeable()){
+                figure.getParent().setSize(figure.getSize().getCopy());
+            } 
+        }
+                /*
+                IFigure bnf = editPart.getFigure();
+                if (bnf instanceof BorderedNodeFigure) {
+                    IFigure dnsf = ((BorderedNodeFigure)bnf).getMainFigure();
+                
+                if (dnsf instanceof DefaultSizeNodeFigure) {
+                    ((DefaultSizeNodeFigure) dnsf).setSize(figure.getSize().getCopy());
+                    ((DefaultSizeNodeFigure) dnsf).setMaximumSize(figure.getSize().getCopy());
+                }
+                }
+            }
+        }
+        */
+        
+        
+    }
 }
+
+

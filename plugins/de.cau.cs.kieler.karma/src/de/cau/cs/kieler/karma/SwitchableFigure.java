@@ -16,6 +16,7 @@ package de.cau.cs.kieler.karma;
 
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -103,7 +104,6 @@ public class SwitchableFigure extends Shape { // implements IAttributeAwareFigur
     /**
      * {@inheritDoc}
      */
-
     @Override
     public void setBounds(final Rectangle rect) {
         // Notifier target = getTarget();
@@ -128,12 +128,10 @@ public class SwitchableFigure extends Shape { // implements IAttributeAwareFigur
      *            the new bounds
      */
     public void setBoundsDirect(final Rectangle rect) {
-        if (resizeable) {
             super.setBounds(rect);
             if (currentFigure != null) {
                 this.currentFigure.setBounds(rect);
             }
-        }
     }
 
     @Override
@@ -147,6 +145,13 @@ public class SwitchableFigure extends Shape { // implements IAttributeAwareFigur
     public void setMaximumSize(Dimension d) {
         if (resizeable) {
             super.setMaximumSize(d);
+        }
+    }
+    
+    @Override
+    public void setSize(int w, int h) {
+        if (resizeable) {
+            super.setSize(w, h);
         }
     }
 

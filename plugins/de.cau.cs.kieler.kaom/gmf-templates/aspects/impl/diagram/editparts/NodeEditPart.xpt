@@ -32,10 +32,7 @@
 «DEFINE createNodeShape(node : gmfgen::GenNode) FOR gmfgen::InnerClassViewmap-»
 	«EXPAND xpt::Common::generatedMemberComment»
 	protected org.eclipse.draw2d.IFigure createNodeShape() {
-		primaryShape = new «className»()«IF node.childNodes->notEmpty() and node.getLayoutType() = gmfgen::ViewmapLayoutType::XY_LAYOUT»«EXPAND forceUseLocalCoordinates»«ENDIF»;
-		«REM» Added call to updateFigure «ENDREM»
-		updateFigure(primaryShape);
-		return primaryShape;
+		return primaryShape = new «className»()«IF node.childNodes->notEmpty() and node.getLayoutType() = gmfgen::ViewmapLayoutType::XY_LAYOUT»«EXPAND forceUseLocalCoordinates»«ENDIF»;
 	}
 
 	«EXPAND getPrimaryShapeMethod FOR className-»
