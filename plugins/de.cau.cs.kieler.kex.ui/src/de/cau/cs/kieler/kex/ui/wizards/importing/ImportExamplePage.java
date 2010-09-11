@@ -8,18 +8,21 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
@@ -30,7 +33,7 @@ import de.cau.cs.kieler.kex.model.Example;
 
 public class ImportExamplePage extends WizardResourceImportPage {
 
-	private Text exampleDescription;
+	private StyledText exampleDescription;
 
 	private Tree exampleTree;
 
@@ -90,12 +93,10 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
 	private void createMiddleComponent(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setLayout(layout);
-		createTreeElement(composite);
-		createPreviewComp(composite);
+		composite.setLayout(new FormLayout());
+		Control createTreeComposite = createTreeComposite(composite);
+		createPreviewComp(composite, createTreeComposite);
+		composite.getShell().redraw();
 
 	}
 
@@ -103,23 +104,33 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		Label descriptionLabel = new Label(parent, SWT.NONE);
 		descriptionLabel.setText("Example Description");
 
-		this.exampleDescription = new Text(parent, SWT.MULTI | SWT.V_SCROLL
-				| SWT.H_SCROLL | SWT.BORDER);
+		this.exampleDescription = new StyledText(parent, SWT.MULTI
+				| SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		this.exampleDescription.setEditable(false);
-		this.exampleDescription.setText("\n\n\n\n\n\n");
+		this.exampleDescription.setText("\n\n\n\n\n");
 		this.exampleDescription.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
 	}
 
-	private void createTreeElement(Composite parent) {
+	private Control createTreeComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		new Label(composite, SWT.NONE).setText("Choose Examples");
+		composite.setLayout(new FormLayout());
+		FormData formData = new FormData();
+		composite.setLayoutData(formData);
+		Label treeDesc = new Label(composite, SWT.NONE);
+		FormData labelData = new FormData();
+		treeDesc.setLayoutData(labelData);
+		treeDesc.setText("Choose Examples");
+		createTree(composite, treeDesc);
+		return composite;
+	}
+
+	private Control createTree(Composite composite, Control topControl) {
 		exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL
 				| SWT.H_SCROLL);
-		exampleTree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		exampleTree.setBounds(0, 0, 300, 200);
+		FormData formData = new FormData(250, 110);
+		formData.top = new FormAttachment(topControl, 5);
+		exampleTree.setLayoutData(formData);
 		exampleTree.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				updateElements(e);
@@ -130,16 +141,13 @@ public class ImportExamplePage extends WizardResourceImportPage {
 			}
 		});
 
-		initTree(exampleTree);
-	}
-
-	private void initTree(Tree tree) {
 		List<String> categories = ExampleManager.get().getCategories();
 		for (int i = 0; i < categories.size(); i++) {
-			TreeItem iItem = new TreeItem(tree, SWT.CHECK);
+			TreeItem iItem = new TreeItem(exampleTree, SWT.CHECK);
 			iItem.setText(categories.get(i));
 			addExamplesToItem(categories.get(i), iItem);
 		}
+		return exampleTree;
 	}
 
 	private void addExamplesToItem(String category, TreeItem tItem) {
@@ -152,13 +160,22 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		}
 	}
 
-	private void createPreviewComp(Composite composite) {
+	private void createPreviewComp(Composite composite, Control controlComp) {
+
 		previewComp = new Composite(composite, SWT.NONE);
 		previewComp.setLayout(new FormLayout());
-		new Label(previewComp, SWT.NONE).setText("Example Preview");
+		FormData prevData = new FormData();
+		prevData.left = new FormAttachment(controlComp, 5);
+		previewComp.setLayoutData(prevData);
+		Label previewDesc = new Label(previewComp, SWT.NONE);
+		previewDesc.setText("Example Preview");
+		FormData formData = new FormData();
+		previewDesc.setLayoutData(formData);
 		imageLabel = new Label(previewComp, SWT.BORDER);
-		imageLabel.setBounds(exampleTree.getBounds());
 		imageLabel.setImage(initPreviewImage());
+		FormData formData2 = new FormData(160, 90);
+		formData2.top = new FormAttachment(previewDesc, 5);
+		imageLabel.setLayoutData(formData2);
 	}
 
 	private void updateElements(SelectionEvent e) {
@@ -207,11 +224,10 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
 	private void updateDescriptionLabel(Example selectedExample) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Title:       ").append(selectedExample.getTitle())
-				.append("\n").append("Author:   ")
-				.append(selectedExample.getAuthor()).append("\n")
-				.append("Contact: ").append(selectedExample.getContact())
-				.append("\n").append("\n")
+		sb.append("Title:       ").append(selectedExample.getTitle()).append(
+				"\n").append("Author:   ").append(selectedExample.getAuthor())
+				.append("\n").append("Contact: ").append(
+						selectedExample.getContact()).append("\n").append("\n")
 				.append(selectedExample.getDescription());
 		getExampleDescription().setText(sb.toString());
 	}
@@ -245,7 +261,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		return result;
 	}
 
-	public Text getExampleDescription() {
+	public StyledText getExampleDescription() {
 		return exampleDescription;
 	}
 
