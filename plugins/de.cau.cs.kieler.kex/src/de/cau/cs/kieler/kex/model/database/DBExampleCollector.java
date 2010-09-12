@@ -36,7 +36,7 @@ public class DBExampleCollector extends ExampleCollector {
 	}
 
 	@Override
-	public void loadExamples() {
+	public void load() {
 		// database.loadExample();
 	}
 

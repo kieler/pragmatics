@@ -22,7 +22,7 @@ import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleResource;
 
-public class ExampleImportUtil {
+public class ExampleImport {
 
 	private final static String workspaceLocation = Platform.getLocation()
 			.toString();
@@ -35,37 +35,39 @@ public class ExampleImportUtil {
 	 * @param selectedExamples
 	 * @throws KielerException
 	 */
-	public static List<String> importExamples(IPath selectedResource,
-			List<Example> selectedExamples, boolean isQuickStart)
+	public static List<String> importExamples(final IPath selectedResource,
+			final List<Example> selectedExamples, boolean isQuickStart)
 			throws KielerException {
-		List<String> directOpens = new ArrayList<String>();
 		if (isQuickStart) {
-
-			// wurde example gew�hlt? ansonsten standard example nutzen.
-
+			return createQuickStartProject();
 		}
+
+		List<String> directOpens = new ArrayList<String>();
+
+		StringBuilder destFolder = new StringBuilder();
+		destFolder.append(workspaceLocation).append(
+				(selectedResource != null ? selectedResource.toString() : ""))
+				.append("/");
+
 		for (Example example : selectedExamples) {
 
-			// check contain project,
-			// falls ja projekt erzeuge und alle example dateien da rein
-			// schmei�en.
-
 			List<ExampleResource> resources = example.getResources();
-			String destFolder = workspaceLocation
-					+ (selectedResource != null ? selectedResource.toString()
-							: "") + "/";
+
 			Bundle bundle = Platform.getBundle(example.getNamespaceId());
-			String rootResource = example.getRootResource();
+			String rootDirectory = example.getRootDir();
 			int exampleBeginIndex = 0;
-			if (rootResource != null && rootResource.length() > 1) {
-				exampleBeginIndex = rootResource.length();
+			if (rootDirectory != null && rootDirectory.length() > 1) {
+				exampleBeginIndex = rootDirectory.length();
 			}
 
-			handleResources(directOpens, resources, destFolder, bundle,
-					exampleBeginIndex);
+			handleResources(directOpens, resources, destFolder.toString(),
+					bundle, exampleBeginIndex);
 		}
 		return directOpens;
+	}
 
+	private static List<String> createQuickStartProject() {
+		return null;
 	}
 
 	private static void handleResources(List<String> directOpens,
@@ -119,8 +121,8 @@ public class ExampleImportUtil {
 	}
 
 	public static InputStream loadStandardPic() {
-		Bundle bundle = Platform.getBundle(ExampleImportUtil.kexNamespaceId);
-		URL entry = bundle.getEntry(ExampleImportUtil.standardPicPath);
+		Bundle bundle = Platform.getBundle(ExampleImport.kexNamespaceId);
+		URL entry = bundle.getEntry(ExampleImport.standardPicPath);
 		try {
 			return entry.openStream();
 		} catch (IOException e) {

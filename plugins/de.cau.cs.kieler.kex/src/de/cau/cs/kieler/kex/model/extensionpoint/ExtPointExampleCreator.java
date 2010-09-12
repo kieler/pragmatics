@@ -137,10 +137,8 @@ public class ExtPointExampleCreator {
 				.getParentFile();
 		String relativeLocation = location.getPath().substring(
 				project.getPath().length());
-		example
-				.setRootResource((relativeLocation.length() > 0) ? relativeLocation
-						.substring(1)
-						: relativeLocation);
+		example.setRootDir((relativeLocation.length() > 0) ? relativeLocation
+				.substring(1) : relativeLocation);
 	}
 
 	private Node getPluginNode(File locationFile,
@@ -370,9 +368,6 @@ public class ExtPointExampleCreator {
 				.getDescription());
 		createdExample.setAttribute(ExtPointConstants.GENERATION_DATE, example
 				.getGenerationDate().toString());
-		createdExample.setAttribute(ExtPointConstants.VERSION, example
-				.getVersion().toString());
-
 		makeRootSource(location, example);
 
 		String overviewPicPath = example.getPreviewPicPath();
@@ -387,18 +382,17 @@ public class ExtPointExampleCreator {
 		if (contact != null)
 			createdExample.setAttribute(ExtPointConstants.CONTACT, contact);
 
-		String rootResource = example.getRootResource();
-		if (rootResource != null)
+		String rootDirectory = example.getRootDir();
+		if (rootDirectory != null)
 			createdExample.setAttribute(ExtPointConstants.ROOT_DIRECTORY,
-					rootResource);
+					rootDirectory);
 
 		for (String category : example.getCategories()) {
 			createdExample.appendChild(toNode(category));
 		}
 
 		for (ExampleResource exResource : example.getResources()) {
-			createdExample.appendChild(toNode(example.getRootResource(),
-					exResource));
+			createdExample.appendChild(toNode(rootDirectory, exResource));
 		}
 		return createdExample;
 

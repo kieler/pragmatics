@@ -8,7 +8,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Version;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
@@ -38,7 +37,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	 * @throws KielerException
 	 */
 	@Override
-	public void loadExamples() throws KielerException {
+	public void load() throws KielerException {
 		if (this.categoryPool == null) {
 			this.categoryPool = new ArrayList<String>();
 		}
@@ -126,13 +125,8 @@ public class ExtPointExampleCollector extends ExampleCollector {
 			KielerException {
 
 		String titleAttr = exampleElement.getAttribute(ExtPointConstants.TITLE);
-		String versionAttr = exampleElement
-				.getAttribute(ExtPointConstants.VERSION);
-		// FIXME IllegalArgumentException sehr wahrscheinlich, da das
-		// version feld
 		// ein freier string, min. default besser noch regex.
-		Example example = new Example(titleAttr, Version
-				.parseVersion(versionAttr), SourceType.KIELER);
+		Example example = new Example(titleAttr, SourceType.KIELER);
 		example.setDescription(exampleElement
 				.getAttribute(ExtPointConstants.DESCRIPTION));
 		example.setContact(exampleElement
@@ -142,7 +136,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 						.getAttribute(ExtPointConstants.AUTHOR));
 		String exNamespaceId = exampleElement.getNamespaceIdentifier();
 		example.setNamespaceId(exNamespaceId);
-		example.setRootResource(exampleElement
+		example.setRootDir(exampleElement
 				.getAttribute(ExtPointConstants.ROOT_DIRECTORY));
 
 		List<String> categories = filterElement(exampleElement,

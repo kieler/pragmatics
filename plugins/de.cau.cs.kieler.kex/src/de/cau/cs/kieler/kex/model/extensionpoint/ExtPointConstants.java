@@ -12,7 +12,6 @@ public class ExtPointConstants {
 	public static final String EXAMPLE = "example";
 	public static final String TITLE = "title";
 	public static final String GENERATION_DATE = "generation_date";
-	public static final String VERSION = "version";
 	public static final String DESCRIPTION = "description";
 	public static final String AUTHOR = "author";
 	public static final String CONTACT = "contact";

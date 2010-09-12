@@ -8,8 +8,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 
 import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.kex.controller.util.ExampleExportUtil;
-import de.cau.cs.kieler.kex.controller.util.ExampleImportUtil;
+import de.cau.cs.kieler.kex.controller.util.ExampleExport;
+import de.cau.cs.kieler.kex.controller.util.ExampleImport;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.model.database.DBExampleCollector;
@@ -58,18 +58,18 @@ public class ExampleManager {
 	 */
 	public void load(boolean forceLoad) throws KielerException {
 		if (!this.isLoaded || forceLoad) {
-			loadExamples();
+			load();
 			// after completely loaded
 			this.isLoaded = true;
 		}
 	}
 
-	private void loadExamples() throws KielerException {
+	private void load() throws KielerException {
 		// TODO exception pool aufbauen und alle examples laden die gehen, rest
 		// als messagebox anzeigen.
-		this.extensionCollector.loadExamples();
+		this.extensionCollector.load();
 		// test impl of an online interface.
-		this.databaseCollector.loadExamples();
+		this.databaseCollector.load();
 	}
 
 	public Map<String, Example> getExamples() {
@@ -88,7 +88,7 @@ public class ExampleManager {
 	public List<String> importExamples(IPath selectedResource,
 			List<Example> selectedExamples, boolean isQuickStart)
 			throws KielerException {
-		return ExampleImportUtil.importExamples(selectedResource,
+		return ExampleImport.importExamples(selectedResource,
 				selectedExamples, isQuickStart);
 	}
 
@@ -102,7 +102,7 @@ public class ExampleManager {
 	public void export(Map<ExampleElement, Object> properties)
 			throws KielerException {
 		if (SourceType.KIELER.equals(properties.get(ExampleElement.SOURCETYPE)))
-			ExampleExportUtil.export(properties, this.extensionCreator,
+			ExampleExport.export(properties, this.extensionCreator,
 					this.extensionCollector, this.databaseCollector);
 		else if (SourceType.PUBLIC.equals(properties
 				.get(ExampleElement.SOURCETYPE))) {
@@ -112,11 +112,11 @@ public class ExampleManager {
 	}
 
 	public InputStream loadPreviewPic(Example example) throws KielerException {
-		return ExampleImportUtil.loadPreviewPic(example);
+		return ExampleImport.loadPreviewPic(example);
 	}
 
 	public InputStream loadStandardPic() {
-		return ExampleImportUtil.loadStandardPic();
+		return ExampleImport.loadStandardPic();
 	}
 
 }

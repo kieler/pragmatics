@@ -8,7 +8,7 @@ import de.cau.cs.kieler.core.KielerException;
 
 public abstract class ExampleCollector {
 
-	public abstract void loadExamples() throws KielerException;
+	public abstract void load() throws KielerException;
 
 	/**
 	 * returns the loaded examplePool

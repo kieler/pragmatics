@@ -5,19 +5,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.osgi.framework.Version;
-
 public class Example {
 
 	/**
 	 * unique field.
 	 */
 	private final String title;
-
-	/**
-	 * initial version is set, if not specified.
-	 */
-	private final Version version;
 
 	private final List<ExampleResource> resources;
 
@@ -35,13 +28,12 @@ public class Example {
 
 	private String namespaceId;
 
-	private String rootResource;
+	private String rootDir;
 
 	private String previewPicPath;
 
-	public Example(final String title, Version version, SourceType importType) {
+	public Example(final String title, SourceType importType) {
 		this.title = title;
-		this.version = version;
 		this.sourceType = importType;
 		this.resources = new ArrayList<ExampleResource>();
 		this.categories = new ArrayList<String>();
@@ -53,8 +45,7 @@ public class Example {
 		return new StringBuffer().append("Example [title= ").append(getTitle())
 				.append(",source type= ").append(
 						SourceType.map(this.sourceType)).append(getContact())
-				.append(", version= ").append(version.toString()).append(
-						", author= ").append(this.author).append(
+				.append(", author= ").append(this.author).append(
 						", generated at= ").append(
 						this.generationDate.toString()).append(
 						", description= ").append(getDescription()).append("]")
@@ -75,10 +66,6 @@ public class Example {
 
 	public Date getGenerationDate() {
 		return this.generationDate;
-	}
-
-	public Version getVersion() {
-		return this.version;
 	}
 
 	public SourceType getSourceType() {
@@ -125,12 +112,12 @@ public class Example {
 		return this.namespaceId;
 	}
 
-	public void setRootResource(String rootResource) {
-		this.rootResource = rootResource;
+	public void setRootDir(String rootDir) {
+		this.rootDir = rootDir;
 	}
 
-	public String getRootResource() {
-		return this.rootResource;
+	public String getRootDir() {
+		return this.rootDir;
 	}
 
 	public void setAuthor(String author) {
