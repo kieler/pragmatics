@@ -71,6 +71,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 		}
 
 		// refresh workspace project
+		// TODO wird nicht bei quickstart gehen.
 		IContainer element = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(mainPage.getContainerPath().segment(0));
 		try {
