@@ -10,5 +10,6 @@ public class ErrorMessage {
 	public static final String TRANSFORM_ERROR = "Could not transform to plugin.xml.";
 	public static final String PLUGIN_WRITE_ERROR = "Error appears at writing plugin.xml.";
 	public static final String PREVIEW_LOAD_ERROR = "Could not load preview for example: ";
+	public static final String NO_Import = "Can't import example!";
 
 }

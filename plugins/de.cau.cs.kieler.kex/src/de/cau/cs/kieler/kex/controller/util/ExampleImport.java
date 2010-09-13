@@ -99,11 +99,11 @@ public class ExampleImport {
 					break;
 				}
 			} catch (FileNotFoundException e) {
-				throw new KielerException("Can't import example!", e);
+				throw new KielerException(ErrorMessage.NO_Import, e);
 			} catch (IOException e1) {
-				throw new KielerException("Can't import example!", e1);
+				throw new KielerException(ErrorMessage.NO_Import, e1);
 			} catch (CoreException e2) {
-				throw new KielerException("Can't import example!", e2);
+				throw new KielerException(ErrorMessage.NO_Import, e2);
 			}
 		}
 	}
