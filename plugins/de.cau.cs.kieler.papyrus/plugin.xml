@@ -35,6 +35,16 @@
             option="de.cau.cs.kieler.layout.options.minSpacing"
             value="30.0">
       </option>
+      <option
+            class="org.eclipse.papyrus.diagram.clazz.edit.parts.ComponentEditPart"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.classDiagram">
+      </option>
+      <option
+            class="org.eclipse.papyrus.diagram.clazz.edit.parts.ComponentEditPart"
+            option="de.cau.cs.kieler.layout.options.minSpacing"
+            value="30.0">
+      </option>
    </extension>
    <extension
          id="de.cau.cs.kieler.papyrus.layout.useCase"
@@ -56,17 +66,17 @@
             value="20.0">
       </option>
       <option
-            class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPart"
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPartTN"
             option="de.cau.cs.kieler.layout.options.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
       </option>
       <option
-            class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPart"
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPartTN"
             option="de.cau.cs.kieler.layout.options.minSpacing"
             value="40.0">
       </option>
       <option
-            class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPart"
+            class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPartTN"
             option="de.cau.cs.kieler.layout.options.borderSpacing"
             value="20.0">
       </option>
@@ -84,6 +94,14 @@
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.PackageEditPartTN"
             option="de.cau.cs.kieler.layout.options.borderSpacing"
             value="20.0">
+      </option>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutInfo">
+      <option
+            class="org.eclipse.papyrus.diagram.statemachine.custom.edit.part.CustomPackageEditPart"
+            option="de.cau.cs.kieler.layout.options.diagramType"
+            value="de.cau.cs.kieler.layout.diagrams.boxes">
       </option>
    </extension>
    <extension
