@@ -13,14 +13,10 @@
  */
 package de.cau.cs.kieler.graphs.wizards;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.HashMap;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -30,24 +26,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.graphdrawing.graphml.GraphMLPackage;
-import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
-import org.graphdrawing.graphml.util.GraphMLXMLProcessor;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
@@ -134,7 +120,8 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
     }
 
     /**
-     * Find the container and create the file if missing or just replace its contents.
+     * Find the container and create the file if missing or just replace its
+     * contents.
      * 
      * @param importFileName
      *            name of the import file
@@ -172,7 +159,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
 
         EPackage p1 = GraphsPackage.eINSTANCE;
         EPackage p2 = GraphMLPackage.eINSTANCE;
-        
+
         Status myStatus = null;
         try {
             input = URI.createFileURI(importFileName);
@@ -180,19 +167,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
                     URI.createPlatformResourceURI(
                             container.getFile(new Path(fileName)).getFullPath()
                                     .toString(), true);
-            
-            //ResourceSet resourceSet = new ResourceSetImpl();
-            // resourceSet.getPackageRegistry().put(null,pkg);
-            //resourceSet.getResourceFactoryRegistry().
-            //  getExtensionToFactoryMap().put("graphml",new GraphMLResourceFactoryImpl());
-            //Resource res = resourceSet.createResource(input);
-            //res.load(new HashMap(5));
-            
-            //System.out.println("whatever " + res.getContents().get(0).getClass());
-            
-            // Print the contents of the resource to System.out.
-            //res.save(System.out, Collections.EMPTY_MAP);
-            
+
             XtendTransformationUtil.model2ModelTransform(transformation, fun,
                     input, output, p1, p2);
         } catch (KielerException e) {

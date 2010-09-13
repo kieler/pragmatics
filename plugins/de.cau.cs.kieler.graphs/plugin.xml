@@ -39,5 +39,15 @@
          </Priority>
       </editpolicyProvider>
    </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.graphs.wizards.ImportGraphWizard"
+            icon="icons/importdiagram.gif"
+            id="de.cau.cs.kieler.graphs.importWizard"
+            name="Import Graph">
+      </wizard>
+   </extension>
       
 </plugin>
