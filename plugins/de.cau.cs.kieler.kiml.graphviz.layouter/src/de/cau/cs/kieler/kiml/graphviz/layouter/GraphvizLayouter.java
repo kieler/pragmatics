@@ -311,7 +311,7 @@ public class GraphvizLayouter {
         List<Attribute> graphAttrs = graphAttrStatement.getAttributes();
         // set minimal spacing
         float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
-        if (Float.isNaN(minSpacing)) {
+        if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
         String spacingVal = Float.toString(minSpacing / DPI);
@@ -330,7 +330,7 @@ public class GraphvizLayouter {
         }
         // set offset to border
         offset = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
-        if (Float.isNaN(offset)) {
+        if (offset < 0) {
             offset = DEF_MIN_SPACING / 2;
         }
         // set layout direction
@@ -477,7 +477,7 @@ public class GraphvizLayouter {
         }
         // set label distance
         float distance = edgeLayout.getProperty(LABEL_DISTANCE);
-        if (!Float.isNaN(distance) && distance >= 0.0f) {
+        if (distance >= 0.0f) {
             attributes.add(createAttribute(GraphvizAPI.ATTR_LABELDISTANCE,
                     Float.toString(distance)));
             if (distance > 1.0f) {
