@@ -75,34 +75,32 @@ import de.cau.cs.kieler.kaom.graphiti.features.UpdateEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateLinkFeature;
 
 /**
+ * Provides and initializes all features for the Graphiti KAOM editor.
  * 
- * @author atr Class which provides(initializes) all the features
+ * @author atr
  */
 public class FeatureProvider extends DefaultFeatureProvider {
 
     /**
+     * Constructor.
      * 
-     * @param dtp
-     *            Constructor.
+     * @param dtp the diagram type provider
      */
     public FeatureProvider(final IDiagramTypeProvider dtp) {
         super(dtp);
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
     public ICreateFeature[] getCreateFeatures() {
-
         return new ICreateFeature[] { new CreateEntityFeature(this),
-                new CreatePortFeature(this, "Port", "Create Port"),
-                new CreateRelationFeature(this, "Relation", "Create Relation") };
+                new CreatePortFeature(this),
+                new CreateRelationFeature(this) };
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -117,7 +115,6 @@ public class FeatureProvider extends DefaultFeatureProvider {
             return new AddRelationFeature(this);
         }
         return super.getAddFeature(context);
-
     }
 
     /**
@@ -155,11 +152,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
             return new MoveRelationFeature(this);
         }
         return super.getMoveShapeFeature(context);
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -171,7 +166,6 @@ public class FeatureProvider extends DefaultFeatureProvider {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -182,11 +176,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
             return new ResizeEntityFeature(this);
         }
         return super.getResizeShapeFeature(context);
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -200,7 +192,6 @@ public class FeatureProvider extends DefaultFeatureProvider {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -210,7 +201,6 @@ public class FeatureProvider extends DefaultFeatureProvider {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -227,17 +217,14 @@ public class FeatureProvider extends DefaultFeatureProvider {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
     public ICopyFeature getCopyFeature(final ICopyContext context) {
         return new CopyEntityFeature(this);
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -246,19 +233,14 @@ public class FeatureProvider extends DefaultFeatureProvider {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
-
-        return new ICreateConnectionFeature[] { new CreateLinkFeature(this) }; // ,"Link","Create Link")
-                                                                               // };
-
+        return new ICreateConnectionFeature[] { new CreateLinkFeature(this) };
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -267,11 +249,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
             return getCreateConnectionFeatures();
         }
         return null;
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override

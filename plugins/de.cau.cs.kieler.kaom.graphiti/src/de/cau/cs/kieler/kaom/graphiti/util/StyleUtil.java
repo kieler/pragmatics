@@ -15,20 +15,24 @@ package de.cau.cs.kieler.kaom.graphiti.util;
 
 import java.util.Collection;
 
+import org.eclipse.graphiti.mm.StyleContainer;
+import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.Style;
-import org.eclipse.graphiti.mm.pictograms.StyleContainer;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
 /**
+ * Utility class used to set a common style for all elements.
  * 
  * @author atr
- * Class used to set a common style for all elements
  */
-public class StyleUtil {
+public final class StyleUtil {
+    
+    /** Hidden constructor. */
+    private StyleUtil() {
+    }
 
     private static final IColorConstant E_CLASS_TEXT_FOREGROUND = new ColorConstant(100, 100, 100);
 
@@ -113,5 +117,3 @@ public class StyleUtil {
     }
 
 }
-
- 

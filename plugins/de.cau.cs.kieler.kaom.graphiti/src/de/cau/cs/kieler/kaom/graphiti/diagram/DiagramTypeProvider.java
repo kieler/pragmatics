@@ -18,7 +18,9 @@ import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 
 
 /**
- * @author atr Class DiagramTypeProvider used to initialize the diagram editor.
+ * Diagram type provider used to initialize the diagram editor.
+ * 
+ * @author atr
  */
 public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
 
@@ -30,11 +32,10 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
     public DiagramTypeProvider() {
         super();
         setFeatureProvider(new FeatureProvider(this));
-        
     }
 
     /**
-     * {@inheritDoc} Used to turn autoUpdate ON at the time of Runtime.
+     * {@inheritDoc}
      */
     @Override
     public boolean isAutoUpdateAtRuntime() {
@@ -42,8 +43,7 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
     }
 
     /**
-     * 
-     * {@inheritDoc} Used to turn autoUpdate ON at the time of StartUp.
+     * {@inheritDoc}
      */
     @Override
     public boolean isAutoUpdateAtStartup() {
@@ -51,7 +51,6 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -60,7 +59,6 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
             toolBehaviorProviders = new IToolBehaviorProvider[] { new ToolBehaviourProvider(this) };
         }
         return toolBehaviorProviders;
-
     }
 
 }

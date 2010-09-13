@@ -5,63 +5,63 @@
          point="org.eclipse.graphiti.ui.diagramTypeProviders">
       <diagramTypeProvider
             class="de.cau.cs.kieler.kaom.graphiti.diagram.DiagramTypeProvider"
-            description="Graphiti diagram editor for Kaom Model"
-            id="de.cau.cs.kieler.kaom.graphiti.diagramTypeProvider"
-            name="Kaom model diagram Type Provider">
+            description="Graphiti diagram type for KAOM models"
+            id="de.cau.cs.kieler.kaom.graphiti"
+            name="KAOM Diagram Type Provider">
          <diagramType
-               id="de.cau.cs.kieler.kaom.graphiti.diagramType">
+               id="de.cau.cs.kieler.kaom.diagramType">
          </diagramType>
          <imageProvider
-               id="de.cau.cs.kieler.kaom.graphiti.imageProvider">
+               id="de.cau.cs.kieler.kaom.imageProvider">
          </imageProvider>
       </diagramTypeProvider>
    </extension>
    <extension
          point="org.eclipse.graphiti.ui.diagramTypes">
       <diagramType
-            description="This is the graphiti diagram of the Kaom model"
-            id="de.cau.cs.kieler.kaom.graphiti.diagramType"
-            name="Kaom model diagram"
-            type="Kaommodel">
+            description="Graphiti diagram for KAOM models"
+            id="de.cau.cs.kieler.kaom.diagramType"
+            name="KAOM Diagram"
+            type="KAOM">
       </diagramType>
    </extension>
    <extension
          point="org.eclipse.graphiti.ui.imageProviders">
       <imageProvider
             class="de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider"
-            id="de.cau.cs.kieler.kaom.graphiti.imageProvider">
+            id="de.cau.cs.kieler.kaom.imageProvider">
       </imageProvider>
    </extension>
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
-            contributorId="Kaommodel.PropertyContributor">
+            contributorId="de.cau.cs.kieler.kaom.graphiti">
          <propertyCategory
                category="Graphiti"></propertyCategory>
       </propertyContributor>
    </extension>
    <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="de.cau.cs.kieler.kaom.graphiti">
+         <propertyTab
+               category="Graphiti"
+               id="de.cau.cs.kieler.kaom.graphiti.core"
+               label="Core">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
+   <extension
          point="org.eclipse.ui.views.properties.tabbed.propertySections">
       <propertySections
-            contributorId="Kaommodel.PropertyContributor">
+            contributorId="de.cau.cs.kieler.kaom.graphiti">
          <propertySection
                class="de.cau.cs.kieler.kaom.graphiti.features.EntitySection"
                filter="de.cau.cs.kieler.kaom.graphiti.features.EntityFilter"
-               id="graphiti.main.tab.emfclass"
-               tab="graphiti.main.tab">
+               id="de.cau.cs.kieler.kaom.graphiti.core"
+               tab="de.cau.cs.kieler.kaom.graphiti.core">
          </propertySection>
       </propertySections>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
-      <propertyTabs
-            contributorId="Kaommodel.PropertyContributor">
-         <propertyTab
-               category="Graphiti"
-               id="graphiti.main.tab"
-               label="Main">
-         </propertyTab>
-      </propertyTabs>
    </extension>
 
 </plugin>

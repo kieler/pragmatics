@@ -13,13 +13,12 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-import org.eclipse.graphiti.examples.common.SampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
-import org.eclipse.graphiti.mm.datatypes.Color;
+import org.eclipse.graphiti.mm.algorithms.styles.Color;
+import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Style;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
@@ -95,28 +94,28 @@ public class ChangeColorEntityFeature extends AbstractCustomFeature {
      */
     public void execute(final ICustomContext context) {
 
-        Style style = StyleUtil.getStyleForEClass(getDiagram());
-         // let the user choose the new color
-        Color currentColor;
-        if (background) {
-            currentColor = style.getBackground();
-        } else {
-            currentColor = style.getForeground();
-        }
-        Color newColor = SampleUtil.editColor(currentColor);
-
-        if (newColor == null) { // user did not choose new color
-            return;
-        }
-
-
-       // set new color
-        if (background) {
-            style.setBackground(newColor);
-        } else {
-            style.setForeground(newColor);
-
-        }
+//        Style style = StyleUtil.getStyleForEClass(getDiagram());
+//         // let the user choose the new color
+//        Color currentColor;
+//        if (background) {
+//            currentColor = style.getBackground();
+//        } else {
+//            currentColor = style.getForeground();
+//        }
+//        Color newColor = SampleUtil.editColor(currentColor);
+//
+//        if (newColor == null) { // user did not choose new color
+//            return;
+//        }
+//
+//
+//       // set new color
+//        if (background) {
+//            style.setBackground(newColor);
+//        } else {
+//            style.setForeground(newColor);
+//
+//        }
 
     }
 

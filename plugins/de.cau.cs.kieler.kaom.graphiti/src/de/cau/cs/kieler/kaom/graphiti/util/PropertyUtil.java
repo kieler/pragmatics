@@ -17,9 +17,9 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 
 /**
+ * Class to set the shape of Entity.
  * 
  * @author atr
- * Class to set the shape of Entity
  */
 public class PropertyUtil {
    

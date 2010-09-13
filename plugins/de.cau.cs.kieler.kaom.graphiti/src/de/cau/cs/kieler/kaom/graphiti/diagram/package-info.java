@@ -13,6 +13,6 @@
  */
 
 /**
- * uieheduc.
+ * Diagram configuration for the Graphiti KAOM editor.
  */
 package de.cau.cs.kieler.kaom.graphiti.diagram;

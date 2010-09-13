@@ -13,6 +13,6 @@
  */
 
 /**
- * Utility classes for the Graphiti KAOM editor. 
+ * Base package of the Graphiti editor for KAOM.
  */
-package de.cau.cs.kieler.kaom.graphiti.util;
+package de.cau.cs.kieler.kaom.graphiti;

@@ -38,9 +38,8 @@ public class CreateRelationFeature extends AbstractCreateFeature {
      * @param description
      *            . Constructor .
      */
-    public CreateRelationFeature(final IFeatureProvider fp, final String name,
-            final String description) {
-        super(fp, name, description);
+    public CreateRelationFeature(final IFeatureProvider fp) {
+        super(fp,  "Relation", "Create Relation");
 
     }
 

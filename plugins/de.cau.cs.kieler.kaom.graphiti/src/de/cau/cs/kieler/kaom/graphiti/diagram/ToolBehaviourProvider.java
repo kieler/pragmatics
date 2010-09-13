@@ -21,18 +21,17 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
-import org.eclipse.graphiti.features.context.IContext;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 //import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.platform.IPlatformImageConstants;
@@ -42,47 +41,44 @@ import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
 import org.eclipse.graphiti.tb.IContextMenuEntry;
-import org.eclipse.graphiti.tb.IRenderingDecorator;
-import org.eclipse.graphiti.tb.ImageRenderingDecorator;
+import org.eclipse.graphiti.tb.IDecorator;
+import org.eclipse.graphiti.tb.ImageDecorator;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.graphiti.features.RenameEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.RenameLinkFeature;
 
 /**
+ * Provides all the features to control the tool bar.
  * 
- * @author atr Class provides all the features to control the tool bar
+ * @author atr
  */
 public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
     /**
+     * Constructor.
      * 
-     * @param diagramTypeProvider
-     *            Constructor.
+     * @param diagramTypeProvider the diagram type provider
      */
     public ToolBehaviourProvider(final IDiagramTypeProvider diagramTypeProvider) {
         super(diagramTypeProvider);
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
     protected boolean isContextMenuApplicable(final IFeature feature) {
         boolean ret = (feature instanceof ICustomFeature);
         return ret;
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
-    public GraphicsAlgorithm[] getSelectionArea(final PictogramElement pe) {
-        // This method basically selects the inner pictogram element ie the rounded rectangle
+    public GraphicsAlgorithm[] getClickArea(final PictogramElement pe) {
+        // This method basically selects the inner pictogram element, i.e. the rounded rectangle
         // inside the outside invisible rectangle
         IFeatureProvider featureProvider = getFeatureProvider();
         Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
@@ -93,17 +89,16 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
                 return new GraphicsAlgorithm[] { rectangle };
             }
         }
-        return super.getSelectionArea(pe);
+        return super.getClickArea(pe);
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
-    public GraphicsAlgorithm getSelectionGraphicsAlgorithm(final PictogramElement pe) {
-        // This method is used to select the Graphics Algorithm of the above selected inner Pictogram
-        // Element
+    public GraphicsAlgorithm getSelectionBorder(final PictogramElement pe) {
+        // This method is used to select the Graphics Algorithm of the above selected
+        // inner Pictogram Element
         IFeatureProvider featureProvider = getFeatureProvider();
         Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
 
@@ -117,17 +112,15 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
             }
         }
 
-        return super.getSelectionGraphicsAlgorithm(pe);
-
+        return super.getSelectionBorder(pe);
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
-    public IContextButtonPadData getContextButtonPadData(final IPictogramElementContext context) {
-        IContextButtonPadData data = super.getContextButtonPadData(context);
+    public IContextButtonPadData getContextButtonPad(final IPictogramElementContext context) {
+        IContextButtonPadData data = super.getContextButtonPad(context);
         PictogramElement pe = context.getPictogramElement();
 
         setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE);
@@ -157,29 +150,23 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
         }
 
         return data;
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
-    public IContextMenuEntry[] getContextMenu(final IContext context) {
+    public IContextMenuEntry[] getContextMenu(final ICustomContext context) {
         ContextMenuEntry subMenu = new ContextMenuEntry(null, context);
         subMenu.setText("Custom Features");
         subMenu.setDescription("Custom feature submenu");
         subMenu.setSubmenu(true);
 
-        if (context instanceof ICustomContext) {
-            ICustomContext customContext = (ICustomContext) context;
-            ICustomFeature[] customFeatures = getFeatureProvider().getCustomFeatures(customContext);
-            for (ICustomFeature customFeature : customFeatures) {
-
-                if (customFeature.isAvailable(customContext)) {
-                    ContextMenuEntry menuEntry = new ContextMenuEntry(customFeature, context);
-                    subMenu.add(menuEntry);
-                }
+        ICustomFeature[] customFeatures = getFeatureProvider().getCustomFeatures(context);
+        for (ICustomFeature customFeature : customFeatures) {
+            if (customFeature.isAvailable(context)) {
+                ContextMenuEntry menuEntry = new ContextMenuEntry(customFeature, context);
+                subMenu.add(menuEntry);
             }
         }
 
@@ -188,49 +175,20 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
-    public IPaletteCompartmentEntry[] getPaletteCompartments() {
-
+    public IPaletteCompartmentEntry[] getPalette() {
         List<IPaletteCompartmentEntry> ret = new ArrayList<IPaletteCompartmentEntry>();
-        IPaletteCompartmentEntry[] superCompartments = super.getPaletteCompartments();
+        IPaletteCompartmentEntry[] superCompartments = super.getPalette();
         for (IPaletteCompartmentEntry superCompartment : superCompartments) {
             ret.add(superCompartment);
         }
 
-        // Code used to create stacked palette compartments
-        /*
-         * PaletteCompartmentEntry compartmentEntry = new PaletteCompartmentEntry("Stacked", null);
-         * ret.add(compartmentEntry); StackEntry stackEntry = new StackEntry("EObject", "EObject",
-         * null); compartmentEntry.addToolEntry(stackEntry);
-         * 
-         * 
-         * IFeatureProvider featureProvider = getFeatureProvider(); ICreateFeature[] createFeatures
-         * = featureProvider.getCreateFeatures(); for (ICreateFeature cf : createFeatures) {
-         * ObjectCreationToolEntry objectCreationToolEntry = new
-         * ObjectCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
-         * cf.getCreateImageId(), cf.getCreateLargeImageId(), cf);
-         * stackEntry.addCreationToolEntry(objectCreationToolEntry);
-         * 
-         * }
-         * 
-         * ICreateConnectionFeature[] createConnectionFeatures =
-         * featureProvider.getCreateConnectionFeatures(); for (ICreateConnectionFeature cf :
-         * createConnectionFeatures) { ConnectionCreationToolEntry connectionCreationToolEntry = new
-         * ConnectionCreationToolEntry(cf.getCreateName(), cf.getCreateDescription(),
-         * cf.getCreateImageId(), cf.getCreateLargeImageId());
-         * connectionCreationToolEntry.addCreateConnectionFeature(cf);
-         * stackEntry.addCreationToolEntry(connectionCreationToolEntry); }
-         */
-
         return ret.toArray(new IPaletteCompartmentEntry[ret.size()]);
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -246,16 +204,14 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
                 return customFeature;
             }
         }
-            return super.getDoubleClickFeature(context);
-        
+        return super.getDoubleClickFeature(context);
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
-    public IRenderingDecorator[] getRenderingDecorators(final PictogramElement pe) {
+    public IDecorator[] getDecorators(final PictogramElement pe) {
         IFeatureProvider featureProvider = getFeatureProvider();
         Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
         if (obj instanceof Entity) {
@@ -263,13 +219,13 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
             String name = eClass.getName();
             if (name != null && name.length() > 0
                     && !(name.charAt(0) >= 'A' && name.charAt(0) <= 'Z')) {
-                IRenderingDecorator imageRenderingDecorator = new ImageRenderingDecorator(
+                IDecorator imageDecorator = new ImageDecorator(
                         IPlatformImageConstants.IMG_ECLIPSE_WARNING_TSK);
-                imageRenderingDecorator.setMessage("Name should start with an upper case");
-                return new IRenderingDecorator[] { imageRenderingDecorator };
+                imageDecorator.setMessage("Name should start with an upper case");
+                return new IDecorator[] { imageDecorator };
             }
         }
-        return super.getRenderingDecorators(pe);
-
+        return super.getDecorators(pe);
     }
+    
 }

@@ -22,9 +22,9 @@ import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
 
 /**
+ * Checks and creates a top entity.
  * 
  * @author atr
- * Checks and creates a top entity
  */
 public class DomainUtility {
     

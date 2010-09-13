@@ -13,9 +13,9 @@
  */
 
 /**
- * Package contains the features which are added to the featureProvider.
+ * Features that are added to the feature provider of the Graphiti KAOM editor.
  * Each feature generally extends an abstract or default feature.
- * Each feature class has a method like canMove,canCreate which checks if the operation is posible
- * like Style,colour,toplevel entity 
+ * Each feature class has a method like {@code canMove}, {@code canCreate} which checks if the
+ * operation is possible. 
  */
 package de.cau.cs.kieler.kaom.graphiti.features;

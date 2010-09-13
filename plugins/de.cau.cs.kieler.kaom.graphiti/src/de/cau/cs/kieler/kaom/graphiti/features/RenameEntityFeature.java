@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-import org.eclipse.graphiti.examples.common.SampleUtil;
 import de.cau.cs.kieler.kaom.Entity;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
@@ -75,21 +74,21 @@ public class RenameEntityFeature extends AbstractCustomFeature {
      * {@inheritDoc}
      */
     public void execute(final ICustomContext context) {
-        PictogramElement[] pes = context.getPictogramElements();
-        if (pes != null && pes.length == 1) {
-            Object bo = getBusinessObjectForPictogramElement(pes[0]);
-            if (bo instanceof Entity) {
-                Entity entity = (Entity) bo;
-                String currentName = entity.getName();
-                String newName = SampleUtil.askString(getName(), getDescription(), currentName);
-
-                if (newName != null) {
-                    entity.setName(newName);
-                }
-
-            }
-
-        }
+//        PictogramElement[] pes = context.getPictogramElements();
+//        if (pes != null && pes.length == 1) {
+//            Object bo = getBusinessObjectForPictogramElement(pes[0]);
+//            if (bo instanceof Entity) {
+//                Entity entity = (Entity) bo;
+//                String currentName = entity.getName();
+//                String newName = SampleUtil.askString(getName(), getDescription(), currentName);
+//
+//                if (newName != null) {
+//                    entity.setName(newName);
+//                }
+//
+//            }
+//
+//        }
 
     }
 

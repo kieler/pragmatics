@@ -14,22 +14,21 @@
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import de.cau.cs.kieler.kaom.Entity;
-import java.util.Iterator;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.impl.AbstractLayoutFeature;
-import org.eclipse.graphiti.mm.datatypes.Point;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Polygon;
+import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Rectangle;
+import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Polygon;
-import org.eclipse.graphiti.mm.pictograms.Polyline;
-import org.eclipse.graphiti.mm.pictograms.Rectangle;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.mm.pictograms.Text;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 
@@ -105,9 +104,7 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
         }
 
         //Position of each child shape of the rectangle adjusted
-        Iterator iter = containerShape.getChildren().iterator();
-        while (iter.hasNext()) {
-            Shape shape = (Shape) iter.next();
+        for (Shape shape : containerShape.getChildren()) {
             GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
 
             IDimension size = gaService.calculateSize(ga);

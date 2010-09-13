@@ -42,8 +42,8 @@ public class CreatePortFeature extends AbstractCreateFeature {
      * 
      *            Constructor.
      */
-    public CreatePortFeature(final IFeatureProvider fp, final String name, final String description) {
-        super(fp, name, description);
+    public CreatePortFeature(final IFeatureProvider fp) {
+        super(fp,  "Port", "Create Port");
 
     }
 

@@ -26,15 +26,15 @@ import de.cau.cs.kieler.kaom.graphiti.util.DomainUtility;
 
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
+import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Rectangle;
+import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
+import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.Orientation;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Polyline;
-import org.eclipse.graphiti.mm.pictograms.Rectangle;
-import org.eclipse.graphiti.mm.pictograms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.mm.pictograms.Text;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
@@ -72,68 +72,57 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
 
         addToDiagram(entity, context);
 
-        {
-            ContainerShape parentContainerShape = context.getTargetContainer();
-            containerShape = peCreateService.createContainerShape(parentContainerShape, true);
-            PropertyUtil.setEClassShape(containerShape);
-
-        }
+        ContainerShape parentContainerShape = context.getTargetContainer();
+        containerShape = peCreateService.createContainerShape(parentContainerShape, true);
+        PropertyUtil.setEClassShape(containerShape);
 
         int width = context.getWidth() <= 0 ? MIN_WIDTH : context.getWidth();
         int height = context.getHeight() <= 0 ? MIN_HEIGHT : context.getHeight();
         IGaService gaService = Graphiti.getGaService();
-        {
-            // InvisibleRectangle created so that port can be placed on the boundary edges
-            Rectangle invisibleRectangle = gaService.createInvisibleRectangle(containerShape);
+        
+        // InvisibleRectangle created so that port can be placed on the boundary edges
+        Rectangle invisibleRectangle = gaService.createInvisibleRectangle(containerShape);
 
-            gaService.setLocationAndSize(invisibleRectangle, context.getX(), context.getY(), width
-                    + 2 * AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, height
-                    + AddPortFeature.INVISIBLE_RECTANGLE_WIDTH);
+        gaService.setLocationAndSize(invisibleRectangle, context.getX(), context.getY(), width
+                + 2 * AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, height
+                + AddPortFeature.INVISIBLE_RECTANGLE_WIDTH);
 
-            {
-                // Rounded rectangle added to invisible rectangle
-                RoundedRectangle roundedRectangle = gaService.createRoundedRectangle(
-                        invisibleRectangle, RECTANGLE_CURVE, RECTANGLE_CURVE);
-                gaService.setLocationAndSize(roundedRectangle, BOUNDARY_DISTANCE, 0, width, height);
-                roundedRectangle.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-                roundedRectangle.setParentGraphicsAlgorithm(invisibleRectangle);
-            }
+        // Rounded rectangle added to invisible rectangle
+        RoundedRectangle roundedRectangle = gaService.createRoundedRectangle(
+                invisibleRectangle, RECTANGLE_CURVE, RECTANGLE_CURVE);
+        gaService.setLocationAndSize(roundedRectangle, BOUNDARY_DISTANCE, 0, width, height);
+        roundedRectangle.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
+        roundedRectangle.setParentGraphicsAlgorithm(invisibleRectangle);
 
-            peCreateService.createChopboxAnchor(containerShape);
-            link(containerShape, entity);
+        peCreateService.createChopboxAnchor(containerShape);
+        link(containerShape, entity);
 
-        }
+        Shape shape = peCreateService.createShape(containerShape, false);
+        Polyline polyline = gaService.createPolyline(shape, new int[] { BOUNDARY_DISTANCE,
+                DISTANCE_FROM_TOP, width, DISTANCE_FROM_TOP });
+        polyline.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
 
-        {
-            Shape shape = peCreateService.createShape(containerShape, false);
-            Polyline polyline = gaService.createPolyline(shape, new int[] { BOUNDARY_DISTANCE,
-                    DISTANCE_FROM_TOP, width, DISTANCE_FROM_TOP });
-            polyline.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
-        }
+        shape = peCreateService.createShape(containerShape, false);
+        Text text = gaService.createDefaultText(shape, entity.getName());
+        text.setStyle(StyleUtil.getStyleForEClassText(getDiagram()));
+        text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
+        text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
+        text.getFont().setBold(true);
+        gaService.setLocationAndSize(text, BOUNDARY_DISTANCE, 0, width, DISTANCE_FROM_TOP);
 
-        {
-            Shape shape = peCreateService.createShape(containerShape, false);
-            Text text = gaService.createDefaultText(shape, entity.getName());
-            text.setStyle(StyleUtil.getStyleForEClassText(getDiagram()));
-            text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.getFont().setBold(true);
-            gaService.setLocationAndSize(text, BOUNDARY_DISTANCE, 0, width, DISTANCE_FROM_TOP);
+        link(shape, entity);
 
-            link(shape, entity);
+        IDirectEditingInfo directEditingInfo = getFeatureProvider().getDirectEditingInfo();
 
-            IDirectEditingInfo directEditingInfo = getFeatureProvider().getDirectEditingInfo();
+        // set container shape for direct editing after object creation
 
-            // set container shape for direct editing after object creation
+        directEditingInfo.setMainPictogramElement(containerShape);
 
-            directEditingInfo.setMainPictogramElement(containerShape);
+        // set shape and graphics algorithm where the editor for
+        // direct editing shall be opened after object creation
 
-            // set shape and graphics algorithm where the editor for
-            // direct editing shall be opened after object creation
-
-            directEditingInfo.setPictogramElement(shape);
-            directEditingInfo.setGraphicsAlgorithm(text);
-        }
+        directEditingInfo.setPictogramElement(shape);
+        directEditingInfo.setGraphicsAlgorithm(text);
 
         layoutPictogramElement(containerShape);
         containerShape.setActive(true);
