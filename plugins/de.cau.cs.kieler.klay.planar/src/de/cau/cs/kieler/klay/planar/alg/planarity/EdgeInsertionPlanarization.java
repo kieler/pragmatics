@@ -34,17 +34,15 @@ import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
  * determined. To get the shortest path we test diffrent start- and targetfaces. The algorithm
  * follow this path with the faces in the given graph and splits up every edge to cross with a new
  * node. Then these nodes get connected and build a path which presents the given insertion edge. So
- * the graph is still planar.
- * A special case is, when a hyperedge is crossed. In this case the new edge is layed through the
- * hypernode of this hyperedge. Then the hypernode is splitted up in 2 hypernodes. Now we have the
- * edge between these 2 new hypernodes. This edge is now crossed as usual, by adding a new node
- * and connect the new edge to this.
+ * the graph is still planar. A special case is, when a hyperedge is crossed. In this case the new
+ * edge is layed through the hypernode of this hyperedge. Then the hypernode is splitted up in 2
+ * hypernodes. Now we have the edge between these 2 new hypernodes. This edge is now crossed as
+ * usual, by adding a new node and connect the new edge to this.
  * 
  * @author cku
  * 
  */
 public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPlanarizer {
-
 
     /**
      * A property assigning a cost to an edge. This property is used when computing a shortest path
@@ -102,6 +100,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                     dualPath = findPath(dualTargetNode.getID(), parent, dualGraph);
 
                     if (shortestDualPath.size() > dualPath.size() || shortestDualPath.isEmpty()) {
+                        shortestDualPath.clear();
                         shortestDualPath.addAll(0, dualPath);
                         targetFace = itargetFace;
                     }
@@ -125,6 +124,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
                 // we found a better startface with shorter path
                 if (shortestFacePath.size() > facePath.size() || shortestFacePath.isEmpty()) {
+                    shortestFacePath.clear();
                     shortestFacePath.addAll(0, facePath);
                 }
 
@@ -185,9 +185,12 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                     IEdge newHyperEdge = graph.addEdge(oldHyperNode, newHyperNode);
 
                     // bring edge in right order
-                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newHyperEdge, oldHyperNode);
-                    // bring edges at the new hypernode in right order
-                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newHyperEdge, newHyperNode);
+                    reinsertEdges(newHyperEdge, oldHyperNode);
+
+                    // move half of the edges to new hypernode
+                    for (int i = 0; i < oldHyperNode.getAdjacentEdgeCount() / 2; i++) {
+                        // FIXME
+                    }
 
                     // split up the new edge
                     INode midNode = graph.addNode(newHyperEdge);
@@ -196,7 +199,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                     IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
 
                     // bring new edges at new node in right order
-                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge, midNode);
+                    reinsertEdges(newEdge, midNode);
                     pathNodeCounter++;
                 }
 
@@ -207,8 +210,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                             path.get(pathNodeCounter + 1));
 
                     // bring new edges in right order
-                    reinsertEdges(shortestFacePath.get(pathNodeCounter), newEdge,
-                            path.get(pathNodeCounter));
+                    reinsertEdges(newEdge, newEdge.getSource());
+                    reinsertEdges(newEdge, newEdge.getTarget());
 
                     pathNodeCounter++;
                 }
@@ -241,7 +244,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param node
      *            , the given node
      */
-    private void reinsertEdges(final IFace face, final IEdge edge, final INode node) {
+    private void reinsertEdges(final IEdge edge, final INode node) {
 
         IEdge preNewEdge = findFirstFaceEdge(edge, node);
         List<IEdge> edges = new LinkedList<IEdge>();
@@ -272,11 +275,16 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param face
      *            , the given face
      * @param node
-     *            , the gven node
+     *            , the given node
      * @return edge, the clockwise first edge at this node
      */
     private IEdge findFirstFaceEdge(final IEdge iedge, final INode node) {
-        IFace face = iedge.getLeftFace();
+        // node is target of edge
+        IFace face = iedge.getRightFace();
+        // node is source of edge
+        if (iedge.getSource() == node) {
+            face = iedge.getLeftFace();
+        }
         for (IEdge edge : node.adjacentEdges()) {
             if (edge.getRightFace() == face || edge.getLeftFace() == face) {
                 return edge;
@@ -342,11 +350,13 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         LinkedList<INode> path = new LinkedList<INode>();
         int nextID = parent[targetIndex];
 
-        while (nextID != -1) {
+        // -1 is the source index
+        do {
             INode nextNode = findNode(nextID, graph.getNodes());
             path.add(nextNode);
             nextID = parent[nextNode.getID()];
-        }
+        } while (nextID != -1);
+
         return path;
     }
 
