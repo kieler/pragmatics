@@ -248,10 +248,11 @@ public final class GraphvizAPI {
      * @param inputStream input stream from which input is expected
      * @param errorStream error stream that is queried if there is no input
      * @param monitor monitor to which progress is reported
+     * @param debugMode whether debug mode is active
      * @throws KielerException if the timeout is exceeded while waiting
      */
     public static void waitForInput(final InputStream inputStream, final InputStream errorStream,
-            final IKielerProgressMonitor monitor) throws KielerException {
+            final IKielerProgressMonitor monitor, final boolean debugMode) throws KielerException {
         monitor.begin("Wait for Graphviz", 1);
         IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
         int timeout = preferenceStore.getInt(PREF_TIMEOUT);
@@ -292,7 +293,7 @@ public final class GraphvizAPI {
                 // read the error stream anyway - if error stream is not empty,
                 // process may not terminate
                 while (errorStream.available() > 0) {
-                    if (GraphvizLayouter.ENABLE_DEBUG) {
+                    if (debugMode) {
                         System.err.print(errorStream.read());
                     } else {
                         errorStream.read();

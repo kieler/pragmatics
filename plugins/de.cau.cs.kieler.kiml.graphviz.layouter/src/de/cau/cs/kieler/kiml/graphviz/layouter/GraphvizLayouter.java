@@ -106,8 +106,6 @@ public class GraphvizLayouter {
     public static final float DEF_MIN_SPACING = 16.0f;
     /** default multiplier for font sizes. */
     public static final double FONT_SIZE_MULT = 1.4;
-    /** if true, debug output is enabled, which writes dot files to the home folder. */
-    public static final boolean ENABLE_DEBUG = false;
     
     /** dots per inch specification, needed by Graphviz for some values. */
     private static final float DPI = 72.0f;
@@ -153,7 +151,9 @@ public class GraphvizLayouter {
         progressMonitor.begin("Graphviz layout (" + command + ")",
                 SMALL_TASK + LARGE_TASK + LARGE_TASK + LARGE_TASK + SMALL_TASK);
         graphElementMap.clear();
-        if (ENABLE_DEBUG) {
+        boolean debugMode = parentNode.getData(KShapeLayout.class)
+                .getProperty(LayoutOptions.DEBUG_MODE);
+        if (debugMode) {
             debugFileName = Integer.toString(parentNode.hashCode());
         }
         // return if there is nothing in this node
@@ -176,16 +176,19 @@ public class GraphvizLayouter {
         GraphvizModel graphvizInput = createDotGraph(parentNode, command,
                 progressMonitor.subTask(SMALL_TASK));
         writeDotGraph(graphvizInput, new BufferedOutputStream(
-                graphvizProcess.getOutputStream()), progressMonitor.subTask(LARGE_TASK));
+                graphvizProcess.getOutputStream()), progressMonitor.subTask(LARGE_TASK),
+                debugMode);
 
         // wait for Graphviz to give some output
         GraphvizAPI.waitForInput(graphvizProcess.getInputStream(),
-                graphvizProcess.getErrorStream(), progressMonitor.subTask(LARGE_TASK));
+                graphvizProcess.getErrorStream(), progressMonitor.subTask(LARGE_TASK),
+                debugMode);
 
         if (!progressMonitor.isCanceled()) {
             // read graphviz output and apply layout information to the KGraph
             GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(
-                    graphvizProcess.getInputStream()), progressMonitor.subTask(LARGE_TASK));
+                    graphvizProcess.getInputStream()), progressMonitor.subTask(LARGE_TASK),
+                    debugMode);
             retrieveLayoutResult(parentNode, graphvizOutput,
                     progressMonitor.subTask(SMALL_TASK));
         }
@@ -525,15 +528,16 @@ public class GraphvizLayouter {
      * @param graphvizModel Graphviz model to serialize
      * @param processStream output stream to which the model is written
      * @param monitor a monitor to which progress is reported
+     * @param debugMode whether debug mode is active
      * @throws KielerException if writing to the output stream fails
      */
     private void writeDotGraph(final GraphvizModel graphvizModel, final OutputStream processStream,
-            final IKielerProgressMonitor monitor) throws KielerException {
+            final IKielerProgressMonitor monitor, final boolean debugMode) throws KielerException {
         monitor.begin("Serialize model", 1);
         OutputStream outputStream = processStream;
         // enable debug output if needed
         FileOutputStream debugStream = null;
-        if (ENABLE_DEBUG) {
+        if (debugMode) {
             try {
                 String path = System.getProperty("user.home");
                 if (path.endsWith(File.separator)) {
@@ -598,18 +602,19 @@ public class GraphvizLayouter {
      * 
      * @param inputStream input stream from which the model is read
      * @param monitor a monitor to which progress is reported
+     * @param debugMode whether debug mode is active
      * @return an instance of the parsed graphviz model
      * @throws KielerException if reading from the input stream fails, or the
      *             parser fails to parse the model
      */
     private GraphvizModel readDotGraph(final InputStream processStream,
-            final IKielerProgressMonitor monitor)
+            final IKielerProgressMonitor monitor, final boolean debugMode)
             throws KielerException {
         monitor.begin("Parse output", 1);
         InputStream inputStream = new NonBlockingInputStream(processStream);
         // enable debug output if needed
         FileOutputStream debugStream = null;
-        if (ENABLE_DEBUG) {
+        if (debugMode) {
             try {
                 String path = System.getProperty("user.home");
                 if (path.endsWith(File.separator)) {
