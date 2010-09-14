@@ -15,6 +15,9 @@
          <appinfo>
             <meta.element />
          </appinfo>
+         <documentation>
+            &quot;de.cau.cs.kieler.kex&quot;
+         </documentation>
       </annotation>
       <complexType>
          <sequence>
@@ -52,35 +55,6 @@
       </complexType>
    </element>
 
-   <element name="example_resource">
-      <complexType>
-         <attribute name="local_path" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Relative to plugin.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="direct_open" type="boolean" use="default" value="false">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="resource_type" type="string" use="required">
-            <annotation>
-               <documentation>
-                  file, folder, project
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <element name="category">
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -97,8 +71,8 @@ It will be unique.
    <element name="example">
       <complexType>
          <sequence>
-            <element ref="example_resource" minOccurs="1" maxOccurs="unbounded"/>
             <element ref="category" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="example_resource" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="title" type="string" use="required">
             <annotation>
@@ -115,13 +89,6 @@ It will be unique.
             </annotation>
          </attribute>
          <attribute name="generation_date" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="version" type="string" use="default" value="1.0">
             <annotation>
                <documentation>
                   
@@ -160,6 +127,35 @@ It will be unique.
                <appinfo>
                   <meta.attribute kind="resource"/>
                </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="example_resource">
+      <complexType>
+         <attribute name="local_path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Relative to plugin.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="direct_open" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="resource_type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  file, folder, project
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

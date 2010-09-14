@@ -24,111 +24,108 @@ import de.cau.cs.kieler.kex.model.ExampleResource;
 
 public class ExampleImport {
 
-	private final static String workspaceLocation = Platform.getLocation()
-			.toString();
+    private final static String workspaceLocation = Platform.getLocation().toString();
 
-	private final static String standardPicPath = "files/noPreview.png";
-	private final static String kexNamespaceId = "de.cau.cs.kieler.kex";
+    private final static String standardPicPath = "files/noPreview.png";
+    private final static String kexNamespaceId = "de.cau.cs.kieler.kex";
 
-	/**
-	 * @param selectedResource
-	 * @param selectedExamples
-	 * @throws KielerException
-	 */
-	public static List<String> importExamples(final IPath selectedResource,
-			final List<Example> selectedExamples, boolean isQuickStart)
-			throws KielerException {
-		if (isQuickStart) {
-			return createQuickStartProject();
-		}
+    /**
+     * @param selectedResource
+     * @param selectedExamples
+     * @throws KielerException
+     */
+    public static List<String> importExamples(final IPath selectedResource,
+            final List<Example> selectedExamples, boolean isQuickStart) throws KielerException {
+        if (isQuickStart) {
+            return createQuickStartProject();
+        }
 
-		List<String> directOpens = new ArrayList<String>();
+        List<String> directOpens = new ArrayList<String>();
 
-		StringBuilder destFolder = new StringBuilder();
-		destFolder.append(workspaceLocation).append(
-				(selectedResource != null ? selectedResource.toString() : ""))
-				.append("/");
+        StringBuilder destFolder = new StringBuilder();
+        destFolder.append(workspaceLocation)
+                .append((selectedResource != null ? selectedResource.toString() : "")).append("/");
 
-		for (Example example : selectedExamples) {
+        for (Example example : selectedExamples) {
 
-			List<ExampleResource> resources = example.getResources();
+            List<ExampleResource> resources = example.getResources();
 
-			Bundle bundle = Platform.getBundle(example.getNamespaceId());
-			String rootDirectory = example.getRootDir();
-			int exampleBeginIndex = 0;
-			if (rootDirectory != null && rootDirectory.length() > 1) {
-				exampleBeginIndex = rootDirectory.length();
-			}
+            String rootDirectory = example.getRootDir();
+            int exampleBeginIndex = 0;
+            if (rootDirectory != null && rootDirectory.length() > 1) {
+                exampleBeginIndex = rootDirectory.length();
+            }
 
-			handleResources(directOpens, resources, destFolder.toString(),
-					bundle, exampleBeginIndex);
-		}
-		return directOpens;
-	}
+            handleResources(directOpens, resources, destFolder.toString(),
+                    example.getNamespaceId(), exampleBeginIndex);
+        }
+        return directOpens;
+    }
 
-	private static List<String> createQuickStartProject() {
-		return null;
-	}
+    private static List<String> createQuickStartProject() {
+        return null;
+    }
 
-	private static void handleResources(List<String> directOpens,
-			List<ExampleResource> resources, String destFolder, Bundle bundle,
-			int exampleBeginIndex) throws KielerException {
-		for (ExampleResource resource : resources) {
-			try {
-				String localPath = resource.getLocalPath();
-				String destPath = localPath.substring(exampleBeginIndex);
-				// searching for subfiles and folders.
-				switch (resource.getResourceType()) {
-				case PROJECT:
-					// creates a new project
-					IProgressMonitor progressMonitor = new NullProgressMonitor();
-					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
-							.getRoot();
-					IProject project = root.getProject(destPath);
-					project.create(progressMonitor);
-					project.open(progressMonitor);
-					break;
-				case FOLDER:
-					IOHandler.createFolder(destFolder + "/" + destPath);
-					break;
-				case FILE:
-					URL entry = bundle.getEntry(localPath);
-					IOHandler.writeFile(entry, destFolder + destPath, true);
-					if (resource.isDirectOpen())
-						directOpens.add(destFolder + destPath);
-					break;
-				}
-			} catch (FileNotFoundException e) {
-				throw new KielerException(ErrorMessage.NO_Import, e);
-			} catch (IOException e1) {
-				throw new KielerException(ErrorMessage.NO_Import, e1);
-			} catch (CoreException e2) {
-				throw new KielerException(ErrorMessage.NO_Import, e2);
-			}
-		}
-	}
+    private static void handleResources(List<String> directOpens, List<ExampleResource> resources,
+            String destFolder, String nameSpaceId, int exampleBeginIndex) throws KielerException {
+        Bundle bundle = Platform.getBundle(nameSpaceId);
 
-	public static InputStream loadPreviewPic(Example example)
-			throws KielerException {
-		Bundle bundle = Platform.getBundle(example.getNamespaceId());
-		URL entry = bundle.getEntry(example.getPreviewPicPath());
-		try {
-			return entry.openStream();
-		} catch (IOException e) {
-			throw new KielerException(ErrorMessage.PREVIEW_LOAD_ERROR
-					+ example.getTitle());
-		}
-	}
+        for (ExampleResource resource : resources) {
+            try {
+                String localPath = resource.getLocalPath();
+                String destPath = localPath.substring(exampleBeginIndex);
 
-	public static InputStream loadStandardPic() {
-		Bundle bundle = Platform.getBundle(ExampleImport.kexNamespaceId);
-		URL entry = bundle.getEntry(ExampleImport.standardPicPath);
-		try {
-			return entry.openStream();
-		} catch (IOException e) {
-			// should not happen at runtime
-			e.printStackTrace();
-		}
-		return null;
-	}
+                switch (resource.getResourceType()) {
+                case PROJECT:
+                    // creates a new project
+                    IProgressMonitor progressMonitor = new NullProgressMonitor();
+                    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                    IProject project = root.getProject(destPath);
+                    project.create(progressMonitor);
+                    project.open(progressMonitor);
+                    break;
+
+                case FOLDER:
+                    IOHandler.createFolder(destFolder + "/" + destPath);
+                    break;
+
+                case FILE:
+                    URL entry = bundle.getEntry(localPath);
+                    IOHandler.writeFile(entry, destFolder + destPath, true);
+                    if (resource.isDirectOpen())
+                        directOpens.add(destFolder + destPath);
+                    break;
+
+                }
+            } catch (FileNotFoundException e) {
+                throw new KielerException(ErrorMessage.NO_Import, e);
+            } catch (IOException e1) {
+                throw new KielerException(ErrorMessage.NO_Import, e1);
+            } catch (CoreException e2) {
+                throw new KielerException(ErrorMessage.NO_Import, e2);
+            }
+        }
+    }
+
+    public static InputStream loadPreviewPic(Example example) throws KielerException {
+        Bundle bundle = Platform.getBundle(example.getNamespaceId());
+        URL entry = bundle.getEntry(example.getPreviewPicPath());
+        try {
+            return entry.openStream();
+        } catch (IOException e) {
+            throw new KielerException(ErrorMessage.PREVIEW_LOAD_ERROR + example.getTitle());
+        }
+    }
+
+    public static InputStream loadStandardPic() {
+        Bundle bundle = Platform.getBundle(ExampleImport.kexNamespaceId);
+        URL entry = bundle.getEntry(ExampleImport.standardPicPath);
+        try {
+            return entry.openStream();
+        } catch (IOException e) {
+            // should not happen at runtime
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

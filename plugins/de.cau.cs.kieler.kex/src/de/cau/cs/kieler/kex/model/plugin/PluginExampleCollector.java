@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.kex.model.extensionpoint;
+package de.cau.cs.kieler.kex.model.plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import de.cau.cs.kieler.kex.model.ExampleCollector;
 import de.cau.cs.kieler.kex.model.ExampleResource;
 import de.cau.cs.kieler.kex.model.SourceType;
 
-public class ExtPointExampleCollector extends ExampleCollector {
+public class PluginExampleCollector extends ExampleCollector {
 
 	// leichter HashMap, da wir eine Pruefung auf enthalten sein machen.
 	// und wir dann bei einer liste komplett ueber alle elemente iterieren
@@ -26,7 +26,7 @@ public class ExtPointExampleCollector extends ExampleCollector {
 
 	private List<String> categoryPool;
 
-	public ExtPointExampleCollector() {
+	public PluginExampleCollector() {
 		examplePool = new HashMap<String, Example>();
 
 	}
@@ -43,13 +43,13 @@ public class ExtPointExampleCollector extends ExampleCollector {
 		}
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
-						ExtPointConstants.KEX_EXT_POINT);
+						PluginConstants.KEX_EXT_POINT);
 		for (IConfigurationElement element : configElements) {
 			try {
 				String elementName = element.getName();
-				if (ExtPointConstants.EXAMPLE.equals(elementName)) {
+				if (PluginConstants.EXAMPLE.equals(elementName)) {
 					String exampleTitle = element
-							.getAttribute(ExtPointConstants.TITLE);
+							.getAttribute(PluginConstants.TITLE);
 					if (getExamplePool().containsKey(exampleTitle)) {
 						// TODO darf eigentlich nicht passieren
 						// RUNTIME Exception schmei�en...
@@ -58,27 +58,27 @@ public class ExtPointExampleCollector extends ExampleCollector {
 					}
 					Example example = toExample(element);
 					this.examplePool.put(exampleTitle, example);
-				} else if (ExtPointConstants.CATEGORY.equals(elementName)) {
+				} else if (PluginConstants.CATEGORY.equals(elementName)) {
 					collectCategory(element);
 				}
 			} catch (InvalidRegistryObjectException e) {
 				throw new KielerException("Error while loading example \""
-						+ element.getAttribute(ExtPointConstants.ID) + "\". "
+						+ element.getAttribute(PluginConstants.ID) + "\". "
 						+ e.getLocalizedMessage());
 			} catch (IllegalArgumentException e1) {
 				throw new KielerException("Error while loading example \""
-						+ element.getAttribute(ExtPointConstants.ID) + "\". "
+						+ element.getAttribute(PluginConstants.ID) + "\". "
 						+ e1.getLocalizedMessage());
 			} catch (KielerException e2) {
 				throw new KielerException("Error while loading example \""
-						+ element.getAttribute(ExtPointConstants.ID) + "\". "
+						+ element.getAttribute(PluginConstants.ID) + "\". "
 						+ e2.getLocalizedMessage());
 			}
 		}
 	}
 
 	public void collectCategory(IConfigurationElement categoryElement) {
-		String categoryId = categoryElement.getAttribute(ExtPointConstants.ID);
+		String categoryId = categoryElement.getAttribute(PluginConstants.ID);
 		if (categoryId == null || categoryId.length() < 4) {
 			// TODO StatusManager als globalen Exceptionhandler
 			// ansprechen...
@@ -107,9 +107,9 @@ public class ExtPointExampleCollector extends ExampleCollector {
 	private void loadCategories() {
 		IConfigurationElement[] configElements = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
-						ExtPointConstants.KEX_EXT_POINT);
+						PluginConstants.KEX_EXT_POINT);
 		for (IConfigurationElement element : configElements) {
-			if (ExtPointConstants.CATEGORY.equals(element.getName())) {
+			if (PluginConstants.CATEGORY.equals(element.getName())) {
 				collectCategory(element);
 			}
 		}
@@ -124,23 +124,23 @@ public class ExtPointExampleCollector extends ExampleCollector {
 			throws InvalidRegistryObjectException, IllegalArgumentException,
 			KielerException {
 
-		String titleAttr = exampleElement.getAttribute(ExtPointConstants.TITLE);
+		String titleAttr = exampleElement.getAttribute(PluginConstants.TITLE);
 		// ein freier string, min. default besser noch regex.
 		Example example = new Example(titleAttr, SourceType.KIELER);
 		example.setDescription(exampleElement
-				.getAttribute(ExtPointConstants.DESCRIPTION));
+				.getAttribute(PluginConstants.DESCRIPTION));
 		example.setContact(exampleElement
-				.getAttribute(ExtPointConstants.CONTACT));
+				.getAttribute(PluginConstants.CONTACT));
 		example
 				.setAuthor(exampleElement
-						.getAttribute(ExtPointConstants.AUTHOR));
+						.getAttribute(PluginConstants.AUTHOR));
 		String exNamespaceId = exampleElement.getNamespaceIdentifier();
 		example.setNamespaceId(exNamespaceId);
 		example.setRootDir(exampleElement
-				.getAttribute(ExtPointConstants.ROOT_DIRECTORY));
+				.getAttribute(PluginConstants.ROOT_DIRECTORY));
 
 		List<String> categories = filterElement(exampleElement,
-				ExtPointConstants.CATEGORY, ExtPointConstants.ID);
+				PluginConstants.CATEGORY, PluginConstants.ID);
 		example.addCategories(categories);
 		example.addResources(filterExampleResource(exampleElement));
 		return example;
@@ -163,17 +163,17 @@ public class ExtPointExampleCollector extends ExampleCollector {
 			IConfigurationElement exampleElement) {
 		List<ExampleResource> result = new ArrayList<ExampleResource>();
 		for (IConfigurationElement configurationElement : exampleElement
-				.getChildren(ExtPointConstants.EXAMPLE_RESOURCE)) {
+				.getChildren(PluginConstants.EXAMPLE_RESOURCE)) {
 			String resourceType = configurationElement
-					.getAttribute(ExtPointConstants.RESOURCE_TYPE);
+					.getAttribute(PluginConstants.RESOURCE_TYPE);
 			String localPath = configurationElement
-					.getAttribute(ExtPointConstants.LOCAL_PATH);
+					.getAttribute(PluginConstants.LOCAL_PATH);
 			if (resourceType != null && localPath != null) {
 				ExampleResource exRe = new ExampleResource(localPath,
 						ExampleResource.Type
 								.valueOf(resourceType.toUpperCase()));
 				String direct_open = configurationElement
-						.getAttribute(ExtPointConstants.DIRECT_OPEN);
+						.getAttribute(PluginConstants.DIRECT_OPEN);
 				if (direct_open != null)
 					exRe.setDirectOpen(Boolean.parseBoolean(direct_open));
 				result.add(exRe);
