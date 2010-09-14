@@ -6,7 +6,7 @@
       <diagramTypeProvider
             class="de.cau.cs.kieler.kaom.graphiti.diagram.DiagramTypeProvider"
             description="Graphiti diagram type for KAOM models"
-            id="de.cau.cs.kieler.kaom.graphiti"
+            id="de.cau.cs.kieler.kaom.diagramTypeProvider"
             name="KAOM Diagram Type Provider">
          <diagramType
                id="de.cau.cs.kieler.kaom.diagramType">
@@ -62,6 +62,27 @@
                tab="de.cau.cs.kieler.kaom.graphiti.core">
          </propertySection>
       </propertySections>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor"
+            default="true"
+            extensions="kaogd"
+            icon="icons/KaomDiagramFile.gif"
+            id="de.cau.cs.kieler.kaom.graphiti.editor"
+            name="Graphiti Diagram">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kaom.graphiti.diagram.KaomNewWizard"
+            icon="icons/KaomDiagramFile.gif"
+            id="de.cau.cs.kieler.kaom.graphiti.wizard"
+            name="KAOM Diagram (Graphiti)">
+      </wizard>
    </extension>
 
 </plugin>
