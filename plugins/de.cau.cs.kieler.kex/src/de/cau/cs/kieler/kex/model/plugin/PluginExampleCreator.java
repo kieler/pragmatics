@@ -227,18 +227,18 @@ public class PluginExampleCreator {
      * @param sourceProject
      */
     public void copyResources(File destFile, List<ExportResource> resources) throws KielerException {
-        List<IPath> errorList = new ArrayList<IPath>();
+        List<IPath> finishedResources = new ArrayList<IPath>();
         try {
             for (ExportResource resource : resources) {
-                copyFile(resource, destFile.getPath(), errorList);
+                copyResource(resource, destFile.getPath(), finishedResources);
             }
         } catch (KielerException e) {
-            throw new KielerModelException(e.getLocalizedMessage(), errorList);
+            throw new KielerModelException(e.getLocalizedMessage(), finishedResources);
         }
     }
 
-    private void copyFile(ExportResource resource, String destPath, List<IPath> errorList)
-            throws KielerException {
+    private void copyResource(ExportResource resource, String destPath,
+            List<IPath> finishedResources) throws KielerException {
         StringBuilder destLocation = new StringBuilder();
         try {
 
@@ -248,16 +248,19 @@ public class PluginExampleCreator {
             destLocation.append(destPath).append(File.separatorChar)
                     .append(resource.getLocalPath());
             Path destination = new Path(destLocation.toString());
-            errorList.add(destination);
+            finishedResources.add(destination);
 
-            IOHandler.writeFile(new File(sourcePath), destination.toFile());
+            IOHandler.writeResource(new File(sourcePath), destination.toFile());
         } catch (IOException e) {
-            throw new KielerException(ErrorMessage.PLUGIN_WRITE_ERROR + ",\ndestination: "
-                    + destPath + ", resource: " + resource.getLocalPath().toPortableString());
+            StringBuilder errorMessage = new StringBuilder();
+            errorMessage.append(ErrorMessage.PLUGIN_WRITE_ERROR).append(",\ndestination: ")
+                    .append(destPath).append(", resource: ")
+                    .append(resource.getLocalPath().toPortableString());
+            throw new KielerException(errorMessage.toString());
         }
     }
 
-    public void deleteExampleResource(List<IPath> resources) {
+    public void deleteExampleResources(List<IPath> resources) {
         for (IPath path : resources)
             IOHandler.deleteFile(path.toFile());
     }
@@ -374,8 +377,8 @@ public class PluginExampleCreator {
 
     private Node toNode(String relativePath, ExampleResource exResource) {
         Element createdExResource = parsedXML.createElement(PluginConstants.EXAMPLE_RESOURCE);
-        createdExResource.setAttribute(PluginConstants.LOCAL_PATH, relativePath + "/"
-                + exResource.getLocalPath());
+        createdExResource.setAttribute(PluginConstants.LOCAL_PATH,
+                relativePath + "/" + exResource.getLocalPath());
         createdExResource.setAttribute(PluginConstants.RESOURCE_TYPE,
                 ExampleResource.Type.map(exResource.getResourceType()));
         createdExResource.setAttribute(PluginConstants.DIRECT_OPEN,

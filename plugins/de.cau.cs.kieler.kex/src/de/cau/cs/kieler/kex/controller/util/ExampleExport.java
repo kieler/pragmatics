@@ -140,7 +140,7 @@ public class ExampleExport {
             mappedExample.addResources(ExampleExport.mapToExampleResource(exportResources));
         } catch (KielerModelException e) {
             if (e.getModelObject() instanceof List<?>) {
-                extensionCreator.deleteExampleResource((List<IPath>) e.getModelObject());
+                extensionCreator.deleteExampleResources((List<IPath>) e.getModelObject());
             }
             throw e;
         }

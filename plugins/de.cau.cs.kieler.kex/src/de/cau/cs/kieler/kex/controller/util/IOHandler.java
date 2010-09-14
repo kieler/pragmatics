@@ -12,25 +12,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.kex.controller.ErrorMessage;
 
 public class IOHandler {
 
     public static String PROJECT_FILE = ".project";
     public static String MANIFEST_MF = "MANIFEST.MF";
     public static final String PLUGIN_XML = "plugin.xml";
+    public static final int BUFFER_SIZE = 1024;
 
-    public static void writeFile(File sourceFile, File destFile) throws IOException {
-        // TODO is directory geht nur auf absolute pfade.
+    public static void writeResource(final File sourceFile, final File destFile) throws IOException {
         if (!sourceFile.exists()) {
-            throw new IOException("Source file for does not exist for path: "
-                    + sourceFile.getPath());
+            throw new IOException(ErrorMessage.NO_SOURCE_FILE + sourceFile.getPath());
         }
+
+        // is directory works only on absolute paths.
         if (sourceFile.isDirectory()) {
             destFile.mkdir();
         } else {
             InputStream is = new FileInputStream(sourceFile);
             OutputStream os = new FileOutputStream(destFile);
-            byte[] buf = new byte[1024];
+            byte[] buf = new byte[IOHandler.BUFFER_SIZE];
             int len;
             while ((len = is.read(buf)) > 0) {
                 os.write(buf, 0, len);
