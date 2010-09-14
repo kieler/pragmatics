@@ -22,11 +22,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 
 public class ExampleImportWizard extends Wizard implements IImportWizard {
 
 	private ImportExamplePage mainPage;
+
+	private boolean checkDuplicate;
 
 	public ExampleImportWizard() {
 		super();
@@ -35,6 +38,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle("Kieler Example Import");
 		setNeedsProgressMonitor(true);
+		this.checkDuplicate = false;
 		try {
 			ExampleManager.get().load(false);
 		} catch (KielerException e) {
@@ -64,8 +68,15 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 		try {
 			directOpens = ExampleManager.get().importExamples(
 					mainPage.getContainerPath(), mainPage.getCheckedExamples(),
-					mainPage.isQuickStart());
+					mainPage.isQuickStart(), checkDuplicate);
 		} catch (KielerException e) {
+			if (e.getLocalizedMessage().equals(ErrorMessage.DUPLICATE_EXAMPLE)) {
+				checkDuplicate = !MessageDialog.openQuestion(getShell(),
+						"Duplicate Example", e.getLocalizedMessage()
+								+ " Do you want to override it?");
+
+			}
+
 			// Messagebox ausgabe
 			return false;
 		}
@@ -88,13 +99,15 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 					.getActiveWorkbenchWindow();
 			IWorkbenchPage page = win.getActivePage();
 			for (String path : directOpens) {
-				IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
+				IFile[] files = ResourcesPlugin
+						.getWorkspace()
+						.getRoot()
 						.findFilesForLocationURI(URIUtil.toURI(path),
 								Resource.FILE);
 				if (files.length == 1) {
 					IEditorDescriptor defaultEditor = PlatformUI.getWorkbench()
-							.getEditorRegistry().getDefaultEditor(
-									files[0].getName());
+							.getEditorRegistry()
+							.getDefaultEditor(files[0].getName());
 					if (defaultEditor != null) {
 
 					} else {
@@ -108,8 +121,8 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 						page.openEditor(new FileEditorInput(files[0]),
 								defaultEditor.getId());
 					} catch (PartInitException e) {
-						MessageDialog.openError(getShell(), "Opening Editor", e
-								.getLocalizedMessage());
+						MessageDialog.openError(getShell(), "Opening Editor",
+								e.getLocalizedMessage());
 					}
 				}
 			}
