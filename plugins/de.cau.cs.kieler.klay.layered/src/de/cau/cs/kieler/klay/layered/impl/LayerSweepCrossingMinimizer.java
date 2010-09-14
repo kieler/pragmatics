@@ -123,14 +123,14 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
     
     /**
      * Assigns ranks to all ports in the given layer, assuming that a forward sweep is
-     * being done. This means that ports are considered as output ports.
+     * being done. This means that only output ports are processed.
      * 
      * @param layer a layer
      */
     private void assignForwardRanks(final Layer layer) {
         int portId = 0;
         for (LNode node : layer.getNodes()) {
-            for (LPort port : node.getPorts()) {
+            for (LPort port : node.getPorts(PortType.OUTPUT)) {
                 port.id = portId;
                 portId++;
             }
@@ -139,7 +139,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
     
     /**
      * Assigns ranks to all ports in the given layer, assuming that a backwards sweep is
-     * being done. This means that ports are considered as input ports.
+     * being done. This means that only input ports are processed.
      * 
      * @param layer a layer
      */
@@ -149,8 +149,10 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
             ListIterator<LPort> portIter = node.getPorts().listIterator(node.getPorts().size());
             while (portIter.hasPrevious()) {
                 LPort port = portIter.previous();
-                port.id = portId;
-                portId++;
+                if (port.getType() == PortType.INPUT) {
+                    port.id = portId;
+                    portId++;
+                }
             }
         }
     }

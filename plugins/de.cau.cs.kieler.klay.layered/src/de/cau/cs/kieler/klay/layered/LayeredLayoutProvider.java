@@ -23,7 +23,6 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
@@ -86,6 +85,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             if (!(edgeRouter instanceof ComplexSplineEdgeRouter)) {
                 edgeRouter = new ComplexSplineEdgeRouter();
             }
+            break;
         default:
             if (!(edgeRouter instanceof PolylineEdgeRouter)) {
                 edgeRouter = new PolylineEdgeRouter();
@@ -93,7 +93,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             break;
         }
 
-     // check which nodeLayouter to use
+        // check which nodeLayouter to use
         NodeLayering placing = parentLayout.getProperty(Properties.NODE_LAYERING);
         switch (placing) {
         case LONGEST_PATH:
@@ -113,18 +113,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             break;
         }
         
-        // debug mode
-        Boolean debug = parentLayout.getProperty(LayoutOptions.DEBUG_MODE);
-        if (debug) {
-            // get debug canvas and clear
-            IDebugCanvas debugCanvas = getDebugCanvas();
-            float borderspacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
-            if (borderspacing < 0) {
-                borderspacing = Properties.DEF_SPACING;
-            }
-            debugCanvas.setOffset(layoutNode, borderspacing, borderspacing);
-        }
-
         // transform the input graph
         IGraphImporter graphImporter = new KGraphImporter(layoutNode);
         LayeredGraph layeredGraph = graphImporter.getGraph();
@@ -141,9 +129,23 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         layeredGraph.setProperty(Properties.DISTRIBUTE_NODES,
                 parentLayout.getProperty(Properties.DISTRIBUTE_NODES));
         // set minimal edge angle
-        layeredGraph.setProperty(Properties.MIN_EDGE_ANGLE, parentLayout.getProperty(
-                Properties.MIN_EDGE_ANGLE));
+        layeredGraph.setProperty(Properties.MIN_EDGE_ANGLE,
+                parentLayout.getProperty(Properties.MIN_EDGE_ANGLE));
         
+        // set debug mode option
+        Boolean debugMode = parentLayout.getProperty(LayoutOptions.DEBUG_MODE);
+        if (debugMode) {
+            // get debug canvas and clear
+            IDebugCanvas debugCanvas = getDebugCanvas();
+            layeredGraph.setProperty(LayoutOptions.DEBUG_MODE, true);
+            layeredGraph.setProperty(Properties.DEBUG_CANVAS, debugCanvas);
+            float borderspacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+            if (borderspacing < 0) {
+                borderspacing = Properties.DEF_SPACING;
+            }
+            debugCanvas.setOffset(layoutNode, borderspacing, borderspacing);
+        }
+
         // perform the actual layout
         layout(graphImporter, progressMonitor.subTask(1));
         // apply the layout results to the original graph
@@ -183,11 +185,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         nodePlacer.placeNodes(layeredGraph);
         // phase 5: edge routing
         edgeRouter.reset(monitor.subTask(1));
-        if (edgeRouter instanceof ComplexSplineEdgeRouter) {
-            ((ComplexSplineEdgeRouter) edgeRouter).routeEdges(layeredGraph, getDebugCanvas());
-        } else {
-            edgeRouter.routeEdges(layeredGraph);
-        }
+        edgeRouter.routeEdges(layeredGraph);
 
         monitor.done();
     }

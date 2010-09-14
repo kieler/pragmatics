@@ -112,10 +112,9 @@ public class LNode extends LGraphElement {
 
     /**
      * Returns the list of ports of this node. The order of ports in this list
-     * corresponds to the order in which they are drawn: first it contains
-     * the input ports in counter-clockwise order, starting with the north side,
-     * then the output ports in clockwise order, starting with the north side.
-     * That order is potentially affected during the crossing minimization phase.
+     * corresponds to the order in which they are drawn, assuming clockwise order,
+     * starting with the north side. That order is potentially affected during
+     * the crossing minimization phase.
      * 
      * @return the ports
      */

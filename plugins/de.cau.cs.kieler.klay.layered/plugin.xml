@@ -28,9 +28,6 @@
                option="de.cau.cs.kieler.layout.options.portConstraints">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.debugInfo">
-         </knownOption>
-         <knownOption
                option="de.cau.cs.kieler.klay.layered.straightEdges">
          </knownOption>
          <knownOption
@@ -38,6 +35,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.distributeNodes">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.debugMode">
          </knownOption>
       </layoutProvider>
       <layoutOption

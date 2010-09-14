@@ -17,6 +17,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;
 
 /**
@@ -45,7 +46,9 @@ public final class Properties {
     public static final IProperty<Region> REGION = new Property<Region>("region", null);
     /** flag for reversed edges. */
     public static final IProperty<Boolean> REVERSED = new Property<Boolean>("reversed", false);
-
+    /** debug canvas. */
+    public static final IProperty<IDebugCanvas> DEBUG_CANVAS = new Property<IDebugCanvas>(
+            "debugCanvas");
     
     ///  USER INTERFACE OPTIONS
     

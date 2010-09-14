@@ -21,7 +21,6 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
@@ -37,7 +36,7 @@ import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
  * of
  * <ul>
  * <li>Georg Sander. A fast heuristic for hierarchical manhattan layout. In <i>Proceedings of the
- * Symposium on Graph Drawing (GD '95)</i>, pp. 447-458, Springer, 1996.
+ * Symposium on Graph Drawing (GD '95)</i>, pp. 447-458, Springer, 1996.</li>
  * </ul>
  * 
  * @author msp

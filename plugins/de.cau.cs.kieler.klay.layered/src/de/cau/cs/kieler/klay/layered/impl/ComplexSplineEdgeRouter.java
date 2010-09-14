@@ -25,8 +25,8 @@ import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -61,8 +61,6 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
     private ISplineGenerator splineGenerator = new SimpleSplineGenerator();
     /** Label placer. */
     private ILabelPlacer labelPlacer = new SimpleLabelPlacer();
-    /** the DebugCanvas to use for debug-drawings. **/
-    private IDebugCanvas debugCanvas;
 
     /** Spline being stored temporarily. */
     private BezierSpline globSpline = new BezierSpline();
@@ -84,17 +82,9 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
     /**
      * {@inheritDoc}
      */
-    public void routeEdges(final LayeredGraph layeredGraph, final IDebugCanvas theDebugCanvas) {
-        debugCanvas = theDebugCanvas;
-        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
-        routeEdges(layeredGraph);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void routeEdges(final LayeredGraph layeredGraph) {
         getMonitor().begin("Complex spline routing", 1);
+        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
 
         // contains nodes from which long edges are starting
         LinkedList<LEdge> longEdges = new LinkedList<LEdge>();
@@ -133,7 +123,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
         }
         layeredGraph.getSize().x = xpos - spacing;
 
-        boxCalculator.initialize(layeredGraph, debugCanvas);
+        boxCalculator.initialize(layeredGraph);
 
         // get user defined minimal angle for straigt edges heading in and out nodes.
         int minimalAngle = layeredGraph.getProperty(Properties.MIN_EDGE_ANGLE);
@@ -201,7 +191,6 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
 
             subMon = getMonitor().subTask(1);
             subMon.begin("Spline Calculation " + counter++, 1);
-            // System.out.println(source.getNode().toString());
             if (source.getNode().toString().equals("n_n3")
                     && target.getNode().toString().equals("n_n4")) {
                 double d = 0;
@@ -225,7 +214,9 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
 
         }
 
-        System.out.println("BoxTime: " + cumBoxTime + "s, SplineTime: " + cumSplineTime + "s");
+        if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
+            System.out.println("BoxTime: " + cumBoxTime + "s, SplineTime: " + cumSplineTime + "s");
+        }
 
         IKielerProgressMonitor labelMon = getMonitor().subTask(1);
         labelMon.begin("Label placing", 1);

@@ -33,6 +33,12 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
 
 /**
+ * Edge routing implementation that creates orthogonal bend points. Inspired by
+ * <ul>
+ * <li>Georg Sander. Layout of directed hypergraphs with orthogonal hyperedges. In
+ *   <i>Proceedings of the 11th International Symposium on Graph Drawing (GD '03)</i>,
+ *   volume 2912 of LNCS, pp. 381-386. Springer, 2004.</li>
+ * </ul>
  *
  * @author msp
  */
@@ -213,6 +219,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
                 createDependency(hyperNode1, hyperNode2, conflictThreshold);
             }
         }
+        
+        // write the dependency graph to an output file
+//        if (layer.getGraph().getProperty(LayoutOptions.DEBUG_MODE)) {
         
         // break cycles
         breakCycles(hyperNodes);

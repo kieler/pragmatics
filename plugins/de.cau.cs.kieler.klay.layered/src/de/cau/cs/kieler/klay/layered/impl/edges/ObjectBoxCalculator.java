@@ -24,7 +24,6 @@ import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas.Color;
@@ -136,10 +135,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
         int minBoxHeight = Math.max(MINIMAL_BOX_WIDTH, (int) spacing / BOX_WIDTH_DIVISION_FACTOR);
 
         LinkedList<Rectangle2D.Double> globBarray = new LinkedList<Rectangle2D.Double>();
-
-        if (debugCanvas != null) {
-            debugCanvas.clear();
-        }
 
         int defaultboxwidth = (int) Math.max(2 + 2 + 1, (int) spacing / BOX_WIDTH_DIVISION_FACTOR);
 
@@ -502,14 +497,6 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
     /**
      * {@inheritDoc}
      */
-    public void initialize(final LayeredGraph graph, final IDebugCanvas dc) {
-        this.debugCanvas = dc;
-        initialize(graph);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void addNode(final LNode node) {
         allNodes.add(new Rectangle2D.Double(node.getPos().x, node.getPos().y, node.getSize().x,
                 node.getSize().y));
@@ -520,6 +507,7 @@ public class ObjectBoxCalculator extends AbstractAlgorithm implements IBoxCalcul
      */
     public void initialize(final LayeredGraph lg) {
         spacing = lg.getProperty(Properties.OBJ_SPACING);
+        debugCanvas = lg.getProperty(Properties.DEBUG_CANVAS);
         layeredGraph = lg;
         allEdges = new LinkedList<Line2D.Double>();
         allNodes = new LinkedList<Rectangle2D.Double>();

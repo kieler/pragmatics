@@ -31,7 +31,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A canvas for drawing debug information on the active diagram.
@@ -121,6 +120,7 @@ public class DebugCanvas implements IDebugCanvas {
         } else {
             PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
+                    isDirty = true;
                     layer.add(figure);
                 }
             });
