@@ -36,6 +36,8 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.workspace.util.WorkspaceSynchronizer;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramLink;
+import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditorFactory;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -167,15 +169,8 @@ public class KaomNewWizard extends Wizard implements INewWizard {
         if (diagramResource != null && modelResource != null) {
             commandStack.execute(new RecordingCommand(editingDomain) {
                 protected void doExecute() {
-                    diagramResource.setTrackingModification(true);
-                    Diagram diagram = Graphiti.getPeCreateService().createDiagram(
-                            KaomDiagramEditor.DIAGRAM_TYPE, diagramURI.lastSegment(),
-                            GRID_SIZE, SNAP_TO_GRID);
-                    diagramResource.getContents().add(diagram);
-                    modelResource.setTrackingModification(true);
-                    Entity entity = KaomFactory.eINSTANCE.createEntity();
-                    entity.setName(modelURI.lastSegment());
-                    modelResource.getContents().add(entity);
+                    createModel(diagramResource, diagramURI.lastSegment(),
+                            modelResource, modelURI.lastSegment());
                 }
             });
             progressMonitor.worked(1);
@@ -238,6 +233,30 @@ public class KaomNewWizard extends Wizard implements INewWizard {
             page.openEditor(new FileEditorInput((IFile) workspaceResource),
                     KaomDiagramEditor.EDITOR_ID);
         }
+    }
+    
+    /**
+     * Create a model in the given resources.
+     * 
+     * @param diagramResource resource for the diagram model
+     * @param diagramName name of the diagram model
+     * @param modelResource resource for the domain model
+     * @param modelName name of the domain model
+     */
+    private static void createModel(final Resource diagramResource, final String diagramName,
+            final Resource modelResource, final String modelName) {
+        modelResource.setTrackingModification(true);
+        Entity entity = KaomFactory.eINSTANCE.createEntity();
+        entity.setName(modelName);
+        modelResource.getContents().add(entity);
+        diagramResource.setTrackingModification(true);
+        Diagram diagram = Graphiti.getPeCreateService().createDiagram(
+                KaomDiagramEditor.DIAGRAM_TYPE, diagramName,
+                GRID_SIZE, SNAP_TO_GRID);
+        PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
+        link.setPictogramElement(diagram);
+        link.getBusinessObjects().add(entity);
+        diagramResource.getContents().add(diagram);
     }
 
 }

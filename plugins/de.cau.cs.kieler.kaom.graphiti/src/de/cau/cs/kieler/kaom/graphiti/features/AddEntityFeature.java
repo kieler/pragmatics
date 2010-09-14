@@ -13,16 +13,12 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-//import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
 import de.cau.cs.kieler.kaom.graphiti.util.PropertyUtil;
 import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
-import de.cau.cs.kieler.kaom.graphiti.util.DomainUtility;
 
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
@@ -146,32 +142,18 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
     }
 
     /**
+     * Adds the new entity formed to its container.
      * 
      * @param newEntity
      * @param context
-     *            Adds the new entity formed to its container
      */
     private void addToDiagram(final Entity newEntity, final IAddContext context) {
-        List<EObject> contents = getDiagram().eResource().getContents();
-        Entity topEntity = null;
-        if (context.getTargetContainer() instanceof Diagram) {
-            for (EObject obj : contents) {
-                if (obj instanceof Entity) {
-                    topEntity = (Entity) obj;
-                    break;
-                }
-            }
-        } else {
-
-            topEntity = (Entity) getBusinessObjectForPictogramElement(context.getTargetContainer());
+        ContainerShape container = context.getTargetContainer();
+        Entity entity = (Entity) getBusinessObjectForPictogramElement(container);
+        if (entity == null && container instanceof Diagram) {
+            entity = ((KaomDiagramEditor) getDiagramEditor()).findTopEntity((Diagram) container);
         }
-
-        if (topEntity == null) {
-            topEntity = DomainUtility.createParentEntity(getDiagram());
-
-        }
-
-        topEntity.getChildEntities().add(newEntity);
+        entity.getChildEntities().add(newEntity);
     }
 
 }

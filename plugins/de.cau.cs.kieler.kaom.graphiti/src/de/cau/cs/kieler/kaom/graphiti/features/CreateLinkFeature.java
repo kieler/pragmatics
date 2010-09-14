@@ -13,11 +13,8 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-import java.util.List;
-
 import javax.swing.JOptionPane;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
@@ -30,6 +27,7 @@ import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
 import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
+import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
 
 /**
  * 
@@ -170,16 +168,11 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
      */
 
     private void addToDiagram(final Link newLink, final Object source, final Object target) {
-        List<EObject> contents = getDiagram().eResource().getContents();
-        Entity topEntity = null;
-        for (EObject obj : contents) {
-            if (obj instanceof Entity) {
-                topEntity = (Entity) obj;
-                break;
-            }
+        Entity topEntity = (Entity) getBusinessObjectForPictogramElement(getDiagram());
+        if (topEntity == null) {
+            topEntity = ((KaomDiagramEditor) getDiagramEditor()).findTopEntity(getDiagram());
         }
         topEntity.getChildLinks().add(newLink);
-
     }
 
     /**

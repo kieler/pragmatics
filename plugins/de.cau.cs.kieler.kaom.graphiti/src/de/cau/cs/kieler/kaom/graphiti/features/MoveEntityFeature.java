@@ -25,7 +25,7 @@ import org.eclipse.graphiti.services.Graphiti;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Relation;
-import de.cau.cs.kieler.kaom.graphiti.util.DomainUtility;
+import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
 
 /**
  * 
@@ -77,19 +77,11 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
 
             // check if the source container is the diagram and get the parent Entity
             // in which this element is contained
-            if (context.getSourceContainer() instanceof Diagram) {
-                oldParentEntity = DomainUtility.getParentEntity();
-            } else {
-                oldParentEntity = (Entity) getBusinessObjectForPictogramElement(oldContainerShape);
-            }
+            oldParentEntity = getParentEntity(oldContainerShape);
 
             // check if the target container is the diagram and get the parent Entity
             // in which this element is contained
-            if (context.getTargetContainer() instanceof Diagram) {
-                newParentEntity = DomainUtility.getParentEntity();
-            } else {
-                newParentEntity = (Entity) getBusinessObjectForPictogramElement(newContainerShape);
-            }
+            newParentEntity = getParentEntity(newContainerShape);
 
             Entity en = (Entity) getBusinessObjectForPictogramElement(shapeToMove);
 
@@ -122,6 +114,20 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
                         avoidNegativeCoordinates());
             }
         }
+    }
+    
+    /**
+     * Returns the parent entity for the given container.
+     * 
+     * @param container a container shape
+     * @return the parent entity
+     */
+    private Entity getParentEntity(final ContainerShape container) {
+        Entity entity = (Entity) getBusinessObjectForPictogramElement(container);
+        if (entity == null && container instanceof Diagram) {
+            entity = ((KaomDiagramEditor) getDiagramEditor()).findTopEntity((Diagram) container);
+        }
+        return entity;
     }
 
 }

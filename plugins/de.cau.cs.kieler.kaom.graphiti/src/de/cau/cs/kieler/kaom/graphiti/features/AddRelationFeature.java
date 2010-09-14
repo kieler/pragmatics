@@ -23,9 +23,6 @@ import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-//import org.eclipse.graphiti.mm.pictograms.Rectangle;
-//import org.eclipse.graphiti.mm.pictograms.RoundedRectangle;
-//import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
@@ -33,10 +30,9 @@ import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
 import de.cau.cs.kieler.kaom.Entity;
-//import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Relation;
+import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
 import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
-import de.cau.cs.kieler.kaom.graphiti.util.DomainUtility;
 
 /**
  * 
@@ -128,28 +124,12 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
      *            Adds the new RELATION formed to its container ENTITY
      */
     private void addToDiagram(final Relation newRelation, final IAddContext context) {
-        List<EObject> contents = getDiagram().eResource().getContents();
-        Entity topEntity = null;
-        if (context.getTargetContainer() instanceof Diagram) {
-            for (EObject obj : contents) {
-                if (obj instanceof Entity) {
-                    topEntity = (Entity) obj;
-                    break;
-                }
-            }
-        } else {
-            Object ob = getBusinessObjectForPictogramElement(context.getTargetContainer());
-            if (ob instanceof Entity) {
-                topEntity = (Entity) ob;
-            }
-
+        ContainerShape container = context.getTargetContainer();
+        Entity entity = (Entity) getBusinessObjectForPictogramElement(container);
+        if (entity == null && container instanceof Diagram) {
+            entity = ((KaomDiagramEditor) getDiagramEditor()).findTopEntity((Diagram) container);
         }
-
-        if (topEntity == null) {
-            topEntity = DomainUtility.createParentEntity(getDiagram());
-        }
-
-        topEntity.getChildRelations().add(newRelation);
+        entity.getChildRelations().add(newRelation);
     }
 
 }

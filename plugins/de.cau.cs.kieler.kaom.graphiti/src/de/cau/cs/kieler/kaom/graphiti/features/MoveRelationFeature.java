@@ -27,7 +27,7 @@ import org.eclipse.graphiti.services.Graphiti;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Relation;
-import de.cau.cs.kieler.kaom.graphiti.util.DomainUtility;
+import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
 
 /**
  * 
@@ -88,8 +88,8 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
                 Relation relation = (Relation) getBusinessObjectForPictogramElement(shapeToMove);
                 oldContainerShape = context.getSourceContainer();
                 newContainerShape = context.getTargetContainer();
-                oldParentEntity = DomainUtility.getParentEntity();
-                newParentEntity = (Entity) getBusinessObjectForPictogramElement(newContainerShape);
+                oldParentEntity = getParentEntity(oldContainerShape);
+                newParentEntity = getParentEntity(newContainerShape);
                 Collection<Shape> children = context.getTargetContainer().getChildren();
                 if (children != null) {
                     children.remove(shapeToMove);
@@ -105,8 +105,8 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
                 Relation relation = (Relation) getBusinessObjectForPictogramElement(shapeToMove);
                 oldContainerShape = context.getSourceContainer();
                 newContainerShape = context.getTargetContainer();
-                newParentEntity = DomainUtility.getParentEntity();
-                oldParentEntity = (Entity) getBusinessObjectForPictogramElement(oldContainerShape);
+                newParentEntity = getParentEntity(newContainerShape);
+                oldParentEntity = getParentEntity(oldContainerShape);
 
                 shapeToMove.setContainer(newContainerShape);
                 if (newParentEntity != null) {
@@ -158,6 +158,20 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
             // restore selection
             getDiagramEditor().setPictogramElementsForSelection(currentSelection);
         }
+    }
+    
+    /**
+     * Returns the parent entity for the given container.
+     * 
+     * @param container a container shape
+     * @return the parent entity
+     */
+    private Entity getParentEntity(final ContainerShape container) {
+        Entity entity = (Entity) getBusinessObjectForPictogramElement(container);
+        if (entity == null && container instanceof Diagram) {
+            entity = ((KaomDiagramEditor) getDiagramEditor()).findTopEntity((Diagram) container);
+        }
+        return entity;
     }
 
 }
