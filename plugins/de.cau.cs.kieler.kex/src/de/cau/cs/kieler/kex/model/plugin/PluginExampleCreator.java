@@ -90,8 +90,6 @@ public class PluginExampleCreator {
             addExampleCategories(pluginNode, creatableCategories);
         }
         boolean isDuplicate = false;
-        // TODO duplicate checker überprüfen mitteles debug
-        checkDuplicate(PluginConstants.TITLE, parseElement.getTitle(), pluginNode, isDuplicate);
         if (isDuplicate) {
             // fehlerfall ï¿½berlegen
         }
@@ -99,6 +97,8 @@ public class PluginExampleCreator {
         Node extensionKEX = filterExtensionKEX(pluginNode);
 
         extensionKEX.appendChild(toNode(parseElement, location));
+        // TODO duplicate checker überprüfen mitteles debug
+        checkDuplicate(PluginConstants.TITLE, parseElement.getTitle(), extensionKEX, isDuplicate);
         writePluginXML(pluginXML.getAbsolutePath());
     }
 
@@ -121,6 +121,7 @@ public class PluginExampleCreator {
                 if (searchValue.equals(item.getNodeValue()))
                     result = true;
             }
+            // TODO check duplicate reicht so noch nicht
             if (item.hasChildNodes()) {
                 checkDuplicate(searchKey, searchValue, item, result);
             }
@@ -238,7 +239,7 @@ public class PluginExampleCreator {
         StringBuilder destLocation = new StringBuilder();
         try {
 
-            String sourcePath = this.workspacePath.toPortableString()
+            String sourcePath = this.workspacePath.toOSString()
                     + resource.getResource().getFullPath().toOSString();
 
             destLocation.append(destPath).append(File.separatorChar)

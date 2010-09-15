@@ -134,9 +134,10 @@ public class ExampleExport {
         List<IPath> finishedResources = new ArrayList<IPath>();
         try {
             extensionCreator.copyResources(destFile, exportResources, finishedResources);
+            // TODO überschreiben ???
+            mappedExample.addResources(ExampleExport.mapToExampleResource(exportResources));
             extensionCreator.addExtension(destFile, mappedExample,
                     (List<String>) properties.get(ExampleElement.CREATE_CATEGORIES));
-            mappedExample.addResources(ExampleExport.mapToExampleResource(exportResources));
         } catch (KielerException e) {
             extensionCreator.deleteExampleResources(finishedResources);
             throw e;
@@ -147,8 +148,9 @@ public class ExampleExport {
         List<ExampleResource> result = new ArrayList<ExampleResource>();
         for (ExportResource exRe : exportResources) {
             ExampleResource resultItem = new ExampleResource(
+            // TODO sourcetype geht nicht
                     exRe.getLocalPath().toPortableString(), ExampleResource.Type.valueOf(exRe
-                            .getResource().getClass().getSimpleName()));
+                            .getResource().getClass().getName()));
             resultItem.setDirectOpen(exRe.isDirectOpen());
             result.add(resultItem);
         }
