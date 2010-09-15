@@ -63,6 +63,11 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
         for (IEdge insertingEdge : edges) {
 
+            System.out.println("Subgraph");
+            System.out.println(graph);
+            System.out.println("Neue Kanten");
+            System.out.println(edges.toString());
+
             IGraph dualGraph = new PGraphFactory().createDualGraph(graph);
             LinkedList<INode> dualPath = new LinkedList<INode>();
 
@@ -170,6 +175,54 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             }
             path.add(target);
 
+            // get the preEdge at the source nodes
+            LinkedList<IEdge> sourcePreEdges = new LinkedList<IEdge>();
+            int i = 0;
+            while (i < path.size() - 1) {
+
+                INode src = path.get(i);
+                IEdge edge = null;
+
+                IFace face = shortestFacePath.get(i);
+                for (IEdge e : face.adjacentEdges()) {
+                    if ((e.getSource() == src) && (e.getRightFace() == face)) {
+                        edge = e;
+                        break;
+                    } else if ((e.getTarget() == src) && (e.getLeftFace() == face)) {
+                        edge = e;
+                        break;
+                    }
+                }
+                sourcePreEdges.add(edge);
+                i++;
+            }
+
+            // TODO edge could be null
+
+            // get the preEdge at the target nodes
+            LinkedList<IEdge> targetPreEdges = new LinkedList<IEdge>();
+            int k = 0;
+            while (k < path.size() - 1) {
+
+                INode dst = path.get(k + 1);
+                IEdge edge = null;
+
+                IFace face = shortestFacePath.get(k);
+                for (IEdge e : face.adjacentEdges()) {
+                    if ((e.getSource() == dst) && (e.getRightFace() == face)) {
+                        edge = e;
+                        break;
+                    } else if ((e.getTarget() == dst) && (e.getLeftFace() == face)) {
+                        edge = e;
+                        break;
+                    }
+                }
+                targetPreEdges.add(edge);
+                k++;
+            }
+
+            // TODO edge could be null
+
             // connect the node path
             int pathNodeCounter = 0;
             while (pathNodeCounter < path.size() - 1) {
@@ -185,10 +238,11 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                     IEdge newHyperEdge = graph.addEdge(oldHyperNode, newHyperNode);
 
                     // bring edge in right order
-                    reinsertEdges(newHyperEdge, oldHyperNode);
+                    IEdge preEdgeA = this.findFirstFaceEdge(newHyperEdge, oldHyperNode);
+                    reinsertEdges(newHyperEdge, preEdgeA, oldHyperNode);
 
                     // move half of the edges to new hypernode
-                    for (int i = 0; i < oldHyperNode.getAdjacentEdgeCount() / 2; i++) {
+                    for (int x = 0; x < oldHyperNode.getAdjacentEdgeCount() / 2; x++) {
                         // FIXME
                     }
 
@@ -199,20 +253,22 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                     IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
 
                     // bring new edges at new node in right order
-                    reinsertEdges(newEdge, midNode);
+                    IEdge preEdgeB = this.findFirstFaceEdge(newEdge, midNode);
+                    reinsertEdges(newEdge, preEdgeB, midNode);
                     pathNodeCounter++;
                 }
 
                 // connecting new normal nodes
                 else {
 
-                    IEdge newEdge = graph.addEdge(path.get(pathNodeCounter),
-                            path.get(pathNodeCounter + 1));
+                    INode src = path.get(pathNodeCounter);
+                    INode dst = path.get(pathNodeCounter + 1);
+
+                    IEdge newEdge = graph.addEdge(src, dst);
 
                     // bring new edges in right order
-                    reinsertEdges(newEdge, newEdge.getSource());
-                    reinsertEdges(newEdge, newEdge.getTarget());
-
+                    reinsertEdges(newEdge, sourcePreEdges.get(pathNodeCounter), src);
+                    reinsertEdges(newEdge, targetPreEdges.get(pathNodeCounter), dst);
                     pathNodeCounter++;
                 }
             }
@@ -244,23 +300,21 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param node
      *            , the given node
      */
-    private void reinsertEdges(final IEdge edge, final INode node) {
+    private void reinsertEdges(final IEdge edge, final IEdge preEdge, final INode node) {
 
-        IEdge preNewEdge = findFirstFaceEdge(edge, node);
         List<IEdge> edges = new LinkedList<IEdge>();
         for (IEdge e : node.adjacentEdges()) {
             edges.add(e);
         }
         int index = 0;
         for (IEdge iedge : edges) {
-            if (iedge == preNewEdge) {
+            if (iedge == preEdge) {
                 // move the given edge in right position
                 edge.move(node, node);
                 // move the rest of the edges after the given edge
                 if (index < edges.size() - 1) {
                     for (IEdge iEdge : edges.subList(index + 1, edges.size() - 1)) {
                         iEdge.move(node, node);
-
                     }
                     break;
                 }
