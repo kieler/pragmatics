@@ -447,7 +447,7 @@ public final class EvolModel {
 
         final int oldPosition = this.position;
 
-        if (oldPosition != thePosition) {
+        if ((oldPosition != thePosition)) {
             this.position = thePosition;
             afterChange("setPosition");
         }

@@ -36,7 +36,6 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -250,8 +249,10 @@ public final class EvolUtil {
                 if (value == null) {
                     value = 0;
                 }
-            } else {
+            } else if (theRawValue instanceof Enum) {
                 value = ((Enum<Type>) theRawValue).ordinal();
+            } else {
+                value = 0;
             }
             result = new EnumGene(theId, value.intValue(), enumClass, theMutationProbability);
             EvolPlugin.logStatus("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
@@ -656,15 +657,15 @@ public final class EvolUtil {
             return new Population();
         }
 
-        // Get the layout property sources of the editors.
-        final List<LayoutPropertySource> sources = getLayoutPropertySources(editors);
-        Assert.isNotNull(sources);
+        // Get the layout inspectors of the editors.
+        final List<ILayoutInspector> inspectors = getLayoutInspectors(editors);
+        Assert.isNotNull(inspectors);
 
-        if (sources.isEmpty()) {
+        if (inspectors.isEmpty()) {
             return new Population();
         }
 
-        final Population result = createPopulation(sources);
+        final Population result = createPopulation(inspectors);
         return result;
     }
 
@@ -889,30 +890,35 @@ public final class EvolUtil {
     private static void adoptIndividual(final Genome individual, final IEditorPart editor) {
         Assert.isLegal(individual != null);
 
-        final LayoutPropertySource propertySource = getLayoutPropertySource(editor, null);
-        Assert.isNotNull(propertySource);
-        adoptIndividual(individual, propertySource);
+        final ILayoutInspector inspector = getLayoutInspector(editor, null);
+        Assert.isNotNull(inspector);
+
+// final LayoutPropertySource propertySource = new
+        // LayoutPropertySource(inspector);
+        // Assert.isNotNull(propertySource);
+        adoptIndividual(individual, inspector);
     }
 
     /**
      * Adopts layout options from the given {@link Genome} into the given
-     * {@link LayoutPropertySource}.
+     * {@link ILayoutInspector}.
      *
      * @param individual
      *            the {@link Genome}; must not be {@code null}
-     * @param propertySource
-     *            the {@link LayoutPropertySource}; must not be {@code null}
+     * @param inspector
+     *            the {@link ILayoutInspector}; must not be {@code null}
      */
     private static void adoptIndividual(
-            final Genome individual, final LayoutPropertySource propertySource) {
-        Assert.isLegal((individual != null) && (propertySource != null));
-        if ((individual == null) || (propertySource == null)) {
+final Genome individual, final ILayoutInspector inspector) {
+        Assert.isLegal((individual != null) && (inspector != null));
+        if ((individual == null) || (inspector == null)) {
             return;
         }
 
         EvolPlugin.logStatus("Adopting " + individual.toString());
         final LayoutServices layoutServices = LayoutServices.getInstance();
-        final EvolutionServices evolServices = EvolutionServices.getInstance();
+        // final EvolutionServices evolServices =
+        // EvolutionServices.getInstance();
         // final Set<String> metricIds = evolServices.getLayoutMetricsIds();
 
         // Set layout options according to the genome.
@@ -931,21 +937,25 @@ public final class EvolUtil {
             Assert.isNotNull(data, "No layout option data for " + id);
 
             final Type layoutOptionType = data.getType();
+
             switch (layoutOptionType) {
 
             case BOOLEAN:
                 if (value instanceof Boolean) {
-                    propertySource.setPropertyValue(id,
+                    inspector.setOption(data,
                             Integer.valueOf((((Boolean) value).booleanValue() ? 1 : 0)));
+                    // inspector.setPropertyValue(id,
+                    // Integer.valueOf((((Boolean) value).booleanValue() ? 1 :
+                    // 0)));
                 } else {
-                    propertySource.setPropertyValue(id,
+                    inspector.setOption(data,
                             Integer.valueOf(Math.round(((Float) value).floatValue())));
                 }
                 break;
 
             case ENUM:
                 try {
-                    propertySource.setPropertyValue(id, value);
+                    inspector.setOption(data, value);
                 } catch (final NullPointerException e) {
                     EvolPlugin.showError("WARNING: enum property could not be set: " + id, e);
                     Assert.isTrue(false);
@@ -954,9 +964,9 @@ public final class EvolUtil {
 
             case INT:
                 if (value instanceof Integer) {
-                    propertySource.setPropertyValue(id, value);
+                    inspector.setOption(data, value);
                 } else {
-                    propertySource.setPropertyValue(id, gene.toString());
+                    inspector.setOption(data, gene.toString());
                 }
                 break;
 
@@ -972,7 +982,7 @@ public final class EvolUtil {
                     final String newLayoutHintId = gene.toString();
 
                     final Set<Object> oldLayoutHintIds =
-                            getPropertyValues(Collections.singletonList(propertySource),
+                            getPropertyValues(Collections.singletonList(inspector),
                                     LayoutOptions.LAYOUTER_HINT_ID);
 
                     Assert.isTrue(!oldLayoutHintIds.isEmpty());
@@ -999,7 +1009,7 @@ public final class EvolUtil {
                     } else if ((canSetForDifferentType || isCompatibleLayoutProvider(
                             oldLayoutHintId, newType))) {
                         // ok, we are allowed to set it
-                        propertySource.setPropertyValue(id, newLayoutHintId);
+                        inspector.setOption(data, newLayoutHintId);
                     } else {
                         EvolPlugin.showError(
                                 "Attempt to set the layout hint to incompatible type: "
@@ -1007,12 +1017,12 @@ public final class EvolUtil {
                     }
 
                 } else {
-                    propertySource.setPropertyValue(id, value.toString());
+                    inspector.setOption(data, value.toString());
                 }
                 break;
 
             default:
-                propertySource.setPropertyValue(id, value.toString());
+                inspector.setOption(data, value.toString());
                 break;
             }
         }
@@ -1037,12 +1047,12 @@ public final class EvolUtil {
         }
 
         final int rating = calculateAutoRating(ind, editors, weightsGenomes);
-        ind.setUserRating(rating);
+        ind.setUserRating(Integer.valueOf(rating));
     }
 
     /**
      * Lays out the given individual in the given editor and measures its
-     * features, using the given manager and layout property source.
+     * features, using the given manager and layout inspector.
      *
      * @param ind
      *            a {@link Genome}; may not be {@code null}
@@ -1050,8 +1060,8 @@ public final class EvolUtil {
      *            an {@link IEditorPart}
      * @param manager
      *            a {@link DiagramLayoutManager}
-     * @param propertySource
-     *            a {@link LayoutPropertySource}; may not be {@code null}
+     * @param inspector
+     *            a {@link ILayoutInspector}; may not be {@code null}
      * @param weightsMap
      *            a map that associates weights to metric IDs; must not be
      *            {@code null}. This map indicates which features shall be
@@ -1060,15 +1070,14 @@ public final class EvolUtil {
      */
     private static Map<String, Object> measure(
             final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
-            final LayoutPropertySource propertySource, final Map<String, Double> weightsMap) {
-        Assert.isLegal((ind != null) && (propertySource != null) && (weightsMap != null));
-        if ((ind == null) || (propertySource == null) || (weightsMap == null)) {
+            final ILayoutInspector inspector, final Map<String, Double> weightsMap) {
+        Assert.isLegal((ind != null) && (inspector != null) && (weightsMap != null));
+        if ((ind == null) || (inspector == null) || (weightsMap == null)) {
             return null;
         }
 
-        // Transfer layout options from the individual to the layout property
-        // source.
-        adoptIndividual(ind, propertySource);
+        // Transfer layout options from the individual to the layout inspector.
+        adoptIndividual(ind, inspector);
 
         final IKielerProgressMonitor monitor = calculateLayout(manager, editor);
 
@@ -1186,7 +1195,10 @@ public final class EvolUtil {
                     EclipseLayoutServices.getInstance().getManager(editor, null);
             Assert.isNotNull(manager);
 
-            final LayoutPropertySource source = getLayoutPropertySource(editor, null);
+            final ILayoutInspector inspector = getLayoutInspector(editor, null);
+            Assert.isNotNull(inspector);
+
+            final LayoutPropertySource source = new LayoutPropertySource(inspector);
             Assert.isNotNull(source);
 
             // TODO: what if weights genomes is empty?
@@ -1210,7 +1222,7 @@ public final class EvolUtil {
                 // measurements, or use average ratings instead?
 
                 if (measurements == null) {
-                    measurements = measure(ind, editor, manager, source, weightsMap);
+                    measurements = measure(ind, editor, manager, inspector, weightsMap);
 
                     ind.setFeatures(measurements);
                     // TODO: don't set features here. This works only for one
@@ -1289,49 +1301,49 @@ public final class EvolUtil {
 
         return monitor;
     }
-
+    
     /**
      * Create a population of default size, taking initial values from the given
-     * list of {@link LayoutPropertySource} instances.
-     *
-     * @param propertySources
+     * list of {@link ILayoutInspector} instances.
+     * 
+     * @param inspectors
      * @return
      * @throws KielerException
      */
-    private static Population createPopulation(final List<LayoutPropertySource> propertySources)
+    private static Population createPopulation(final List<ILayoutInspector> inspectors)
             throws KielerException {
-        Assert.isLegal(propertySources != null);
+        Assert.isLegal(inspectors != null);
         final int size =
                 EvolPlugin.getDefault().getPreferenceStore()
                         .getInt(EvolPlugin.PREF_POPULATION_SIZE);
-        return createPopulation(propertySources, size);
+        return createPopulation(inspectors, size);
     }
 
     /**
      * Create a population of the given size, taking initial values from the
-     * given list of {@link LayoutPropertySource} instances.
+     * given list of {@link ILayoutInspector} instances.
      *
-     * @param propertySources
+     * @param inspectors
      * @param size
      * @return a new population
      * @throws KielerException
      */
     private static Population createPopulation(
-            final List<LayoutPropertySource> propertySources, final int size)
+            final List<ILayoutInspector> inspectors, final int size)
             throws KielerException {
-        Assert.isLegal(propertySources != null);
+        Assert.isLegal(inspectors != null);
         Assert.isLegal(size >= 0);
 
         final Population result = new Population();
 
-        final Set<Object> layoutHintIds =
-                getPropertyValues(propertySources, LayoutOptions.LAYOUTER_HINT_ID);
+        final Set<Object> presentLayoutHintIds =
+                getPropertyValues(inspectors, LayoutOptions.LAYOUTER_HINT_ID);
 
         // Create the individuals one by one.
         final GenomeFactory genomeFactory = new GenomeFactory(null);
 
         for (int i = 0; i < size; i++) {
-            final Genome genome = genomeFactory.createGenome(propertySources, layoutHintIds);
+            final Genome genome = genomeFactory.createGenome(inspectors, presentLayoutHintIds);
             result.add(genome);
         }
         return result;
@@ -1342,7 +1354,7 @@ public final class EvolUtil {
      *
      * @param genome
      *            a {@link Genome}
-     * @return a map associating metric weights to metric ids.
+     * @return a map associating metric weights to metric IDs.
      */
     private static Map<String, Double> extractMetricWeights(final Genome genome) {
         // TODO: Discuss whether this method should be moved into Genome.
@@ -1371,44 +1383,53 @@ public final class EvolUtil {
     }
 
     /**
-     * Obtains the layout hint identifier from the given property descriptor.
+     * Obtains the layout hint identifier from the given layout inspector.
      *
-     * @param descriptor
-     *            an {@link IPropertyDescriptor}
+     * @param inspector
+     *            an {@link ILayoutInspector}
      * @param value
      *            the integer value indicating the layout hint
      * @return the layout hint id
      */
-    private static String getLayoutHintId(final IPropertyDescriptor descriptor, final Object value) {
-        final ILabelProvider labelProvider = descriptor.getLabelProvider();
-        Assert.isNotNull(labelProvider,
-                "Could not obtain label provider for " + descriptor.getId());
+    private static String getLayoutHintId(final ILayoutInspector inspector, final Object value) {
+        // final LayoutPropertySource source = new
+        // LayoutPropertySource(inspector);
 
-        String text;
-        String hintId = null;
+// final ILabelProvider labelProvider = ((IPropertyDescriptor)
+        // source).getLabelProvider();
+
+        final LayoutOptionData<?> data =
+                LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUTER_HINT_ID);
+
+        final String hintId = (String) inspector.getOption(data) + "";
+
+// Assert.isNotNull(labelProvider,
+        // "Could not obtain label provider for " + inspector.toString());
+
+// String text;
 
         // Get the caption.
-        text = labelProvider.getText(value);
+        // text = labelProvider.getText(value);
 
-        // XXX @msp Is there a more elegant way to obtain the layout hint id?
-        hintId = LayoutPropertySource.getLayoutHint(text);
+// hintId = LayoutPropertySource.getLayoutHint(text);
 
-        Assert.isTrue(hintId.length() > 0, "Could not find layout provider id for '" + text + "'");
+        Assert.isTrue(hintId.length() > 0, "Could not find layout provider id.");
 
         return hintId;
     }
 
     /**
+     * Returns a layout inspector for the given editor and edit part.
      *
      * @param theEditor
      *            an {@link IEditorPart}
      * @param theEditPart
      *            an {@link EditPart}. If this is {@code null}, the rootPart is
      *            used instead.
-     * @return a {@link LayoutPropertySource} for the given editor and edit
-     *         part, or {@code null} if none can be found.
+     * @return a {@link ILayoutInspector} for the given editor and edit part, or
+     *         {@code null} if none can be found.
      */
-    private static LayoutPropertySource getLayoutPropertySource(
+    private static ILayoutInspector getLayoutInspector(
             final IEditorPart theEditor, final EditPart theEditPart) {
 
         if (!(theEditor instanceof DiagramEditor)) {
@@ -1439,29 +1460,28 @@ public final class EvolUtil {
         final ILayoutInspector inspector = manager.getInspector(rootPart);
         Assert.isNotNull(inspector);
 
-        final LayoutPropertySource result = new LayoutPropertySource(inspector);
-        return result;
+        return inspector;
     }
 
     /**
-     * Collect the layout property sources of the given editors. The current
-     * editor is treated first, if there is any.
+     * Collect the layout inspectors of the given editors. The current editor is
+     * treated first, if there is any.
      *
      * @param editors
-     * @return
+     * @return a list of layout inspectors
      */
-    private static List<LayoutPropertySource> getLayoutPropertySources(
+    private static List<ILayoutInspector> getLayoutInspectors(
             final Set<IEditorPart> editors) {
-        final List<LayoutPropertySource> sources = new LinkedList<LayoutPropertySource>();
+        final List<ILayoutInspector> inspectors = new LinkedList<ILayoutInspector>();
 
         // Handle current editor.
         final IEditorPart currentEditor = getCurrentEditor();
 
         if (currentEditor != null) {
-            final LayoutPropertySource currentPropertySource =
-                    getLayoutPropertySource(currentEditor, null);
-            if (currentPropertySource != null) {
-                sources.add(currentPropertySource);
+            final ILayoutInspector currentInspector =
+                    getLayoutInspector(currentEditor, null);
+            if (currentInspector != null) {
+                inspectors.add(currentInspector);
             }
         }
 
@@ -1477,14 +1497,14 @@ public final class EvolUtil {
                 continue;
             }
 
-            final LayoutPropertySource propertySource = getLayoutPropertySource(editor, null);
+            final ILayoutInspector inspector = getLayoutInspector(editor, null);
 
-            if (propertySource != null) {
-                sources.add(propertySource);
+            if (inspector != null) {
+                inspectors.add(inspector);
             }
         }
 
-        return sources;
+        return inspectors;
     }
 
     /**
@@ -1516,20 +1536,20 @@ public final class EvolUtil {
     }
 
     /**
-     * Retrieve the values of the given IDs in from the given layout property
-     * sources. For layout hint, the layout hint identifiers are returned
-     * instead of the actual values.
+     * Retrieve the values of the given IDs in from the given layout inspectors.
+     * For layout hint, the layout hint identifiers are returned.
      *
-     * @param propertySources
+     * @param inspectors
      * @param id
      * @return a set of values
      */
     private static Set<Object> getPropertyValues(
-            final List<LayoutPropertySource> propertySources, final String id) {
+            final List<ILayoutInspector> inspectors, final String id) {
 
         final Set<Object> result = new LinkedHashSet<Object>();
 
-        for (final LayoutPropertySource source : propertySources) {
+        for (final ILayoutInspector inspector : inspectors) {
+            final LayoutPropertySource source = new LayoutPropertySource(inspector);
             Object value;
             try {
                 value = source.getPropertyValue(id);
@@ -1554,7 +1574,7 @@ public final class EvolUtil {
                     continue;
                 }
 
-                final String item = getLayoutHintId(source, value);
+                final String item = getLayoutHintId(inspector, value);
 
                 if (item != null) {
                     result.add(item);
@@ -1576,7 +1596,9 @@ public final class EvolUtil {
      * @param value
      *            the integer value indicating the layout hint
      * @return the layout hint id
+     * @deprecated
      */
+    @Deprecated
     private static String getLayoutHintId(final LayoutPropertySource source, final Object value) {
 
         // Get the property descriptor.
@@ -1592,7 +1614,8 @@ public final class EvolUtil {
         String result = null;
         if (descriptor != null) {
             // Get the layout hint identifier.
-            final String layoutHintId = getLayoutHintId(descriptor, value);
+            final String layoutHintId = null; // getLayoutHintId(descriptor,
+                                              // value);
             result = layoutHintId;
         }
 
