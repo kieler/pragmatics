@@ -44,9 +44,14 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public static final Comparator<Genome> DESCENDING_RATING_COMPARATOR = new Comparator<Genome>() {
         public int compare(final Genome ind0, final Genome ind1) {
-                    if (ind0.getUserRating() == ind1.getUserRating()) {
+                    final int v0 =
+                            (ind0.getUserRating() == null ? 0 : ind0.getUserRating().intValue());
+                    final int v1 =
+                            (ind1.getUserRating() == null ? 0 : ind1.getUserRating().intValue());
+
+                    if (v0 == v1) {
                         return 0;
-                    } else if (ind0.getUserRating() < ind1.getUserRating()) {
+                    } else if (v0 < v1) {
                         return 1;
                     }
                     return -1;
@@ -154,7 +159,7 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public void fadeUserRating() {
         // TODO: implement more sophisticated fading of ratings
-        if (this.userRating != 0) {
+        if (hasUserRating()) {
             final double scalingFactor = .90;
             this.userRating = (int) (this.userRating * scalingFactor);
         }
@@ -205,7 +210,7 @@ public class Genome extends ArrayList<IGene<?>> {
      * @return the user-defined rating. A higher value means a better rating.
      *         The value may be negative.
      */
-    public synchronized int getUserRating() {
+    public synchronized Integer getUserRating() {
         return this.userRating;
     }
 
@@ -214,7 +219,7 @@ public class Genome extends ArrayList<IGene<?>> {
      * @return {@code true} if this individual has been rated.
      */
     public boolean hasUserRating() {
-        return (this.userRating != 0);
+        return (this.userRating != null);
     }
 
     /**
@@ -252,14 +257,16 @@ public class Genome extends ArrayList<IGene<?>> {
      * Sets the user-defined rating.
      *
      * @param theRating
-     *            An integer value (may be negative). A higher value means a
-     *            better rating.
+     *            An Integer (may be negative). A higher value means a better
+     *            rating.
      */
-    public synchronized void setUserRating(final int theRating) {
+    public synchronized void setUserRating(final Integer theRating) {
         System.out.println("Assign rating " + theRating + " to individual" + ": " + getId());
+
+        final Integer oldRating = getUserRating();
+
         // compare new rating to previous one
-        if (hasUserRating()) {
-            final int oldRating = getUserRating();
+        if (hasUserRating() && (theRating != null)) {
             if (oldRating < theRating) {
                 System.out.println("Ind. was under-rated (" + oldRating + " -> " + theRating + ")");
             } else if (oldRating > theRating) {
@@ -342,7 +349,7 @@ public class Genome extends ArrayList<IGene<?>> {
 
     // private fields
     private final int generation;
-    private int userRating;
+    private Integer userRating = null;
 
     private Map<String, Object> features = Collections.emptyMap();
 
