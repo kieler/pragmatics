@@ -376,16 +376,6 @@
             id="de.cau.cs.kieler.kiml.evol.info"
             name="Info">
       </command>
-      <command
-            defaultHandler="de.cau.cs.kieler.kiml.evol.handlers.MultipleEditorsHandler"
-            description="Toggles between single and multiple editors mode."
-            id="de.cau.cs.kieler.kiml.evol.multipleEditors"
-            name="Multiple editors">
-         <state
-               class="de.cau.cs.kieler.kiml.evol.MultipleEditorsState"
-               id="state">
-         </state>
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -399,21 +389,6 @@
                tooltip="Proceed to the next generation.">
             <parameter
                   name="de.cau.cs.kieler.kiml.evol.steps"
-                  value="1">
-            </parameter>
-         </command>
-         <command
-               commandId="de.cau.cs.kieler.kiml.evol.evolve"
-               icon="icons/evolve16.png"
-               label="Evolve"
-               style="push"
-               tooltip="Proceed to the next generation repeatedly.">
-            <parameter
-                  name="de.cau.cs.kieler.kiml.evol.steps"
-                  value="12">
-            </parameter>
-            <parameter
-                  name="de.cau.cs.kieler.kiml.evol.stepsBeforeAutoRating"
                   value="1">
             </parameter>
          </command>
