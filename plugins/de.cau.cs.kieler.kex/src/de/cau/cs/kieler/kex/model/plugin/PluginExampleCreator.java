@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -31,7 +30,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.controller.util.IOHandler;
@@ -222,18 +220,16 @@ public class PluginExampleCreator {
     /**
      * creates example files to given location
      * 
+     * @param finishedResources
+     * 
      * @param exampleId
      * 
      * @param sourceProject
      */
-    public void copyResources(File destFile, List<ExportResource> resources) throws KielerException {
-        List<IPath> finishedResources = new ArrayList<IPath>();
-        try {
-            for (ExportResource resource : resources) {
-                copyResource(resource, destFile.getPath(), finishedResources);
-            }
-        } catch (KielerException e) {
-            throw new KielerModelException(e.getLocalizedMessage(), finishedResources);
+    public void copyResources(File destFile, List<ExportResource> resources,
+            List<IPath> finishedResources) throws KielerException {
+        for (ExportResource resource : resources) {
+            copyResource(resource, destFile.getPath(), finishedResources);
         }
     }
 

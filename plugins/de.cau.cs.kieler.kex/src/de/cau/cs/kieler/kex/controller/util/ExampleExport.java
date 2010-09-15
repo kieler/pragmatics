@@ -8,7 +8,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 
 import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExportResource;
@@ -132,16 +131,14 @@ public class ExampleExport {
 
         List<ExportResource> exportResources = (List<ExportResource>) properties
                 .get(ExampleElement.RESOURCES);
+        List<IPath> finishedResources = new ArrayList<IPath>();
         try {
-            extensionCreator.copyResources(destFile, exportResources);
+            extensionCreator.copyResources(destFile, exportResources, finishedResources);
             extensionCreator.addExtension(destFile, mappedExample,
                     (List<String>) properties.get(ExampleElement.CREATE_CATEGORIES));
-
             mappedExample.addResources(ExampleExport.mapToExampleResource(exportResources));
-        } catch (KielerModelException e) {
-            if (e.getModelObject() instanceof List<?>) {
-                extensionCreator.deleteExampleResources((List<IPath>) e.getModelObject());
-            }
+        } catch (KielerException e) {
+            extensionCreator.deleteExampleResources(finishedResources);
             throw e;
         }
     }
