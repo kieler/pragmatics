@@ -13,12 +13,18 @@
  */
 package de.cau.cs.kieler.klay.layered.impl;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
@@ -35,9 +41,13 @@ import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
 /**
  * Edge routing implementation that creates orthogonal bend points. Inspired by
  * <ul>
- * <li>Georg Sander. Layout of directed hypergraphs with orthogonal hyperedges. In
- *   <i>Proceedings of the 11th International Symposium on Graph Drawing (GD '03)</i>,
- *   volume 2912 of LNCS, pp. 381-386. Springer, 2004.</li>
+ *   <li>Georg Sander. Layout of directed hypergraphs with orthogonal hyperedges. In
+ *     <i>Proceedings of the 11th International Symposium on Graph Drawing (GD '03)</i>,
+ *     volume 2912 of LNCS, pp. 381-386. Springer, 2004.</li>
+ *   <li>Giuseppe di Battista, Peter Eades, Roberto Tamassia, Ioannis G. Tollis,
+ *     <i>Graph Drawing: Algorithms for the Visualization of Graphs</i>,
+ *     Prentice Hall, New Jersey, 1999 (Section 9.4, for cycle breaking in the
+ *     hyperedge segment graph)
  * </ul>
  *
  * @author msp
@@ -50,7 +60,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
     /**
      * A hypernode used for routing a hyperedge.
      */
-    private static class HyperNode {
+    private static class HyperNode implements Comparable<HyperNode> {
         /** ports represented by this hypernode. */
         private List<LPort> ports = new LinkedList<LPort>();
         /** mark value used for cycle breaking. */
@@ -116,7 +126,28 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
          */
         @Override
         public String toString() {
-            return "hn[" + mark + "]";
+            StringBuilder builder = new StringBuilder("{");
+            Iterator<LPort> portIter = ports.iterator();
+            while (portIter.hasNext()) {
+                LPort port = portIter.next();
+                String name = port.getNode().getName();
+                if (name == null) {
+                    name = "n" + port.getNode().getIndex();
+                }
+                builder.append(name);
+                if (portIter.hasNext()) {
+                    builder.append(',');
+                }
+            }
+            builder.append('}');
+            return builder.toString();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public int compareTo(final HyperNode other) {
+            return this.mark - other.mark;
         }
     }
 
@@ -173,11 +204,15 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
         conflictThreshold = CONFL_THRESH_FACTOR * edgeSpacing;
         
         float xpos = 0.0f;
-        for (Layer layer : layeredGraph.getLayers()) {
+        Iterator<Layer> layerIter = layeredGraph.getLayers().iterator();
+        while (layerIter.hasNext()) {
+            Layer layer = layerIter.next();
             layer.placeNodes(xpos);
             xpos += layer.getSize().x + edgeSpacing;
-            int slotsCount = routeEdges(layer, xpos);
-            xpos += slotsCount * edgeSpacing;
+            if (layerIter.hasNext()) {
+                int slotsCount = routeEdges(layer, xpos);
+                xpos += slotsCount * edgeSpacing;
+            }
         }
         
         layeredGraph.getSize().x = xpos;
@@ -220,11 +255,18 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             }
         }
         
-        // write the dependency graph to an output file
-//        if (layer.getGraph().getProperty(LayoutOptions.DEBUG_MODE)) {
+        // write the full dependency graph to an output file
+        if (layer.getGraph().getProperty(LayoutOptions.DEBUG_MODE)) {
+            writeDebugGraph(layer, hyperNodes, "full");
+        }
         
         // break cycles
         breakCycles(hyperNodes);
+
+        // write the acyclic dependency graph to an output file
+        if (layer.getGraph().getProperty(LayoutOptions.DEBUG_MODE)) {
+            writeDebugGraph(layer, hyperNodes, "acyc");
+        }
         
         // assign ranks to the hypernodes
         topolNumb(hyperNodes);
@@ -235,8 +277,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             rankCount = Math.max(rankCount, node.rank);
             double x = xpos + node.rank * edgeSpacing;
             for (LPort port : node.ports) {
-                double sourcey = port.getNode().getPos().y + port.getPos().y;
                 if (port.getType() == PortType.OUTPUT) {
+                    double sourcey = port.getNode().getPos().y + port.getPos().y;
                     for (LEdge edge : port.getEdges()) {
                         double targety = edge.getTarget().getNode().getPos().y
                                 + edge.getTarget().getPos().y;
@@ -280,9 +322,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             // create dependency from second hypernode to first one
             new Dependency(hn2, hn1, depValue1 - depValue2);
         } else if (depValue1 > 0 && depValue2 > 0) {
-            // create two dependencies with equal weight
-            new Dependency(hn1, hn2, 1);
-            new Dependency(hn2, hn1, 1);
+            // create two dependencies with zero weight
+            new Dependency(hn1, hn2, 0);
+            new Dependency(hn2, hn1, 0);
         }
     }
     
@@ -340,7 +382,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
     }
     
     /**
-     * Breaks all cycles in the given hypernode structure by removing some dependencies.
+     * Breaks all cycles in the given hypernode structure by reversing or removing
+     * some dependencies. This implementation assumes that the dependencies of zero
+     * weight are exactly the two-cycles of the hypernode structure.
      * 
      * @param nodes list of hypernodes
      */
@@ -348,7 +392,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
         LinkedList<HyperNode> sources = new LinkedList<HyperNode>();
         LinkedList<HyperNode> sinks = new LinkedList<HyperNode>();
         // initialize values for the algorithm
+        int nextMark = -1;
         for (HyperNode node : nodes) {
+            node.mark = nextMark--;
             int inweight = 0, outweight = 0;
             for (Dependency dependency : node.outgoing) {
                 outweight += dependency.weight;
@@ -365,55 +411,62 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             }
         }
     
-        // assign marks to all nodes
-        int unprocessedNodes = nodes.size(), nextRight = -1, nextLeft = 1;
-        while (unprocessedNodes > 0) {
+        // assign marks to all nodes, ignore dependencies of weight zero
+        Set<HyperNode> unprocessed = new TreeSet<HyperNode>(nodes);
+        int markBase = nodes.size();
+        int nextRight = markBase - 1, nextLeft = markBase + 1;
+        while (!unprocessed.isEmpty()) {
             while (!sinks.isEmpty()) {
                 HyperNode sink = sinks.removeFirst();
+                unprocessed.remove(sink);
                 sink.mark = nextRight--;
                 updateNeighbors(sink, sources, sinks);
-                unprocessedNodes--;
             }
             while (!sources.isEmpty()) {
                 HyperNode source = sources.removeFirst();
+                unprocessed.remove(source);
                 source.mark = nextLeft++;
                 updateNeighbors(source, sources, sinks);
-                unprocessedNodes--;
             }
-            if (unprocessedNodes != 0) {
-                int maxOutflow = Integer.MIN_VALUE;
-                HyperNode maxNode = null;
-                for (HyperNode node : nodes) {
-                    if (node.mark == 0) {
-                        int outflow = node.outweight - node.inweight;
-                        if (outflow > maxOutflow) {
-                            maxOutflow = outflow;
-                            maxNode = node;
-                        }
-                    }
+            int maxOutflow = Integer.MIN_VALUE;
+            HyperNode maxNode = null;
+            for (HyperNode node : unprocessed) {
+                int outflow = node.outweight - node.inweight;
+                if (outflow > maxOutflow) {
+                    maxOutflow = outflow;
+                    maxNode = node;
                 }
+            }
+            if (maxNode != null) {
+                unprocessed.remove(maxNode);
                 maxNode.mark = nextLeft++;
                 updateNeighbors(maxNode, sources, sinks);
-                unprocessedNodes--;
             }
         }
     
-        // shift negative ranks
+        // shift ranks that are left of the mark base
         int shiftBase = nodes.size() + 1;
         for (HyperNode node : nodes) {
-            if (node.mark < 0) {
+            if (node.mark < markBase) {
                 node.mark += shiftBase;
             }
         }
     
-        // remove edges that point left
-        for (HyperNode node : nodes) {
-            ListIterator<Dependency> depIter = node.outgoing.listIterator();
+        // process edges that point left: remove those of zero weight, reverse the others
+        for (HyperNode source : nodes) {
+            ListIterator<Dependency> depIter = source.outgoing.listIterator();
             while (depIter.hasNext()) {
                 Dependency dependency = depIter.next();
-                if (node.mark > dependency.target.mark) {
+                HyperNode target = dependency.target;
+                if (source.mark > target.mark) {
                     depIter.remove();
-                    dependency.target.incoming.remove(dependency);
+                    target.incoming.remove(dependency);
+                    if (dependency.weight > 0) {
+                        dependency.source = target;
+                        target.outgoing.add(dependency);
+                        dependency.target = source;
+                        source.incoming.add(dependency);
+                    }
                 }
             }
         }
@@ -432,18 +485,18 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             final LinkedList<HyperNode> sinks) {
         // process following nodes
         for (Dependency dep : node.outgoing) {
-            if (dep.target.mark == 0) {
-                dep.target.inweight -= dep.weight + 1;
-                if (dep.target.inweight == 0 && dep.target.outweight != 0) {
+            if (dep.target.mark < 0 && dep.weight > 0) {
+                dep.target.inweight -= dep.weight;
+                if (dep.target.inweight <= 0 && dep.target.outweight > 0) {
                     sources.add(dep.target);
                 }
             }
         }
         // process preceding nodes
         for (Dependency dep : node.incoming) {
-            if (dep.source.mark == 0) {
-                dep.source.outweight -= dep.weight + 1;
-                if (dep.source.outweight == 0 && dep.source.inweight != 0) {
+            if (dep.source.mark < 0 && dep.weight > 0) {
+                dep.source.outweight -= dep.weight;
+                if (dep.source.outweight <= 0 && dep.source.inweight > 0) {
                     sinks.add(dep.source);
                 }
             }
@@ -496,6 +549,58 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
             }
         }
         listIter.add(Double.valueOf(value));
+    }
+    
+    /**
+     * Writes a debug graph for the given list of hypernodes.
+     * 
+     * @param layer the currently processed layer
+     * @param hypernodes a list of hypernodes
+     * @param label a label to append to the output files
+     */
+    private static void writeDebugGraph(final Layer layer,
+            final List<HyperNode> hypernodes, final String label) {
+        try {
+            Writer writer = createWriter(layer, label);
+            writer.write("digraph {\n");
+            // write hypernode information
+            for (HyperNode hypernode : hypernodes) {
+                writer.write("  " + hypernode.hashCode() + "[label=\""
+                        + hypernode.toString() + "\"]\n");
+            }
+            // write dependency information
+            for (HyperNode hypernode : hypernodes) {
+                for (Dependency dependency : hypernode.outgoing) {
+                    writer.write("  " + hypernode.hashCode() + "->" + dependency.target.hashCode()
+                            + "[label=\"" + dependency.weight + "\"]\n");
+                }
+            }
+            writer.write("}\n");
+            writer.close();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+    
+    /**
+     * Create a writer for debug output.
+     * 
+     * @param layer the currently processed layer
+     * @param label a label to append to the output files
+     * @return a file writer for debug output
+     * @throws IOException if creating the output file fails
+     */
+    private static Writer createWriter(final Layer layer, final String label) throws IOException {
+        String path = System.getProperty("user.home");
+        if (path.endsWith(File.separator)) {
+            path += "tmp" + File.separator + "graphviz";
+        } else {
+            path += File.separator + "tmp" + File.separator + "klay";
+        }
+        new File(path).mkdirs();
+        String debugFileName = Integer.toString(layer.getGraph().hashCode()
+                & ((1 << (Integer.SIZE / 2)) - 1)) + "-l" + layer.getIndex() + "-" + label;
+        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
 }

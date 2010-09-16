@@ -65,6 +65,15 @@ public class LNode extends LGraphElement {
             return "n_" + name;
         }
     }
+    
+    /**
+     * Returns the name of the node.
+     * 
+     * @return the name, or {@code null}
+     */
+    public String getName() {
+        return name;
+    }
 
     /**
      * Returns the layer that owns this node.
