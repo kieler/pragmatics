@@ -91,13 +91,13 @@ public class PluginExampleCreator {
         }
         boolean isDuplicate = false;
         if (isDuplicate) {
-            // fehlerfall ï¿½berlegen
+            // TODO fehlerfall ueberlegen
         }
 
         Node extensionKEX = filterExtensionKEX(pluginNode);
 
         extensionKEX.appendChild(toNode(parseElement, location));
-        // TODO duplicate checker überprüfen mitteles debug
+        // TODO duplicate checker ï¿½berprï¿½fen mitteles debug
         checkDuplicate(PluginConstants.TITLE, parseElement.getTitle(), extensionKEX, isDuplicate);
         writePluginXML(pluginXML.getAbsolutePath());
     }
@@ -250,9 +250,9 @@ public class PluginExampleCreator {
             IOHandler.writeResource(new File(sourcePath), destination.toFile());
         } catch (IOException e) {
             StringBuilder errorMessage = new StringBuilder();
-            errorMessage.append(ErrorMessage.PLUGIN_WRITE_ERROR).append(",\ndestination: ")
-                    .append(destPath).append(", resource: ")
-                    .append(resource.getLocalPath().toPortableString());
+            errorMessage.append(ErrorMessage.PLUGIN_WRITE_ERROR).append(",\ndestination: ").append(
+                    destPath).append(", resource: ").append(
+                    resource.getLocalPath().toPortableString());
             throw new KielerException(errorMessage.toString());
         }
     }
@@ -328,8 +328,8 @@ public class PluginExampleCreator {
     // return new File(path);
 
     private void throwWritePluginError(Throwable e) throws KielerException {
-        throw new KielerException(new StringBuffer().append(ErrorMessage.NOT_WRITE_PLUGIN)
-                .append(e.getLocalizedMessage()).toString());
+        throw new KielerException(new StringBuffer().append(ErrorMessage.NOT_WRITE_PLUGIN).append(
+                e.getLocalizedMessage()).toString());
     }
 
     private Node toNode(String categoryId) {
@@ -374,12 +374,12 @@ public class PluginExampleCreator {
 
     private Node toNode(String relativePath, ExampleResource exResource) {
         Element createdExResource = parsedXML.createElement(PluginConstants.EXAMPLE_RESOURCE);
-        createdExResource.setAttribute(PluginConstants.LOCAL_PATH,
-                relativePath + "/" + exResource.getLocalPath());
-        createdExResource.setAttribute(PluginConstants.RESOURCE_TYPE,
-                ExampleResource.Type.map(exResource.getResourceType()));
-        createdExResource.setAttribute(PluginConstants.DIRECT_OPEN,
-                Boolean.toString(exResource.isDirectOpen()));
+        createdExResource.setAttribute(PluginConstants.LOCAL_PATH, relativePath + "/"
+                + exResource.getLocalPath());
+        createdExResource.setAttribute(PluginConstants.RESOURCE_TYPE, ExampleResource.Type
+                .map(exResource.getResourceType()));
+        createdExResource.setAttribute(PluginConstants.DIRECT_OPEN, Boolean.toString(exResource
+                .isDirectOpen()));
         return createdExResource;
 
     }

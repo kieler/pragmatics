@@ -81,7 +81,7 @@ It will be unique.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="description" type="string">
+         <attribute name="description" type="string" use="required">
             <annotation>
                <documentation>
                   

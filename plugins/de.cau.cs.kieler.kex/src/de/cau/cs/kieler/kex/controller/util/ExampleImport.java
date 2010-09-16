@@ -26,164 +26,133 @@ import de.cau.cs.kieler.kex.model.ExampleResource;
 
 public class ExampleImport {
 
-	private final static String workspaceLocation = Platform.getLocation()
-			.toString();
+    private final static String workspaceLocation = Platform.getLocation().toString();
 
-	private final static String standardPicPath = "files/noPreview.png";
-	private final static String kexNamespaceId = "de.cau.cs.kieler.kex";
+    private final static String standardPicPath = "files/noPreview.png";
+    private final static String kexNamespaceId = "de.cau.cs.kieler.kex";
 
-	/**
-	 * @param selectedResource
-	 * @param selectedExamples
-	 * @throws KielerException
-	 */
-	public static List<String> importExamples(final IPath selectedResource,
-			final List<Example> selectedExamples, boolean isQuickStart,
-			boolean checkDuplicate) throws KielerException {
-		if (isQuickStart) {
-			return createQuickStartProject();
-		}
+    /**
+     * @param selectedResource
+     * @param selectedExamples
+     * @throws KielerException
+     */
+    public static List<String> importExamples(final IPath selectedResource,
+            final List<Example> selectedExamples, boolean checkDuplicate) throws KielerException {
 
-		List<String> directOpens = new ArrayList<String>();
+        List<String> directOpens = new ArrayList<String>();
 
-		StringBuilder destFolder = new StringBuilder();
-		destFolder
-				.append(workspaceLocation)
-				.append((selectedResource != null ? selectedResource.toString()
-						: "")).append("/");
+        StringBuilder destFolder = new StringBuilder();
+        destFolder.append(workspaceLocation).append(
+                (selectedResource != null ? selectedResource.toString() : "")).append("/");
+        List<String> finishedResources = new ArrayList<String>();
+        try {
 
-		for (Example example : selectedExamples) {
+            for (Example example : selectedExamples) {
 
-			List<ExampleResource> resources = example.getResources();
+                List<ExampleResource> resources = example.getResources();
 
-			String rootDirectory = example.getRootDir();
-			int exampleBeginIndex = 0;
-			if (rootDirectory != null && rootDirectory.length() > 1) {
-				exampleBeginIndex = rootDirectory.length();
-			}
+                String rootDirectory = example.getRootDir();
+                int exampleBeginIndex = 0;
+                if (rootDirectory != null && rootDirectory.length() > 1) {
+                    exampleBeginIndex = rootDirectory.length();
+                }
 
-			handleResources(directOpens, resources, destFolder.toString(),
-					example.getNamespaceId(), exampleBeginIndex, checkDuplicate);
-		}
-		return directOpens;
-	}
+                handleResources(directOpens, resources, destFolder.toString(), example
+                        .getNamespaceId(), exampleBeginIndex, checkDuplicate, finishedResources);
+            }
+        } catch (KielerException e) {
+            deleteResources(finishedResources);
+            throw e;
+        }
+        return directOpens;
+    }
 
-	private static List<String> createQuickStartProject() {
-		return null;
-	}
+    private static void deleteResources(List<String> finishedResources) {
+        // TODO implement
+    }
 
-	private static void handleResources(List<String> directOpens,
-			List<ExampleResource> resources, String destFolder,
-			String nameSpaceId, int exampleBeginIndex, boolean checkDuplicate)
-			throws KielerException {
-		Bundle bundle = Platform.getBundle(nameSpaceId);
+    public static List<String> createQuickStartProject() {
+        return null;
+    }
 
-		for (ExampleResource resource : resources) {
-			try {
-				String localPath = resource.getLocalPath();
-				String destPath = localPath.substring(exampleBeginIndex);
+    private static void handleResources(List<String> directOpens, List<ExampleResource> resources,
+            String destFolder, String nameSpaceId, int exampleBeginIndex, boolean checkDuplicate,
+            List<String> finishedResources) throws KielerException {
+        Bundle bundle = Platform.getBundle(nameSpaceId);
 
-				switch (resource.getResourceType()) {
-				case PROJECT:
-					// creates a new project
-					IProgressMonitor progressMonitor = new NullProgressMonitor();
-					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
-							.getRoot();
-					IProject project = root.getProject(destPath);
-					project.create(progressMonitor);
-					project.open(progressMonitor);
-					break;
+        for (ExampleResource resource : resources) {
+            try {
+                String localPath = resource.getLocalPath();
+                String destPath = localPath.substring(exampleBeginIndex);
 
-				case FOLDER:
-					File destFile = new File(destFolder + "/" + destPath);
-					if (destFile.exists()) {
-						throw new KielerModelException(
-								ErrorMessage.DUPLICATE_EXAMPLE,
-								destFile.getName());
-					}
-					IOHandler.createFolder(destFolder + "/" + destPath);
-					break;
+                switch (resource.getResourceType()) {
+                case PROJECT:
+                    // creates a new project
+                    // TODO projekt duplikatstest
+                    IProgressMonitor progressMonitor = new NullProgressMonitor();
+                    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                    IProject project = root.getProject(destPath);
+                    project.create(progressMonitor);
+                    project.open(progressMonitor);
+                    break;
 
-				case FILE:
-					URL entry = bundle.getEntry(localPath);
-					IOHandler.writeFile(entry, destFolder + destPath,
-							checkDuplicate);
-					if (resource.isDirectOpen())
-						directOpens.add(destFolder + destPath);
-					break;
+                case FOLDER:
+                    File destFile = new File(destFolder + "/" + destPath);
+                    finishedResources.add(destFile.getPath());
+                    if (checkDuplicate && destFile.exists()) {
+                        throw new KielerModelException(ErrorMessage.DUPLICATE_EXAMPLE, destFile
+                                .getName());
+                    }
+                    IOHandler.createFolder(destFolder + "/" + destPath);
+                    break;
 
-				}
-			} catch (FileNotFoundException e) {
-				throw new KielerException(ErrorMessage.NO_Import, e);
-			} catch (IOException e1) {
-				throw new KielerException(ErrorMessage.NO_Import, e1);
-			} catch (CoreException e2) {
-				throw new KielerException(ErrorMessage.NO_Import, e2);
-			}
-		}
-	}
+                case FILE:
+                    URL entry = bundle.getEntry(localPath);
+                    String dest = destFolder + destPath;
+                    finishedResources.add(dest);
+                    IOHandler.writeFile(entry, dest, checkDuplicate);
+                    if (resource.isDirectOpen())
+                        directOpens.add(destFolder + destPath);
+                    break;
 
-	public static InputStream loadPreviewPic(Example example)
-			throws KielerException {
-		Bundle bundle = Platform.getBundle(example.getNamespaceId());
-		URL entry = bundle.getEntry(example.getPreviewPicPath());
-		try {
-			return entry.openStream();
-		} catch (IOException e) {
-			throw new KielerException(ErrorMessage.PREVIEW_LOAD_ERROR
-					+ example.getTitle());
-		}
-	}
+                }
+            } catch (FileNotFoundException e) {
+                throw new KielerException(ErrorMessage.NO_Import, e);
+            } catch (IOException e1) {
+                throw new KielerException(ErrorMessage.NO_Import, e1);
+            } catch (CoreException e2) {
+                throw new KielerException(ErrorMessage.NO_Import, e2);
+            }
+        }
+    }
 
-	public static InputStream loadStandardPic() {
-		Bundle bundle = Platform.getBundle(ExampleImport.kexNamespaceId);
-		URL entry = bundle.getEntry(ExampleImport.standardPicPath);
-		try {
-			return entry.openStream();
-		} catch (IOException e) {
-			// should not happen at runtime
-			e.printStackTrace();
-		}
-		return null;
-	}
+    public static InputStream loadPreviewPic(Example example) throws KielerException {
+        Bundle bundle = Platform.getBundle(example.getNamespaceId());
+        URL entry = bundle.getEntry(example.getPreviewPicPath());
+        try {
+            return entry.openStream();
+        } catch (IOException e) {
+            throw new KielerException(ErrorMessage.PREVIEW_LOAD_ERROR + example.getTitle());
+        }
+    }
 
-	public static void validate(IPath selectedResource,
-			List<Example> selectedExamples, boolean checkDuplicate)
-			throws KielerException {
-		if (selectedExamples == null || selectedExamples.size() == 0) {
-			throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
-		}
+    public static InputStream loadStandardPic() {
+        Bundle bundle = Platform.getBundle(ExampleImport.kexNamespaceId);
+        URL entry = bundle.getEntry(ExampleImport.standardPicPath);
+        try {
+            return entry.openStream();
+        } catch (IOException e) {
+            // should not happen at runtime
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-		if (checkDuplicate) {
-			for (Example example : selectedExamples) {
-				if (checkDuplicate(selectedResource, example.getResources(),
-						example.getTitle())) {
-					throw new KielerModelException(
-							ErrorMessage.DUPLICATE_EXAMPLE, example);
-				}
-			}
-		}
-	}
+    public static void validate(IPath selectedResource, List<Example> selectedExamples,
+            boolean checkDuplicate) throws KielerException {
+        if (selectedExamples == null || selectedExamples.size() == 0) {
+            throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
+        }
+    }
 
-	private static boolean checkDuplicate(IPath target,
-			List<ExampleResource> resources, String exampleTitle) {
-		// TODO duplikat check bauen
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		// for (ExampleResource exampleResource : resources) {
-		// target.toPortableString() +
-		//
-		// String localPath = exampleResource.getLocalPath();
-		// String checkPath = target.toPortableString() + File.separatorChar +
-		// localPath;
-		//
-		//
-		// IProject project = root.getF(target);
-		// IFolder folder = project.getFolder(exampleTitle);
-		// // assert folder.exists();
-		// IFile file = folder.getFile("myfile");
-		// assert !file.exists();
-		// file.create(stream, false, monitor);
-		// assert file.exists();
-		return false;
-	}
 }
