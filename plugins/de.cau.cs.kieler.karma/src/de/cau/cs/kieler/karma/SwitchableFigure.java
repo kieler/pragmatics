@@ -14,9 +14,11 @@
  *****************************************************************************/
 package de.cau.cs.kieler.karma;
 
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
+import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -27,7 +29,7 @@ import org.eclipse.swt.graphics.Color;
  * @author ckru
  * 
  */
-public class SwitchableFigure extends Shape { // implements IAttributeAwareFigure {
+public class SwitchableFigure extends Shape {
 
     /**
      * The figure that will actually be displayed.
@@ -41,6 +43,15 @@ public class SwitchableFigure extends Shape { // implements IAttributeAwareFigur
      */
     public SwitchableFigure() {
         super();
+        currentFigure = defaultFigure();
+    }
+    
+    private IFigure defaultFigure() {
+        RectangleFigure rectangle = new RectangleFigure();
+        rectangle.setLineWidth(1);
+        rectangle.setForegroundColor(ColorConstants.black);
+        rectangle.setBackgroundColor(ColorConstants.white);
+        return rectangle;
     }
 
     @Override
