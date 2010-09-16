@@ -185,7 +185,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @param theNodes
      *            a {@code Collection} containing all nodes of the graph to determine the connected
      *            components
-     * @return an {@code LinkedList} of {@code LinkedLists} containing all nodes of every connected
+     * @return a {@code LinkedList} of {@code LinkedLists} containing all nodes of every connected
      *         component
      * 
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponentsDFS(LNode)
@@ -371,10 +371,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
             bigNodeHandler.splitWideNodes(theNodes, theLayeredGraph);
         }
-        
+
         // layer graph, each connected component separately
         for (LinkedList<LNode> connComp : connectedComponents(theNodes)) {
-            
+
             initialize(connComp);
             // determine optimal layering
             feasibleTree();
@@ -383,7 +383,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 // current layering is not optimal
                 exchange(e, enterEdge(e));
             }
-            
+
             if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
                 normalize(false);
             } else {
@@ -394,6 +394,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 putNode(node);
             }
         }
+
         // correct layering concerning wide nodes
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
             bigNodeHandler.correctLayering();
@@ -468,14 +469,29 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         for (LNode node : sinks) {
             layeringDFS(node, true);
         }
+        // normalize revLayer
+        int min = Integer.MAX_VALUE;
+        for (LNode node : nodes) {
+            if (min > revLayer[node.id]) {
+                min = revLayer[node.id];
+            }
+        }
+        for (LNode node : nodes) {
+            revLayer[node.id] -= min;
+        }
         // determine minimal length of each edge
         for (LEdge edge : edges) {
-            minSpan[edge.id] = Math.min(layer[edge.getTarget().getNode().id]
-                    - layer[edge.getSource().getNode().id], revLayer[edge.getTarget().getNode().id]
-                    - revLayer[edge.getSource().getNode().id]);
+            if (layer[edge.getTarget().getNode().id] <= revLayer[edge.getSource().getNode().id]) {
+                minSpan[edge.id] = 1;
+            } else {
+                minSpan[edge.id] = Math
+                        .min(layer[edge.getTarget().getNode().id]
+                                - layer[edge.getSource().getNode().id], Math.min(revLayer[edge
+                                .getTarget().getNode().id]
+                                - revLayer[edge.getSource().getNode().id], layer[edge.getTarget()
+                                .getNode().id] - revLayer[edge.getSource().getNode().id]));
+            }
         }
-        // pull sources and sinks closer to their adjacent nodes
-        shiftLeafs();
     }
 
     /**
@@ -557,23 +573,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
 
         return new Pair<Integer, Integer>(minSpanIn, minSpanOut);
-    }
-
-    /**
-     * Helper method for the network simplex layerer. It shifts all leafs (i.e. source or sink
-     * nodes) as close to their adjacent nodes as possible (i.e. as the layering remains feasible).
-     * Note that this method is originally not part of the network simplex approach. It serves as a
-     * first optimization here to minimize the number of (potentially more expensive) iterations
-     * necessary in the main algorithm.
-     */
-    private void shiftLeafs() {
-
-        for (LNode node : sources) {
-            layer[node.id] += minimalSpan(node).getSecond() - 1;
-        }
-        for (LNode node : sinks) {
-            layer[node.id] -= minimalSpan(node).getFirst() - 1;
-        }
     }
 
     /**
