@@ -35,6 +35,7 @@ import de.cau.cs.kieler.klay.planar.graph.INode;
 public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implements
         IMinimumCostFlowSolver {
     // TODO Handle multi edges in network
+    // TODO flow can move in both directions in residual network
     // TODO different path costs for forward and backward edges in residual network
 
     /**
@@ -87,13 +88,12 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
                 INode node = object.getFirst();
                 IEdge edge = object.getSecond();
                 int cap = 0;
-                if (edge.isDirected() && (node == edge.getSource())) {
+                if (edge.isDirected() && (node == edge.getTarget())) {
                     cap = edge.getProperty(CAPACITY) - edge.getProperty(FLOW);
-                } else if (edge.isDirected() && (node == edge.getTarget())) {
-                    cap = edge.getProperty(FLOW);
+                    edge.setProperty(RESIDUALCAPACITY, cap);
+                    return cap > 0;
                 }
-                edge.setProperty(RESIDUALCAPACITY, cap);
-                return cap > 0;
+                return false;
             }
         };
 
@@ -120,7 +120,6 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             // Update flow along path
             for (IEdge edge : path) {
                 int flow = edge.getProperty(FLOW);
-                // TODO substract if other direction?
                 edge.setProperty(FLOW, flow + value);
             }
 

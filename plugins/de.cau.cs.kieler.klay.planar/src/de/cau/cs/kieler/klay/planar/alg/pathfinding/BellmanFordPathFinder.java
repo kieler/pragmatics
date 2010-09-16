@@ -46,12 +46,13 @@ public class BellmanFordPathFinder extends AbstractPathFinder implements IShorte
         // Relax edges
         for (int i = 1; i < size; i++) {
             for (IEdge edge : source.getParent().getEdges()) {
-                INode neighbor = edge.getTarget();
+                INode src = edge.getSource();
+                INode dst = edge.getTarget();
                 int cost = edge.getProperty(PATHCOST);
-                cost += edge.getProperty(DISTANCE);
-                if (cost < neighbor.getProperty(DISTANCE)) {
-                    neighbor.setProperty(DISTANCE, cost);
-                    edges[neighbor.getID()] = edge;
+                int dist = src.getProperty(DISTANCE);
+                if ((dist != Integer.MAX_VALUE) && (dist + cost < dst.getProperty(DISTANCE))) {
+                    dst.setProperty(DISTANCE, cost + dist);
+                    edges[dst.getID()] = edge;
                 }
             }
         }

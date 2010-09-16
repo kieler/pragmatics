@@ -43,13 +43,13 @@ public class DijkstraPathFinder extends AbstractPathFinder implements IShortestP
         int size = source.getParent().getNodeCount();
         IEdge[] edges = new IEdge[size];
 
-        source.setProperty(DISTANCE, 0);
-
         // Initialize set of nodes
         Set<INode> nodes = new HashSet<INode>(size * 2);
         for (INode n : source.getParent().getNodes()) {
+            n.setProperty(DISTANCE, Integer.MAX_VALUE);
             nodes.add(n);
         }
+        source.setProperty(DISTANCE, 0);
 
         // Comparator to find node of smallest distance value
         Comparator<INode> comp = new Comparator<INode>() {

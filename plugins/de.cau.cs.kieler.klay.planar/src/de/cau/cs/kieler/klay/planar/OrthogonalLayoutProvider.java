@@ -22,8 +22,11 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.GiottoCompactor;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.ICompactor;
 import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.QuodOrthogonalizer;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.TamassiaOrthogonalizer;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.alg.planarity.BoyerMyrvoldPlanarityTester;
 import de.cau.cs.kieler.klay.planar.alg.planarity.EdgeInsertionPlanarization;
 import de.cau.cs.kieler.klay.planar.alg.planarity.IPlanarityTester;
@@ -63,7 +66,10 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
     private IPlanarizer planarizer = new EdgeInsertionPlanarization();
 
     /** Algorithm for orthogonalization. */
-    private IOrthogonalizer orthogonalizer = new QuodOrthogonalizer();
+    private IOrthogonalizer orthogonalizer = new TamassiaOrthogonalizer();
+
+    /** Algorithm for compaction. */
+    private ICompactor compactor = new GiottoCompactor();
 
     // ======================== Layout Provider ====================================================
 
@@ -97,7 +103,10 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
         this.planarizer.planarize(graph, edges);
 
         // Step 3: Orthogonalization
-        this.orthogonalizer.orthogonalize(graph);
+        OrthogonalRepresentation orthogonal = this.orthogonalizer.orthogonalize(graph);
+
+        // Step 4: Compaction
+        this.compactor.compact(graph, orthogonal);
 
         monitor.done();
     }
