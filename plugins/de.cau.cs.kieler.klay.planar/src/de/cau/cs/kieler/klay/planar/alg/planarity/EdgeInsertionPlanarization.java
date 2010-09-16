@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.planar.alg.planarity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,218 +61,247 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
     public void planarize(final IGraph graph, final List<IEdge> edges) {
+        if (edges == null) {
+            System.out.println("No new Edges");
+        } else {
+            for (IEdge insertingEdge : edges) {
 
-        for (IEdge insertingEdge : edges) {
+                System.out.println("Subgraph");
+                System.out.println(graph);
+                System.out.println("Neue Kanten\n\n");
+                System.out.println(edges.toString());
 
-            System.out.println("Subgraph");
-            System.out.println(graph);
-            System.out.println("Neue Kanten");
-            System.out.println(edges.toString());
+                IGraph dualGraph = new PGraphFactory().createDualGraph(graph);
+                LinkedList<INode> dualPath = new LinkedList<INode>();
 
-            IGraph dualGraph = new PGraphFactory().createDualGraph(graph);
-            LinkedList<INode> dualPath = new LinkedList<INode>();
+                INode source = insertingEdge.getSource();
+                INode target = insertingEdge.getTarget();
 
-            INode source = insertingEdge.getSource();
-            INode target = insertingEdge.getTarget();
+                INode dualStartNode = null;
+                INode dualTargetNode = null;
 
-            INode dualStartNode = null;
-            INode dualTargetNode = null;
+                IFace targetFace = null;
 
-            IFace targetFace = null;
+                HashSet<IFace> sourceFaces = findSurroundingFaces(source);
+                HashSet<IFace> targetFaces = findSurroundingFaces(target);
 
-            HashSet<IFace> sourceFaces = findSurroundingFaces(source);
-            HashSet<IFace> targetFaces = findSurroundingFaces(target);
+                ArrayList<IFace> facePath = new ArrayList<IFace>();
+                ArrayList<IFace> shortestFacePath = new ArrayList<IFace>();
+                LinkedList<INode> shortestDualPath = new LinkedList<INode>();
 
-            ArrayList<IFace> facePath = new ArrayList<IFace>();
-            ArrayList<IFace> shortestFacePath = new ArrayList<IFace>();
-            LinkedList<INode> shortestDualPath = new LinkedList<INode>();
+                int[] parent = new int[graph.getFaceCount()];
 
-            int[] parent = new int[graph.getFaceCount()];
+                // check all start nodes for BFS in dual graph
+                for (IFace sourceFace : sourceFaces) {
+                    facePath.clear();
 
-            // check all start nodes for BFS in dual graph
-            for (IFace sourceFace : sourceFaces) {
-                facePath.clear();
+                    dualStartNode = (INode) sourceFace.getProperty(IGraphFactory.TODUALGRAPH);
 
-                dualStartNode = (INode) sourceFace.getProperty(IGraphFactory.TODUALGRAPH);
+                    // run BFS for all possible target faces
+                    for (IFace itargetFace : targetFaces) {
 
-                // run BFS for all possible target faces
-                for (IFace itargetFace : targetFaces) {
+                        dualTargetNode = (INode) itargetFace.getProperty(IGraphFactory.TODUALGRAPH);
 
-                    dualTargetNode = (INode) itargetFace.getProperty(IGraphFactory.TODUALGRAPH);
+                        parent = bfs(dualStartNode, dualTargetNode, dualGraph);
 
-                    parent = bfs(dualStartNode, dualTargetNode, dualGraph);
+                        // the path through the dual graph
+                        dualPath = findPath(dualTargetNode.getID(), parent, dualGraph);
 
-                    // the path through the dual graph
-                    dualPath = findPath(dualTargetNode.getID(), parent, dualGraph);
-
-                    if (shortestDualPath.size() > dualPath.size() || shortestDualPath.isEmpty()) {
-                        shortestDualPath.clear();
-                        shortestDualPath.addAll(0, dualPath);
-                        targetFace = itargetFace;
-                    }
-                }
-
-                assert sourceFace.getID() != targetFace.getID() : "nodes lie at the same face";
-
-                // same path with faces in the normal graph
-                facePath.add(sourceFace);
-
-                for (INode node : shortestDualPath) {
-                    IFace face = dualNodeToFace(node, graph);
-                    if (face.getID() != sourceFace.getID()) {
-                        facePath.add(face);
+                        if (shortestDualPath.size() > dualPath.size() || shortestDualPath.isEmpty()) {
+                            shortestDualPath.clear();
+                            shortestDualPath.addAll(0, dualPath);
+                            targetFace = itargetFace;
+                        }
                     }
 
-                }
-                if (!facePath.contains(targetFace)) {
-                    facePath.add(targetFace);
-                }
+                    assert sourceFace.getID() != targetFace.getID() : "nodes lie at the same face";
 
-                // we found a better startface with shorter path
-                if (shortestFacePath.size() > facePath.size() || shortestFacePath.isEmpty()) {
-                    shortestFacePath.clear();
-                    shortestFacePath.addAll(0, facePath);
-                }
+                    // same path with faces in the normal graph
+                    facePath.add(sourceFace);
 
-                // path can't be shorter then 1, search finished
-                if (shortestFacePath.size() == 1) {
-                    break;
-                }
-            }
-            System.out.println("Der Face Path:");
-            System.out.println(shortestFacePath.toString());
+                    for (INode node : shortestDualPath) {
+                        IFace face = dualNodeToFace(node, graph);
+                        if (face.getID() != sourceFace.getID()) {
+                            facePath.add(face);
+                        }
 
-            // find the borders to cross
-            LinkedList<IEdge> crossingBorders = new LinkedList<IEdge>();
-            int faceCounter = 0;
-            while (faceCounter < shortestFacePath.size() - 1) {
-                IFace face1 = shortestFacePath.get(faceCounter);
-                IFace face2 = shortestFacePath.get(faceCounter + 1);
-                IEdge crossingEdge = findBorderEdge(face1, face2);
-                crossingBorders.add(crossingEdge);
-                faceCounter++;
+                    }
+                    if (!facePath.contains(targetFace)) {
+                        facePath.add(targetFace);
+                    }
 
-            }
+                    // we found a better startface with shorter path
+                    if (shortestFacePath.size() > facePath.size() || shortestFacePath.isEmpty()) {
+                        shortestFacePath.clear();
+                        shortestFacePath.addAll(0, facePath);
+                    }
 
-            // the node path with new nodes for the crossing edges
-            ArrayList<INode> path = new ArrayList<INode>();
-            path.add(source);
-            for (IEdge crossingEdge : crossingBorders) {
-
-                // crossing a hyperedge
-                if (crossingEdge.getSource().getType() == NodeType.HYPER) {
-                    path.add(crossingEdge.getSource());
-                }
-
-                if (crossingEdge.getTarget().getType() == NodeType.HYPER) {
-                    path.add(crossingEdge.getTarget());
-                }
-
-                // crossing a normal edge
-                else {
-                    INode newNode = graph.addNode(crossingEdge);
-                    path.add(newNode);
-                }
-            }
-            path.add(target);
-
-            // get the preEdge at the source nodes
-            LinkedList<IEdge> sourcePreEdges = new LinkedList<IEdge>();
-            int i = 0;
-            while (i < path.size() - 1) {
-
-                INode src = path.get(i);
-                IEdge edge = null;
-
-                IFace face = shortestFacePath.get(i);
-                for (IEdge e : face.adjacentEdges()) {
-                    if ((e.getSource() == src) && (e.getRightFace() == face)) {
-                        edge = e;
-                        break;
-                    } else if ((e.getTarget() == src) && (e.getLeftFace() == face)) {
-                        edge = e;
+                    // path can't be shorter then 1, search finished
+                    if (shortestFacePath.size() == 1) {
                         break;
                     }
                 }
-                sourcePreEdges.add(edge);
-                i++;
-            }
+                System.out.println("Der Face Path:");
+                System.out.println(shortestFacePath.toString());
 
-            // TODO edge could be null
+                // find the borders to cross
+                LinkedList<IEdge> crossingBorders = new LinkedList<IEdge>();
+                int faceCounter = 0;
+                while (faceCounter < shortestFacePath.size() - 1) {
+                    IFace face1 = shortestFacePath.get(faceCounter);
+                    IFace face2 = shortestFacePath.get(faceCounter + 1);
+                    IEdge crossingEdge = findBorderEdge(face1, face2);
+                    crossingBorders.add(crossingEdge);
+                    faceCounter++;
 
-            // get the preEdge at the target nodes
-            LinkedList<IEdge> targetPreEdges = new LinkedList<IEdge>();
-            int k = 0;
-            while (k < path.size() - 1) {
-
-                INode dst = path.get(k + 1);
-                IEdge edge = null;
-
-                IFace face = shortestFacePath.get(k);
-                for (IEdge e : face.adjacentEdges()) {
-                    if ((e.getSource() == dst) && (e.getRightFace() == face)) {
-                        edge = e;
-                        break;
-                    } else if ((e.getTarget() == dst) && (e.getLeftFace() == face)) {
-                        edge = e;
-                        break;
-                    }
                 }
-                targetPreEdges.add(edge);
-                k++;
-            }
 
-            // TODO edge could be null
+                // the node path with new nodes for the crossing edges
+                ArrayList<INode> path = new ArrayList<INode>();
+                path.add(source);
+                for (IEdge crossingEdge : crossingBorders) {
 
-            // connect the node path
-            int pathNodeCounter = 0;
-            while (pathNodeCounter < path.size() - 1) {
-
-                // split up the crossed hypernodes
-                // TODO check this!!!
-                if (path.get(pathNodeCounter).getType() == NodeType.HYPER) {
-
-                    INode oldHyperNode = path.get(pathNodeCounter);
-
-                    // create new hypernode and connect this with the old one
-                    INode newHyperNode = graph.addNode();
-                    IEdge newHyperEdge = graph.addEdge(oldHyperNode, newHyperNode);
-
-                    // bring edge in right order
-                    IEdge preEdgeA = this.findFirstFaceEdge(newHyperEdge, oldHyperNode);
-                    reinsertEdges(newHyperEdge, preEdgeA, oldHyperNode);
-
-                    // move half of the edges to new hypernode
-                    for (int x = 0; x < oldHyperNode.getAdjacentEdgeCount() / 2; x++) {
-                        // FIXME
+                    // crossing a hyperedge
+                    if (crossingEdge.getSource().getType() == NodeType.HYPER) {
+                        path.add(crossingEdge.getSource());
                     }
 
-                    // split up the new edge
-                    INode midNode = graph.addNode(newHyperEdge);
+                    if (crossingEdge.getTarget().getType() == NodeType.HYPER) {
+                        path.add(crossingEdge.getTarget());
+                    }
 
-                    // connect the new node
-                    IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
+                    // crossing a normal edge
+                    else {
+                        INode newNode = graph.addNode(crossingEdge);
+                        path.add(newNode);
+                    }
+                }
+                path.add(target);
 
-                    // bring new edges at new node in right order
-                    IEdge preEdgeB = this.findFirstFaceEdge(newEdge, midNode);
-                    reinsertEdges(newEdge, preEdgeB, midNode);
-                    pathNodeCounter++;
+                // get the preEdge at the source nodes
+                LinkedList<IEdge> sourcePreEdges = new LinkedList<IEdge>();
+                int i = 0;
+                while (i < path.size() - 1) {
+
+                    INode src = path.get(i);
+                    IEdge edge = null;
+
+                    IFace face = shortestFacePath.get(i);
+                    for (IEdge e : face.adjacentEdges()) {
+                        if ((e.getSource() == src) && (e.getRightFace() == face)) {
+                            edge = e;
+                            break;
+                        } else if ((e.getTarget() == src) && (e.getLeftFace() == face)) {
+                            edge = e;
+                            break;
+                        }
+                    }
+                    sourcePreEdges.add(edge);
+                    i++;
                 }
 
-                // connecting new normal nodes
-                else {
+                // TODO edge could be null
 
-                    INode src = path.get(pathNodeCounter);
-                    INode dst = path.get(pathNodeCounter + 1);
+                // get the preEdge at the target nodes
+                LinkedList<IEdge> targetPreEdges = new LinkedList<IEdge>();
+                int k = 0;
+                while (k < path.size() - 1) {
 
-                    IEdge newEdge = graph.addEdge(src, dst);
+                    INode dst = path.get(k + 1);
+                    IEdge edge = null;
 
-                    // bring new edges in right order
-                    reinsertEdges(newEdge, sourcePreEdges.get(pathNodeCounter), src);
-                    reinsertEdges(newEdge, targetPreEdges.get(pathNodeCounter), dst);
-                    pathNodeCounter++;
+                    IFace face = shortestFacePath.get(k);
+                    for (IEdge e : face.adjacentEdges()) {
+                        if ((e.getSource() == dst) && (e.getRightFace() == face)) {
+                            edge = e;
+                            break;
+                        } else if ((e.getTarget() == dst) && (e.getLeftFace() == face)) {
+                            edge = e;
+                            break;
+                        }
+                    }
+                    targetPreEdges.add(edge);
+                    k++;
+                }
+
+                // TODO edge could be null
+
+                // connect the node path
+                int pathNodeCounter = 0;
+                while (pathNodeCounter < path.size() - 1) {
+
+                    // split up the crossed hypernodes
+                    // TODO check this!!!
+                    if (path.get(pathNodeCounter).getType() == NodeType.HYPER) {
+
+                        INode oldHyperNode = path.get(pathNodeCounter);
+
+                        // create new hypernode and connect this with the old one
+                        INode newHyperNode = graph.addNode();
+                        IEdge newHyperEdge = graph.addEdge(oldHyperNode, newHyperNode);
+
+                        // bring edge in right order
+                        IEdge preEdgeA = this.findFirstFaceEdge(newHyperEdge, oldHyperNode);
+                        reinsertEdges(newHyperEdge, preEdgeA, oldHyperNode);
+
+                        // move half of the edges to new hypernode
+                        IEdge next = getNextClockwiseEdge(oldHyperNode, newHyperEdge);
+                        for (int x = 0; x < oldHyperNode.getAdjacentEdgeCount() / 2; x++) {
+                            next.move(oldHyperNode, newHyperNode);
+                            next = getNextClockwiseEdge(oldHyperNode, next);
+                        }
+
+                        // split up the new edge
+                        INode midNode = graph.addNode(newHyperEdge);
+
+                        // connect the new node
+                        IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
+
+                        // bring new edges at new node in right order
+                        IEdge preEdgeB = this.findFirstFaceEdge(newEdge, midNode);
+                        reinsertEdges(newEdge, preEdgeB, midNode);
+                        pathNodeCounter++;
+                    }
+
+                    // connecting new normal nodes
+                    else {
+
+                        INode src = path.get(pathNodeCounter);
+                        INode dst = path.get(pathNodeCounter + 1);
+
+                        IEdge newEdge = graph.addEdge(src, dst);
+
+                        // bring new edges in right order
+                        reinsertEdges(newEdge, sourcePreEdges.get(pathNodeCounter), src);
+                        reinsertEdges(newEdge, targetPreEdges.get(pathNodeCounter), dst);
+                        pathNodeCounter++;
+                    }
                 }
             }
+        }
+    }
+
+    /**
+     * Find the next edge on a node.
+     * 
+     * @param node
+     *            the node containing the edges
+     * @param edge
+     *            the current edge
+     * @return the next edge
+     */
+    private IEdge getNextClockwiseEdge(final INode node, final IEdge edge) {
+        Iterator<IEdge> iter = node.adjacentEdges().iterator();
+        IEdge current = null;
+        while (iter.hasNext() && current != edge) {
+            current = iter.next();
+        }
+        if (iter.hasNext()) {
+            // Get the next edge on the node
+            return iter.next();
+        } else {
+            // Reached the last node, get the first
+            return node.adjacentEdges().iterator().next();
         }
     }
 
