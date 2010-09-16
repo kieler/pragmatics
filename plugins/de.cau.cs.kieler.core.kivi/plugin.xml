@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="de.cau.cs.kieler.core.kivi.combinations" name="Combinations" schema="schema/de.cau.cs.kieler.core.kivi.combinations.exsd" />
+   <extension-point id="de.cau.cs.kieler.core.kivi.effects" name="Effects" schema="schema/de.cau.cs.kieler.core.kivi.effects.exsd" />
+   
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.cau.cs.kieler.core.kivi.KiViPlugin">
+      </startup>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.cau.cs.kieler.core.kivi.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.cau.cs.kieler.core.kivi.preferences.KiViPreferencePage"
+            id="de.cau.cs.kieler.core.kivi"
+            name="KiVi"
+            category="de.cau.cs.kieler">
+      </page>
+   </extension>
+</plugin>
