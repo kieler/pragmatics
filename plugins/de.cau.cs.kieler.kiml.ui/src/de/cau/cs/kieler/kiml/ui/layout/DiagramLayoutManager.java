@@ -258,19 +258,34 @@ public abstract class DiagramLayoutManager {
     }
     
     /**
-     * Returns the currently processed top level edit part.
-     * 
-     * @return the currently processed edit part
-     */
-    public abstract EditPart getCurrentEditPart();
-    
-    /**
-     * Returns the edit part associated with the given layout node.
+     * Returns the edit part associated with the given layout node. This is only valid after
+     * {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was called.
      * 
      * @param knode a node from the layout graph
      * @return the corresponding edit part, or {@code null}
      */
-    public abstract EditPart getEditPart(KNode knode);
+    public EditPart getEditPart(final KNode knode) {
+        return null;
+    }
+    
+    /**
+     * Returns the layout node associated with the given edit part. This is only valid after
+     * {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was called.
+     * 
+     * @param editPart an edit part of the currently layouted diagram
+     * @return the corresponding layout node, or {@code null}
+     */
+    public KNode getLayoutNode(final EditPart editPart) {
+        return null;
+    }
+    
+    /**
+     * Returns the currently processed top level edit part. This is only valid after
+     * {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was called.
+     * 
+     * @return the currently processed edit part
+     */
+    public abstract EditPart getCurrentEditPart();
 
     /**
      * Determines whether this layout manager is able to perform layout for the

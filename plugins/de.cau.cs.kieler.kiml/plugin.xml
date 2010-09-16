@@ -135,6 +135,14 @@
             type="boolean">
       </layoutOption>
       <layoutOption
+            appliesTo="nodes"
+            default="false"
+            description="Whether the node should be handled as a hypernode"
+            id="de.cau.cs.kieler.layout.options.hypernode"
+            name="Hypernode"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
             appliesTo="parents"
             default="false"
             description="Optimize the layout for user interaction by considering previous layout"

@@ -421,8 +421,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
         // execute the command
         commandStack.execute(applyLayoutCommand);
-        // refresh the labels in the diagram
 
+        // refresh the labels and border items in the diagram
         // FIXME this workaround should be eliminated
         refreshDiagram(diagramEditorPart, layoutRootPart);
     }
@@ -457,6 +457,19 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     @Override
     public EditPart getEditPart(final KNode knode) {
         return graphElem2EditPartMap.get(knode);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public KNode getLayoutNode(final EditPart editPart) {
+        KGraphElement graphElement = editPart2GraphElemMap.get(editPart);
+        if (graphElement instanceof KNode) {
+            return (KNode) graphElement;
+        } else {
+            return null;
+        }
     }
 
     /**
