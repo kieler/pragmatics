@@ -409,6 +409,26 @@ public class KiVi {
         }
         return new ArrayList<ICombination>();
     }
+    
+    
+    /**
+     * Get the instance registered for the class if there is any.
+     * 
+     * @param clazz the combination class
+     * @return the combination instance or null
+     */
+    public ICombination getCombinationInstance(final Class<?> clazz) {
+        synchronized (combinationsByTrigger) {
+            for (List<ICombination> list : combinationsByTrigger.values()) {
+                for (ICombination combination : list) {
+                    if (clazz.isInstance(combination)) {
+                        return combination;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * Check whether any combination of the given class is active.
