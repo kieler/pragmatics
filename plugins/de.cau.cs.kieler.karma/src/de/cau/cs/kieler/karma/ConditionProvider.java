@@ -15,6 +15,8 @@
 
 package de.cau.cs.kieler.karma;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,22 +53,19 @@ public final class ConditionProvider {
      * HashTable for caching condition pairs so that the ExtensionPoint is parsed only once per edit
      * part.
      */
-    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = 
-        new HashMap<String, List<HashMap<String, Object>>>();
+    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = new HashMap<String, List<HashMap<String, Object>>>();
 
     /**
      * HashTable for caching figure providers so that the ExtensionPoint is parsed only once per
      * edit part.
      */
-    private HashMap<String, IRenderingProvider> hashTableFigureProviders = 
-        new HashMap<String, IRenderingProvider>();
+    private HashMap<String, IRenderingProvider> hashTableFigureProviders = new HashMap<String, IRenderingProvider>();
 
     /**
      * HashTable for caching the relevant features and feature ids. Not yet used, will probably
      * removed again.
      */
-    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = 
-        new HashMap<Integer, EStructuralFeature>();
+    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = new HashMap<Integer, EStructuralFeature>();
 
     /**
      * Constructor set to private to ensure usage of singleton instance.
@@ -105,8 +104,7 @@ public final class ConditionProvider {
      *            the editor for which the returned conditions will be defined
      * @return list of all condition figure pairs that fit the given editor
      */
-    public List<HashMap<String, Object>> getPairs(
-            final String callingEditPart) {
+    public List<HashMap<String, Object>> getPairs(final String callingEditPart) {
         if (hashTableConditions.containsKey(callingEditPart)) {
             return hashTableConditions.get(callingEditPart);
         }
@@ -118,14 +116,31 @@ public final class ConditionProvider {
                 System.out.println("faulty extensionpoint");
                 continue;
             }
-            IConfigurationElement[] parts = settings.getChildren("editPart");
+            IConfigurationElement[] parts = settings.getChildren("editPart");            
             if (checkCompatibleEditParts(parts, callingEditPart)) {
+                int prio = 1;
+                String prioString = settings.getAttribute("Priority");
+                if (prioString != null) {
+                    prio = Integer.parseInt(prioString);
+                }
                 IConfigurationElement[] packages = settings.getChildren("package");
                 IConfigurationElement[] conditionsContainer = settings.getChildren("conditions");
                 for (IConfigurationElement conditionContainer : conditionsContainer) {
                     IConfigurationElement[] conditions = conditionContainer.getChildren();
                     for (IConfigurationElement condition : conditions) {
                         HashMap<String, Object> conditionElement = new HashMap<String, Object>();
+
+                        conditionElement.put("prio", prio);
+                        
+                        IRenderingProvider renderingProvider = null;
+                        try {                  
+                            renderingProvider = (IRenderingProvider) settings
+                                    .createExecutableExtension("RenderingProvider");
+                        } catch (CoreException e1) {
+                            throw new RuntimeException("renderingProvider failed to load.");
+                        }
+                        conditionElement.put("renderingProvider", renderingProvider);
+                    
 
                         String figureParam = condition.getAttribute("figureParam");
                         conditionElement.put("figureParam", figureParam);
@@ -146,12 +161,15 @@ public final class ConditionProvider {
                         }
                     }
                 }
-
-                hashTableConditions.put(callingEditPart, conditionsList);
-                return conditionsList;
             }
         }
-        return null;
+        if (!conditionsList.isEmpty()) {
+            Collections.sort(conditionsList, new ConditionElementComparator());
+            hashTableConditions.put(callingEditPart, conditionsList);
+            return conditionsList;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -220,8 +238,7 @@ public final class ConditionProvider {
                 String value = condition.getAttribute("value");
                 if (customConditionObject instanceof ICustomCondition<?>) {
                     @SuppressWarnings("unchecked")
-                    ICustomCondition<EObject> customCondition = 
-                        (ICustomCondition<EObject>) customConditionObject;
+                    ICustomCondition<EObject> customCondition = (ICustomCondition<EObject>) customConditionObject;
                     customCondition.initialize(key, value);
                     return customCondition;
                 }
@@ -312,41 +329,6 @@ public final class ConditionProvider {
     }
 
     /**
-     * Returns the registered figure provider that matches the calling edit part.
-     * 
-     * @param callingEditPart
-     *            name of the calling edit part
-     * @return the registered figure provider
-     */
-    public IRenderingProvider getFigureProvider(final String callingEditPart) {
-        if (hashTableFigureProviders.containsKey(callingEditPart)) {
-            return hashTableFigureProviders.get(callingEditPart);
-        }
-        IConfigurationElement[] configurations = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTENSION_POINT_ID);
-        for (IConfigurationElement settings : configurations) {
-            if (!settings.getName().equals("configuration")) {
-                System.out.println("faulty extensionpoint");
-                continue;
-            }
-            // String editorId = settings.getAttribute("editorId");
-            IConfigurationElement[] parts = settings.getChildren("editPart");
-            if (checkCompatibleEditParts(parts, callingEditPart)) {
-                IRenderingProvider figureProvider = null;
-                try {
-                    figureProvider = (IRenderingProvider) settings
-                            .createExecutableExtension("RenderingProvider");
-                } catch (CoreException e1) {
-                    throw new RuntimeException("figureProvider failed to load.");
-                }
-                hashTableFigureProviders.put(callingEditPart, figureProvider);
-                return figureProvider;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Method for parsing the list size string of the extension point to an operator and the number.
      * 
      * @param Input
@@ -392,6 +374,21 @@ public final class ConditionProvider {
             }
         } else {
             return new Pair<Integer, Integer>(-1, -1);
+        }
+    }
+
+    private class ConditionElementComparator implements Comparator<HashMap<String, Object>> {
+
+        public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
+            int prio1 = (Integer) o1.get("prio");
+            int prio2 = (Integer) o2.get("prio");
+            if (prio1 == prio2) {
+                return 0;
+            } else if (prio1 < prio2) {
+                return 1;
+            } else {
+                return -1;
+            }
         }
     }
 }

@@ -5,8 +5,13 @@ import org.eclipse.emf.ecore.EObject;
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 
+/**
+ * 
+ * This condition is true if the annotation identified by the key exists in a given EObject.
+ * @author ckru
+ * 
+ */
 public class AnnotationExistsCondition extends ICustomCondition<EObject> {
-
     public boolean evaluate(final EObject object) {
         if (object instanceof Annotatable) {
             Annotatable annotatable = ((Annotatable) object);

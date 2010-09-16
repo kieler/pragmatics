@@ -50,10 +50,9 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
         super(view);
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
-        /* List<Pair<Pair<String, String>, ICondition<EObject>>> */List<HashMap<String, Object>> conditions = conditionProvider
+        List<HashMap<String, Object>> conditions = conditionProvider
                 .getPairs(className);
-        IRenderingProvider figureProvider = conditionProvider.getFigureProvider(className);
-        util = new AdvancedRenderingEditPartUtil(conditions, figureProvider);
+        util = new AdvancedRenderingEditPartUtil(conditions);
     }
 
     @Override

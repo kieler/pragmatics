@@ -50,20 +50,12 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
         List<HashMap<String, Object>> conditions = conditionProvider.getPairs(className);
-        IRenderingProvider renderingProvider = conditionProvider.getFigureProvider(className);
-        util = new AdvancedRenderingEditPartUtil(conditions, renderingProvider);
+        util = new AdvancedRenderingEditPartUtil(conditions);
     }
 
     @Override
     public void handleNotificationEvent(final Notification notification) {
         super.handleNotificationEvent(notification);
-        /*
-         * if (!(notification.isTouch())) { primaryShape = this.getFigure(); if (primaryShape !=
-         * null) { if (primaryShape instanceof PolylineConnection) { PolylineConnection polyFigure =
-         * (PolylineConnection) primaryShape; boolean changed = this.updateFigure(polyFigure); if
-         * (changed) { LayoutManager layoutManager = polyFigure.getLayoutManager(); if
-         * (layoutManager != null) { layoutManager.layout(polyFigure); } } } } }
-         */
         util.handleNotificationEvent(notification, primaryShape, this.getModelElement(), this);
     }
 
@@ -71,29 +63,6 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
      * {@inheritDoc}
      */
     public boolean updateFigure(final IFigure figure) {
-        /*
-         * if ((figure instanceof PolylineConnection) && (conditions != null)) { if
-         * (!(conditions.isEmpty())) { PolylineConnection polyFigure = (PolylineConnection) figure;
-         * IFigure oldFigure = polyFigure; IFigure newFigure = null; for (HashMap<String, Object>
-         * conditionElement : conditions) {
-         * 
-         * @SuppressWarnings("unchecked") ICondition<EObject> condition = (ICondition<EObject>)
-         * conditionElement.get("condition");
-         * 
-         * if (condition.evaluate(this.getModelElement())) { if (condition == lastCondition) {
-         * return false; } else {
-         * 
-         * @SuppressWarnings("unchecked") Pair<Integer, Integer> figureSize = (Pair<Integer,
-         * Integer>)conditionElement.get("figureSize"); String figureParam = (String)
-         * conditionElement.get("figureParam"); String layoutParam = (String)
-         * conditionElement.get("layoutParam");
-         * 
-         * newFigure = renderingProvider.getFigureByString(figureParam, oldFigure,
-         * this.getModelElement()); primaryShape = newFigure; LayoutManager newLayoutManager =
-         * renderingProvider .getLayoutManagerByString(layoutParam, polyFigure.getLayoutManager(),
-         * this.getModelElement()); polyFigure.setLayoutManager(newLayoutManager); lastCondition =
-         * condition; return true; } } } } } return false;
-         */
         return util.updateFigure(figure, this.getModelElement(), this);
     }
 

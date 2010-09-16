@@ -260,6 +260,13 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="Priority" type="string">
+            <annotation>
+               <documentation>
+                  Priority of the Condition set. This will influence the order of conditions if there are different condition sets defined for the same edit part. (default: 1)
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

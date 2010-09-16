@@ -39,21 +39,14 @@ public class AdvancedRenderingEditPartUtil {
     private List<HashMap<String, Object>> conditions;
 
     /**
-     * The figure provider for generating the figures from a string.
-     */
-    private IRenderingProvider renderingProvider;
-
-    /**
      * 
      * @param theConditions
      *            The list of conditions and the corresponding string for generating the figure.
      * @param theRenderingProvider
      *            The figure provider for generating the figures from a string.
      */
-    public AdvancedRenderingEditPartUtil(final List<HashMap<String, Object>> theConditions,
-            final IRenderingProvider theRenderingProvider) {
+    public AdvancedRenderingEditPartUtil(final List<HashMap<String, Object>> theConditions) {
         conditions = theConditions;
-        renderingProvider = theRenderingProvider;
     }
 
     /**
@@ -120,6 +113,8 @@ public class AdvancedRenderingEditPartUtil {
                                 .get("figureSize");
                         String figureParam = (String) conditionElement.get("figureParam");
                         String layoutParam = (String) conditionElement.get("layoutParam");
+                        
+                        IRenderingProvider renderingProvider = (IRenderingProvider) conditionElement.get("renderingProvider");
 
                         newFigure = renderingProvider.getFigureByString(figureParam, oldFigure,
                                 modelElement);
@@ -157,28 +152,6 @@ public class AdvancedRenderingEditPartUtil {
         return false;
     }
     
-    public void setSize(IFigure figure, final EObject modelElement, final AbstractGraphicalEditPart editPart) {
-        if (figure instanceof SwitchableFigure) {
-            if (!((SwitchableFigure)figure).getResizeable()){
-                figure.getParent().setSize(figure.getSize().getCopy());
-            } 
-        }
-                /*
-                IFigure bnf = editPart.getFigure();
-                if (bnf instanceof BorderedNodeFigure) {
-                    IFigure dnsf = ((BorderedNodeFigure)bnf).getMainFigure();
-                
-                if (dnsf instanceof DefaultSizeNodeFigure) {
-                    ((DefaultSizeNodeFigure) dnsf).setSize(figure.getSize().getCopy());
-                    ((DefaultSizeNodeFigure) dnsf).setMaximumSize(figure.getSize().getCopy());
-                }
-                }
-            }
-        }
-        */
-        
-        
-    }
 }
 
 

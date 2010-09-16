@@ -51,8 +51,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
         List<HashMap<String, Object>> conditions = conditionProvider.getPairs(className);
-        IRenderingProvider figureProvider = conditionProvider.getFigureProvider(className);
-        util = new AdvancedRenderingEditPartUtil(conditions, figureProvider);
+        util = new AdvancedRenderingEditPartUtil(conditions);
     }
 
     @Override
