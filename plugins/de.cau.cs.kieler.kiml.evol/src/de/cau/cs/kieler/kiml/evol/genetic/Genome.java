@@ -161,7 +161,8 @@ public class Genome extends ArrayList<IGene<?>> {
         // TODO: implement more sophisticated fading of ratings
         if (hasUserRating()) {
             final double scalingFactor = .90;
-            this.userRating = (int) (this.userRating * scalingFactor);
+            this.userRating =
+                    Integer.valueOf((int) Math.round((this.userRating.doubleValue() * scalingFactor)));
         }
     }
 
@@ -267,9 +268,9 @@ public class Genome extends ArrayList<IGene<?>> {
 
         // compare new rating to previous one
         if (hasUserRating() && (theRating != null)) {
-            if (oldRating < theRating) {
+            if (oldRating.intValue() < theRating.intValue()) {
                 System.out.println("Ind. was under-rated (" + oldRating + " -> " + theRating + ")");
-            } else if (oldRating > theRating) {
+            } else if (oldRating.intValue() > theRating.intValue()) {
                 System.out.println("Ind. was over-rated (" + oldRating + " -> " + theRating + ")");
             }
         }
@@ -339,10 +340,10 @@ public class Genome extends ArrayList<IGene<?>> {
             // determine the rating
             int ratingSum = 0;
             for (final Genome genome : genomes) {
-                ratingSum += genome.getUserRating();
+                ratingSum += (genome.hasUserRating() ? genome.getUserRating().intValue() : 0);
             }
             final int average = Math.round(ratingSum / (float) genomes.length);
-            result.setUserRating(average);
+            result.setUserRating(Integer.valueOf(average));
         }
         return result;
     }

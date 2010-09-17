@@ -79,7 +79,7 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
         }
         int ratingSum = 0;
         for (final Genome ind : this) {
-            ratingSum += ind.getUserRating();
+            ratingSum += (ind.hasUserRating() ? ind.getUserRating().intValue() : 0);
         }
         return Double.valueOf((ratingSum / (double) this.size()));
     }
