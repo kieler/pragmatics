@@ -150,7 +150,8 @@ public class EvolView extends ViewPart {
                 return;
             }
 
-            final boolean isOnlyCurrent = false; // ("changeCurrentRating".equalsIgnoreCase(cause));
+            // Is only the current entry affected?
+            final boolean isOnlyCurrent = false;
 
             if (!isOnlyCurrent) {
                 // Set the new population as input.
@@ -164,6 +165,7 @@ public class EvolView extends ViewPart {
                 Assert.isTrue(row == 0);
             }
 
+            // synchronously
             MonitoredOperation.runInUI(new Runnable() {
                 public void run() {
                     tv.selectRow(row);

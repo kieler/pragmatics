@@ -48,10 +48,6 @@ public class EvolveHandler extends AbstractHandler {
         /**
          *
          */
-        private final EvolveJob evolveJob;
-        /**
-         *
-         */
         private final IProgressMonitor monitor;
         /**
          *
@@ -66,11 +62,9 @@ public class EvolveHandler extends AbstractHandler {
          * @param theModel
          */
         EvolutionJobChangeAdapter(
-                final EvolveJob theEvolveJob,
                 final IProgressMonitor theMonitor,
                 final EvolModel theModel,
                 final boolean wantAutoRating) {
-            this.evolveJob = theEvolveJob;
             this.monitor = theMonitor;
             this.model = theModel;
             this.isAutoRatingEnabled = wantAutoRating;
@@ -204,7 +198,7 @@ public class EvolveHandler extends AbstractHandler {
         for (int steps = 0; steps < maxSteps; steps++) {
             final boolean wantAutoRating = isAutoRatingStep(steps, stepsBeforeAutoRating);
 
-            evolveJob.addJobChangeListener(new EvolutionJobChangeAdapter(evolveJob, monitor,
+            evolveJob.addJobChangeListener(new EvolutionJobChangeAdapter(monitor,
                     model, wantAutoRating));
 
             evolveJob.schedule();

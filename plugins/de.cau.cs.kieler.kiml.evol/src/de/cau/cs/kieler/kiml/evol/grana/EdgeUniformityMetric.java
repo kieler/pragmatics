@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.grana.MinAvgMaxResult;
  * A layout metric that computes the edge length uniformity of the graph layout.
  * The returned Object is a float value within the range of 0.0 to 1.0, where a
  * higher value means more edge length uniformity.
- * 
+ *
  * NOTE: This implementation is experimental. It depends only on the values
  * returned by the edge length analysis.
  *
@@ -51,15 +51,15 @@ public class EdgeUniformityMetric implements IAnalysis {
             final Object edgeLengthResult = results.get("de.cau.cs.kieler.kiml.grana.edgeLength");
 
             if (edgeLengthResult instanceof MinAvgMaxResult<?, ?>) {
-                final MinAvgMaxResult<Float, Float> mmr =
-                        ((MinAvgMaxResult<Float, Float>) edgeLengthResult);
-                final float min = mmr.getMin();
-                final float max = mmr.getMax();
-                final float avg = mmr.getAvg();
 
-                final float range = max - min;
+                final MinAvgMaxResult<?, ?> mmr = ((MinAvgMaxResult<?, ?>) edgeLengthResult);
+                final Float min = (Float) mmr.getMin();
+                final Float max = (Float) mmr.getMax();
+                final Float avg = (Float) mmr.getAvg();
 
-                final float rangeToAverageRatio = range / avg;
+                final float range = max.floatValue() - min.floatValue();
+
+                final float rangeToAverageRatio = range / avg.floatValue();
 
                 final float half = .5f;
                 // FIXME this correlates with the layout size?
