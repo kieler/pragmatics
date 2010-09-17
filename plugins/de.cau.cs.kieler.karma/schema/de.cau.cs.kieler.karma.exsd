@@ -82,6 +82,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="borderItemParam" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="layoutParam" type="string">
             <annotation>
                <documentation>
@@ -141,6 +148,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="borderItemParam" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="figureSize" type="string">
             <annotation>
                <documentation>
@@ -182,6 +196,13 @@
             <annotation>
                <documentation>
                   The non resizeable size of the figure in the form of width,height. In case of negative numbers or empty it will be user resizeable.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="borderItemParam" type="string">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>
@@ -237,6 +258,13 @@
             <annotation>
                <documentation>
                   The non resizeable size of the figure in the form of width,height. In case of negative numbers or empty it will be user resizeable.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="borderItemParam" type="string">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>

@@ -144,6 +144,9 @@ public final class ConditionProvider {
 
                         String figureParam = condition.getAttribute("figureParam");
                         conditionElement.put("figureParam", figureParam);
+                        
+                        String borderItemParam = condition.getAttribute("borderItemParam");
+                        conditionElement.put("borderItemParam", borderItemParam);
 
                         String layoutParam = condition.getAttribute("layoutParam");
                         conditionElement.put("layoutParam", layoutParam);

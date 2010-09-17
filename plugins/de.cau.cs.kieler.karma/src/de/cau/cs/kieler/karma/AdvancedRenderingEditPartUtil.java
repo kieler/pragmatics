@@ -13,6 +13,7 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartListener;
 import org.eclipse.gef.NodeListener;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 
@@ -113,21 +114,34 @@ public class AdvancedRenderingEditPartUtil {
                                 .get("figureSize");
                         String figureParam = (String) conditionElement.get("figureParam");
                         String layoutParam = (String) conditionElement.get("layoutParam");
+                        String borderItemParam = (String) conditionElement.get("borderItemParam");
                         
                         IRenderingProvider renderingProvider = (IRenderingProvider) conditionElement.get("renderingProvider");
 
+                        //setting the new figure
                         newFigure = renderingProvider.getFigureByString(figureParam, oldFigure,
                                 modelElement);
-                        LayoutManager newLayoutManager = renderingProvider
-                                .getLayoutManagerByString(layoutParam, figure.getLayoutManager(),
-                                        modelElement);
                         if (attrFigure != null) {
                             attrFigure.setCurrentFigure(newFigure);
                         } else {
 
                         }
-                        figure.setLayoutManager(newLayoutManager);
+                        
+                        //sets the new BoderItemLocator
+                        BorderItemLocator newBorderItemLocatior = renderingProvider.getBorderItemLocatorByString(borderItemParam);
+                        if ((newBorderItemLocatior != null) && (attrFigure != null)) {
+                           attrFigure.getParent().getLayoutManager().setConstraint(attrFigure, newBorderItemLocatior);
+                        }
+                        
+                        //setting the LayoutManager
+                        LayoutManager newLayoutManager = renderingProvider
+                        .getLayoutManagerByString(layoutParam, figure.getLayoutManager(),
+                                modelElement);
+                        if (newLayoutManager != null) {
+                            figure.setLayoutManager(newLayoutManager);
+                        }
 
+                        //setting a fixed node size
                         if ((figureSize.getFirst() >= 0) && (figureSize.getSecond() >= 0)) {
                             Dimension dim = new Dimension(figureSize.getFirst(),
                                     figureSize.getSecond());

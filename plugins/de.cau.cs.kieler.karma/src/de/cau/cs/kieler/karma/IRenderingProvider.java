@@ -18,6 +18,7 @@ package de.cau.cs.kieler.karma;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 
 /**
  * Class for providing figures represented by a string.
@@ -56,5 +57,12 @@ public interface IRenderingProvider {
      * @return the default LayoutManager
      */
     public LayoutManager getDefaultLayoutManager();
+    
+    /**
+     * Method that returns a BorderItemLocator according to a given string.
+     * @param input a string representation of the BorderItemLocator
+     * @return the new BorderItemLocator
+     */
+    public BorderItemLocator getBorderItemLocatorByString(final String input);
     
 }
