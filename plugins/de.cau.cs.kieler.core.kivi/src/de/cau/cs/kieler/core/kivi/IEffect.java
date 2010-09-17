@@ -26,11 +26,21 @@ public interface IEffect {
      * Execute the effect.
      */
     void execute();
+    
+    /**
+     * Schedule the effect for execution.
+     */
+    void schedule();
 
     /**
      * Attempt to undo the effect.
      */
     void undo();
+    
+    /**
+     * Schedule the effect to be undone.
+     */
+    void scheduleUndo();
 
     /**
      * Determines whether multiple instances of this effect can be combined into

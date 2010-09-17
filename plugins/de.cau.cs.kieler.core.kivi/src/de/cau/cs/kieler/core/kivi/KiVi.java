@@ -275,16 +275,6 @@ public class KiVi {
     }
 
     /**
-     * Tell the view management to execute a list of effects.
-     * 
-     * @param effects
-     *            the effects to execute
-     */
-    public void executeEffect(final List<IEffect> effects) {
-        effectsWorker.enqueueEffect(effects);
-    }
-
-    /**
      * Undo an effect.
      * 
      * @param effect
@@ -292,16 +282,6 @@ public class KiVi {
      */
     public void undoEffect(final IEffect effect) {
         effectsWorker.undoEffect(effect);
-    }
-
-    /**
-     * Undo a list of effects.
-     * 
-     * @param effects
-     *            the effects to be undone
-     */
-    public void undoEffect(final List<IEffect> effects) {
-        effectsWorker.undoEffects(effects);
     }
 
     /**

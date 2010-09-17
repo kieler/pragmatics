@@ -25,12 +25,26 @@ public abstract class AbstractEffect implements IEffect {
      * {@inheritDoc}
      */
     public abstract void execute();
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void schedule() {
+        KiVi.getInstance().executeEffect(this);
+    }
 
     /**
      * {@inheritDoc}
      */
     public void undo() {
         // needs to be overwritten when required
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void scheduleUndo() {
+        KiVi.getInstance().undoEffect(this);
     }
 
     /**
