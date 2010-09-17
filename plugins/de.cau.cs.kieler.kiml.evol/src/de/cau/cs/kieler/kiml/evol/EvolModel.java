@@ -28,7 +28,6 @@ import org.eclipse.ui.IEditorPart;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
-import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -156,28 +155,31 @@ public final class EvolModel {
 
             final Population pop = this.getPopulation();
             int rating = 0;
-            final int small = -delta / (10 * (pop.size() - 1));
+            // TODO: add preference to switch off compensation
+            final int compensation = -delta / ((pop.size() - 1));
 
             for (final Genome g : pop) {
                 if (g == current) {
-                    rating = g.getUserRating() + delta;
+                    rating = g.getUserRating().intValue() + delta;
                 } else {
-                    rating = g.getUserRating() + small;
+                    // compensation for counterbalance
+                    rating = g.getUserRating().intValue() + compensation;
                 }
 
-                g.setUserRating(rating);
+                g.setUserRating(Integer.valueOf(rating));
             }
 
             // Punish predictors
             final String key = "proposedRating:" + current.getId();
-            rating = current.getUserRating();
+            rating = (current.hasUserRating() ? current.getUserRating().intValue() : 0);
             for (final Genome predictor : this.getWeightWatchers()) {
                 final Map<String, Object> features = predictor.getFeatures();
                 if ((features != null) && !features.isEmpty() && features.containsKey(key)) {
                     final Integer prediction = (Integer) features.get(key);
                     final int diff = rating - prediction.intValue();
-                    final int predictorRating = predictor.getUserRating();
-                    predictor.setUserRating(predictorRating - Math.abs(diff));
+                    final int predictorRating =
+                            (predictor.hasUserRating() ? predictor.getUserRating().intValue() : 0);
+                    predictor.setUserRating(Integer.valueOf(predictorRating - Math.abs(diff)));
                 }
             }
 
@@ -234,7 +236,7 @@ public final class EvolModel {
             final int reward = 10;
             for (final Genome wg : ww) {
                 Assert.isNotNull(wg);
-                wg.setUserRating(wg.getUserRating() + reward);
+                wg.setUserRating(Integer.valueOf(wg.getUserRating().intValue() + reward));
             }
 
             monitor.worked(autoRateWork * scale);
@@ -382,20 +384,19 @@ public final class EvolModel {
         setPosition(0);
         setEvolAlg(null);
 
-        final String providerId = EvolUtil.getLayoutProviderId(editor, part);
-        setLayoutProviderId(providerId);
+        final LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, part);
 
-        if (providerId != null) {
+        if (providerData != null) {
+            final String providerId = providerData.getId();
+            setLayoutProviderId(providerId);
+
             // Find out which layout type it is.
-            final LayoutServices layoutServices = LayoutServices.getInstance();
-            Assert.isNotNull(layoutServices);
-
-            final LayoutProviderData providerData =
-                    layoutServices.getLayoutProviderData(providerId);
-            Assert.isNotNull(providerData);
-
             final String typeId = providerData.getType();
             setLayoutTypeId(typeId);
+
+        } else {
+            setLayoutProviderId(null);
+            setLayoutTypeId(null);
         }
 
         // Create an initial population.
@@ -416,7 +417,7 @@ public final class EvolModel {
 
             final Population ww = new Population();
             for (int i = 0; i < NUM_WEIGHT_GENOMES; i++) {
-                final Genome weightGenes = EvolUtil.createWeightGenes(metricIds, null);
+                final Genome weightGenes = GenomeFactory.createWeightGenes(metricIds);
                 Assert.isNotNull(weightGenes);
                 ww.add(weightGenes);
             }
@@ -497,7 +498,8 @@ public final class EvolModel {
         final EditPart editPart = EvolUtil.getCurrentEditPart(editor);
 
         final String oldProviderId = this.layoutProviderId;
-        final String newProviderId = EvolUtil.getLayoutProviderId(editor, editPart);
+        final LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, editPart);
+        final String newProviderId = providerData.getId();
 
         if ((newProviderId == null) || (oldProviderId == null)) {
             return (oldProviderId == null) && (newProviderId == null);
