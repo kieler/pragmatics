@@ -682,7 +682,7 @@ final class GenomeFactory {
     // The set of all learnable elements that are accepted.
     private final Set<String> learnableOptions;
 
-    private final IGeneFactory geneFactory = new LayoutOptionGeneFactory();
+    private final IGeneFactory layoutOptionGeneFactory = new LayoutOptionGeneFactory();
 
     /**
      * Create a {@link Genome} from the given layout inspectors.
@@ -729,6 +729,7 @@ final class GenomeFactory {
                 + " layout property genes ...");
 
         // Collect the property values from the layout inspectors.
+        // XXX This should be done once by the GenomeFactory constructor.
         final Map<String, Object> propertyId2ValueMap = collectPropertyValues(inspectors);
 
         // Create genes for the property values.
@@ -749,7 +750,10 @@ final class GenomeFactory {
                 IGene<?> gene = null;
                 try {
                     Assert.isNotNull(value, "Value is null: " + id);
-                    gene = this.geneFactory.newGene(id, value, uniformProb);
+                    // XXX convert value to string for legacy reasons
+                    gene =
+                            this.layoutOptionGeneFactory.newGene(id, value.toString(),
+                                    uniformProb);
                     Assert.isNotNull(gene, "Failed to create gene for " + id);
                     result.add(gene);
                 } catch (final IllegalArgumentException exception) {
@@ -832,7 +836,7 @@ final class GenomeFactory {
 
         final IGeneFactory gf;
         if (theGeneFactory == null) {
-            gf = this.geneFactory;
+            gf = this.layoutOptionGeneFactory;
         } else {
             gf = theGeneFactory;
         }

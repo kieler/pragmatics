@@ -63,6 +63,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
+import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
@@ -927,17 +928,19 @@ public final class EvolUtil {
     }
 
     /**
+     *
      * @param providerId
-     *            layout provider ID
+     *            layout provider ID; must not be {@code null}
      * @param typeId
      *            layout type ID
      * @return {@code true} iff the given layout provider is of the given type
      */
     public static boolean isCompatibleLayoutProvider(final String providerId, final String typeId) {
-
+        Assert.isLegal(providerId != null);
         final LayoutServices layoutServices = LayoutServices.getInstance();
 
-        final String newTypeId = layoutServices.getLayoutProviderData(providerId).getType();
+        final LayoutProviderData providerData = layoutServices.getLayoutProviderData(providerId);
+        final String newTypeId = providerData.getType();
 
         final boolean result = typeId.equalsIgnoreCase(newTypeId);
 
@@ -982,6 +985,7 @@ public final class EvolUtil {
         adoptIndividual(individual, inspector);
     }
 
+
     /**
      * Adopts layout options from the given {@link Genome} into the given
      * {@link ILayoutInspector}.
@@ -999,12 +1003,10 @@ public final class EvolUtil {
 
         EvolPlugin.logStatus("Adopting " + individual.toString());
         final LayoutServices layoutServices = LayoutServices.getInstance();
-        // final EvolutionServices evolServices =
-        // EvolutionServices.getInstance();
-        // final Set<String> metricIds = evolServices.getLayoutMetricsIds();
 
         // Set layout options according to the genome.
         for (final IGene<?> gene : individual) {
+
             Assert.isNotNull(gene);
 
             final Object value = gene.getValue();
@@ -1015,96 +1017,116 @@ public final class EvolUtil {
 
             final Type layoutOptionType = data.getType();
 
-            switch (layoutOptionType) {
+            final Runnable modelChange = new Runnable() {
 
-            case BOOLEAN:
-                if (value instanceof Boolean) {
-                    inspector.setOption(data,
-                            Integer.valueOf((((Boolean) value).booleanValue() ? 1 : 0)));
-                    // inspector.setPropertyValue(id,
-                    // Integer.valueOf((((Boolean) value).booleanValue() ? 1 :
-                    // 0)));
-                } else {
-                    inspector.setOption(data,
-                            Integer.valueOf(Math.round(((Float) value).floatValue())));
-                }
-                break;
+                public void run() {
+                    switch (layoutOptionType) {
 
-            case ENUM:
-                try {
-                    inspector.setOption(data, value);
-                } catch (final NullPointerException e) {
-                    EvolPlugin.showError("WARNING: enum property could not be set: " + id, e);
-                    Assert.isTrue(false);
-                }
-                break;
+                    case BOOLEAN:
+                        if (value instanceof Boolean) {
+                            inspector.setOption(data,
+                                    Integer.valueOf((((Boolean) value).booleanValue() ? 1 : 0)));
+                        } else {
+                            inspector.setOption(data,
+                                    Integer.valueOf(Math.round(((Float) value).floatValue())));
+                        }
+                        break;
 
-            case INT:
-                if (value instanceof Integer) {
-                    inspector.setOption(data, value);
-                } else {
-                    inspector.setOption(data, gene.toString());
-                }
-                break;
+                    case ENUM:
+                        try {
+                            inspector.setOption(data, value);
+                        } catch (final NullPointerException e) {
+                            EvolPlugin.showError(
+                                    "WARNING: enum property could not be set: " + id, e);
+                            Assert.isTrue(false);
+                        }
+                        break;
 
-            case STRING:
-                if (LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id)) {
-                    // Cannot use the int value of the gene because it is the
-                    // index for the internal list in the gene, not for the
-                    // layout hint array in the property source which we would
-                    // need.
+                    case INT:
+                        if (value instanceof Integer) {
+                            inspector.setOption(data, value);
+                        } else {
+                            inspector.setOption(data, gene.toString());
+                        }
+                        break;
 
-                    // Are we allowed to set the layout hint?
-                    final boolean canSetLayoutHint =
-                            EvolPlugin.getDefault().getPreferenceStore()
-                                    .getBoolean(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
+                    case STRING:
+                        if (LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id)) {
+                            // Cannot use the int value of the gene because it
+                            // is the
+                            // index for the internal list in the gene, not for
+                            // the
+                            // layout hint array in the property source which we
+                            // would
+                            // need.
 
-                    // Even for different types?
-                    final boolean canSetForDifferentType =
-                            EvolPlugin.getDefault().getPreferenceStore()
-                                    .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
+                            // Are we allowed to set the layout hint?
+                            final boolean canSetLayoutHint =
+                                    EvolPlugin
+                                            .getDefault()
+                                            .getPreferenceStore()
+                                            .getBoolean(
+                                                    EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
 
-                    if (!canSetLayoutHint) {
-                        // We have nothing to do, for we are not allowed to set
-                        // the layout hint at all.
+                            // Even for different types?
+                            final boolean canSetForDifferentType =
+                                    EvolPlugin
+                                            .getDefault()
+                                            .getPreferenceStore()
+                                            .getBoolean(
+                                                    EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
+
+                            if (!canSetLayoutHint) {
+                                // We have nothing to do, for we are not allowed
+                                // to set
+                                // the layout hint at all.
+                                break;
+                            }
+
+                            final String newLayoutHintId = gene.toString();
+
+                            final Set<Object> oldLayoutHintIds =
+                                    getPropertyValues(Collections.singletonList(inspector),
+                                            LayoutOptions.LAYOUTER_HINT_ID);
+
+                            Assert.isTrue(!oldLayoutHintIds.isEmpty());
+                            final String oldLayoutHintId =
+                                    (String) oldLayoutHintIds.iterator().next();
+                            Assert.isNotNull(oldLayoutHintId);
+
+                            final LayoutProviderData providerData =
+                                    layoutServices.getLayoutProviderData(newLayoutHintId, null);
+
+                            final String newType = providerData.getType();
+
+                            if ((!canSetForDifferentType && !isCompatibleLayoutProvider(
+                                    oldLayoutHintId, newType))) {
+                                // we are not allowed do this
+                                System.err
+                                        .println("Attempt to set the layout hint to incompatible type: "
+                                                + newLayoutHintId);
+                                break;
+                            }
+
+                            inspector.setOption(data, newLayoutHintId);
+
+                        } else {
+                            // a normal string option
+                            inspector.setOption(data, value.toString());
+                        }
+                        break;
+
+                    default:
+                        inspector.setOption(data, value.toString());
                         break;
                     }
 
-                    final String newLayoutHintId = gene.toString();
-
-                    final Set<Object> oldLayoutHintIds =
-                            getPropertyValues(Collections.singletonList(inspector),
-                                    LayoutOptions.LAYOUTER_HINT_ID);
-
-                    Assert.isTrue(!oldLayoutHintIds.isEmpty());
-                    final String oldLayoutHintId = (String) oldLayoutHintIds.iterator().next();
-
-                    final LayoutProviderData providerData =
-                            layoutServices.getLayoutProviderData(newLayoutHintId, null);
-
-                    final String newType = providerData.getType();
-
-                    if ((!canSetForDifferentType && !isCompatibleLayoutProvider(oldLayoutHintId,
-                            newType))) {
-                        // we are not allowed do this
-                        System.err
-                                .println("Attempt to set the layout hint to incompatible type: "
-                                        + newLayoutHintId);
-                        break;
-                    }
-
-                    inspector.setOption(data, newLayoutHintId);
-
-                } else {
-                    // a normal string option
-                    inspector.setOption(data, value.toString());
                 }
-                break;
+            };
 
-            default:
-                inspector.setOption(data, value.toString());
-                break;
-            }
+            KimlUiUtil.runModelChange(modelChange, inspector.getEditingDomain(),
+                    "Adopt individual " + individual);
+
         }
     }
 
@@ -1216,7 +1238,9 @@ public final class EvolUtil {
         final LayoutOptionData<?> data =
                 LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUTER_HINT_ID);
 
-        final String hintId = (String) inspector.getOption(data) + "";
+        // TODO: hintId = inspector.getFocusLayouterData().getId();
+
+        final Object hintData = inspector.getOption(data);
 
         // Assert.isNotNull(labelProvider,
         // "Could not obtain label provider for " + inspector.toString());
@@ -1228,8 +1252,9 @@ public final class EvolUtil {
 
         // hintId = LayoutPropertySource.getLayoutHint(text);
 
-        Assert.isTrue(hintId.length() > 0, "Could not find layout provider id.");
+        Assert.isNotNull(hintData, "Could not find layout provider id.");
 
+        final String hintId = hintData.toString();
         return hintId;
     }
 
