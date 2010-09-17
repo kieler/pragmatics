@@ -24,11 +24,13 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CompoundCommand;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -36,6 +38,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.graphs.Node;
 import de.cau.cs.kieler.graphs.Port;
+import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditor;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.gmf.GmfLayoutInspector;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -63,6 +66,22 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
     private List<KEdge> edges = new LinkedList<KEdge>();
     /** map of hyperedges to the representing hypernodes in the original graph. */
     private Map<Set<KNode>, List<KNode>> hyperedgeMap;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean supports(final IEditorPart editorPart) {
+        return editorPart instanceof GraphsDiagramEditor;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean supports(final EditPart editPart) {
+        return false;
+    }
     
     /**
      * Builds the view map by traversing the notation view tree.

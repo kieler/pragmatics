@@ -619,7 +619,7 @@ public class GmfLayoutInspector implements ILayoutInspector {
             if (koption == null) {
                 koption = LayoutOptionsFactory.eINSTANCE.createKOption();
                 koption.setKey(optionData.getId());
-                optionStyle.getOptions().add(koption);
+                style.getOptions().add(koption);
             }
             
             // set the new option value

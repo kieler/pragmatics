@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.gmf;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -22,10 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
@@ -50,9 +45,9 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
-import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -74,7 +69,6 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
@@ -1005,41 +999,41 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
-     * Refreshes all LabelEditParts in the diagram. This is necessary in order to prevent Transition
-     * labels from vanishing.
+     * Refreshes all labels and ports in the diagram. This is necessary in order to prevent Transition
+     * labels from vanishing and to correctly move ports.
      * 
-     * author: soh FIXME: Someone should look into this. What causes transition labels to fly out of
-     * alignment.
+     * FIXME: Someone should look into this. What causes transition labels to fly out of alignment?
      * 
-     * @param editor the editor
-     * @param editPart the root edit part
+     * @param editor the diagram editor
+     * @param rootPart the root edit part
      */
-    private static void refreshDiagram(final IEditorPart editor, final EditPart editPart) {
-        Job worker = new Job("Diagram refresh") {
-
-            @Override
-            protected IStatus run(final IProgressMonitor monitor) {
-                if (editor instanceof IDiagramWorkbenchPart) {
-                    EditPart part = editPart;
-
-                    if (part == null) {
-                        part = ((IDiagramWorkbenchPart) editor).getDiagramEditPart();
-                    }
-
-                    @SuppressWarnings("unchecked")
-                    Collection<EditPart> editParts = new ArrayList<EditPart>(part.getViewer()
-                        .getEditPartRegistry().values());
-
-                    for (EditPart obj : editParts) {
-                        if (obj instanceof LabelEditPart) {
-                            ((LabelEditPart) obj).refresh();
+    private static void refreshDiagram(final DiagramEditor editor,
+            final IGraphicalEditPart rootPart) {
+//        Job worker = new Job("Diagram refresh") {
+//
+//            @Override
+//            protected IStatus run(final IProgressMonitor monitor) {
+                EditPart editPart = rootPart;
+                if (editPart == null) {
+                    editPart = editor.getDiagramEditPart();
+                }
+                for (Object obj : editPart.getViewer().getEditPartRegistry().values()) {
+                    if (obj instanceof LabelEditPart) {
+                        ((LabelEditPart) obj).refresh();
+                    } else if (obj instanceof ShapeNodeEditPart) {
+                        IFigure figure = ((ShapeNodeEditPart) obj).getFigure();
+                        if (figure instanceof BorderedNodeFigure) {
+                            IFigure portContainer = ((BorderedNodeFigure) figure)
+                                    .getBorderItemContainer();
+                            portContainer.invalidate();
+                            portContainer.validate();
                         }
                     }
                 }
-                return new Status(Status.OK, KimlUiPlugin.PLUGIN_ID, "Refresh done");
-            }
-        };
-        worker.schedule(1000);
+//                return new Status(Status.OK, KimlUiPlugin.PLUGIN_ID, "Refresh done");
+//            }
+//        };
+//        worker.schedule(1000);
     }
 
 }
