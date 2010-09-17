@@ -236,7 +236,8 @@ public final class EvolModel {
             final int reward = 10;
             for (final Genome wg : ww) {
                 Assert.isNotNull(wg);
-                wg.setUserRating(Integer.valueOf(wg.getUserRating().intValue() + reward));
+                final int oldRating = (wg.hasUserRating() ? wg.getUserRating().intValue() : 0);
+                wg.setUserRating(Integer.valueOf(oldRating + reward));
             }
 
             monitor.worked(autoRateWork * scale);
