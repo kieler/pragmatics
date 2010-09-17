@@ -96,11 +96,9 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
     /** map of layout graph elements to edit parts. */
-    private Map<KGraphElement, IGraphicalEditPart> graphElem2EditPartMap
-            = new LinkedHashMap<KGraphElement, IGraphicalEditPart>();
+    private Map<KGraphElement, IGraphicalEditPart> graphElem2EditPartMap = new LinkedHashMap<KGraphElement, IGraphicalEditPart>();
     /** map of edit parts to layout graph elements. */
-    private Map<IGraphicalEditPart, KGraphElement> editPart2GraphElemMap
-            = new HashMap<IGraphicalEditPart, KGraphElement>();
+    private Map<IGraphicalEditPart, KGraphElement> editPart2GraphElemMap = new HashMap<IGraphicalEditPart, KGraphElement>();
     /** list of connection edit parts that were found in the diagram. */
     private LinkedList<ConnectionEditPart> connections = new LinkedList<ConnectionEditPart>();
     /** editor part of the currently layouted diagram. */
@@ -183,8 +181,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /** map of editor change listeners to all editors for which they have registered. */
-    private Map<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>> listenerMap
-            = new HashMap<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>>();
+    private Map<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>> listenerMap = new HashMap<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>>();
 
     /**
      * {@inheritDoc}
@@ -294,7 +291,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
         layoutGraph = doBuildLayoutGraph(layoutRootPart);
 
-        // haf,cmot: add dummy edge for interlevel transitions to get at least the 
+        // haf,cmot: add dummy edge for interlevel transitions to get at least the
         // order of top level parents right
         addDummyEdgesForInterlevelConnections(layoutGraph);
 
@@ -314,67 +311,83 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // iterate over all elements (even deeply nested) of the graph
         TreeIterator<?> iter = graph.eAllContents();
         while (iter.hasNext()) {
-            Object child = iter.next();
-            // only do something for edges
-            if (child instanceof KEdge) {
-                KNode source = ((KEdge) child).getSource();
-                KNode target = ((KEdge) child).getTarget();
-                // look for interlevel connections
-                if (source.eContainer() != target.eContainer()) {
-                    KNode sourceParent = source;
-                    KNode targetParent = target;
-                    // successively create list of ancestors for target and source
-                    // whenever a new ancestor is contained by the other list, we found a common ancestor
-                    List<KNode> sourceAncestors = new ArrayList<KNode>();
-                    List<KNode> targetAncestors = new ArrayList<KNode>();
-                    sourceAncestors.add(source);
-                    targetAncestors.add(target);
-                    KNode newSource = null;
-                    KNode newTarget = null;
+            try {
+                Object child = iter.next();
+                // only do something for edges
+                if (child instanceof KEdge) {
+                    KNode source = ((KEdge) child).getSource();
+                    KNode target = ((KEdge) child).getTarget();
+                    // look for interlevel connections
+                    /*
+                     * FIXME: haf: this does only work for plain graphs, not for models with ports!
+                     * In a port-based model the source and target parents may be different when the
+                     * connection is from an inner to an outer port! This code should be generalized
+                     * to also work with ports!
+                     */
+                    if (source.eContainer() != target.eContainer()) {
+                        KNode sourceParent = source;
+                        KNode targetParent = target;
+                        // successively create list of ancestors for target and source
+                        // whenever a new ancestor is contained by the other list, we found a common
+                        // ancestor
+                        List<KNode> sourceAncestors = new ArrayList<KNode>();
+                        List<KNode> targetAncestors = new ArrayList<KNode>();
+                        sourceAncestors.add(source);
+                        targetAncestors.add(target);
+                        KNode newSource = null;
+                        KNode newTarget = null;
 
-                    do {
-                        if (sourceParent != null) {
-                            newSource = sourceParent;
-                        }
-                        if (targetParent != null) {
-                            newTarget = targetParent;
-                        }
-                        sourceParent = sourceParent.getParent();
-                        targetParent = targetParent.getParent();
-                        if (sourceParent != null) {
-                            sourceAncestors.add(sourceParent);
-                        }
-                        if (targetParent != null) {
-                            targetAncestors.add(targetParent);
-                        }
-                        if (sourceAncestors.contains(targetParent)) {
-                            // the list was build in order of hierarchy levels
-                            // hence, the index denotes this level
-                            int index = sourceAncestors.indexOf(targetParent);
-                            System.out.println("sourceAncestor, index "+index);
-                            // the new source is the corresponding child of the common parent, i.e.
-                            // one less index
-                            newSource = sourceAncestors.get(index - 1);
-                            break;
-                        }
-                        if (targetAncestors.contains(sourceParent)) {
-                            // the list was build in order of hierarchy levels
-                            // hence, the index denotes this level
-                            int index = targetAncestors.indexOf(sourceParent);
-                            System.out.println("targetAncestor, index "+index);
-                            // the new source is the corresponding child of the common parent, i.e.
-                            // one less index
-                            newTarget = targetAncestors.get(index - 1);
-                            break;
-                        }
-                    } while (!(sourceParent == null && targetParent == null));
+                        do {
+                            if (sourceParent != null) {
+                                newSource = sourceParent;
+                            }
+                            if (targetParent != null) {
+                                newTarget = targetParent;
+                            }
+                            sourceParent = sourceParent.getParent();
+                            targetParent = targetParent.getParent();
+                            if (sourceParent != null) {
+                                sourceAncestors.add(sourceParent);
+                            }
+                            if (targetParent != null) {
+                                targetAncestors.add(targetParent);
+                            }
+                            if (sourceAncestors.contains(targetParent)) {
+                                // the list was build in order of hierarchy levels
+                                // hence, the index denotes this level
+                                int index = sourceAncestors.indexOf(targetParent);
+                                // System.out.println("sourceAncestor, index "+index);
+                                // the new source is the corresponding child of the common parent,
+                                // i.e.
+                                // one less index
+                                newSource = sourceAncestors.get(index - 1);
+                                break;
+                            }
+                            if (targetAncestors.contains(sourceParent)) {
+                                // the list was build in order of hierarchy levels
+                                // hence, the index denotes this level
+                                int index = targetAncestors.indexOf(sourceParent);
+                                // System.out.println("targetAncestor, index "+index);
+                                // the new source is the corresponding child of the common parent,
+                                // i.e.
+                                // one less index
+                                newTarget = targetAncestors.get(index - 1);
+                                break;
+                            }
+                        } while (!(sourceParent == null && targetParent == null));
 
-                    KEdge dummyEdge = KimlUtil.createInitializedEdge();
-                    dummyEdge.setSource(newSource);
-                    dummyEdge.setTarget(newTarget);
+                        KEdge dummyEdge = KimlUtil.createInitializedEdge();
+                        dummyEdge.setSource(newSource);
+                        dummyEdge.setTarget(newTarget);
+
+                    }
 
                 }
-
+            } catch (ArrayIndexOutOfBoundsException e) {
+                /* haf:
+                 * in this case the parents could not correctly be determined. This is currently the
+                 * case for port-based models do nothing in such case
+                 */
             }
         }
     }
@@ -458,7 +471,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     public EditPart getEditPart(final KNode knode) {
         return graphElem2EditPartMap.get(knode);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -515,8 +528,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      */
     private void buildLayoutGraphRecursively(final IGraphicalEditPart parentEditPart,
         final KNode parentLayoutNode, final IGraphicalEditPart currentEditPart) {
-        boolean hasChildNodes = false, hasChildCompartments = false,
-                hasPorts = false, isCollapsed = false;
+        boolean hasChildNodes = false, hasChildCompartments = false, hasPorts = false, isCollapsed = false;
         KInsets kinsets = null;
         IFigure parentFigure = parentEditPart.getFigure();
 
@@ -590,8 +602,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 if (!KimlUiUtil.isNoLayout(compartment)) {
                     IFigure compartmentFigure = compartment.getFigure();
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
-                        ResizableCompartmentFigure resizableCompartmentFigure
-                                = (ResizableCompartmentFigure) compartmentFigure;
+                        ResizableCompartmentFigure resizableCompartmentFigure = (ResizableCompartmentFigure) compartmentFigure;
                         // check whether the compartment is collapsed
                         if (!resizableCompartmentFigure.isExpanded()) {
                             isCollapsed = true;
@@ -684,8 +695,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
         KShapeLayout nodeLayout = parentLayoutNode.getData(KShapeLayout.class);
         // set default fixed size option
-        nodeLayout.setProperty(LayoutOptions.FIXED_SIZE,
-                !hasChildNodes && !hasChildCompartments && !isCollapsed);
+        nodeLayout.setProperty(LayoutOptions.FIXED_SIZE, !hasChildNodes && !hasChildCompartments
+            && !isCollapsed);
         // set default port constraints option
         if (hasPorts) {
             if (hasChildNodes || hasChildCompartments) {
@@ -773,8 +784,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // calculate offset for edge and label coordinates
             IGraphicalEditPart sourceParent = graphElem2EditPartMap.get(sourceNode.getParent());
             Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParent.getFigure());
-            KInsets insets = sourceNode.getParent().getData(KShapeLayout.class).getProperty(
-                LayoutOptions.INSETS);
+            KInsets insets = sourceNode.getParent().getData(KShapeLayout.class)
+                .getProperty(LayoutOptions.INSETS);
             float offsetx = sourceParentBounds.x + insets.getLeft();
             float offsety = sourceParentBounds.y + insets.getTop();
 
