@@ -29,15 +29,38 @@ public class UndoEffect extends AbstractEffect {
     /**
      * Create a new undo effect.
      * 
-     * @param e the effect to be undone
+     * @param e
+     *            the effect to be undone
      */
     public UndoEffect(final IEffect e) {
         effect = e;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void execute() {
         effect.undo();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isMergeable() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IEffect merge(final IEffect otherEffect) {
+        // if there are any scheduled executions of the effect then cancel those executions
+        // undo alone will suffice
+        if (effect == otherEffect) {
+            return this;
+        } else {
+            return null;
+        }
     }
 
 }

@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.gmf;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -29,6 +32,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
+import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
 
 /**
@@ -60,7 +64,9 @@ public class LayoutEffect extends AbstractEffect {
         }
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void execute() {
         final DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(
                 diagramEditor, editPart);
@@ -109,6 +115,108 @@ public class LayoutEffect extends AbstractEffect {
             }, false);
 
         }
+    }
+
+    @Override
+    public boolean isMergeable() {
+        return true;
+    }
+
+    @Override
+    public IEffect merge(final IEffect otherEffect) {
+        if (otherEffect instanceof LayoutEffect) {
+            LayoutEffect other = (LayoutEffect) otherEffect;
+            if (diagramEditor == other.diagramEditor) {
+                editPart = commonAncestorOrSelf(editPart, other.editPart);
+                return this;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Find the first common ancestor of two EditParts. Modelled after
+     * GmfDiagramLayoutManager.addDummyEdgesForInterlevelConnections().
+     * 
+     * @param a
+     * @param b
+     * @return
+     */
+    private EditPart commonAncestorOrSelf(final EditPart a, final EditPart b) {
+        if (a == b) {
+            return a;
+        }
+        EditPart aParent = a;
+        EditPart bParent = b;
+        List<EditPart> aAncestors = new ArrayList<EditPart>();
+        List<EditPart> bAncestors = new ArrayList<EditPart>();
+        aAncestors.add(a);
+        bAncestors.add(b);
+        do {
+            if (aParent != null) {
+                aParent = aParent.getParent();
+            }
+            if (bParent != null) {
+                bParent = bParent.getParent();
+            }
+            if (aParent != null) {
+                aAncestors.add(aParent);
+            }
+            if (bParent != null) {
+                bAncestors.add(bParent);
+            }
+            if (aAncestors.contains(bParent)) {
+                return bParent;
+            }
+            if (bAncestors.contains(aParent)) {
+                return aParent;
+            }
+        } while (!(aParent == null && bParent == null));
+        return null;
+    }
+
+    /**
+     * Find the first common ancestor of two EditParts. Modelled after
+     * GmfDiagramLayoutManager.addDummyEdgesForInterlevelConnections().
+     * 
+     * @param a
+     * @param b
+     * @return
+     */
+    private EObject commonAncestorOrSelf(final EObject a, final EObject b) {
+        if (a == b) {
+            return a;
+        }
+        EObject aParent = a;
+        EObject bParent = b;
+        List<EObject> aAncestors = new ArrayList<EObject>();
+        List<EObject> bAncestors = new ArrayList<EObject>();
+        aAncestors.add(a);
+        bAncestors.add(b);
+        do {
+            if (aParent != null) {
+                aParent = aParent.eContainer();
+            }
+            if (bParent != null) {
+                bParent = bParent.eContainer();
+            }
+            if (aParent != null) {
+                aAncestors.add(aParent);
+            }
+            if (bParent != null) {
+                bAncestors.add(bParent);
+            }
+            if (aAncestors.contains(bParent)) {
+                return bParent;
+            }
+            if (bAncestors.contains(aParent)) {
+                return aParent;
+            }
+        } while (!(aParent == null && bParent == null));
+        return null;
     }
 
 }

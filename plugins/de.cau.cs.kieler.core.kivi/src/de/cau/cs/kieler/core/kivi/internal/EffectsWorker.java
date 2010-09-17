@@ -13,9 +13,9 @@
  */
 package de.cau.cs.kieler.core.kivi.internal;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import de.cau.cs.kieler.core.kivi.IEffect;
 
@@ -27,15 +27,21 @@ import de.cau.cs.kieler.core.kivi.IEffect;
  */
 public class EffectsWorker extends Thread {
 
-    private BlockingQueue<IEffect> effects = new LinkedBlockingQueue<IEffect>();
+    private List<IEffect> effects = new ArrayList<IEffect>();
 
     @Override
     public void run() {
+        IEffect effect = null;
         while (!isInterrupted()) {
             try {
-                IEffect effect = effects.take();
+                synchronized (effects) {
+                    while (effects.size() == 0) {
+                        effects.wait();
+                    }
+                    effect = effects.remove(0);
+                }
                 try {
-                    execute(effect);
+                    effect.execute();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -52,22 +58,20 @@ public class EffectsWorker extends Thread {
      * @param effect the effect to execute
      */
     public void enqueueEffect(final IEffect effect) {
-        try {
-            effects.put(effect);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Enqueue a list of effects for execution preserving the order.
-     * 
-     * @param es list of effects to execute
-     */
-    public void enqueueEffect(final List<IEffect> es) {
-        for (IEffect e : es) {
-            enqueueEffect(e);
+        IEffect toAdd = effect;
+        synchronized (effects) {
+            if (effect.isMergeable()) {
+                for (Iterator<IEffect> iterator = effects.iterator(); iterator.hasNext();) {
+                    IEffect other = iterator.next();
+                    IEffect current = toAdd.merge(other);
+                    if (current != null) {
+                        toAdd = current;
+                        iterator.remove();
+                    }
+                }
+            }
+            effects.add(toAdd);
+            effects.notify();
         }
     }
     
@@ -80,24 +84,4 @@ public class EffectsWorker extends Thread {
         enqueueEffect(new UndoEffect(effect));
     }
     
-    /**
-     * Undo a list of effects preserving the order.
-     * 
-     * @param es list of effects to undo
-     */
-    public void undoEffects(final List<IEffect> es) {
-        for (IEffect e : es) {
-            undoEffect(e);
-        }
-    }
-
-    /**
-     * Execute an effect.
-     * 
-     * @param effect the effect to execute
-     */
-    private void execute(final IEffect effect) {
-        // TODO merging etc
-        effect.execute();
-    }
 }

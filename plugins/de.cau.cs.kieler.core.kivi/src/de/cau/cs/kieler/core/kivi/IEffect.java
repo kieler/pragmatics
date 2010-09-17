@@ -14,8 +14,8 @@
 package de.cau.cs.kieler.core.kivi;
 
 /**
- * An effect executes some type of view management action, usually a visual
- * change of the graphical model.
+ * An effect executes some type of view management action, usually a visual change of the graphical
+ * model.
  * 
  * @author mmu
  * 
@@ -26,7 +26,7 @@ public interface IEffect {
      * Execute the effect.
      */
     void execute();
-    
+
     /**
      * Schedule the effect for execution.
      */
@@ -36,21 +36,25 @@ public interface IEffect {
      * Attempt to undo the effect.
      */
     void undo();
-    
+
     /**
      * Schedule the effect to be undone.
      */
     void scheduleUndo();
 
     /**
-     * Determines whether multiple instances of this effect can be combined into
-     * one instance. For example multiple layout calls need not be executed
-     * multiple times, once is enough.
+     * Determines whether this effect can be merged with previously scheduled effects.
      * 
-     * @return true if multiple instances of this effect can be combined into
-     *         one instance
+     * @return true if it can be merged, false if no search through the effect queue is necessary
      */
-    boolean combinable();
+    boolean isMergeable();
     
-    // TODO update to merge mechanism
+    /**
+     * Merge this effect with another effect. Will return null if the effects can not be merged.
+     * 
+     * @param otherEffect the effect to merge with
+     * @return the newly merged effect, or null if no merge was possible.
+     */
+    IEffect merge(IEffect otherEffect);
+    
 }

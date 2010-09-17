@@ -24,11 +24,6 @@ public abstract class AbstractEffect implements IEffect {
     /**
      * {@inheritDoc}
      */
-    public abstract void execute();
-    
-    /**
-     * {@inheritDoc}
-     */
     public void schedule() {
         KiVi.getInstance().executeEffect(this);
     }
@@ -50,9 +45,17 @@ public abstract class AbstractEffect implements IEffect {
     /**
      * {@inheritDoc}
      */
-    public boolean combinable() {
-        // default behavior: not combinable
+    public boolean isMergeable() {
+        // default behaviour: not mergeable
         return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IEffect merge(final IEffect otherEffect) {
+        // default behaviour: no merge possible
+        return null;
     }
     
 }
