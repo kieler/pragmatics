@@ -90,26 +90,6 @@ public class ExampleExport {
     }
 
     /**
-     * mapping of properties onto an example.
-     * 
-     * @param properties
-     *            , Map<String, Object>
-     * @param rootResource
-     * @return Example
-     */
-    @SuppressWarnings("unchecked")
-    public static Example mapToExample(Map<ExampleElement, Object> properties) {
-        Example result = new Example((String) properties.get(ExampleElement.TITLE),
-                (SourceType) properties.get(ExampleElement.SOURCETYPE));
-        result.setDescription((String) properties.get(ExampleElement.DESCRIPTION));
-        result.setContact((String) properties.get(ExampleElement.CONTACT));
-        result.addCategories((List<String>) properties.get(ExampleElement.CATEGORIES));
-        result.setAuthor((String) properties.get(ExampleElement.AUTHOR));
-        result.setRootDir((String) properties.get(ExampleElement.DEST_LOCATION));
-        return result;
-    }
-
-    /**
      * 
      * @param example
      * @throws KielerException
@@ -140,13 +120,38 @@ public class ExampleExport {
         try {
             extensionCreator.copyResources(destFile, exportResources, finishedResources);
             // TODO ueberschreiben ???
+            // TODO geht so noch nicht, relativer pfad zum plugin muss ermittelt werden.
+            String absolutePath = extensionCreator.copyOverviewPic(destFile.getPath(),
+                    (String) properties.get(ExampleElement.OVERVIEW_PIC), finishedResources);
             mappedExample.addResources(ExampleExport.mapToExampleResource(exportResources));
+            // mappedExample.setOverviewPic(extensionCreator.makeRelativePath(null, absolutePath));
             extensionCreator.addExtension(destFile, mappedExample, (List<String>) properties
                     .get(ExampleElement.CREATE_CATEGORIES));
         } catch (KielerException e) {
             extensionCreator.deleteExampleResources(finishedResources);
             throw e;
         }
+    }
+
+    /**
+     * mapping of properties onto an example.
+     * 
+     * @param properties
+     *            , Map<String, Object>
+     * @param rootResource
+     * @return Example
+     */
+    @SuppressWarnings("unchecked")
+    public static Example mapToExample(Map<ExampleElement, Object> properties) {
+        Example result = new Example((String) properties.get(ExampleElement.TITLE),
+                (SourceType) properties.get(ExampleElement.SOURCETYPE));
+        result.setDescription((String) properties.get(ExampleElement.DESCRIPTION));
+        result.setContact((String) properties.get(ExampleElement.CONTACT));
+        result.addCategories((List<String>) properties.get(ExampleElement.CATEGORIES));
+        result.setAuthor((String) properties.get(ExampleElement.AUTHOR));
+        result.setRootDir((String) properties.get(ExampleElement.DEST_LOCATION));
+        result.setOverviewPic((String) properties.get(ExampleElement.OVERVIEW_PIC));
+        return result;
     }
 
     private static List<ExampleResource> mapToExampleResource(List<ExportResource> exportResources) {

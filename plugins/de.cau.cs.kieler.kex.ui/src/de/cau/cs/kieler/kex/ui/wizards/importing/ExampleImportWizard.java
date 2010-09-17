@@ -42,8 +42,8 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         try {
             ExampleManager.get().load(false);
         } catch (KielerException e) {
-            MessageDialog.openError(this.getShell(), "Could not load example.", e
-                    .getLocalizedMessage());
+            MessageDialog.openError(this.getShell(), "Could not load example.",
+                    e.getLocalizedMessage());
         }
         mainPage = new ImportExamplePage("Import Example", selection);
     }
@@ -69,9 +69,8 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                     mainPage.getCheckedExamples(), mainPage.isQuickStart(), checkDuplicate);
         } catch (KielerException e) {
             if (e.getLocalizedMessage().equals(ErrorMessage.DUPLICATE_EXAMPLE)) {
-                checkDuplicate = !MessageDialog.openQuestion(getShell(), "Duplicate Example", e
-                        .getLocalizedMessage()
-                        + " Do you want to override it?");
+                checkDuplicate = !MessageDialog.openQuestion(getShell(), "Duplicate Example",
+                        e.getLocalizedMessage() + " Do you want to override it?");
 
             }
 
@@ -81,14 +80,16 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 
         // refresh workspace project
         // TODO wird nicht bei quickstart gehen.
-        IContainer element = ResourcesPlugin.getWorkspace().getRoot().getProject(
-                mainPage.getContainerPath().segment(0));
-        try {
-            if (element != null) {
-                element.refreshLocal(IContainer.DEPTH_INFINITE, null);
+        if (!mainPage.isQuickStart()) {
+            IContainer element = ResourcesPlugin.getWorkspace().getRoot()
+                    .getProject(mainPage.getContainerPath().segment(0));
+            try {
+                if (element != null) {
+                    element.refreshLocal(IContainer.DEPTH_INFINITE, null);
+                }
+            } catch (CoreException e1) {
+                // do nothing
             }
-        } catch (CoreException e1) {
-            // do nothing
         }
 
         // open direct opens
@@ -96,22 +97,22 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
             IWorkbenchPage page = win.getActivePage();
             for (String path : directOpens) {
-                IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(
-                        URIUtil.toURI(path), IResource.FILE);
+                IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
+                        .findFilesForLocationURI(URIUtil.toURI(path), IResource.FILE);
                 if (files.length == 1) {
                     IEditorDescriptor defaultEditor = PlatformUI.getWorkbench().getEditorRegistry()
                             .getDefaultEditor(files[0].getName());
                     if (defaultEditor != null) {
 
                     } else {
-                        defaultEditor = PlatformUI.getWorkbench().getEditorRegistry().findEditor(
-                                IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+                        defaultEditor = PlatformUI.getWorkbench().getEditorRegistry()
+                                .findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
                     }
                     try {
                         page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
                     } catch (PartInitException e) {
-                        MessageDialog.openError(getShell(), "Opening Editor", e
-                                .getLocalizedMessage());
+                        MessageDialog.openError(getShell(), "Opening Editor",
+                                e.getLocalizedMessage());
                     }
                 }
             }

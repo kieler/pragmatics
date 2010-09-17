@@ -21,12 +21,12 @@ public class DBExampleCollector extends ExampleCollector {
 
 	private final List<String> categories;
 
-	private final DatabaseHandler database;
+	private final DatabaseHandler dbHandler;
 
 	public DBExampleCollector() {
 		examplePool = new HashMap<String, Example>();
 		categories = new ArrayList<String>();
-		database = new DatabaseHandler();
+		dbHandler = new DatabaseHandler();
 	}
 
 	@Override

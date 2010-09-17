@@ -127,6 +127,7 @@ public class PluginExampleCollector extends ExampleCollector {
         example.setDescription(exampleElement.getAttribute(PluginConstants.DESCRIPTION));
         example.setContact(exampleElement.getAttribute(PluginConstants.CONTACT));
         example.setAuthor(exampleElement.getAttribute(PluginConstants.AUTHOR));
+        example.setOverviewPic(exampleElement.getAttribute(PluginConstants.OVERVIEW_PIC));
         String exNamespaceId = exampleElement.getNamespaceIdentifier();
         example.setNamespaceId(exNamespaceId);
         example.setRootDir(exampleElement.getAttribute(PluginConstants.ROOT_DIRECTORY));
@@ -156,8 +157,8 @@ public class PluginExampleCollector extends ExampleCollector {
             String resourceType = configurationElement.getAttribute(PluginConstants.RESOURCE_TYPE);
             String localPath = configurationElement.getAttribute(PluginConstants.LOCAL_PATH);
             if (resourceType != null && localPath != null) {
-                ExampleResource exRe = new ExampleResource(localPath, ExampleResource.Type
-                        .valueOf(resourceType.toUpperCase()));
+                ExampleResource exRe = new ExampleResource(localPath,
+                        ExampleResource.Type.valueOf(resourceType.toUpperCase()));
                 String direct_open = configurationElement.getAttribute(PluginConstants.DIRECT_OPEN);
                 if (direct_open != null)
                     exRe.setDirectOpen(Boolean.parseBoolean(direct_open));

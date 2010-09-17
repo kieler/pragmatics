@@ -244,7 +244,7 @@ public class PluginExampleCreator {
 
             destLocation.append(destPath).append(File.separatorChar)
                     .append(resource.getLocalPath());
-            Path destination = new Path(destLocation.toString());
+            IPath destination = Path.fromPortableString(destLocation.toString());
             finishedResources.add(destination);
 
             IOHandler.writeResource(new File(sourcePath), destination.toFile());
@@ -269,6 +269,8 @@ public class PluginExampleCreator {
 
             checkDuplicate(PluginConstants.ID, category, pluginNode, isDuplicate);
         }
+
+        // FIXME category muss an extension nicht an plugin
 
         if (isDuplicate) {
             // TODO fehlerfall �berlegen
@@ -307,26 +309,6 @@ public class PluginExampleCreator {
 
     }
 
-    // try {
-    // DOMSource domSource = new DOMSource(doc);
-    // TransformerFactory tf = TransformerFactory.newInstance();
-    // Transformer transformer = tf.newTransformer();
-    // transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-    // transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-    // transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-    // transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-    // transformer.setParameter("eclipse version", "3.4");
-    // StreamResult sr = new StreamResult(new FileOutputStream(path));
-    // transformer.transform(domSource, sr);
-    // } catch (FileNotFoundException f) {
-    // throw new KielerException(ErrorMessage.TRANSFORM_ERROR + ", "
-    // + f.getLocalizedMessage());
-    // } catch (TransformerException t) {
-    // throw new KielerException(ErrorMessage.TRANSFORM_ERROR + ", "
-    // + t.getLocalizedMessage());
-    // }
-    // return new File(path);
-
     private void throwWritePluginError(Throwable e) throws KielerException {
         throw new KielerException(new StringBuffer().append(ErrorMessage.NOT_WRITE_PLUGIN).append(
                 e.getLocalizedMessage()).toString());
@@ -346,7 +328,7 @@ public class PluginExampleCreator {
                 .toString());
         makeRootSource(location, example);
 
-        String overviewPicPath = example.getPreviewPicPath();
+        String overviewPicPath = example.getOverviewPic();
         if (overviewPicPath != null)
             createdExample.setAttribute(PluginConstants.OVERVIEW_PIC, overviewPicPath);
         String author = example.getAuthor();
@@ -382,6 +364,37 @@ public class PluginExampleCreator {
                 .isDirectOpen()));
         return createdExResource;
 
+    }
+
+    public String copyOverviewPic(String destPath, String sourcePath, List<IPath> finishedResources)
+            throws KielerException {
+        // TODO test
+        String destLocation = destPath + File.separatorChar
+                + Path.fromPortableString(sourcePath).lastSegment();
+        IPath destination = Path.fromPortableString(destLocation.toString());
+        finishedResources.add(destination);
+        try {
+            IOHandler.writeResource(new File(sourcePath), destination.toFile());
+        } catch (IOException e) {
+            StringBuilder errorMessage = new StringBuilder();
+            errorMessage.append(ErrorMessage.PLUGIN_WRITE_ERROR).append(",\ndestination: ").append(
+                    destPath).append(", image: ").append(sourcePath);
+            throw new KielerException(errorMessage.toString());
+        }
+        return destLocation;
+
+    }
+
+    /**
+     * makes a absolute path, relative to export project of workspace.
+     * 
+     * @param absolutePath
+     * @return
+     */
+    public String makeRelativePath(String projectPath, String absolutePath) {
+        // TODO der projekt pfad wird bei filerPluginProjekt ermittelt,
+        // der muss hier herein gereicht werden und der vom absolutenpath abgetrennt werden.
+        return null;
     }
 
 }

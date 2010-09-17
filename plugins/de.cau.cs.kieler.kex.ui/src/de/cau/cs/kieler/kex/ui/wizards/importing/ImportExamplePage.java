@@ -1,18 +1,23 @@
 package de.cau.cs.kieler.kex.ui.wizards.importing;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -23,6 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
@@ -33,244 +39,309 @@ import de.cau.cs.kieler.kex.model.Example;
 
 public class ImportExamplePage extends WizardResourceImportPage {
 
-	private StyledText exampleDescription;
+    private static final int IMAGE_MAX_WIDTH = 800;
+    private static final int IMAGE_MAX_HEIGHT = 600;
 
-	private Tree exampleTree;
+    private static final int IMAGE_PRE_WIDTH = 192;
+    private static final int IMAGE_PRE_HEIGHT = 108;
 
-	private Label imageLabel;
+    private StyledText exampleDescription;
 
-	private Composite previewComp;
+    private Tree exampleTree;
 
-	protected ImportExamplePage(String name, IStructuredSelection selection) {
-		super(name, selection);
-		setTitle(name);
-		setDescription("Enter example attributes and destination location.");
-	}
+    private Label imageLabel;
 
-	// TODO Probleme mit der Hintergrund farbe unter ubuntu, k�nnten mit dem
-	// set font der elemente geloest werden.
+    private Example selectedExample;
 
-	@Override
-	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		setControl(composite);
-		createTopGroup(composite);
-		createMiddleComponent(composite);
-		createBottomComponent(composite);
+    private Composite previewComp;
 
-	}
+    private Label previewDesc;
 
-	@Override
-	protected void createOptionsGroup(Composite parent) {
-		// no options
-	}
+    protected ImportExamplePage(String name, IStructuredSelection selection) {
+        super(name, selection);
+        setTitle(name);
+        setDescription("Enter example attributes and destination location.");
+    }
 
-	@Override
-	protected void createSourceGroup(Composite parent) {
-		// no sourceGroup
-	}
+    // TODO Probleme mit der Hintergrund farbe unter ubuntu, k�nnten mit dem
+    // set font der elemente geloest werden.
 
-	@Override
-	protected ITreeContentProvider getFileProvider() {
-		return null;
-	}
+    @Override
+    public void createControl(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        setControl(composite);
+        createTopGroup(composite);
+        createMiddleComponent(composite);
+        createBottomComponent(composite);
 
-	@Override
-	protected ITreeContentProvider getFolderProvider() {
-		return null;
-	}
+    }
 
-	private void createTopGroup(Composite composite) {
-		Group topGroup = new Group(composite, SWT.NONE);
-		topGroup.setLayout(new GridLayout());
-		topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		topGroup.setText("Set Destination");
-		super.createControl(topGroup);
+    @Override
+    protected void createOptionsGroup(Composite parent) {
+        // no options
+    }
 
-	}
+    @Override
+    protected void createSourceGroup(Composite parent) {
+        // no sourceGroup
+    }
 
-	private void createMiddleComponent(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new FormLayout());
-		Control createTreeComposite = createTreeComposite(composite);
-		createPreviewComp(composite, createTreeComposite);
-		composite.getShell().redraw();
+    @Override
+    protected ITreeContentProvider getFileProvider() {
+        return null;
+    }
 
-	}
+    @Override
+    protected ITreeContentProvider getFolderProvider() {
+        return null;
+    }
 
-	private void createBottomComponent(Composite parent) {
-		Label descriptionLabel = new Label(parent, SWT.NONE);
-		descriptionLabel.setText("Example Description");
+    private void createTopGroup(Composite composite) {
+        Group topGroup = new Group(composite, SWT.NONE);
+        topGroup.setLayout(new GridLayout());
+        topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        topGroup.setText("Set Destination");
+        super.createControl(topGroup);
 
-		this.exampleDescription = new StyledText(parent, SWT.MULTI
-				| SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-		this.exampleDescription.setEditable(false);
-		this.exampleDescription.setText("\n\n\n\n\n");
-		this.exampleDescription.setLayoutData(new GridData(
-				GridData.FILL_HORIZONTAL));
-	}
+    }
 
-	private Control createTreeComposite(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new FormLayout());
-		FormData formData = new FormData();
-		composite.setLayoutData(formData);
-		Label treeDesc = new Label(composite, SWT.NONE);
-		FormData labelData = new FormData();
-		treeDesc.setLayoutData(labelData);
-		treeDesc.setText("Choose Examples");
-		createTree(composite, treeDesc);
-		return composite;
-	}
+    private void createMiddleComponent(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new FormLayout());
+        Control createTreeComposite = createTreeComposite(composite);
+        createPreviewComp(composite, createTreeComposite);
+        composite.getShell().redraw();
 
-	private Control createTree(Composite composite, Control topControl) {
-		exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL
-				| SWT.H_SCROLL);
-		FormData formData = new FormData(250, 110);
-		formData.top = new FormAttachment(topControl, 5);
-		exampleTree.setLayoutData(formData);
-		exampleTree.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				updateElements(e);
-			}
+    }
 
-			public void widgetDefaultSelected(SelectionEvent e) {
-				updateElements(e);
-			}
-		});
+    private void createBottomComponent(Composite parent) {
+        Label descriptionLabel = new Label(parent, SWT.NONE);
+        descriptionLabel.setText("Example Description");
 
-		List<String> categories = ExampleManager.get().getCategories();
-		for (int i = 0; i < categories.size(); i++) {
-			TreeItem iItem = new TreeItem(exampleTree, SWT.CHECK);
-			iItem.setText(categories.get(i));
-			addExamplesToItem(categories.get(i), iItem);
-		}
-		return exampleTree;
-	}
+        this.exampleDescription = new StyledText(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL
+                | SWT.BORDER);
+        this.exampleDescription.setEditable(false);
+        GridData descData = new GridData(GridData.FILL_HORIZONTAL);
+        descData.heightHint = 80;
+        descData.minimumHeight = 80;
+        this.exampleDescription.setLayoutData(descData);
+    }
 
-	private void addExamplesToItem(String category, TreeItem tItem) {
-		for (Example example : ExampleManager.get().getExamples().values()) {
-			if (example.contains(category)) {
-				TreeItem item = new TreeItem(tItem, SWT.NONE);
-				item.setText(example.getTitle());
-				item.setData(example);
-			}
-		}
-	}
+    private Control createTreeComposite(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new FormLayout());
+        FormData formData = new FormData();
+        composite.setLayoutData(formData);
+        Label treeDesc = new Label(composite, SWT.NONE);
+        FormData labelData = new FormData();
+        treeDesc.setLayoutData(labelData);
+        treeDesc.setText("Choose Examples");
+        createTree(composite, treeDesc);
+        return composite;
+    }
 
-	private void createPreviewComp(Composite composite, Control controlComp) {
+    private Control createTree(Composite composite, Control topControl) {
+        exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL);
+        FormData formData = new FormData(200, 100);
+        formData.top = new FormAttachment(topControl, 5);
+        exampleTree.setLayoutData(formData);
+        exampleTree.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                updateElements(e);
+            }
 
-		previewComp = new Composite(composite, SWT.NONE);
-		previewComp.setLayout(new FormLayout());
-		FormData prevData = new FormData();
-		prevData.left = new FormAttachment(controlComp, 5);
-		previewComp.setLayoutData(prevData);
-		Label previewDesc = new Label(previewComp, SWT.NONE);
-		previewDesc.setText("Example Preview");
-		FormData formData = new FormData();
-		previewDesc.setLayoutData(formData);
-		imageLabel = new Label(previewComp, SWT.BORDER);
-		imageLabel.setImage(initPreviewImage());
-		FormData formData2 = new FormData(160, 90);
-		formData2.top = new FormAttachment(previewDesc, 5);
-		imageLabel.setLayoutData(formData2);
-	}
+            public void widgetDefaultSelected(SelectionEvent e) {
+                updateElements(e);
+            }
+        });
 
-	private void updateElements(SelectionEvent e) {
-		if (!(e.item instanceof TreeItem)) {
-			getExampleDescription().setText("");
-			imageLabel.setImage(initPreviewImage());
-			return;
-		}
+        List<String> categories = ExampleManager.get().getCategories();
+        for (int i = 0; i < categories.size(); i++) {
+            TreeItem iItem = new TreeItem(exampleTree, SWT.CHECK);
+            iItem.setText(categories.get(i));
+            addExamplesToItem(categories.get(i), iItem);
+        }
+        return exampleTree;
+    }
 
-		TreeItem selected = (TreeItem) e.item;
-		if (selected.getParentItem() != null) {
-			Object data = selected.getData();
-			Image preview = null;
-			if (data instanceof Example) {
-				Example selectedExample = (Example) data;
+    private void addExamplesToItem(String category, TreeItem tItem) {
+        for (Example example : ExampleManager.get().getExamples().values()) {
+            if (example.contains(category)) {
+                TreeItem item = new TreeItem(tItem, SWT.NONE);
+                item.setText(example.getTitle());
+                item.setData(example);
+            }
+        }
+    }
 
-				updateDescriptionLabel(selectedExample);
+    private void createPreviewComp(Composite composite, Control controlComp) {
 
-				preview = loadImage(selectedExample);
-			} else {
-				getExampleDescription().setText("");
-				imageLabel.setImage(initPreviewImage());
-			}
-			imageLabel.setImage(preview);
-		} else {
-			getExampleDescription().setText("");
-			imageLabel.setImage(initPreviewImage());
-		}
-	}
+        previewComp = new Composite(composite, SWT.NONE);
+        previewComp.setLayout(new FormLayout());
+        FormData prevData = new FormData();
+        prevData.left = new FormAttachment(controlComp, 20);
+        previewComp.setLayoutData(prevData);
+        previewDesc = new Label(previewComp, SWT.NONE);
+        previewDesc.setText("Example Preview");
+        FormData formData = new FormData();
+        previewDesc.setLayoutData(formData);
+        imageLabel = new Label(previewComp, SWT.BORDER);
+        imageLabel.setImage(initPreviewImage());
+        // 16 : 9
+        FormData formData2 = new FormData(IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
+        formData2.top = new FormAttachment(previewDesc, 5);
+        imageLabel.setLayoutData(formData2);
+        imageLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDown(MouseEvent e) {
+                super.mouseDown(e);
+                if (selectedExample == null) {
+                    return;
+                }
+                Dialog dialog = new Dialog(imageLabel.getShell()) {
 
-	private Image loadImage(Example selectedExample) {
-		final String previewPicPath = selectedExample.getPreviewPicPath();
-		if (previewPicPath != null) {
-			try {
-				final InputStream inputStream = ExampleManager.get()
-						.loadPreviewPic(selectedExample);
-				return new Image(previewComp.getDisplay(), inputStream);
-			} catch (final KielerException e) {
-				// TODO Message Dialog error
-				return noPreviewPic(previewComp.getDisplay());
-			}
-		}
-		return noPreviewPic(previewComp.getDisplay());
+                    private Rectangle bounds;
 
-	}
+                    @Override
+                    protected Control createDialogArea(Composite parent) {
+                        Composite composite = (Composite) super.createDialogArea(parent);
+                        Composite innerComp = new Composite(composite, SWT.CENTER | SWT.BORDER);
+                        innerComp.setLayout(new GridLayout());
+                        Label imageLabel = new Label(innerComp, SWT.BORDER | SWT.V_SCROLL
+                                | SWT.H_SCROLL);
+                        imageLabel.setLayoutData(new GridData(GridData.CENTER));
+                        Image image = loadImage(IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT);
+                        bounds = image.getBounds();
+                        imageLabel.setImage(image);
+                        return composite;
+                    }
 
-	private void updateDescriptionLabel(Example selectedExample) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Title:       ").append(selectedExample.getTitle()).append(
-				"\n").append("Author:   ").append(selectedExample.getAuthor())
-				.append("\n").append("Contact: ").append(
-						selectedExample.getContact()).append("\n").append("\n")
-				.append(selectedExample.getDescription());
-		getExampleDescription().setText(sb.toString());
-	}
+                    @Override
+                    protected Point getInitialSize() {
+                        // imagesize + paddings
+                        return new Point(bounds.width + 40, bounds.height + 120);
+                    }
 
-	// TODO falls ein image nicht richtig geladen wird wegen format fehler oder
-	// so muss auf jeden fall eine meldung kommen... am besten schon beim export
-	// darauf reagieren.
+                    @Override
+                    protected void configureShell(Shell newShell) {
+                        super.configureShell(newShell);
+                        newShell.setText("Preview Picture");
+                    }
 
-	private Image noPreviewPic(Display display) {
-		return new Image(display, ExampleManager.get().loadStandardPic());
-	}
+                };
+                dialog.open();
+            }
+        });
+    }
 
-	private Image initPreviewImage() {
-		Image preview = new Image(previewComp.getDisplay(), 160, 90);
-		GC gc = new GC(preview);
-		gc.setBackground(previewComp.getBackground());
-		gc.fillRectangle(preview.getBounds());
-		return preview;
-	}
+    private void updateElements(SelectionEvent e) {
+        if (!(e.item instanceof TreeItem)) {
+            getExampleDescription().setText("");
+            imageLabel.setImage(initPreviewImage());
+            return;
+        }
 
-	public List<Example> getCheckedExamples() {
-		List<Example> result = new ArrayList<Example>();
-		for (TreeItem item : exampleTree.getItems()) {
-			TreeItem[] categoryItems = item.getItems();
-			for (TreeItem categoryItem : categoryItems) {
-				if (categoryItem.getChecked() && categoryItem.getData() != null) {
-					result.add((Example) categoryItem.getData());
-				}
-			}
-		}
-		return result;
-	}
+        TreeItem selected = (TreeItem) e.item;
+        if (selected.getParentItem() != null) {
+            Object data = selected.getData();
+            Image previewPic = null;
+            if (data instanceof Example) {
+                selectedExample = (Example) data;
+                updateDescriptionLabel(selectedExample);
+                previewPic = loadImage(IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
+            } else {
+                getExampleDescription().setText("");
+                selectedExample = null;
+                previewPic = initPreviewImage();
+                imageLabel.setImage(initPreviewImage());
 
-	public StyledText getExampleDescription() {
-		return exampleDescription;
-	}
+            }
+            updateImageLabel(previewPic);
+        } else {
+            getExampleDescription().setText("");
+            updateImageLabel(initPreviewImage());
+        }
+    }
 
-	public IPath getContainerPath() {
-		return super.getContainerFullPath();
-	}
+    private void updateImageLabel(Image image) {
+        FormData formData = new FormData(image.getImageData().width, image.getImageData().height);
+        formData.top = new FormAttachment(previewDesc, 5);
+        imageLabel.setLayoutData(formData);
+        imageLabel.setImage(image);
+        imageLabel.pack();
+    }
 
-	public boolean isQuickStart() {
-		return super.getContainerFullPath() == null
-				&& getCheckedExamples().size() == 0;
-	}
+    private Image loadImage(double image_width, double image_height) {
+        final String previewPicPath = selectedExample.getOverviewPic();
+        if (previewPicPath != null) {
+            try {
+                ImageData imgData = new ImageData(ExampleManager.get().loadOverviewPic(
+                        selectedExample));
+
+                double tempSize = Math.max(imgData.width / image_width, imgData.height
+                        / image_height);
+                imgData = imgData.scaledTo((int) (imgData.width / tempSize),
+                        (int) (imgData.height / tempSize));
+                return new Image(previewComp.getDisplay(), imgData);
+
+            } catch (final KielerException e) {
+                e.printStackTrace();
+                return noPreviewPic(previewComp.getDisplay());
+            }
+        }
+        return noPreviewPic(previewComp.getDisplay());
+
+    }
+
+    private void updateDescriptionLabel(Example selectedExample) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Title:       ").append(selectedExample.getTitle()).append("\n").append(
+                "Author:   ").append(selectedExample.getAuthor()).append("\n").append("Contact: ")
+                .append(selectedExample.getContact()).append("\n").append("\n").append(
+                        selectedExample.getDescription());
+        getExampleDescription().setText(sb.toString());
+    }
+
+    // TODO falls ein image nicht richtig geladen wird wegen format fehler oder
+    // so muss auf jeden fall eine meldung kommen... am besten schon beim export
+    // darauf reagieren.
+
+    private Image noPreviewPic(Display display) {
+        return new Image(display, ExampleManager.get().loadStandardPic());
+    }
+
+    private Image initPreviewImage() {
+        Image preview = new Image(previewComp.getDisplay(), IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
+        GC gc = new GC(preview);
+        gc.setBackground(previewComp.getBackground());
+        gc.fillRectangle(preview.getBounds());
+        return preview;
+    }
+
+    public List<Example> getCheckedExamples() {
+        List<Example> result = new ArrayList<Example>();
+        for (TreeItem item : exampleTree.getItems()) {
+            TreeItem[] categoryItems = item.getItems();
+            for (TreeItem categoryItem : categoryItems) {
+                if (categoryItem.getChecked() && categoryItem.getData() != null) {
+                    result.add((Example) categoryItem.getData());
+                }
+            }
+        }
+        return result;
+    }
+
+    public StyledText getExampleDescription() {
+        return exampleDescription;
+    }
+
+    public IPath getContainerPath() {
+        return super.getContainerFullPath();
+    }
+
+    public boolean isQuickStart() {
+        return super.getContainerFullPath() == null && getCheckedExamples().size() == 0;
+    }
 }

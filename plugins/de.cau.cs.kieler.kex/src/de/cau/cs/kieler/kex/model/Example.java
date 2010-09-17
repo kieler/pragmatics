@@ -30,7 +30,7 @@ public class Example {
 
 	private String rootDir;
 
-	private String previewPicPath;
+	private String overviewPic;
 
 	public Example(final String title, SourceType importType) {
 		this.title = title;
@@ -128,12 +128,12 @@ public class Example {
 		return author;
 	}
 
-	public void setPreviewPicPath(String previewPicPath) {
-		this.previewPicPath = previewPicPath;
+	public void setOverviewPic(String overviewPic) {
+		this.overviewPic = overviewPic;
 	}
 
-	public String getPreviewPicPath() {
-		return previewPicPath;
+	public String getOverviewPic() {
+		return overviewPic;
 	}
 
 }

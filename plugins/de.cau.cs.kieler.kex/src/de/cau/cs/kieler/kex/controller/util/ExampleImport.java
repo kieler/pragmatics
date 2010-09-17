@@ -42,8 +42,8 @@ public class ExampleImport {
         List<String> directOpens = new ArrayList<String>();
 
         StringBuilder destFolder = new StringBuilder();
-        destFolder.append(workspaceLocation).append(
-                (selectedResource != null ? selectedResource.toString() : "")).append("/");
+        destFolder.append(workspaceLocation)
+                .append((selectedResource != null ? selectedResource.toString() : "")).append("/");
         List<String> finishedResources = new ArrayList<String>();
         try {
 
@@ -57,8 +57,9 @@ public class ExampleImport {
                     exampleBeginIndex = rootDirectory.length();
                 }
 
-                handleResources(directOpens, resources, destFolder.toString(), example
-                        .getNamespaceId(), exampleBeginIndex, checkDuplicate, finishedResources);
+                handleResources(directOpens, resources, destFolder.toString(),
+                        example.getNamespaceId(), exampleBeginIndex, checkDuplicate,
+                        finishedResources);
             }
         } catch (KielerException e) {
             deleteResources(finishedResources);
@@ -100,8 +101,8 @@ public class ExampleImport {
                     File destFile = new File(destFolder + "/" + destPath);
                     finishedResources.add(destFile.getPath());
                     if (checkDuplicate && destFile.exists()) {
-                        throw new KielerModelException(ErrorMessage.DUPLICATE_EXAMPLE, destFile
-                                .getName());
+                        throw new KielerModelException(ErrorMessage.DUPLICATE_EXAMPLE,
+                                destFile.getName());
                     }
                     IOHandler.createFolder(destFolder + "/" + destPath);
                     break;
@@ -126,9 +127,9 @@ public class ExampleImport {
         }
     }
 
-    public static InputStream loadPreviewPic(Example example) throws KielerException {
+    public static InputStream loadOverviewPic(Example example) throws KielerException {
         Bundle bundle = Platform.getBundle(example.getNamespaceId());
-        URL entry = bundle.getEntry(example.getPreviewPicPath());
+        URL entry = bundle.getEntry(example.getOverviewPic());
         try {
             return entry.openStream();
         } catch (IOException e) {
@@ -153,6 +154,8 @@ public class ExampleImport {
         if (selectedExamples == null || selectedExamples.size() == 0) {
             throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
         }
+        if (selectedResource == null || selectedResource.segmentCount() == 0) {
+            throw new KielerException(ErrorMessage.NO_DEST_SET);
+        }
     }
-
 }

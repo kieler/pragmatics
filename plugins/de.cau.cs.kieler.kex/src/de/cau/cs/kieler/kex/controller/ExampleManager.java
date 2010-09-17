@@ -115,8 +115,8 @@ public class ExampleManager {
             throw new KielerException(ErrorMessage.NO_SOURCETYPE);
     }
 
-    public InputStream loadPreviewPic(Example example) throws KielerException {
-        return ExampleImport.loadPreviewPic(example);
+    public InputStream loadOverviewPic(Example example) throws KielerException {
+        return ExampleImport.loadOverviewPic(example);
     }
 
     public InputStream loadStandardPic() {
