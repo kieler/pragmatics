@@ -340,12 +340,12 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                         do {
                             if (sourceParent != null) {
                                 newSource = sourceParent;
+                                sourceParent = sourceParent.getParent();
                             }
                             if (targetParent != null) {
                                 newTarget = targetParent;
+                                targetParent = targetParent.getParent();
                             }
-                            sourceParent = sourceParent.getParent();
-                            targetParent = targetParent.getParent();
                             if (sourceParent != null) {
                                 sourceAncestors.add(sourceParent);
                             }
