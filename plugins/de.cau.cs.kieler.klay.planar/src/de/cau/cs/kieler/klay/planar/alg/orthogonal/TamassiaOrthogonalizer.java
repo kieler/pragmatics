@@ -157,27 +157,38 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
 
         // Creating source nodes for every graph node
         for (INode node : this.graph.getNodes()) {
+            int supply = MAXDEGREE - node.getAdjacentEdgeCount();
+
             // Check if node has a valid degree
-            if (node.getAdjacentEdgeCount() > MAXDEGREE) {
+            if (supply < 0) {
                 throw new IllegalArgumentException("The node " + node.getID()
                         + ") has a higher degree than the maximal allowed " + MAXDEGREE);
             }
 
             INode newnode = network.addNode();
             newnode.setProperty(NETWORKTOGRAPH, node);
-            newnode.setProperty(IFlowNetworkSolver.SUPPLY, MAXDEGREE);
+            newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
             map.put(node, newnode);
         }
 
         // Creating sink nodes for every graph face
+        boolean internal = false;
         for (IFace face : this.graph.getFaces()) {
+            int supply = -1 * face.getAdjacentNodeCount();
+            if (internal) {
+                supply += MAXDEGREE;
+            } else {
+                internal = true;
+                supply -= MAXDEGREE;
+            }
+
             INode newnode = network.addNode();
             newnode.setProperty(NETWORKTOGRAPH, face);
+            newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
             map.put(face, newnode);
         }
 
         // Linking nodes
-        boolean internal = false;
         for (IFace face : this.graph.getFaces()) {
             INode newnode = map.get(face);
 
@@ -189,27 +200,21 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
                 }
                 IEdge newedge = network.addEdge(map.get(node), newnode, true);
                 newedge.setProperty(IFlowNetworkSolver.CAPACITY, MAXDEGREE);
-                newedge.setProperty(IFlowNetworkSolver.LOWERBOUND, 1);
+                newedge.setProperty(IFlowNetworkSolver.FLOW, 1);
                 newedge.setProperty(IPathFinder.PATHCOST, 0);
                 this.nodeArcs.add(newedge);
             }
 
             // Creating arcs for every face adjacent to the face
             for (IFace adj : face.adjacentFaces()) {
+                if (!map.containsKey(adj)) {
+                    throw new InconsistentGraphModelException(
+                            "Attempted to link non-existent nodes by an edge.");
+                }
                 IEdge newedge = network.addEdge(map.get(adj), newnode, true);
                 newedge.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
-                newedge.setProperty(IFlowNetworkSolver.LOWERBOUND, 0);
                 newedge.setProperty(IPathFinder.PATHCOST, 1);
                 this.faceArcs.add(newedge);
-            }
-
-            // Set demand property of the node
-            int supply = -1 * 2 * newnode.getAdjacentEdgeCount();
-            if (internal) {
-                newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply + MAXDEGREE);
-            } else {
-                internal = true;
-                newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply - MAXDEGREE);
             }
         }
 

@@ -125,7 +125,7 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
         for (IEdge edge : this.graph.getEdges()) {
             IEdge newedge;
             newedge = null; // TODO
-            newedge.setProperty(IFlowNetworkSolver.LOWERBOUND, 1);
+            // newedge.setProperty(IFlowNetworkSolver.LOWERBOUND, 1);
             newedge.setProperty(IPathFinder.PATHCOST, 1);
             // TODO capacity, supply/demand
         }

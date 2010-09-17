@@ -59,13 +59,6 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
             }
         }
 
-        // Augment flow on arcs with lower bounds
-        for (IEdge edge : network.getEdges()) {
-            int value = edge.getProperty(LOWERBOUND);
-            int flow = edge.getProperty(FLOW);
-            edge.setProperty(FLOW, flow + value);
-        }
-
         // Initialize node potentials using Bellman-Ford-Algorithm
         IPathFinder pathFinder = new BellmanFordPathFinder();
         pathFinder.findPath(source, sink);
@@ -128,7 +121,7 @@ public class SuccessiveShortestPathFlowSolver extends AbstractAlgorithm implemen
         }
 
         // Remove source and sink nodes
-        network.removeNode(source);
-        network.removeNode(sink);
+        // network.removeNode(source);
+        // network.removeNode(sink);
     }
 }
