@@ -45,6 +45,7 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
+import org.eclipse.swt.graphics.Color;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -81,13 +82,14 @@ public class KaomFigureProvider implements IRenderingProvider {
             return getDefaultFigure();
         } else if(input.equals("ptolemy.actor.lib.MonitorValue")){
             return getDefaultFigure();
+        } else if(input.equals("ptolemy.domains.sr.kernel.SRDirector")) {
+            return createDirector();
         } else {
             try {
                 //UpdatedValueIcon val = new UpdatedValueIcon(new CompositeEntity(), "name");
                 //String test1 = val.toString();
                 //diva.canvas.Figure test2 = val.createBackgroundFigure();
                 //diva.canvas.Figure test3 = val.createFigure();
-                
                 
                 Class ptolemy = Class.forName(input);
                 Constructor constr = ptolemy.getConstructor(CompositeEntity.class, String.class);
@@ -173,15 +175,21 @@ public class KaomFigureProvider implements IRenderingProvider {
      */
 
     private IFigure createDirector() {
+        /*
         RectangleFigure rf = new RectangleFigure();
         // this.setCurrentFigure(rf);
         rf.setFill(false);
 
         rf.setForegroundColor(ColorConstants.black);
-        rf.setBackgroundColor(ColorConstants.green);
+        rf.setBackgroundColor(ColorConstants.white);
+        rf.setBackgroundColor(new Color(rf.getBackgroundColor().getDevice(), 0, 250, 0));
         // rf.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
         // getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
         return rf;
+        */
+        int v;
+        String directorsvg = "<svg width=\"101\" height=\"31\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
+        return createSvg(directorsvg);
     }
 
     /**

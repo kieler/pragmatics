@@ -26,7 +26,7 @@
             <customCondition
                   condition="de.cau.cs.kieler.karma.AnnotationCondition"
                   figureParam="ptolemy.actor.lib.MonitorValue"
-                  figureSize="160,40"
+                  figureSize="160,30"
                   key="ptolemyClass"
                   layoutParam="ptolemy.actor.lib.MonitorValue"
                   value="ptolemy.actor.lib.MonitorValue">
@@ -42,7 +42,7 @@
             <customCondition
                   condition="de.cau.cs.kieler.karma.RecursiveAnnotationCondition"
                   figureParam="ptolemy.domains.sr.kernel.SRDirector"
-                  figureSize="160,40"
+                  figureSize="100,30"
                   key="ptolemyClass"
                   layoutParam="ptolemy.domains.sr.kernel.SRDirector"
                   value="ptolemy.domains.sr.kernel.SRDirector">
