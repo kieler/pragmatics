@@ -153,6 +153,19 @@ public class KaomFigureProvider implements IRenderingProvider {
         return fig;
     }
 
+    private String repairString(String input){
+        String[] parts = input.split("\"");
+        String output = "";
+        for (int i = 0; i < parts.length; i+=2) {
+            if (i < parts.length -1) {
+                output += parts[i] + "\"" + parts[i+1] + "\" ";
+            } else {
+                output += parts[i];
+            }
+        }
+        return output;
+    }
+    
 
     /**
      * 
@@ -196,7 +209,13 @@ public class KaomFigureProvider implements IRenderingProvider {
     private String writeFile(String svg, String name) {
         try {
                 XMLParser xmlpars = new XMLParser();
-                Document doc = xmlpars.parser(svg);
+                Document doc;
+                try {
+                    doc = xmlpars.parser(svg);
+                } catch (Exception e) {
+                    svg = repairString(svg);
+                    doc = xmlpars.parser(svg);
+                }
                 Element svgElement = (Element) doc.getElementsByTagName("svg").item(0);
                 Element rectElement = (Element) doc.getElementsByTagName("rect").item(0);
 
