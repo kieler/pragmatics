@@ -77,7 +77,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
     @Override
     public IFigure getFigure() {
         IFigure figure = super.getFigure();
-        updateFigure(primaryShape);
+        updateFigure(figure);
         return figure;
     }
 
