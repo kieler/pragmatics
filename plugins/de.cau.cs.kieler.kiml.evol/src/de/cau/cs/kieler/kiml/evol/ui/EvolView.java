@@ -41,7 +41,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
- * View for EvolPlugin.
+ * View for EvolPlugin. This view shows a population table and a tool bar.
  *
  * @author bdu
  *
@@ -55,6 +55,9 @@ public class EvolView extends ViewPart {
      *
      */
     private abstract static class EvolModelListener implements IEvolModelListener {
+        /**
+         * The associated view.
+         */
         private final EvolView evolView;
 
         /**
@@ -69,6 +72,7 @@ public class EvolView extends ViewPart {
          * Creates a new {@link EvolView.EvolModelListener} instance.
          *
          * @param theEvolView
+         *            the view that the listener shall be associated to.
          *
          */
         public EvolModelListener(final EvolView theEvolView) {
@@ -95,7 +99,8 @@ public class EvolView extends ViewPart {
          *            the evolution model
          *
          */
-        protected void applySelectedIndividual(final EvolModel em) {
+        void applySelectedIndividual(final EvolModel em) {
+            // TODO: this method should be encapsulated as a command
             Assert.isNotNull(em);
 
             if (!em.isValid()) {
@@ -253,14 +258,19 @@ public class EvolView extends ViewPart {
     }
 
     /**
+     * An {@link ISelectionChangedListener} that is supposed to update the
+     * evolution model whenever the selection in the population table viewer
+     * changes.
+     *
      * @author bdu
      *
      */
     private final class SelectionChangedListener implements ISelectionChangedListener {
         /**
          * Creates a new {@link SelectionChangedListener} instance.
-         *
+         * 
          * @param theTableViewer
+         *            the associated table viewer
          */
         SelectionChangedListener(final SelectorTableViewer theTableViewer) {
             this.tv = theTableViewer;
@@ -367,7 +377,6 @@ public class EvolView extends ViewPart {
             final Object element = selection.getFirstElement();
             return element;
         }
-
     }
 
     /**
@@ -386,6 +395,7 @@ public class EvolView extends ViewPart {
     private static final int NARROW_COLUMN_WIDTH = 80;
 
     /**
+     * Creates a new {@link EvolView} instance.
      *
      */
     public EvolView() {

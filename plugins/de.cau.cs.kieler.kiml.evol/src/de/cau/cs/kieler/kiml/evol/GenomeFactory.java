@@ -826,12 +826,16 @@ final class GenomeFactory {
      * @param presentIds
      * @param prob
      * @param theGeneFactory
+     *            an {@link IGeneFactory}; may be {@code null}
      * @return
      * @throws KielerException
      */
     private Genome createGenes(
             final Set<String> knownOptionIds, final List<String> presentIds, final double prob,
             final IGeneFactory theGeneFactory) throws KielerException {
+        Assert.isNotNull(knownOptionIds);
+        Assert.isNotNull(presentIds);
+
         final Genome extraGenes = new Genome();
 
         final IGeneFactory gf;

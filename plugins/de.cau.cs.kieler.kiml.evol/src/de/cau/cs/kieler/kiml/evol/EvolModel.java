@@ -156,27 +156,30 @@ public final class EvolModel {
             final Population pop = this.getPopulation();
             int rating = 0;
             // TODO: add preference to switch off compensation
+            // TODO: Do evolution of rating predictors at lock step with
+            // evolution of layout options. Use separate auto-rating and
+            // user-rating fields for that purpose.
             final int compensation = -delta / ((pop.size() - 1));
 
             for (final Genome g : pop) {
+                rating = (g.hasUserRating() ? g.getUserRating().intValue() : 0);
                 if (g == current) {
-                    rating = g.getUserRating().intValue() + delta;
+                    g.setUserRating(Integer.valueOf(rating + delta));
                 } else {
                     // compensation for counterbalance
-                    rating = g.getUserRating().intValue() + compensation;
+                    g.setUserRating(Integer.valueOf(rating + compensation));
                 }
-
-                g.setUserRating(Integer.valueOf(rating));
             }
 
             // Punish predictors
             final String key = "proposedRating:" + current.getId();
-            rating = (current.hasUserRating() ? current.getUserRating().intValue() : 0);
+            final int newRating =
+                    (current.hasUserRating() ? current.getUserRating().intValue() : 0);
             for (final Genome predictor : this.getWeightWatchers()) {
                 final Map<String, Object> features = predictor.getFeatures();
                 if ((features != null) && !features.isEmpty() && features.containsKey(key)) {
                     final Integer prediction = (Integer) features.get(key);
-                    final int diff = rating - prediction.intValue();
+                    final int diff = newRating - prediction.intValue();
                     final int predictorRating =
                             (predictor.hasUserRating() ? predictor.getUserRating().intValue() : 0);
                     predictor.setUserRating(Integer.valueOf(predictorRating - Math.abs(diff)));

@@ -185,8 +185,11 @@ public final class EvolUtil {
 
             final IKielerProgressMonitor monitor = EvolUtil.calculateLayout(manager, editor);
 
-            // Apply the layout to the diagram in the editor.
-            manager.applyAnimatedLayout(false /* animate */, false /* cacheLayout */, 0);
+            if (monitor != null) {
+                // Apply the layout to the diagram in the editor.
+                manager.applyAnimatedLayout(false /* animate */, false /* cacheLayout */, 0);
+            }
+
             return manager;
         }
 
@@ -856,7 +859,6 @@ public final class EvolUtil {
 
         EditPart rootPart;
         if (theEditPart == null) {
-            // TODO: Discuss: Is it OK to call getRoot() in this case?
             rootPart = ((DiagramEditor) theEditor).getDiagramEditPart();
         } else {
             // find root edit part
@@ -1011,6 +1013,7 @@ public final class EvolUtil {
 
             final Object value = gene.getValue();
             final Object id = gene.getId();
+            System.out.println(id + ": " + value);
 
             final LayoutOptionData<?> data = layoutServices.getLayoutOptionData((String) id);
             Assert.isNotNull(data, "No layout option data for " + id);
@@ -1163,7 +1166,7 @@ public final class EvolUtil {
 
         if (!status.isOK()) {
             // Something went wrong. Report the status.
-            StatusManager.getManager().handle(status, StatusManager.SHOW);
+            StatusManager.getManager().handle(status, StatusManager.LOG);
             return null;
         }
 
@@ -1238,9 +1241,9 @@ public final class EvolUtil {
         final LayoutOptionData<?> data =
                 LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUTER_HINT_ID);
 
-        // TODO: hintId = inspector.getFocusLayouterData().getId();
+        final LayoutProviderData hintData = inspector.getFocusLayouterData();
 
-        final Object hintData = inspector.getOption(data);
+       // final Object hintData = inspector.getOption(data);
 
         // Assert.isNotNull(labelProvider,
         // "Could not obtain label provider for " + inspector.toString());
@@ -1254,7 +1257,7 @@ public final class EvolUtil {
 
         Assert.isNotNull(hintData, "Could not find layout provider id.");
 
-        final String hintId = hintData.toString();
+        final String hintId = hintData.getId();
         return hintId;
     }
 
