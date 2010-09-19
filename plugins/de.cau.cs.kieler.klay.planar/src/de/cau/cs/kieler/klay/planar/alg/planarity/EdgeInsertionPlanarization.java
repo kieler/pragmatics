@@ -22,6 +22,8 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.klay.planar.alg.pathfinding.AbstractPathFinder;
+import de.cau.cs.kieler.klay.planar.alg.pathfinding.DijkstraPathFinder;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
@@ -64,6 +66,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         if (edges == null) {
             System.out.println("No new Edges");
         } else {
+            mergeHyperNodes(graph);
+            AbstractPathFinder dijkstra = new DijkstraPathFinder();
             for (IEdge insertingEdge : edges) {
 
                 System.out.println("Subgraph");
@@ -72,75 +76,130 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 System.out.println(edges.toString());
 
                 IGraph dualGraph = new PGraphFactory().createDualGraph(graph);
-                LinkedList<INode> dualPath = new LinkedList<INode>();
+
+                // insert the original nodes in the dual graph
+                INode dualStartNode = dualGraph.addNode();
+                INode dualTargetNode = dualGraph.addNode();
 
                 INode source = insertingEdge.getSource();
                 INode target = insertingEdge.getTarget();
 
-                INode dualStartNode = null;
-                INode dualTargetNode = null;
-
-                IFace targetFace = null;
-
                 HashSet<IFace> sourceFaces = findSurroundingFaces(source);
                 HashSet<IFace> targetFaces = findSurroundingFaces(target);
 
-                ArrayList<IFace> facePath = new ArrayList<IFace>();
-                ArrayList<IFace> shortestFacePath = new ArrayList<IFace>();
-                LinkedList<INode> shortestDualPath = new LinkedList<INode>();
+                // connect the start node with the start faces for 0 cost
+                for (IFace sFace : sourceFaces) {
+                    INode newDualNode = (INode) sFace.getProperty(IGraphFactory.TODUALGRAPH);
+                    IEdge newDualEdge = dualGraph.addEdge(dualStartNode, newDualNode);
+                    newDualEdge.setProperty(PATHCOST, 0);
+                }
 
-                int[] parent = new int[graph.getFaceCount()];
+                // connect the target node with the target faces for 0 cost
+                for (IFace tFace : targetFaces) {
+                    INode newDualNode = (INode) tFace.getProperty(IGraphFactory.TODUALGRAPH);
+                    IEdge newDualEdge = dualGraph.addEdge(newDualNode, dualTargetNode);
+                    newDualEdge.setProperty(PATHCOST, 0);
+                }
 
-                // check all start nodes for BFS in dual graph
-                for (IFace sourceFace : sourceFaces) {
-                    facePath.clear();
+                // find the shortest Path through dual graph via dijkstra
+                List<IEdge> dualEdgePath = dijkstra.findPath(dualStartNode, dualTargetNode);
 
-                    dualStartNode = (INode) sourceFace.getProperty(IGraphFactory.TODUALGRAPH);
+                LinkedList<IFace> shortestFacePath = new LinkedList<IFace>();
 
-                    // run BFS for all possible target faces
-                    for (IFace itargetFace : targetFaces) {
-
-                        dualTargetNode = (INode) itargetFace.getProperty(IGraphFactory.TODUALGRAPH);
-
-                        parent = bfs(dualStartNode, dualTargetNode, dualGraph);
-
-                        // the path through the dual graph
-                        dualPath = findPath(dualTargetNode.getID(), parent, dualGraph);
-
-                        if (shortestDualPath.size() > dualPath.size() || shortestDualPath.isEmpty()) {
-                            shortestDualPath.clear();
-                            shortestDualPath.addAll(0, dualPath);
-                            targetFace = itargetFace;
-                        }
+                // same path with faces in the normal graph
+                for (IEdge iEdge : dualEdgePath) {
+                    IFace firstFace = (IFace) iEdge.getSource().getProperty(
+                            IGraphFactory.TODUALGRAPH);
+                    IFace secondFace = (IFace) iEdge.getTarget().getProperty(
+                            IGraphFactory.TODUALGRAPH);
+                    if (!shortestFacePath.contains(firstFace) && firstFace != null) {
+                        shortestFacePath.add(firstFace);
                     }
-
-                    assert sourceFace.getID() != targetFace.getID() : "nodes lie at the same face";
-
-                    // same path with faces in the normal graph
-                    facePath.add(sourceFace);
-
-                    for (INode node : shortestDualPath) {
-                        IFace face = dualNodeToFace(node, graph);
-                        if (face.getID() != sourceFace.getID()) {
-                            facePath.add(face);
-                        }
-
-                    }
-                    if (!facePath.contains(targetFace)) {
-                        facePath.add(targetFace);
-                    }
-
-                    // we found a better startface with shorter path
-                    if (shortestFacePath.size() > facePath.size() || shortestFacePath.isEmpty()) {
-                        shortestFacePath.clear();
-                        shortestFacePath.addAll(0, facePath);
-                    }
-
-                    // path can't be shorter then 1, search finished
-                    if (shortestFacePath.size() == 1) {
-                        break;
+                    if (!shortestFacePath.contains(secondFace) && secondFace != null) {
+                        shortestFacePath.add(secondFace);
                     }
                 }
+                // } else {
+                // for (IEdge insertingEdge : edges) {
+                //
+                // System.out.println("Subgraph");
+                // System.out.println(graph);
+                // System.out.println("Neue Kanten\n\n");
+                // System.out.println(edges.toString());
+                //
+                // IGraph dualGraph = new PGraphFactory().createDualGraph(graph);
+                // LinkedList<INode> dualPath = new LinkedList<INode>();
+                //
+                // INode source = insertingEdge.getSource();
+                // INode target = insertingEdge.getTarget();
+                //
+                // INode dualStartNode = null;
+                // INode dualTargetNode = null;
+                //
+                // IFace targetFace = null;
+                //
+                // HashSet<IFace> sourceFaces = findSurroundingFaces(source);
+                // HashSet<IFace> targetFaces = findSurroundingFaces(target);
+                //
+                // ArrayList<IFace> facePath = new ArrayList<IFace>();
+                // ArrayList<IFace> shortestFacePath = new ArrayList<IFace>();
+                // LinkedList<INode> shortestDualPath = new LinkedList<INode>();
+                //
+                // int[] parent = new int[graph.getFaceCount()];
+                //
+                // // check all start nodes for BFS in dual graph
+                // for (IFace sourceFace : sourceFaces) {
+                // facePath.clear();
+                //
+                // dualStartNode = (INode) sourceFace.getProperty(IGraphFactory.TODUALGRAPH);
+                //
+                // // run BFS for all possible target faces
+                // for (IFace itargetFace : targetFaces) {
+                //
+                // dualTargetNode = (INode) itargetFace.getProperty(IGraphFactory.TODUALGRAPH);
+                //
+                // parent = bfs(dualStartNode, dualTargetNode, dualGraph);
+                //
+                // // the path through the dual graph
+                // dualPath = findPath(dualTargetNode.getID(), parent, dualGraph);
+                //
+                // if (shortestDualPath.size() > dualPath.size() || shortestDualPath.isEmpty())
+                // {
+                // shortestDualPath.clear();
+                // shortestDualPath.addAll(0, dualPath);
+                // targetFace = itargetFace;
+                // }
+                // }
+                //
+                // assert sourceFace.getID() != targetFace.getID() :
+                // "nodes lie at the same face";
+                //
+                // // same path with faces in the normal graph
+                // facePath.add(sourceFace);
+                //
+                // for (INode node : shortestDualPath) {
+                // IFace face = dualNodeToFace(node, graph);
+                // if (face.getID() != sourceFace.getID()) {
+                // facePath.add(face);
+                // }
+                //
+                // }
+                // if (!facePath.contains(targetFace)) {
+                // facePath.add(targetFace);
+                // }
+                //
+                // // we found a better startface with shorter path
+                // if (shortestFacePath.size() > facePath.size() || shortestFacePath.isEmpty())
+                // {
+                // shortestFacePath.clear();
+                // shortestFacePath.addAll(0, facePath);
+                // }
+                //
+                // // path can't be shorter then 1, search finished
+                // if (shortestFacePath.size() == 1) {
+                // break;
+                // }
+                // }
                 System.out.println("Der Face Path:");
                 System.out.println(shortestFacePath.toString());
 
@@ -608,7 +667,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param graph
      *            , the given graph
      */
-    @SuppressWarnings("unused")
     private void mergeHyperNodes(final IGraph graph) {
         for (INode node : graph.getNodes()) {
             if (node.getType() == NodeType.HYPER) {
