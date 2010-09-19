@@ -7,133 +7,149 @@ import java.util.List;
 
 public class Example {
 
-	/**
-	 * unique field.
-	 */
-	private final String title;
+    /**
+     * unique field.
+     */
+    private final String title;
 
-	private final List<ExampleResource> resources;
+    private final List<ExampleResource> resources;
 
-	private final List<String> categories;
+    private final List<String> categories;
 
-	private final SourceType sourceType;
+    private final SourceType sourceType;
 
-	private final Date generationDate;
+    private final Date generationDate;
 
-	private String description;
+    private String description;
 
-	private String contact;
+    private String contact;
 
-	private String author;
+    private String author;
 
-	private String namespaceId;
+    private String namespaceId;
 
-	private String rootDir;
+    private String rootDir;
 
-	private String overviewPic;
+    private String overviewPic;
 
-	public Example(final String title, SourceType importType) {
-		this.title = title;
-		this.sourceType = importType;
-		this.resources = new ArrayList<ExampleResource>();
-		this.categories = new ArrayList<String>();
-		this.generationDate = Calendar.getInstance().getTime();
-	}
+    private Boolean isProject;
 
-	@Override
-	public String toString() {
-		return new StringBuffer().append("Example [title= ").append(getTitle())
-				.append(",source type= ").append(
-						SourceType.map(this.sourceType)).append(getContact())
-				.append(", author= ").append(this.author).append(
-						", generated at= ").append(
-						this.generationDate.toString()).append(
-						", description= ").append(getDescription()).append("]")
-				.toString();
-	}
+    public Example(final String title, SourceType importType) {
+        this.title = title;
+        this.sourceType = importType;
+        this.resources = new ArrayList<ExampleResource>();
+        this.categories = new ArrayList<String>();
+        this.generationDate = Calendar.getInstance().getTime();
+    }
 
-	public boolean contains(String category) {
-		for (String element : getCategories()) {
-			if (category.equals(element))
-				return true;
-		}
-		return false;
-	}
+    @Override
+    public String toString() {
+        return new StringBuffer().append("Example [title= ").append(getTitle()).append(
+                ",source type= ").append(SourceType.map(this.sourceType)).append(getContact())
+                .append(", author= ").append(this.author).append(", generated at= ").append(
+                        this.generationDate.toString()).append(", description= ").append(
+                        getDescription()).append("]").toString();
+    }
 
-	public String getTitle() {
-		return this.title;
-	}
+    public boolean contains(String category) {
+        for (String element : getCategories()) {
+            if (category.equals(element))
+                return true;
+        }
+        return false;
+    }
 
-	public Date getGenerationDate() {
-		return this.generationDate;
-	}
+    public String getTitle() {
+        return this.title;
+    }
 
-	public SourceType getSourceType() {
-		return this.sourceType;
-	}
+    public Date getGenerationDate() {
+        return this.generationDate;
+    }
 
-	public void addCategories(List<String> categories) {
-		this.categories.addAll(categories);
-	}
+    public SourceType getSourceType() {
+        return this.sourceType;
+    }
 
-	public List<String> getCategories() {
-		return categories;
-	}
+    public void addCategories(List<String> categories) {
+        this.categories.addAll(categories);
+    }
 
-	public void addResources(List<ExampleResource> exampleResources) {
-		this.resources.addAll(exampleResources);
-	}
+    public List<String> getCategories() {
+        return categories;
+    }
 
-	public List<ExampleResource> getResources() {
-		return resources;
-	}
+    public void addResources(List<ExampleResource> exampleResources) {
+        this.resources.addAll(exampleResources);
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public List<ExampleResource> getResources() {
+        return resources;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getContact() {
-		return this.contact;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setContact(String contact) {
-		this.contact = contact;
-	}
+    public String getContact() {
+        return this.contact;
+    }
 
-	public void setNamespaceId(String namespaceId) {
-		this.namespaceId = namespaceId;
-	}
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
 
-	public String getNamespaceId() {
-		return this.namespaceId;
-	}
+    public void setNamespaceId(String namespaceId) {
+        this.namespaceId = namespaceId;
+    }
 
-	public void setRootDir(String rootDir) {
-		this.rootDir = rootDir;
-	}
+    public String getNamespaceId() {
+        return this.namespaceId;
+    }
 
-	public String getRootDir() {
-		return this.rootDir;
-	}
+    public void setRootDir(String rootDir) {
+        this.rootDir = rootDir;
+    }
 
-	public void setAuthor(String author) {
-		this.author = author;
-	}
+    public String getRootDir() {
+        return this.rootDir;
+    }
 
-	public String getAuthor() {
-		return author;
-	}
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
-	public void setOverviewPic(String overviewPic) {
-		this.overviewPic = overviewPic;
-	}
+    public String getAuthor() {
+        return author;
+    }
 
-	public String getOverviewPic() {
-		return overviewPic;
-	}
+    public void setOverviewPic(String overviewPic) {
+        this.overviewPic = overviewPic;
+    }
+
+    public String getOverviewPic() {
+        return overviewPic;
+    }
+
+    public boolean isProject() {
+        // should only be loaded one time.
+        if (isProject == null) {
+            for (ExampleResource resource : resources) {
+                if (ExampleResource.Type.PROJECT == resource.getResourceType()) {
+                    isProject = Boolean.valueOf(true);
+                    return isProject;
+                }
+            }
+            isProject = Boolean.valueOf(false);
+            return isProject;
+        } else {
+            return isProject;
+        }
+
+    }
 
 }

@@ -186,9 +186,11 @@ public class ExampleExportPage extends WizardResourceImportPage {
                         "Please enter a new category.", "", validator);
                 dialog.open();
                 String value = dialog.getValue();
-                TreeItem item = new TreeItem(categoryTree, SWT.NONE);
-                item.setText(value);
-                creatableCategories.add(value);
+                if (value != null && value.length() > 3) {
+                    TreeItem item = new TreeItem(categoryTree, SWT.NONE);
+                    item.setText(value);
+                    creatableCategories.add(value);
+                }
             }
         });
 

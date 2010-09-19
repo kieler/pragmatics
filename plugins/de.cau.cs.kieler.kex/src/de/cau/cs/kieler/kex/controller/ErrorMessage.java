@@ -10,7 +10,7 @@ public class ErrorMessage {
     public static final String TRANSFORM_ERROR = "Could not transform to plugin.xml.";
     public static final String PLUGIN_WRITE_ERROR = "Error appears at writing plugin.xml.";
     public static final String PREVIEW_LOAD_ERROR = "Could not load preview for example: ";
-    public static final String NO_Import = "Can't import example!";
+    public static final String NO_Import = "Can't import example! ";
     public static final String NO_SOURCE_FILE = "Source file for does not exist for path: ";
     public static final String NO_EXAMPLE_SELECTED = "No Example has been selected.";
     public static final String DUPLICATE_EXAMPLE = "Example exists already in workspace.";

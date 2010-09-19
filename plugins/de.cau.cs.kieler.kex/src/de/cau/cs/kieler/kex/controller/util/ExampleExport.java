@@ -97,10 +97,10 @@ public class ExampleExport {
     public static void checkDuplicate(String exampleTitle, ExampleCollector... collectors)
             throws KielerException {
         if (exampleTitle == null)
-            throw new KielerException("ID of an example could not be null.");
+            throw new KielerException("Title of an example could not be null.");
         for (ExampleCollector collector : collectors) {
             if (collector.getExamplePool().containsKey(exampleTitle))
-                throw new KielerException("Duplicate example id. Please choose an other one!");
+                throw new KielerException("Duplicate example title. Please choose an other one!");
         }
     }
 
@@ -121,10 +121,14 @@ public class ExampleExport {
             extensionCreator.copyResources(destFile, exportResources, finishedResources);
             // TODO ueberschreiben ???
             // TODO geht so noch nicht, relativer pfad zum plugin muss ermittelt werden.
-            String absolutePath = extensionCreator.copyOverviewPic(destFile.getPath(),
-                    (String) properties.get(ExampleElement.OVERVIEW_PIC), finishedResources);
+            String overviewPic = (String) properties.get(ExampleElement.OVERVIEW_PIC);
+            if (overviewPic != null && overviewPic.length() > 1) {
+                String absolutePath = extensionCreator.copyOverviewPic(destFile.getPath(),
+                        (String) properties.get(ExampleElement.OVERVIEW_PIC), finishedResources);
+                // mappedExample.setOverviewPic(extensionCreator.makeRelativePath(null,
+                // absolutePath));
+            }
             mappedExample.addResources(ExampleExport.mapToExampleResource(exportResources));
-            // mappedExample.setOverviewPic(extensionCreator.makeRelativePath(null, absolutePath));
             extensionCreator.addExtension(destFile, mappedExample, (List<String>) properties
                     .get(ExampleElement.CREATE_CATEGORIES));
         } catch (KielerException e) {

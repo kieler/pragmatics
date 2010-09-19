@@ -42,8 +42,8 @@ public class ExampleImport {
         List<String> directOpens = new ArrayList<String>();
 
         StringBuilder destFolder = new StringBuilder();
-        destFolder.append(workspaceLocation)
-                .append((selectedResource != null ? selectedResource.toString() : "")).append("/");
+        destFolder.append(workspaceLocation).append(
+                (selectedResource != null ? selectedResource.toString() : "")).append("/");
         List<String> finishedResources = new ArrayList<String>();
         try {
 
@@ -57,9 +57,8 @@ public class ExampleImport {
                     exampleBeginIndex = rootDirectory.length();
                 }
 
-                handleResources(directOpens, resources, destFolder.toString(),
-                        example.getNamespaceId(), exampleBeginIndex, checkDuplicate,
-                        finishedResources);
+                handleResources(directOpens, resources, destFolder.toString(), example
+                        .getNamespaceId(), exampleBeginIndex, checkDuplicate, finishedResources);
             }
         } catch (KielerException e) {
             deleteResources(finishedResources);
@@ -70,10 +69,6 @@ public class ExampleImport {
 
     private static void deleteResources(List<String> finishedResources) {
         // TODO implement
-    }
-
-    public static List<String> createQuickStartProject() {
-        return null;
     }
 
     private static void handleResources(List<String> directOpens, List<ExampleResource> resources,
@@ -101,8 +96,8 @@ public class ExampleImport {
                     File destFile = new File(destFolder + "/" + destPath);
                     finishedResources.add(destFile.getPath());
                     if (checkDuplicate && destFile.exists()) {
-                        throw new KielerModelException(ErrorMessage.DUPLICATE_EXAMPLE,
-                                destFile.getName());
+                        throw new KielerModelException(ErrorMessage.DUPLICATE_EXAMPLE, destFile
+                                .getName());
                     }
                     IOHandler.createFolder(destFolder + "/" + destPath);
                     break;
@@ -122,7 +117,7 @@ public class ExampleImport {
             } catch (IOException e1) {
                 throw new KielerException(ErrorMessage.NO_Import, e1);
             } catch (CoreException e2) {
-                throw new KielerException(ErrorMessage.NO_Import, e2);
+                throw new KielerException(ErrorMessage.NO_Import + e2.getMessage());
             }
         }
     }
@@ -154,8 +149,24 @@ public class ExampleImport {
         if (selectedExamples == null || selectedExamples.size() == 0) {
             throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
         }
-        if (selectedResource == null || selectedResource.segmentCount() == 0) {
-            throw new KielerException(ErrorMessage.NO_DEST_SET);
+        // could happen that user wants to import a project and a example in a other project
+        boolean allProjects = false;
+        for (Example example : selectedExamples) {
+            if (example.isProject()) {
+                allProjects = true;
+            } else {
+                allProjects = false;
+                break;
+            }
+        }
+        // FIXME it is possible to choose a project and additional files at export.
+        // that would cause a BANG! :-), that shouldn´t be possible
+
+        // projects do not need a destinatin resource
+        if (!allProjects) {
+            if (selectedResource == null || selectedResource.segmentCount() == 0) {
+                throw new KielerException(ErrorMessage.NO_DEST_SET);
+            }
         }
     }
 }

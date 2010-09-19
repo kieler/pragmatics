@@ -105,11 +105,11 @@ public class ExampleResourcesPage extends WizardPage {
      */
     private void initResourceGroup(Composite parent, List<Object> input) {
         this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
-                getResourceProvider(IResource.FOLDER),
-                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-                getResourceProvider(IResource.FILE),
-                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.BORDER,
-                DialogUtil.inRegularFontMode(parent));
+                getResourceProvider(IResource.FOLDER), WorkbenchLabelProvider
+                        .getDecoratingWorkbenchLabelProvider(),
+                getResourceProvider(IResource.FILE), WorkbenchLabelProvider
+                        .getDecoratingWorkbenchLabelProvider(), SWT.BORDER, DialogUtil
+                        .inRegularFontMode(parent));
         this.resourceGroup.addCheckStateListener(new ICheckStateListener() {
 
             public void checkStateChanged(CheckStateChangedEvent event) {
@@ -235,11 +235,13 @@ public class ExampleResourcesPage extends WizardPage {
         List<IResource> duplicateChecker = new ArrayList<IResource>();
         for (IProject iProject : getExportedProjects()) {
             try {
+                this.exportResources.add(new ExportResource(iProject, makeRelativePath(iProject,
+                        iProject)));
                 for (IResource resource : iProject.members()) {
                     if (checkHiddenResource(resource))
                         continue;
                     if (resource instanceof IFolder) {
-                        addFolderWithElements((IContainer) resource, (IContainer) resource,
+                        addFolderWithElements((IContainer) resource, (IContainer) iProject,
                                 duplicateChecker);
                     }
                     if (resource instanceof IFile) {
@@ -250,6 +252,7 @@ public class ExampleResourcesPage extends WizardPage {
                         }
                     }
                 }
+
             } catch (CoreException e) {
                 e.printStackTrace();
             }

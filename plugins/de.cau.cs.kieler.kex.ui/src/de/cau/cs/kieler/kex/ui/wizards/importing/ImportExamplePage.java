@@ -8,7 +8,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
@@ -45,7 +45,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
     private static final int IMAGE_PRE_WIDTH = 192;
     private static final int IMAGE_PRE_HEIGHT = 108;
 
-    private StyledText exampleDescription;
+    private Browser exampleDescription;
 
     private Tree exampleTree;
 
@@ -117,16 +117,39 @@ public class ImportExamplePage extends WizardResourceImportPage {
     }
 
     private void createBottomComponent(Composite parent) {
+
         Label descriptionLabel = new Label(parent, SWT.NONE);
         descriptionLabel.setText("Example Description");
 
-        this.exampleDescription = new StyledText(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL
-                | SWT.BORDER);
-        this.exampleDescription.setEditable(false);
+        this.exampleDescription = new Browser(parent, SWT.NONE | SWT.BORDER);
         GridData descData = new GridData(GridData.FILL_HORIZONTAL);
-        descData.heightHint = 80;
+        descData.heightHint = 100;
         descData.minimumHeight = 80;
         this.exampleDescription.setLayoutData(descData);
+        // Font initialFont = descriptionLabel.getFont();
+        // FontData[] fontData = initialFont.getFontData();
+        // for (int i = 0; i < fontData.length; i++) {
+        // fontData[i].setHeight(24);
+        // }
+        // FontData[] fontData = this.exampleDescription.getFont().getFontData();
+        // for (FontData fd : fontData) {
+        //
+        // int lfHeight = fd.data.lfHeight;
+        // System.err.println(lfHeight);
+        // }
+        // this.exampleDescription.setFont(new Font(parent.getDisplay(), fontData));
+        // FontData[] fontData2 = this.exampleDescription.getFont().getFontData();
+        // for (FontData fd : fontData) {
+        // fd.setHeight(25);
+        // }
+        // this.exampleDescription = new StyledText(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL
+        // | SWT.BORDER);
+        // this.exampleDescription.setEditable(false);
+        // GridData descData = new GridData(GridData.FILL_HORIZONTAL);
+        // descData.heightHint = 80;
+        // descData.minimumHeight = 80;
+        // this.exampleDescription.setLayoutData(descData);
+
     }
 
     private Control createTreeComposite(Composite parent) {
@@ -275,7 +298,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
     private Image loadImage(double image_width, double image_height) {
         final String previewPicPath = selectedExample.getOverviewPic();
-        if (previewPicPath != null) {
+        if (previewPicPath != null && previewPicPath.length() > 1) {
             try {
                 ImageData imgData = new ImageData(ExampleManager.get().loadOverviewPic(
                         selectedExample));
@@ -297,10 +320,10 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
     private void updateDescriptionLabel(Example selectedExample) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Title:       ").append(selectedExample.getTitle()).append("\n").append(
-                "Author:   ").append(selectedExample.getAuthor()).append("\n").append("Contact: ")
-                .append(selectedExample.getContact()).append("\n").append("\n").append(
-                        selectedExample.getDescription());
+        sb.append("Title:       ").append(selectedExample.getTitle()).append("<br>").append(
+                "Author:   ").append(selectedExample.getAuthor()).append("<br>")
+                .append("Contact: ").append(selectedExample.getContact()).append("<br>").append(
+                        "<br>").append(selectedExample.getDescription());
         getExampleDescription().setText(sb.toString());
     }
 
@@ -333,7 +356,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
         return result;
     }
 
-    public StyledText getExampleDescription() {
+    public Browser getExampleDescription() {
         return exampleDescription;
     }
 

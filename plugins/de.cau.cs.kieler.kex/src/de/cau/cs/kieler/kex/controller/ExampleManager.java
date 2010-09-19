@@ -13,6 +13,7 @@ import de.cau.cs.kieler.kex.controller.util.ExampleImport;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.model.database.DBExampleCollector;
+import de.cau.cs.kieler.kex.model.plugin.PluginConstants;
 import de.cau.cs.kieler.kex.model.plugin.PluginExampleCollector;
 import de.cau.cs.kieler.kex.model.plugin.PluginExampleCreator;
 
@@ -90,11 +91,12 @@ public class ExampleManager {
     public List<String> importExamples(IPath selectedResource, List<Example> selectedExamples,
             boolean isQuickStart, boolean checkDuplicate) throws KielerException {
         if (isQuickStart) {
-            return ExampleImport.createQuickStartProject();
-        } else {
-            ExampleImport.validate(selectedResource, selectedExamples, checkDuplicate);
-            return ExampleImport.importExamples(selectedResource, selectedExamples, checkDuplicate);
+            selectedExamples.add(this.extensionCollector.getExamplePool().get(
+                    PluginConstants.QUICK_START));
+
         }
+        ExampleImport.validate(selectedResource, selectedExamples, checkDuplicate);
+        return ExampleImport.importExamples(selectedResource, selectedExamples, checkDuplicate);
     }
 
     /**

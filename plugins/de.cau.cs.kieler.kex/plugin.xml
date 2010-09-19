@@ -7,7 +7,7 @@
       <example
             author="pkl"
             contact="pkl@informatik.uni-kiel.de"
-            description="This is the quick start example."
+            description="This is the &lt;b&gt;quick start &lt;/b&gt; example."
             generation_date="Fri Jul 07 09:05:16 CEST 2010"
             root_directory="files/"
             title="QuickStart"
