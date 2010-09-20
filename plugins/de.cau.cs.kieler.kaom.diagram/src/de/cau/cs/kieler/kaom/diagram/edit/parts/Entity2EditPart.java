@@ -27,7 +27,6 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.BorderItemSelectionEditPo
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CreationEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.DragDropEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
-import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
@@ -36,6 +35,7 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
 import de.cau.cs.kieler.core.ui.figures.layout.LabelLocator;
+import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.diagram.edit.policies.Entity2CanonicalEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.edit.policies.Entity2ItemSemanticEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
@@ -138,8 +138,13 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
     protected void addBorderItem(IFigure borderItemContainer, IBorderItemEditPart borderItemEditPart) {
         if (borderItemEditPart instanceof EntityNameEditPart) {
 
-            BorderItemLocator locator = new LabelLocator(getMainFigure(), PositionConstants.SOUTH);
-            locator.setBorderItemOffset(new Dimension(-5, -5));
+            LabelLocator locator = new LabelLocator(getMainFigure(), PositionConstants.SOUTH);
+            if (getNotationView().getElement() instanceof Port) {
+                locator.setPortBehavior(true);
+                locator.setBorderItemOffset(new Dimension(-2, -2));
+            } else {
+                locator.setBorderItemOffset(new Dimension(-4, -4));
+            }
 
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
         } else {
@@ -324,18 +329,6 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
             this.setBackgroundColor(ColorConstants.white);
             this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
                     getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
-        }
-
-        @Override
-        public void invalidate() {
-            // TODO Auto-generated method stub
-            super.invalidate();
-        }
-
-        @Override
-        public void setValid(boolean value) {
-            // TODO Auto-generated method stub
-            super.setValid(value);
         }
 
     }

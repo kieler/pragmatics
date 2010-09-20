@@ -115,10 +115,9 @@
    <extension point="org.eclipse.ui.preferencePages" id="prefpages">
       <?gmfgen generated="true"?>
       <page
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kaom.diagram.preferences.DiagramGeneralPreferencePage"
             id="de.cau.cs.kieler.kaom.diagram.general"
-            name="%prefpage.de.cau.cs.kieler.kaom.diagram.general">
+            name="%prefpage.de.cau.cs.kieler.kaom.diagram.general"
+            class="de.cau.cs.kieler.kaom.diagram.preferences.DiagramGeneralPreferencePage">
       </page>
       <page
             id="de.cau.cs.kieler.kaom.diagram.appearance"

@@ -25,7 +25,6 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.BorderItemSelectionEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
-import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
@@ -34,6 +33,7 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
 import de.cau.cs.kieler.core.ui.figures.layout.LabelLocator;
+import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.custom.figures.DiamondFigure;
 import de.cau.cs.kieler.kaom.diagram.edit.policies.Relation2ItemSemanticEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
@@ -130,8 +130,13 @@ public class Relation2EditPart extends AdvancedRenderingBorderedShapeEditPart {
     protected void addBorderItem(IFigure borderItemContainer, IBorderItemEditPart borderItemEditPart) {
         if (borderItemEditPart instanceof RelationName2EditPart) {
 
-            BorderItemLocator locator = new LabelLocator(getMainFigure(), PositionConstants.SOUTH);
-            locator.setBorderItemOffset(new Dimension(-5, -5));
+            LabelLocator locator = new LabelLocator(getMainFigure(), PositionConstants.SOUTH);
+            if (getNotationView().getElement() instanceof Port) {
+                locator.setPortBehavior(true);
+                locator.setBorderItemOffset(new Dimension(-2, -2));
+            } else {
+                locator.setBorderItemOffset(new Dimension(-4, -4));
+            }
 
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
         } else {

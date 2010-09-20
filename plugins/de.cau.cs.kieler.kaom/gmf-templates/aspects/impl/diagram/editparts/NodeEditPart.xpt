@@ -50,9 +50,14 @@
         «EXPAND xpt::Common::generatedMemberComment»
         protected void addBorderItem(org.eclipse.draw2d.IFigure borderItemContainer, org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart borderItemEditPart) {
             if («FOREACH getExternalLabels(self) AS label SEPARATOR ' || '»borderItemEditPart instanceof «label.getEditPartQualifiedClassName()»«ENDFOREACH») {
-«REM» exchanged default label locator and set smaller default offset «ENDREM»
-                org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator locator = new de.cau.cs.kieler.core.ui.figures.layout.LabelLocator(getMainFigure(), org.eclipse.draw2d.PositionConstants.SOUTH);
-                locator.setBorderItemOffset(new org.eclipse.draw2d.geometry.Dimension(-5, -5));
+«REM» exchanged default label locator and set smaller default offset; TODO eliminate dynamic check «ENDREM»
+                de.cau.cs.kieler.core.ui.figures.layout.LabelLocator locator = new de.cau.cs.kieler.core.ui.figures.layout.LabelLocator(getMainFigure(), org.eclipse.draw2d.PositionConstants.SOUTH);
+                if (getNotationView().getElement() instanceof de.cau.cs.kieler.kaom.Port) {
+                    locator.setPortBehavior(true);
+                    locator.setBorderItemOffset(new org.eclipse.draw2d.geometry.Dimension(-2, -2));
+                } else {
+                    locator.setBorderItemOffset(new org.eclipse.draw2d.geometry.Dimension(-4, -4));
+                }
 «REM» end of changes «ENDREM»
                 borderItemContainer.add(borderItemEditPart.getFigure(), locator);
             } else {

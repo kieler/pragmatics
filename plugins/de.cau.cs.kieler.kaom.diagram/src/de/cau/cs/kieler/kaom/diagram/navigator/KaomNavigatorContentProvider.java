@@ -219,53 +219,6 @@ public class KaomNavigatorContentProvider implements ICommonContentProvider {
     private Object[] getViewChildren(View view, Object parentElement) {
         switch (KaomVisualIDRegistry.getVisualID(view)) {
 
-        case EntityEditPart.VISUAL_ID: {
-            LinkedList<KaomAbstractNavigatorItem> result = new LinkedList<KaomAbstractNavigatorItem>();
-            Diagram sv = (Diagram) view;
-            KaomNavigatorGroup links = new KaomNavigatorGroup(
-                    Messages.NavigatorGroupName_Entity_1000_links,
-                    "icons/linksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection<View> connectedViews;
-            connectedViews = getChildrenByType(Collections.singleton(sv),
-                    KaomVisualIDRegistry.getType(Entity2EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
-            connectedViews = getChildrenByType(Collections.singleton(sv),
-                    KaomVisualIDRegistry.getType(RelationEditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
-            connectedViews = getDiagramLinksByType(Collections.singleton(sv),
-                    KaomVisualIDRegistry.getType(LinkEditPart.VISUAL_ID));
-            links.addChildren(createNavigatorItems(connectedViews, links, false));
-            if (!links.isEmpty()) {
-                result.add(links);
-            }
-            return result.toArray();
-        }
-
-        case Relation2EditPart.VISUAL_ID: {
-            LinkedList<KaomAbstractNavigatorItem> result = new LinkedList<KaomAbstractNavigatorItem>();
-            Node sv = (Node) view;
-            KaomNavigatorGroup incominglinks = new KaomNavigatorGroup(
-                    Messages.NavigatorGroupName_Relation_3003_incominglinks,
-                    "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            KaomNavigatorGroup outgoinglinks = new KaomNavigatorGroup(
-                    Messages.NavigatorGroupName_Relation_3003_outgoinglinks,
-                    "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
-            Collection<View> connectedViews;
-            connectedViews = getIncomingLinksByType(Collections.singleton(sv),
-                    KaomVisualIDRegistry.getType(LinkEditPart.VISUAL_ID));
-            incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
-            connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
-                    KaomVisualIDRegistry.getType(LinkEditPart.VISUAL_ID));
-            outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
-            if (!incominglinks.isEmpty()) {
-                result.add(incominglinks);
-            }
-            if (!outgoinglinks.isEmpty()) {
-                result.add(outgoinglinks);
-            }
-            return result.toArray();
-        }
-
         case LinkEditPart.VISUAL_ID: {
             LinkedList<KaomAbstractNavigatorItem> result = new LinkedList<KaomAbstractNavigatorItem>();
             Edge sv = (Edge) view;
@@ -340,29 +293,16 @@ public class KaomNavigatorContentProvider implements ICommonContentProvider {
             return result.toArray();
         }
 
-        case Entity2EditPart.VISUAL_ID: {
+        case Relation2EditPart.VISUAL_ID: {
             LinkedList<KaomAbstractNavigatorItem> result = new LinkedList<KaomAbstractNavigatorItem>();
             Node sv = (Node) view;
             KaomNavigatorGroup incominglinks = new KaomNavigatorGroup(
-                    Messages.NavigatorGroupName_Entity_2001_incominglinks,
+                    Messages.NavigatorGroupName_Relation_3003_incominglinks,
                     "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             KaomNavigatorGroup outgoinglinks = new KaomNavigatorGroup(
-                    Messages.NavigatorGroupName_Entity_2001_outgoinglinks,
+                    Messages.NavigatorGroupName_Relation_3003_outgoinglinks,
                     "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
             Collection<View> connectedViews;
-            connectedViews = getChildrenByType(Collections.singleton(sv),
-                    KaomVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
-            connectedViews = getChildrenByType(Collections.singleton(sv),
-                    KaomVisualIDRegistry.getType(EntityEntityCompartmentEditPart.VISUAL_ID));
-            connectedViews = getChildrenByType(connectedViews,
-                    KaomVisualIDRegistry.getType(Entity3EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
-            connectedViews = getChildrenByType(Collections.singleton(sv),
-                    KaomVisualIDRegistry.getType(EntityEntityCompartmentEditPart.VISUAL_ID));
-            connectedViews = getChildrenByType(connectedViews,
-                    KaomVisualIDRegistry.getType(Relation2EditPart.VISUAL_ID));
-            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
             connectedViews = getIncomingLinksByType(Collections.singleton(sv),
                     KaomVisualIDRegistry.getType(LinkEditPart.VISUAL_ID));
             incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
@@ -412,6 +352,66 @@ public class KaomNavigatorContentProvider implements ICommonContentProvider {
             }
             if (!outgoinglinks.isEmpty()) {
                 result.add(outgoinglinks);
+            }
+            return result.toArray();
+        }
+
+        case Entity2EditPart.VISUAL_ID: {
+            LinkedList<KaomAbstractNavigatorItem> result = new LinkedList<KaomAbstractNavigatorItem>();
+            Node sv = (Node) view;
+            KaomNavigatorGroup incominglinks = new KaomNavigatorGroup(
+                    Messages.NavigatorGroupName_Entity_2001_incominglinks,
+                    "icons/incomingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+            KaomNavigatorGroup outgoinglinks = new KaomNavigatorGroup(
+                    Messages.NavigatorGroupName_Entity_2001_outgoinglinks,
+                    "icons/outgoingLinksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+            Collection<View> connectedViews;
+            connectedViews = getChildrenByType(Collections.singleton(sv),
+                    KaomVisualIDRegistry.getType(PortEditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+            connectedViews = getChildrenByType(Collections.singleton(sv),
+                    KaomVisualIDRegistry.getType(EntityEntityCompartmentEditPart.VISUAL_ID));
+            connectedViews = getChildrenByType(connectedViews,
+                    KaomVisualIDRegistry.getType(Entity3EditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+            connectedViews = getChildrenByType(Collections.singleton(sv),
+                    KaomVisualIDRegistry.getType(EntityEntityCompartmentEditPart.VISUAL_ID));
+            connectedViews = getChildrenByType(connectedViews,
+                    KaomVisualIDRegistry.getType(Relation2EditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+            connectedViews = getIncomingLinksByType(Collections.singleton(sv),
+                    KaomVisualIDRegistry.getType(LinkEditPart.VISUAL_ID));
+            incominglinks.addChildren(createNavigatorItems(connectedViews, incominglinks, true));
+            connectedViews = getOutgoingLinksByType(Collections.singleton(sv),
+                    KaomVisualIDRegistry.getType(LinkEditPart.VISUAL_ID));
+            outgoinglinks.addChildren(createNavigatorItems(connectedViews, outgoinglinks, true));
+            if (!incominglinks.isEmpty()) {
+                result.add(incominglinks);
+            }
+            if (!outgoinglinks.isEmpty()) {
+                result.add(outgoinglinks);
+            }
+            return result.toArray();
+        }
+
+        case EntityEditPart.VISUAL_ID: {
+            LinkedList<KaomAbstractNavigatorItem> result = new LinkedList<KaomAbstractNavigatorItem>();
+            Diagram sv = (Diagram) view;
+            KaomNavigatorGroup links = new KaomNavigatorGroup(
+                    Messages.NavigatorGroupName_Entity_1000_links,
+                    "icons/linksNavigatorGroup.gif", parentElement); //$NON-NLS-1$
+            Collection<View> connectedViews;
+            connectedViews = getChildrenByType(Collections.singleton(sv),
+                    KaomVisualIDRegistry.getType(Entity2EditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+            connectedViews = getChildrenByType(Collections.singleton(sv),
+                    KaomVisualIDRegistry.getType(RelationEditPart.VISUAL_ID));
+            result.addAll(createNavigatorItems(connectedViews, parentElement, false));
+            connectedViews = getDiagramLinksByType(Collections.singleton(sv),
+                    KaomVisualIDRegistry.getType(LinkEditPart.VISUAL_ID));
+            links.addChildren(createNavigatorItems(connectedViews, links, false));
+            if (!links.isEmpty()) {
+                result.add(links);
             }
             return result.toArray();
         }
