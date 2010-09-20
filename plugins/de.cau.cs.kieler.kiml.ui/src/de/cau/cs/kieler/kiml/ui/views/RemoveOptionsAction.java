@@ -66,6 +66,7 @@ public class RemoveOptionsAction extends Action {
                     Runnable runnable = new Runnable() {
                         public void run() {
                             inspector.removeAllOptions();
+                            LayoutViewPart.findView().refresh();
                         }
                     };
                     KimlUiUtil.runModelChange(runnable, inspector.getEditingDomain(),
