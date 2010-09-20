@@ -14,8 +14,6 @@
 
 package de.cau.cs.kieler.kaom.karma.ptolemy;
 
-import java.io.ByteArrayInputStream;
-//import java.io.File;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -27,15 +25,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.eclipse.core.internal.resources.File;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
@@ -45,7 +35,6 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
-import org.eclipse.swt.graphics.Color;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -65,20 +54,13 @@ import de.cau.cs.kieler.karma.IRenderingProvider;
  */
 public class KaomFigureProvider implements IRenderingProvider {
 
-    /**
-     * running number for unique file names
-     */
-    int lfdnr = 0;
 
     /**
      * {@inheritDoc}
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object) {
-        // TODO Auto-generated method stub
         if (input.equals("ptolemyObject")) {
-            // return createTestSVGFigure1(oldFigure, "");
-
             return getDefaultFigure();
         } else if(input.equals("ptolemy.actor.lib.MonitorValue")){
             return getDefaultFigure();
@@ -86,11 +68,6 @@ public class KaomFigureProvider implements IRenderingProvider {
             return createDirector();
         } else {
             try {
-                //UpdatedValueIcon val = new UpdatedValueIcon(new CompositeEntity(), "name");
-                //String test1 = val.toString();
-                //diva.canvas.Figure test2 = val.createBackgroundFigure();
-                //diva.canvas.Figure test3 = val.createFigure();
-                
                 Class ptolemy = Class.forName(input);
                 Constructor constr = ptolemy.getConstructor(CompositeEntity.class, String.class);
                 Object obj = constr.newInstance(new CompositeEntity(), "test");
@@ -100,23 +77,22 @@ public class KaomFigureProvider implements IRenderingProvider {
                     try {
                         til.loadIconForClass(Ramp.class.getName(), entity);
                     } catch (Exception e) { 
-                        // TODO Auto-generated catch block e.printStackTrace(); 
+                        // TODO Auto-generated catch block 
+                        e.printStackTrace(); 
                     }
                     List<EditorIcon> icons = entity.attributeList(EditorIcon.class);
-                    int k;
                     ConfigurableAttribute ca = null;
-                    String svg = "d";
+                    String svg = "";
                     if (icons.isEmpty()) {
                         ca = (ConfigurableAttribute) entity.getAttribute("_iconDescription");
 
                         svg = ca.getConfigureText();
                     }
-                    String file = writeFile(svg, input + String.valueOf(lfdnr));
-                    if (file == null){
+                    svg = repairSvg(svg);
+                    if (svg == null){
                         return getDefaultFigure();
                     } else {
-                    lfdnr++;
-                    return createSvg(file);
+                    return createSvg(svg);
                     }
                 }
             } catch (Exception e) {
@@ -175,19 +151,6 @@ public class KaomFigureProvider implements IRenderingProvider {
      */
 
     private IFigure createDirector() {
-        /*
-        RectangleFigure rf = new RectangleFigure();
-        // this.setCurrentFigure(rf);
-        rf.setFill(false);
-
-        rf.setForegroundColor(ColorConstants.black);
-        rf.setBackgroundColor(ColorConstants.white);
-        rf.setBackgroundColor(new Color(rf.getBackgroundColor().getDevice(), 0, 250, 0));
-        // rf.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
-        // getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
-        return rf;
-        */
-        int v;
         String directorsvg = "<svg width=\"101\" height=\"31\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
         return createSvg(directorsvg);
     }
@@ -198,10 +161,7 @@ public class KaomFigureProvider implements IRenderingProvider {
     public LayoutManager getLayoutManagerByString(String input, LayoutManager oldLayoutManager,
             EObject object) {
         // TODO Auto-generated method stub
-        /*
-         * if (input.equals("ramp")) { return new PtolemyEntityLayout(); }
-         */
-        return oldLayoutManager;
+        return null;
     }
 
     /**
@@ -214,7 +174,7 @@ public class KaomFigureProvider implements IRenderingProvider {
      *            the file name the svg image is saved as
      * @return the file holding the svg image
      */
-    private String writeFile(String svg, String name) {
+    private String repairSvg(String svg) {
         try {
                 XMLParser xmlpars = new XMLParser();
                 Document doc;
