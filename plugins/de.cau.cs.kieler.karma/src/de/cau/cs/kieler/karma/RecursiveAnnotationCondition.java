@@ -14,6 +14,8 @@
 
 package de.cau.cs.kieler.karma;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 
 import de.cau.cs.kieler.core.annotations.Annotatable;
@@ -37,61 +39,65 @@ public class RecursiveAnnotationCondition extends ICustomCondition<EObject> {
      * {@inheritDoc}
      */
     public boolean evaluate(final EObject object) {
+        Boolean result = false;
         if (object instanceof Annotatable) {
             Annotatable annotatable = ((Annotatable) object);
-            Annotation annotation = getAnnotationByKeyRecursive(annotatable);
-            if (annotation == null) {
-                return false;
-            } else {
-            if (annotation instanceof BooleanAnnotation) {
-                BooleanAnnotation booleanAnnotation = (BooleanAnnotation) annotation;
-                boolean annotationValue = booleanAnnotation.isValue();
-                boolean boolValue = Boolean.parseBoolean(value);
-                return (annotationValue == boolValue);
-            } else if (annotation instanceof ContainmentAnnotation) {
-                ContainmentAnnotation containmentAnnotation = (ContainmentAnnotation) annotation;
-                EObject eObject = containmentAnnotation.getObject();
-                //TODO probably think of a different check that makes more sense.
-                return eObject.eClass().getName().equals(value);
-            } else if (annotation instanceof FloatAnnotation) {
-                FloatAnnotation floatAnnotation = (FloatAnnotation) annotation;
-                float annotationValue = floatAnnotation.getValue();
-                float floatValue = Float.parseFloat(value);
-                return (floatValue == annotationValue);
-            } else if (annotation instanceof IntAnnotation) {
-                IntAnnotation intAnnotation = (IntAnnotation) annotation;
-                int annotationValue = intAnnotation.getValue();
-                int intValue = Integer.parseInt(value);
-                return (intValue == annotationValue);
-            } else if (annotation instanceof ReferenceAnnotation) {
-                ReferenceAnnotation referenceAnnotation = (ReferenceAnnotation) annotation;
-                EObject eObject = referenceAnnotation.getObject();
-              //TODO probably think of a different check that makes more sense.
-                return eObject.eClass().getName().equals(value);
-            } else if (annotation instanceof StringAnnotation) {
-                StringAnnotation stringAnnotation = (StringAnnotation) annotation;
-                //return stringAnnotation.getValue().equals(value);
-                return stringAnnotation.getValue().equals(value);
-            }
-        }
-        }
-        return false;
-    }
-    
-    private Annotation getAnnotationByKeyRecursive(Annotatable annotatable) {
-        if (!annotatable.getAnnotations().isEmpty()) {
-            Annotation annotation = annotatable.getAnnotation(key);
-            if (annotation != null) {
-                return annotation;
-            } else {
-                for (Annotation ann : annotatable.getAnnotations()){
-                    return getAnnotationByKeyRecursive(ann);
+            List<Annotation> annotations = getAnnotationByKeyRecursive(annotatable);
+            for (Annotation annotation : annotations) {
+                if (result) {
+                    return true;
+                } else {
+                    if (annotation instanceof BooleanAnnotation) {
+                        BooleanAnnotation booleanAnnotation = (BooleanAnnotation) annotation;
+                        boolean annotationValue = booleanAnnotation.isValue();
+                        boolean boolValue = Boolean.parseBoolean(value);
+                        result = (annotationValue == boolValue);
+                    } else if (annotation instanceof ContainmentAnnotation) {
+                        ContainmentAnnotation containmentAnnotation = (ContainmentAnnotation) annotation;
+                        EObject eObject = containmentAnnotation.getObject();
+                        // TODO probably think of a different check that makes more sense.
+                        result = eObject.eClass().getName().equals(value);
+                    } else if (annotation instanceof FloatAnnotation) {
+                        FloatAnnotation floatAnnotation = (FloatAnnotation) annotation;
+                        float annotationValue = floatAnnotation.getValue();
+                        float floatValue = Float.parseFloat(value);
+                        result = (floatValue == annotationValue);
+                    } else if (annotation instanceof IntAnnotation) {
+                        IntAnnotation intAnnotation = (IntAnnotation) annotation;
+                        int annotationValue = intAnnotation.getValue();
+                        int intValue = Integer.parseInt(value);
+                        result = (intValue == annotationValue);
+                    } else if (annotation instanceof ReferenceAnnotation) {
+                        ReferenceAnnotation referenceAnnotation = (ReferenceAnnotation) annotation;
+                        EObject eObject = referenceAnnotation.getObject();
+                        // TODO probably think of a different check that makes more sense.
+                        result = eObject.eClass().getName().equals(value);
+                    } else if (annotation instanceof StringAnnotation) {
+                        StringAnnotation stringAnnotation = (StringAnnotation) annotation;
+                        // return stringAnnotation.getValue().equals(value);
+                        result = stringAnnotation.getValue().equals(value);
+                    }
                 }
             }
+
+        }
+        return result;
+    }
+
+    private List<Annotation> getAnnotationByKeyRecursive(Annotatable annotatable) {
+        if (!annotatable.getAnnotations().isEmpty()) {
+            List<Annotation> annotations = annotatable.getAllAnnotations(key);
+            for (Annotation ann : annotatable.getAnnotations()) {
+                List<Annotation> moreAnnotations = getAnnotationByKeyRecursive(ann);
+                if (moreAnnotations != null) { 
+                    annotations.addAll(moreAnnotations);
+                }
+            }
+            return annotations;
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
