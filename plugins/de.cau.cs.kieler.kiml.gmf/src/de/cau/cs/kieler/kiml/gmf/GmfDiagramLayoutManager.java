@@ -581,6 +581,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     if (label.getText() == null || label.getText().length() == 0) {
                         label.setText(text);
                         KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                        Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
+                        Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(parentFigure);
+                        labelLayout.setXpos(labelBounds.x - nodeBounds.x);
+                        labelLayout.setYpos(labelBounds.y - nodeBounds.y);
                         labelLayout.setWidth(labelFigure.getPreferredSize().width);
                         labelLayout.setHeight(labelFigure.getPreferredSize().height);
                         labelLayout.setProperty(LayoutOptions.FONT_NAME,

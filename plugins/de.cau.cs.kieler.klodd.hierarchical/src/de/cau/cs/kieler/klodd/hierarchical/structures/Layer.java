@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.structures.slimgraph.KSlimNode;
@@ -58,7 +57,7 @@ public class Layer {
 
     /**
      * Creates a new layer with given rank and height.
-     * TODO contract for UNDEFs
+     *
      * @param therank the rank, may be UNDEF_RANK
      * @param theheight the height, may be UNDEF_HEIGHT
      * @param thelayeredGraph layered graph in which the layer is created
@@ -84,7 +83,6 @@ public class Layer {
      * @param kNode the corresponding node in the acyclic KIELER graph
      * @return the new layer element
      */
-    // TODO Need SlimNode
     public LayerElement put(final KGraphElement obj, final KSlimNode kNode) {
         LayerElement element = new LayerElement(obj, this, kNode);
         elements.add(element);
@@ -98,50 +96,22 @@ public class Layer {
      * @param minDist minimal distance between nodes and connections
      */
     public void layoutElements(final float layerPos, final float minDist) {
-        LayoutDirection layoutDirection = layeredGraph.getLayoutDirection();
-        float backPadding = 0.0f;
-        float frontPadding = 0.0f;
-
-        // determine padding values
-        for (LayerElement element : elements) {
-            float sideSpace = (lengthwiseDim - (layoutDirection == LayoutDirection.DOWN ? element
-                    .getRealHeight() : element.getRealWidth())) / 2;
-            backPadding = Math.max(backPadding, element.getEdgesBack() * minDist - sideSpace);
-            frontPadding = Math.max(frontPadding, element.getEdgesFront() * minDist - sideSpace);
-        }
-        lengthwisePos = layerPos + frontPadding;
-
-        // set the lengthwise position of each node
-        for (LayerElement element : elements) {
-            if (rank > 0 && height > 0) {
+        lengthwisePos = layerPos;
+        if (rank > 0 && height > 0) {
+            for (LayerElement element : elements) {
                 float sideSpace;
-                if (layoutDirection == LayoutDirection.DOWN) {
-                    if (element.getIncomingConnections().isEmpty()
-                            && !element.getOutgoingConnections().isEmpty()) {
-                        sideSpace = (lengthwiseDim - element.getRealHeight());
-                    } else if (element.getOutgoingConnections().isEmpty()
-                            && !element.getIncomingConnections().isEmpty()) {
-                        sideSpace = 0;
-                    } else {
-                        sideSpace = (lengthwiseDim - element.getRealHeight()) / 2;
-                    }
-                    element.getPosition().setY(lengthwisePos + sideSpace);
+                if (element.getIncomingConnections().isEmpty()
+                        && !element.getOutgoingConnections().isEmpty()) {
+                    sideSpace = (lengthwiseDim - element.getTotalLengthwiseDim(minDist));
+                } else if (element.getOutgoingConnections().isEmpty()
+                        && !element.getIncomingConnections().isEmpty()) {
+                    sideSpace = 0;
                 } else {
-                    if (element.getIncomingConnections().isEmpty()
-                            && !element.getOutgoingConnections().isEmpty()) {
-                        sideSpace = (lengthwiseDim - element.getRealWidth());
-                    } else if (element.getOutgoingConnections().isEmpty()
-                            && !element.getIncomingConnections().isEmpty()) {
-                        sideSpace = 0;
-                    } else {
-                        sideSpace = (lengthwiseDim - element.getRealWidth()) / 2;
-                    }
-                    element.getPosition().setX(lengthwisePos + sideSpace);
+                    sideSpace = (lengthwiseDim - element.getTotalLengthwiseDim(minDist)) / 2;
                 }
+                element.setLengthwisePos(lengthwisePos + sideSpace, minDist);
             }
         }
-
-        lengthwiseDim += backPadding;
     }
 
     /**
@@ -169,7 +139,6 @@ public class Layer {
      * 
      * @param newRanks if true new port ranks are determined for the contained ports
      */
-    // TODO explain, param name?
     public void sortByPorts(final boolean newRanks) {
         boolean forward;
         if (rank == 0) {

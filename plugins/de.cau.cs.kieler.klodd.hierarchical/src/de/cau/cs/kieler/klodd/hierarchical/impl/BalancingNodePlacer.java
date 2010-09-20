@@ -19,7 +19,6 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klodd.hierarchical.modules.INodePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayerConnection;
@@ -155,12 +154,9 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
         // update crosswise dimension for the whole graph
         for (Layer layer2 : layeredGraph.getLayers()) {
             LayerElement lastElem = layer2.getElements().get(layer2.getElements().size() - 1);
-            layer2.setCrosswiseDim((layoutDirection == LayoutDirection.DOWN
-                    ? lastElem.getPosition().getX()
-                            + lastElem.getRealWidth() + lastElem.getRanks(PortSide.EAST) * theobjSpacing
-                    : lastElem.getPosition().getY()
-                        + lastElem.getRealHeight() + lastElem.getRanks(PortSide.SOUTH) * theobjSpacing)
-                    + borderSpacing);
+            layer2.setCrosswiseDim(layoutDirection == LayoutDirection.DOWN
+                    ? lastElem.getPosition().getX() : lastElem.getPosition().getY()
+                    + lastElem.getTotalCrosswiseDim(objSpacing, false) + borderSpacing);
             layeredGraph.setCrosswiseDim(Math.max(layeredGraph.getCrosswiseDim(),
                     layer2.getCrosswiseDim()));
         }

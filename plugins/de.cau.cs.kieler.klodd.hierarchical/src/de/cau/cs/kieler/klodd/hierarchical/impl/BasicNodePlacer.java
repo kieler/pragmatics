@@ -214,8 +214,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
      */
     private void createUnbalancedPlacement(final LinearSegment[] thesortedSegments) {
         for (LinearSegment segment : thesortedSegments) {
-            // determine the leftmost / uppermost placement for the linear
-            // segment
+            // determine the leftmost / uppermost placement for the linear segment
             float leftmostPlace = 0.0f;
             for (LayerElement element : segment.getElements()) {
                 leftmostPlace = Math.max(leftmostPlace, element.getLayer().getCrosswiseDim());
@@ -229,12 +228,11 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
                     spacingMap.put(lastElements[layer.getRank()], Float.valueOf(leftmostPlace
                             - layer.getCrosswiseDim()));
                 }
+                float totalCrosswiseDim = element.getTotalCrosswiseDim(objSpacing, true);
                 element.setCrosswisePos(newPos, objSpacing);
-                float totalCrosswiseDim = element.getTotalCrosswiseDim(objSpacing);
                 layer.setCrosswiseDim(newPos + totalCrosswiseDim);
                 layer.setLengthwiseDim(Math.max(layer.getLengthwiseDim(),
-                        layoutDirection == LayoutDirection.DOWN ? element.getRealHeight() : element
-                                .getRealWidth()));
+                        element.getTotalLengthwiseDim(objSpacing)));
                 lastElements[layer.getRank()] = element;
             }
         }

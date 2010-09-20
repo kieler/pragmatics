@@ -81,6 +81,12 @@ public class LayerElement {
     private float realHeight;
     /** the total crosswise dimension. */
     private float totalCrosswiseDim = -1.0f;
+    /** crosswise spacing to be left before the element. */
+    private float preSpacingCross;
+    /** the total lengthwise dimension. */
+    private float totalLengthwiseDim = -1.0f;
+    /** lengthwise spacing to be left before the element. */
+    private float preSpacingLength;    
     /** the list of incoming layer connections. */
     private List<LayerConnection> incoming = new LinkedList<LayerConnection>();
     /** the list of outgoing layer connections. */
@@ -412,29 +418,149 @@ public class LayerElement {
     public void setCrosswisePos(final float pos, final float minDist) {
         LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
         if (layoutDirection == LayoutDirection.DOWN) {
-            position.setX(pos + westRanks * minDist);
+            position.setX(pos + westRanks * minDist + preSpacingCross);
         } else {
-            position.setY(pos + northRanks * minDist);
+            position.setY(pos + northRanks * minDist + preSpacingCross);
+        }
+    }
+    
+    /**
+     * Sets the lengthwise position for this layer element, considering all edges
+     * that are routed before this element.
+     * 
+     * @param pos new lengthwise position
+     * @param minDist minimal distance for routed edges
+     */
+    public void setLengthwisePos(final float pos, final float minDist) {
+        LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
+        if (layoutDirection == LayoutDirection.DOWN) {
+            position.setY(pos + northRanks * minDist + preSpacingLength);
+        } else {
+            position.setX(pos + westRanks * minDist + preSpacingLength);
         }
     }
 
     /**
-     * Gets the total crosswise dimension of this layer element with routed
-     * edges.
+     * Gets the total crosswise dimension of this layer element with routed edges.
      * 
      * @param minDist minimal distance for routed edges
+     * @param preSpacing whether the pre-spacing should be considered
      * @return total crosswise dimension with routed edges
      */
-    public float getTotalCrosswiseDim(final float minDist) {
+    public float getTotalCrosswiseDim(final float minDist, final boolean preSpacing) {
         if (totalCrosswiseDim < 0.0f) {
             LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
             if (layoutDirection == LayoutDirection.DOWN) {
                 totalCrosswiseDim = (westRanks + eastRanks) * minDist + realWidth;
+                if (elemObj instanceof KNode) {
+                    float minX = 0, maxX = realWidth;
+                    KNode node = (KNode) elemObj;
+                    KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
+                    if (labelLayout.getXpos() < minX) {
+                        minX = labelLayout.getXpos();
+                    }
+                    if (labelLayout.getXpos() + labelLayout.getWidth() > maxX) {
+                        maxX = labelLayout.getXpos() + labelLayout.getWidth();
+                    }
+                    preSpacingCross = -minX;
+                    totalCrosswiseDim += preSpacingCross + maxX - realWidth;
+                }
             } else {
                 totalCrosswiseDim = (northRanks + southRanks) * minDist + realHeight;
+                if (elemObj instanceof KNode) {
+                    float minY = 0, maxY = realHeight;
+                    KNode node = (KNode) elemObj;
+                    KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
+                    if (labelLayout.getYpos() < minY) {
+                        minY = labelLayout.getYpos();
+                    }
+                    if (labelLayout.getYpos() + labelLayout.getHeight() > maxY) {
+                        maxY = labelLayout.getYpos() + labelLayout.getHeight();
+                    }
+                    preSpacingCross = -minY;
+                    totalCrosswiseDim += preSpacingCross + maxY - realHeight;
+                }
             }
         }
-        return totalCrosswiseDim;
+        if (preSpacing) {
+            return totalCrosswiseDim;
+        } else {
+            return totalCrosswiseDim - preSpacingCross;
+        }
+    }
+    
+    /**
+     * Gets the total lengthwise dimension of this layer element with routed edges.
+     * 
+     * @param minDist minimal distance for routed edges
+     * @return total lengthwise dimension with routed edges
+     */
+    public float getTotalLengthwiseDim(final float minDist) {
+        if (totalLengthwiseDim < 0.0f) {
+            LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
+            if (layoutDirection == LayoutDirection.DOWN) {
+                totalLengthwiseDim = (northRanks + southRanks) * minDist + realHeight;
+                if (elemObj instanceof KNode) {
+                    float minY = 0, maxY = realHeight;
+                    KNode node = (KNode) elemObj;
+                    for (KPort port : node.getPorts()) {
+                        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+                        if (portLayout.getYpos() < minY) {
+                            minY = portLayout.getYpos();
+                        } else if (portLayout.getYpos() + portLayout.getHeight() > maxY) {
+                            maxY = portLayout.getYpos() + portLayout.getHeight();
+                        }
+                        KShapeLayout labelLayout = port.getLabel().getData(KShapeLayout.class);
+                        float ypos = portLayout.getYpos() + labelLayout.getYpos();
+                        if (ypos < minY) {
+                            minY = ypos;
+                        } else if (ypos + labelLayout.getHeight() > maxY) {
+                            maxY = ypos + labelLayout.getHeight();
+                        }
+                    }
+                    KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
+                    if (labelLayout.getYpos() < minY) {
+                        minY = labelLayout.getYpos();
+                    }
+                    if (labelLayout.getYpos() + labelLayout.getHeight() > maxY) {
+                        maxY = labelLayout.getYpos() + labelLayout.getHeight();
+                    }
+                    preSpacingLength = -minY;
+                    totalLengthwiseDim += preSpacingLength + maxY - realHeight;
+                }
+            } else {
+                totalLengthwiseDim = (westRanks + eastRanks) * minDist + realWidth;
+                if (elemObj instanceof KNode) {
+                    float minX = 0, maxX = realWidth;
+                    KNode node = (KNode) elemObj;
+                    for (KPort port : node.getPorts()) {
+                        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+                        if (portLayout.getXpos() < minX) {
+                            minX = portLayout.getXpos();
+                        } else if (portLayout.getXpos() + portLayout.getWidth() > maxX) {
+                            maxX = portLayout.getXpos() + portLayout.getWidth();
+                        }
+                        KShapeLayout labelLayout = port.getLabel().getData(KShapeLayout.class);
+                        float xpos = portLayout.getXpos() + labelLayout.getXpos();
+                        if (xpos < minX) {
+                            minX = xpos;
+                        } else if (xpos + labelLayout.getWidth() > maxX) {
+                            maxX = xpos + labelLayout.getWidth();
+                        }
+                    }
+                    KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
+                    if (labelLayout.getXpos() < minX) {
+                        minX = labelLayout.getXpos();
+                    }
+                    if (labelLayout.getXpos() + labelLayout.getWidth() > maxX) {
+                        maxX = labelLayout.getXpos() + labelLayout.getWidth();
+                    }
+                    preSpacingLength = -minX;
+                    totalLengthwiseDim += preSpacingLength + maxX - realWidth;
+                }
+            }
+        }
+        return totalLengthwiseDim;
     }
 
     /**
