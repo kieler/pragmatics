@@ -211,8 +211,8 @@ public class KaomFigureProvider implements IRenderingProvider {
                 for (int i = 0; i < doc.getElementsByTagName("rect").getLength(); i++) {
                     Element e = (Element) doc.getElementsByTagName("rect").item(i);
                     if (e.hasAttribute("x") && e.hasAttribute("y") && e.hasAttribute("style")) {
-                        int x = Integer.parseInt(e.getAttribute("x"));
-                        int y = Integer.parseInt(e.getAttribute("y"));
+                        float x = Float.parseFloat(e.getAttribute("x"));
+                        float y = Float.parseFloat(e.getAttribute("y"));
                         x += xoffset;
                         y += yoffset;
                         e.setAttribute("x", String.valueOf(x));
@@ -225,13 +225,15 @@ public class KaomFigureProvider implements IRenderingProvider {
                 for (int i = 0; i < doc.getElementsByTagName("circle").getLength(); i++) {
                     Element e = (Element) doc.getElementsByTagName("circle").item(i);
                     if (e.hasAttribute("cx") && e.hasAttribute("cy")) {
-                        int x = Integer.parseInt(e.getAttribute("cx"));
-                        int y = Integer.parseInt(e.getAttribute("cy"));
+                        float x = Float.parseFloat(e.getAttribute("cx"));
+                        float y = Float.parseFloat(e.getAttribute("cy"));
                         x += xoffset;
                         y += yoffset;
                         e.setAttribute("cx", String.valueOf(x));
                         e.setAttribute("cy", String.valueOf(y));
                     }
+                    e.setAttribute("style",
+                            e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
                 }
 
                 for (int i = 0; i < doc.getElementsByTagName("polygon").getLength(); i++) {
@@ -242,8 +244,8 @@ public class KaomFigureProvider implements IRenderingProvider {
                         String[] pointsarray = allpoints.split(" +");
                         for (String coords : pointsarray) {
                             String[] coordsarray = coords.split(",");
-                            int x = Integer.parseInt(coordsarray[0]);
-                            int y = Integer.parseInt(coordsarray[1]);
+                            float x = Float.parseFloat(coordsarray[0]);
+                            float y = Float.parseFloat(coordsarray[1]);
                             x += xoffset;
                             y += yoffset;
                             newpoints += String.valueOf(x) + "," + String.valueOf(y) + " ";
@@ -263,8 +265,8 @@ public class KaomFigureProvider implements IRenderingProvider {
                         String[] pointsarray = allpoints.split(" +");
                         for (String coords : pointsarray) {
                             String[] coordsarray = coords.split(",");
-                            int x = Integer.parseInt(coordsarray[0]);
-                            int y = Integer.parseInt(coordsarray[1]);
+                            float x = Float.parseFloat(coordsarray[0]);
+                            float y = Float.parseFloat(coordsarray[1]);
                             x += xoffset;
                             y += yoffset;
                             newpoints += String.valueOf(x) + "," + String.valueOf(y) + " ";
@@ -278,10 +280,10 @@ public class KaomFigureProvider implements IRenderingProvider {
                     Element e = (Element) doc.getElementsByTagName("line").item(i);
                     if (e.hasAttribute("x1") && e.hasAttribute("y1") && e.hasAttribute("x2")
                             && e.hasAttribute("y2")) {
-                        int x1 = Integer.parseInt(e.getAttribute("x1"));
-                        int y1 = Integer.parseInt(e.getAttribute("y1"));
-                        int x2 = Integer.parseInt(e.getAttribute("x2"));
-                        int y2 = Integer.parseInt(e.getAttribute("y2"));
+                        float x1 = Float.parseFloat(e.getAttribute("x1"));
+                        float y1 = Float.parseFloat(e.getAttribute("y1"));
+                        float x2 = Float.parseFloat(e.getAttribute("x2"));
+                        float y2 = Float.parseFloat(e.getAttribute("y2"));
                         x1 += xoffset;
                         y1 += yoffset;
                         x2 += xoffset;
@@ -298,8 +300,8 @@ public class KaomFigureProvider implements IRenderingProvider {
                 for (int i = 0; i < doc.getElementsByTagName("image").getLength(); i++) {
                     Element e = (Element) doc.getElementsByTagName("image").item(i);
                     if (e.hasAttribute("x") && e.hasAttribute("y")) {
-                        int x = Integer.parseInt(e.getAttribute("x"));
-                        int y = Integer.parseInt(e.getAttribute("y"));
+                        float x = Float.parseFloat(e.getAttribute("x"));
+                        float y = Float.parseFloat(e.getAttribute("y"));
                         x += xoffset;
                         y += yoffset;
                         e.setAttribute("x", String.valueOf(x));
@@ -310,8 +312,8 @@ public class KaomFigureProvider implements IRenderingProvider {
                 for (int i = 0; i < doc.getElementsByTagName("ellipse").getLength(); i++) {
                     Element e = (Element) doc.getElementsByTagName("ellipse").item(i);
                     if (e.hasAttribute("cx") && e.hasAttribute("cy")) {
-                        int x = Integer.parseInt(e.getAttribute("cx"));
-                        int y = Integer.parseInt(e.getAttribute("cy"));
+                        float x = Float.parseFloat(e.getAttribute("cx"));
+                        float y = Float.parseFloat(e.getAttribute("cy"));
                         x += xoffset;
                         y += yoffset;
                         e.setAttribute("cx", String.valueOf(x));
@@ -322,8 +324,8 @@ public class KaomFigureProvider implements IRenderingProvider {
                 for (int i = 0; i < doc.getElementsByTagName("text").getLength(); i++) {
                     Element e = (Element) doc.getElementsByTagName("text").item(i);
                     if (e.hasAttribute("x") && e.hasAttribute("y")) {
-                        int x = Integer.parseInt(e.getAttribute("x"));
-                        int y = Integer.parseInt(e.getAttribute("y"));
+                        float x = Float.parseFloat(e.getAttribute("x"));
+                        float y = Float.parseFloat(e.getAttribute("y"));
                         x += xoffset;
                         y += yoffset;
                         e.setAttribute("x", String.valueOf(x));

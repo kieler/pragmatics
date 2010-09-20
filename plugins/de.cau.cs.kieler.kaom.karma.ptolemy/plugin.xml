@@ -47,6 +47,70 @@
                   layoutParam="ptolemy.domains.sr.kernel.SRDirector"
                   value="ptolemy.domains.sr.kernel.SRDirector">
             </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="ptolemy.actor.lib.gui.InteractiveShell"
+                  figureSize="40,40"
+                  key="ptolemyClass"
+                  layoutParam="ptolemy.actor.lib.gui.InteractiveShell"
+                  value="ptolemy.actor.lib.gui.InteractiveShell">
+            </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="ptolemy.actor.lib.Interpolator"
+                  figureSize="60,40"
+                  key="ptolemyClass"
+                  layoutParam="ptolemy.actor.lib.Interpolator"
+                  value="ptolemy.actor.lib.Interpolator">
+            </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="ptolemy.actor.lib.Pulse"
+                  figureSize="60,40"
+                  key="ptolemyClass"
+                  layoutParam="ptolemy.actor.lib.Pulse"
+                  value="ptolemy.actor.lib.Pulse">
+            </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="ptolemy.actor.lib.gui.SketchedSource"
+                  figureSize="40,40"
+                  key="ptolemyClass"
+                  layoutParam="ptolemy.actor.lib.gui.SketchedSource"
+                  value="ptolemy.actor.lib.gui.SketchedSource">
+            </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="ptolemy.actor.lib.DiscreteClock"
+                  figureSize="40,40"
+                  key="ptolemyClass"
+                  layoutParam="ptolemy.actor.lib.DiscreteClock"
+                  value="ptolemy.actor.lib.DiscreteClock">
+            </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="ptolemy.actor.lib.CurrentTime"
+                  figureSize="40,40"
+                  key="ptolemyClass"
+                  layoutParam="ptolemy.actor.lib.CurrentTime"
+                  value="ptolemy.actor.lib.CurrentTime">
+            </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="ptolemy.actor.lib.PoissonClock"
+                  figureSize="40,40"
+                  key="ptolemyClass"
+                  layoutParam="ptolemy.actor.lib.PoissonClock"
+                  value="ptolemy.actor.lib.PoissonClock">
+            </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="ptolemy.actor.lib.TriggeredClock"
+                  figureSize="40,40"
+                  key="ptolemyClass"
+                  layoutParam="ptolemy.actor.lib.TriggeredClock"
+                  value="ptolemy.actor.lib.TriggeredClock">
+            </customCondition>
          </conditions>
          <editPart
                editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart">
