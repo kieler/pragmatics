@@ -26,10 +26,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.draw2d.StackLayout;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
@@ -45,7 +48,17 @@ import ptolemy.kernel.Entity;
 import ptolemy.kernel.util.ConfigurableAttribute;
 import ptolemy.moml.test.TestIconLoader;
 import ptolemy.vergil.icon.EditorIcon;
+import de.cau.cs.kieler.core.annotations.NamedObject;
+import de.cau.cs.kieler.kaom.Port;
+import de.cau.cs.kieler.kaom.impl.PortImpl;
 import de.cau.cs.kieler.karma.IRenderingProvider;
+import de.cau.cs.kieler.kvid.KvidUtil;
+import de.cau.cs.kieler.kvid.data.DataObject;
+import de.cau.cs.kieler.kvid.data.KvidUri;
+import de.cau.cs.kieler.kvid.datadistributor.DataDistributor;
+import de.cau.cs.kieler.kvid.datadistributor.IDataListener;
+import de.cau.cs.kieler.kvid.datadistributor.IProviderListener;
+import de.cau.cs.kieler.kvid.dataprovider.IDataProvider;
 
 /**
  * 
@@ -63,7 +76,7 @@ public class KaomFigureProvider implements IRenderingProvider {
         if (input.equals("ptolemyObject")) {
             return getDefaultFigure();
         } else if(input.equals("ptolemy.actor.lib.MonitorValue")){
-            return getDefaultFigure();
+            return createMonitorValue(object); 
         } else if(input.equals("ptolemy.domains.sr.kernel.SRDirector")) {
             return createDirector();
         } else {
@@ -346,6 +359,51 @@ public class KaomFigureProvider implements IRenderingProvider {
     public BorderItemLocator getBorderItemLocatorByString(String input) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    private IFigure createMonitorValue(EObject object){
+        MonitorValueFigure monitor = new MonitorValueFigure(object);
+        monitor.setLineWidth(1);
+        monitor.setForegroundColor(ColorConstants.black);
+        monitor.setBackgroundColor(ColorConstants.white);
+        return monitor;
+    }
+    
+    private class MonitorValueFigure extends RectangleFigure implements IDataListener {
+
+        Label value;
+        
+        String referredDataUri;
+        
+        public MonitorValueFigure(EObject object){
+            value = new Label();
+            value.getBounds().setSize(140, 10);
+            value.getBounds().setLocation(70, 10);
+            this.setLayoutManager(new BorderLayout());
+            this.add(value);
+            String uri = object.eResource().getURIFragment(object);
+            uri = KvidUtil.fragmentUri2PtolemyUri(uri, object.eResource());
+            if (object instanceof de.cau.cs.kieler.kaom.Entity) {
+                de.cau.cs.kieler.kaom.Entity entity = (de.cau.cs.kieler.kaom.Entity) object;
+                NamedObject port = entity.getChildPorts().get(0);
+                uri += ":" + port.getName();
+                referredDataUri = uri;
+                DataDistributor.getInstance().registerDataListener(this);
+            }
+            
+        }
+        
+        public void triggerDataChanged() {
+            DataObject data = DataDistributor.getInstance().getDataObjectByURI(new KvidUri(referredDataUri));
+            if (data != null) {
+                value.setText(data.getData().toString());
+            }
+        }
+
+        public void triggerWrapup() {
+            value.setText("");   
+        }
+        
     }
 
 }
