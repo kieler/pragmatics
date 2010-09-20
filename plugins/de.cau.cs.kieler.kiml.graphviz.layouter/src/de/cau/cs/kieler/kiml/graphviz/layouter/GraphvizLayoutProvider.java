@@ -20,6 +20,7 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Layout provider for the Graphviz layout tool. The actual interface to
@@ -85,6 +86,18 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean supportsHierarchy(final KNode layoutNode) {
+        // add dummy inter-level edges for a better hierarchy support
+        if (layoutNode.getParent() == null) {
+            KimlUtil.addDummyEdgesForInterlevelConnections(layoutNode);
+        }
+        return false;
     }
 
 }

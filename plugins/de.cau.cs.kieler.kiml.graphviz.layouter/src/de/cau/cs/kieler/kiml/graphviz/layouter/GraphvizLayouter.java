@@ -185,7 +185,7 @@ public class GraphvizLayouter {
                 debugMode);
 
         if (!progressMonitor.isCanceled()) {
-            // read graphviz output and apply layout information to the KGraph
+            // read Graphviz output and apply layout information to the KGraph
             GraphvizModel graphvizOutput = readDotGraph(new BufferedInputStream(
                     graphvizProcess.getInputStream()), progressMonitor.subTask(LARGE_TASK),
                     debugMode);
