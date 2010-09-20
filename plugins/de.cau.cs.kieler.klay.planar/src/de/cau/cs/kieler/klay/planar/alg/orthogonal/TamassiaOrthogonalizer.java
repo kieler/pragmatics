@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.alg.orthogonal;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,12 +64,14 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
 
     /**
      * The arcs in the flow network from a face to an adjacent face. The flow in these arcs specify
-     * the number of bends along the edge between the two faces.
+     * the number of bends along the edge between the two faces. For every two faces, there are two
+     * arcs, one for each direction.
      */
-    private LinkedList<IEdge> faceArcs;
+    private LinkedList<Pair<IEdge, IEdge>> faceArcs;
 
-    /** A map to store the data for an orthogonal representation. */
-    private Map<IFace, List<Pair<IEdge, OrthogonalAngle[]>>> orthogonalData;
+    private Map<IEdge, OrthogonalAngle[]> bendData;
+
+    private Map<INode, List<Pair<IEdge, OrthogonalAngle>>> angleData;
 
     // ======================== Algorithm ==========================================================
 
@@ -88,54 +91,128 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
         solver.findFlow(network);
 
         // Flow in face arcs define bends in edges
-        for (IEdge arc : this.faceArcs) {
-            IFace face1 = (IFace) arc.getSource().getProperty(NETWORKTOGRAPH);
-            IFace face2 = (IFace) arc.getTarget().getProperty(NETWORKTOGRAPH);
-            // TODO check face1 == face2
+        this.bendData = new HashMap<IEdge, OrthogonalAngle[]>();
+        for (Pair<IEdge, IEdge> pair : this.faceArcs) {
+            IFace face1 = (IFace) pair.getFirst().getSource().getProperty(NETWORKTOGRAPH);
+            if (face1 != pair.getSecond().getTarget().getProperty(NETWORKTOGRAPH)) {
+                throw new InconsistentGraphModelException(
+                        "The flow network has not been build correctly.");
+            }
+            IFace face2 = (IFace) pair.getSecond().getSource().getProperty(NETWORKTOGRAPH);
+            if (face2 != pair.getFirst().getTarget().getProperty(NETWORKTOGRAPH)) {
+                throw new InconsistentGraphModelException(
+                        "The flow network has not been build correctly.");
+            }
 
-            if (!this.orthogonalData.containsKey(face1)) {
-                this.orthogonalData.put(face1, new LinkedList<Pair<IEdge, OrthogonalAngle[]>>());
+            OrthogonalAngle[] bends1;
+            OrthogonalAngle[] bends2;
+            int flow1 = pair.getFirst().getProperty(IFlowNetworkSolver.FLOW);
+            int flow2 = pair.getSecond().getProperty(IFlowNetworkSolver.FLOW);
+            if (face1 == face2) {
+                bends1 = new OrthogonalAngle[flow1];
+                bends2 = new OrthogonalAngle[flow2];
+                Arrays.fill(bends1, OrthogonalAngle.RIGHT);
+                Arrays.fill(bends2, OrthogonalAngle.LEFT);
+            } else {
+                bends1 = new OrthogonalAngle[flow1 + flow2];
+                for (int i = 0; i < flow1; i++) {
+                    bends1[i] = OrthogonalAngle.RIGHT;
+                }
+                for (int i = flow1; i < bends1.length; i++) {
+                    bends1[i] = OrthogonalAngle.LEFT;
+                }
+                bends2 = new OrthogonalAngle[flow2 + flow1];
+                for (int i = 0; i < flow2; i++) {
+                    bends2[i] = OrthogonalAngle.RIGHT;
+                }
+                for (int i = flow2; i < bends2.length; i++) {
+                    bends2[i] = OrthogonalAngle.LEFT;
+                }
             }
 
             boolean first = true;
             for (IEdge edge : face1.getEdges(face2)) {
-                OrthogonalAngle[] bends;
                 if (first) {
                     first = false;
-                    int flow = arc.getProperty(IFlowNetworkSolver.FLOW);
-                    bends = new OrthogonalAngle[flow];
 
-                    OrthogonalAngle angle;
-                    if (face1 == edge.getLeftFace()) {
-                        angle = OrthogonalAngle.LEFT;
-                    } else if (face1 == edge.getRightFace()) {
-                        angle = OrthogonalAngle.RIGHT;
+                    if ((face1 == edge.getRightFace()) && (face2 == edge.getLeftFace())) {
+                        this.bendData.put(edge, bends1);
+                    } else if ((face1 == edge.getLeftFace()) && (face2 == edge.getRightFace())) {
+                        this.bendData.put(edge, bends2);
                     } else {
-                        throw new InconsistentGraphModelException("The face (" + face1.getID()
-                                + ") is not adjacent to the face (" + face2.getID() + ").");
+                        throw new InconsistentGraphModelException(
+                                "The flow network has not been build correctly.");
                     }
-
                 } else {
-                    bends = new OrthogonalAngle[0];
+                    OrthogonalAngle[] bends = new OrthogonalAngle[0];
+                    this.bendData.put(edge, bends);
                 }
-                this.orthogonalData.get(face1).add(new Pair<IEdge, OrthogonalAngle[]>(edge, bends));
             }
-
         }
 
         // Flow in node arcs define angles in nodes
+        this.angleData = new HashMap<INode, List<Pair<IEdge, OrthogonalAngle>>>();
         for (IEdge arc : this.nodeArcs) {
             INode node = (INode) arc.getSource().getProperty(NETWORKTOGRAPH);
             IFace face = (IFace) arc.getTarget().getProperty(NETWORKTOGRAPH);
-            int angleInNode = arc.getProperty(IFlowNetworkSolver.FLOW);
-            // TODO set angle in orthogonal representation
+
+            List<Pair<IEdge, OrthogonalAngle>> nodeList;
+            if (!this.angleData.containsKey(node)) {
+                nodeList = new LinkedList<Pair<IEdge, OrthogonalAngle>>();
+                for (IEdge edge : node.adjacentEdges()) {
+                    nodeList.add(new Pair<IEdge, OrthogonalAngle>(edge, null));
+                }
+                this.angleData.put(node, nodeList);
+            } else {
+                nodeList = this.angleData.get(node);
+            }
+
+            int numEdges = 0;
+            for (Pair<IEdge, OrthogonalAngle> pair : nodeList) {
+                IEdge edge = pair.getFirst();
+                if (((node == edge.getSource()) && (face == edge.getRightFace()))
+                        || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
+                    numEdges++;
+                }
+            }
+
+            int i = numEdges;
+            for (Pair<IEdge, OrthogonalAngle> pair : nodeList) {
+                IEdge edge = pair.getFirst();
+                if (((node == edge.getSource()) && (face == edge.getRightFace()))
+                        || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
+                    i--;
+                    if (i > 0) {
+                        pair.setSecond(OrthogonalAngle.RIGHT);
+                    } else {
+                        int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - numEdges;
+                        switch (angle) {
+                        case 0:
+                            pair.setSecond(OrthogonalAngle.RIGHT);
+                            break;
+                        case 1:
+                            pair.setSecond(OrthogonalAngle.STRAIGHT);
+                            break;
+                        case 2:
+                            pair.setSecond(OrthogonalAngle.LEFT);
+                            break;
+                        case 3:
+                            pair.setSecond(OrthogonalAngle.NONE);
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         getMonitor().done();
-
         return new OrthogonalRepresentation() {
-            public List<Pair<IEdge, OrthogonalAngle[]>> evaluate(IFace element) {
-                return orthogonalData.get(element);
+            public OrthogonalAngle[] getBends(final IEdge edge) {
+                return bendData.get(edge);
+            }
+
+            public List<Pair<IEdge, OrthogonalAngle>> getAngle(final INode node) {
+                return angleData.get(node);
             }
         };
     }
@@ -153,7 +230,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
         IGraph network = factory.createEmptyGraph();
         HashMap<IGraphElement, INode> map = new HashMap<IGraphElement, INode>();
         this.nodeArcs = new LinkedList<IEdge>();
-        this.faceArcs = new LinkedList<IEdge>();
+        this.faceArcs = new LinkedList<Pair<IEdge, IEdge>>();
 
         // Creating source nodes for every graph node
         for (INode node : this.graph.getNodes()) {
@@ -188,11 +265,9 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             map.put(face, newnode);
         }
 
-        // Linking nodes
+        // Creating arcs for every node adjacent to the face
         for (IFace face : this.graph.getFaces()) {
             INode newnode = map.get(face);
-
-            // Creating arcs for every node adjacent to the face
             for (INode node : face.adjacentNodes()) {
                 if (!map.containsKey(node)) {
                     throw new InconsistentGraphModelException(
@@ -204,18 +279,25 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
                 newedge.setProperty(IPathFinder.PATHCOST, 0);
                 this.nodeArcs.add(newedge);
             }
+        }
 
-            // Creating arcs for every face adjacent to the face
-            for (IFace adj : face.adjacentFaces()) {
-                if (!map.containsKey(adj)) {
-                    throw new InconsistentGraphModelException(
-                            "Attempted to link non-existent nodes by an edge.");
-                }
-                IEdge newedge = network.addEdge(map.get(adj), newnode, true);
-                newedge.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
-                newedge.setProperty(IPathFinder.PATHCOST, 1);
-                this.faceArcs.add(newedge);
+        // Creating arcs for every face adjacent to the face
+        for (IEdge edge : this.graph.getEdges()) {
+            IFace left = edge.getLeftFace();
+            IFace right = edge.getRightFace();
+
+            if (!map.containsKey(left) || !map.containsKey(right)) {
+                throw new InconsistentGraphModelException(
+                        "Attempted to link non-existent nodes by an edge.");
             }
+
+            IEdge edgeLeft = network.addEdge(map.get(left), map.get(right), true);
+            edgeLeft.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
+            edgeLeft.setProperty(IPathFinder.PATHCOST, 1);
+            IEdge edgeRight = network.addEdge(map.get(right), map.get(left), true);
+            edgeRight.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
+            edgeRight.setProperty(IPathFinder.PATHCOST, 1);
+            this.faceArcs.add(new Pair<IEdge, IEdge>(edgeLeft, edgeRight));
         }
 
         return network;

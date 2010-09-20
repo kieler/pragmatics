@@ -18,9 +18,8 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.util.IFunction;
+import de.cau.cs.kieler.klay.planar.graph.INode;
 
 /**
  * Interface for orthogonalization algorithms. Uses the Strategy design pattern to provide a common
@@ -56,8 +55,11 @@ public interface IOrthogonalizer extends IAlgorithm {
      * 
      * @author ocl
      */
-    public abstract class OrthogonalRepresentation implements
-            IFunction<IFace, List<Pair<IEdge, OrthogonalAngle[]>>> {
+    interface OrthogonalRepresentation {
+
+        OrthogonalAngle[] getBends(IEdge edge);
+
+        List<Pair<IEdge, OrthogonalAngle>> getAngle(INode node);
     }
 
     /**

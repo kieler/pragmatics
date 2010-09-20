@@ -14,15 +14,12 @@
 package de.cau.cs.kieler.klay.planar.alg.orthogonal;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.alg.flownetwork.SuccessiveShortestPathFlowSolver;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
@@ -60,34 +57,10 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
         this.graph = g;
 
         // Decompose faces into rectangles
-        for (IFace face : this.graph.getFaces()) {
 
-            // Create list of angles that define the face
-            List<OrthogonalAngle> faceBends = new LinkedList<OrthogonalAngle>();
-            for (Pair<IEdge, OrthogonalAngle[]> edgeBends : orthogonal.evaluate(face)) {
-                OrthogonalAngle[] angles = edgeBends.getSecond();
-                for (int i = 0; i < angles.length - 1; i++) {
-                    switch (angles[i]) {
-                    case RIGHT:
-                        faceBends.add(OrthogonalAngle.RIGHT);
-                        break;
-                    case LEFT:
-                        faceBends.add(OrthogonalAngle.LEFT);
-                        break;
-                    case NONE:
-                        faceBends.add(OrthogonalAngle.LEFT);
-                        faceBends.add(OrthogonalAngle.LEFT);
-                        break;
-                    case STRAIGHT:
-                    default:
-                    }
-                }
-            }
+        // Remove rectangular 'ears' from list
 
-            // Remove rectangular 'ears' from list
-
-            // TODO
-        }
+        // TODO
 
         // Solve flow networks
         Pair<IGraph, IGraph> networks = this.createFlowNetworks();
