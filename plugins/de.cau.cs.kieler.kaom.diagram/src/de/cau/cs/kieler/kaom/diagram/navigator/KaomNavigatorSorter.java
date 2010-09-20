@@ -9,20 +9,20 @@ import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
  */
 public class KaomNavigatorSorter extends ViewerSorter {
 
-	/**
-	 * @generated
-	 */
-	private static final int GROUP_CATEGORY = 7004;
+    /**
+     * @generated
+     */
+    private static final int GROUP_CATEGORY = 7004;
 
-	/**
-	 * @generated
-	 */
-	public int category(Object element) {
-		if (element instanceof KaomNavigatorItem) {
-			KaomNavigatorItem item = (KaomNavigatorItem) element;
-			return KaomVisualIDRegistry.getVisualID(item.getView());
-		}
-		return GROUP_CATEGORY;
-	}
+    /**
+     * @generated
+     */
+    public int category(Object element) {
+        if (element instanceof KaomNavigatorItem) {
+            KaomNavigatorItem item = (KaomNavigatorItem) element;
+            return KaomVisualIDRegistry.getVisualID(item.getView());
+        }
+        return GROUP_CATEGORY;
+    }
 
 }

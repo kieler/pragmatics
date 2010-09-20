@@ -18,13 +18,13 @@
 
 
 «DEFINE extendsListContents FOR gmfgen::GenNode-»
-«REM» Exchanged ussual edit parts for KARMA edit parts «ENDREM»
+«REM» Exchanged usual edit parts for KARMA edit parts «ENDREM»
 «REM» «IF hasBorderItems(self)»org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart«ELSE»org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart«ENDIF-» «ENDREM»
 «IF hasBorderItems(self)»de.cau.cs.kieler.karma.AdvancedRenderingBorderedShapeEditPart«ELSE»de.cau.cs.kieler.karma.AdvancedRenderingShapeNodeEditPart«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE extendsListContents FOR gmfgen::GenChildSideAffixedNode-»
-«REM» Exchanged ussual edit parts for KARMA edit parts «ENDREM»
+«REM» Exchanged usual edit parts for KARMA edit parts «ENDREM»
 «REM» «IF hasBorderItems(self)»org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart«ELSE»org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart«ENDIF-» «ENDREM»
 «IF hasBorderItems(self)»de.cau.cs.kieler.karma.AdvancedRenderingBorderedBorderItemEditPart«ELSE»org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart«ENDIF-»
 «ENDDEFINE»
@@ -43,4 +43,21 @@
 	public «self» getPrimaryShape() {
 		return («self») primaryShape;
 	}
+«ENDDEFINE»
+
+«DEFINE addBorderItem FOR gmfgen::GenNode-»
+    «IF getExternalLabels(self)->size() > 0-»
+        «EXPAND xpt::Common::generatedMemberComment»
+        protected void addBorderItem(org.eclipse.draw2d.IFigure borderItemContainer, org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart borderItemEditPart) {
+            if («FOREACH getExternalLabels(self) AS label SEPARATOR ' || '»borderItemEditPart instanceof «label.getEditPartQualifiedClassName()»«ENDFOREACH») {
+«REM» exchanged default label locator and set smaller default offset «ENDREM»
+                org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator locator = new de.cau.cs.kieler.core.ui.figures.layout.LabelLocator(getMainFigure(), org.eclipse.draw2d.PositionConstants.SOUTH);
+                locator.setBorderItemOffset(new org.eclipse.draw2d.geometry.Dimension(-5, -5));
+«REM» end of changes «ENDREM»
+                borderItemContainer.add(borderItemEditPart.getFigure(), locator);
+            } else {
+                super.addBorderItem(borderItemContainer, borderItemEditPart);
+            }
+        }
+    «ENDIF-»
 «ENDDEFINE»

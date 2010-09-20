@@ -41,8 +41,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.edit;visibility:=reexport,
  org.eclipse.gef;visibility:=reexport,
- de.cau.cs.kieler.core.annotations;bundle-version="0.1.0",
- de.cau.cs.kieler.core.annotations.edit;bundle-version="0.1.0",
- de.cau.cs.kieler.karma;bundle-version="0.1.0"
+ de.cau.cs.kieler.core.annotations,
+ de.cau.cs.kieler.core.annotations.edit,
+ de.cau.cs.kieler.karma,
+ de.cau.cs.kieler.core.ui
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
