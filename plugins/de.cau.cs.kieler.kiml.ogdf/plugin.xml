@@ -200,16 +200,7 @@
             parameter="CIRCULAR"
             type="de.cau.cs.kieler.layout.types.circle">
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistCircle">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC">
+               option="de.cau.cs.kieler.layout.options.minSpacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.borderSpacing">
