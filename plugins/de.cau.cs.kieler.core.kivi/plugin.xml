@@ -25,4 +25,13 @@
             category="de.cau.cs.kieler">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.cau.cs.kieler.core.kivi.preferences.CombinationsPreferencePage"
+            id="de.cau.cs.kieler.core.kivi.combinations"
+            name="Combinations"
+            category="de.cau.cs.kieler.core.kivi">
+      </page>
+   </extension>
 </plugin>

@@ -21,7 +21,7 @@ import de.cau.cs.kieler.core.kivi.KiViPlugin;
 
 /**
  * Preference initializer for the KiVi plugin.
- *
+ * 
  * @author mmu
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
@@ -32,10 +32,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     @Override
     public void initializeDefaultPreferences() {
         IPreferenceStore preferenceStore = KiViPlugin.getDefault().getPreferenceStore();
-        
+
         preferenceStore.setDefault(KiVi.PROPERTY_ACTIVE, true);
-        
-        // TODO defaults from combinations?
     }
 
 }
