@@ -77,6 +77,8 @@ public class ListItemGene extends AbstractGene<Integer> {
         super(theId, theValue, theTypeInfo, theMutationInfo);
     }
 
+    private Integer cachedHash;
+
     @Override
     public ListItemTypeInfo getTypeInfo() {
         return (ListItemTypeInfo) super.getTypeInfo();
@@ -139,11 +141,16 @@ public class ListItemGene extends AbstractGene<Integer> {
 
     @Override
     public int hashCode() {
-        // TODO cache hash value
-        final int f1 = 17881;
-        final int f2 = 41;
-        return this.getTypeInfo().getList().hashCode() * f1 + this.getId().hashCode() * f2
-                + this.getValue().hashCode();
+        if (this.cachedHash == null) {
+            final int f1 = 17881;
+            final int f2 = 41;
+            this.cachedHash =
+                    Integer.valueOf(this.getTypeInfo().getList().hashCode() * f1
+                            + this.getId().hashCode() * f2 + this.getValue().hashCode());
+
+        }
+
+        return this.cachedHash.intValue();
     }
 
     @Override

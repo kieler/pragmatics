@@ -58,39 +58,58 @@ public class Genome extends ArrayList<IGene<?>> {
                 }
             };
 
-    private static final double RADIO_GENE_DISTANCE = 2.5;
+    private static final double LIST_ITEM_GENE_DISTANCE = 2.5;
 
+    private static final double DEFAULT_GENE_DISTANCE = 1.0;
+
+    private static final float FLOAT_GENE_SCALE = 0.8f;
 
     /**
      * Returns the distance between the given genomes. The genomes must be
      * compatible, i.e. have the same gene types in the same order.
      *
-     * @param g0
+     * @param genome0
      *            a {@link Genome}
-     * @param g1
+     * @param genome1
      *            another {@link Genome}
      * @return the distance between the genomes
      */
-    public static final double distance(final Genome g0, final Genome g1) {
+    public static final double distance(final Genome genome0, final Genome genome1) {
 
-        Assert.isLegal((g0 != null) && (g1 != null) && (g0.size() == g1.size()));
-        if ((g0 == null) || (g1 == null)) {
+        Assert.isLegal((genome0 != null) && (genome1 != null)
+                && (genome0.size() == genome1.size()));
+        if ((genome0 == null) || (genome1 == null)) {
             return 0.0;
         }
 
         Iterator<?> iter0;
         Iterator<?> iter1;
         double dist = 0.0;
-        for (iter0 = g0.iterator(), iter1 = g1.iterator(); iter0.hasNext() && iter1.hasNext();) {
+        for (iter0 = genome0.iterator(), iter1 = genome1.iterator(); iter0.hasNext()
+                && iter1.hasNext();) {
             final IGene<?> gene0 = (IGene<?>) iter0.next();
             final IGene<?> gene1 = (IGene<?>) iter1.next();
 
             if (!gene0.equals(gene1)) {
                 System.out.println(gene0 + " !equals " + gene1);
-                if (gene0 instanceof RadioGene) {
-                    dist += RADIO_GENE_DISTANCE;
+                if (gene0 instanceof ListItemGene) {
+                    dist += LIST_ITEM_GENE_DISTANCE;
+                } else if ((gene0 instanceof UniversalGene)
+                        && (((UniversalGene) gene0).getTypeInfo().getTypeClass() == Float.class)) {
+                    // Distance of float genes is analogous to the absolute
+                    // difference, related to the variance in order to make it
+                    // more comparable.
+                    final UniversalGene g0 = ((UniversalGene) gene0);
+                    final UniversalGene g1 = ((UniversalGene) gene1);
+                    final double var0 = g0.getMutationInfo().getVariance();
+                    final double var1 = g1.getMutationInfo().getVariance();
+                    final double var = (var0 + var1) * .5;
+                    final float absDiff =
+                            Math.abs(g0.getValue().floatValue() - g1.getValue().floatValue());
+                    dist += absDiff * FLOAT_GENE_SCALE / var;
+
                 } else {
-                    dist++;
+                    dist += DEFAULT_GENE_DISTANCE;
                 }
             }
         }

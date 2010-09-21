@@ -82,6 +82,36 @@ public final class EnumGene extends AbstractGene<Integer> {
         return result;
     }
 
+    @Override
+    public boolean equals(final Object theObj) {
+        if (!(theObj instanceof EnumGene)) {
+            return false;
+        }
+
+        final EnumGene eg2 = (EnumGene) theObj;
+
+        return (eg2.getEnumClass().equals(this.getEnumClass())
+                && (eg2.getId().equals(this.getId())) && eg2.getValue().equals(this.getValue()));
+    }
+
+    @Override
+    public EnumTypeInfo getTypeInfo() {
+        return (EnumTypeInfo) super.getTypeInfo();
+    }
+
+    @Override
+    public int hashCode() {
+        if (this.cachedHash == null) {
+            final int f1 = 17881;
+            final int f2 = 41;
+            this.cachedHash =
+                    Integer.valueOf((this.getEnumClass().hashCode() * f1
+                            + this.getId().hashCode() * f2 + this.getValue().hashCode()));
+        }
+
+        return this.cachedHash.intValue();
+    }
+
     private EnumGene newMutation(final EnumGene template, final MutationInfo mutationInfo) {
         return new EnumMutator().newMutation(template, mutationInfo);
     }
@@ -138,17 +168,13 @@ public final class EnumGene extends AbstractGene<Integer> {
         }
     }
 
-    @Override
-    public EnumTypeInfo getTypeInfo() {
-        return (EnumTypeInfo) super.getTypeInfo();
-    }
-
 
     private Class<? extends Enum<?>> getEnumClass() {
         return getTypeInfo().getTypeClass();
     }
 
     // private fields
+    private Integer cachedHash;
 
     private static final IValueFormatter ENUM_FORMATTER = new IValueFormatter() {
         public String getString(final Object o) {
@@ -183,28 +209,5 @@ public final class EnumGene extends AbstractGene<Integer> {
             return null;
         }
     };
-
-    @Override
-    public boolean equals(final Object theObj) {
-        if (!(theObj instanceof EnumGene)) {
-            return false;
-        }
-
-        final EnumGene eg2 = (EnumGene) theObj;
-
-        return (eg2.getEnumClass().equals(this.getEnumClass())
-                && (eg2.getId().equals(this.getId())) && eg2.getValue().equals(
-                this.getValue()));
-    }
-
-    @Override
-    public int hashCode() {
-        // TODO cache hash value
-        final int f1 = 17881;
-        final int f2 = 41;
-        return this.getEnumClass().hashCode() * f1 + this.getId().hashCode() * f2
-                + this.getValue().hashCode();
-
-    }
 
 }

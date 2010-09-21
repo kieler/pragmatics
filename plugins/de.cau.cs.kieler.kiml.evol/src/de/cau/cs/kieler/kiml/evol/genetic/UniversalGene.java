@@ -104,6 +104,8 @@ public class UniversalGene extends AbstractGene<Float> {
             Float.valueOf(Float.NEGATIVE_INFINITY), Float.valueOf(Float.POSITIVE_INFINITY),
             FLOAT_FORMATTER, Float.class);
 
+    private Integer cachedHash;
+
     @Override
     public String toString() {
         String result = getTypeInfo().getValueFormatter().getString(this);
@@ -413,11 +415,16 @@ public class UniversalGene extends AbstractGene<Float> {
 
     @Override
     public int hashCode() {
-        // TODO cache hash value
-        final int f1 = 17881;
-        final int f2 = 41;
-        return this.getTypeInfo().getTypeClass().hashCode() * f1 + this.getId().hashCode() * f2
-                + this.getValue().hashCode();
+        if (this.cachedHash == null) {
+            final int f1 = 17881;
+            final int f2 = 41;
+            this.cachedHash =
+                    Integer.valueOf(this.getTypeInfo().getTypeClass().hashCode() * f1
+                            + this.getId().hashCode() * f2 + this.getValue().hashCode());
+        }
+        
+        return this.cachedHash.intValue();
+
     }
 
     @Override

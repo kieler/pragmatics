@@ -71,7 +71,12 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         System.out.println("*** cross over");
         if (!selection.isEmpty()) {
             final int proposal = (int) Math.round(selection.size() * CROSS_OVER_RATIO);
-            final int min = MIN_CROSS_OVERS;
+
+            // pad minimum population
+            final int missing =
+                    ((population.size() < MIN_SURVIVORS) ? MIN_SURVIVORS - population.size() : 0);
+
+            final int min = MIN_CROSS_OVERS + missing;
             final int max = MAX_CROSS_OVERS;
             final int crossOvers = ((proposal < min) ? min : (proposal > max) ? max : proposal);
             offspring = new Population();
@@ -112,6 +117,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     protected void determineFitness() {
         System.out.println("*** determineFitness");
         // fitness is determined by the rating value.
+        System.out.println(this.population.getDetails());
     }
 
     @Override
@@ -162,7 +168,8 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         population.toArray(individuals);
         Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
 
-        // only some are allowed to generate offspring
+        // Only some are allowed to generate offspring
+        // These are selected by truncation.
         final int min = MIN_SELECT;
         final int max = MAX_SELECT;
         final int proposal = (int) Math.round(individuals.length * SELECTION_RATIO);
@@ -196,8 +203,11 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         final double minDist = individuals[0].size() * .2;
         final Population survivors = new Population();
         final Population victims = new Population(population);
+
         System.out.println(" -- keep " + keep + " of " + count);
         for (final Genome ind : individuals) {
+            // in order to keep some variety, prevent too similar genomes from
+            // surviving
             if (survivors.size() < keep) {
                 final Genome comp = survivors.pick();
                 final Genome comp2 = survivors.pick();
@@ -213,7 +223,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
             }
         }
         if (survivors.size() < keep) {
-            System.out.println(survivors.size());
+            System.out.println("Only " + survivors.size() + " survive");
         }
         population = new Population(survivors);
         System.out.println(" -- dying out: ");
