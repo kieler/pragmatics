@@ -20,7 +20,6 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.alg.flownetwork.SuccessiveShortestPathFlowSolver;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
@@ -53,7 +52,7 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
     /**
      * {@inheritDoc}
      */
-    public void compact(final IGraph g, final OrthogonalRepresentation orthogonal) {
+    public void compact(final IGraph g, final IOrthogonalRepresentation orthogonal) {
         this.graph = g;
 
         // Decompose faces into rectangles
