@@ -75,48 +75,55 @@ public class KaomFigureProvider implements IRenderingProvider {
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object) {
-        if (input.equals("ptolemyObject")) {
-            return getDefaultFigure();
+        if (input.equals("_IconDescription")) {
+            if (object instanceof de.cau.cs.kieler.kaom.Entity) {
+                de.cau.cs.kieler.kaom.Entity myEntity = (de.cau.cs.kieler.kaom.Entity) object;
+                Annotation annotation = myEntity.getAnnotation("ptolemyClass");
+                if (annotation instanceof StringAnnotation){
+                    String ptolemyClassString = ((StringAnnotation)annotation).getValue();                   
+                    try {               
+                        Class ptolemy = Class.forName(ptolemyClassString);
+                        Constructor constr = ptolemy.getConstructor(CompositeEntity.class, String.class);
+                        Object obj = constr.newInstance(new CompositeEntity(), "test");
+                        if (obj instanceof Entity) {
+                            Entity entity = (Entity) obj;
+                            TestIconLoader til = new TestIconLoader(); 
+                            try {
+                                til.loadIconForClass(Ramp.class.getName(), entity);
+                            } catch (Exception e) { 
+                                // TODO Auto-generated catch block 
+                                e.printStackTrace(); 
+                            }
+                            List<EditorIcon> icons = entity.attributeList(EditorIcon.class);
+                            ConfigurableAttribute ca = null;
+                            String svg = "";
+                            if (icons.isEmpty()) {
+                                ca = (ConfigurableAttribute) entity.getAttribute("_iconDescription");
+
+                                svg = ca.getConfigureText();
+                            }
+                            svg = repairSvg(svg);
+                            if (svg == null){
+                                return getDefaultFigure();
+                            } else {
+                            return createSvg(svg);
+                            }
+                        }
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+                        throw new RuntimeException("initializing svg from ptolemyClass failed");
         } else if(input.equals("ptolemy.actor.lib.MonitorValue")){
             return createMonitorValue(object); 
         } else if(input.equals("ptolemy.domains.sr.kernel.SRDirector")) {
             return createDirector();
         } else {
-            try {
-                Class ptolemy = Class.forName(input);
-                Constructor constr = ptolemy.getConstructor(CompositeEntity.class, String.class);
-                Object obj = constr.newInstance(new CompositeEntity(), "test");
-                if (obj instanceof Entity) {
-                    Entity entity = (Entity) obj;
-                    TestIconLoader til = new TestIconLoader(); 
-                    try {
-                        til.loadIconForClass(Ramp.class.getName(), entity);
-                    } catch (Exception e) { 
-                        // TODO Auto-generated catch block 
-                        e.printStackTrace(); 
-                    }
-                    List<EditorIcon> icons = entity.attributeList(EditorIcon.class);
-                    ConfigurableAttribute ca = null;
-                    String svg = "";
-                    if (icons.isEmpty()) {
-                        ca = (ConfigurableAttribute) entity.getAttribute("_iconDescription");
-
-                        svg = ca.getConfigureText();
-                    }
-                    svg = repairSvg(svg);
-                    if (svg == null){
-                        return getDefaultFigure();
-                    } else {
-                    return createSvg(svg);
-                    }
-                }
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            throw new RuntimeException("initializing svg from ptolemyClass failed");
+            return getDefaultFigure();
         }
-       
     }
 
     /**

@@ -9,35 +9,11 @@
          <conditions>
             <customCondition
                   condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.Ramp"
-                  figureSize="60,40"
-                  key="ptolemyClass"
-                  layoutParam="ramp"
-                  value="ptolemy.actor.lib.Ramp">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.AddSubtract"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="addSubtract"
-                  value="ptolemy.actor.lib.AddSubtract">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
                   figureParam="ptolemy.actor.lib.MonitorValue"
                   figureSize="160,30"
                   key="ptolemyClass"
                   layoutParam="ptolemy.actor.lib.MonitorValue"
                   value="ptolemy.actor.lib.MonitorValue">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.MultiplyDivide"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.MultiplyDivide"
-                  value="ptolemy.actor.lib.MultiplyDivide">
             </customCondition>
             <customCondition
                   condition="de.cau.cs.kieler.karma.RecursiveAnnotationCondition"
@@ -48,150 +24,32 @@
                   value="ptolemy.domains.sr.kernel.SRDirector">
             </customCondition>
             <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.gui.InteractiveShell"
-                  figureSize="40,40"
+                  condition="de.cau.cs.kieler.karma.RecursiveAnnotationCondition"
+                  figureParam="ptolemy.actor.TypedCompositeActor"
                   key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.gui.InteractiveShell"
-                  value="ptolemy.actor.lib.gui.InteractiveShell">
+                  layoutParam="ptolemy.actor.TypedCompositeActor"
+                  value="ptolemy.actor.TypedCompositeActor">
             </customCondition>
+            <compoundCondition
+                  figureParam="icon">
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     figureParam="icon"
+                     key="ptolemyClass"
+                     value="ptolemyClass">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     figureParam="icon"
+                     key="_icon"
+                     value="_icon">
+               </customCondition>
+            </compoundCondition>
             <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.Interpolator"
-                  figureSize="60,40"
+                  condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                  figureParam="_IconDescription"
                   key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.Interpolator"
-                  value="ptolemy.actor.lib.Interpolator">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.Pulse"
-                  figureSize="60,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.Pulse"
-                  value="ptolemy.actor.lib.Pulse">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.gui.SketchedSource"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.gui.SketchedSource"
-                  value="ptolemy.actor.lib.gui.SketchedSource">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.DiscreteClock"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.DiscreteClock"
-                  value="ptolemy.actor.lib.DiscreteClock">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.CurrentTime"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.CurrentTime"
-                  value="ptolemy.actor.lib.CurrentTime">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.PoissonClock"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.PoissonClock"
-                  value="ptolemy.actor.lib.PoissonClock">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.TriggeredClock"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.TriggeredClock"
-                  value="ptolemy.actor.lib.TriggeredClock">
-            </customCondition>
-         </conditions>
-         <editPart
-               editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart">
-         </editPart>
-      </configuration>
-      <configuration
-            Priority="5"
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomFigureProvider">
-         <conditions>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.gui.ArrayPlotterXY"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.gui.ArrayPlotterXY"
-                  value="ptolemy.actor.lib.gui.ArrayPlotterXY">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.Discard"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.Discard"
-                  value="ptolemy.actor.lib.Discard">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.gui.Display"
-                  figureSize="40,25"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.gui.Display"
-                  value="ptolemy.actor.lib.gui.Display">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.Publisher"
-                  figureSize="15,10"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.Publisher"
-                  value="ptolemy.actor.lib.Publisher">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.Recorder"
-                  figureSize="60,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.Recorder"
-                  value="ptolemy.actor.lib.Recorder">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.gui.XYPlotter"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.gui.XYPlotter"
-                  value="ptolemy.actor.lib.gui.XYPlotter">
-            </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.gui.XYScope"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.gui.XYScope"
-                  value="ptolemy.actor.lib.gui.XYScope">
-            </customCondition>
-         </conditions>
-         <editPart
-               editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart">
-         </editPart>
-      </configuration>
-      <configuration
-            Priority="5"
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomFigureProvider">
-         <conditions>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.gui.ArrayPlotterXY"
-                  figureSize="40,40"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.lib.gui.ArrayPlotterXY"
-                  value="ptolemy.actor.lib.gui.ArrayPlotterXY">
+                  value="ptolemyClass">
             </customCondition>
          </conditions>
          <editPart
