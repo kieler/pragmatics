@@ -27,14 +27,14 @@ import de.cau.cs.kieler.kiml.evol.genetic.ListItemGene;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * Provides labels for LayoutSet table.
+ * Provides labels for the population table of {@link EvolView}.
  *
  * @author bdu
  *
  */
 public class PopulationTableLabelProvider extends LabelProvider implements ITableLabelProvider {
     /**
-     *
+     * The evolution view.
      */
     private final EvolView evolView;
 
@@ -49,9 +49,15 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
         // Nothing to do here.
     }
 
+    /**
+     * Image for the currently selected row.
+     */
     private final Image currentImage = AbstractUIPlugin.imageDescriptorFromPlugin(
             EvolPlugin.PLUGIN_ID, "icons/current.png").createImage();
 
+    /**
+     * Image for a non-selected row.
+     */
     private final Image defaultImage = AbstractUIPlugin.imageDescriptorFromPlugin(
             EvolPlugin.PLUGIN_ID, "icons/default.png").createImage();
 
@@ -83,7 +89,7 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
      * {@inheritDoc}
      */
     public String getColumnText(final Object element, final int columnIndex) {
-        // TODO: use CellLabelProviders
+        // Note: this may be improved by using CellLabelProviders
 
         final Genome individual = ((PopulationTableEntry) element).getIndividual();
         switch (columnIndex) {
