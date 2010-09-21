@@ -94,19 +94,19 @@ public class LayoutEffect extends AbstractEffect {
             double scaleY = Math.min(available.height / (double) desired.height,
                     zoomManager.getMaxZoom());
             final double scale = Math.min(scaleX, scaleY);
-            final boolean zoomPre = scale < zoomManager.getZoom();
+            final double oldScale = zoomManager.getZoom();
 
             MonitoredOperation.runInUI(new Runnable() {
                 // third phase: apply layout with animation
                 public void run() {
-                    if (zoomPre) {
+                    if (scale < oldScale) {
                         zoomManager.setViewLocation(new Point(0, 0));
                         zoomManager.setZoom(scale);
                         zoomManager.setViewLocation(new Point(0, 0));
                     }
                     int nodeCount = status == null ? 0 : status.getCode();
                     manager.applyAnimatedLayout(true, false, nodeCount);
-                    if (!zoomPre) {
+                    if (scale > oldScale) {
                         zoomManager.setViewLocation(new Point(0, 0));
                         zoomManager.setZoom(scale);
                         zoomManager.setViewLocation(new Point(0, 0));
