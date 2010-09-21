@@ -14,13 +14,14 @@
 package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.evol.EvolutionServices;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 /**
@@ -45,16 +46,19 @@ public class WeightedAggregation implements IAnalysis {
             // TODO: read and use weights
             double sum = 0.0;
             int count = 0;
-            for (final Entry<String, Object> entry : results.entrySet()) {
-                if (entry.getKey().toLowerCase().contains("metric")) {
-                    final Object val = entry.getValue();
-                    if (val instanceof Float) {
-                        sum += ((Float) val).doubleValue();
-                        count++;
-                        System.out.println(entry.getKey() + ": " + val + " ");
-                    }
+
+            final Set<String> layoutMetricsIds =
+                    EvolutionServices.getInstance().getLayoutMetricsIds();
+
+            for (final String metricId : layoutMetricsIds) {
+                final Object val = results.get(metricId);
+                if (val instanceof Float) {
+                    sum += ((Float) val).doubleValue();
+                    count++;
+                    System.out.println(metricId + ": " + val + " ");
                 }
             }
+
             System.out.println();
             if (count == 0) {
                 return Float.valueOf(Float.NaN);
