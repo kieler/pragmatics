@@ -40,16 +40,18 @@ import de.cau.cs.kieler.kiml.evol.ui.EvolView;
  */
 public class EvolveHandler extends AbstractHandler {
     /**
+     * A job change adapter that can be used to react on an evolution job.
+     *
      * @author bdu
      *
      */
     private static final class EvolutionJobChangeAdapter extends JobChangeAdapter {
         /**
-         *
+         * The progress monitor.
          */
         private final IProgressMonitor monitor;
         /**
-         *
+         * The evolution model.
          */
         private final EvolModel model;
         private final boolean isAutoRatingEnabled;
@@ -94,21 +96,25 @@ public class EvolveHandler extends AbstractHandler {
     }
 
     /**
+     *
      * @author bdu
      *
      */
     private static final class EvolveJob extends Job {
 
         /**
-         *
+         * The evolution model.
          */
         private final EvolModel model;
 
         /**
-         * Creates a new {@link EvolveJob} instance.
+         * Creates a new {@link EvolveJob} instance. This job can perform an
+         * evolutionary step on the evolution model it is initialized with.
          *
          * @param theName
+         *            the name of the job
          * @param theModel
+         *            the evolution model
          */
         EvolveJob(final String theName, final EvolModel theModel) {
             super(theName);
@@ -128,13 +134,13 @@ public class EvolveHandler extends AbstractHandler {
 
     // Parameter identifiers.
     /**
-     *
+     * Identifier for the parameter "Steps before auto rating".
      */
     private static final String PARAM_STEPS_PER_AUTO_RATING =
             "de.cau.cs.kieler.kiml.evol.stepsBeforeAutoRating";
-
+    
     /**
-     *
+     * Identifier for the parameter "maximum steps".
      */
     private static final String PARAM_MAX_STEPS = "de.cau.cs.kieler.kiml.evol.steps";
 

@@ -106,7 +106,7 @@ public class EvolView extends ViewPart {
             Assert.isNotNull(source);
 
             if (EvolUtil.getCurrentEditor() == null) {
-                System.err.println("We are not in the UI thread: " + cause);
+                System.err.println("There is no current editor: " + cause);
                 // TODO: eliminate these cases
             }
 
@@ -158,6 +158,8 @@ public class EvolView extends ViewPart {
     }
 
     /**
+     * Action for toggling between "multiple editors" and "single editor" mode.
+     *
      * @author bdu
      *
      */
@@ -166,6 +168,8 @@ public class EvolView extends ViewPart {
          * Creates a new {@link MultipleEditorsAction} instance.
          *
          * @param theText
+         *            the string used as the text for the action, or null if
+         *            there is no text
          */
         MultipleEditorsAction(final String theText) {
             super(theText);
@@ -189,6 +193,8 @@ public class EvolView extends ViewPart {
     }
 
     /**
+     * A Runnable that sets a population as input for a table viewer.
+     *
      * @author bdu
      *
      */
@@ -206,7 +212,10 @@ public class EvolView extends ViewPart {
          * Creates a new {@link InputSetterRunnable} instance.
          *
          * @param thePopulation
+         *            the population that shall be set as new input for the
+         *            table viewer
          * @param theTableViewer
+         *            the table viewer
          */
         InputSetterRunnable(final Population thePopulation, final TableViewer theTableViewer) {
             this.population = thePopulation;
@@ -383,12 +392,7 @@ public class EvolView extends ViewPart {
 
         // create table view
         final Table table = new Table(parent, SWT.BORDER | SWT.BORDER_SOLID);
-        // Composite tableComposite = new Composite(parent, SWT.NONE);
-        // TableColumnLayout tableColumnLayout = new TableColumnLayout();
-        // tableComposite.setLayout(tableColumnLayout);
-        // tableViewer = new TableViewer(tableComposite, SWT.BORDER |
-        // SWT.FULL_SELECTION);
-        // Table table = tableViewer.getTable();
+
         final TableColumn column = new TableColumn(table, SWT.NONE);
         column.setWidth(WIDE_COLUMN_WIDTH);
         final TableColumn column2 = new TableColumn(table, SWT.NONE);
@@ -411,12 +415,12 @@ public class EvolView extends ViewPart {
         final ISelectionChangedListener listener = new SelectionChangedListener(tv);
         tv.addPostSelectionChangedListener(listener);
 
-        // Add the toggle button
+        // Add the "multiple editors" toggle button. All the other buttons are
+        // added later via extension point, so we can't change their order as we
+        // would like.
         final IToolBarManager tm = this.getViewSite().getActionBars().getToolBarManager();
         final IAction multipleEditorsAction = new MultipleEditorsAction("Multiple editors");
         tm.add(multipleEditorsAction);
-        // XXX too bad all the other buttons are added later via extension point
-        // so we can't change their order as we would like
 
         // Set the population as input in order to populate the view.
         this.modelListener.populationChange(this.evolModel.getPopulation(), this.tableViewer);
