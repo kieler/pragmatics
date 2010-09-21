@@ -98,28 +98,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 }
 
                 // add edges for faces laying at the same hypernode in dualgraph
-                for (INode node : graph.getNodes()) {
-                    if (node.getType() == NodeType.HYPER) {
-                        LinkedList<INode> dualNodes = new LinkedList<INode>();
-                        IFace face = null;
-                        for (IEdge edge : node.adjacentEdges()) {
-                            if (node == edge.getSource()) {
-                                face = edge.getRightFace();
-                            } else {
-                                face = edge.getLeftFace();
-                            }
-                            INode dualNode = (INode) face.getProperty(IGraphFactory.TODUALGRAPH);
-                            dualNodes.add(dualNode);
-                        }
-                        for (INode iNode : dualNodes) {
-                            for (INode iNode2 : dualNodes) {
-                                if (iNode != iNode2) {
-                                    dualGraph.addEdge(iNode, iNode2, false);
-                                }
-                            }
-                        }
-                    }
-                }
+                extendDualGraph(graph, dualGraph);
 
                 // find the shortest path through dual graph via dijkstra
                 List<IEdge> dualEdgePath = dijkstra.findPath(dualStartNode, dualTargetNode);
@@ -140,8 +119,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 int pathNodeCounter = 0;
                 while (pathNodeCounter < path.size() - 1) {
 
+                    // split up the crossed hypernodes
                     if (path.get(pathNodeCounter).getType() == NodeType.HYPER) {
-                        // split up the crossed hypernodes
                         splitUpHypernodes(path, graph, pathNodeCounter);
                     }
 
@@ -164,6 +143,40 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 }
             }
         }
+    }
+
+    /**
+     * add edges for faces laying at the same hypernode in dualgraph.
+     * 
+     * @param graph
+     *            , the given graph
+     * @param dualGraph
+     *            , the dual graph of the given graph + 2 nodes
+     */
+    private void extendDualGraph(IGraph graph, IGraph dualGraph) {
+        for (INode node : graph.getNodes()) {
+            if (node.getType() == NodeType.HYPER) {
+                LinkedList<INode> dualNodes = new LinkedList<INode>();
+                IFace face = null;
+                for (IEdge edge : node.adjacentEdges()) {
+                    if (node == edge.getSource()) {
+                        face = edge.getRightFace();
+                    } else {
+                        face = edge.getLeftFace();
+                    }
+                    INode dualNode = (INode) face.getProperty(IGraphFactory.TODUALGRAPH);
+                    dualNodes.add(dualNode);
+                }
+                for (INode iNode : dualNodes) {
+                    for (INode iNode2 : dualNodes) {
+                        if (iNode != iNode2) {
+                            dualGraph.addEdge(iNode, iNode2, false);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     /**
@@ -272,7 +285,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * 
      * @param dualEdgePath
      *            , a path of edges through the dual graph
-     * @return
+     * @return shortestFacePath, a path of faces
      */
     private LinkedList<IFace> getShortestFacePath(List<IEdge> dualEdgePath) {
         LinkedList<IFace> shortestFacePath = new LinkedList<IFace>();
@@ -281,6 +294,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         for (IEdge iEdge : dualEdgePath) {
             IFace firstFace = (IFace) iEdge.getSource().getProperty(IGraphFactory.TODUALGRAPH);
             IFace secondFace = (IFace) iEdge.getTarget().getProperty(IGraphFactory.TODUALGRAPH);
+
             if (!shortestFacePath.contains(firstFace) && firstFace != null) {
                 shortestFacePath.add(firstFace);
             }
@@ -295,8 +309,10 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * returns all pre edges at the source nodes of a path
      * 
      * @param nodePath
+     *            , the path of nodes
      * @param facePath
-     * @return
+     *            , the path of faces adjacent to the nodes
+     * @return sourcePreEdges, all pre edges at the source nodes
      */
     private List<IEdge> getSourcePreEdges(ArrayList<INode> nodePath, LinkedList<IFace> facePath) {
         LinkedList<IEdge> sourcePreEdges = new LinkedList<IEdge>();
@@ -327,8 +343,10 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * returns all pre edges at the target nodes of a path
      * 
      * @param nodePath
+     *            , the path of nodes
      * @param facePath
-     * @return
+     *            , the path of faces adjacent to the nodes
+     * @return targetPreEdges, all pre edges at the target nodes
      */
     private List<IEdge> getTargetPreEdges(ArrayList<INode> nodePath, LinkedList<IFace> facePath) {
         LinkedList<IEdge> targetPreEdges = new LinkedList<IEdge>();
@@ -359,9 +377,9 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * Find the next edge on a node.
      * 
      * @param node
-     *            the node containing the edges
+     *            , the node containing the edges
      * @param edge
-     *            the current edge
+     *            , the current edge
      * @return the next edge
      */
     private IEdge getNextClockwiseEdge(final INode node, final IEdge edge) {
@@ -493,11 +511,9 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
                         // remove all unneeded hypernodes
                         graph.removeNode(inode);
-
                     }
                 }
             }
         }
     }
-
 }
