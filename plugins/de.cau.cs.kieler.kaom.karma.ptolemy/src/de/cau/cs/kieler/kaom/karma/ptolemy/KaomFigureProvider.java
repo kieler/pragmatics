@@ -73,7 +73,7 @@ public class KaomFigureProvider implements IRenderingProvider {
             if (object instanceof de.cau.cs.kieler.kaom.Entity) {
                 de.cau.cs.kieler.kaom.Entity myEntity = (de.cau.cs.kieler.kaom.Entity) object;
                 Annotation annotation = myEntity.getAnnotation("ptolemyClass");
-                if (annotation instanceof StringAnnotation) {
+                if (annotation != null && annotation instanceof StringAnnotation) {
                     String ptolemyClassString = ((StringAnnotation) annotation).getValue();
                     try {
                         Class ptolemy = Class.forName(ptolemyClassString);
@@ -110,12 +110,14 @@ public class KaomFigureProvider implements IRenderingProvider {
                         e.printStackTrace();
                     }
 
+                } else {
+                    return getDefaultFigure();
                 }
             }
             throw new RuntimeException("initializing svg from ptolemyClass failed");
         } else if (input.equals("ptolemy.actor.lib.MonitorValue")) {
             return createMonitorValue(object);
-        } else if (input.equals("ptolemy.domains.sr.kernel.SRDirector")) {
+        } else if (input.equals("Director")) {
             return createDirector();
         } else {
             return getDefaultFigure();
