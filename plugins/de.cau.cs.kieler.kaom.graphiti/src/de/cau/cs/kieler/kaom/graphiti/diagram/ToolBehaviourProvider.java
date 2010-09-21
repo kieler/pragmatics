@@ -25,7 +25,6 @@ import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
-//import org.eclipse.graphiti.features.context.impl.CustomContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -34,7 +33,6 @@ import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
-import org.eclipse.graphiti.platform.IPlatformImageConstants;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.tb.ContextButtonEntry;
 import org.eclipse.graphiti.tb.ContextMenuEntry;
@@ -42,7 +40,6 @@ import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
 import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.graphiti.tb.IDecorator;
-import org.eclipse.graphiti.tb.ImageDecorator;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.graphiti.features.RenameEntityFeature;
@@ -137,7 +134,7 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
         ContextButtonEntry button = new ContextButtonEntry(null, context);
         button.setText("Create Connection");
-        button.setIconId(ImageProvider.IMAGE_EREFERENCE);
+        button.setIconId(ImageProvider.IMAGE_LINK);
         ICreateConnectionFeature[] features = getFeatureProvider().getCreateConnectionFeatures();
         for (ICreateConnectionFeature feature : features) {
             if (feature.isAvailable(ccc) && feature.canStartConnection(ccc)) {
@@ -212,19 +209,7 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
      */
     @Override
     public IDecorator[] getDecorators(final PictogramElement pe) {
-        IFeatureProvider featureProvider = getFeatureProvider();
-        Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
-        if (obj instanceof Entity) {
-            Entity eClass = (Entity) obj;
-            String name = eClass.getName();
-            if (name != null && name.length() > 0
-                    && !(name.charAt(0) >= 'A' && name.charAt(0) <= 'Z')) {
-                IDecorator imageDecorator = new ImageDecorator(
-                        IPlatformImageConstants.IMG_ECLIPSE_WARNING_TSK);
-                imageDecorator.setMessage("Name should start with an upper case");
-                return new IDecorator[] { imageDecorator };
-            }
-        }
+        // TODO add validation mechanism here
         return super.getDecorators(pe);
     }
     

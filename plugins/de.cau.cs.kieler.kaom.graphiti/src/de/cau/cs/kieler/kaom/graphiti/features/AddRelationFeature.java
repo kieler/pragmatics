@@ -13,9 +13,6 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-import java.util.List;
-
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
@@ -124,11 +121,8 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
      *            Adds the new RELATION formed to its container ENTITY
      */
     private void addToDiagram(final Relation newRelation, final IAddContext context) {
-        ContainerShape container = context.getTargetContainer();
-        Entity entity = (Entity) getBusinessObjectForPictogramElement(container);
-        if (entity == null && container instanceof Diagram) {
-            entity = ((KaomDiagramEditor) getDiagramEditor()).findTopEntity((Diagram) container);
-        }
+        Entity entity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(
+                context.getTargetContainer());
         entity.getChildRelations().add(newRelation);
     }
 

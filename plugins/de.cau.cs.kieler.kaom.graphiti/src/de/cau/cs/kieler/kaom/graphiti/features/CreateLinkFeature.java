@@ -168,10 +168,7 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
      */
 
     private void addToDiagram(final Link newLink, final Object source, final Object target) {
-        Entity topEntity = (Entity) getBusinessObjectForPictogramElement(getDiagram());
-        if (topEntity == null) {
-            topEntity = ((KaomDiagramEditor) getDiagramEditor()).findTopEntity(getDiagram());
-        }
+        Entity topEntity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(getDiagram());
         topEntity.getChildLinks().add(newLink);
     }
 

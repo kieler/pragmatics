@@ -167,10 +167,7 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
      * @return the parent entity
      */
     private Entity getParentEntity(final ContainerShape container) {
-        Entity entity = (Entity) getBusinessObjectForPictogramElement(container);
-        if (entity == null && container instanceof Diagram) {
-            entity = ((KaomDiagramEditor) getDiagramEditor()).findTopEntity((Diagram) container);
-        }
+        Entity entity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(container);
         return entity;
     }
 

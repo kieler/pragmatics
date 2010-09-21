@@ -14,45 +14,49 @@
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.graphiti.util.GraphitiUtil;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.impl.AbstractLayoutFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
-import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.services.IGaService;
 
 /**
+ * Feature used to layout an entity and adjust its components after resizing has occurred.
  * 
- * @author atr Class used to layout the entity object and adjust its components after resizing has
- *         occurred
+ * @author atr
  */
 public class LayoutEntityFeature extends AbstractLayoutFeature {
 
-    private static final int MIN_HEIGHT = 30;
-    private static final int MIN_WIDTH = 50;
+    /** minimal width for entities. */
+    public static final int MIN_WIDTH = 30;
+    /** minimal width for the port container shapes. */
+    public static final int MIN_CONTAINER_WIDTH = MIN_WIDTH + 2 * AddPortFeature.PORT_SIZE;
+    /** minimal height for entities. */
+    public static final int MIN_HEIGHT = 30;
+    /** minimal height for the port container shapes. */
+    public static final int MIN_CONTAINER_HEIGHT = MIN_HEIGHT + 2 * AddPortFeature.PORT_SIZE;
 
+    /** the distance of the separator line from the top margin. */
+    private static final int SEPARATOR_DIST = 20;
+    
     /**
+     * The constructor.
      * 
-     * @param fp
-     *            Constructor
+     * @param fp the feature provider
      */
     public LayoutEntityFeature(final IFeatureProvider fp) {
         super(fp);
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public boolean canLayout(final ILayoutContext context) {
@@ -61,78 +65,51 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
             EList<EObject> ob = pe.getLink().getBusinessObjects();
             return ob.size() == 1 && (ob.get(0) instanceof Entity);
         }
-
         return false;
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public boolean layout(final ILayoutContext context) {
-
         boolean changed = false;
         ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
         GraphicsAlgorithm containerGa = containerShape.getGraphicsAlgorithm();
-        IGaService gaService = Graphiti.getGaService();
-
         
-        if (containerGa.getHeight() < MIN_HEIGHT) {
-            containerGa.setHeight(MIN_HEIGHT);
+        if (containerGa.getHeight() < MIN_CONTAINER_HEIGHT) {
+            containerGa.setHeight(MIN_CONTAINER_HEIGHT);
+            changed = true;
+        }
+        if (containerGa.getWidth() < MIN_CONTAINER_WIDTH) {
+            containerGa.setWidth(MIN_CONTAINER_WIDTH);
             changed = true;
         }
 
-        if (containerGa.getWidth() < MIN_WIDTH) {
-            containerGa.setWidth(MIN_WIDTH);
-            changed = true;
+        // container width initially of the invisible rectangle
+        // now adjusted to the width of the normal inner rectangle
+        int entityWidth = containerGa.getWidth() - 2 * AddPortFeature.PORT_SIZE;
+        int entityHeight = containerGa.getHeight() - 2 * AddPortFeature.PORT_SIZE;
+        for (GraphicsAlgorithm child : containerGa.getGraphicsAlgorithmChildren()) {
+            changed |= GraphitiUtil.setBounds(child, AddPortFeature.PORT_SIZE, AddPortFeature.PORT_SIZE,
+                    entityWidth, entityHeight);
         }
 
-        //Container width initially of the invisible rectangle now
-        //adjusted to the width of the normal inner rectangle
-      
-        int containerWidth = containerGa.getWidth() - 2 * AddPortFeature.INVISIBLE_RECTANGLE_WIDTH;
-        if (containerGa instanceof Rectangle) {
-
-            Rectangle rectangle = (Rectangle) containerGa;
-         
-            //normal rectangle position adjusted
-            gaService.setLocationAndSize(rectangle.getGraphicsAlgorithmChildren().get(0),
-                    AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, 0, containerWidth,
-                    rectangle.getHeight() - AddPortFeature.INVISIBLE_RECTANGLE_WIDTH);
-            changed = true;
-        }
-
-        //Position of each child shape of the rectangle adjusted
+        // position of each child shape of the entity adjusted
         for (Shape shape : containerShape.getChildren()) {
             GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
-
-            IDimension size = gaService.calculateSize(ga);
-            if (size.getWidth() != containerWidth) {
-
-                if (ga instanceof Polygon) {
-                    System.out.println();
-                } else if (ga instanceof Polyline) {
-                    Polyline polyline = (Polyline) ga;
-                    Point firstPoint = polyline.getPoints().get(0);
-                    Point newfirstPoint = gaService.createPoint(
-                            AddPortFeature.INVISIBLE_RECTANGLE_WIDTH, firstPoint.getY());
-                    Point secondpoint = polyline.getPoints().get(1);
-                    Point newsecondpoint = gaService.createPoint(
-                            AddPortFeature.INVISIBLE_RECTANGLE_WIDTH + containerWidth,
-                            secondpoint.getY());
-                    polyline.getPoints().set(0, newfirstPoint);
-                    polyline.getPoints().set(1, newsecondpoint);
-                    changed = true;
-                } else if (ga instanceof Text) {
-                    Text text = (Text) ga;
-                    gaService.setLocationAndSize(ga, AddPortFeature.INVISIBLE_RECTANGLE_WIDTH,
-                            text.getY(), containerWidth, text.getHeight()); 
-                    changed = true;
-                }
-
+            if (ga instanceof Polyline) {
+                int[] points = new int[] {
+                        AddPortFeature.PORT_SIZE, AddPortFeature.PORT_SIZE + SEPARATOR_DIST,
+                        AddPortFeature.PORT_SIZE + entityWidth,
+                        AddPortFeature.PORT_SIZE + SEPARATOR_DIST
+                };
+                changed |= GraphitiUtil.setPoints((Polyline) ga, points);
+            } else if (ga instanceof Text) {
+                changed |= GraphitiUtil.setBounds(ga, AddPortFeature.PORT_SIZE,
+                        AddPortFeature.PORT_SIZE, entityWidth, SEPARATOR_DIST); 
             }
         }
+        
         return changed;
     }
 

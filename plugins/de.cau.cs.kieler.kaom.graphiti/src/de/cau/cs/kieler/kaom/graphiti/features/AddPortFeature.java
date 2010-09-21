@@ -42,7 +42,7 @@ public class AddPortFeature extends AbstractAddShapeFeature {
     /**
      * Port created at a distance.
      */
-    public static final int INVISIBLE_RECTANGLE_WIDTH = 6;
+    public static final int PORT_SIZE = 6;
     private static final int BOUNDARY_DISTANCE = 10;
 
     /**
@@ -111,7 +111,7 @@ public class AddPortFeature extends AbstractAddShapeFeature {
         boxEllipse.setFilled(true);
         boxEllipse.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
 
-        final int w = INVISIBLE_RECTANGLE_WIDTH;
+        final int w = PORT_SIZE;
         gaService.setLocationAndSize(boxEllipse, -w, -w, 2 * w, 2 * w);
 
         Entity entity = (Entity) getBusinessObjectForPictogramElement(context.getTargetContainer());

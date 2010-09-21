@@ -15,40 +15,26 @@ package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import org.eclipse.graphiti.ui.platform.AbstractImageProvider;
 
+import de.cau.cs.kieler.kaom.graphiti.KaomGraphitiPlugin;
+
 /**
+ * Provides all the images required in the graphical editor.
  * 
- * @author atr Provides all the images required in the graphical editor
+ * @author atr
  */
 public class ImageProvider extends AbstractImageProvider {
-
-    /**
-     * Prefix gives the directory where the image is located.
-     */
-    protected static final String PREFIX = "de.cau.cs.kieler.kaom.graphiti";
-    /**
-     * Prefix gives the reference to the image.
-     */
-    public static final String IMAGE_EREFERENCE = PREFIX + "ereference";
    
-    /**
-     * References to image Entity.
-     */
-    public static final String IMAGE_ENTITY = PREFIX + "Entity";
+    /** References to image Entity. */
+    public static final String IMAGE_ENTITY = KaomGraphitiPlugin.PLUGIN_ID + ".Entity";
    
-    /**
-     * References to image Port.
-     */
-    public static final String IMAGE_PORT = PREFIX + "Port";
+    /** References to image Port. */
+    public static final String IMAGE_PORT = KaomGraphitiPlugin.PLUGIN_ID + ".Port";
    
-    /**
-     * References to image Link.
-     */
-    public static final String IMAGE_LINK = PREFIX + "Link";
+    /** References to image Link. */
+    public static final String IMAGE_LINK = KaomGraphitiPlugin.PLUGIN_ID + ".Link";
     
-    /**
-     * References to image Relation.
-     */
-    public static final String IMAGE_RELATION = PREFIX + "Relation";
+    /** References to image Relation. */
+    public static final String IMAGE_RELATION = KaomGraphitiPlugin.PLUGIN_ID + ".Relation";
 
     /**
      * 
@@ -56,8 +42,6 @@ public class ImageProvider extends AbstractImageProvider {
      */
     @Override
     protected void addAvailableImages() {
-        
-        addImageFilePath(IMAGE_EREFERENCE, "/icons/ereference.gif");
         addImageFilePath(IMAGE_ENTITY, "/icons/Entity.gif");
         addImageFilePath(IMAGE_PORT, "/icons/Port.gif");
         addImageFilePath(IMAGE_RELATION, "/icons/Relation.gif");

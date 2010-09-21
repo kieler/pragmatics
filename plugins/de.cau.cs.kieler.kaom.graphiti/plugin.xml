@@ -68,7 +68,7 @@
       <editor
             class="de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor"
             default="true"
-            extensions="kaogd"
+            extensions="kaog"
             icon="icons/KaomDiagramFile.gif"
             id="de.cau.cs.kieler.kaom.graphiti.editor"
             name="Graphiti Diagram">
