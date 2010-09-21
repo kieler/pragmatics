@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Assert;
  * @author bdu
  *
  */
-public class RadioGene extends AbstractGene<Integer> {
+public class ListItemGene extends AbstractGene<Integer> {
 
     /**
      * Default formatter for integer values.
@@ -37,9 +37,9 @@ public class RadioGene extends AbstractGene<Integer> {
          * {@inheritDoc}
          */
         public String getString(final Object o) {
-            if (o instanceof RadioGene) {
-                final RadioGene gene = (RadioGene) o;
-                final RadioTypeInfo typeInfo = gene.getTypeInfo();
+            if (o instanceof ListItemGene) {
+                final ListItemGene gene = (ListItemGene) o;
+                final ListItemTypeInfo typeInfo = gene.getTypeInfo();
                 final List<?> list = typeInfo.getList();
                 Assert.isNotNull(list);
                 if (list == null) {
@@ -57,7 +57,8 @@ public class RadioGene extends AbstractGene<Integer> {
     };
 
     /**
-     * Creates a new {@link RadioGene} instance.
+     * Creates a new {@link ListItemGene} instance. The type info object must
+     * contain the list.
      *
      * @param theId
      *            the id
@@ -68,28 +69,28 @@ public class RadioGene extends AbstractGene<Integer> {
      * @param theMutationInfo
      *            the mutation info
      */
-    public RadioGene(
+    public ListItemGene(
             final Object theId,
             final Integer theValue,
-            final TypeInfo<Integer> theTypeInfo,
+            final ListItemTypeInfo theTypeInfo,
             final MutationInfo theMutationInfo) {
         super(theId, theValue, theTypeInfo, theMutationInfo);
     }
 
     @Override
-    public RadioTypeInfo getTypeInfo() {
-        return (RadioTypeInfo) super.getTypeInfo();
+    public ListItemTypeInfo getTypeInfo() {
+        return (ListItemTypeInfo) super.getTypeInfo();
     }
 
     /**
      * {@inheritDoc}
      */
     public IGene<Integer> newInstance(final AbstractGene<Integer> template) {
-        if (!(template instanceof RadioGene)) {
+        if (!(template instanceof ListItemGene)) {
             return null;
         }
-        final RadioGene radioTemplate = (RadioGene) template;
-        return new RadioGene(radioTemplate.getId(), radioTemplate.getValue(),
+        final ListItemGene radioTemplate = (ListItemGene) template;
+        return new ListItemGene(radioTemplate.getId(), radioTemplate.getValue(),
                 radioTemplate.getTypeInfo(), radioTemplate.getMutationInfo());
     }
 
@@ -97,12 +98,13 @@ public class RadioGene extends AbstractGene<Integer> {
      * {@inheritDoc}
      */
     public IGene<Integer> newMutation() {
-        final RadioGene result;
+        final ListItemGene result;
 
         final Random r = this.getRandomGenerator();
         final MutationInfo mutationInfo = this.getMutationInfo();
         final double prob = mutationInfo.getProbability();
 
+        // must be uniform distribution
         final Distribution distr = mutationInfo.getDistr();
         Assert.isTrue(distr == Distribution.UNIFORM);
 
@@ -114,14 +116,13 @@ public class RadioGene extends AbstractGene<Integer> {
         int newInt = value.intValue();
         if (r.nextDouble() < prob) {
             // TODO: regard genuineMutationProbability
-            // uniform distribution:
             newInt =
                     (r.nextInt((upperBound.intValue() - lowerBound.intValue() + 1)) + lowerBound
                             .intValue());
         }
 
         result =
-                new RadioGene(this.getId(), Integer.valueOf(newInt), this.getTypeInfo(),
+                new ListItemGene(this.getId(), Integer.valueOf(newInt), this.getTypeInfo(),
                         this.getMutationInfo());
 
         return result;
@@ -147,11 +148,11 @@ public class RadioGene extends AbstractGene<Integer> {
 
     @Override
     public boolean equals(final Object theObj) {
-        if (!(theObj instanceof RadioGene)) {
+        if (!(theObj instanceof ListItemGene)) {
             return false;
         }
 
-        final RadioGene rg2 = (RadioGene) theObj;
+        final ListItemGene rg2 = (ListItemGene) theObj;
 
         return (rg2.getTypeInfo().getList().equals(this.getTypeInfo().getList())
                 && (rg2.getId().equals(this.getId())) && rg2.getValue().equals(this.getValue()));

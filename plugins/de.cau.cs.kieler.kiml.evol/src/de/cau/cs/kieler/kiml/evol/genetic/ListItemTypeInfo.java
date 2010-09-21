@@ -20,17 +20,17 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * * Convenience integer type info. Use only for radio genes.
- *
+ * Convenience integer type info. Use only for genes of type {@link ListItemGene}.
+ * 
  * @author bdu
- *
+ * 
  */
-public class RadioTypeInfo extends TypeInfo<Integer> {
+public class ListItemTypeInfo extends TypeInfo<Integer> {
 
     private final List<?> list;
 
     /**
-     * Creates a new {@link RadioTypeInfo} instance.
+     * Creates a new {@link ListItemTypeInfo} instance.
      *
      * @param theDefaultValue
      *            the default value
@@ -39,7 +39,7 @@ public class RadioTypeInfo extends TypeInfo<Integer> {
      * @param theList
      *            the list
      */
-    public RadioTypeInfo(
+    public ListItemTypeInfo(
             final Integer theDefaultValue,
             final IValueFormatter theFormatter,
             final List<?> theList) {
@@ -49,15 +49,15 @@ public class RadioTypeInfo extends TypeInfo<Integer> {
     }
 
     /**
-     * Creates a new {@link RadioTypeInfo} instance.
+     * Creates a new {@link ListItemTypeInfo} instance.
      *
      * @param theDefaultValue
      *            the default value
      * @param theList
      *            the list
      */
-    public RadioTypeInfo(final Integer theDefaultValue, final List<?> theList) {
-        this(theDefaultValue, RadioGene.RADIO_GENE_FORMATTER, theList);
+    public ListItemTypeInfo(final Integer theDefaultValue, final List<?> theList) {
+        this(theDefaultValue, ListItemGene.RADIO_GENE_FORMATTER, theList);
     }
 
     @SuppressWarnings("unchecked")

@@ -40,8 +40,8 @@ import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.IGeneFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.IValueFormatter;
 import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
-import de.cau.cs.kieler.kiml.evol.genetic.RadioGene;
-import de.cau.cs.kieler.kiml.evol.genetic.RadioTypeInfo;
+import de.cau.cs.kieler.kiml.evol.genetic.ListItemGene;
+import de.cau.cs.kieler.kiml.evol.genetic.ListItemTypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.UniversalGene;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -580,7 +580,7 @@ final class GenomeFactory {
      *            {@code providerIds}
      * @return a gene that mutates over given the providers
      */
-    private static RadioGene createLayoutHintGene(
+    private static ListItemGene createLayoutHintGene(
             final List<String> providerIds, final int defaultEntry) {
 
         Assert.isLegal(providerIds != null);
@@ -590,13 +590,13 @@ final class GenomeFactory {
         Assert.isLegal((defaultEntry >= 0) && (defaultEntry < providerIds.size()),
                 "Index out of range.");
 
-        final RadioTypeInfo typeInfo =
-                new RadioTypeInfo(Integer.valueOf(defaultEntry), providerIds);
+        final ListItemTypeInfo typeInfo =
+                new ListItemTypeInfo(Integer.valueOf(defaultEntry), providerIds);
         final double prob = 0.05;
         final MutationInfo mutationInfo = new MutationInfo(prob);
 
-        final RadioGene hintGene =
-                new RadioGene(LayoutOptions.LAYOUTER_HINT_ID, Integer.valueOf(defaultEntry),
+        final ListItemGene hintGene =
+                new ListItemGene(LayoutOptions.LAYOUTER_HINT_ID, Integer.valueOf(defaultEntry),
                         typeInfo, mutationInfo);
         return hintGene;
     }
@@ -608,7 +608,7 @@ final class GenomeFactory {
      * @param defaultProviderId
      * @return a gene that mutates over the given providers
      */
-    private static RadioGene createLayoutHintGene(
+    private static ListItemGene createLayoutHintGene(
             final List<String> providerIds, final String defaultProviderId) {
         Assert.isLegal((providerIds != null) && !providerIds.isEmpty());
         Assert.isLegal(defaultProviderId != null);
@@ -797,7 +797,7 @@ final class GenomeFactory {
         final String providerId = providerData.getId();
 
         // Create the layout hint gene.
-        final RadioGene hintGene = createLayoutHintGene(providerIds, providerId);
+        final ListItemGene hintGene = createLayoutHintGene(providerIds, providerId);
         Assert.isNotNull(hintGene, "Failed to create layout hint gene for " + typeId);
         result.add(hintGene);
 
