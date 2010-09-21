@@ -16,14 +16,13 @@ package de.cau.cs.kieler.klay.planar.alg.planarity;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.planar.alg.pathfinding.AbstractPathFinder;
 import de.cau.cs.kieler.klay.planar.alg.pathfinding.DijkstraPathFinder;
+import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
@@ -46,14 +45,6 @@ import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
  * 
  */
 public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPlanarizer {
-
-    /**
-     * A property assigning a cost to an edge. This property is used when computing a shortest path
-     * in a graph.
-     */
-    private Property<Integer> PATHCOST = new Property<Integer>(
-            "de.cau.cs.kieler.klay.planar.properties.pathcost", 1);
-
     /**
      * Inserts a list of given pairs of nodes (that presemt edges) into a given planar embedding of
      * a graph.
@@ -66,8 +57,11 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         if (edges == null) {
             System.out.println("No new Edges");
         } else {
+            // bring graph in point-based standard
             mergeHyperNodes(graph);
+            // initialize path finder
             AbstractPathFinder dijkstra = new DijkstraPathFinder();
+
             for (IEdge insertingEdge : edges) {
 
                 System.out.println("Subgraph");
@@ -75,6 +69,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 System.out.println("Neue Kanten\n\n");
                 System.out.println(edges.toString());
 
+                // get the dual graph of the given graph
                 IGraph dualGraph = new PGraphFactory().createDualGraph(graph);
 
                 // insert the original nodes in the dual graph
@@ -84,246 +79,77 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 INode source = insertingEdge.getSource();
                 INode target = insertingEdge.getTarget();
 
+                // find the faces around source and target
                 HashSet<IFace> sourceFaces = findSurroundingFaces(source);
                 HashSet<IFace> targetFaces = findSurroundingFaces(target);
 
                 // connect the start node with the start faces for 0 cost
                 for (IFace sFace : sourceFaces) {
                     INode newDualNode = (INode) sFace.getProperty(IGraphFactory.TODUALGRAPH);
-                    IEdge newDualEdge = dualGraph.addEdge(dualStartNode, newDualNode);
-                    newDualEdge.setProperty(PATHCOST, 0);
+                    IEdge newDualEdge = dualGraph.addEdge(dualStartNode, newDualNode, true);
+                    newDualEdge.setProperty(IPathFinder.PATHCOST, 0);
                 }
 
                 // connect the target node with the target faces for 0 cost
                 for (IFace tFace : targetFaces) {
                     INode newDualNode = (INode) tFace.getProperty(IGraphFactory.TODUALGRAPH);
-                    IEdge newDualEdge = dualGraph.addEdge(newDualNode, dualTargetNode);
-                    newDualEdge.setProperty(PATHCOST, 0);
+                    IEdge newDualEdge = dualGraph.addEdge(newDualNode, dualTargetNode, true);
+                    newDualEdge.setProperty(IPathFinder.PATHCOST, 0);
                 }
 
-                // find the shortest Path through dual graph via dijkstra
+                // add edges for faces laying at the same hypernode in dualgraph
+                for (INode node : graph.getNodes()) {
+                    if (node.getType() == NodeType.HYPER) {
+                        LinkedList<INode> dualNodes = new LinkedList<INode>();
+                        IFace face = null;
+                        for (IEdge edge : node.adjacentEdges()) {
+                            if (node == edge.getSource()) {
+                                face = edge.getRightFace();
+                            } else {
+                                face = edge.getLeftFace();
+                            }
+                            INode dualNode = (INode) face.getProperty(IGraphFactory.TODUALGRAPH);
+                            dualNodes.add(dualNode);
+                        }
+                        for (INode iNode : dualNodes) {
+                            for (INode iNode2 : dualNodes) {
+                                if (iNode != iNode2) {
+                                    dualGraph.addEdge(iNode, iNode2, false);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // find the shortest path through dual graph via dijkstra
                 List<IEdge> dualEdgePath = dijkstra.findPath(dualStartNode, dualTargetNode);
 
-                LinkedList<IFace> shortestFacePath = new LinkedList<IFace>();
+                // get a path of faces in the original graph
+                LinkedList<IFace> shortestFacePath = getShortestFacePath(dualEdgePath);
 
-                // same path with faces in the normal graph
-                for (IEdge iEdge : dualEdgePath) {
-                    IFace firstFace = (IFace) iEdge.getSource().getProperty(
-                            IGraphFactory.TODUALGRAPH);
-                    IFace secondFace = (IFace) iEdge.getTarget().getProperty(
-                            IGraphFactory.TODUALGRAPH);
-                    if (!shortestFacePath.contains(firstFace) && firstFace != null) {
-                        shortestFacePath.add(firstFace);
-                    }
-                    if (!shortestFacePath.contains(secondFace) && secondFace != null) {
-                        shortestFacePath.add(secondFace);
-                    }
-                }
-                // } else {
-                // for (IEdge insertingEdge : edges) {
-                //
-                // System.out.println("Subgraph");
-                // System.out.println(graph);
-                // System.out.println("Neue Kanten\n\n");
-                // System.out.println(edges.toString());
-                //
-                // IGraph dualGraph = new PGraphFactory().createDualGraph(graph);
-                // LinkedList<INode> dualPath = new LinkedList<INode>();
-                //
-                // INode source = insertingEdge.getSource();
-                // INode target = insertingEdge.getTarget();
-                //
-                // INode dualStartNode = null;
-                // INode dualTargetNode = null;
-                //
-                // IFace targetFace = null;
-                //
-                // HashSet<IFace> sourceFaces = findSurroundingFaces(source);
-                // HashSet<IFace> targetFaces = findSurroundingFaces(target);
-                //
-                // ArrayList<IFace> facePath = new ArrayList<IFace>();
-                // ArrayList<IFace> shortestFacePath = new ArrayList<IFace>();
-                // LinkedList<INode> shortestDualPath = new LinkedList<INode>();
-                //
-                // int[] parent = new int[graph.getFaceCount()];
-                //
-                // // check all start nodes for BFS in dual graph
-                // for (IFace sourceFace : sourceFaces) {
-                // facePath.clear();
-                //
-                // dualStartNode = (INode) sourceFace.getProperty(IGraphFactory.TODUALGRAPH);
-                //
-                // // run BFS for all possible target faces
-                // for (IFace itargetFace : targetFaces) {
-                //
-                // dualTargetNode = (INode) itargetFace.getProperty(IGraphFactory.TODUALGRAPH);
-                //
-                // parent = bfs(dualStartNode, dualTargetNode, dualGraph);
-                //
-                // // the path through the dual graph
-                // dualPath = findPath(dualTargetNode.getID(), parent, dualGraph);
-                //
-                // if (shortestDualPath.size() > dualPath.size() || shortestDualPath.isEmpty())
-                // {
-                // shortestDualPath.clear();
-                // shortestDualPath.addAll(0, dualPath);
-                // targetFace = itargetFace;
-                // }
-                // }
-                //
-                // assert sourceFace.getID() != targetFace.getID() :
-                // "nodes lie at the same face";
-                //
-                // // same path with faces in the normal graph
-                // facePath.add(sourceFace);
-                //
-                // for (INode node : shortestDualPath) {
-                // IFace face = dualNodeToFace(node, graph);
-                // if (face.getID() != sourceFace.getID()) {
-                // facePath.add(face);
-                // }
-                //
-                // }
-                // if (!facePath.contains(targetFace)) {
-                // facePath.add(targetFace);
-                // }
-                //
-                // // we found a better startface with shorter path
-                // if (shortestFacePath.size() > facePath.size() || shortestFacePath.isEmpty())
-                // {
-                // shortestFacePath.clear();
-                // shortestFacePath.addAll(0, facePath);
-                // }
-                //
-                // // path can't be shorter then 1, search finished
-                // if (shortestFacePath.size() == 1) {
-                // break;
-                // }
-                // }
                 System.out.println("Der Face Path:");
                 System.out.println(shortestFacePath.toString());
 
                 // find the borders to cross
-                LinkedList<IEdge> crossingBorders = new LinkedList<IEdge>();
-                int faceCounter = 0;
-                while (faceCounter < shortestFacePath.size() - 1) {
-                    IFace face1 = shortestFacePath.get(faceCounter);
-                    IFace face2 = shortestFacePath.get(faceCounter + 1);
-                    IEdge crossingEdge = findBorderEdge(face1, face2);
-                    crossingBorders.add(crossingEdge);
-                    faceCounter++;
-
-                }
+                LinkedList<IEdge> crossingBorders = findCrossingBorders(shortestFacePath);
 
                 // the node path with new nodes for the crossing edges
-                ArrayList<INode> path = new ArrayList<INode>();
-                path.add(source);
-                for (IEdge crossingEdge : crossingBorders) {
-
-                    // crossing a hyperedge
-                    if (crossingEdge.getSource().getType() == NodeType.HYPER) {
-                        path.add(crossingEdge.getSource());
-                    }
-
-                    if (crossingEdge.getTarget().getType() == NodeType.HYPER) {
-                        path.add(crossingEdge.getTarget());
-                    }
-
-                    // crossing a normal edge
-                    else {
-                        INode newNode = graph.addNode(crossingEdge);
-                        path.add(newNode);
-                    }
-                }
-                path.add(target);
-
-                // get the preEdge at the source nodes
-                LinkedList<IEdge> sourcePreEdges = new LinkedList<IEdge>();
-                int i = 0;
-                while (i < path.size() - 1) {
-
-                    INode src = path.get(i);
-                    IEdge edge = null;
-
-                    IFace face = shortestFacePath.get(i);
-                    for (IEdge e : face.adjacentEdges()) {
-                        if ((e.getSource() == src) && (e.getRightFace() == face)) {
-                            edge = e;
-                            break;
-                        } else if ((e.getTarget() == src) && (e.getLeftFace() == face)) {
-                            edge = e;
-                            break;
-                        }
-                    }
-                    sourcePreEdges.add(edge);
-                    i++;
-                }
-
-                // TODO edge could be null
-
-                // get the preEdge at the target nodes
-                LinkedList<IEdge> targetPreEdges = new LinkedList<IEdge>();
-                int k = 0;
-                while (k < path.size() - 1) {
-
-                    INode dst = path.get(k + 1);
-                    IEdge edge = null;
-
-                    IFace face = shortestFacePath.get(k);
-                    for (IEdge e : face.adjacentEdges()) {
-                        if ((e.getSource() == dst) && (e.getRightFace() == face)) {
-                            edge = e;
-                            break;
-                        } else if ((e.getTarget() == dst) && (e.getLeftFace() == face)) {
-                            edge = e;
-                            break;
-                        }
-                    }
-                    targetPreEdges.add(edge);
-                    k++;
-                }
-
-                // TODO edge could be null
+                ArrayList<INode> path = buildPathFromBorders(crossingBorders, source, target, graph);
 
                 // connect the node path
                 int pathNodeCounter = 0;
                 while (pathNodeCounter < path.size() - 1) {
 
-                    // split up the crossed hypernodes
-                    // TODO check this!!!
                     if (path.get(pathNodeCounter).getType() == NodeType.HYPER) {
-
-                        INode oldHyperNode = path.get(pathNodeCounter);
-
-                        // create new hypernode and connect this with the old one
-                        INode newHyperNode = graph.addNode();
-                        IEdge newHyperEdge = graph.addEdge(oldHyperNode, newHyperNode);
-
-                        // bring edge in right order
-                        IEdge preEdgeA = this.findFirstFaceEdge(newHyperEdge, oldHyperNode);
-                        reinsertEdges(newHyperEdge, preEdgeA, oldHyperNode);
-
-                        // move half of the edges to new hypernode
-                        IEdge next = getNextClockwiseEdge(oldHyperNode, newHyperEdge);
-                        for (int x = 0; x < oldHyperNode.getAdjacentEdgeCount() / 2; x++) {
-                            next.move(oldHyperNode, newHyperNode);
-                            next = getNextClockwiseEdge(oldHyperNode, next);
-                        }
-
-                        // split up the new edge
-                        INode midNode = graph.addNode(newHyperEdge);
-
-                        // connect the new node
-                        IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
-
-                        // bring new edges at new node in right order
-                        IEdge preEdgeB = this.findFirstFaceEdge(newEdge, midNode);
-                        reinsertEdges(newEdge, preEdgeB, midNode);
-                        pathNodeCounter++;
+                        // split up the crossed hypernodes
+                        splitUpHypernodes(path, graph, pathNodeCounter);
                     }
 
                     // connecting new normal nodes
                     else {
+
+                        List<IEdge> sourcePreEdges = getSourcePreEdges(path, shortestFacePath);
+                        List<IEdge> targetPreEdges = getTargetPreEdges(path, shortestFacePath);
 
                         INode src = path.get(pathNodeCounter);
                         INode dst = path.get(pathNodeCounter + 1);
@@ -338,6 +164,195 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                 }
             }
         }
+    }
+
+    /**
+     * builds a path of nodes, depending on the edges to cross.
+     * 
+     * @param crossingBorders
+     *            , list of borders that are crossed by the new edge
+     * @param source
+     *            , the source of the new edge
+     * @param target
+     *            , the target of the new egde
+     * @param graph
+     *            , the given graph
+     * @return
+     */
+    private ArrayList<INode> buildPathFromBorders(LinkedList<IEdge> crossingBorders, INode source,
+            INode target, IGraph graph) {
+        ArrayList<INode> path = new ArrayList<INode>();
+        path.add(source);
+        for (IEdge crossingEdge : crossingBorders) {
+
+            // crossing a hyperedge
+            if (crossingEdge.getSource().getType() == NodeType.HYPER) {
+                path.add(crossingEdge.getSource());
+            }
+
+            if (crossingEdge.getTarget().getType() == NodeType.HYPER) {
+                path.add(crossingEdge.getTarget());
+            }
+
+            // crossing a normal edge
+            else {
+                INode newNode = graph.addNode(crossingEdge);
+                path.add(newNode);
+            }
+        }
+        path.add(target);
+        return path;
+    }
+
+    /**
+     * finds the borders to cross, from a given path of faces.
+     * 
+     * @param shortestFacePath
+     *            , the path of faces through the graph
+     * @return
+     */
+    private LinkedList<IEdge> findCrossingBorders(LinkedList<IFace> shortestFacePath) {
+        LinkedList<IEdge> crossingBorders = new LinkedList<IEdge>();
+        int faceCounter = 0;
+        while (faceCounter < shortestFacePath.size() - 1) {
+            IFace face1 = shortestFacePath.get(faceCounter);
+            IFace face2 = shortestFacePath.get(faceCounter + 1);
+            IEdge crossingEdge = findBorderEdge(face1, face2);
+            crossingBorders.add(crossingEdge);
+            faceCounter++;
+
+        }
+        return crossingBorders;
+    }
+
+    /**
+     * splits a hypernode in 2 hypernodes and inserts a new node on the egde between the hypernodes.
+     * 
+     * @param path
+     *            , a path of nodes for the new edge
+     * @param graph
+     *            , the given graph
+     * @param pathNodeCounter
+     *            , the position on the path
+     */
+    private void splitUpHypernodes(ArrayList<INode> path, IGraph graph, int pathNodeCounter) {
+
+        INode oldHyperNode = path.get(pathNodeCounter);
+
+        // create new hypernode and connect this with the old one
+        INode newHyperNode = graph.addNode();
+        IEdge newHyperEdge = graph.addEdge(oldHyperNode, newHyperNode);
+
+        // bring edge in right order
+        IEdge preEdgeA = this.findFirstFaceEdge(newHyperEdge, oldHyperNode);
+        reinsertEdges(newHyperEdge, preEdgeA, oldHyperNode);
+
+        // move half of the edges to new hypernode
+        IEdge next = getNextClockwiseEdge(oldHyperNode, newHyperEdge);
+        for (int x = 0; x < oldHyperNode.getAdjacentEdgeCount() / 2; x++) {
+            next.move(oldHyperNode, newHyperNode);
+            next = getNextClockwiseEdge(oldHyperNode, next);
+        }
+
+        // split up the new edge
+        INode midNode = graph.addNode(newHyperEdge);
+
+        // connect the new node
+        IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
+
+        // bring new edges at new node in right order
+        IEdge preEdgeB = this.findFirstFaceEdge(newEdge, midNode);
+        reinsertEdges(newEdge, preEdgeB, midNode);
+        pathNodeCounter++;
+
+    }
+
+    /**
+     * builds a face path in the real graph, from a given edge path in the dual graph
+     * 
+     * @param dualEdgePath
+     *            , a path of edges through the dual graph
+     * @return
+     */
+    private LinkedList<IFace> getShortestFacePath(List<IEdge> dualEdgePath) {
+        LinkedList<IFace> shortestFacePath = new LinkedList<IFace>();
+
+        // same path with faces in the normal graph
+        for (IEdge iEdge : dualEdgePath) {
+            IFace firstFace = (IFace) iEdge.getSource().getProperty(IGraphFactory.TODUALGRAPH);
+            IFace secondFace = (IFace) iEdge.getTarget().getProperty(IGraphFactory.TODUALGRAPH);
+            if (!shortestFacePath.contains(firstFace) && firstFace != null) {
+                shortestFacePath.add(firstFace);
+            }
+            if (!shortestFacePath.contains(secondFace) && secondFace != null) {
+                shortestFacePath.add(secondFace);
+            }
+        }
+        return shortestFacePath;
+    }
+
+    /**
+     * returns all pre edges at the source nodes of a path
+     * 
+     * @param nodePath
+     * @param facePath
+     * @return
+     */
+    private List<IEdge> getSourcePreEdges(ArrayList<INode> nodePath, LinkedList<IFace> facePath) {
+        LinkedList<IEdge> sourcePreEdges = new LinkedList<IEdge>();
+        int i = 0;
+        while (i < nodePath.size() - 1) {
+
+            INode src = nodePath.get(i);
+            IEdge edge = null;
+
+            IFace face = facePath.get(i);
+            for (IEdge e : face.adjacentEdges()) {
+                if ((e.getSource() == src) && (e.getRightFace() == face)) {
+                    edge = e;
+                    break;
+                } else if ((e.getTarget() == src) && (e.getLeftFace() == face)) {
+                    edge = e;
+                    break;
+                }
+            }
+            sourcePreEdges.add(edge);
+            i++;
+        }
+        return sourcePreEdges;
+
+    }
+
+    /**
+     * returns all pre edges at the target nodes of a path
+     * 
+     * @param nodePath
+     * @param facePath
+     * @return
+     */
+    private List<IEdge> getTargetPreEdges(ArrayList<INode> nodePath, LinkedList<IFace> facePath) {
+        LinkedList<IEdge> targetPreEdges = new LinkedList<IEdge>();
+        int i = 0;
+        while (i < nodePath.size() - 1) {
+
+            INode dst = nodePath.get(i + 1);
+            IEdge edge = null;
+
+            IFace face = facePath.get(i);
+            for (IEdge e : face.adjacentEdges()) {
+                if ((e.getSource() == dst) && (e.getRightFace() == face)) {
+                    edge = e;
+                    break;
+                } else if ((e.getTarget() == dst) && (e.getLeftFace() == face)) {
+                    edge = e;
+                    break;
+                }
+            }
+            targetPreEdges.add(edge);
+            i++;
+        }
+        return targetPreEdges;
+
     }
 
     /**
@@ -454,211 +469,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             }
         }
         return null;
-    }
-
-    /**
-     * finds the suiting face in the graph with a given node from the dual graph.
-     * 
-     * @param node
-     *            , the given node
-     * @param graph
-     *            , the given graph
-     * @return face, the searched face
-     */
-    private IFace dualNodeToFace(final INode node, final IGraph graph) {
-        for (IFace face : graph.getFaces()) {
-            if (node.getID() == face.getID()) {
-                return face;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * builds a path from the target node to the source node.
-     * 
-     * @param sourceIndex
-     *            , the index of the source node
-     * @param targetIndex
-     *            , the index of the target node
-     * @param parent
-     *            , the array of parents
-     * @param graph
-     *            , the given graph
-     * 
-     * @return path, a list of nodes from source to target
-     */
-    private LinkedList<INode> findPath(final int targetIndex, final int[] parent, final IGraph graph) {
-
-        LinkedList<INode> path = new LinkedList<INode>();
-        int nextID = parent[targetIndex];
-
-        // -1 is the source index
-        do {
-            INode nextNode = findNode(nextID, graph.getNodes());
-            path.add(nextNode);
-            nextID = parent[nextNode.getID()];
-        } while (nextID != -1);
-
-        return path;
-    }
-
-    /**
-     * finds a node by his id in a given LinkedList.
-     * 
-     * @param index
-     *            , the given index
-     * @param iterable
-     *            , the given list
-     * @return node, the searched node
-     */
-    private INode findNode(final int nodeID, final Iterable<INode> iterable) {
-        for (INode node : iterable) {
-            if (node.getID() == nodeID) {
-                return node;
-            }
-
-        }
-        return null;
-    }
-
-    /**
-     * searches all distances and parents from the root in the given graph.
-     * 
-     * @param root
-     *            , the start node
-     * @param graph
-     *            , the given graph
-     * @return parent , array with the parents from root to all nodes
-     */
-    private int[] bfs(final INode root, final INode target, final IGraph graph) {
-        int size = graph.getNodeCount();
-        int rootID = root.getID();
-        int targetID = target.getID();
-
-        // initialize arrays
-        int[] parent = new int[size];
-        int[] distance = new int[size];
-        boolean[] visited = new boolean[size];
-
-        for (int i = 0; i < size; i++) {
-            parent[i] = -1;
-            distance[i] = -1;
-            visited[i] = false;
-        }
-
-        parent[rootID] = -1;
-        visited[rootID] = true;
-        distance[rootID] = 0;
-
-        // start BFS
-        LinkedList<INode> queue = new LinkedList<INode>();
-        queue.add(root);
-
-        while (!queue.isEmpty()) {
-
-            INode currentNode = queue.poll();
-            int currentID = currentNode.getID();
-
-            // BFS can stop if we reached the target
-            if (currentID == targetID) {
-                return parent;
-            }
-
-            // find all neighbors and put them in an array
-            INode[] neighbors = new INode[currentNode.getAdjacentEdgeCount()];
-            int neighborCounter = 0;
-
-            for (INode neighborNode : currentNode.adjacentNodes()) {
-                neighbors[neighborCounter] = neighborNode;
-                neighborCounter++;
-            }
-
-            // find the neighbors and get parent and distance
-            for (int i = 0; i < neighbors.length; i++) {
-                INode neighbor = neighbors[i];
-                int neighborIndex = neighbor.getID();
-                if (!visited[neighborIndex]) {
-                    parent[neighborIndex] = currentID;
-                    distance[neighborIndex] = distance[currentID] + 1;
-                    visited[neighborIndex] = true;
-                    queue.add(neighbor);
-                }
-                visited[currentID] = true;
-            }
-        }
-        return parent;
-    }
-
-    /**
-     * a dijkstra algorithm which finds the shortest path in a graph, where edges are undirected
-     * have a weight.
-     * 
-     * @param root
-     *            , the start node
-     * @param graph
-     *            , the given graph
-     * @return parent , array with the parents from root to all nodes
-     */
-    @SuppressWarnings("unused")
-    private int[] dijkstra(final INode root, final IGraph graph) {
-
-        int size = graph.getNodeCount();
-        int rootID = root.getID();
-
-        // initialize arrays
-        int[] parent = new int[size];
-        int[] distance = new int[size];
-
-        for (int i = 0; i < size; i++) {
-            parent[i] = -1;
-            distance[i] = -1;
-        }
-
-        parent[rootID] = -1;
-        distance[rootID] = 0;
-
-        // get all nodes of the given graph and put them in a hash set
-        LinkedHashSet<INode> nodes = new LinkedHashSet<INode>();
-        for (INode iNode : graph.getNodes()) {
-            nodes.add(iNode);
-        }
-        INode currentNode = root;
-        int currentID = currentNode.getID();
-
-        while (!nodes.isEmpty()) {
-
-            // find the node with smalles weight in nodes
-            int minEdgeWeight = Integer.MAX_VALUE;
-            for (INode neighborNode : currentNode.adjacentNodes()) {
-                IEdge connectingEdge = currentNode.getEdge(neighborNode);
-                int edgeWeight = connectingEdge.getProperty(PATHCOST);
-                if (edgeWeight < minEdgeWeight) {
-                    minEdgeWeight = edgeWeight;
-                }
-            }
-
-            nodes.remove(currentNode);
-
-            for (INode neighborNode : currentNode.adjacentNodes()) {
-                int neighborID = neighborNode.getID();
-                if (nodes.contains(neighborNode)) {
-
-                    // distance between current and neighbor
-                    int wayLenght = currentNode.getEdge(neighborNode).getProperty(PATHCOST);
-                    int alternative = distance[currentID] + wayLenght;
-
-                    // check if there is a shorter path
-                    if (alternative < distance[neighborID]) {
-                        distance[neighborID] = alternative;
-                        parent[neighborID] = currentID;
-                    }
-
-                }
-            }
-        }
-
-        return parent;
     }
 
     /**
