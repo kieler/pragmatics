@@ -385,8 +385,9 @@ public final class EvolModel {
     public void reset() {
         final IEditorPart editor = EvolUtil.getCurrentEditor();
         final EditPart part = EvolUtil.getCurrentEditPart(editor);
-        setPosition(0);
-        setEvolAlg(null);
+        this.position = 0;
+        this.evolAlg = null;
+        this.weightEvolAlg = null;
 
         final LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, part);
 

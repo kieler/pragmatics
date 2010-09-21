@@ -40,7 +40,7 @@ public final class EvolutionServices {
     /** Identifier of the element "data". */
     private static final String ELEMENT_DATA = "data";
 
-    /** Identifier of the analysis category "metric" */
+    /** Identifier of the analysis category "metric". */
     private static final String METRICS_CATEGORY = "de.cau.cs.kieler.kiml.evol.metricCategory";
 
     /**

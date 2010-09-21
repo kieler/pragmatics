@@ -240,14 +240,15 @@ public final class EvolUtil {
          *            laid out; must not be {@code null}.
          * @param weightsGenomes
          */
-        private static void autoRateIndividual(
-                final Genome ind, final Set<IEditorPart> editors, final Population weightsGenomes) {
-            Assert.isLegal((ind != null) && (editors != null) && (weightsGenomes != null));
-            if ((ind == null) || (editors == null) || (weightsGenomes == null)) {
+        private void autoRateIndividual(final Set<IEditorPart> editors) {
+            Assert.isLegal(editors != null);
+            final Genome ind = this.individual;
+            final Population wg = this.weightsGenomes;
+            if ((ind == null) || (editors == null) || (wg == null)) {
                 return;
             }
 
-            final int rating = calculateAutoRating(ind, editors, weightsGenomes);
+            final int rating = calculateAutoRating(ind, editors, wg);
             ind.setUserRating(Integer.valueOf(rating));
         }
 
@@ -303,8 +304,7 @@ public final class EvolUtil {
                     normalize(weightsMap);
 
                     // Get measurements, then get rating proposal from each
-                    // weight
-                    // genome.
+                    // weight genome.
 
                     // TODO Discuss: For more than one editor: rate average
                     // measurements, or use average ratings instead?
@@ -314,10 +314,8 @@ public final class EvolUtil {
 
                         ind.setFeatures(measurements);
                         // TODO: don't set features here. This works only for
-                        // one
-                        // editor. For more editors, average measurements must
-                        // be
-                        // calculated.
+                        // one editor. For more editors, average measurements
+                        // must be calculated.
                     }
 
                     final double scaledSum = weight(measurements, weightsMap);
@@ -616,13 +614,6 @@ public final class EvolUtil {
             this.weightsGenomes = theWeightsGenomes;
         }
 
-        /**
-        *
-        */
-        private final Genome individual;
-
-        private final Population weightsGenomes;
-
         public void run() {
             // Must be run in the UI thread.
 
@@ -630,14 +621,19 @@ public final class EvolUtil {
 
             final Set<IEditorPart> editorsSet = new HashSet<IEditorPart>(editors);
 
-            // TODO: remove superfluous parameters
-            autoRateIndividual(this.individual, editorsSet, this.weightsGenomes);
+            autoRateIndividual(editorsSet);
         }
+
+        // private fields
+        private final Genome individual;
+
+        private final Population weightsGenomes;
 
     }
 
     /**
-     * Refresher for the layout view.
+     * Refresher for the layout view. Asynchronously refreshes the layout view,
+     * if it can be found.
      *
      * @author bdu
      *
@@ -1020,6 +1016,8 @@ public final class EvolUtil {
 
             final Type layoutOptionType = data.getType();
 
+            // TODO: discuss: should the (gene : individual) loop be put inside
+            // modelChange?
             final Runnable modelChange = new Runnable() {
 
                 public void run() {
@@ -1330,14 +1328,16 @@ public final class EvolUtil {
         }
         return data;
     }
-
+    
     /**
      * Retrieve the values of the given IDs in from the given layout inspectors.
-     * For layout hint, the layout hint identifiers are returned.
-     *
+     * For layout hint, the (non-null) layout hint identifiers are returned.
+     * 
      * @param inspectors
+     *            layout inspectors
      * @param id
-     * @return a set of values
+     *            an identifier
+     * @return the set of values having the specified ID
      */
     private static Set<Object> getPropertyValues(
             final List<ILayoutInspector> inspectors, final String id) {
@@ -1379,6 +1379,7 @@ public final class EvolUtil {
                 }
 
             } else {
+                // normal option
                 result.add(value);
             }
         }
@@ -1418,4 +1419,33 @@ public final class EvolUtil {
     private EvolUtil() {
         // nothing
     }
+
+    /**
+     * Synchronously refreshes the layout according to the current individual of
+     * the given model.
+     *
+     * @param model
+     *            the evolution model; must be valid
+     */
+    public static void applyCurrentIndividual(final EvolModel model) {
+        Assert.isNotNull(model);
+
+        Assert.isTrue(model.isValid(),
+                "Attempt to apply an individual when the model was not valid.");
+
+        // Get the current individual from the model.
+        final Genome individual = model.getCurrentIndividual();
+        Assert.isNotNull(individual);
+
+        // Get the expected layout provider id.
+        final String expectedLayoutProviderId = model.getLayoutProviderId();
+        Assert.isNotNull(expectedLayoutProviderId);
+
+        // Adopt and layout the current individual.
+        syncApplyIndividual(individual, expectedLayoutProviderId);
+
+        // Refresh the layout view.
+        asyncRefreshLayoutView();
+    }
+
 }

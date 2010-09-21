@@ -29,7 +29,6 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
-import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
 
 /**
@@ -73,21 +72,9 @@ public class EvolveHandler extends AbstractHandler {
         @Override
         public void done(final IJobChangeEvent event) {
             if (event.getResult().isOK()) {
-                // The current individual has changed.
+                // The current individual has changed --> apply it.
 
-                // Get the current individual from the model.
-                final Genome individual = this.model.getCurrentIndividual();
-                Assert.isNotNull(individual);
-
-                // Get the expected layout provider id.
-                final String expectedLayoutProviderId = this.model.getLayoutProviderId();
-                Assert.isNotNull(expectedLayoutProviderId);
-
-                // Adopt and layout the current individual.
-                EvolUtil.syncApplyIndividual(individual, expectedLayoutProviderId);
-
-                // Refresh the layout view.
-                EvolUtil.asyncRefreshLayoutView();
+                EvolUtil.applyCurrentIndividual(this.model);
 
                 if (this.isAutoRatingEnabled) {
                     // Calculate auto-rating in the current editor for
@@ -99,10 +86,11 @@ public class EvolveHandler extends AbstractHandler {
                 Assert.isNotNull(this.model.getPopulation());
 
             } else {
-                EvolPlugin.showError("The evolution job did not complete successfully.",
-                        null);
+                EvolPlugin.showError("The evolution job did not complete successfully.", null);
             }
         }
+
+
     }
 
     /**

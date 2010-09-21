@@ -23,7 +23,7 @@ import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
-import de.cau.cs.kieler.kiml.evol.genetic.RadioGene;
+import de.cau.cs.kieler.kiml.evol.genetic.ListItemGene;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -95,7 +95,7 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
         case 2:
             final IGene<?> hintGene = individual.find(LayoutOptions.LAYOUTER_HINT_ID);
             String providerName = null;
-            if (hintGene instanceof RadioGene) {
+            if (hintGene instanceof ListItemGene) {
                 final String hintId = hintGene.toString();
 
                 final LayoutProviderData provider =

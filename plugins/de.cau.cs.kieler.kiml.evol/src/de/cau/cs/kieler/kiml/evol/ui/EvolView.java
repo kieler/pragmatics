@@ -37,7 +37,6 @@ import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
-import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 
 /**
@@ -90,38 +89,6 @@ public class EvolView extends ViewPart {
                 MonitoredOperation.runInUI(inputSetterRunnable, true);
             }
         }
-
-        /**
-         * Refreshes the layout according to the selected individual in the
-         * model.
-         *
-         * @param em
-         *            the evolution model
-         *
-         */
-        void applySelectedIndividual(final EvolModel em) {
-            // TODO: this method should be encapsulated as a command
-            Assert.isNotNull(em);
-
-            if (!em.isValid()) {
-                return;
-            }
-
-            // Get the current individual from the model.
-            final Genome currentIndividual = em.getCurrentIndividual();
-            Assert.isNotNull(currentIndividual);
-
-            // Get the expected layout provider id.
-            final String expectedLayoutProviderId = em.getLayoutProviderId();
-            Assert.isNotNull(expectedLayoutProviderId);
-
-            // Adopt, layout and measure the current individual.
-            EvolUtil.syncApplyIndividual(currentIndividual, expectedLayoutProviderId);
-
-            // Refresh the layout view, if it can be found.
-            EvolUtil.asyncRefreshLayoutView();
-        }
-
     }
 
     /**
@@ -144,7 +111,8 @@ public class EvolView extends ViewPart {
             }
 
             if ("setPosition".equalsIgnoreCase(cause)) {
-                applySelectedIndividual(source);
+                EvolUtil.applyCurrentIndividual(source);
+                // nothing more needs to be done
                 return;
             }
 
@@ -268,7 +236,7 @@ public class EvolView extends ViewPart {
     private final class SelectionChangedListener implements ISelectionChangedListener {
         /**
          * Creates a new {@link SelectionChangedListener} instance.
-         * 
+         *
          * @param theTableViewer
          *            the associated table viewer
          */
