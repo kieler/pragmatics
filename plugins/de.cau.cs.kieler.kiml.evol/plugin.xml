@@ -298,6 +298,13 @@
          </dependency>
       </provider>
       <provider
+            category="de.cau.cs.kieler.kiml.evol.metricCategory"
+            class="de.cau.cs.kieler.kiml.evol.grana.UpwardnessMetric"
+            description="Measures the fraction of upward edges."
+            id="de.cau.cs.kieler.kiml.evol.upwardnessMetric"
+            name="Upwardness Metric">
+      </provider>
+      <provider
             class="de.cau.cs.kieler.kiml.evol.grana.WeightedAggregation"
             description="Returns the weighted sum of the metrics."
             id="de.cau.cs.kieler.kiml.evol.weightedAggregation"
