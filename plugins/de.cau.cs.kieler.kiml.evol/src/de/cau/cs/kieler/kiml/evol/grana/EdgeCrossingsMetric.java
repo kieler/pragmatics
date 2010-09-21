@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 /**
  * Calculates a normalized "crosslessness" metric, based upon the number of
- * crossings.
+ * crossings. This does not care for hierarchies.
  *
  * @author bdu
  *
@@ -57,13 +57,11 @@ public class EdgeCrossingsMetric implements IAnalysis {
                 final int degree =
                         node.getOutgoingEdges().size() + node.getIncomingEdges().size();
                 sum += degree * (degree - 1);
-                // FIXME: this only works for highest level, not for hierarchies
                 // TODO: consider bend points as pseudo nodes
             }
 
             // In straight-line drawings of connected graphs with at most one
-            // edge
-            // between nodes, adjacent edges cannot cross.
+            // edge between nodes, adjacent edges cannot cross.
             // [H. C. Purchase, "Metrics for Graph Drawing Aesthetics", 2002]
 
             // In general, this is not guaranteed, so we don't know how many

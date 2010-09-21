@@ -31,7 +31,10 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
- * Experimental upwardness metric. Measures the fraction of upward edges.
+ * Experimental upwardness metric. Measures the fraction of upward edges. A more
+ * sophisticated, fuzzy metric would take angles into account, so that for
+ * example an edge that is pointing diagonally upward would be counted as a
+ * "50% upward" edge.
  *
  * @author bdu
  *
@@ -47,43 +50,45 @@ public class UpwardnessMetric implements IAnalysis {
 
         progressMonitor.begin("Upwardness metric analysis", 1);
 
-        Float result;
+        final Float result;
 
-        final Queue<KNode> nodes = new LinkedList<KNode>();
-        final List<KEdge> totalEdges = new LinkedList<KEdge>();
-        final List<KEdge> upwardEdges = new LinkedList<KEdge>();
+        try {
+            final Queue<KNode> nodes = new LinkedList<KNode>();
+            final List<KEdge> totalEdges = new LinkedList<KEdge>();
+            final List<KEdge> upwardEdges = new LinkedList<KEdge>();
 
-        nodes.add(parentNode);
+            nodes.add(parentNode);
+            while (!nodes.isEmpty()) {
+                final KNode current = nodes.remove();
 
-        while (!nodes.isEmpty()) {
-            final KNode current = nodes.remove();
+                final EList<KEdge> edges = current.getOutgoingEdges();
 
-            final EList<KEdge> edges = current.getOutgoingEdges();
+                final KShapeLayout currentLayout = current.getData(KShapeLayout.class);
+                final float currentXpos = currentLayout.getXpos();
+                final float currentYpos = currentLayout.getYpos();
 
-            final KShapeLayout currentLayout = current.getData(KShapeLayout.class);
-            final float currentXpos = currentLayout.getXpos();
-            final float currentYpos = currentLayout.getYpos();
+                for (final KEdge edge : edges) {
+                    totalEdges.add(edge);
+                    final KNode target = edge.getTarget();
 
-            for (final KEdge edge : edges) {
-                totalEdges.add(edge);
-                final KNode target = edge.getTarget();
+                    final KShapeLayout targetLayout = target.getData(KShapeLayout.class);
+                    final float targetXpos = targetLayout.getXpos();
+                    final float targetYpos = targetLayout.getYpos();
 
-                final KShapeLayout targetLayout = target.getData(KShapeLayout.class);
-                final float targetXpos = targetLayout.getXpos();
-                final float targetYpos = targetLayout.getYpos();
-
-                if (targetYpos < currentYpos) {
-                    // this is an upward edge
-                    upwardEdges.add(edge);
+                    if (targetYpos < currentYpos) {
+                        // this is an upward edge
+                        upwardEdges.add(edge);
+                    }
                 }
+
+                nodes.addAll(current.getChildren());
             }
 
-            nodes.addAll(current.getChildren());
+            result = Float.valueOf(((float) upwardEdges.size() / totalEdges.size()));
+
+        } finally {
+            progressMonitor.done();
         }
-
-        result = Float.valueOf(((float) upwardEdges.size() / totalEdges.size()));
-
-        progressMonitor.done();
 
         return result;
     }
