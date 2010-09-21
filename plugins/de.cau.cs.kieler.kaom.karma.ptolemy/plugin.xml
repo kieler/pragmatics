@@ -18,7 +18,7 @@
             <customCondition
                   condition="de.cau.cs.kieler.karma.RecursiveAnnotationCondition"
                   figureParam="ptolemy.domains.sr.kernel.SRDirector"
-                  figureSize="100,30"
+                  figureSize="102,32"
                   key="ptolemyClass"
                   layoutParam="ptolemy.domains.sr.kernel.SRDirector"
                   value="ptolemy.domains.sr.kernel.SRDirector">

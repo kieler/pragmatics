@@ -92,7 +92,7 @@ public class SwitchableFigure extends Shape {
         
         if (this.getParent() instanceof DefaultSizeNodeFigure &&  figure instanceof ScalableImageFigure) {            
         ((DefaultSizeNodeFigure)this.getParent()).setDefaultSize(
-                ((ScalableImageFigure)figure).getImage().getBounds().width, ((ScalableImageFigure)figure).getImage().getBounds().height);
+                ((ScalableImageFigure)figure).getImage().getBounds().width + 2, ((ScalableImageFigure)figure).getImage().getBounds().height + 2);
         }
         // this.repaint();         
     }

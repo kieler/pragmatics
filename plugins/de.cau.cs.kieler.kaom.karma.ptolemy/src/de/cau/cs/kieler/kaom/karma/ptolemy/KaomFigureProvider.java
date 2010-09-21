@@ -32,7 +32,6 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.RectangleFigure;
-import org.eclipse.draw2d.StackLayout;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
@@ -51,16 +50,12 @@ import ptolemy.vergil.icon.EditorIcon;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
-import de.cau.cs.kieler.kaom.Port;
-import de.cau.cs.kieler.kaom.impl.PortImpl;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.kvid.KvidUtil;
 import de.cau.cs.kieler.kvid.data.DataObject;
 import de.cau.cs.kieler.kvid.data.KvidUri;
 import de.cau.cs.kieler.kvid.datadistributor.DataDistributor;
 import de.cau.cs.kieler.kvid.datadistributor.IDataListener;
-import de.cau.cs.kieler.kvid.datadistributor.IProviderListener;
-import de.cau.cs.kieler.kvid.dataprovider.IDataProvider;
 
 /**
  * 
@@ -68,7 +63,6 @@ import de.cau.cs.kieler.kvid.dataprovider.IDataProvider;
  * 
  */
 public class KaomFigureProvider implements IRenderingProvider {
-
 
     /**
      * {@inheritDoc}
@@ -79,34 +73,36 @@ public class KaomFigureProvider implements IRenderingProvider {
             if (object instanceof de.cau.cs.kieler.kaom.Entity) {
                 de.cau.cs.kieler.kaom.Entity myEntity = (de.cau.cs.kieler.kaom.Entity) object;
                 Annotation annotation = myEntity.getAnnotation("ptolemyClass");
-                if (annotation instanceof StringAnnotation){
-                    String ptolemyClassString = ((StringAnnotation)annotation).getValue();                   
-                    try {               
+                if (annotation instanceof StringAnnotation) {
+                    String ptolemyClassString = ((StringAnnotation) annotation).getValue();
+                    try {
                         Class ptolemy = Class.forName(ptolemyClassString);
-                        Constructor constr = ptolemy.getConstructor(CompositeEntity.class, String.class);
+                        Constructor constr = ptolemy.getConstructor(CompositeEntity.class,
+                                String.class);
                         Object obj = constr.newInstance(new CompositeEntity(), "test");
                         if (obj instanceof Entity) {
                             Entity entity = (Entity) obj;
-                            TestIconLoader til = new TestIconLoader(); 
+                            TestIconLoader til = new TestIconLoader();
                             try {
                                 til.loadIconForClass(Ramp.class.getName(), entity);
-                            } catch (Exception e) { 
-                                // TODO Auto-generated catch block 
-                                e.printStackTrace(); 
+                            } catch (Exception e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
                             }
                             List<EditorIcon> icons = entity.attributeList(EditorIcon.class);
                             ConfigurableAttribute ca = null;
                             String svg = "";
                             if (icons.isEmpty()) {
-                                ca = (ConfigurableAttribute) entity.getAttribute("_iconDescription");
+                                ca = (ConfigurableAttribute) entity
+                                        .getAttribute("_iconDescription");
 
                                 svg = ca.getConfigureText();
                             }
                             svg = repairSvg(svg);
-                            if (svg == null){
+                            if (svg == null) {
                                 return getDefaultFigure();
                             } else {
-                            return createSvg(svg);
+                                return createSvg(svg);
                             }
                         }
                     } catch (Exception e) {
@@ -116,10 +112,10 @@ public class KaomFigureProvider implements IRenderingProvider {
 
                 }
             }
-                        throw new RuntimeException("initializing svg from ptolemyClass failed");
-        } else if(input.equals("ptolemy.actor.lib.MonitorValue")){
-            return createMonitorValue(object); 
-        } else if(input.equals("ptolemy.domains.sr.kernel.SRDirector")) {
+            throw new RuntimeException("initializing svg from ptolemyClass failed");
+        } else if (input.equals("ptolemy.actor.lib.MonitorValue")) {
+            return createMonitorValue(object);
+        } else if (input.equals("ptolemy.domains.sr.kernel.SRDirector")) {
             return createDirector();
         } else {
             return getDefaultFigure();
@@ -140,222 +136,11 @@ public class KaomFigureProvider implements IRenderingProvider {
     }
 
     /**
-     * method for generating a scalable image figure from a file.
-     * 
-     * @param file
-     *            the file holding the svg image
-     * @return a scalable image figure
-     */
-    private IFigure createSvg(String file) {
-        
-        RenderedImage img = RenderedImageFactory.getInstance(file.getBytes());
-        ScalableImageFigure fig = new ScalableImageFigure(img, false, true, true);
-        return fig;
-    }
-
-    private String repairString(String input){
-        String[] parts = input.split("\"");
-        String output = "";
-        for (int i = 0; i < parts.length; i+=2) {
-            if (i < parts.length -1) {
-                output += parts[i] + "\"" + parts[i+1] + "\" ";
-            } else {
-                output += parts[i];
-            }
-        }
-        return output;
-    }
-    
-
-    /**
-     * 
-     * @return
-     */
-
-    private IFigure createDirector() {
-        String directorsvg = "<svg width=\"101\" height=\"31\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
-        return createSvg(directorsvg);
-    }
-
-    /**
      * {@inheritDoc}
      */
-    public LayoutManager getLayoutManagerByString(String input, LayoutManager oldLayoutManager,
-            EObject object) {
+    public LayoutManager getLayoutManagerByString(final String input, final LayoutManager oldLayoutManager,
+           final EObject object) {
         // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * Method for creating and saving an svg file from a string description of an svg and modifying
-     * it from ptolemy style to a form usable in eclipse.
-     * 
-     * @param svg
-     *            the string describing an svg in xml
-     * @param name
-     *            the file name the svg image is saved as
-     * @return the file holding the svg image
-     */
-    private String repairSvg(String svg) {
-        try {
-                XMLParser xmlpars = new XMLParser();
-                Document doc;
-                try {
-                    doc = xmlpars.parser(svg);
-                } catch (Exception e) {
-                    svg = repairString(svg);
-                    doc = xmlpars.parser(svg);
-                }
-                Element svgElement = (Element) doc.getElementsByTagName("svg").item(0);
-                Element rectElement = (Element) doc.getElementsByTagName("rect").item(0);
-
-                svgElement.setAttribute("height",
-                        String.valueOf(Integer.parseInt(rectElement.getAttribute("height")) + 1));
-                svgElement.setAttribute("width",
-                        String.valueOf(Integer.parseInt(rectElement.getAttribute("width")) + 1));
-
-                int xoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("x")));
-                int yoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("y")));
-
-                for (int i = 0; i < doc.getElementsByTagName("rect").getLength(); i++) {
-                    Element e = (Element) doc.getElementsByTagName("rect").item(i);
-                    if (e.hasAttribute("x") && e.hasAttribute("y") && e.hasAttribute("style")) {
-                        float x = Float.parseFloat(e.getAttribute("x"));
-                        float y = Float.parseFloat(e.getAttribute("y"));
-                        x += xoffset;
-                        y += yoffset;
-                        e.setAttribute("x", String.valueOf(x));
-                        e.setAttribute("y", String.valueOf(y));
-                        e.setAttribute("style",
-                                e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
-                    }
-                }
-
-                for (int i = 0; i < doc.getElementsByTagName("circle").getLength(); i++) {
-                    Element e = (Element) doc.getElementsByTagName("circle").item(i);
-                    if (e.hasAttribute("cx") && e.hasAttribute("cy")) {
-                        float x = Float.parseFloat(e.getAttribute("cx"));
-                        float y = Float.parseFloat(e.getAttribute("cy"));
-                        x += xoffset;
-                        y += yoffset;
-                        e.setAttribute("cx", String.valueOf(x));
-                        e.setAttribute("cy", String.valueOf(y));
-                    }
-                    e.setAttribute("style",
-                            e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
-                }
-
-                for (int i = 0; i < doc.getElementsByTagName("polygon").getLength(); i++) {
-                    Element e = (Element) doc.getElementsByTagName("polygon").item(i);
-                    if (e.hasAttribute("points")) {
-                        String newpoints = "";
-                        String allpoints = e.getAttribute("points");
-                        String[] pointsarray = allpoints.split(" +");
-                        for (String coords : pointsarray) {
-                            String[] coordsarray = coords.split(",");
-                            float x = Float.parseFloat(coordsarray[0]);
-                            float y = Float.parseFloat(coordsarray[1]);
-                            x += xoffset;
-                            y += yoffset;
-                            newpoints += String.valueOf(x) + "," + String.valueOf(y) + " ";
-
-                        }
-                        e.setAttribute("points", newpoints);
-                        e.setAttribute("style",
-                                e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
-                    }
-                }
-
-                for (int i = 0; i < doc.getElementsByTagName("polyline").getLength(); i++) {
-                    Element e = (Element) doc.getElementsByTagName("polyline").item(i);
-                    if (e.hasAttribute("points")) {
-                        String newpoints = "";
-                        String allpoints = e.getAttribute("points");
-                        String[] pointsarray = allpoints.split(" +");
-                        for (String coords : pointsarray) {
-                            String[] coordsarray = coords.split(",");
-                            float x = Float.parseFloat(coordsarray[0]);
-                            float y = Float.parseFloat(coordsarray[1]);
-                            x += xoffset;
-                            y += yoffset;
-                            newpoints += String.valueOf(x) + "," + String.valueOf(y) + " ";
-
-                        }
-                        e.setAttribute("points", newpoints);
-                    }
-                }
-                
-                for (int i = 0; i < doc.getElementsByTagName("line").getLength(); i++) {
-                    Element e = (Element) doc.getElementsByTagName("line").item(i);
-                    if (e.hasAttribute("x1") && e.hasAttribute("y1") && e.hasAttribute("x2")
-                            && e.hasAttribute("y2")) {
-                        float x1 = Float.parseFloat(e.getAttribute("x1"));
-                        float y1 = Float.parseFloat(e.getAttribute("y1"));
-                        float x2 = Float.parseFloat(e.getAttribute("x2"));
-                        float y2 = Float.parseFloat(e.getAttribute("y2"));
-                        x1 += xoffset;
-                        y1 += yoffset;
-                        x2 += xoffset;
-                        y2 += yoffset;
-                        e.setAttribute("x1", String.valueOf(x1));
-                        e.setAttribute("y1", String.valueOf(y1));
-                        e.setAttribute("x2", String.valueOf(x2));
-                        e.setAttribute("y2", String.valueOf(y2));
-                    }
-                    e.setAttribute("style",
-                            e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
-                }
-
-                for (int i = 0; i < doc.getElementsByTagName("image").getLength(); i++) {
-                    Element e = (Element) doc.getElementsByTagName("image").item(i);
-                    if (e.hasAttribute("x") && e.hasAttribute("y")) {
-                        float x = Float.parseFloat(e.getAttribute("x"));
-                        float y = Float.parseFloat(e.getAttribute("y"));
-                        x += xoffset;
-                        y += yoffset;
-                        e.setAttribute("x", String.valueOf(x));
-                        e.setAttribute("y", String.valueOf(y));
-                    }
-                }
-
-                for (int i = 0; i < doc.getElementsByTagName("ellipse").getLength(); i++) {
-                    Element e = (Element) doc.getElementsByTagName("ellipse").item(i);
-                    if (e.hasAttribute("cx") && e.hasAttribute("cy")) {
-                        float x = Float.parseFloat(e.getAttribute("cx"));
-                        float y = Float.parseFloat(e.getAttribute("cy"));
-                        x += xoffset;
-                        y += yoffset;
-                        e.setAttribute("cx", String.valueOf(x));
-                        e.setAttribute("cy", String.valueOf(y));
-                    }
-                }
-
-                for (int i = 0; i < doc.getElementsByTagName("text").getLength(); i++) {
-                    Element e = (Element) doc.getElementsByTagName("text").item(i);
-                    if (e.hasAttribute("x") && e.hasAttribute("y")) {
-                        float x = Float.parseFloat(e.getAttribute("x"));
-                        float y = Float.parseFloat(e.getAttribute("y"));
-                        x += xoffset;
-                        y += yoffset;
-                        e.setAttribute("x", String.valueOf(x));
-                        e.setAttribute("y", String.valueOf(y));
-                    }
-                }
-                Source source = new DOMSource(doc);
-                StringWriter stringWriter = new StringWriter();
-                Result result = new StreamResult(stringWriter);
-                TransformerFactory factory = TransformerFactory.newInstance();
-                Transformer transformer = factory.newTransformer();
-                transformer.transform(source, result);
-                svg = stringWriter.getBuffer().toString();
-            return svg;
-        } catch (CoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         return null;
     }
 
@@ -367,26 +152,264 @@ public class KaomFigureProvider implements IRenderingProvider {
         return null;
     }
 
-    public BorderItemLocator getBorderItemLocatorByString(String input) {
+    /**
+     * {@inheritDoc}
+     */
+    public BorderItemLocator getBorderItemLocatorByString(final String input) {
         // TODO Auto-generated method stub
         return null;
     }
-    
-    private IFigure createMonitorValue(EObject object){
+
+    /**
+     * method for generating a scalable image figure from a file.
+     * 
+     * @param file
+     *            the file holding the svg image
+     * @return a scalable image figure
+     */
+    private IFigure createSvg(final String file) {
+
+        RenderedImage img = RenderedImageFactory.getInstance(file.getBytes());
+        ScalableImageFigure fig = new ScalableImageFigure(img, false, true, true);
+        return fig;
+    }
+
+    /**
+     * Helper method that adds necessary blanks to an svg description because ptolemy is bugged.
+     * 
+     * @param input
+     *            the broken svg description
+     * @return a repaired version of the input that an xml parser can understand.
+     */
+    private String repairString(final String input) {
+        String[] parts = input.split("\"");
+        String output = "";
+        for (int i = 0; i < parts.length; i += 2) {
+            if (i < parts.length - 1) {
+                output += parts[i] + "\"" + parts[i + 1] + "\" ";
+            } else {
+                output += parts[i];
+            }
+        }
+        return output;
+    }
+
+    /**
+     * Helper method for converting a ptolemy svg description to an svg description thats compatible
+     * with the common svg standard.
+     * 
+     * @param svg
+     *            the string describing an svg in xml
+     * @return an svg description compatible with the svg standard
+     */
+    private String repairSvg(final String svg) {
+        try {
+            String svgDescription = svg;
+            XMLParser xmlpars = new XMLParser();
+            Document doc;
+            try {
+                doc = xmlpars.parser(svgDescription);
+            } catch (Exception e) {
+                svgDescription = repairString(svgDescription);
+                doc = xmlpars.parser(svgDescription);
+            }
+            Element svgElement = (Element) doc.getElementsByTagName("svg").item(0);
+            Element rectElement = (Element) doc.getElementsByTagName("rect").item(0);
+
+            svgElement.setAttribute("height",
+                    String.valueOf(Integer.parseInt(rectElement.getAttribute("height")) + 1));
+            svgElement.setAttribute("width",
+                    String.valueOf(Integer.parseInt(rectElement.getAttribute("width")) + 1));
+
+            int xoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("x")));
+            int yoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("y")));
+
+            for (int i = 0; i < doc.getElementsByTagName("rect").getLength(); i++) {
+                Element e = (Element) doc.getElementsByTagName("rect").item(i);
+                if (e.hasAttribute("x") && e.hasAttribute("y") && e.hasAttribute("style")) {
+                    float x = Float.parseFloat(e.getAttribute("x"));
+                    float y = Float.parseFloat(e.getAttribute("y"));
+                    x += xoffset;
+                    y += yoffset;
+                    e.setAttribute("x", String.valueOf(x));
+                    e.setAttribute("y", String.valueOf(y));
+                    e.setAttribute("style",
+                            e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
+                }
+            }
+
+            for (int i = 0; i < doc.getElementsByTagName("circle").getLength(); i++) {
+                Element e = (Element) doc.getElementsByTagName("circle").item(i);
+                if (e.hasAttribute("cx") && e.hasAttribute("cy")) {
+                    float x = Float.parseFloat(e.getAttribute("cx"));
+                    float y = Float.parseFloat(e.getAttribute("cy"));
+                    x += xoffset;
+                    y += yoffset;
+                    e.setAttribute("cx", String.valueOf(x));
+                    e.setAttribute("cy", String.valueOf(y));
+                }
+                e.setAttribute("style",
+                        e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
+            }
+
+            for (int i = 0; i < doc.getElementsByTagName("polygon").getLength(); i++) {
+                Element e = (Element) doc.getElementsByTagName("polygon").item(i);
+                if (e.hasAttribute("points")) {
+                    String newpoints = "";
+                    String allpoints = e.getAttribute("points");
+                    String[] pointsarray = allpoints.split(" +");
+                    for (String coords : pointsarray) {
+                        String[] coordsarray = coords.split(",");
+                        float x = Float.parseFloat(coordsarray[0]);
+                        float y = Float.parseFloat(coordsarray[1]);
+                        x += xoffset;
+                        y += yoffset;
+                        newpoints += String.valueOf(x) + "," + String.valueOf(y) + " ";
+
+                    }
+                    e.setAttribute("points", newpoints);
+                    e.setAttribute("style",
+                            e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
+                }
+            }
+
+            for (int i = 0; i < doc.getElementsByTagName("polyline").getLength(); i++) {
+                Element e = (Element) doc.getElementsByTagName("polyline").item(i);
+                if (e.hasAttribute("points")) {
+                    String newpoints = "";
+                    String allpoints = e.getAttribute("points");
+                    String[] pointsarray = allpoints.split(" +");
+                    for (String coords : pointsarray) {
+                        String[] coordsarray = coords.split(",");
+                        float x = Float.parseFloat(coordsarray[0]);
+                        float y = Float.parseFloat(coordsarray[1]);
+                        x += xoffset;
+                        y += yoffset;
+                        newpoints += String.valueOf(x) + "," + String.valueOf(y) + " ";
+
+                    }
+                    e.setAttribute("points", newpoints);
+                }
+            }
+
+            for (int i = 0; i < doc.getElementsByTagName("line").getLength(); i++) {
+                Element e = (Element) doc.getElementsByTagName("line").item(i);
+                if (e.hasAttribute("x1") && e.hasAttribute("y1") && e.hasAttribute("x2")
+                        && e.hasAttribute("y2")) {
+                    float x1 = Float.parseFloat(e.getAttribute("x1"));
+                    float y1 = Float.parseFloat(e.getAttribute("y1"));
+                    float x2 = Float.parseFloat(e.getAttribute("x2"));
+                    float y2 = Float.parseFloat(e.getAttribute("y2"));
+                    x1 += xoffset;
+                    y1 += yoffset;
+                    x2 += xoffset;
+                    y2 += yoffset;
+                    e.setAttribute("x1", String.valueOf(x1));
+                    e.setAttribute("y1", String.valueOf(y1));
+                    e.setAttribute("x2", String.valueOf(x2));
+                    e.setAttribute("y2", String.valueOf(y2));
+                }
+                e.setAttribute("style",
+                        e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
+            }
+
+            for (int i = 0; i < doc.getElementsByTagName("image").getLength(); i++) {
+                Element e = (Element) doc.getElementsByTagName("image").item(i);
+                if (e.hasAttribute("x") && e.hasAttribute("y")) {
+                    float x = Float.parseFloat(e.getAttribute("x"));
+                    float y = Float.parseFloat(e.getAttribute("y"));
+                    x += xoffset;
+                    y += yoffset;
+                    e.setAttribute("x", String.valueOf(x));
+                    e.setAttribute("y", String.valueOf(y));
+                }
+            }
+
+            for (int i = 0; i < doc.getElementsByTagName("ellipse").getLength(); i++) {
+                Element e = (Element) doc.getElementsByTagName("ellipse").item(i);
+                if (e.hasAttribute("cx") && e.hasAttribute("cy")) {
+                    float x = Float.parseFloat(e.getAttribute("cx"));
+                    float y = Float.parseFloat(e.getAttribute("cy"));
+                    x += xoffset;
+                    y += yoffset;
+                    e.setAttribute("cx", String.valueOf(x));
+                    e.setAttribute("cy", String.valueOf(y));
+                }
+            }
+
+            for (int i = 0; i < doc.getElementsByTagName("text").getLength(); i++) {
+                Element e = (Element) doc.getElementsByTagName("text").item(i);
+                if (e.hasAttribute("x") && e.hasAttribute("y")) {
+                    float x = Float.parseFloat(e.getAttribute("x"));
+                    float y = Float.parseFloat(e.getAttribute("y"));
+                    x += xoffset;
+                    y += yoffset;
+                    e.setAttribute("x", String.valueOf(x));
+                    e.setAttribute("y", String.valueOf(y));
+                }
+            }
+            Source source = new DOMSource(doc);
+            StringWriter stringWriter = new StringWriter();
+            Result result = new StreamResult(stringWriter);
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer();
+            transformer.transform(source, result);
+            svgDescription = stringWriter.getBuffer().toString();
+            return svgDescription;
+        } catch (CoreException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * method holding a figure description used by directors.
+     * 
+     * @return a figure represention an director
+     */
+    private IFigure createDirector() {
+        String directorsvg = "<svg width=\"102\" height=\"32\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
+        return createSvg(directorsvg);
+    }
+
+    /**
+     * method for creating a custom monitorvalue figure.
+     * 
+     * @param object
+     *            the modelelement
+     * @return the monitorvalue figure
+     */
+    private IFigure createMonitorValue(EObject object) {
         MonitorValueFigure monitor = new MonitorValueFigure(object);
         monitor.setLineWidth(1);
         monitor.setForegroundColor(ColorConstants.black);
         monitor.setBackgroundColor(ColorConstants.white);
         return monitor;
     }
-    
+
+    /**
+     * a monitor figure using the kvid mechanism of displaying its value.
+     * 
+     * @author ckru
+     * 
+     */
     private class MonitorValueFigure extends RectangleFigure implements IDataListener {
 
         Label value;
-        
+
         String referredDataUri;
-        
-        public MonitorValueFigure(EObject object){
+
+        /**
+         * constructs this figure and adds a label that displays the current value.
+         * 
+         * @param object
+         *            the model element.
+         */
+        public MonitorValueFigure(EObject object) {
             value = new Label();
             value.getBounds().setSize(140, 10);
             value.getBounds().setLocation(70, 10);
@@ -401,20 +424,27 @@ public class KaomFigureProvider implements IRenderingProvider {
                 referredDataUri = uri;
                 DataDistributor.getInstance().registerDataListener(this);
             }
-            
+
         }
-        
+
+        /**
+         * {@inheritDoc}
+         */
         public void triggerDataChanged() {
-            DataObject data = DataDistributor.getInstance().getDataObjectByURI(new KvidUri(referredDataUri));
+            DataObject data = DataDistributor.getInstance().getDataObjectByURI(
+                    new KvidUri(referredDataUri));
             if (data != null) {
                 value.setText(data.getData().toString());
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void triggerWrapup() {
-            value.setText("");   
+            value.setText("");
         }
-        
+
     }
 
 }
