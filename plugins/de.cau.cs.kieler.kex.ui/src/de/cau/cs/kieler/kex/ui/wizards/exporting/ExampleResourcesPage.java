@@ -45,7 +45,7 @@ public class ExampleResourcesPage extends WizardPage {
     protected ExampleResourcesPage(String pageName, IStructuredSelection selection) {
         super(pageName);
         this.setTitle(pageName);
-        this.setDescription("Choose resources to export");
+        this.setDescription("Choose resources to export and set direct opens.");
         this.exportResources = new ArrayList<ExportResource>();
         exportedFolders = new ArrayList<IFolder>();
         exportedProjects = new ArrayList<IProject>();

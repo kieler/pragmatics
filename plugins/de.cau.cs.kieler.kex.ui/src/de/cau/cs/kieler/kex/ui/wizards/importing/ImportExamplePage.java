@@ -42,8 +42,8 @@ public class ImportExamplePage extends WizardResourceImportPage {
     private static final int IMAGE_MAX_WIDTH = 800;
     private static final int IMAGE_MAX_HEIGHT = 600;
 
-    private static final int IMAGE_PRE_WIDTH = 192;
-    private static final int IMAGE_PRE_HEIGHT = 108;
+    private static final int IMAGE_PRE_WIDTH = 208;
+    private static final int IMAGE_PRE_HEIGHT = 117;
 
     private Browser exampleDescription;
 
@@ -60,7 +60,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
     protected ImportExamplePage(String name, IStructuredSelection selection) {
         super(name, selection);
         setTitle(name);
-        setDescription("Enter example attributes and destination location.");
+        super.setDescription("Choose examples to import and set destination location.");
     }
 
     // TODO Probleme mit der Hintergrund farbe unter ubuntu, k�nnten mit dem
@@ -167,7 +167,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
     private Control createTree(Composite composite, Control topControl) {
         exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL);
-        FormData formData = new FormData(200, 100);
+        FormData formData = new FormData(190, 100);
         formData.top = new FormAttachment(topControl, 5);
         exampleTree.setLayoutData(formData);
         exampleTree.addSelectionListener(new SelectionListener() {
@@ -320,10 +320,10 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
     private void updateDescriptionLabel(Example selectedExample) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Title:       ").append(selectedExample.getTitle()).append("<br>").append(
-                "Author:   ").append(selectedExample.getAuthor()).append("<br>")
-                .append("Contact: ").append(selectedExample.getContact()).append("<br>").append(
-                        "<br>").append(selectedExample.getDescription());
+        sb.append("Title:       ").append(selectedExample.getTitle()).append("<br>")
+                .append("Author:   ").append(selectedExample.getAuthor()).append("<br>")
+                .append("Contact: ").append(selectedExample.getContact()).append("<br>")
+                .append("<br>").append(selectedExample.getDescription());
         getExampleDescription().setText(sb.toString());
     }
 

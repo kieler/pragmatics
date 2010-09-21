@@ -40,11 +40,11 @@ public class ExampleImport {
             final List<Example> selectedExamples, boolean checkDuplicate) throws KielerException {
 
         List<String> directOpens = new ArrayList<String>();
+        List<String> finishedResources = new ArrayList<String>();
 
         StringBuilder destFolder = new StringBuilder();
         destFolder.append(workspaceLocation).append(
                 (selectedResource != null ? selectedResource.toString() : "")).append("/");
-        List<String> finishedResources = new ArrayList<String>();
         try {
 
             for (Example example : selectedExamples) {

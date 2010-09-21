@@ -33,34 +33,39 @@ public class ExampleAttributesPage extends WizardPage {
      *            , parent composite
      */
     public void createControl(Composite parent) {
-
-        Composite composite = new Composite(parent, SWT.BORDER);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        composite.setLayout(layout);
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout());
         setControl(composite);
         addAttributeFields(composite);
     }
 
-    private void addAttributeFields(Composite composite) {
+    private void addAttributeFields(Composite parent) {
+        Composite composite = new Composite(parent, SWT.BORDER);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         new Label(composite, SWT.NONE).setText("Title:");
         exampleTitle = new Text(composite, SWT.BORDER);
         exampleTitle.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        // TODO check before example titles and set number like that.
+        exampleTitle.setText("ExportedExample1");
+        String user = System.getProperty("user.name");
 
         new Label(composite, SWT.NONE).setText("Author:");
         author = new Text(composite, SWT.BORDER);
         author.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        author.setText(System.getProperty("user.name"));
+        author.setText(user);
 
         new Label(composite, SWT.NONE).setText("Contact:");
         contact = new Text(composite, SWT.BORDER);
         contact.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
+        contact.setText((user != null && user.length() > 1 ? user + "@informatik.uni-kiel.de" : ""));
         new Label(composite, SWT.NONE).setText("Description:");
         exampleDescription = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
                 | SWT.H_SCROLL);
         GridData descData = new GridData(GridData.FILL_HORIZONTAL);
-        descData.heightHint = 80;
+        descData.heightHint = 100;
         descData.minimumHeight = 80;
         exampleDescription.setLayoutData(descData);
 

@@ -49,7 +49,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
     protected ExampleExportPage(String name, IStructuredSelection selection) {
         super(name, selection);
         setTitle(name);
-        setDescription("Set destination for exported Example and determine Example Resources.");
+        setDescription("Set destination and preview picture for exported example and determine example cateories.");
         checkedCategories = new ArrayList<String>();
         creatableCategories = new ArrayList<String>();
     }
