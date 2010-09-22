@@ -407,7 +407,7 @@
                tooltip="Promote the selected individual.">
             <parameter
                   name="de.cau.cs.kieler.kiml.evol.amount"
-                  value="300">
+                  value="0.06">
             </parameter>
          </command>
          <command
@@ -418,7 +418,7 @@
                tooltip="Demote the selected individual.">
             <parameter
                   name="de.cau.cs.kieler.kiml.evol.amount"
-                  value="-300">
+                  value="-0.06">
             </parameter>
          </command>
          <command

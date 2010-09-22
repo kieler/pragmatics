@@ -369,7 +369,7 @@ public class EvolView extends ViewPart {
     /**
      * Width for narrow columns in the viewer table.
      */
-    private static final int NARROW_COLUMN_WIDTH = 80;
+    private static final int NARROW_COLUMN_WIDTH = 60;
 
     /**
      * Creates a new {@link EvolView} instance.

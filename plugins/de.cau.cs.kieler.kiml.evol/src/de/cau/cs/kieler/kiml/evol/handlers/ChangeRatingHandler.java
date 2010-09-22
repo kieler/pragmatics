@@ -35,7 +35,7 @@ public class ChangeRatingHandler extends AbstractHandler {
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
         final String amount = event.getParameter("de.cau.cs.kieler.kiml.evol.amount");
-        final int delta = Integer.parseInt(amount);
+        final double delta = Double.parseDouble(amount);
         final IViewPart view =
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);

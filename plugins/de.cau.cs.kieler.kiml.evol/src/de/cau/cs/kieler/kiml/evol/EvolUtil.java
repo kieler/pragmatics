@@ -248,8 +248,8 @@ public final class EvolUtil {
                 return;
             }
 
-            final int rating = calculateAutoRating(ind, editors, wg);
-            ind.setUserRating(Integer.valueOf(rating));
+            final double rating = calculateAutoRating(ind, editors, wg);
+            ind.setUserRating(Double.valueOf(rating));
         }
 
         /**
@@ -266,14 +266,14 @@ public final class EvolUtil {
          *
          * @return the rating proposal
          */
-        private static int calculateAutoRating(
+        private static double calculateAutoRating(
                 final Genome ind, final Set<IEditorPart> editors, final Population weightsGenomes) {
             Assert.isLegal((ind != null) && (editors != null) && (weightsGenomes != null));
             if ((ind == null) || (editors == null) || (weightsGenomes == null)) {
-                return 0;
+                return 0.0;
             }
 
-            int totalRating = 0;
+            double totalRating = 0.0;
             final int editorCount = editors.size();
 
             for (final IEditorPart editor : editors) {
@@ -292,7 +292,7 @@ public final class EvolUtil {
                 // TODO: what if weights genomes is empty?
                 Assert.isTrue(!weightsGenomes.isEmpty());
 
-                int editorRating = 0;
+                double editorRating = 0.0;
                 Map<String, Object> measurements = null;
 
                 final int weightsGenomesCount = weightsGenomes.size();
@@ -319,19 +319,18 @@ public final class EvolUtil {
                     }
 
                     final double scaledSum = weight(measurements, weightsMap);
-                    final int maxNum = 5000;
-                    final int rating = (int) Math.round((scaledSum * maxNum));
+
+                    final double rating = scaledSum;
 
                     System.out.println("Rated " + rating + " by " + wg.toString());
-                    wg.addFeature("proposedRating:" + ind.getId(), Integer.valueOf(rating));
+                    wg.addFeature("proposedRating:" + ind.getId(), Double.valueOf(rating));
 
                     editorRating += rating;
                 }
 
                 if (weightsGenomesCount > 1) {
-                    final int averageEditorRating =
-                            Math.round(editorRating
-                                    / Integer.valueOf(weightsGenomesCount).floatValue());
+                    final double averageEditorRating =
+ editorRating / weightsGenomesCount;
                     totalRating += averageEditorRating;
                 } else {
                     totalRating += editorRating;
@@ -340,8 +339,8 @@ public final class EvolUtil {
 
             if (editorCount > 1) {
                 // return average rating of all editors
-                final int averageTotalRating =
-                        Math.round(totalRating / Integer.valueOf(editorCount).floatValue());
+                final double averageTotalRating =
+                        Math.round(totalRating / Double.valueOf(editorCount).floatValue());
                 return averageTotalRating;
             }
 
@@ -576,7 +575,7 @@ public final class EvolUtil {
                 }
             }
 
-            double scaledSum = 0;
+            double scaledSum = 0.0;
 
             // scale results
             for (final Entry<String, Object> measurement : measurements.entrySet()) {
@@ -674,6 +673,7 @@ public final class EvolUtil {
     public static void autoRate(
             final Population thePopulation, final IProgressMonitor theMonitor,
             final Population theWeightsGenomes) {
+        // TODO: move code into a class RatingPopulation extends Population.
         Assert.isLegal((thePopulation != null));
         if (thePopulation == null) {
             return;
@@ -1328,11 +1328,11 @@ public final class EvolUtil {
         }
         return data;
     }
-    
+
     /**
      * Retrieve the values of the given IDs in from the given layout inspectors.
      * For layout hint, the (non-null) layout hint identifiers are returned.
-     * 
+     *
      * @param inspectors
      *            layout inspectors
      * @param id

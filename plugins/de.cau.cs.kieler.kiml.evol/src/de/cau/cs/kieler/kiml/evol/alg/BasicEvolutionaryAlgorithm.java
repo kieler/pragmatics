@@ -100,7 +100,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
                 } while ((parent1 == parent2) && !isParthenogenesisAllowed);
 
                 final Genome newGenome = parent1.newRecombination(parent2);
-                newGenome.setUserRating(0);
+                newGenome.setUserRating(0.0);
                 System.out.println(" -- cross over of " + parent1);
                 System.out.println("              and " + parent2);
                 offspring.add(new Genome(newGenome, getGeneration()));

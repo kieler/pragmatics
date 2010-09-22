@@ -93,42 +93,41 @@ public final class EvolModel {
     /**
      * Changes the rating of the current individual.
      *
-     * @param delta
+     * @param theDelta
      *            the amount of the change
      */
-    public void changeCurrentRating(final int delta) {
+    public void changeCurrentRating(final double theDelta) {
         if (isValid()) {
             final Genome current = getCurrentIndividual();
 
             final Population pop = this.getPopulation();
-            int rating = 0;
+            double rating = 0.0;
             // TODO: add preference to switch off compensation
             // TODO: Do evolution of rating predictors at lock step with
             // evolution of layout options. Use separate auto-rating and
             // user-rating fields for that purpose.
-            final int compensation = -delta / ((pop.size() - 1));
+            final double compensation = -theDelta / ((pop.size() - 1));
 
             for (final Genome g : pop) {
-                rating = (g.hasUserRating() ? g.getUserRating().intValue() : 0);
+                rating = (g.hasUserRating() ? g.getUserRating() : 0);
                 if (g == current) {
-                    g.setUserRating(Integer.valueOf(rating + delta));
+                    g.setUserRating(Double.valueOf(rating + theDelta));
                 } else {
                     // compensation for counterbalance
-                    g.setUserRating(Integer.valueOf(rating + compensation));
+                    g.setUserRating(Double.valueOf(rating + compensation));
                 }
             }
 
             // Punish predictors
             final String key = "proposedRating:" + current.getId();
-            final int newRating =
-                    (current.hasUserRating() ? current.getUserRating().intValue() : 0);
+            final double newRating = (current.hasUserRating() ? current.getUserRating() : 0.0);
             for (final Genome predictor : this.getRatingPredictors()) {
                 final Map<String, Object> features = predictor.getFeatures();
                 if ((features != null) && features.containsKey(key)) {
-                    final Integer prediction = (Integer) features.get(key);
-                    final int diff = newRating - prediction.intValue();
-                    final int predictorRating =
-                            (predictor.hasUserRating() ? predictor.getUserRating() : 0);
+                    final Double prediction = (Double) features.get(key);
+                    final double diff = newRating - prediction;
+                    final double predictorRating =
+                            (predictor.hasUserRating() ? predictor.getUserRating() : 0.0);
                     predictor.setUserRating(predictorRating - Math.abs(diff));
                 }
             }
@@ -188,10 +187,13 @@ public final class EvolModel {
             MonitoredOperation.runInUI(runnable, true);
 
             // reward predictors
-            final int reward = 10;
+            // XXX: this should be refactored. The predictors' fitness should
+            // be calculated an a more sophisticated way.
+            final double reward = 0.01;
             for (final Genome predictor : predictors) {
                 Assert.isNotNull(predictor);
-                final int oldRating = (predictor.hasUserRating() ? predictor.getUserRating() : 0);
+                final double oldRating =
+                        (predictor.hasUserRating() ? predictor.getUserRating() : 0);
                 predictor.setUserRating(oldRating + reward);
             }
 

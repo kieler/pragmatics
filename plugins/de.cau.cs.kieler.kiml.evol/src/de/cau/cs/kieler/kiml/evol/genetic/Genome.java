@@ -181,7 +181,7 @@ public class Genome extends ArrayList<IGene<?>> {
         if (hasUserRating()) {
             final double scalingFactor = .90;
             this.userRating =
-                    Integer.valueOf((int) Math.round((this.userRating.doubleValue() * scalingFactor)));
+ Double.valueOf((int) Math.round((this.userRating * scalingFactor)));
         }
     }
 
@@ -230,7 +230,7 @@ public class Genome extends ArrayList<IGene<?>> {
      * @return the user-defined rating. A higher value means a better rating.
      *         The value may be negative.
      */
-    public synchronized Integer getUserRating() {
+    public synchronized Double getUserRating() {
         return this.userRating;
     }
 
@@ -280,10 +280,10 @@ public class Genome extends ArrayList<IGene<?>> {
      *            An Integer (may be negative). A higher value means a better
      *            rating.
      */
-    public synchronized void setUserRating(final Integer theRating) {
+    public synchronized void setUserRating(final Double theRating) {
         System.out.println("Assign rating " + theRating + " to individual" + ": " + getId());
 
-        final Integer oldRating = getUserRating();
+        final Double oldRating = getUserRating();
 
         // compare new rating to previous one
         if (hasUserRating() && (theRating != null)) {
@@ -362,14 +362,14 @@ public class Genome extends ArrayList<IGene<?>> {
                 ratingSum += (genome.hasUserRating() ? genome.getUserRating().intValue() : 0);
             }
             final int average = Math.round(ratingSum / (float) genomes.length);
-            result.setUserRating(Integer.valueOf(average));
+            result.setUserRating(Double.valueOf(average));
         }
         return result;
     }
 
     // private fields
     private final int generation;
-    private Integer userRating = null;
+    private Double userRating = null;
 
     private Map<String, Object> features = Collections.emptyMap();
 
