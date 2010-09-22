@@ -335,6 +335,11 @@ public class KiVi {
                         .getBoolean(descriptor.getClazz().getCanonicalName() + ".active")) {
                     ((ICombination) o).setActive(true);
                 }
+                CombinationParameter[] parameters = CombinationParameter
+                        .getParameters(o.getClass());
+                for (CombinationParameter parameter : parameters) {
+                    parameter.initialize();
+                }
             } catch (InvalidRegistryObjectException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -345,7 +350,7 @@ public class KiVi {
         }
     }
 
-    // TODO merge these two methods
+    // TODO merge these two methods, or check if effects ep is needed at all
     /**
      * Load all information from the effects extension point.
      */
@@ -354,9 +359,9 @@ public class KiVi {
                 .getConfigurationElementsFor("de.cau.cs.kieler.core.kivi.effects");
         for (IConfigurationElement element : elements) {
             try {
-                Descriptor descriptor = new Descriptor(
-                        element.getAttribute("name"), element.getAttribute("description"), element
-                                .createExecutableExtension("class").getClass());
+                Descriptor descriptor = new Descriptor(element.getAttribute("name"),
+                        element.getAttribute("description"), element.createExecutableExtension(
+                                "class").getClass());
                 availableEffects.add(descriptor);
             } catch (InvalidRegistryObjectException e) {
                 // TODO Auto-generated catch block
@@ -389,12 +394,12 @@ public class KiVi {
         }
         return new ArrayList<ICombination>();
     }
-    
-    
+
     /**
      * Get the instance registered for the class if there is any.
      * 
-     * @param clazz the combination class
+     * @param clazz
+     *            the combination class
      * @return the combination instance or null
      */
     public ICombination getCombinationInstance(final Class<?> clazz) {
