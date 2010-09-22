@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kiml.gmf;
 
 import java.util.ArrayList;
@@ -7,59 +20,66 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.internal.tools.CompartmentCollapseTracker;
+import org.eclipse.gmf.runtime.diagram.ui.internal.tools.CompartmentCollapseTracker; // FIXME
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.BasicCompartment;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
 
 /**
  * This Effect collapses or expands compartments. The execute() method expands while the undo method
  * collapses.
  * 
- * @author haf
+ * @author haf, mmu
  */
 public class CompartmentCollapseExpandEffect extends AbstractEffect {
 
-    private int compartmentLevel = 0;
+    private int compartmentLevel = 0; // TODO implement compartment levels
     private IResizableCompartmentEditPart targetEditPart;
     private EObject targetNode;
-    private boolean collapse;
+    private boolean doCollapse;
     private boolean originalCollapseState;
     private boolean doLayout;
     private boolean executed = false;
-    private DiagramEditor editor;
+    private DiagramEditor targetEditor;
 
     /**
-     * The compartment level gives the hierarchy to which to search for compartments to collapse.
+     * The compartment level gives the hierarchy to which to search for compartments to doCollapse.
      * 
-     * @param theCompartmentLevel hierarchy level. 0 means only exactly the given EditPart.
+     * @param editor
+     *            the DiagramEditor containing the EObject
+     * @param node
+     *            the EObject to doCollapse/expand
+     * @param featureToCollapse
+     *            the feature of the EObject to doCollapse/expand
+     * @param theCompartmentLevel
+     *            hierarchy level. 0 means only exactly the given EditPart.
+     * @param layout
+     *            whether to perform auto-layout after collapsing/expanding or not
+     * @param collapse
+     *            true if collapsing, false if expanding
      */
-    public CompartmentCollapseExpandEffect(DiagramEditor targetEditor, EObject targetNode,
-        EStructuralFeature featureToCollapse, final int theCompartmentLevel, boolean layout,
-        boolean collapse) {
+    public CompartmentCollapseExpandEffect(final DiagramEditor editor, final EObject node,
+            final EStructuralFeature featureToCollapse, final int theCompartmentLevel,
+            final boolean layout, final boolean collapse) {
         this.compartmentLevel = theCompartmentLevel;
-        this.collapse = collapse;
-        this.editor = targetEditor;
+        this.doCollapse = collapse;
+        this.targetEditor = editor;
         this.doLayout = layout;
-        this.targetNode = targetNode;
-        // FIXME: the original state should be taken from the diagram itself
+        this.targetNode = node;
+        // FIXME: the original collapse state should be taken from the diagram itself
         this.originalCollapseState = !collapse;
-        EditPart parentPart = ModelingUtil.getEditPart(targetEditor.getDiagramEditPart(),
-            targetNode);
+        EditPart parentPart = ModelingUtil.getEditPart(editor.getDiagramEditPart(), node);
         if (parentPart != null) {
             outer: for (Object child : parentPart.getChildren()) {
                 if (child instanceof IResizableCompartmentEditPart) {
                     for (Object grandChild : ((IResizableCompartmentEditPart) child).getChildren()) {
                         if (grandChild instanceof EditPart) {
                             EObject grandChildSemantic = ((View) ((EditPart) grandChild).getModel())
-                                .getElement();
+                                    .getElement();
                             if (grandChildSemantic.eContainingFeature() == featureToCollapse) {
                                 targetEditPart = (IResizableCompartmentEditPart) child;
                                 break outer;
@@ -71,12 +91,15 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute() {
         if (targetEditPart != null && !executed) {
             executed = true;
-            setCollapsed(targetEditPart, collapse);
+            setCollapsed(targetEditPart, doCollapse);
             if (doLayout) {
-                new LayoutEffect(editor, targetNode).schedule();
+                new LayoutEffect(targetEditor, targetNode).schedule();
             }
         }
     }
@@ -89,21 +112,22 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
             executed = false;
             setCollapsed(targetEditPart, originalCollapseState);
             if (doLayout) {
-                new LayoutEffect(editor, targetNode).schedule();
+                new LayoutEffect(targetEditor, targetNode).schedule();
             }
         }
     }
 
-    public void setCollapsed(boolean collapsed) {
-        if(collapsed != collapse){
-            this.collapse = collapsed;
+    /**
+     * Set whether this effect should collapse or expand on the next execute().
+     * 
+     * @param collapsed
+     *            true if collapsing
+     */
+    public void setCollapsed(final boolean collapsed) {
+        if (collapsed != doCollapse) {
+            this.doCollapse = collapsed;
             executed = false;
         }
-        
-    }
-
-    public boolean getCollapsed() {
-        return this.collapse;
     }
 
     /*
@@ -133,9 +157,10 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
     /**
      * Set the collapsed state of the given compartment.
      * 
-     * @param editPart the input editPart
-     * @param value true iff should get collapsed, false if expanded
-     * @throws KielerModelException
+     * @param editPart
+     *            the input editPart
+     * @param value
+     *            true iff should get collapsed, false if expanded
      */
     private void setCollapsed(final IResizableCompartmentEditPart editPart, final boolean value) {
         CompartmentCollapseTrackerEx tracker = new CompartmentCollapseTrackerEx(editPart);
@@ -147,8 +172,10 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
      * compartment. Additionally it traverses the whole child tree and also returns all nested child
      * compartments. The list is ordered from root following a dfs.
      * 
-     * @param view input view where search is started
-     * @param level how deep to go into hierarchy: 0 will return only the view itself if it is a
+     * @param view
+     *            input view where search is started
+     * @param level
+     *            how deep to go into hierarchy: 0 will return only the view itself if it is a
      *            compartment
      * @return a List of all compartments of the view
      */
@@ -170,7 +197,7 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
     }
 
     /**
-     * Inner class that takes care about the concrete collapse command. Extends the official
+     * Inner class that takes care about the concrete doCollapse command. Extends the official
      * CompartmentCollapseTracker that is also used for the manual collapsing with the mouse.
      * 
      * FIXME: This might be some overhead as the tracker is a quite heavy tool.
@@ -180,12 +207,12 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
      */
     class CompartmentCollapseTrackerEx extends CompartmentCollapseTracker {
 
-        public CompartmentCollapseTrackerEx(IResizableCompartmentEditPart compartmentEditPart) {
+        public CompartmentCollapseTrackerEx(final IResizableCompartmentEditPart compartmentEditPart) {
             super(compartmentEditPart);
             this.setEditDomain((EditDomain) compartmentEditPart.getDiagramEditDomain());
         }
 
-        void setCollapsed(boolean value) {
+        void setCollapsed(final boolean value) {
             setCurrentCommand(getCommand(value));
             executeCurrentCommand();
         }
