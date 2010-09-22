@@ -15,13 +15,11 @@
                   layoutParam="ptolemy.actor.lib.MonitorValue"
                   value="ptolemy.actor.lib.MonitorValue">
             </customCondition>
-            <customCondition
-                  condition="de.cau.cs.kieler.karma.RecursiveAnnotationCondition"
-                  figureParam="ptolemy.actor.TypedCompositeActor"
-                  key="ptolemyClass"
-                  layoutParam="ptolemy.actor.TypedCompositeActor"
-                  value="ptolemy.actor.TypedCompositeActor">
-            </customCondition>
+            <listSizeCondition
+                  feature="childEntities"
+                  size="&lt;0"
+                  type="Entity">
+            </listSizeCondition>
             <compoundCondition
                   figureParam="icon">
                <customCondition
@@ -47,6 +45,9 @@
          <editPart
                editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart">
          </editPart>
+         <package
+               class="de.cau.cs.kieler.kaom.KaomPackage">
+         </package>
       </configuration>
       <configuration
             Priority="6"

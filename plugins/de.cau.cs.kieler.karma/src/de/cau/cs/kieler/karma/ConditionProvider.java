@@ -56,12 +56,6 @@ public final class ConditionProvider {
     private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = new HashMap<String, List<HashMap<String, Object>>>();
 
     /**
-     * HashTable for caching figure providers so that the ExtensionPoint is parsed only once per
-     * edit part.
-     */
-    private HashMap<String, IRenderingProvider> hashTableFigureProviders = new HashMap<String, IRenderingProvider>();
-
-    /**
      * HashTable for caching the relevant features and feature ids. Not yet used, will probably
      * removed again.
      */
@@ -143,12 +137,21 @@ public final class ConditionProvider {
                     
 
                         String figureParam = condition.getAttribute("figureParam");
+                        if (figureParam == null) {
+                            figureParam = "";
+                        }
                         conditionElement.put("figureParam", figureParam);
                         
                         String borderItemParam = condition.getAttribute("borderItemParam");
+                        if (borderItemParam == null) {
+                            borderItemParam = "";
+                        }
                         conditionElement.put("borderItemParam", borderItemParam);
 
                         String layoutParam = condition.getAttribute("layoutParam");
+                        if (layoutParam == null) {
+                            layoutParam = "";
+                        }
                         conditionElement.put("layoutParam", layoutParam);
 
                         String figureSizeString = condition.getAttribute("figureSize");
@@ -297,7 +300,6 @@ public final class ConditionProvider {
                 throw new RuntimeException("Package filed to load.");
             }
             if (pack != null) {
-
                 EClassifier classifier = pack.getEClassifier(type);
                 EClass cl = (EClass) classifier;
                 if (cl != null) {

@@ -58,7 +58,7 @@ import de.cau.cs.kieler.kvid.datadistributor.DataDistributor;
 import de.cau.cs.kieler.kvid.datadistributor.IDataListener;
 
 /**
- * 
+ * Karma rendering provider for rendering ptolemy diagrams in kaom.
  * @author ckru
  * 
  */
@@ -140,8 +140,8 @@ public class KaomFigureProvider implements IRenderingProvider {
     /**
      * {@inheritDoc}
      */
-    public LayoutManager getLayoutManagerByString(final String input, final LayoutManager oldLayoutManager,
-           final EObject object) {
+    public LayoutManager getLayoutManagerByString(final String input,
+            final LayoutManager oldLayoutManager, final EObject object) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -385,7 +385,7 @@ public class KaomFigureProvider implements IRenderingProvider {
      *            the modelelement
      * @return the monitorvalue figure
      */
-    private IFigure createMonitorValue(EObject object) {
+    private IFigure createMonitorValue(final EObject object) {
         MonitorValueFigure monitor = new MonitorValueFigure(object);
         monitor.setLineWidth(1);
         monitor.setForegroundColor(ColorConstants.black);
@@ -401,9 +401,9 @@ public class KaomFigureProvider implements IRenderingProvider {
      */
     private class MonitorValueFigure extends RectangleFigure implements IDataListener {
 
-        Label value;
+        private Label value;
 
-        String referredDataUri;
+        private String referredDataUri;
 
         /**
          * constructs this figure and adds a label that displays the current value.
@@ -411,7 +411,7 @@ public class KaomFigureProvider implements IRenderingProvider {
          * @param object
          *            the model element.
          */
-        public MonitorValueFigure(EObject object) {
+        public MonitorValueFigure(final EObject object) {
             value = new Label();
             value.getBounds().setSize(140, 10);
             value.getBounds().setLocation(70, 10);
