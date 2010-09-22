@@ -117,7 +117,6 @@ public class ListItemGene extends AbstractGene<Integer> {
         final Integer value = Integer.valueOf(this.getValue().intValue());
         int newInt = value.intValue();
         if (r.nextDouble() < prob) {
-            // TODO: regard genuineMutationProbability
             newInt =
                     (r.nextInt((upperBound.intValue() - lowerBound.intValue() + 1)) + lowerBound
                             .intValue());

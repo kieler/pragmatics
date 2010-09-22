@@ -42,17 +42,18 @@ public class UniversalGene extends AbstractGene<Float> {
     /**
      * Default formatter for strictly positive float values.
      */
-    public static final IValueFormatter STRICTLY_POSITIVE_FLOAT_FORMATTER = new IValueFormatter() {
-        public String getString(final Object o) {
-            final DecimalFormat df = new DecimalFormat("0.00");
-            if (o instanceof Float) {
-                return df.format(o) + "f";
-            } else if (o instanceof UniversalGene) {
-                return df.format(((UniversalGene) o).getValue()) + "f";
-            }
-            return null;
-        }
-    };
+    public static final IValueFormatter STRICTLY_POSITIVE_FLOAT_FORMATTER =
+            new IValueFormatter() {
+                public String getString(final Object o) {
+                    final DecimalFormat df = new DecimalFormat("0.00");
+                    if (o instanceof Float) {
+                        return df.format(o) + "f";
+                    } else if (o instanceof UniversalGene) {
+                        return df.format(((UniversalGene) o).getValue()) + "f";
+                    }
+                    return null;
+                }
+            };
 
     /**
      * Default formatter for float values.
@@ -93,8 +94,7 @@ public class UniversalGene extends AbstractGene<Float> {
      */
     public static final FloatTypeInfo STRICTLY_POSITIVE_FLOAT_TYPE_INFO = new FloatTypeInfo(
             Float.valueOf(1.0f), Float.valueOf(Float.MIN_VALUE),
-            Float.valueOf(Float.POSITIVE_INFINITY),
-            STRICTLY_POSITIVE_FLOAT_FORMATTER,
+            Float.valueOf(Float.POSITIVE_INFINITY), STRICTLY_POSITIVE_FLOAT_FORMATTER,
             Float.class);
 
     /**
@@ -182,8 +182,7 @@ public class UniversalGene extends AbstractGene<Float> {
             }
 
             final IGene<Float> result =
-                    new UniversalGene(getId(), value, getTypeInfo(),
-                            getMutationInfo());
+                    new UniversalGene(getId(), value, getTypeInfo(), getMutationInfo());
 
             return result;
         }
@@ -260,19 +259,15 @@ public class UniversalGene extends AbstractGene<Float> {
 
             // get mutation parameters
             final double prob = mutationInfo.getProbability();
-            final double probGenuineMutation = mutationInfo.getGenuineMutationProbability();
+
             final Distribution distr = mutationInfo.getDistr();
             Assert.isTrue(distr == Distribution.UNIFORM);
 
             final Float newValue;
             if (r.nextDouble() < prob) {
-                if (r.nextDouble() < probGenuineMutation) {
-                    // enforce genuine mutation
-                    newValue = Float.valueOf(template.getBoolValue() ? 0.0f : 1.0f);
-                } else {
-                    // assign a random boolean value (may be the same as before)
-                    newValue = Float.valueOf(r.nextDouble() < PROBABILITY_FOR_TRUE ? 1.0f : 0.0f);
-                }
+                // assign a random boolean value (may be the same as before)
+                newValue = Float.valueOf(r.nextDouble() < PROBABILITY_FOR_TRUE ? 1.0f : 0.0f);
+
             } else {
                 newValue = template.getValue();
             }
@@ -320,7 +315,6 @@ public class UniversalGene extends AbstractGene<Float> {
                 // produce a new value within the valid bounds.
                 do {
                     final double gauss = r.nextGaussian() * Math.sqrt(var);
-                    // TODO: regard genuineMutationProbability
                     newValue = Float.valueOf((float) (value.doubleValue() + gauss));
                 } while (!typeInfo.isValueWithinBounds(newValue));
             }
@@ -368,7 +362,6 @@ public class UniversalGene extends AbstractGene<Float> {
             final Integer value = Integer.valueOf(template.getValue().intValue());
             Integer newInt = value;
             if (r.nextDouble() < prob) {
-                // TODO: regard genuineMutationProbability
                 switch (distr) {
                 case GAUSSIAN:
                     do {
@@ -422,7 +415,7 @@ public class UniversalGene extends AbstractGene<Float> {
                     Integer.valueOf(this.getTypeInfo().getTypeClass().hashCode() * f1
                             + this.getId().hashCode() * f2 + this.getValue().hashCode());
         }
-        
+
         return this.cachedHash.intValue();
 
     }

@@ -158,7 +158,6 @@ public final class EnumGene extends AbstractGene<Integer> {
 
             int newInt = value.intValue();
             if (r.nextDouble() < prob) {
-                // TODO: regard genuineMutationProbability
                 // Uniform distribution
                 newInt =
                         (r.nextInt((upperBound.intValue() - lowerBound.intValue() + 1)) + lowerBound

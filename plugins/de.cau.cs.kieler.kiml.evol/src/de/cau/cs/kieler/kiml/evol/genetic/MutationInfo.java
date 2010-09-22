@@ -86,15 +86,6 @@ public class MutationInfo {
      *            the probability that a mutation occurs.
      * @param var
      *            the variance (used for Gaussian distribution).
-     * @param gprob
-     *            The probability for an enforced genuine mutation. This
-     *            determines how likely a genuine mutation shall be enforced,
-     *            compared to a completely random mutation. Must be within
-     *            {@code 0.0} and {@code 1.0}. An value of {@code 0.0} for this
-     *            argument means that every time a mutation occurs, it might
-     *            result in the same value as before. A value of {@code 1.0} for
-     *            this argument means that every time a mutation occurs, it
-     *            shall be ensured that it differs from the previous value.
      * @param distr
      *            the probability distribution.
      */
@@ -106,16 +97,13 @@ public class MutationInfo {
         Assert.isLegal(var >= 0.0);
         this.probability = prob;
         this.variance = var;
-        this.genuineMutationProbability = gprob;
         this.distribution = distr;
     }
 
     private final Distribution distribution;
 
-    private final double genuineMutationProbability;
-
     private final double probability;
-    // TODO: encapsulate distribution-related parameters
+    // discuss: encapsulate parameters of distribution
     private final double variance;
 
     /**
@@ -125,14 +113,6 @@ public class MutationInfo {
     public Distribution getDistr() {
         Assert.isNotNull(this.distribution);
         return this.distribution;
-    }
-
-    /**
-     *
-     * @return the genuine mutation probability.
-     */
-    public double getGenuineMutationProbability() {
-        return this.genuineMutationProbability;
     }
 
     /**
