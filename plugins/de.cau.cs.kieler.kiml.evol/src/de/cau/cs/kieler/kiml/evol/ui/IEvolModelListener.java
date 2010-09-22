@@ -25,6 +25,39 @@ import de.cau.cs.kieler.kiml.evol.EvolModel;
  *
  */
 public interface IEvolModelListener {
+    
+    /**
+     * Indicates the type of a model change.
+     * 
+     * @author bdu
+     * 
+     */
+    public enum ModelChangeType {
+        /**
+         * The current position was changed.
+         */
+        SET_POSITION,
+
+        /**
+         * The model was reset.
+         */
+        RESET,
+
+        /**
+         * An evolutionary step was performed.
+         */
+        EVOLVE,
+
+        /**
+         * Auto-rating was performed.
+         */
+        AUTO_RATING,
+
+        /**
+         * Rating of the current individual was changed.
+         */
+        CURRENT_RATING
+    }
 
     /**
      * Notifies that a model change has been performed.
@@ -32,9 +65,8 @@ public interface IEvolModelListener {
      * @param source
      *            the model
      * @param cause
-     *            a string explaining the cause
+     *            the cause of the change
      */
-    void afterChange(EvolModel source, String cause);
-    // TODO: discuss: should "cause" be an enum constant instead of a string?
+    void afterChange(EvolModel source, ModelChangeType cause);
 
 }

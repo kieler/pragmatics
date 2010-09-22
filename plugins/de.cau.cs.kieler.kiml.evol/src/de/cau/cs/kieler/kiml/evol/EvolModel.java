@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.evol.ui.IEvolModelListener;
+import de.cau.cs.kieler.kiml.evol.ui.IEvolModelListener.ModelChangeType;
 
 /**
  * This class encapsulates the evolution model that is displayed in the
@@ -98,7 +99,7 @@ public final class EvolModel {
     private BasicEvolutionaryAlgorithm weightEvolAlg;
     private int position;
     private String layoutProviderId;
-    private String layoutTypeId;
+
     private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
 
     /**
@@ -130,7 +131,7 @@ public final class EvolModel {
         EvolUtil.autoRate(population, theMonitor, wgs);
 
         // Notify listeners.
-        afterChange("autoRate");
+        afterChange(ModelChangeType.AUTO_RATING);
     }
 
     /**
@@ -178,7 +179,7 @@ public final class EvolModel {
 
             this.weightEvolAlg.step();
 
-            afterChange("changeCurrentRating");
+            afterChange(ModelChangeType.CURRENT_RATING);
         }
     }
 
@@ -229,14 +230,14 @@ public final class EvolModel {
             final int reward = 10;
             for (final Genome predictor : weightWatchers) {
                 Assert.isNotNull(predictor);
-                final int oldRating = (predictor.hasUserRating() ? predictor.getUserRating().intValue() : 0);
-                predictor.setUserRating(Integer.valueOf(oldRating + reward));
+                final int oldRating = (predictor.hasUserRating() ? predictor.getUserRating() : 0);
+                predictor.setUserRating(oldRating + reward);
             }
 
             monitor.worked(autoRateWork * scale);
 
             // Notify listeners.
-            afterChange("evolve");
+            afterChange(ModelChangeType.EVOLVE);
             monitor.worked(listenersWork * scale);
 
         } finally {
@@ -377,13 +378,8 @@ public final class EvolModel {
             final String providerId = providerData.getId();
             this.layoutProviderId = providerId;
 
-            // Find out which layout type it is.
-            final String typeId = providerData.getType();
-            this.layoutTypeId = typeId;
-
         } else {
             this.layoutProviderId = null;
-            this.layoutTypeId = null;
         }
 
         // Create an initial population.
@@ -420,7 +416,7 @@ public final class EvolModel {
         }
 
         // Notify listeners.
-        afterChange("reset");
+        afterChange(ModelChangeType.RESET);
     }
 
     /**
@@ -437,7 +433,7 @@ public final class EvolModel {
 
         if ((oldPosition != thePosition)) {
             this.position = thePosition;
-            afterChange("setPosition");
+            afterChange(ModelChangeType.SET_POSITION);
         }
     }
 
@@ -446,7 +442,7 @@ public final class EvolModel {
      *
      * @param cause
      */
-    private void afterChange(final String cause) {
+    private void afterChange(final ModelChangeType cause) {
         for (final IEvolModelListener listener : this.listeners) {
             listener.afterChange(this, cause);
         }

@@ -99,7 +99,7 @@ public class EvolView extends ViewPart {
         /**
          * {@inheritDoc}
          */
-        public void afterChange(final EvolModel source, final String cause) {
+        public void afterChange(final EvolModel source, final ModelChangeType cause) {
 
             EvolPlugin.logStatus("afterChange: " + cause);
 
@@ -110,7 +110,7 @@ public class EvolView extends ViewPart {
                 // TODO: eliminate these cases
             }
 
-            if ("setPosition".equalsIgnoreCase(cause)) {
+            if (cause == ModelChangeType.SET_POSITION) {
                 EvolUtil.applyCurrentIndividual(source);
                 // nothing more needs to be done
                 return;
@@ -134,7 +134,7 @@ public class EvolView extends ViewPart {
             }
 
             final int row = source.getPosition();
-            if ("reset".equalsIgnoreCase(cause)) {
+            if (cause == ModelChangeType.RESET) {
                 Assert.isTrue(row == 0);
             }
 
