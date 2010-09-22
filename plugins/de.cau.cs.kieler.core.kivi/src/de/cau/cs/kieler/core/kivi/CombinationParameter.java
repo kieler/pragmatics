@@ -29,9 +29,9 @@ import org.eclipse.swt.graphics.RGB;
 public class CombinationParameter {
 
     /**
-     * Default initializer for strings.
+     * Default parameter type for strings.
      */
-    public static final IParameterType STRING_INITIALIZER = new IParameterType() {
+    public static final IParameterType STRING_TYPE = new IParameterType() {
         public void initialize(final IPreferenceStore p, final String k, final Object o) {
             p.setDefault(k, (String) o);
         }
@@ -42,9 +42,9 @@ public class CombinationParameter {
     };
     
     /**
-     * Default initializer for integers.
+     * Default parameter type for integers.
      */
-    public static final IParameterType INTEGER_INITIALIZER = new IParameterType() {
+    public static final IParameterType INTEGER_TYPE = new IParameterType() {
         public void initialize(final IPreferenceStore p, final String k, final Object o) {
             p.setDefault(k, (Integer) o);
         }
@@ -55,9 +55,9 @@ public class CombinationParameter {
     };
     
     /**
-     * Default initializer for floats.
+     * Default parameter type for floats.
      */
-    public static final IParameterType FLOAT_INITIALIZER = new IParameterType() {
+    public static final IParameterType FLOAT_TYPE = new IParameterType() {
         public void initialize(final IPreferenceStore p, final String k, final Object o) {
             p.setDefault(k, (Float) o);
         }
@@ -68,9 +68,9 @@ public class CombinationParameter {
     };
     
     /**
-     * Default initializer for doubles.
+     * Default parameter type for doubles.
      */
-    public static final IParameterType DOUBLE_INITIALIZER = new IParameterType() {
+    public static final IParameterType DOUBLE_TYPE = new IParameterType() {
         public void initialize(final IPreferenceStore p, final String k, final Object o) {
             p.setDefault(k, (Double) o);
         }
@@ -81,9 +81,9 @@ public class CombinationParameter {
     };
     
     /**
-     * Default initializer for booleans.
+     * Default parameter type for booleans.
      */
-    public static final IParameterType BOOLEAN_INITIALIZER = new IParameterType() {
+    public static final IParameterType BOOLEAN_TYPE = new IParameterType() {
         public void initialize(final IPreferenceStore p, final String k, final Object o) {
             p.setDefault(k, (String) o);
         }
@@ -94,9 +94,9 @@ public class CombinationParameter {
     };
     
     /**
-     * Default initializer for RGB color values.
+     * Default parameter type for RGB color values.
      */
-    public static final IParameterType RGB_INITIALIZER = new IParameterType() {
+    public static final IParameterType RGB_TYPE = new IParameterType() {
         public void initialize(final IPreferenceStore p, final String k, final Object o) {
             PreferenceConverter.setDefault(p, k, (RGB) o);
         }

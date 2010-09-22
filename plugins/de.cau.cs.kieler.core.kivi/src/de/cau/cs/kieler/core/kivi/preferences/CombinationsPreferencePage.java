@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -84,14 +84,14 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
             CombinationParameter[] parameters = CombinationParameter.getParameters(descriptor
                     .getClazz());
             if (parameters.length > 0) {
-                Composite current = new Composite(main, SWT.NONE);
-                current.setLayout(new GridLayout());
-                Label label = new Label(main, SWT.NONE);
-                label.setText(descriptor.getName());
-                label.setFont(font);
-
+                Group group = new Group(main, SWT.NONE);
+                group.setText(descriptor.getName());
+                group.setToolTipText(descriptor.getDescription());
+                group.setFont(font);
+                group.setLayout(new GridLayout());
+                
                 for (CombinationParameter parameter : parameters) {
-                    FieldEditor editor = createFieldEditor(parameter, current);
+                    FieldEditor editor = createFieldEditor(parameter, group);
                     if (editor != null) {
                         parameterEditors.add(editor);
                     }
