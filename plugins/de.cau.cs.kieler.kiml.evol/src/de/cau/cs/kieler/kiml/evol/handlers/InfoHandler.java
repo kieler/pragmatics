@@ -47,7 +47,7 @@ public class InfoHandler extends AbstractHandler {
         }
 
         System.out.println();
-        System.out.println(model.getWeightWatchers().getDetails());
+        System.out.println(model.getRatingPredictors().getDetails());
         System.out.println();
         System.out.println(model.getPopulation().getDetails());
 

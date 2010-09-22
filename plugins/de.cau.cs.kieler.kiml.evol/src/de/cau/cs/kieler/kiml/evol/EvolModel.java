@@ -37,10 +37,11 @@ import de.cau.cs.kieler.kiml.evol.ui.IEvolModelListener.ModelChangeType;
 /**
  * This class encapsulates the evolution model that is displayed in the
  * EvolView. The model basically consists of an evolutionary algorithm, a
- * population and a current individual.
- *
+ * population and a current individual. Additionally, it manages a population of
+ * rating predictors that is evolved separately.
+ * 
  * @author bdu
- *
+ * 
  */
 public final class EvolModel {
 
@@ -90,13 +91,13 @@ public final class EvolModel {
     }
 
     /**
-     * Number of weight genomes.
+     * Number of rating predictors.
      */
-    private static final int NUM_WEIGHT_GENOMES = 25;
+    private static final int NUM_RATING_PREDICTORS = 25;
 
     // private fields
     private BasicEvolutionaryAlgorithm evolAlg;
-    private BasicEvolutionaryAlgorithm weightEvolAlg;
+    private BasicEvolutionaryAlgorithm predictorsEvolAlg;
     private int position;
     private String layoutProviderId;
 
@@ -125,10 +126,10 @@ public final class EvolModel {
         final Population population = getPopulation();
         Assert.isNotNull(population);
 
-        final Population wgs = getWeightWatchers();
-        Assert.isNotNull(wgs);
+        final Population predictors = getRatingPredictors();
+        Assert.isNotNull(predictors);
 
-        EvolUtil.autoRate(population, theMonitor, wgs);
+        EvolUtil.autoRate(population, theMonitor, predictors);
 
         // Notify listeners.
         afterChange(ModelChangeType.AUTO_RATING);
@@ -166,18 +167,18 @@ public final class EvolModel {
             final String key = "proposedRating:" + current.getId();
             final int newRating =
                     (current.hasUserRating() ? current.getUserRating().intValue() : 0);
-            for (final Genome predictor : this.getWeightWatchers()) {
+            for (final Genome predictor : this.getRatingPredictors()) {
                 final Map<String, Object> features = predictor.getFeatures();
                 if ((features != null) && features.containsKey(key)) {
                     final Integer prediction = (Integer) features.get(key);
                     final int diff = newRating - prediction.intValue();
                     final int predictorRating =
-                            (predictor.hasUserRating() ? predictor.getUserRating().intValue() : 0);
-                    predictor.setUserRating(Integer.valueOf(predictorRating - Math.abs(diff)));
+                            (predictor.hasUserRating() ? predictor.getUserRating() : 0);
+                    predictor.setUserRating(predictorRating - Math.abs(diff));
                 }
             }
 
-            this.weightEvolAlg.step();
+            this.predictorsEvolAlg.step();
 
             afterChange(ModelChangeType.CURRENT_RATING);
         }
@@ -219,16 +220,16 @@ public final class EvolModel {
             final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
             Assert.isNotNull(unrated);
 
-            final Population weightWatchers = this.getWeightWatchers();
-            Assert.isNotNull(weightWatchers);
-            Assert.isTrue(!weightWatchers.isEmpty());
+            final Population predictors = this.getRatingPredictors();
+            Assert.isNotNull(predictors);
+            Assert.isTrue(!predictors.isEmpty());
 
-            final Runnable runnable = new AutoRaterRunnable(unrated, weightWatchers, monitor, scale);
+            final Runnable runnable = new AutoRaterRunnable(unrated, predictors, monitor, scale);
             MonitoredOperation.runInUI(runnable, true);
 
             // reward predictors
             final int reward = 10;
-            for (final Genome predictor : weightWatchers) {
+            for (final Genome predictor : predictors) {
                 Assert.isNotNull(predictor);
                 final int oldRating = (predictor.hasUserRating() ? predictor.getUserRating() : 0);
                 predictor.setUserRating(oldRating + reward);
@@ -305,11 +306,11 @@ public final class EvolModel {
      *
      * @return the population of rating predictors
      */
-    public Population getWeightWatchers() {
-        if (this.weightEvolAlg == null) {
+    public Population getRatingPredictors() {
+        if (this.predictorsEvolAlg == null) {
             return new Population();
         }
-        return this.weightEvolAlg.getPopulation();
+        return this.predictorsEvolAlg.getPopulation();
     }
 
     /**
@@ -324,13 +325,13 @@ public final class EvolModel {
             return false;
         }
 
-        if (this.weightEvolAlg == null) {
+        if (this.predictorsEvolAlg == null) {
             EvolPlugin.logStatus("Weights algorithm is not set.");
             return false;
         }
 
-        if (this.weightEvolAlg.getPopulation() == null) {
-            EvolPlugin.logStatus("Weights genome is not set.");
+        if (this.predictorsEvolAlg.getPopulation() == null) {
+            EvolPlugin.logStatus("Predictor population is not set.");
             return false;
         }
 
@@ -370,7 +371,7 @@ public final class EvolModel {
         final EditPart part = EvolUtil.getCurrentEditPart(editor);
         this.position = 0;
         this.evolAlg = null;
-        this.weightEvolAlg = null;
+        this.predictorsEvolAlg = null;
 
         final LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, part);
 
@@ -398,15 +399,15 @@ public final class EvolModel {
             EvolPlugin.logStatus("Creating metric weights ...");
             final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
 
-            final Population ww = new Population();
-            for (int i = 0; i < NUM_WEIGHT_GENOMES; i++) {
+            final Population predictors = new Population();
+            for (int i = 0; i < NUM_RATING_PREDICTORS; i++) {
                 final Genome weightGenes = GenomeFactory.createWeightGenes(metricIds);
                 Assert.isNotNull(weightGenes);
-                ww.add(weightGenes);
+                predictors.add(weightGenes);
             }
 
-            this.weightEvolAlg = new BasicEvolutionaryAlgorithm(ww);
-            this.weightEvolAlg.step();
+            this.predictorsEvolAlg = new BasicEvolutionaryAlgorithm(predictors);
+            this.predictorsEvolAlg.step();
 
             // Create and initialize the algorithm.
             final BasicEvolutionaryAlgorithm alg =
