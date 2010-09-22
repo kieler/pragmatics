@@ -695,6 +695,9 @@ public class GraphvizLayouter {
                 // process a node
                 NodeStatement nodeStatement = (NodeStatement) statement;
                 KNode knode = (KNode) graphElementMap.get(nodeStatement.getNode().getName());
+                if (knode == null) {
+                    continue;
+                }
                 KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
                 float xpos = 0.0f, ypos = 0.0f, width = 0.0f, height = 0.0f;
                 for (Attribute attribute : nodeStatement.getAttributes()) {
@@ -724,6 +727,9 @@ public class GraphvizLayouter {
                 EdgeStatement edgeStatement = (EdgeStatement) statement;
                 Map<String, String> attributeMap = createAttributeMap(edgeStatement.getAttributes());
                 KEdge kedge = (KEdge) graphElementMap.get(attributeMap.get(GraphvizAPI.ATTR_COMMENT));
+                if (kedge == null) {
+                    continue;
+                }
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 List<KPoint> edgePoints = edgeLayout.getBendPoints();
                 edgePoints.clear();
