@@ -93,16 +93,6 @@ public final class EvolModel {
      */
     private static final int NUM_WEIGHT_GENOMES = 25;
 
-    /**
-     * Creates a new {@link EvolModel} instance.
-     */
-    public EvolModel() {
-        this.position = 0;
-        this.layoutProviderId = null;
-        this.layoutTypeId = null;
-        this.weightEvolAlg = null;
-    }
-
     // private fields
     private BasicEvolutionaryAlgorithm evolAlg;
     private BasicEvolutionaryAlgorithm weightEvolAlg;
@@ -177,7 +167,7 @@ public final class EvolModel {
                     (current.hasUserRating() ? current.getUserRating().intValue() : 0);
             for (final Genome predictor : this.getWeightWatchers()) {
                 final Map<String, Object> features = predictor.getFeatures();
-                if ((features != null) && !features.isEmpty() && features.containsKey(key)) {
+                if ((features != null) && features.containsKey(key)) {
                     final Integer prediction = (Integer) features.get(key);
                     final int diff = newRating - prediction.intValue();
                     final int predictorRating =
@@ -228,19 +218,19 @@ public final class EvolModel {
             final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
             Assert.isNotNull(unrated);
 
-            final Population ww = this.getWeightWatchers();
-            Assert.isNotNull(ww);
-            Assert.isTrue(!ww.isEmpty());
+            final Population weightWatchers = this.getWeightWatchers();
+            Assert.isNotNull(weightWatchers);
+            Assert.isTrue(!weightWatchers.isEmpty());
 
-            final Runnable runnable = new AutoRaterRunnable(unrated, ww, monitor, scale);
+            final Runnable runnable = new AutoRaterRunnable(unrated, weightWatchers, monitor, scale);
             MonitoredOperation.runInUI(runnable, true);
 
             // reward predictors
             final int reward = 10;
-            for (final Genome wg : ww) {
-                Assert.isNotNull(wg);
-                final int oldRating = (wg.hasUserRating() ? wg.getUserRating().intValue() : 0);
-                wg.setUserRating(Integer.valueOf(oldRating + reward));
+            for (final Genome predictor : weightWatchers) {
+                Assert.isNotNull(predictor);
+                final int oldRating = (predictor.hasUserRating() ? predictor.getUserRating().intValue() : 0);
+                predictor.setUserRating(Integer.valueOf(oldRating + reward));
             }
 
             monitor.worked(autoRateWork * scale);
@@ -264,10 +254,7 @@ public final class EvolModel {
         final Population pop = this.getPopulation();
         final int pos = this.getPosition();
         Assert.isTrue((pos >= 0) && (pos < pop.size()), "position out of range");
-        if ((pop == null) || pop.isEmpty()) {
-            return null;
-        }
-
+      
         // ensure that the position is within the valid range
         if ((pos >= pop.size()) || (pos < 0)) {
             return null;
@@ -360,12 +347,7 @@ public final class EvolModel {
             EvolPlugin.logStatus("No individual selected.");
             return false;
         }
-
-        if (!isCompatibleLayoutProvider()) {
-            // this is ok.
-            System.out.println("The current population is not compatible to the layout type.");
-        }
-
+        
         return true;
     }
 
@@ -491,30 +473,6 @@ public final class EvolModel {
     }
 
     /**
-     * Checks if the expected layout provider is of the same type as the layout
-     * provider of the current editor.
-     *
-     * @return {@code true} iff the layout providers are compatible or both are
-     *         {@code null}
-     */
-    private boolean isCompatibleLayoutProvider() {
-
-        final IEditorPart editor = EvolUtil.getCurrentEditor();
-        final EditPart editPart = EvolUtil.getCurrentEditPart(editor);
-
-        final String oldProviderId = this.layoutProviderId;
-        final LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, editPart);
-        final String newProviderId = providerData.getId();
-
-        if ((newProviderId == null) || (oldProviderId == null)) {
-            return (oldProviderId == null) && (newProviderId == null);
-        }
-
-        final String expectedTypeId = this.layoutTypeId;
-        return EvolUtil.isCompatibleLayoutProvider(newProviderId, expectedTypeId);
-    }
-
-    /**
      * Selects an interesting individual.
      */
     private void selectInterestingIndividual() {
@@ -527,31 +485,7 @@ public final class EvolModel {
         updatePosition();
         Assert.isTrue(getPosition() >= 0);
     }
-
-    /**
-     *
-     * @param theEvolAlg
-     *            the evolutionary algorithm
-     */
-    private void setEvolAlg(final BasicEvolutionaryAlgorithm theEvolAlg) {
-        this.evolAlg = theEvolAlg;
-    }
-
-    /**
-     * @param theLayoutProviderId
-     *            a layout provider id
-     */
-    private void setLayoutProviderId(final String theLayoutProviderId) {
-        this.layoutProviderId = theLayoutProviderId;
-    }
-
-    /**
-     * @param theLayoutTypeId
-     */
-    private void setLayoutTypeId(final String theLayoutTypeId) {
-        this.layoutTypeId = theLayoutTypeId;
-    }
-
+  
     /**
      * Make sure that the current position is not beyond the last individual.
      */
