@@ -39,56 +39,11 @@ import de.cau.cs.kieler.kiml.evol.ui.IEvolModelListener.ModelChangeType;
  * EvolView. The model basically consists of an evolutionary algorithm, a
  * population and a current individual. Additionally, it manages a population of
  * rating predictors that is evolved separately.
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public final class EvolModel {
-
-    /**
-     * @author bdu
-     *
-     */
-    private static final class AutoRaterRunnable implements Runnable {
-        private final Population weightsGenomes;
-
-        /**
-         * Creates a new {@link AutoRaterRunnable} instance.
-         *
-         * @param theUnrated
-         * @param theWeightsGenomes
-         * @param theMonitor
-         * @param theScale
-         */
-        AutoRaterRunnable(
-                final Population theUnrated,
-                final Population theWeightsGenomes,
-                final IProgressMonitor theMonitor,
-                final int theScale) {
-            this.unrated = theUnrated;
-            this.weightsGenomes = theWeightsGenomes;
-            this.monitor = theMonitor;
-            this.scale = theScale;
-        }
-        /**
-         *
-         */
-        private final Population unrated;
-        /**
-         *
-         */
-        private final IProgressMonitor monitor;
-
-        /**
-         *
-         */
-        private final int scale;
-
-        public void run() {
-            EvolUtil.autoRate(this.unrated, new SubProgressMonitor(this.monitor, 1 * this.scale),
-                    this.weightsGenomes);
-        }
-    }
 
     /**
      * Number of rating predictors.
@@ -224,7 +179,12 @@ public final class EvolModel {
             Assert.isNotNull(predictors);
             Assert.isTrue(!predictors.isEmpty());
 
-            final Runnable runnable = new AutoRaterRunnable(unrated, predictors, monitor, scale);
+            final Runnable runnable = new Runnable() {
+                public void run() {
+                    EvolUtil.autoRate(unrated, new SubProgressMonitor(monitor, 1 * scale),
+                            predictors);
+                }
+            };
             MonitoredOperation.runInUI(runnable, true);
 
             // reward predictors
