@@ -254,7 +254,7 @@ public final class EvolModel {
         final Population pop = this.getPopulation();
         final int pos = this.getPosition();
         Assert.isTrue((pos >= 0) && (pos < pop.size()), "position out of range");
-      
+
         // ensure that the position is within the valid range
         if ((pos >= pop.size()) || (pos < 0)) {
             return null;
@@ -347,7 +347,7 @@ public final class EvolModel {
             EvolPlugin.logStatus("No individual selected.");
             return false;
         }
-        
+
         return true;
     }
 
@@ -375,15 +375,15 @@ public final class EvolModel {
 
         if (providerData != null) {
             final String providerId = providerData.getId();
-            setLayoutProviderId(providerId);
+            this.layoutProviderId = providerId;
 
             // Find out which layout type it is.
             final String typeId = providerData.getType();
-            setLayoutTypeId(typeId);
+            this.layoutTypeId = typeId;
 
         } else {
-            setLayoutProviderId(null);
-            setLayoutTypeId(null);
+            this.layoutProviderId = null;
+            this.layoutTypeId = null;
         }
 
         // Create an initial population.
@@ -485,7 +485,7 @@ public final class EvolModel {
         updatePosition();
         Assert.isTrue(getPosition() >= 0);
     }
-  
+
     /**
      * Make sure that the current position is not beyond the last individual.
      */
