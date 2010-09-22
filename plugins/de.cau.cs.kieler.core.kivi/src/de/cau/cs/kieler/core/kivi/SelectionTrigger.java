@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.ui.listeners;
+package de.cau.cs.kieler.core.kivi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,6 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.kivi.AbstractTrigger;
-import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
 
