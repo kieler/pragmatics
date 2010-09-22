@@ -58,7 +58,7 @@ public class EvolPlugin extends AbstractUIPlugin {
      */
     public static final String PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT =
             "de.cau.cs.kieler.kiml.evol.useDifferentTypeLayoutHint";
-    
+
     /**
      * Preference constant for option "Allow parthenogenesis". A preference that
      * indicates whether parthenogenesis (reproduction from only one parent) may
@@ -128,8 +128,6 @@ public class EvolPlugin extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
         EvolutionServices.createExtensionData();
-        System.out.println(EvolutionServices.getInstance().getEvolutionDataIds());
-        System.out.println(EvolutionServices.getInstance().getLayoutMetricsIds());
     }
 
     /**

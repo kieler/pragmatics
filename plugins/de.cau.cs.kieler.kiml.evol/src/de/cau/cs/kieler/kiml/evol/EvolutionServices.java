@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.evol;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -61,6 +62,8 @@ public final class EvolutionServices {
         // build data for the extension points
         instance.loadEvolutionDataExtensions();
         instance.loadLayoutMetricsExtensions();
+
+        EvolPlugin.logStatus("Metrics loaded: " + instance.getLayoutMetricsIds());
     }
 
     /**
@@ -88,6 +91,9 @@ public final class EvolutionServices {
 
     /** Set of registered layout metrics. */
     private HashMap<String, IConfigurationElement> layoutMetricsMap;
+
+    /** Set of the cached metrics. */
+    private Set<AbstractInfoAnalysis> cachedMetrics;
 
     /**
      *
@@ -147,6 +153,17 @@ public final class EvolutionServices {
     }
 
     /**
+     * Returns the unmodifiable set of layout metrics.
+     * {@link #createExtensionData()} must be called before this method,
+     * otherwise an exception is thrown.
+     *
+     * @return the set of layout metrics
+     */
+    public Set<AbstractInfoAnalysis> getLayoutMetrics() {
+        return Collections.unmodifiableSet(this.cachedMetrics);
+    }
+
+    /**
      * Loads and registers all evolution data entries from the extension point.
      */
     private void loadEvolutionDataExtensions() {
@@ -167,7 +184,6 @@ public final class EvolutionServices {
      * Loads and registers all metrics from the extension point.
      */
     private void loadLayoutMetricsExtensions() {
-        this.layoutMetricsMap = new HashMap<String, IConfigurationElement>();
         final IConfigurationElement[] extensions =
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
                         AnalysisServices.EXTP_ID_ANALYSIS_PROVIDERS);
@@ -183,9 +199,9 @@ public final class EvolutionServices {
             metricIds.add(metric.getID());
         }
 
+        this.layoutMetricsMap = new HashMap<String, IConfigurationElement>();
+
         // Store the configuration elements of the metrics.
-        // TODO: discuss: we have the metrics here, should we cache them instead
-        // of storing their configuration element?
         for (final IConfigurationElement element : extensions) {
             if (AnalysisServices.ELEMENT_ANALYSIS_PROVIDER.equals(element.getName())) {
                 final String id = element.getAttribute("id");
@@ -194,5 +210,9 @@ public final class EvolutionServices {
                 }
             }
         }
+
+        // We have the metrics here, so we cache them additionally
+        // to storing their configuration element.
+        this.cachedMetrics = new HashSet<AbstractInfoAnalysis>(metrics);
     }
 }

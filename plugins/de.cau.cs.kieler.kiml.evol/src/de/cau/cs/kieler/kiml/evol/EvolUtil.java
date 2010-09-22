@@ -453,16 +453,18 @@ public final class EvolUtil {
             // Get the metric IDs.
             final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
 
+            // Get the metrics.
+            final Set<AbstractInfoAnalysis> metrics =
+                    EvolutionServices.getInstance().getLayoutMetrics();
+
             final Map<String, Double> weightsMap = new HashMap<String, Double>(theWeightsMap);
 
-            // We have the metric IDs, now get the metrics.
             final AnalysisServices as = AnalysisServices.getInstance();
-            final List<AbstractInfoAnalysis> metricsList =
+            final List<AbstractInfoAnalysis> wantedMetricsList =
                     new ArrayList<AbstractInfoAnalysis>(metricIds.size());
-            for (final String metricId : metricIds) {
-                final AbstractInfoAnalysis metric = as.getAnalysisById(metricId);
-                Assert.isNotNull(metric, "Could not find analysis: " + metricId);
-
+            for (final AbstractInfoAnalysis metric : metrics) {
+                
+                final String metricId = metric.getID();
                 if (!weightsMap.containsKey(metricId)) {
                     // Skip this analysis.
                     continue;
@@ -474,18 +476,18 @@ public final class EvolUtil {
                     continue;
                 }
 
-                metricsList.add(metric);
+                wantedMetricsList.add(metric);
             }
 
             // Do we have anything to measure?
-            if (metricsList.isEmpty()) {
+            if (wantedMetricsList.isEmpty()) {
                 return Collections.emptyMap();
             }
 
             // Perform the measurement.
             final boolean showProgressBar = false;
             final Map<String, Object> analysisResults =
-                    DiagramAnalyser.analyse(parentNode, metricsList, showProgressBar);
+                    DiagramAnalyser.analyse(parentNode, wantedMetricsList, showProgressBar);
 
             for (final String metricId : metricIds) {
                 final Object analysisResult = analysisResults.get(metricId);
