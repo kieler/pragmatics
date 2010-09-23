@@ -201,11 +201,11 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         path.add(source);
         for (IEdge crossingEdge : crossingBorders) {
 
-            // crossing a hyperedge
+            // crossing a edge has hypernode as source
             if (crossingEdge.getSource().getType() == NodeType.HYPER) {
                 path.add(crossingEdge.getSource());
             }
-
+            // crossing a edge has hypernode as target
             if (crossingEdge.getTarget().getType() == NodeType.HYPER) {
                 path.add(crossingEdge.getTarget());
             }
@@ -233,6 +233,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         while (faceCounter < shortestFacePath.size() - 1) {
             IFace face1 = shortestFacePath.get(faceCounter);
             IFace face2 = shortestFacePath.get(faceCounter + 1);
+            // find the edge between face1 and fac2
             IEdge crossingEdge = findBorderEdge(face1, face2);
             crossingBorders.add(crossingEdge);
             faceCounter++;
@@ -298,9 +299,11 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
             IFace firstFace = (IFace) iEdge.getSource().getProperty(IGraphFactory.TODUALGRAPH);
             IFace secondFace = (IFace) iEdge.getTarget().getProperty(IGraphFactory.TODUALGRAPH);
 
+            // add first face to the path
             if (!shortestFacePath.contains(firstFace) && firstFace != null) {
                 shortestFacePath.add(firstFace);
             }
+            // add second face to the path
             if (!shortestFacePath.contains(secondFace) && secondFace != null) {
                 shortestFacePath.add(secondFace);
             }
