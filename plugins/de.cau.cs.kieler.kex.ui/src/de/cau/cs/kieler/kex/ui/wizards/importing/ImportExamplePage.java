@@ -320,10 +320,13 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
     private void updateDescriptionLabel(Example selectedExample) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Title:       ").append(selectedExample.getTitle()).append("<br>")
-                .append("Author:   ").append(selectedExample.getAuthor()).append("<br>")
-                .append("Contact: ").append(selectedExample.getContact()).append("<br>")
-                .append("<br>").append(selectedExample.getDescription());
+
+        String htmlDesc = selectedExample.getDescription().replaceAll("\n", "<br>");
+
+        sb.append("Title:       ").append(selectedExample.getTitle()).append("<br>").append(
+                "Author:   ").append(selectedExample.getAuthor()).append("<br>")
+                .append("Contact: ").append(selectedExample.getContact()).append("<br>").append(
+                        "<br>").append(htmlDesc);
         getExampleDescription().setText(sb.toString());
     }
 
