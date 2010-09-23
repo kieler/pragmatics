@@ -6,7 +6,7 @@
          <meta.schema plugin="de.cau.cs.kieler.kex" id="de.cau.cs.kieler.kex" name="KEX"/>
       </appinfo>
       <documentation>
-         To add new examples to KEX you have to extend that extensionpoint.
+         To add new examples to KIELER you have to extend that extensionpoint.
       </documentation>
    </annotation>
 

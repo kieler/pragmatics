@@ -55,7 +55,12 @@ public class PluginExampleCollector extends ExampleCollector {
                         // oder einfach annehmen, dass dies nicht geschieht
                         continue;
                     }
-                    Example example = toExample(element);
+                    Example example = null;
+                    try {
+                        example = toExample(element);
+                    } catch (Exception e) {
+                        continue;
+                    }
                     this.examplePool.put(exampleTitle, example);
                 } else if (PluginConstants.CATEGORY.equals(elementName)) {
                     collectCategory(element);
@@ -68,11 +73,12 @@ public class PluginExampleCollector extends ExampleCollector {
                 throw new KielerException("Error while loading example \""
                         + element.getAttribute(PluginConstants.ID) + "\". "
                         + e1.getLocalizedMessage());
-            } catch (KielerException e2) {
-                throw new KielerException("Error while loading example \""
-                        + element.getAttribute(PluginConstants.ID) + "\". "
-                        + e2.getLocalizedMessage());
             }
+            // catch (KielerException e2) {
+            // throw new KielerException("Error while loading example \""
+            // + element.getAttribute(PluginConstants.ID) + "\". "
+            // + e2.getLocalizedMessage());
+            // }
         }
     }
 
