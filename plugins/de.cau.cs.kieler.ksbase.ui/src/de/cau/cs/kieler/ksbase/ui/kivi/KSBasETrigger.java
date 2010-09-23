@@ -82,12 +82,12 @@ public class KSBasETrigger extends AbstractTrigger implements ITransformationEve
         public KSBasEState() {
 
         }
-        
+
         private KSBasEState(final EObject object, final DiagramEditor editor) {
             newObject = object;
             diagramEditor = editor;
         }
-        
+
         /**
          * Get the EObject selected after the transformation.
          * 
@@ -96,7 +96,7 @@ public class KSBasETrigger extends AbstractTrigger implements ITransformationEve
         public EObject getEObject() {
             return newObject;
         }
-        
+
         /**
          * Get the DiagramEditor where the transformation happened.
          * 
@@ -106,7 +106,9 @@ public class KSBasETrigger extends AbstractTrigger implements ITransformationEve
             return diagramEditor;
         }
 
-        @Override
+        /**
+         * {@inheritDoc}
+         */
         public Class<?> getTriggerClass() {
             return KSBasETrigger.class;
         }

@@ -17,12 +17,12 @@ package de.cau.cs.kieler.core.kivi;
  * Base implementation for trigger states.
  * 
  * @author mmu
- *
+ * 
  */
 public abstract class AbstractTriggerState implements ITriggerState {
-    
+
     private long sequenceNumber = 0;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -36,12 +36,7 @@ public abstract class AbstractTriggerState implements ITriggerState {
     public void finish() {
         // do nothing, needs to be overridden for event-ish states
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public abstract Class<?> getTriggerClass();
-    
+
     /**
      * {@inheritDoc}
      */

@@ -120,7 +120,9 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
             editor = e;
         }
 
-        @Override
+        /**
+         * {@inheritDoc}
+         */
         public Class<?> getTriggerClass() {
             return SelectionTrigger.class;
         }
