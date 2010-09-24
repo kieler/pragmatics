@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 public abstract class AbstractCombination implements ICombination {
 
     private boolean active = false;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -59,7 +59,7 @@ public abstract class AbstractCombination implements ICombination {
      * Can be overridden when the default mechanism of registering triggers by implementing
      * evaluate(ConcreteTrigger) is not wanted.
      */
-    public Class<?>[] getTriggerStates() {
+    public Class<?>[] getTriggerStates() { // FIXME more precise return type
         Method execute = getExecuteMethod();
         if (execute == null) {
             return new Class<?>[0];
@@ -73,7 +73,8 @@ public abstract class AbstractCombination implements ICombination {
      * 
      * @return execute method
      */
-    private Method getExecuteMethod() {
+    private Method getExecuteMethod() { // FIXME check for correct return types, multiple execute
+                                        // methods -> error log
         Method[] methods = getClass().getMethods();
         Method execute = null;
         for (Method m : methods) {
