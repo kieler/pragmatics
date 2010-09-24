@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
+import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -121,16 +122,32 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
                             Integer.valueOf(Math.round(((Float) value).floatValue())));
                 }
                 break;
-            
+
             case ENUM:
                 try {
-                    shapeLayout.setProperty(data, value);
+                    if (gene instanceof EnumGene) {
+                        Class<? extends Enum<?>> enumClass =
+                                ((EnumGene) gene).getTypeInfo().getTypeClass();
+                        Enum<?> enumConst = enumClass.getEnumConstants()[(Integer) value];
+                        shapeLayout.setProperty(data, enumConst);
+                    } else {
+                        shapeLayout.setProperty(data, value);
+                    }
+
                 } catch (final NullPointerException e) {
                     EvolPlugin.showError("WARNING: enum property could not be set: " + id, e);
                     Assert.isTrue(false);
                 }
                 break;
-            
+
+            case FLOAT:
+                if (value instanceof Float) {
+                    shapeLayout.setProperty(data, value);
+                } else {
+                    shapeLayout.setProperty(data, gene.toString());
+                }
+                break;
+
             case INT:
                 if (value instanceof Integer) {
                     shapeLayout.setProperty(data, value);

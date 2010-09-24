@@ -286,14 +286,6 @@ public final class EvolUtil {
                         EclipseLayoutServices.getInstance().getManager(editor, null);
                 Assert.isNotNull(manager);
 
-// final ILayoutInspector inspector =
-                // EvolUtil.getLayoutInspector(editor, null);
-                // Assert.isNotNull(inspector);
-
-// final LayoutPropertySource source = new
-                // LayoutPropertySource(inspector);
-                // Assert.isNotNull(source);
-
                 // TODO: what if weights genomes is empty?
                 Assert.isTrue(!weightsGenomes.isEmpty());
 
