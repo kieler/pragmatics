@@ -47,6 +47,9 @@
             icon="icons/importdiagram.gif"
             id="de.cau.cs.kieler.graphs.importWizard"
             name="Import Graph">
+         <description>
+            Import a graph from the local filesystem.
+         </description>
       </wizard>
    </extension>
       

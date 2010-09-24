@@ -1,8 +1,6 @@
 import graphs;
 import graphml;
 
-extension org::eclipse::xtend::util::stdlib::io;
-
 Node transform(graphml::DocumentRoot doc):
 	transformGraphML(doc.graphml)
 ;
@@ -76,29 +74,10 @@ Void transformNestedGraphHyperedges(graphml::NodeType node):
 ;
 
 Void transformHyperedge(graphml::HyperedgeType hyperedge, Node parent):
-	(if hyperedge.endpoint.size == 2
-		then (let source = getNode(hyperedge.endpoint.get(0).node):
-			 let target = getNode(hyperedge.endpoint.get(1).node):
-			 let newEdge = new Edge:
-			 newEdge.setMidLabel(hyperedge.id) ->
-			 newEdge.setIsDirected(false) ->
-			 newEdge.setSource(source) ->
-			 newEdge.setTarget(target) ->
-			 (if hyperedge.endpoint.get(0).port != null
-			 	then newEdge.setSourcePort(getPort(hyperedge.endpoint.get(0).port, source))) ->
-			 (if hyperedge.endpoint.get(1).port != null
-			 	then newEdge.setTargetPort(getPort(hyperedge.endpoint.get(1).port, target))) ->
-			 (if hyperedge.endpoint.get(0).port != null
-			 	then (if hyperedge.endpoint.get(1).port != null
-			 			then newEdge.setType(graphs::EdgeType::Port2Port)
-			 			else newEdge.setType(graphs::EdgeType::Port2Node))
-			 	else (if hyperedge.endpoint.get(1).port != null
-			 			then newEdge.setType(graphs::EdgeType::Node2Port)
-			 			else newEdge.setType(graphs::EdgeType::Node2Node))))
-		else (let hypernode = new Node:
-			hypernode.setIsHypernode(true) ->
-			parent.children.add(hypernode) ->
-			hyperedge.endpoint.connectEndpointToHypernode(hypernode)))
+	let hypernode = new Node:
+	hypernode.setIsHypernode(true) ->
+	parent.children.add(hypernode) ->
+	hyperedge.endpoint.connectEndpointToHypernode(hypernode)
 ;
 
 Void connectEndpointToHypernode(graphml::EndpointType endpoint, Node hypernode):
