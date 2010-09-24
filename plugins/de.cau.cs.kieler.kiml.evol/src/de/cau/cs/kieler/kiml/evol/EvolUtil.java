@@ -57,7 +57,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
@@ -355,7 +354,7 @@ public final class EvolUtil {
          * @return a map associating metric weights to metric IDs.
          */
         private static Map<String, Double> extractMetricWeights(final Genome genome) {
-            // TODO: Discuss whether this method should be moved into Genome.
+
             final EvolutionServices evolService = EvolutionServices.getInstance();
             Assert.isNotNull(evolService);
 
@@ -459,11 +458,10 @@ public final class EvolUtil {
 
             final Map<String, Double> weightsMap = new HashMap<String, Double>(theWeightsMap);
 
-            final AnalysisServices as = AnalysisServices.getInstance();
             final List<AbstractInfoAnalysis> wantedMetricsList =
                     new ArrayList<AbstractInfoAnalysis>(metricIds.size());
             for (final AbstractInfoAnalysis metric : metrics) {
-                
+
                 final String metricId = metric.getID();
                 if (!weightsMap.containsKey(metricId)) {
                     // Skip this analysis.
@@ -498,6 +496,8 @@ public final class EvolUtil {
                     Assert.isTrue((value.doubleValue() >= 0.0) && (value.doubleValue() <= 1.0));
                 } else {
                     System.err.println("Result: " + metricId + ": " + analysisResult.toString());
+                    EvolPlugin.showError("Cannot handle analysis result for " + metricId + ": "
+                            + analysisResult.toString(), null);
                 }
             }
 
@@ -563,13 +563,13 @@ public final class EvolUtil {
          */
         private static double weight(
                 final Map<String, Object> measurements, final Map<String, Double> weightsMap) {
-
-            // TODO: Discuss: How should metrics be weighted per default?
-            // TODO: What if weightsMap is empty?
             // Attention: The measurements can contain additional intermediate
             // results we did not ask for.
-            final Double defaultScale = Double.valueOf(0.0);
-
+            
+            // This is the default weight for metrics. If this is not zero, then
+            // the weights map should be renormalized after the additional
+            // metrics are added.
+            final Double defaultScale = 0.0;
             for (final String metricId : measurements.keySet()) {
                 if (!weightsMap.containsKey(metricId)) {
                     // add additional metrics
