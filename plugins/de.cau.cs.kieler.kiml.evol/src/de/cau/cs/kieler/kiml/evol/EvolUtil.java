@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -969,11 +972,41 @@ public final class EvolUtil {
     public static void syncApplyIndividual(final Genome individual, final String providerId) {
         MonitoredOperation.runInUI(new IndividualApplierRunnable(individual, providerId), true);
     }
-
+    
+    /**
+     * Saves options the given model to a file.
+     * 
+     * @param model
+     *            the model to save
+     * @param canOverWrite
+     *            indicates whether the output file may be overwritten if it
+     *            exists
+     */
+    public void saveOptionsToFile(final EvolModel model, final boolean canOverWrite) {
+        File file = new File("evol");
+        if (!file.exists() || canOverWrite) {
+            try {
+                FileWriter writer = new FileWriter(file);
+                
+                Genome genome = model.getCurrentIndividual();
+                
+                String newLine = System.getProperty("line.separator");
+                
+                for (final IGene<?> gene : genome) {
+                    writer.append(gene.getId() + ";" + gene.getValue() + newLine);
+                }
+                
+            } catch (final IOException exception) {
+                // TODO Auto-generated catch block
+                exception.printStackTrace();
+            }
+        }
+    }
+    
     /**
      * Adopts layout options from the given {@link Genome} into the given
      * {@link IEditorPart}.
-     *
+     * 
      * @param individual
      *            the {@link Genome}; must not be {@code null}
      * @param editor
