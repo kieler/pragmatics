@@ -53,6 +53,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.evol.AdoptingRecursiveLayouterEngine.LayoutResult;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -282,11 +283,13 @@ public final class EvolUtil {
                         EclipseLayoutServices.getInstance().getManager(editor, null);
                 Assert.isNotNull(manager);
 
-                final ILayoutInspector inspector = EvolUtil.getLayoutInspector(editor, null);
-                Assert.isNotNull(inspector);
+// final ILayoutInspector inspector =
+                // EvolUtil.getLayoutInspector(editor, null);
+                // Assert.isNotNull(inspector);
 
-                final LayoutPropertySource source = new LayoutPropertySource(inspector);
-                Assert.isNotNull(source);
+// final LayoutPropertySource source = new
+                // LayoutPropertySource(inspector);
+                // Assert.isNotNull(source);
 
                 // TODO: what if weights genomes is empty?
                 Assert.isTrue(!weightsGenomes.isEmpty());
@@ -309,7 +312,9 @@ public final class EvolUtil {
                     // measurements, or use average ratings instead?
 
                     if (measurements == null) {
-                        measurements = measure(ind, editor, manager, inspector, weightsMap);
+                        measurements =
+                                measure(ind, editor, manager, manager.getLayoutGraph(),
+                                        weightsMap);
 
                         ind.setFeatures(measurements);
                         // TODO: don't set features here. This works only for
@@ -328,8 +333,7 @@ public final class EvolUtil {
                 }
 
                 if (weightsGenomesCount > 1) {
-                    final double averageEditorRating =
- editorRating / weightsGenomesCount;
+                    final double averageEditorRating = editorRating / weightsGenomesCount;
                     totalRating += averageEditorRating;
                 } else {
                     totalRating += editorRating;
@@ -400,26 +404,24 @@ public final class EvolUtil {
          */
         private static Map<String, Object> measure(
                 final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
-                final ILayoutInspector inspector, final Map<String, Double> weightsMap) {
-            Assert.isLegal((ind != null) && (inspector != null) && (weightsMap != null));
-            if ((ind == null) || (inspector == null) || (weightsMap == null)) {
+                final KNode graph, final Map<String, Double> weightsMap) {
+            Assert.isLegal((ind != null) && (graph != null) && (weightsMap != null));
+            if ((ind == null) || (graph == null) || (weightsMap == null)) {
                 return null;
             }
 
-            // Transfer layout options from the individual to the layout
-            // inspector.
-            EvolUtil.adoptIndividual(ind, inspector);
+            AdoptingRecursiveLayouterEngine engine = new AdoptingRecursiveLayouterEngine();
 
-            final IKielerProgressMonitor monitor = EvolUtil.calculateLayout(manager, editor);
+            LayoutResult layoutResult = engine.calculateLayout(ind, (DiagramEditor) editor);
 
-            final KNode layoutGraph = manager.getLayoutGraph();
 
-            final Map<String, Object> measurements = measure(layoutGraph, weightsMap);
+            final Map<String, Object> measurements =
+                    measure(layoutResult.getLayoutGraph(), weightsMap);
             // Attention: The measurements may contain additional intermediate
             // results we did not ask for. See #1152.
 
             // add the execution speed
-            final double time = monitor.getExecutionTime();
+            final double time = layoutResult.getMonitor().getExecutionTime();
 
             final double speed = normalizedSpeed(time);
 
@@ -482,10 +484,13 @@ public final class EvolUtil {
                 return Collections.emptyMap();
             }
 
+            final Map<String, Object> map = new HashMap<String, Object>();
+            map.put("de.cau.cs.kieler.kiml.evol.weights", weightsMap);
+
             // Perform the measurement.
             final boolean showProgressBar = false;
             final Map<String, Object> analysisResults =
-                    DiagramAnalyser.analyse(parentNode, wantedMetricsList, showProgressBar);
+                    DiagramAnalyser.analyse(parentNode, wantedMetricsList, map, showProgressBar);
 
             for (final String metricId : metricIds) {
                 final Object analysisResult = analysisResults.get(metricId);
@@ -565,7 +570,7 @@ public final class EvolUtil {
                 final Map<String, Object> measurements, final Map<String, Double> weightsMap) {
             // Attention: The measurements can contain additional intermediate
             // results we did not ask for.
-            
+
             // This is the default weight for metrics. If this is not zero, then
             // the weights map should be renormalized after the additional
             // metrics are added.
@@ -952,6 +957,7 @@ public final class EvolUtil {
         return result;
     }
 
+
     /**
      * Synchronously applies the given individual.
      *
@@ -979,12 +985,9 @@ public final class EvolUtil {
         final ILayoutInspector inspector = getLayoutInspector(editor, null);
         Assert.isNotNull(inspector);
 
-        // final LayoutPropertySource propertySource = new
-        // LayoutPropertySource(inspector);
-        // Assert.isNotNull(propertySource);
+
         adoptIndividual(individual, inspector);
     }
-
 
     /**
      * Adopts layout options from the given {@link Genome} into the given
@@ -1132,6 +1135,7 @@ public final class EvolUtil {
 
         }
     }
+
 
     /**
      * Builds the layout graph for the given editor, using the given manager,
