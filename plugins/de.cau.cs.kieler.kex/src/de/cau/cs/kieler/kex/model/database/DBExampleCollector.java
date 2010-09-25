@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
 import de.cau.cs.kieler.kex.model.SourceType;
@@ -38,6 +39,12 @@ public class DBExampleCollector extends ExampleCollector {
 	@Override
 	public void load() {
 		// database.loadExample();
+	}
+
+	public static Example getExample(String exampleTitle)
+			throws KielerException {
+		// to implement
+		return null;
 	}
 
 	public List<String> getCategories() {
