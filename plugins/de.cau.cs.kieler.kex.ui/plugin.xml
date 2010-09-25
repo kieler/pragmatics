@@ -29,4 +29,11 @@
             name="Export">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="intro/introContent.xml">
+      </configExtension>
+   </extension>
 </plugin>
