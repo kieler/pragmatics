@@ -1,0 +1,41 @@
+<introContent>
+      <extensionContent
+        id="de.cau.cs.kieler.intro.import-wizard"
+        name="Import Wizard"
+        path="samples/@de.cau.cs.kieler.intro.samples/group/import-wizard">
+		<link
+		   label="Import Examples"
+		   url="http://org.eclipse.ui.intro/runAction?pluginId=de.cau.cs.kieler.kex.ui&amp;class=de.cau.cs.kieler.kex.ui.actions.ImportWizardAction&amp;id=de.cau.cs.kieler.kex.ui.importWizardAction"
+		   id="welcome-import-example"
+		   style-id="content-link"
+		   icon="icons/keksIcon.jpg">
+		   <text>Opens a wizard to import examples</text>
+		</link>
+      </extensionContent>
+	  <extensionContent
+        id="de.cau.cs.kieler.intro.dataflow"
+        name="Dataflow Quick Start"
+        path="samples/@de.cau.cs.kieler.intro.samples/group/quickstarts/quickstarts.anchor">
+        <link
+            label="Dataflow Quick Start"
+            url="http://org.eclipse.ui.intro/runAction?pluginId=de.cau.cs.kieler.kex.ui&amp;class=de.cau.cs.kieler.kex.ui.actions.QuickStartAction&amp;id=de.cau.cs.kieler.kex.ui&amp;exampleTitle=QuickStart&amp;sourceType=KIELER"
+            id="dataflow-quick-start"
+            style-id="content-link">
+			<text>Dataflow Description</text>
+        </link>
+      	<link
+            label="Syncchart Quick Start"
+            url="http://www.informatik.uni-kiel.de/rtsys/kieler"
+            id="syncchart-quick-start"
+            style-id="content-link">
+			<text>Syncchart Description</text>
+        </link>
+        <link
+            label="Kaom Quick Start"
+            url="http://www.informatik.uni-kiel.de/rtsys/kieler"
+            id="kaom-quick-start"
+            style-id="content-link">
+			<text>Kaom Description</text>
+        </link>
+      </extensionContent>
+</introContent>

@@ -1,0 +1,128 @@
+package de.cau.cs.kieler.kex.ui.actions;
+
+import java.util.List;
+import java.util.Properties;
+
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.intro.IIntroSite;
+import org.eclipse.ui.intro.config.IIntroAction;
+import org.eclipse.ui.part.FileEditorInput;
+
+import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.kex.controller.ExampleManager;
+import de.cau.cs.kieler.kex.model.Example;
+import de.cau.cs.kieler.kex.model.SourceType;
+
+public class QuickStartAction implements IIntroAction {
+
+	public void run(IIntroSite site, Properties params) {
+
+		String sourceType = params.getProperty("sourceType");
+		SourceType sourcetype = null;
+		try {
+			sourcetype = SourceType.valueOf(sourceType);
+		} catch (IllegalArgumentException i) {
+			showError("Could not identify sourcetype", i.getMessage());
+			return;
+		}
+		if (sourceType == null) {
+			showError("Introtag Error", "Missing property sourceType");
+			return;
+		}
+
+		String exampleTitle = params.getProperty("exampleTitle");
+		if (exampleTitle == null) {
+			showError("Introtag Error", "Missing property exampleTitle");
+			return;
+		}
+		Example quickStarter = null;
+		try {
+			quickStarter = ExampleManager.get().quickStartLoad(sourcetype,
+					exampleTitle);
+		} catch (KielerException e) {
+			showError("Example loading error", e.getMessage());
+			return;
+		}
+		if (quickStarter == null) {
+			showError("Example loading error",
+					"Could not find example with title " + exampleTitle);
+			return;
+		}
+		IntroPlugin.closeIntro();
+		try {
+			List<String> directOpens = ExampleManager.get().quickStartImport(
+					quickStarter);
+			postfix(directOpens);
+		} catch (KielerException e) {
+			showError("Could not import example", e.getMessage());
+			return;
+		}
+	}
+
+	private void showError(String title, String message) {
+		IWorkbench wb = PlatformUI.getWorkbench();
+		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+		MessageDialog.openError(win.getShell(), title, message);
+	}
+
+	private void postfix(List<String> directOpens) {
+		// refresh workspace
+		IContainer element = ResourcesPlugin.getWorkspace().getRoot();
+		try {
+			if (element != null) {
+				element.refreshLocal(IContainer.DEPTH_INFINITE, null);
+			}
+		} catch (CoreException e1) {
+			// do nothing
+		}
+
+		// open direct opens
+		if (directOpens != null) {
+			IWorkbenchWindow win = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow();
+			IWorkbenchPage page = win.getActivePage();
+			for (String path : directOpens) {
+				IFile[] files = ResourcesPlugin
+						.getWorkspace()
+						.getRoot()
+						.findFilesForLocationURI(URIUtil.toURI(path),
+								IResource.FILE);
+				if (files.length == 1) {
+					IEditorDescriptor defaultEditor = PlatformUI.getWorkbench()
+							.getEditorRegistry()
+							.getDefaultEditor(files[0].getName());
+					if (defaultEditor != null) {
+
+					} else {
+						defaultEditor = PlatformUI
+								.getWorkbench()
+								.getEditorRegistry()
+								.findEditor(
+										IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+					}
+					try {
+						page.openEditor(new FileEditorInput(files[0]),
+								defaultEditor.getId());
+					} catch (PartInitException e) {
+						showError("Opening Editor", e.getLocalizedMessage());
+					}
+				}
+			}
+		}
+
+	}
+}
