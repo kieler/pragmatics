@@ -357,11 +357,11 @@ public class Genome extends ArrayList<IGene<?>> {
                 result.add(newGene);
             }
             // determine the rating
-            int ratingSum = 0;
+            double ratingSum = 0;
             for (final Genome genome : genomes) {
-                ratingSum += (genome.hasUserRating() ? genome.getUserRating().intValue() : 0);
+                ratingSum += (genome.hasUserRating() ? genome.getUserRating() : 0.0);
             }
-            final int average = Math.round(ratingSum / (float) genomes.length);
+            final double average = ratingSum / genomes.length;
             result.setUserRating(Double.valueOf(average));
         }
         return result;
