@@ -44,10 +44,8 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public static final Comparator<Genome> DESCENDING_RATING_COMPARATOR = new Comparator<Genome>() {
         public int compare(final Genome ind0, final Genome ind1) {
-                    final int v0 =
-                            (ind0.getUserRating() == null ? 0 : ind0.getUserRating().intValue());
-                    final int v1 =
-                            (ind1.getUserRating() == null ? 0 : ind1.getUserRating().intValue());
+                    final double v0 = (ind0.getUserRating() == null ? 0.0 : ind0.getUserRating());
+                    final double v1 = (ind1.getUserRating() == null ? 0.0 : ind1.getUserRating());
 
                     if (v0 == v1) {
                         return 0;
