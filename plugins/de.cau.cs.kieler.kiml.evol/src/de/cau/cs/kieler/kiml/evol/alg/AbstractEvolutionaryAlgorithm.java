@@ -18,8 +18,15 @@ import java.util.List;
 
 /**
  * Abstract implementation of an evolutionary algorithm. Implementations of
- * evolutionary algorithms shall inherit from this class.
+ * evolutionary algorithms shall inherit from this class. After construction,
+ * either
+ * <ul>
+ * <li>{@link #run()} can be used to start the algorithm, which will initialize
+ * and then continue running until {@link #isDone()} yields {@code true}, or
  *
+ * <li>{@link #step()} can be used for stepwise execution. In this case,
+ * {@link #initialize()} must be called explicitly once before.
+ * </ul>
  *
  * @author bdu
  *
@@ -27,17 +34,23 @@ import java.util.List;
 public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
 
     /**
-     * Adds an evolution listener.
+     * Adds an evolution listener. Duplicate listeners are ignored.
      *
      * @param listener
-     *            the listener to add
+     *            the listener to add; must not be {@code null}
      */
     public void addListener(final IEvolutionListener listener) {
-        this.listeners.add(listener);
+        if (listener == null) {
+            throw new IllegalArgumentException("Argument must not be null: listener");
+        }
+        if (!this.listeners.contains(listener)) {
+            this.listeners.add(listener);
+        }
     }
 
     /**
-     * Removes the specified evolution listener.
+     * Removes the specified evolution listener, if present. Requests to remove
+     * non-existent listeners are ignored.
      *
      * @param listener
      *            the listener to remove
@@ -56,8 +69,10 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
     }
 
     /**
-     * Main loop for running the complete algorithm. The algorithm will run
-     * until some stop criterion is satisfied.
+     * Main loop for initializing and running the complete algorithm. The
+     * algorithm will run until some stop criterion is satisfied. Since this
+     * method implicitly initializes the algorithm, {@link #initialize()} must
+     * not be called before.
      */
     public void run() {
         if (!this.isInitialized) {
@@ -68,48 +83,38 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
                 // pause here for stepwise execution using an IEvolutionListener
             }
             this.isInitialized = false;
+        } else {
+            throw new UnsupportedOperationException(
+                    "Cannot run an algorithm that has already been initialized.");
         }
     }
 
     /**
-     * Performs a step of the algorithm by proceeding to the next generation.
-     * The algorithm must be initialized before by calling {@code initialize()}.
+     * Performs a single step of the algorithm by proceeding to the next
+     * generation. The algorithm must be initialized before by calling
+     * {@link #initialize()}.
      */
     public final void step() {
+        if (!this.isInitialized) {
+            throw new UnsupportedOperationException(
+                    "The algorithm must be initialized before steps can be performed.");
+        }
+
+        if (isDone()) {
+            throw new UnsupportedOperationException(
+                    "No further steps may be performed after the stop criterion has been satisfied.");
+        }
+
         beforeStep();
-        if (this.isInitialized && !isDone()) {
-            if (this.generation > 0) {
-                survive();
-            }
-            this.generation++;
-            select();
-            crossOver();
-            mutate();
-            determineFitness();
-        } else {
-            // do nothing
-            System.out.println("Cannot perform step.");
+        if (this.generation > 0) {
+            survive();
         }
+        this.generation++;
+        select();
+        crossOver();
+        mutate();
+        determineFitness();
         afterStep();
-    }
-
-    /**
-     * Inform the listeners about a completed step.
-     */
-    private void afterStep() {
-        for (final IEvolutionListener listener : this.listeners) {
-            listener.afterStep();
-        }
-    }
-
-    /**
-     * Inform the listeners about an upcoming step.
-     */
-    private void beforeStep() {
-        for (final IEvolutionListener listener : this.listeners) {
-            listener.beforeStep();
-        }
-
     }
 
     /**
@@ -122,16 +127,18 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
     public abstract boolean isDone();
 
     /**
-     * Initialize population. Extending classes must ensure that this is called
-     * exactly once before using {@code step()}.
+     * Initializes the population. Extending classes that wish to call
+     * {@link #step()} must ensure that this method is called exactly once
+     * before.
      **/
     protected void initialize() {
         if (this.isInitialized) {
             System.err.println("Warning: Algorithm already initialized.");
-        } else {
-            this.generation = 0;
-            this.isInitialized = true;
+            throw new UnsupportedOperationException(
+                    "Algorithm already initialized: initialize() must be called only once.");
         }
+        this.generation = 0;
+        this.isInitialized = true;
     }
 
     /** Determines fitness values for all individuals. **/
@@ -153,7 +160,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      * Mutates offspring, depending on some mutation strategy.
      **/
     protected abstract void mutate();
-    
+
     /**
      * Selects individuals that shall be preserved and proceeds to the next
      * generation. According to the implemented survivors' selection strategy,
@@ -161,6 +168,25 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      * considered.
      **/
     protected abstract void survive();
+
+    /**
+     * Informs the listeners about an upcoming step.
+     */
+    private void beforeStep() {
+        for (final IEvolutionListener listener : this.listeners) {
+            listener.beforeStep();
+        }
+
+    }
+
+    /**
+     * Informs the listeners about a completed step.
+     */
+    private void afterStep() {
+        for (final IEvolutionListener listener : this.listeners) {
+            listener.afterStep();
+        }
+    }
 
     // private fields
     private int generation = 0;
