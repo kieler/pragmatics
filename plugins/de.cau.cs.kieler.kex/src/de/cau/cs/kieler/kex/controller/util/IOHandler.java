@@ -24,6 +24,8 @@ public class IOHandler {
 
     public static void writeResource(final File sourceFile, final File destFile) throws IOException {
         if (!sourceFile.exists()) {
+            // FIXME Problem, if user imports a project from another locations as it's workspace.
+            // the sourcepath is generated from workspace location and local path. BANG!
             throw new IOException(ErrorMessage.NO_SOURCE_FILE + sourceFile.getPath());
         }
 

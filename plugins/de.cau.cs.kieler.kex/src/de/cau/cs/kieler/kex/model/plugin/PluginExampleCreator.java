@@ -249,11 +249,7 @@ public class PluginExampleCreator {
 
             IOHandler.writeResource(new File(sourcePath), destination.toFile());
         } catch (IOException e) {
-            StringBuilder errorMessage = new StringBuilder();
-            errorMessage.append(ErrorMessage.RESOURCE_WRITE_ERROR).append("\ndestination: ")
-                    .append(destPath).append(", resource: ")
-                    .append(resource.getLocalPath().toPortableString());
-            throw new KielerException(errorMessage.toString());
+            throw new KielerException(e.getMessage());
         }
     }
 
@@ -368,9 +364,8 @@ public class PluginExampleCreator {
 
     public String copyOverviewPic(String destPath, String sourcePath, List<IPath> finishedResources)
             throws KielerException {
-        // TODO test
-        String destLocation = destPath + File.separatorChar
-                + Path.fromPortableString(sourcePath).lastSegment();
+        File file = new File(sourcePath);
+        String destLocation = destPath + File.separatorChar + file.getName();
         IPath destination = Path.fromPortableString(destLocation.toString());
         finishedResources.add(destination);
         try {

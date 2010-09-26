@@ -14,8 +14,8 @@ import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
 import de.cau.cs.kieler.kex.model.ExampleResource;
-import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.model.ExampleResource.Type;
+import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.model.plugin.PluginExampleCreator;
 
 public class ExampleExport {
@@ -72,8 +72,8 @@ public class ExampleExport {
             throws KielerException {
         if (list == null || list.size() < minLength) {
             StringBuilder errorMsg = new StringBuilder();
-            errorMsg.append("No ").append(listName).append(" has been selected.\n").append(
-                    "Please choose at least ").append(String.valueOf(minLength));
+            errorMsg.append("No ").append(listName).append(" has been selected.\n")
+                    .append("Please choose at least ").append(String.valueOf(minLength));
             throw new KielerException(errorMsg.toString());
         }
     }
@@ -82,9 +82,9 @@ public class ExampleExport {
             throws KielerException {
         if (checkable == null || checkable.length() < minLength) {
             StringBuilder errorMsg = new StringBuilder();
-            errorMsg.append("The field ").append(checkableName).append(
-                    " has to be set with at least ").append(String.valueOf(minLength)).append(
-                    " characters.");
+            errorMsg.append("The field ").append(checkableName)
+                    .append(" has to be set with at least ").append(String.valueOf(minLength))
+                    .append(" characters.");
             throw new KielerException(errorMsg.toString());
         }
     }
@@ -119,22 +119,31 @@ public class ExampleExport {
         List<IPath> finishedResources = new ArrayList<IPath>();
         try {
             extensionCreator.copyResources(destFile, exportResources, finishedResources);
-            // TODO ueberschreiben ???
-            // TODO geht so noch nicht, relativer pfad zum plugin muss ermittelt werden.
-            String overviewPic = (String) properties.get(ExampleElement.OVERVIEW_PIC);
-            if (overviewPic != null && overviewPic.length() > 1) {
-                String absolutePath = extensionCreator.copyOverviewPic(destFile.getPath(),
-                        (String) properties.get(ExampleElement.OVERVIEW_PIC), finishedResources);
-                // mappedExample.setOverviewPic(extensionCreator.makeRelativePath(null,
-                // absolutePath));
-            }
             mappedExample.addResources(ExampleExport.mapToExampleResource(exportResources));
-            extensionCreator.addExtension(destFile, mappedExample, (List<String>) properties
-                    .get(ExampleElement.CREATE_CATEGORIES));
+
+            mappedExample.setOverviewPic(copyOverviewPic(
+                    (String) properties.get(ExampleElement.OVERVIEW_PIC), extensionCreator,
+                    destFile, finishedResources));
+
+            extensionCreator.addExtension(destFile, mappedExample,
+                    (List<String>) properties.get(ExampleElement.CREATE_CATEGORIES));
         } catch (KielerException e) {
             extensionCreator.deleteExampleResources(finishedResources);
             throw e;
         }
+    }
+
+    private static String copyOverviewPic(String overviewPic,
+            PluginExampleCreator extensionCreator, File destFile, List<IPath> finishedResources)
+            throws KielerException {
+        String result = null;
+        // TODO ueberschreiben ???
+        // TODO geht so noch nicht, relativer pfad zum plugin muss ermittelt werden.
+        if (overviewPic != null && overviewPic.length() > 1) {
+            String absolutePath = extensionCreator.copyOverviewPic(destFile.getPath(), overviewPic,
+                    finishedResources);
+        }
+        return result;
     }
 
     /**
