@@ -64,28 +64,32 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
     LayoutResult calculateLayout(
             final Genome individual, final DiagramEditor editor) {
 
-            DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, null);
-            KNode layoutGraph = manager.buildLayoutGraph(editor, null, false);
-            // TODO: discuss: can we have manager.getEditor() ?
+        DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, null);
+        KNode layoutGraph = manager.buildLayoutGraph(editor, null, false);
+        // TODO: discuss: can we have manager.getEditor() ?
 
         // Transfer layout options from the individual to the KGraph.
-            KNode adopted = adoptIndividual(individual, layoutGraph);
-            IKielerProgressMonitor monitor = new BasicProgressMonitor();
-            try {
-                layout(adopted, monitor, false);
-            } catch (final KielerException exception) {
-                // TODO: do something about the failed layout
-                exception.printStackTrace();
-            }
-            return new LayoutResult(adopted, monitor);
+        KNode adopted = adoptIndividual(individual, layoutGraph);
+        IKielerProgressMonitor monitor = new BasicProgressMonitor();
+        try {
+            layout(adopted, monitor, false);
+        } catch (final KielerException exception) {
+            // TODO: do something about the failed layout
+            exception.printStackTrace();
+        }
+        return new LayoutResult(adopted, monitor);
     }
 
     /**
+     * Transfers layout options from the given individual to the specified
+     * graph.
      *
      * @param individual
+     *            the individual encoding the layout options to be transferred
      * @param originalGraph
-     * @return
+     *            the original graph
+     * @return a copy of the graph with the adopted layout options
      */
     private static KNode adoptIndividual(final Genome individual, final KNode originalGraph) {
 
@@ -109,7 +113,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             System.out.println(id + ": " + value);
 
             final LayoutOptionData<?> data = layoutServices.getLayoutOptionData((String) id);
-            Assert.isNotNull(data, "No layout option data for " + id);
+            assert data != null : "No layout option data for " + id;
 
             final Type layoutOptionType = data.getType();
 
@@ -135,8 +139,8 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
                     }
 
                 } catch (final NullPointerException e) {
-                    EvolPlugin.showError("WARNING: enum property could not be set: " + id, e);
-                    Assert.isTrue(false);
+                    EvolPlugin.showError("Enum property could not be set: " + id, e);
+                    throw new AssertionError(value);
                 }
                 break;
 

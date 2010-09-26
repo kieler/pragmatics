@@ -378,8 +378,7 @@ public class UniversalGene extends AbstractGene<Float> {
                     break;
                 default:
                     // execution should never reach this line.
-                    Assert.isTrue(false);
-                    newInt = defaultValue;
+                    throw new AssertionError(distr);
                 }
             }
             return new UniversalGene(template.getId(), Float.valueOf(newInt.floatValue()),

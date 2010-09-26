@@ -22,10 +22,6 @@ import org.eclipse.core.runtime.Assert;
  *
  */
 public class MutationInfo {
-    /**
-     * Default probability for an enforced genuine mutation.
-     */
-    public static final double DEFAULT_GENUINE_MUTATION_PROBABILITY = 0.0;
 
     /**
      * Default mutation probability.
@@ -50,7 +46,7 @@ public class MutationInfo {
      *            the probability that a mutation occurs.
      */
     public MutationInfo(final double prob) {
-        this(prob, DEFAULT_VARIANCE, DEFAULT_GENUINE_MUTATION_PROBABILITY, DEFAULT_DISTRIBUTION);
+        this(prob, DEFAULT_VARIANCE, DEFAULT_DISTRIBUTION);
     }
 
     /**
@@ -62,26 +58,12 @@ public class MutationInfo {
      *            the probability distribution
      */
     public MutationInfo(final double prob, final Distribution distr) {
-        this(prob, DEFAULT_VARIANCE, DEFAULT_GENUINE_MUTATION_PROBABILITY, distr);
+        this(prob, DEFAULT_VARIANCE, distr);
     }
 
     /**
      * Constructor for a mutation info.
-     *
-     * @param prob
-     *            the probability that a mutation occurs.
-     * @param var
-     *            the variance (used for Gaussian distribution).
-     * @param distr
-     *            the probability distribution
-     */
-    public MutationInfo(final double prob, final double var, final Distribution distr) {
-        this(prob, var, DEFAULT_GENUINE_MUTATION_PROBABILITY, distr);
-    }
-
-    /**
-     * Constructor for a mutation info.
-     *
+     * 
      * @param prob
      *            the probability that a mutation occurs.
      * @param var
@@ -89,11 +71,9 @@ public class MutationInfo {
      * @param distr
      *            the probability distribution.
      */
-    public MutationInfo(final double prob, final double var, final double gprob,
-            final Distribution distr) {
+    public MutationInfo(final double prob, final double var, final Distribution distr) {
         Assert.isLegal(distr != null);
         Assert.isLegal((prob >= 0.0) && (prob <= 1.0));
-        Assert.isLegal((gprob >= 0.0) && (gprob <= 1.0));
         Assert.isLegal(var >= 0.0);
         this.probability = prob;
         this.variance = var;

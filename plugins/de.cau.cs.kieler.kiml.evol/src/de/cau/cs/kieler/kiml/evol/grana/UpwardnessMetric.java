@@ -64,7 +64,6 @@ public class UpwardnessMetric implements IAnalysis {
                 final EList<KEdge> edges = current.getOutgoingEdges();
 
                 final KShapeLayout currentLayout = current.getData(KShapeLayout.class);
-                final float currentXpos = currentLayout.getXpos();
                 final float currentYpos = currentLayout.getYpos();
 
                 for (final KEdge edge : edges) {
@@ -72,7 +71,6 @@ public class UpwardnessMetric implements IAnalysis {
                     final KNode target = edge.getTarget();
 
                     final KShapeLayout targetLayout = target.getData(KShapeLayout.class);
-                    final float targetXpos = targetLayout.getXpos();
                     final float targetYpos = targetLayout.getYpos();
 
                     if (targetYpos < currentYpos) {
