@@ -253,6 +253,9 @@
          <dependency
                analysis="de.cau.cs.kieler.kiml.grana.bendpointCount">
          </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.edgeCount">
+         </dependency>
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
@@ -458,6 +461,18 @@
       <initializer
             class="de.cau.cs.kieler.kiml.evol.EvolPreferenceInitializer">
       </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="de.cau.cs.kieler.kiml.evol.elementSelected">
+         <with
+               variable="selection">
+            <count
+                  value="1">
+            </count>
+         </with>
+      </definition>
    </extension>
 
 </plugin>

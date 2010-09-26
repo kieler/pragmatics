@@ -39,9 +39,9 @@ import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.IGeneFactory;
 import de.cau.cs.kieler.kiml.evol.genetic.IValueFormatter;
-import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.ListItemGene;
 import de.cau.cs.kieler.kiml.evol.genetic.ListItemTypeInfo;
+import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.UniversalGene;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -679,9 +679,11 @@ final class GenomeFactory {
         }
     }
 
-    // The set of all learnable elements that are accepted.
+    // Private fields.
+    /** The set of all learnable elements that are accepted. */
     private final Set<String> learnableOptions;
 
+    /** The gene factory used to produce layout option genes. */
     private final IGeneFactory layoutOptionGeneFactory = new LayoutOptionGeneFactory();
 
     /**

@@ -153,7 +153,7 @@ public class EvolView extends ViewPart {
         super.init(theSite);
 
         // Reset the model.
-        Assert.isNotNull(this.evolModel);
+        assert this.evolModel != null;
         this.evolModel.reset();
     }
 
@@ -423,7 +423,12 @@ public class EvolView extends ViewPart {
         tm.add(multipleEditorsAction);
 
         // Set the population as input in order to populate the view.
-        this.modelListener.populationChange(this.evolModel.getPopulation(), this.tableViewer);
+        // this.modelListener.populationChange(this.evolModel.getPopulation(),
+        // this.tableViewer);
+        EvolPlugin.logStatus("part control created.");
+
+        // Make the selection available to the workbench
+        getSite().setSelectionProvider(tv);
     }
 
     /**
