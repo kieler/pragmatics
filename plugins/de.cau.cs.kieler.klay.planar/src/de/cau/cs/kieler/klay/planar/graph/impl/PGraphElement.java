@@ -64,7 +64,7 @@ abstract class PGraphElement extends MapPropertyHolder implements IGraphElement 
      * @param id
      *            the id of the element
      */
-    public void setID(final int id) {
+    protected void setID(final int id) {
         this.identifier = id;
     }
 
@@ -81,6 +81,16 @@ abstract class PGraphElement extends MapPropertyHolder implements IGraphElement 
     public String toString() {
         String res = "Graph Element (" + this.getID() + ")";
         return res;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getID();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof PGraphElement) && (((PGraphElement) obj).getID() == this.getID());
     }
 
 }
