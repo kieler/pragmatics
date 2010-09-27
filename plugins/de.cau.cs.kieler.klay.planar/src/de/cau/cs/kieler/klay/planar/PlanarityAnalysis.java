@@ -66,7 +66,8 @@ public class PlanarityAnalysis implements IAnalysis {
             for (IEdge edge : edges) {
                 KNode src = (KNode) edge.getSource().getProperty(PGraphFactory.TOKGRAPH);
                 KNode dst = (KNode) edge.getTarget().getProperty(PGraphFactory.TOKGRAPH);
-                result += "( " + src.getLabel() + " ; " + dst.getLabel() + " )" + "\n";
+                result += "( " + src.getLabel().getText() + " ; " + dst.getLabel().getText() + " )"
+                        + "\n";
             }
         }
 
