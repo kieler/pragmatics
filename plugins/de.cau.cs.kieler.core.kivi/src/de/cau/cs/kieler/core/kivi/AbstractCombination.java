@@ -84,6 +84,7 @@ public abstract class AbstractCombination implements ICombination {
                     if (current != null) {
                         effect = current;
                         iterator.remove();
+                        effects.remove(other);
                     }
                 }
             }
