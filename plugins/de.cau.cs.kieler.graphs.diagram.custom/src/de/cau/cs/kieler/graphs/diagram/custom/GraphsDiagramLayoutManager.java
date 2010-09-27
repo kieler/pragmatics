@@ -28,6 +28,7 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CompoundCommand;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.ui.IEditorPart;
@@ -185,7 +186,10 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         graphMap.put(graphNode, layoutNode);
         
         // set label text
-        layoutNode.getLabel().setText(((Node) graphNode).getNodeLabel());
+        String label = ((Node) graphNode).getNodeLabel();
+        if (label != null) {
+            layoutNode.getLabel().setText(label);
+        }
         
         // process ports
         for (KPort port : graphNode.getPorts()) {

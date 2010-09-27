@@ -59,7 +59,11 @@ public class RecursiveLayouterEngine {
             throws KielerException {
         lastLayoutProvider = null;
         int nodeCount = countNodes(layoutGraph);
-        progressMonitor.begin("Recursive graph layout", nodeCount);
+        String label = "Recursive graph layout";
+        if (layoutGraph.getLabel().getText() != null) {
+            label += " (" + layoutGraph.getLabel().getText() + ")";
+        }
+        progressMonitor.begin(label, nodeCount);
         
         // perform recursive layout of the whole substructure of the given node
         layoutRecursively(layoutGraph, progressMonitor);
