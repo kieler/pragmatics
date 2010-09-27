@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 /**
  * Abstract base implementation for combinations.
  * 
@@ -76,6 +75,8 @@ public abstract class AbstractCombination implements ICombination {
         for (IEffect effect : toUndo) {
             result.add(new UndoEffect(effect));
         }
+
+        List<IEffect> toRemove = new ArrayList<IEffect>();
         for (IEffect effect : effects) {
             if (effect.isMergeable()) {
                 for (Iterator<IEffect> iterator = result.iterator(); iterator.hasNext();) {
@@ -84,12 +85,13 @@ public abstract class AbstractCombination implements ICombination {
                     if (current != null) {
                         effect = current;
                         iterator.remove();
-                        effects.remove(other);
+                        toRemove.add(other);
                     }
                 }
             }
             result.add(effect);
         }
+        effects.removeAll(toRemove);
         return result;
     }
 

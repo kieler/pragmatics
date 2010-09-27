@@ -24,9 +24,12 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPar
 import org.eclipse.gmf.runtime.diagram.ui.internal.tools.CompartmentCollapseTracker; // FIXME
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.BasicCompartment;
+import org.eclipse.gmf.runtime.notation.DrawerStyle;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
+import de.cau.cs.kieler.core.kivi.IEffect;
+import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
 
 /**
@@ -43,7 +46,6 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
     private boolean doCollapse;
     private boolean originalCollapseState;
     private boolean doLayout;
-    private boolean executed = false;
     private DiagramEditor targetEditor;
 
     /**
@@ -70,8 +72,6 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
         this.targetEditor = editor;
         this.doLayout = layout;
         this.targetNode = node;
-        // FIXME: the original collapse state should be taken from the diagram itself
-        this.originalCollapseState = !collapse;
         EditPart parentPart = ModelingUtil.getEditPart(editor.getDiagramEditPart(), node);
         if (parentPart != null) {
             outer: for (Object child : parentPart.getChildren()) {
@@ -89,15 +89,17 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
                 }
             }
         }
+        originalCollapseState = isCollapsed();
     }
 
     /**
      * {@inheritDoc}
      */
     public void execute() {
-        if (targetEditPart != null && !executed) {
-            executed = true;
+        if (targetEditPart != null && doCollapse != isCollapsed()) {
             setCollapsed(targetEditPart, doCollapse);
+            // ((DrawerStyle) targetEditPart.getModel()).setCollapsed(doCollapse);
+            // TODO incorporate ^ into a write transaction?
             if (doLayout) {
                 new LayoutEffect(targetEditor, targetNode).schedule();
             }
@@ -108,8 +110,7 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
      * Undo the effect, i.e. expand a collapsed compartment.
      */
     public void undo() {
-        if (targetEditPart != null) {
-            executed = false;
+        if (targetEditPart != null && originalCollapseState != isCollapsed()) {
             setCollapsed(targetEditPart, originalCollapseState);
             if (doLayout) {
                 new LayoutEffect(targetEditor, targetNode).schedule();
@@ -124,9 +125,41 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
      *            true if collapsing
      */
     public void setCollapsed(final boolean collapsed) {
-        if (collapsed != doCollapse) {
-            this.doCollapse = collapsed;
-            executed = false;
+        doCollapse = collapsed;
+    }
+
+    @Override
+    public boolean isMergeable() {
+        return true;
+    }
+
+    @Override
+    public IEffect merge(final IEffect otherEffect) {
+        if (otherEffect instanceof CompartmentCollapseExpandEffect) {
+            CompartmentCollapseExpandEffect other = (CompartmentCollapseExpandEffect) otherEffect;
+            if (other.targetEditor == targetEditor && other.targetEditPart == targetEditPart) {
+                originalCollapseState = other.originalCollapseState;
+                return this;
+            }
+        } else if (otherEffect instanceof UndoEffect) {
+            IEffect undo = ((UndoEffect) otherEffect).getEffect();
+            if (undo instanceof CompartmentCollapseExpandEffect) {
+                CompartmentCollapseExpandEffect other = (CompartmentCollapseExpandEffect) undo;
+                if (other.targetEditor == targetEditor && other.targetEditPart == targetEditPart) {
+                    originalCollapseState = other.originalCollapseState;
+                    return this;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isCollapsed() {
+        if (targetEditPart != null && targetEditPart.getModel() instanceof DrawerStyle) {
+            return ((DrawerStyle) targetEditPart.getModel()).isCollapsed();
+        } else {
+            return !doCollapse;
         }
     }
 
