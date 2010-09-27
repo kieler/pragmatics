@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.planar.alg.orthogonal.GiottoCompactor;
 import de.cau.cs.kieler.klay.planar.alg.orthogonal.ICompactor;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalRepresentation;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.alg.orthogonal.TamassiaOrthogonalizer;
 import de.cau.cs.kieler.klay.planar.alg.planarity.BoyerMyrvoldPlanarityTester;
@@ -103,7 +103,7 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
         this.planarizer.planarize(graph, edges);
 
         // Step 3: Orthogonalization
-        IOrthogonalRepresentation orthogonal = this.orthogonalizer.orthogonalize(graph);
+        OrthogonalRepresentation orthogonal = this.orthogonalizer.orthogonalize(graph);
 
         // Step 4: Compaction
         this.compactor.compact(graph, orthogonal);

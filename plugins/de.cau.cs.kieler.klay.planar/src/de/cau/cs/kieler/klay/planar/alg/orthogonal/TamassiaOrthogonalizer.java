@@ -17,14 +17,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.alg.flownetwork.SuccessiveShortestPathFlowSolver;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
@@ -75,7 +74,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
     /**
      * {@inheritDoc}
      */
-    public IOrthogonalRepresentation orthogonalize(final IGraph g) {
+    public OrthogonalRepresentation orthogonalize(final IGraph g) {
         getMonitor().begin("Orthogonalization", 1);
 
         // Initialization
@@ -86,7 +85,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
         IGraph network = this.createFlowNetwork();
         IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
         solver.findFlow(network);
-        IOrthogonalRepresentation orthogonal = this.computeAngles(network);
+        OrthogonalRepresentation orthogonal = this.computeAngles(network);
 
         getMonitor().done();
         return orthogonal;
@@ -183,9 +182,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
      * 
      * @return an orthogonal representation encoding the graph shape
      */
-    private IOrthogonalRepresentation computeAngles(final IGraph network) {
-        final Map<IEdge, OrthogonalAngle[]> bendData = new HashMap<IEdge, OrthogonalAngle[]>();
-        final Map<INode, List<Pair<IEdge, OrthogonalAngle>>> angleData = new HashMap<INode, List<Pair<IEdge, OrthogonalAngle>>>();
+    private OrthogonalRepresentation computeAngles(final IGraph network) {
+        OrthogonalRepresentation orthogonal = new OrthogonalRepresentation();
 
         // Flow in face arcs define bends in edges
         for (Pair<IEdge, IEdge> pair : this.faceArcs) {
@@ -232,16 +230,16 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
                     first = false;
 
                     if ((face1 == edge.getRightFace()) && (face2 == edge.getLeftFace())) {
-                        bendData.put(edge, bends1);
+                        orthogonal.setBends(edge, bends1);
                     } else if ((face1 == edge.getLeftFace()) && (face2 == edge.getRightFace())) {
-                        bendData.put(edge, bends2);
+                        orthogonal.setBends(edge, bends2);
                     } else {
                         throw new InconsistentGraphModelException(
                                 "The flow network has not been build correctly.");
                     }
                 } else {
                     OrthogonalAngle[] bends = new OrthogonalAngle[0];
-                    bendData.put(edge, bends);
+                    orthogonal.setBends(edge, bends);
                 }
             }
         }
@@ -252,14 +250,13 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             IFace face = (IFace) arc.getTarget().getProperty(NETWORKTOGRAPH);
 
             List<Pair<IEdge, OrthogonalAngle>> nodeList;
-            if (!angleData.containsKey(node)) {
+            nodeList = orthogonal.getAngles(node);
+            if (nodeList == null) {
                 nodeList = new LinkedList<Pair<IEdge, OrthogonalAngle>>();
                 for (IEdge edge : node.adjacentEdges()) {
                     nodeList.add(new Pair<IEdge, OrthogonalAngle>(edge, null));
                 }
-                angleData.put(node, nodeList);
-            } else {
-                nodeList = angleData.get(node);
+                orthogonal.setAngles(node, nodeList);
             }
 
             int numEdges = 0;
@@ -287,15 +284,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             }
         }
 
-        return new IOrthogonalRepresentation() {
-            public OrthogonalAngle[] getBends(final IEdge edge) {
-                return bendData.get(edge);
-            }
-
-            public List<Pair<IEdge, OrthogonalAngle>> getAngle(final INode node) {
-                return angleData.get(node);
-            }
-        };
+        return orthogonal;
     }
 
 }

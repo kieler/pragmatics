@@ -32,6 +32,6 @@ public interface IOrthogonalizer extends IAlgorithm {
      *            the graph to draw as orthogonal graph
      * @return an orthogonal representation of the graph
      */
-    IOrthogonalRepresentation orthogonalize(IGraph graph);
+    OrthogonalRepresentation orthogonalize(IGraph graph);
 
 }

@@ -114,7 +114,7 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
     /**
      * {@inheritDoc}
      */
-    public IOrthogonalRepresentation orthogonalize(final IGraph graph) {
+    public OrthogonalRepresentation orthogonalize(final IGraph graph) {
 
         // Replace high-degree nodes with cages
         LinkedList<Cage> cages = new LinkedList<Cage>();
@@ -125,7 +125,7 @@ public class QuodOrthogonalizer extends AbstractAlgorithm implements IOrthogonal
         }
 
         IOrthogonalizer orthogonalizer = new TamassiaOrthogonalizer();
-        IOrthogonalRepresentation orthogonal = orthogonalizer.orthogonalize(graph);
+        OrthogonalRepresentation orthogonal = orthogonalizer.orthogonalize(graph);
 
         // TODO force cages as rectangles
 

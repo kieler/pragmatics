@@ -39,6 +39,6 @@ public interface ICompactor {
      * @param orthogonal
      *            the orthogonal representation that restricts the graph
      */
-    void compact(IGraph graph, IOrthogonalRepresentation orthogonal);
+    void compact(IGraph graph, OrthogonalRepresentation orthogonal);
 
 }

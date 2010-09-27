@@ -13,96 +13,95 @@
  */
 package de.cau.cs.kieler.klay.planar.alg.orthogonal;
 
-import java.util.HashMap;
+import java.util.Iterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.alg.flownetwork.IFlowNetworkSolver;
-import de.cau.cs.kieler.klay.planar.alg.flownetwork.SuccessiveShortestPathFlowSolver;
-import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
-import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
-import de.cau.cs.kieler.klay.planar.graph.IGraphElement;
-import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
-import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
 
 /**
- * TODO .
+ * A compaction algorithm that reduces the orthogonal representation to a simple orthogonal
+ * representation by adding virtual vertices and edges.
  * 
  * @author ocl
  */
 public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
-
-    // ======================== Constants ==========================================================
-
-    /** Property to convert a node in the flow network to a node or face in the graph. */
-    public static final Property<IGraphElement> NETWORKTOGRAPH = new Property<IGraphElement>(
-            "de.cau.cs.kieler.klay.planar.properties.networktograph");
+    // TODO rename: this is not giotto
 
     // ======================== Attributes =========================================================
 
-    /** The graph the algorithm works on. */
-    private IGraph graph;
+    /** The compaction algorithm to compact the simple orthogonal representation. */
+    private TidyRectangleCompactor compactor;
+
+    // ======================== Constructor ========================================================
+
+    /**
+     * Create a new compaction algorithm.
+     */
+    public GiottoCompactor() {
+        this.compactor = new TidyRectangleCompactor();
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        this.compactor.reset();
+    }
 
     // ======================== Algorithm ==========================================================
 
     /**
      * {@inheritDoc}
      */
-    public void compact(final IGraph g, final IOrthogonalRepresentation orthogonal) {
-        this.graph = g;
+    public void compact(final IGraph g, final OrthogonalRepresentation orthogonal) {
+
+        // Add a node for every bend in the orthogonal representation
+        for (IEdge edge : g.getEdges()) {
+            OrthogonalAngle[] bends = orthogonal.getBends(edge);
+            for (int i = 0; i < bends.length; i++) {
+                INode virtual = g.addNode(edge);
+                for (IEdge e : virtual.adjacentEdges()) {
+                    orthogonal.setBends(e, new OrthogonalAngle[0]);
+                }
+                // TODO order in new vertex: inEdge, bend, outEdge, anti-bend
+            }
+        }
 
         // Decompose faces into rectangles
+        for (IEdge edge : g.getEdges()) {
 
-        // Remove rectangular 'ears' from list
+        }
 
-        // TODO
-
-        // Solve flow networks
-        Pair<IGraph, IGraph> networks = this.createFlowNetworks();
-        IFlowNetworkSolver solver = new SuccessiveShortestPathFlowSolver();
-        solver.findFlow(networks.getFirst());
-        solver.findFlow(networks.getSecond());
-
-        // TODO Assign coordinates based on flow
+        // Compact reduced orthogonal representation
+        this.compactor.compact(g, orthogonal);
     }
 
     /**
-     * Create the flow networks for vertical and horizontal metrics.
+     * Get the next edge adjacent to a given node from an edge in clockwise order. Returns {@code
+     * null} if the given edge is not adjacent to the node, and the given edge if it is the only one
+     * adjacent to the node.
      * 
-     * @return the flow network
+     * @param node
+     *            the node
+     * @param edge
+     *            the edge
+     * @return the next edge after the given edge
      */
-    private Pair<IGraph, IGraph> createFlowNetworks() {
-        IGraphFactory factory = new PGraphFactory();
-        IGraph vertical = factory.createEmptyGraph();
-        IGraph horizontal = factory.createEmptyGraph();
-        HashMap<IFace, INode> verticalMap = new HashMap<IFace, INode>();
-        HashMap<IFace, INode> horizontalMap = new HashMap<IFace, INode>();
-
-        // Create nodes for every graph face
-        for (IFace face : this.graph.getFaces()) {
-            INode newnode;
-            newnode = vertical.addNode();
-            newnode.setProperty(NETWORKTOGRAPH, face);
-            verticalMap.put(face, newnode);
-            newnode = horizontal.addNode();
-            newnode.setProperty(NETWORKTOGRAPH, face);
-            horizontalMap.put(face, newnode);
+    private IEdge nextEdge(final INode node, final IEdge edge) {
+        Iterator<IEdge> iter = node.adjacentEdges().iterator();
+        IEdge current = null;
+        while (iter.hasNext() && current != edge) {
+            current = iter.next();
         }
-
-        // Create arcs for vertical or horizontal edges
-        for (IEdge edge : this.graph.getEdges()) {
-            IEdge newedge;
-            newedge = null; // TODO
-            // newedge.setProperty(IFlowNetworkSolver.LOWERBOUND, 1);
-            newedge.setProperty(IPathFinder.PATHCOST, 1);
-            // TODO capacity, supply/demand
+        if (iter.hasNext()) {
+            // Get the next edge on the node
+            return iter.next();
+        } else {
+            // Reached the last node, get the first
+            return node.adjacentEdges().iterator().next();
         }
-
-        return new Pair<IGraph, IGraph>(vertical, horizontal);
     }
 
 }
