@@ -39,7 +39,7 @@ public interface ITriggerState {
      * 
      * @return the trigger class
      */
-    Class<?> getTriggerClass();
+    Class<? extends ITrigger> getTriggerClass();
     
     /**
      * Get the sequence number of this state to determine a temporal order.

@@ -11,10 +11,8 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.kivi.internal;
+package de.cau.cs.kieler.core.kivi;
 
-import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.kivi.IEffect;
 
 /**
  * Takes another effect and performs undo when executed.
@@ -61,6 +59,15 @@ public class UndoEffect extends AbstractEffect {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Get the effect that is supposed to be undone.
+     * 
+     * @return the effect
+     */
+    public IEffect getEffect() {
+        return effect;
     }
 
 }

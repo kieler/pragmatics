@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.core.kivi;
 
+import java.util.List;
+
 /**
  * A combination connects triggers and effects, it receives a set of events from
  * triggers and determines which effects need to be executed.
@@ -25,17 +27,16 @@ public interface ICombination {
     /**
      * Trigger the evaluation and execution of this combination.
      * 
-     * @param triggerState
-     *            the triggering ITrigger
+     * @return the list of effects to execute
      */
-    void trigger(final ITriggerState triggerState);
+    List<IEffect> trigger();
     
     /**
      * Get the array of trigger state classes this combination listens to.
      * 
      * @return array of trigger states
      */
-    Class<?>[] getTriggerStates();
+    Class<? extends ITriggerState>[] getTriggerStates();
 
     /**
      * Attempt to undo all active effects, for example when shutting down view

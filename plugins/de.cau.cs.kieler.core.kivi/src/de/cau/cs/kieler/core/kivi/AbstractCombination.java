@@ -15,6 +15,10 @@ package de.cau.cs.kieler.core.kivi;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 
 /**
  * Abstract base implementation for combinations.
@@ -26,19 +30,30 @@ public abstract class AbstractCombination implements ICombination {
 
     private boolean active = false;
 
+    private Method executeCache = null; // speed up reflection
+
+    private List<IEffect> effects = new ArrayList<IEffect>();
+
+    private boolean doNothing = false;
+
     /**
      * {@inheritDoc}
      */
-    public void trigger(final ITriggerState triggerState) {
+    public List<IEffect> trigger() {
         Method execute = getExecuteMethod();
         if (execute == null) {
-            return; // no execute method found :(
+            System.err.println("no execute() found for " + getClass().getCanonicalName());
+            // FIXME error log
+            return new ArrayList<IEffect>();
         }
         Class<?>[] types = execute.getParameterTypes();
         Object[] states = new ITriggerState[types.length];
         for (int i = 0; i < types.length; i++) {
             states[i] = KiVi.getInstance().getTriggerState(types[i]);
         }
+
+        List<IEffect> toUndo = effects;
+        effects = new ArrayList<IEffect>();
         try {
             execute.invoke(this, states);
         } catch (IllegalArgumentException e) {
@@ -51,6 +66,49 @@ public abstract class AbstractCombination implements ICombination {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        if (doNothing) {
+            doNothing = false;
+            effects = toUndo; // keep old effects
+            return new ArrayList<IEffect>();
+        }
+
+        List<IEffect> result = new ArrayList<IEffect>();
+        for (IEffect effect : toUndo) {
+            result.add(new UndoEffect(effect));
+        }
+        for (IEffect effect : effects) {
+            if (effect.isMergeable()) {
+                for (Iterator<IEffect> iterator = result.iterator(); iterator.hasNext();) {
+                    IEffect other = iterator.next();
+                    IEffect current = effect.merge(other);
+                    if (current != null) {
+                        effect = current;
+                        iterator.remove();
+                    }
+                }
+            }
+            result.add(effect);
+        }
+        return result;
+    }
+
+    /**
+     * Schedule an effect for execution, performs merging against all other effects scheduled during
+     * this execution before actually executing the effect.
+     * 
+     * @param effect
+     *            the effect to schedule
+     */
+    protected void schedule(final IEffect effect) {
+        effects.add(effect);
+    }
+
+    /**
+     * Called by execute() to make sure previous effects are not undone when an execution wants to
+     * perform no changes.
+     */
+    protected void doNothing() {
+        doNothing = true;
     }
 
     /**
@@ -59,12 +117,15 @@ public abstract class AbstractCombination implements ICombination {
      * Can be overridden when the default mechanism of registering triggers by implementing
      * evaluate(ConcreteTrigger) is not wanted.
      */
-    public Class<?>[] getTriggerStates() { // FIXME more precise return type
+    @SuppressWarnings("unchecked")
+    public Class<? extends ITriggerState>[] getTriggerStates() {
         Method execute = getExecuteMethod();
         if (execute == null) {
-            return new Class<?>[0];
-        } else {
-            return execute.getParameterTypes();
+            System.err.println("no execute() found for " + getClass().getCanonicalName());
+            // FIXME error log
+            return (Class<? extends ITriggerState>[]) new Class<?>[0];
+        } else { // FIXME is there any way to check against this type?
+            return (Class<? extends ITriggerState>[]) execute.getParameterTypes();
         }
     }
 
@@ -75,23 +136,29 @@ public abstract class AbstractCombination implements ICombination {
      */
     private Method getExecuteMethod() { // FIXME check for correct return types, multiple execute
                                         // methods -> error log
-        Method[] methods = getClass().getMethods();
-        Method execute = null;
-        for (Method m : methods) {
-            if (m.getName().equals("execute")
-                    && (execute == null || m.getParameterTypes().length > execute
-                            .getParameterTypes().length)) {
-                execute = m;
+        if (executeCache == null) {
+            Method[] methods = getClass().getMethods();
+            Method execute = null;
+            for (Method m : methods) {
+                if (m.getName().equals("execute")
+                        && (execute == null || m.getParameterTypes().length > execute
+                                .getParameterTypes().length)) {
+                    execute = m;
+                }
             }
+            executeCache = execute;
         }
-        return execute;
+        return executeCache;
     }
 
     /**
      * {@inheritDoc}
      */
     public void undo() {
-        // nothing to do, overridden when required
+        for (IEffect effect : effects) {
+            KiVi.getInstance().undoEffect(effect);
+        }
+        effects.clear();
     }
 
     /**
@@ -113,13 +180,4 @@ public abstract class AbstractCombination implements ICombination {
         }
         active = a;
     }
-
-    // /**
-    // * Get the parameters for this combination.
-    // *
-    // * @return the parameters
-    // */
-    // public static CombinationParameter[] getParameters() {
-    // return new CombinationParameter[0];
-    // }
 }

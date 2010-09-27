@@ -123,7 +123,7 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
         /**
          * {@inheritDoc}
          */
-        public Class<?> getTriggerClass() {
+        public Class<? extends ITrigger> getTriggerClass() {
             return SelectionTrigger.class;
         }
 

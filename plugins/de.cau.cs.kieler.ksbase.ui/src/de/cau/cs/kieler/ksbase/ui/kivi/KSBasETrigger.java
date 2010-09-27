@@ -18,6 +18,7 @@ import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
+import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 import de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils;
@@ -109,7 +110,7 @@ public class KSBasETrigger extends AbstractTrigger implements ITransformationEve
         /**
          * {@inheritDoc}
          */
-        public Class<?> getTriggerClass() {
+        public Class<? extends ITrigger> getTriggerClass() {
             return KSBasETrigger.class;
         }
     }

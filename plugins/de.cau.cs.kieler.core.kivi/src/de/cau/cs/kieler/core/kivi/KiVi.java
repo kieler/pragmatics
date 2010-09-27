@@ -218,8 +218,8 @@ public class KiVi {
      *            true if registering, false if unregistering
      */
     public void registerCombination(final ICombination combination, final boolean register) {
-        Class<?>[] ts = combination.getTriggerStates();
-        for (Class<?> t : ts) {
+        Class<? extends ITriggerState>[] ts = combination.getTriggerStates();
+        for (Class<? extends ITriggerState> t : ts) {
             if (register) {
                 addCombination(t, combination);
             } else {
@@ -298,13 +298,17 @@ public class KiVi {
                 triggerState.merge(previous);
             } else {
                 System.err.println("no previous state found for " + triggerState.getClass());
+                // FIXME error log
             }
             triggerStates.put(triggerState.getClass(), triggerState);
         }
 
         List<ICombination> cs = getCombinations(triggerState.getTriggerClass());
         for (ICombination c : cs) {
-            c.trigger(triggerState);
+            List<IEffect> effects = c.trigger();
+            for (IEffect effect : effects) {
+                executeEffect(effect);
+            }
         }
         triggerState.finish();
     }
@@ -314,7 +318,7 @@ public class KiVi {
      */
     private void loadExtensionPoints() {
         loadCombinations();
-        loadEffects();
+        // loadEffects();
     }
 
     /**
@@ -443,13 +447,14 @@ public class KiVi {
      * @param combination
      *            the listening combination
      */
-    private void addCombination(final Class<?> clazz, final ICombination combination) {
+    private void addCombination(final Class<? extends ITriggerState> clazz,
+            final ICombination combination) {
         try {
             synchronized (combinationsByTrigger) {
                 synchronized (triggerStates) {
                     ITriggerState triggerState = triggerStates.get(clazz);
                     if (triggerState == null) {
-                        triggerState = (ITriggerState) clazz.newInstance();
+                        triggerState = clazz.newInstance();
                         triggerStates.put(clazz, triggerState);
                     }
                     for (Map.Entry<ITrigger, List<ICombination>> entry : combinationsByTrigger
@@ -460,7 +465,7 @@ public class KiVi {
                         }
                     }
                     // trigger not found, add new list for new trigger
-                    ITrigger trigger = (ITrigger) triggerState.getTriggerClass().newInstance();
+                    ITrigger trigger = triggerState.getTriggerClass().newInstance();
                     trigger.setActive(isActive());
                     List<ICombination> list = new ArrayList<ICombination>();
                     list.add(combination);
@@ -484,13 +489,14 @@ public class KiVi {
      * @param combination
      *            the listening combination
      */
-    private void removeCombination(final Class<?> clazz, final ICombination combination) {
+    private void removeCombination(final Class<? extends ITriggerState> clazz,
+            final ICombination combination) {
         try {
             synchronized (combinationsByTrigger) {
                 synchronized (triggerStates) {
                     ITriggerState triggerState = triggerStates.get(clazz);
                     if (triggerState == null) {
-                        triggerState = (ITriggerState) clazz.newInstance();
+                        triggerState = clazz.newInstance();
                     }
                     Map.Entry<ITrigger, List<ICombination>> toRemove = null;
                     for (Map.Entry<ITrigger, List<ICombination>> entry : combinationsByTrigger

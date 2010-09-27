@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.cau.cs.kieler.core.kivi.IEffect;
+import de.cau.cs.kieler.core.kivi.UndoEffect;
 
 /**
  * Worker thread that handles the execution of effects.
