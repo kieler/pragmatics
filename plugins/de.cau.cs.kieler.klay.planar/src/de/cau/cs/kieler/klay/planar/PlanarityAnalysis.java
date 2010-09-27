@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar;
 
+import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -21,6 +22,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.klay.planar.alg.planarity.BoyerMyrvoldPlanarityTester;
 import de.cau.cs.kieler.klay.planar.alg.planarity.IPlanarityTester;
+import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
@@ -54,10 +56,21 @@ public class PlanarityAnalysis implements IAnalysis {
 
         // Planarity Testing
         this.tester.reset();
-        boolean planar = this.tester.testPlanarity(graph);
+        List<IEdge> edges = this.tester.planarSubgraph(graph);
+
+        String result;
+        if (edges.isEmpty()) {
+            result = "The graph is planar.";
+        } else {
+            result = "The graph is not planar." + "\n" + "Conflicting edges:" + "\n";
+            for (IEdge edge : edges) {
+                KNode src = (KNode) edge.getSource().getProperty(PGraphFactory.TOKGRAPH);
+                KNode dst = (KNode) edge.getTarget().getProperty(PGraphFactory.TOKGRAPH);
+                result += "( " + src.getLabel() + " ; " + dst.getLabel() + " )" + "\n";
+            }
+        }
 
         progressMonitor.done();
-        return "The graph is " + (planar ? "" : "not") + " planar.";
+        return result;
     }
-
 }
