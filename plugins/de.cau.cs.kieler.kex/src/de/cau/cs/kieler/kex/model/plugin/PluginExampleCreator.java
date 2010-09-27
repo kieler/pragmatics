@@ -85,20 +85,20 @@ public class PluginExampleCreator {
             throws KielerException {
 
         Node pluginNode = getPluginNode(location, creatableCategories);
-
-        if (creatableCategories != null && creatableCategories.size() > 0) {
-            addExampleCategories(pluginNode, creatableCategories);
-        }
-        boolean isDuplicate = false;
-        if (isDuplicate) {
-            // TODO fehlerfall ueberlegen
-        }
-
         Node extensionKEX = filterExtensionKEX(pluginNode);
+
+        boolean isUnique = true;
+        if (creatableCategories != null && creatableCategories.size() > 0) {
+            isUnique = addExampleCategories(extensionKEX, pluginNode, creatableCategories);
+        }
+
+        if (!isUnique) {
+            // TODO think about errorcase
+        }
 
         extensionKEX.appendChild(toNode(parseElement, location));
         // TODO duplicate checker �berpr�fen mitteles debug
-        checkDuplicate(PluginConstants.TITLE, parseElement.getTitle(), extensionKEX, isDuplicate);
+        checkDuplicate(PluginConstants.TITLE, parseElement.getTitle(), extensionKEX, !isUnique);
         writePluginXML(pluginXML.getAbsolutePath());
     }
 
@@ -258,7 +258,8 @@ public class PluginExampleCreator {
             IOHandler.deleteFile(path.toFile());
     }
 
-    private void addExampleCategories(Node pluginNode, List<String> creatableCategories) {
+    private boolean addExampleCategories(Node node, Node pluginNode,
+            List<String> creatableCategories) {
 
         boolean isDuplicate = false;
         for (String category : creatableCategories) {
@@ -266,19 +267,17 @@ public class PluginExampleCreator {
             checkDuplicate(PluginConstants.ID, category, pluginNode, isDuplicate);
         }
 
-        // FIXME category muss an extension nicht an plugin
-
         if (isDuplicate) {
-            // TODO fehlerfall �berlegen
+            return false;
         }
         List<String> creates = creatableCategories;
         for (String creatable : creates) {
             Element createdCategory = parsedXML.createElement(PluginConstants.CATEGORY);
             createdCategory.setAttribute(PluginConstants.ID, creatable);
-            pluginNode.appendChild(createdCategory);
+            node.appendChild(createdCategory);
 
         }
-
+        return true;
     }
 
     private void writePluginXML(String pluginPath) throws KielerException {
@@ -306,8 +305,8 @@ public class PluginExampleCreator {
     }
 
     private void throwWritePluginError(Throwable e) throws KielerException {
-        throw new KielerException(new StringBuffer().append(ErrorMessage.NOT_WRITE_PLUGIN)
-                .append(e.getLocalizedMessage()).toString());
+        throw new KielerException(new StringBuffer().append(ErrorMessage.NOT_WRITE_PLUGIN).append(
+                e.getLocalizedMessage()).toString());
     }
 
     private Node toNode(String categoryId) {
@@ -352,12 +351,12 @@ public class PluginExampleCreator {
 
     private Node toNode(String relativePath, ExampleResource exResource) {
         Element createdExResource = parsedXML.createElement(PluginConstants.EXAMPLE_RESOURCE);
-        createdExResource.setAttribute(PluginConstants.LOCAL_PATH,
-                relativePath + "/" + exResource.getLocalPath());
-        createdExResource.setAttribute(PluginConstants.RESOURCE_TYPE,
-                ExampleResource.Type.map(exResource.getResourceType()));
-        createdExResource.setAttribute(PluginConstants.DIRECT_OPEN,
-                Boolean.toString(exResource.isDirectOpen()));
+        createdExResource.setAttribute(PluginConstants.LOCAL_PATH, relativePath + "/"
+                + exResource.getLocalPath());
+        createdExResource.setAttribute(PluginConstants.RESOURCE_TYPE, ExampleResource.Type
+                .map(exResource.getResourceType()));
+        createdExResource.setAttribute(PluginConstants.DIRECT_OPEN, Boolean.toString(exResource
+                .isDirectOpen()));
         return createdExResource;
 
     }
@@ -372,8 +371,8 @@ public class PluginExampleCreator {
             IOHandler.writeResource(new File(sourcePath), destination.toFile());
         } catch (IOException e) {
             StringBuilder errorMessage = new StringBuilder();
-            errorMessage.append(ErrorMessage.PLUGIN_WRITE_ERROR).append("\ndestination: ")
-                    .append(destPath).append(", image: ").append(sourcePath);
+            errorMessage.append(ErrorMessage.PLUGIN_WRITE_ERROR).append("\ndestination: ").append(
+                    destPath).append(", image: ").append(sourcePath);
             throw new KielerException(errorMessage.toString());
         }
         return destLocation;
