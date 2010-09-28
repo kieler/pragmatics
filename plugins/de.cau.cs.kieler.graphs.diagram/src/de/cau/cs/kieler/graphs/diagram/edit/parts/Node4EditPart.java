@@ -411,6 +411,7 @@ public class Node4EditPart extends AbstractBorderedShapeEditPart implements Grap
             this.setCornerDimensions(new Dimension(getMapMode().DPtoLP(16), getMapMode().DPtoLP(16)));
             this.setForegroundColor(THIS_FORE);
             this.setBackgroundColor(THIS_BACK);
+            this.setAlpha(160);
 
             this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5), getMapMode()
                     .DPtoLP(5), getMapMode().DPtoLP(5)));
