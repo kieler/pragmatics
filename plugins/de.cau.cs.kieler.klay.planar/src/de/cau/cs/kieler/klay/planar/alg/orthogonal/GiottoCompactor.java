@@ -66,9 +66,10 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
     public void compact(final IGraph g, final OrthogonalRepresentation o) {
         this.graph = g;
         this.orthogonal = o;
+        List<IEdge> edges;
 
         // Add a node for every bend in the orthogonal representation
-        List<IEdge> edges = new LinkedList<IEdge>();
+        edges = new LinkedList<IEdge>();
         for (IEdge edge : g.getEdges()) {
             edges.add(edge);
         }
@@ -77,9 +78,13 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
         }
 
         // Decompose faces into rectangles
+        edges = new LinkedList<IEdge>();
         for (IEdge edge : g.getEdges()) {
-            // this.addVirtuals(edge, edge.getSource());
-            // this.addVirtuals(edge, edge.getTarget());
+            edges.add(edge);
+        }
+        for (IEdge edge : edges) {
+            this.addVirtuals(edge, edge.getSource());
+            this.addVirtuals(edge, edge.getTarget());
         }
 
         // Compact reduced orthogonal representation
@@ -110,16 +115,20 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
     private void addVirtuals(final IEdge edge, final INode node) {
         IEdge nextEdge = edge;
         INode nextNode = node;
+        Pair<IEdge, OrthogonalAngle> firstPair = null;
         int bends = 0;
 
         do {
             Pair<IEdge, OrthogonalAngle> pair = this.nextEdge(nextNode, nextEdge);
+            if (firstPair == null) {
+                firstPair = pair;
+            }
             nextEdge = pair.getFirst();
             nextNode = nextNode.getAdjacentNode(nextEdge);
             OrthogonalAngle angle = pair.getSecond();
 
             switch (angle) {
-            case RIGHT:
+            case LEFT:
                 if (nextEdge == edge) {
                     return;
                 } else {
@@ -131,7 +140,7 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
                     return;
                 }
                 break;
-            case LEFT:
+            case RIGHT:
                 bends -= 1;
                 break;
             case FULL:
@@ -142,17 +151,48 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
             }
 
             if (bends == 1) {
-                INode newnode = this.graph.addNode(nextEdge).getFirst();
-                IEdge newedge = this.graph.addEdge(node, newnode, false);
+                Pair<INode, IEdge> newPair = this.graph.addNode(nextEdge);
+                INode virtualNode = newPair.getFirst();
+                IEdge newedge = newPair.getSecond();
+                IEdge virtualEdge = this.graph.addEdge(node, virtualNode, false);
                 this.orthogonal.setBends(newedge, new OrthogonalAngle[0]);
+                this.orthogonal.setBends(virtualEdge, new OrthogonalAngle[0]);
+                List<Pair<IEdge, OrthogonalAngle>> list;
 
-                // TODO order in node: .., edge, 180, newedge, 90, ?oldedge?, ..
-                // TODO order in newnode: .., nextEdgeIn, 90, newedge, 90, nextEdgeOut, ..
-                // TODO same orders in embedding of node/newnode
+                // Fix embedding in virtual nodes
+                nextEdge.move(virtualNode, virtualNode);
+                virtualEdge.move(virtualNode, virtualNode);
+                newedge.move(virtualNode, virtualNode);
+                list = new LinkedList<Pair<IEdge, OrthogonalAngle>>();
+                list.add(new Pair<IEdge, OrthogonalAngle>(nextEdge, OrthogonalAngle.LEFT));
+                list.add(new Pair<IEdge, OrthogonalAngle>(virtualEdge, OrthogonalAngle.LEFT));
+                list.add(new Pair<IEdge, OrthogonalAngle>(newedge, OrthogonalAngle.STRAIGHT));
+                this.orthogonal.setAngles(virtualNode, list);
+
+                // Fix embedding in old node
+                boolean found = false;
+                List<IEdge> toMove = new LinkedList<IEdge>();
+                for (IEdge e : node.adjacentEdges()) {
+                    if (found) {
+                        toMove.add(e);
+                    } else {
+                        found = (e == edge);
+                    }
+                }
+                for (IEdge e : toMove) {
+                    e.move(node, node);
+                }
+                list = new LinkedList<Pair<IEdge, OrthogonalAngle>>();
+                list.add(new Pair<IEdge, OrthogonalAngle>(edge, OrthogonalAngle.STRAIGHT));
+                list.add(new Pair<IEdge, OrthogonalAngle>(virtualEdge, OrthogonalAngle.LEFT));
+                list.add(new Pair<IEdge, OrthogonalAngle>(firstPair.getFirst(),
+                        OrthogonalAngle.LEFT));
                 return;
             }
         } while (nextEdge != edge);
-        // TODO external face?
+
+        // TODO handle external face?
+        // if this point is reached, is the face the external face?
     }
 
     /**
@@ -168,7 +208,7 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
      */
     private Pair<IEdge, OrthogonalAngle> nextEdge(final INode node, final IEdge edge) {
         Iterator<Pair<IEdge, OrthogonalAngle>> iter = this.orthogonal.getAngles(node).iterator();
-        Pair<IEdge, OrthogonalAngle> current = null;
+        Pair<IEdge, OrthogonalAngle> current = new Pair<IEdge, OrthogonalAngle>(null, null);
         while (iter.hasNext() && current.getFirst() != edge) {
             current = iter.next();
         }

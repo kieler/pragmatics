@@ -36,14 +36,14 @@ public class OrthogonalRepresentation {
      * multiples of 90 degrees, only values for 0, 90, 180 and 270 are allowed.
      */
     public enum OrthogonalAngle {
-        /** A 90 degree angle, or a right turn. */
-        RIGHT,
+        /** A 90 degree angle, or a left turn. */
+        LEFT,
 
         /** A 180 degree angle, or a straight line. */
         STRAIGHT,
 
-        /** A 270 degree angle, or a left turn. */
-        LEFT,
+        /** A 270 degree angle, or a right turn. */
+        RIGHT,
 
         /** A 360 degree angle, or full circle. */
         FULL,

@@ -204,22 +204,22 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             if (face1 == face2) {
                 bends1 = new OrthogonalAngle[flow1];
                 bends2 = new OrthogonalAngle[flow2];
-                Arrays.fill(bends1, OrthogonalAngle.RIGHT);
-                Arrays.fill(bends2, OrthogonalAngle.LEFT);
+                Arrays.fill(bends1, OrthogonalAngle.LEFT);
+                Arrays.fill(bends2, OrthogonalAngle.RIGHT);
             } else {
                 bends1 = new OrthogonalAngle[flow1 + flow2];
                 for (int i = 0; i < flow1; i++) {
-                    bends1[i] = OrthogonalAngle.RIGHT;
+                    bends1[i] = OrthogonalAngle.LEFT;
                 }
                 for (int i = flow1; i < bends1.length; i++) {
-                    bends1[i] = OrthogonalAngle.LEFT;
+                    bends1[i] = OrthogonalAngle.RIGHT;
                 }
                 bends2 = new OrthogonalAngle[flow2 + flow1];
                 for (int i = 0; i < flow2; i++) {
-                    bends2[i] = OrthogonalAngle.RIGHT;
+                    bends2[i] = OrthogonalAngle.LEFT;
                 }
                 for (int i = flow2; i < bends2.length; i++) {
-                    bends2[i] = OrthogonalAngle.LEFT;
+                    bends2[i] = OrthogonalAngle.RIGHT;
                 }
             }
 
@@ -274,7 +274,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
                         || ((node == edge.getTarget()) && (face == edge.getLeftFace()))) {
                     i--;
                     if (i > 0) {
-                        pair.setSecond(OrthogonalAngle.RIGHT);
+                        pair.setSecond(OrthogonalAngle.LEFT);
                     } else {
                         int angle = arc.getProperty(IFlowNetworkSolver.FLOW) - numEdges;
                         pair.setSecond(OrthogonalAngle.values()[angle]);
