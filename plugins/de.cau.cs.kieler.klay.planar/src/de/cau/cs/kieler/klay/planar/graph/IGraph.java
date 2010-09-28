@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
+import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * Interface for a basic graph data structure. The purpose of this basic structure is to be used in
@@ -67,7 +68,7 @@ public interface IGraph extends INode {
      *            the edge to split up by the node
      * @return the new node in the graph
      */
-    INode addNode(IEdge edge);
+    Pair<INode, IEdge> addNode(IEdge edge);
 
     /**
      * Add a new node of a specific type to the graph. This adds an empty node of the given type to
@@ -90,7 +91,7 @@ public interface IGraph extends INode {
      *            the type of the node
      * @return the new node in the graph
      */
-    INode addNode(IEdge edge, NodeType type);
+    Pair<INode, IEdge> addNode(IEdge edge, NodeType type);
 
     /**
      * Remove a node from the graph. The node will be remove, together with all references to it in

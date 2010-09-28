@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
@@ -138,7 +139,7 @@ class PGraph extends PNode implements IGraph, Serializable {
     /**
      * {@inheritDoc}
      */
-    public INode addNode(final IEdge edge) {
+    public Pair<INode, IEdge> addNode(final IEdge edge) {
         return this.addNode(edge, NodeType.NORMAL);
     }
 
@@ -161,7 +162,7 @@ class PGraph extends PNode implements IGraph, Serializable {
     /**
      * {@inheritDoc}
      */
-    public INode addNode(final IEdge edge, final NodeType type) {
+    public Pair<INode, IEdge> addNode(final IEdge edge, final NodeType type) {
         if (!(edge.getSource() instanceof PNode && edge.getTarget() instanceof PNode)) {
             throw new IncompatibleGraphTypeException();
         } else if (!(edge.getLeftFace() instanceof PFace && edge.getRightFace() instanceof PFace)) {
@@ -205,7 +206,7 @@ class PGraph extends PNode implements IGraph, Serializable {
         ((PFace) edge.getRightFace()).addNode(node);
         ((PFace) edge.getRightFace()).addEdge(newedge);
 
-        return node;
+        return new Pair<INode, IEdge>(node, newedge);
     }
 
     /**

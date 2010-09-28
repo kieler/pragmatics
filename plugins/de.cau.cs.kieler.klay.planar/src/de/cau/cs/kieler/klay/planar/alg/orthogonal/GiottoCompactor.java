@@ -89,7 +89,7 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
     private void addBends(final IEdge edge) {
         OrthogonalAngle[] bends = this.orthogonal.getBends(edge);
         for (int i = bends.length - 1; i >= 0; i--) {
-            INode virtual = this.graph.addNode(edge);
+            INode virtual = this.graph.addNode(edge).getFirst();
             List<Pair<IEdge, OrthogonalAngle>> list = new LinkedList<Pair<IEdge, OrthogonalAngle>>();
             OrthogonalAngle b1 = (bends[i] == OrthogonalAngle.LEFT) ? OrthogonalAngle.RIGHT
                     : OrthogonalAngle.LEFT;
@@ -142,9 +142,10 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
             }
 
             if (bends == 1) {
-                INode newnode = this.graph.addNode(nextEdge);
+                INode newnode = this.graph.addNode(nextEdge).getFirst();
                 IEdge newedge = this.graph.addEdge(node, newnode, false);
                 this.orthogonal.setBends(newedge, new OrthogonalAngle[0]);
+
                 // TODO order in node: .., edge, 180, newedge, 90, ?oldedge?, ..
                 // TODO order in newnode: .., nextEdgeIn, 90, newedge, 90, nextEdgeOut, ..
                 // TODO same orders in embedding of node/newnode

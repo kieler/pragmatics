@@ -89,7 +89,7 @@ abstract class PGraphElement extends MapPropertyHolder implements IGraphElement 
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         return (obj instanceof PGraphElement) && (((PGraphElement) obj).getID() == this.getID());
     }
 

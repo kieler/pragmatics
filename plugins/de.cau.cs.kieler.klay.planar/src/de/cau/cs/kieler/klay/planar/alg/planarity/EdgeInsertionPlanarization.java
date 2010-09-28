@@ -212,7 +212,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
             // crossing a normal edge
             else {
-                INode newNode = graph.addNode(crossingEdge);
+                INode newNode = graph.addNode(crossingEdge).getFirst();
                 path.add(newNode);
             }
         }
@@ -272,7 +272,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         }
 
         // split up the new edge
-        INode midNode = graph.addNode(newHyperEdge);
+        INode midNode = graph.addNode(newHyperEdge).getFirst();
 
         // connect the new node
         IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
