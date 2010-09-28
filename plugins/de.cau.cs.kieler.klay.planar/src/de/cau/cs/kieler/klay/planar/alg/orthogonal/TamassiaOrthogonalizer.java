@@ -79,7 +79,6 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
 
         // Initialization
         this.graph = g;
-        this.graph.reindex();
 
         // Solve flow network and compute orthogonal representation
         IGraph network = this.createFlowNetwork();
@@ -102,7 +101,8 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
     private IGraph createFlowNetwork() {
         IGraphFactory factory = new PGraphFactory();
         IGraph network = factory.createEmptyGraph();
-        HashMap<IGraphElement, INode> map = new HashMap<IGraphElement, INode>();
+        HashMap<INode, INode> nodes = new HashMap<INode, INode>();
+        HashMap<IFace, INode> faces = new HashMap<IFace, INode>();
         this.nodeArcs = new LinkedList<IEdge>();
         this.faceArcs = new LinkedList<Pair<IEdge, IEdge>>();
 
@@ -119,7 +119,7 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             INode newnode = network.addNode();
             newnode.setProperty(NETWORKTOGRAPH, node);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
-            map.put(node, newnode);
+            nodes.put(node, newnode);
         }
 
         // Creating sink nodes for every graph face
@@ -136,18 +136,17 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             INode newnode = network.addNode();
             newnode.setProperty(NETWORKTOGRAPH, face);
             newnode.setProperty(IFlowNetworkSolver.SUPPLY, supply);
-            map.put(face, newnode);
+            faces.put(face, newnode);
         }
 
         // Creating arcs for every node adjacent to the face
         for (IFace face : this.graph.getFaces()) {
-            INode newnode = map.get(face);
             for (INode node : face.adjacentNodes()) {
-                if (!map.containsKey(node)) {
+                if (!nodes.containsKey(node)) {
                     throw new InconsistentGraphModelException(
                             "Attempted to link non-existent nodes by an edge.");
                 }
-                IEdge newedge = network.addEdge(map.get(node), newnode, true);
+                IEdge newedge = network.addEdge(nodes.get(node), faces.get(face), true);
                 newedge.setProperty(IFlowNetworkSolver.CAPACITY, MAXDEGREE);
                 newedge.setProperty(IFlowNetworkSolver.FLOW, 1);
                 newedge.setProperty(IPathFinder.PATHCOST, 0);
@@ -160,15 +159,15 @@ public class TamassiaOrthogonalizer extends AbstractAlgorithm implements IOrthog
             IFace left = edge.getLeftFace();
             IFace right = edge.getRightFace();
 
-            if (!map.containsKey(left) || !map.containsKey(right)) {
+            if (!faces.containsKey(left) || !faces.containsKey(right)) {
                 throw new InconsistentGraphModelException(
                         "Attempted to link non-existent nodes by an edge.");
             }
 
-            IEdge edgeLeft = network.addEdge(map.get(left), map.get(right), true);
+            IEdge edgeLeft = network.addEdge(faces.get(left), faces.get(right), true);
             edgeLeft.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeLeft.setProperty(IPathFinder.PATHCOST, 1);
-            IEdge edgeRight = network.addEdge(map.get(right), map.get(left), true);
+            IEdge edgeRight = network.addEdge(faces.get(right), faces.get(left), true);
             edgeRight.setProperty(IFlowNetworkSolver.CAPACITY, Integer.MAX_VALUE);
             edgeRight.setProperty(IPathFinder.PATHCOST, 1);
             this.faceArcs.add(new Pair<IEdge, IEdge>(edgeLeft, edgeRight));
