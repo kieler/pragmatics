@@ -102,6 +102,7 @@ public class GiottoCompactor extends AbstractAlgorithm implements ICompactor {
                     list.add(new Pair<IEdge, OrthogonalAngle>(e, b2));
                 }
             }
+            this.orthogonal.setAngles(virtual, list);
         }
         this.orthogonal.setBends(edge, new OrthogonalAngle[0]);
     }
