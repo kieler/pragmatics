@@ -18,7 +18,7 @@
         path="samples/@de.cau.cs.kieler.intro.samples/group/quickstarts/quickstarts.anchor">
         <link
             label="Dataflow Quick Start"
-            url="http://org.eclipse.ui.intro/runAction?pluginId=de.cau.cs.kieler.kex.ui&amp;class=de.cau.cs.kieler.kex.ui.actions.QuickStartAction&amp;id=de.cau.cs.kieler.kex.ui&amp;exampleTitle=QuickStart&amp;sourceType=KIELER"
+            url="http://org.eclipse.ui.intro/runAction?pluginId=de.cau.cs.kieler.kex.ui&amp;class=de.cau.cs.kieler.kex.ui.actions.QuickStartAction&amp;id=de.cau.cs.kieler.kex.ui&amp;exampleTitle=Kaom Quick Start&amp;sourceType=KIELER"
             id="dataflow-quick-start"
             style-id="content-link">
 			<text>Dataflow Description</text>
@@ -29,13 +29,6 @@
             id="syncchart-quick-start"
             style-id="content-link">
 			<text>Syncchart Description</text>
-        </link>
-        <link
-            label="Kaom Quick Start"
-            url="http://www.informatik.uni-kiel.de/rtsys/kieler"
-            id="kaom-quick-start"
-            style-id="content-link">
-			<text>Kaom Description</text>
         </link>
       </extensionContent>
 </introContent>
