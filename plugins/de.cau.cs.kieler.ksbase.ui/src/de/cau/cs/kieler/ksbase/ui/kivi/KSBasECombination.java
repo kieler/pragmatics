@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.ksbase.ui.kivi;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.kiml.gmf.LayoutEffect;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasETrigger.KSBasEState;
 
 /**

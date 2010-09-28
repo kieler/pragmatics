@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.gmf;
+package de.cau.cs.kieler.kiml.ui.layout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +22,12 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.ZoomManager;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
-import org.eclipse.gmf.runtime.diagram.ui.render.editparts.RenderedDiagramRootEditPart;
+import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
@@ -40,11 +37,10 @@ import de.cau.cs.kieler.core.model.util.ModelingUtil;
  * Performs automatic layout on an diagramEditor for a given selection.
  * 
  * @author mmu
- * 
  */
 public class LayoutEffect extends AbstractEffect {
 
-    private DiagramEditor diagramEditor;
+    private IEditorPart diagramEditor;
 
     private EditPart editPart;
 
@@ -56,13 +52,9 @@ public class LayoutEffect extends AbstractEffect {
      * @param object
      *            the EObject to layout
      */
-    public LayoutEffect(final DiagramEditor editor, final EObject object) {
+    public LayoutEffect(final IEditorPart editor, final EObject object) {
         diagramEditor = editor;
-        editPart = ModelingUtil.getEditPart(editor.getDiagramEditPart(), object);
-        if (editPart == null) {
-            // layout the entire diagram if no editpart found
-            editPart = editor.getDiagramEditPart();
-        }
+        editPart = ModelingUtil.getEditPart(editor, object);
     }
 
     /**
@@ -81,8 +73,8 @@ public class LayoutEffect extends AbstractEffect {
             final IStatus status = manager.layout(new BasicProgressMonitor(0), true);
 
             // determine pre- or post-layout zoom
-            final ZoomManager zoomManager = ((RenderedDiagramRootEditPart) diagramEditor
-                    .getDiagramEditPart().getRoot()).getZoomManager();
+            ILayoutInspector inspector = manager.getInspector(manager.getCurrentEditPart());
+            final ZoomManager zoomManager = inspector.getZoomManager();
             KNode current = manager.getLayoutGraph();
             while (current.eContainer() instanceof KNode) {
                 current = (KNode) current.eContainer();
@@ -118,11 +110,17 @@ public class LayoutEffect extends AbstractEffect {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isMergeable() {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IEffect merge(final IEffect otherEffect) {
         if (otherEffect instanceof LayoutEffect) {
@@ -130,7 +128,7 @@ public class LayoutEffect extends AbstractEffect {
             if (diagramEditor == other.diagramEditor) {
                 editPart = commonAncestorOrSelf(editPart, other.editPart);
                 return this;
-            }
+            } 
         }
         if (otherEffect instanceof UndoEffect) {
             if (((UndoEffect) otherEffect).getEffect() instanceof LayoutEffect) {
@@ -138,7 +136,6 @@ public class LayoutEffect extends AbstractEffect {
             }
         }
         return null;
-
     }
 
     /**

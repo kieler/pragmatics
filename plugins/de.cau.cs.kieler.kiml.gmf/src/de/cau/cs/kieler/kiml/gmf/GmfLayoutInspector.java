@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
@@ -35,6 +36,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.render.editparts.RenderedDiagramRootEditPart;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.Style;
 import org.eclipse.gmf.runtime.notation.View;
@@ -686,6 +688,14 @@ public class GmfLayoutInspector implements ILayoutInspector {
     public IFigure getDrawingLayer() {
         return (getDiagramEditPart(focusEditPart))
                 .getLayer(DiagramRootEditPart.PAGE_BREAKS_LAYER);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ZoomManager getZoomManager() {
+        return ((RenderedDiagramRootEditPart) getDiagramEditPart(focusEditPart)
+                .getRoot()).getZoomManager();
     }
     
 }

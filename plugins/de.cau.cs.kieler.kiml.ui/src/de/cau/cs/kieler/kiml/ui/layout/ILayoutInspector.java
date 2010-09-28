@@ -19,6 +19,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.editparts.ZoomManager;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
@@ -153,5 +154,12 @@ public interface ILayoutInspector {
      * @return a drawing layer
      */
     IFigure getDrawingLayer();
+    
+    /**
+     * Returns a zoom manager for the associated diagram.
+     * 
+     * @return a zoom manager
+     */
+    ZoomManager getZoomManager();
 
 }

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.gmf;
+package de.cau.cs.kieler.core.model.effects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,9 +100,10 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
             setCollapsed(targetEditPart, doCollapse);
             // ((DrawerStyle) targetEditPart.getModel()).setCollapsed(doCollapse);
             // TODO incorporate ^ into a write transaction?
-            if (doLayout) {
-                new LayoutEffect(targetEditor, targetNode).schedule();
-            }
+            // FIXME why should this effect create a layout effect? shouldn't this be handled by some combination?
+//            if (doLayout) {
+//                new LayoutEffect(targetEditor, targetNode).schedule();
+//            }
         }
     }
 
@@ -112,9 +113,10 @@ public class CompartmentCollapseExpandEffect extends AbstractEffect {
     public void undo() {
         if (targetEditPart != null && originalCollapseState != isCollapsed()) {
             setCollapsed(targetEditPart, originalCollapseState);
-            if (doLayout) {
-                new LayoutEffect(targetEditor, targetNode).schedule();
-            }
+            // FIXME see execute()
+//            if (doLayout) {
+//                new LayoutEffect(targetEditor, targetNode).schedule();
+//            }
         }
     }
 
