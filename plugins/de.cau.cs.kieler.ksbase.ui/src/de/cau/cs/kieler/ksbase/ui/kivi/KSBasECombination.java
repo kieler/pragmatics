@@ -32,7 +32,7 @@ public class KSBasECombination extends AbstractCombination {
      *            the KSBasEState
      */
     public void execute(final KSBasEState state) {
-        new LayoutEffect(state.getDiagramEditor(), state.getEObject()).schedule();
+        schedule(new LayoutEffect(state.getDiagramEditor(), state.getEObject()));
     }
 
 }

@@ -20,7 +20,9 @@ package de.cau.cs.kieler.core.kivi;
  * 
  */
 public abstract class AbstractTriggerState implements ITriggerState {
-
+    
+    private static long lastSequenceNumber = 0;
+    
     private long sequenceNumber = 0;
 
     /**
@@ -42,5 +44,13 @@ public abstract class AbstractTriggerState implements ITriggerState {
      */
     public long getSequenceNumber() {
         return sequenceNumber; // TODO determine best point of setting number
+    }
+    
+    void setSequenceNumber() {
+        // not thread-safe, only gets called from the combinations worker
+        if (sequenceNumber == 0) {
+            lastSequenceNumber++;
+            sequenceNumber = lastSequenceNumber;
+        }
     }
 }

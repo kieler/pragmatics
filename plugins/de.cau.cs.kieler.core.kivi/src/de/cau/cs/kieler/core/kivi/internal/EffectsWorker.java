@@ -29,6 +29,13 @@ import de.cau.cs.kieler.core.kivi.UndoEffect;
 public class EffectsWorker extends Thread {
 
     private List<IEffect> effects = new ArrayList<IEffect>();
+    
+    /**
+     * Default constructor, sets thread name as effects.
+     */
+    public EffectsWorker() {
+        super("Effects");
+    }
 
     @Override
     public void run() {
@@ -47,8 +54,7 @@ public class EffectsWorker extends Thread {
                     e.printStackTrace();
                 }
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                // got interrupted
             }
         }
     }

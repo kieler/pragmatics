@@ -33,7 +33,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import de.cau.cs.kieler.core.kivi.CombinationParameter;
-import de.cau.cs.kieler.core.kivi.Descriptor;
+import de.cau.cs.kieler.core.kivi.CombinationDescriptor;
 import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.ui.util.DoubleFieldEditor;
 import de.cau.cs.kieler.core.ui.util.FloatFieldEditor;
@@ -79,8 +79,8 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
         Composite main = new Composite(parent, SWT.NONE);
         main.setLayout(new GridLayout());
 
-        List<Descriptor> combinations = KiVi.getInstance().getAvailableCombinations();
-        for (Descriptor descriptor : combinations) {
+        List<CombinationDescriptor> combinations = KiVi.getInstance().getAvailableCombinations();
+        for (CombinationDescriptor descriptor : combinations) {
             CombinationParameter[] parameters = CombinationParameter.getParameters(descriptor
                     .getClazz());
             if (parameters.length > 0) {

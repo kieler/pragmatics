@@ -52,8 +52,6 @@ public class KSBasETrigger extends AbstractTrigger implements ITransformationEve
                 eObject = (EObject) args[0];
             }
             trigger(new KSBasEState(eObject, (DiagramEditor) args[1]));
-        } else {
-            System.out.println("ksbase post-transformation fail: " + args); // FIXME remove later
         }
     }
 

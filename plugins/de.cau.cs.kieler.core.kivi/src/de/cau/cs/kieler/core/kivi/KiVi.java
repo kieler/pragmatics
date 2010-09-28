@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kivi.internal.CombinationsWorker;
 import de.cau.cs.kieler.core.kivi.internal.EffectsWorker;
@@ -50,11 +52,9 @@ public class KiVi {
 
     private Map<Class<?>, ITriggerState> triggerStates = new HashMap<Class<?>, ITriggerState>();
 
-    private List<Descriptor> availableCombinations = new ArrayList<Descriptor>();
+    private List<CombinationDescriptor> availableCombinations = new ArrayList<CombinationDescriptor>();
 
-    private List<Descriptor> availableEffects = new ArrayList<Descriptor>();
-
-    private Map<ITrigger, List<ICombination>> combinationsByTrigger = new HashMap<ITrigger, List<ICombination>>();
+    private Map<ITrigger, List<ICombination>> combinationsByTrigger;;
 
     private boolean active = false;
 
@@ -62,6 +62,7 @@ public class KiVi {
      * Instantiate the singleton class.
      */
     public KiVi() {
+        combinationsByTrigger = new HashMap<ITrigger, List<ICombination>>();
         combinationsWorker.start();
         effectsWorker.start();
     }
@@ -80,7 +81,7 @@ public class KiVi {
      */
     public void initialize() {
         setActive(KiViPlugin.getDefault().getPreferenceStore().getBoolean(PROPERTY_ACTIVE));
-        loadExtensionPoints();
+        loadCombinations();
     }
 
     /**
@@ -140,16 +141,13 @@ public class KiVi {
 
     /**
      * Update activity state for each combination after preference page submit.
-     * 
-     * TODO better method name
      */
-    public void updateCombinationsByGUI() {
+    public void loadActiveStates() {
         List<ICombination> toActivate = new ArrayList<ICombination>();
         List<ICombination> toDeactivate = new ArrayList<ICombination>();
-        // split up to avoid breaking the loops by modifying
-        // combinationsByTrigger
+        // split up to avoid breaking the loops by modifying combinationsByTrigger
         synchronized (combinationsByTrigger) {
-            for (Descriptor d : availableCombinations) {
+            for (CombinationDescriptor d : availableCombinations) {
                 if (d.isActive()) {
                     boolean found = false;
                     outer: for (List<ICombination> l : combinationsByTrigger.values()) {
@@ -162,13 +160,11 @@ public class KiVi {
                     }
                     if (!found) {
                         try {
-                            toActivate.add((ICombination) d.getClazz().newInstance());
+                            toActivate.add(d.getClazz().newInstance());
                         } catch (InstantiationException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            error(e);
                         } catch (IllegalAccessException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            error(e);
                         }
                     }
                 } else {
@@ -195,17 +191,8 @@ public class KiVi {
      * 
      * @return a copied list of combinations
      */
-    public List<Descriptor> getAvailableCombinations() {
-        return new ArrayList<Descriptor>(availableCombinations);
-    }
-
-    /**
-     * Get a list of all available effects registered to the effects extension point.
-     * 
-     * @return a copied list of effects
-     */
-    public List<Descriptor> getAvailableEffects() {
-        return new ArrayList<Descriptor>(availableEffects);
+    public List<CombinationDescriptor> getAvailableCombinations() {
+        return new ArrayList<CombinationDescriptor>(availableCombinations);
     }
 
     /**
@@ -227,32 +214,13 @@ public class KiVi {
             }
         }
         boolean anyActive = isCombinationClassActive(combination.getClass());
-        for (Descriptor d : availableCombinations) {
+        for (CombinationDescriptor d : availableCombinations) {
             if (d.getClazz().equals(combination.getClass())) {
                 d.setActive(anyActive);
                 break;
             }
         }
     }
-
-    // /**
-    // * Change the trigger object used by the view management. Hack to allow KIML to create its
-    // * layout listener itself at the first layout, use that new instance now instead.
-    // *
-    // * @param trigger the trigger to swap in
-    // */
-    // public void swapTrigger(final ITrigger trigger) {
-    // synchronized (combinationsByTrigger) {
-    // for (ITrigger t : combinationsByTrigger.keySet()) {
-    // if (trigger.getClass().isInstance(t)) {
-    // List<ICombination> list = combinationsByTrigger.remove(t);
-    // combinationsByTrigger.put(trigger, list);
-    // trigger.setActive(t.isActive());
-    // return;
-    // }
-    // }
-    // }
-    // }
 
     /**
      * Inform the view management about an event contained in the given trigger state.
@@ -297,12 +265,14 @@ public class KiVi {
             if (previous != null) {
                 triggerState.merge(previous);
             } else {
-                System.err.println("no previous state found for " + triggerState.getClass());
-                // FIXME error log
+                error("no previous state found for " + triggerState.getClass());
             }
             triggerStates.put(triggerState.getClass(), triggerState);
         }
-
+        if (triggerState instanceof AbstractTriggerState) {
+            ((AbstractTriggerState) triggerState).setSequenceNumber();
+        }
+        
         List<ICombination> cs = getCombinations(triggerState.getTriggerClass());
         for (ICombination c : cs) {
             List<IEffect> effects = c.trigger();
@@ -311,14 +281,6 @@ public class KiVi {
             }
         }
         triggerState.finish();
-    }
-
-    /**
-     * Load information from the extension points registering combinations, effects etc.
-     */
-    private void loadExtensionPoints() {
-        loadCombinations();
-        // loadEffects();
     }
 
     /**
@@ -331,48 +293,27 @@ public class KiVi {
         for (IConfigurationElement element : elements) {
             try {
                 Object o = element.createExecutableExtension("class");
-                Descriptor descriptor;
-                descriptor = new Descriptor(element.getAttribute("name"),
-                        element.getAttribute("description"), o.getClass());
-                availableCombinations.add(descriptor);
-                if (preferenceStore
-                        .getBoolean(descriptor.getClazz().getCanonicalName() + ".active")) {
-                    ((ICombination) o).setActive(true);
-                }
-                CombinationParameter[] parameters = CombinationParameter
-                        .getParameters(o.getClass());
-                for (CombinationParameter parameter : parameters) {
-                    parameter.initialize();
+                if (o instanceof ICombination) {
+                    ICombination c = (ICombination) o;
+                    CombinationDescriptor descriptor = new CombinationDescriptor(
+                            element.getAttribute("name"), element.getAttribute("description"),
+                            c.getClass());
+                    availableCombinations.add(descriptor);
+                    if (preferenceStore.getBoolean(descriptor.getClazz().getCanonicalName()
+                            + ".active")) {
+                        c.setActive(true);
+                        descriptor.setActive(true);
+                    }
+                    CombinationParameter[] parameters = CombinationParameter.getParameters(c
+                            .getClass());
+                    for (CombinationParameter parameter : parameters) {
+                        parameter.initialize();
+                    }
                 }
             } catch (InvalidRegistryObjectException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                error(e);
             } catch (CoreException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
-
-    // TODO merge these two methods, or check if effects ep is needed at all
-    /**
-     * Load all information from the effects extension point.
-     */
-    private void loadEffects() {
-        IConfigurationElement[] elements = RegistryFactory.getRegistry()
-                .getConfigurationElementsFor("de.cau.cs.kieler.core.kivi.effects");
-        for (IConfigurationElement element : elements) {
-            try {
-                Descriptor descriptor = new Descriptor(element.getAttribute("name"),
-                        element.getAttribute("description"), element.createExecutableExtension(
-                                "class").getClass());
-                availableEffects.add(descriptor);
-            } catch (InvalidRegistryObjectException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (CoreException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                error(e);
             }
         }
     }
@@ -473,11 +414,9 @@ public class KiVi {
                 }
             }
         } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            error(e);
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            error(e);
         }
     }
 
@@ -516,11 +455,31 @@ public class KiVi {
                 }
             }
         } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            error(e);
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            error(e);
         }
+    }
+
+    /**
+     * Log an error.
+     * 
+     * @param t the causing throwable
+     */
+    public static void error(final Throwable t) {
+        StatusManager.getManager().handle(
+                new Status(Status.ERROR, KiViPlugin.PLUGIN_ID, t.getLocalizedMessage(), t),
+                StatusManager.LOG);
+    }
+
+    /**
+     * Log an error.
+     * 
+     * @param m the error message
+     */
+    public static void error(final String m) {
+        StatusManager.getManager().handle(new Status(Status.ERROR, KiViPlugin.PLUGIN_ID, m),
+                StatusManager.LOG);
+
     }
 }

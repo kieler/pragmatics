@@ -41,8 +41,6 @@ public abstract class AbstractCombination implements ICombination {
     public List<IEffect> trigger() {
         Method execute = getExecuteMethod();
         if (execute == null) {
-            System.err.println("no execute() found for " + getClass().getCanonicalName());
-            // FIXME error log
             return new ArrayList<IEffect>();
         }
         Class<?>[] types = execute.getParameterTypes();
@@ -56,14 +54,11 @@ public abstract class AbstractCombination implements ICombination {
         try {
             execute.invoke(this, states);
         } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            KiVi.error(e);
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            KiVi.error(e);
         } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            KiVi.error(e);
         }
         if (doNothing) {
             doNothing = false;
@@ -124,8 +119,6 @@ public abstract class AbstractCombination implements ICombination {
     public Class<? extends ITriggerState>[] getTriggerStates() {
         Method execute = getExecuteMethod();
         if (execute == null) {
-            System.err.println("no execute() found for " + getClass().getCanonicalName());
-            // FIXME error log
             return (Class<? extends ITriggerState>[]) new Class<?>[0];
         } else { // FIXME is there any way to check against this type?
             return (Class<? extends ITriggerState>[]) execute.getParameterTypes();
@@ -137,17 +130,30 @@ public abstract class AbstractCombination implements ICombination {
      * 
      * @return execute method
      */
-    private Method getExecuteMethod() { // FIXME check for correct return types, multiple execute
-                                        // methods -> error log
+    private Method getExecuteMethod() {
         if (executeCache == null) {
             Method[] methods = getClass().getMethods();
             Method execute = null;
-            for (Method m : methods) {
+            outer: for (Method m : methods) {
                 if (m.getName().equals("execute")
                         && (execute == null || m.getParameterTypes().length > execute
                                 .getParameterTypes().length)) {
-                    execute = m;
+                    if (m.getReturnType().equals(Void.TYPE)) {
+                        for (Class<?> parameterType : m.getParameterTypes()) {
+                            if (!ITriggerState.class.isAssignableFrom(parameterType)) {
+                                continue outer; // execute() takes a non-ITriggerState-parameter.
+                            }
+                        }
+                        if (execute != null) {
+                            KiVi.error("found multiple execute() methods in"
+                                    + getClass().getCanonicalName());
+                        }
+                        execute = m;
+                    }
                 }
+            }
+            if (execute == null) {
+                KiVi.error("no execute() found for " + getClass().getCanonicalName());
             }
             executeCache = execute;
         }

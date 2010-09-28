@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.IEffect;
+import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
 
 /**
@@ -129,12 +130,15 @@ public class LayoutEffect extends AbstractEffect {
             if (diagramEditor == other.diagramEditor) {
                 editPart = commonAncestorOrSelf(editPart, other.editPart);
                 return this;
-            } else {
-                return null;
             }
-        } else {
-            return null;
         }
+        if (otherEffect instanceof UndoEffect) {
+            if (((UndoEffect) otherEffect).getEffect() instanceof LayoutEffect) {
+                return this;
+            }
+        }
+        return null;
+
     }
 
     /**

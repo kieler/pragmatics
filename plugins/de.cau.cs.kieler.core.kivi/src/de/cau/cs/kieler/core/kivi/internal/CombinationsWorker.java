@@ -31,6 +31,13 @@ public class CombinationsWorker extends Thread {
      * Queue of triggers containing events that need to be handled.
      */
     private BlockingQueue<ITriggerState> triggerStates = new LinkedBlockingQueue<ITriggerState>();
+    
+    /**
+     * Default constructor, sets thread name as combinations.
+     */
+    public CombinationsWorker() {
+        super("Combinations");
+    }
 
     @Override
     public void run() {
@@ -43,8 +50,7 @@ public class CombinationsWorker extends Thread {
                     e.printStackTrace();
                 }
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                // got interrupted
             }
         }
     }
@@ -58,8 +64,7 @@ public class CombinationsWorker extends Thread {
         try {
             triggerStates.put(triggerState);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // got interrupted
         }
     }
 

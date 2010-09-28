@@ -207,7 +207,7 @@ public class CombinationParameter {
      *            the combination class to look in
      * @return its combination parameters, or an empty array if there are none
      */
-    public static CombinationParameter[] getParameters(final Class<?> combination) {
+    public static CombinationParameter[] getParameters(final Class<? extends ICombination> combination) {
         try {
             Method method = combination.getMethod("getParameters");
             Object result = method.invoke(null);

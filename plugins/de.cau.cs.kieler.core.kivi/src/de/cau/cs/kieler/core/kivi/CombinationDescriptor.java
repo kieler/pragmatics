@@ -18,13 +18,13 @@ package de.cau.cs.kieler.core.kivi;
  * 
  * @author mmu
  */
-public class Descriptor {
+public class CombinationDescriptor {
 
     private String name;
 
     private String description;
 
-    private Class<?> clazz;
+    private Class<? extends ICombination> clazz;
 
     private boolean active = false;
 
@@ -38,7 +38,8 @@ public class Descriptor {
      * @param c
      *            the class
      */
-    public Descriptor(final String n, final String d, final Class<?> c) {
+    public CombinationDescriptor(final String n, final String d,
+            final Class<? extends ICombination> c) {
         name = n;
         description = d;
         clazz = c;
@@ -67,7 +68,7 @@ public class Descriptor {
      * 
      * @return the class
      */
-    public Class<?> getClazz() {
+    public Class<? extends ICombination> getClazz() {
         return clazz;
     }
 
@@ -89,5 +90,5 @@ public class Descriptor {
     public boolean isActive() {
         return active;
     }
-    
+
 }
