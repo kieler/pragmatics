@@ -77,10 +77,15 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
         return this.getNotationView().getElement();
     }
     
+private boolean updateTriggerFigure = true;
+    
     @Override
     public IFigure getFigure() {
         IFigure figure = super.getFigure();
+        if (updateTriggerFigure) {
         updateFigure(primaryShape);
+        updateTriggerFigure = false;
+        }
         return figure;
     }
 

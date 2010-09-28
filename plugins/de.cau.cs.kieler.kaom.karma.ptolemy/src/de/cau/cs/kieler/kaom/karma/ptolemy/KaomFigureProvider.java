@@ -39,6 +39,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import ptolemy.actor.lib.Ramp;
 import ptolemy.data.expr.XMLParser;
@@ -59,6 +60,7 @@ import de.cau.cs.kieler.kvid.datadistributor.IDataListener;
 
 /**
  * Karma rendering provider for rendering ptolemy diagrams in kaom.
+ * 
  * @author ckru
  * 
  */
@@ -157,7 +159,7 @@ public class KaomFigureProvider implements IRenderingProvider {
     /**
      * {@inheritDoc}
      */
-    public BorderItemLocator getBorderItemLocatorByString(final String input) {
+    public BorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parent, final Object locator) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -216,16 +218,30 @@ public class KaomFigureProvider implements IRenderingProvider {
                 doc = xmlpars.parser(svgDescription);
             }
             Element svgElement = (Element) doc.getElementsByTagName("svg").item(0);
-            Element rectElement = (Element) doc.getElementsByTagName("rect").item(0);
+            NodeList nodeList = doc.getElementsByTagName("rect");
+            int xoffset = 0;
+            int yoffset = 0;
+            if (nodeList.getLength() != 0) {
+                    Element rectElement = (Element) doc.getElementsByTagName("rect").item(0);
 
-            svgElement.setAttribute("height",
+                        svgElement.setAttribute("height",
                     String.valueOf(Integer.parseInt(rectElement.getAttribute("height")) + 1));
-            svgElement.setAttribute("width",
+                        svgElement.setAttribute("width",
                     String.valueOf(Integer.parseInt(rectElement.getAttribute("width")) + 1));
 
-            int xoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("x")));
-            int yoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("y")));
-
+            xoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("x")));
+            yoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("y")));
+            } else {
+                //TODO hacked else case, think of something better
+                int childPointer = 0;
+                Object object = svgElement.getChildNodes().item(childPointer);                
+                while (!(object instanceof Element) && (object != svgElement )) {
+                    object = svgElement.getElementsByTagName("*").item(childPointer);
+                }
+                Element firstElement = (Element)object;
+                xoffset = Math.abs(Integer.parseInt(firstElement.getAttribute("x")));
+                yoffset = Math.abs(Integer.parseInt(firstElement.getAttribute("y")));
+            }
             for (int i = 0; i < doc.getElementsByTagName("rect").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("rect").item(i);
                 if (e.hasAttribute("x") && e.hasAttribute("y") && e.hasAttribute("style")) {

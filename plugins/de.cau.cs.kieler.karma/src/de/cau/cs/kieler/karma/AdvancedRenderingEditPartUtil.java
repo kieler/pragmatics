@@ -9,8 +9,14 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
+import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
+import org.eclipse.gmf.runtime.diagram.ui.internal.figures.BorderItemContainerFigure;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
+import org.eclipse.gmf.runtime.notation.impl.BasicCompartmentImpl;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
@@ -110,34 +116,53 @@ public class AdvancedRenderingEditPartUtil {
                         String figureParam = (String) conditionElement.get("figureParam");
                         String layoutParam = (String) conditionElement.get("layoutParam");
                         String borderItemParam = (String) conditionElement.get("borderItemParam");
-                        
-                        IRenderingProvider renderingProvider = (IRenderingProvider) conditionElement.get("renderingProvider");
 
-                        //setting the new figure
+                        IRenderingProvider renderingProvider = (IRenderingProvider) conditionElement
+                                .get("renderingProvider");
+
+                        // setting the new figure
                         newFigure = renderingProvider.getFigureByString(figureParam, oldFigure,
                                 modelElement);
-                        if (attrFigure != null) {
+                        if (attrFigure != null && newFigure != null) {
                             attrFigure.setCurrentFigure(newFigure);
                         } else {
 
                         }
                         
-                        //sets the new BoderItemLocator
-                        BorderItemLocator newBorderItemLocatior = renderingProvider.getBorderItemLocatorByString(borderItemParam);
-                        if ((newBorderItemLocatior != null) && (attrFigure != null)) {
-                           attrFigure.getParent().getLayoutManager().setConstraint(attrFigure, newBorderItemLocatior);
-                        }
-                        
-                        //setting the LayoutManager
+                        // setting the LayoutManager
                         LayoutManager newLayoutManager = renderingProvider
-                        .getLayoutManagerByString(layoutParam, figure.getLayoutManager(),
-                                modelElement);
+                                .getLayoutManagerByString(layoutParam, figure.getLayoutManager(),
+                                        modelElement);
                         if (newLayoutManager != null) {
                             figure.setLayoutManager(newLayoutManager);
                         }
 
-                        //setting a fixed node size
-                        if ((figureSize.getFirst() >= 0) && (figureSize.getSecond() >= 0)) {
+                        // sets the new BoderItemLocator
+                        if (editPart instanceof AbstractBorderItemEditPart) {
+                            IFigure mainFigure = ((AbstractBorderedShapeEditPart)editPart.getParent()).getMainFigure();
+                            IBorderItemLocator newLocator = renderingProvider.getBorderItemLocatorByString(borderItemParam, mainFigure, null);
+                            if (newLocator != null && figure.getLayoutManager() != null) {
+                                figure.getLayoutManager().setConstraint(figure, newLocator);
+                            }
+                            /*
+                            BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) ((AdvancedRenderingBorderedShapeEditPart) editPart.getParent()).getFigure();
+                            BorderItemContainerFigure borderItemContainerFigure = (BorderItemContainerFigure) borderedNodeFigure.getBorderItemContainer();
+                            IBorderItemLocator oldBorderItemLocator = (IBorderItemLocator) borderItemContainerFigure.getLayoutManager().getConstraint(figure.getParent().getParent());//(IBorderItemLocator) borderItemContainerFigure.getLayoutManager().getConstraint(figure);
+                            IBorderItemLocator newBorderItemLocatior = renderingProvider
+                                    .getBorderItemLocatorByString(borderItemParam,
+                                            figure, oldBorderItemLocator);
+                            if (newBorderItemLocatior != null) {
+                                borderItemContainerFigure.getLayoutManager().setConstraint(figure, newBorderItemLocatior);
+                            }
+                            //oldBorderItemLocator = (IBorderItemLocator) figure.getParent().getLayoutManager().getConstraint(figure);
+                            oldBorderItemLocator = (IBorderItemLocator) borderItemContainerFigure.getLayoutManager().getConstraint(figure);
+                            int f = 7;
+                            */
+                        }
+
+                        // setting a fixed node size
+                        if (((figureSize.getFirst() >= 0) && (figureSize.getSecond() >= 0))
+                                && attrFigure != null) {
                             Dimension dim = new Dimension(figureSize.getFirst(),
                                     figureSize.getSecond());
                             figure.getBounds().setSize(dim);
@@ -145,13 +170,11 @@ public class AdvancedRenderingEditPartUtil {
                             figure.setMinimumSize(dim.getCopy());
                             figure.setPreferredSize(dim.getCopy());
                             if (figure.getParent() instanceof DefaultSizeNodeFigure) {
-                                ((DefaultSizeNodeFigure)figure.getParent()).setDefaultSize(figure.getSize().getCopy());
+                                ((DefaultSizeNodeFigure) figure.getParent()).setDefaultSize(figure
+                                        .getSize().getCopy());
                             }
-                            if (attrFigure != null) {
-                                attrFigure.setResizeable(false);
-                            }
-                        } 
-
+                            attrFigure.setResizeable(false);
+                        }
                         lastCondition = condition;
                         return true;
                     }
@@ -160,7 +183,5 @@ public class AdvancedRenderingEditPartUtil {
         }
         return false;
     }
-    
+
 }
-
-

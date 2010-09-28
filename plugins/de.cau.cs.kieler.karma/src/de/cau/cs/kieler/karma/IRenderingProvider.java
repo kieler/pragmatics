@@ -19,6 +19,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 
 /**
  * Class for providing figures represented by a string.
@@ -63,6 +64,6 @@ public interface IRenderingProvider {
      * @param input a string representation of the BorderItemLocator
      * @return the new BorderItemLocator
      */
-    public BorderItemLocator getBorderItemLocatorByString(final String input);
+    public IBorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parentFigure,final Object locator);
     
 }

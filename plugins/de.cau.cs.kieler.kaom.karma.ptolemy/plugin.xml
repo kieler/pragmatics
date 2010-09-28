@@ -234,6 +234,20 @@
                editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart">
          </editPart>
       </configuration>
+      <configuration
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomPortProvider">
+         <conditions>
+            <customCondition
+                  borderItemParam="NORTH"
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  key="_cardinal"
+                  value="NORTH">
+            </customCondition>
+         </conditions>
+         <editPart
+               editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.PortEditPart">
+         </editPart>
+      </configuration>
    </extension>
 
 </plugin>
