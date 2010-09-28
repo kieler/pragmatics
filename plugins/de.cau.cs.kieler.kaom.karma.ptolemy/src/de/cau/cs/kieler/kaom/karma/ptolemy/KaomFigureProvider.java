@@ -448,7 +448,7 @@ public class KaomFigureProvider implements IRenderingProvider {
         /**
          * {@inheritDoc}
          */
-        public void triggerDataChanged() {
+        public void triggerDataChanged(final boolean isHistoryValue) {
             DataObject data = DataDistributor.getInstance().getDataObjectByURI(
                     new KvidUri(referredDataUri));
             if (data != null) {
