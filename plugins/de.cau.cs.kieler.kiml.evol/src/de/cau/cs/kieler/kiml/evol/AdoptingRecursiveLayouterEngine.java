@@ -11,12 +11,8 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-/**
- *
- */
 package de.cau.cs.kieler.kiml.evol;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 
@@ -41,6 +37,7 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
  * A recursive layout engine that can adopt an individual.
  *
  * @author bdu
+ * @see RecursiveLayouterEngine
  *
  */
 class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
@@ -56,13 +53,19 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
      * Calculates a layout for the given individual in the given editor.
      *
      * @param individual
-     *            the individual that shall be adopted
+     *            the {@link Genome} from which layout options shall be adopted;
+     *            may not be {@code null}
      * @param editor
-     *            the editor in which layout shall be calculated
-     * @return a {@link LayoutResult} object
+     *            the {@link DiagramEditor} in which layout shall be calculated;
+     *            may not be {@code null}
+     * @param progressMonitor
+     *            monitor to which progress of the layout algorithms is
+     *            reported; may be {@code null}
+     * @return the resulting layout graph
      */
-    LayoutResult calculateLayout(
-            final Genome individual, final DiagramEditor editor) {
+    KNode calculateLayout(
+            final Genome individual, final DiagramEditor editor,
+            final IKielerProgressMonitor progressMonitor) {
 
         DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
@@ -71,14 +74,17 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         // Transfer layout options from the individual to the KGraph.
         KNode adopted = adoptIndividual(individual, layoutGraph);
-        IKielerProgressMonitor monitor = new BasicProgressMonitor();
+
+        // Make sure there is a monitor of some kind.
+        IKielerProgressMonitor monitor =
+                (progressMonitor != null ? progressMonitor : new BasicProgressMonitor());
         try {
             layout(adopted, monitor, false);
         } catch (final KielerException exception) {
             // TODO: do something about the failed layout
             exception.printStackTrace();
         }
-        return new LayoutResult(adopted, monitor);
+        return adopted;
     }
 
     /**
@@ -86,36 +92,35 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
      * graph.
      *
      * @param individual
-     *            the individual encoding the layout options to be transferred
+     *            the {@link Genome} that is encoding the layout options to be
+     *            transferred
      * @param originalGraph
      *            the original graph
      * @return a copy of the graph with the adopted layout options
      */
     private static KNode adoptIndividual(final Genome individual, final KNode originalGraph) {
-
-        Assert.isLegal((individual != null) && (originalGraph != null));
         if ((individual == null) || (originalGraph == null)) {
-            return null;
+            throw new IllegalArgumentException("Argument must not be null.");
         }
 
         EvolPlugin.logStatus("Adopting " + individual.toString());
 
-        final KNode copy = EcoreUtil.copy(originalGraph);
-        final KShapeLayout shapeLayout = copy.getData(KShapeLayout.class);
+        KNode copy = EcoreUtil.copy(originalGraph);
+        KShapeLayout shapeLayout = copy.getData(KShapeLayout.class);
 
-        final LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutServices layoutServices = LayoutServices.getInstance();
 
         // Set layout options according to the genome.
         for (final IGene<?> gene : individual) {
 
-            final Object value = gene.getValue();
-            final Object id = gene.getId();
+            Object value = gene.getValue();
+            Object id = gene.getId();
             System.out.println(id + ": " + value);
 
-            final LayoutOptionData<?> data = layoutServices.getLayoutOptionData((String) id);
+            LayoutOptionData<?> data = layoutServices.getLayoutOptionData((String) id);
             assert data != null : "No layout option data for " + id;
 
-            final Type layoutOptionType = data.getType();
+            Type layoutOptionType = data.getType();
 
             switch (layoutOptionType) {
             case BOOLEAN:
@@ -166,31 +171,30 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
                     // is the index for the internal list in the gene.
 
                     // Are we allowed to set the layout hint?
-                    final boolean canSetLayoutHint =
+                    boolean canSetLayoutHint =
                             EvolPlugin.getDefault().getPreferenceStore()
                                     .getBoolean(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
 
                     // Even for different types?
-                    final boolean canSetForDifferentType =
+                    boolean canSetForDifferentType =
                             EvolPlugin.getDefault().getPreferenceStore()
                                     .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
 
                     if (!canSetLayoutHint) {
                         // We have nothing to do, for we are not allowed
-                        // to set
-                        // the layout hint at all.
+                        // to set the layout hint at all.
                         break;
                     }
 
-                    final String newLayoutHintId = gene.toString();
+                    String newLayoutHintId = gene.toString();
 
-                    final String oldLayoutHintId = (String) shapeLayout.getProperty(data);
-                    Assert.isNotNull(oldLayoutHintId);
+                    String oldLayoutHintId = (String) shapeLayout.getProperty(data);
+                    assert oldLayoutHintId != null;
 
-                    final LayoutProviderData providerData =
+                    LayoutProviderData providerData =
                             layoutServices.getLayoutProviderData(newLayoutHintId, null);
 
-                    final String newType = providerData.getType();
+                    String newType = providerData.getType();
 
                     if ((!canSetForDifferentType && !EvolUtil.isCompatibleLayoutProvider(
                             oldLayoutHintId, newType))) {
@@ -213,50 +217,9 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             default:
                 shapeLayout.setProperty(data, value.toString());
                 // TODO: make sure the omitted properties are removed
-
                 break;
             }
-
-
         }
         return copy;
     }
-
-    /**
-     * @author bdu
-     *
-     */
-    public class LayoutResult {
-
-        private final KNode layoutGraph;
-        private final IKielerProgressMonitor monitor;
-
-        /**
-         * Creates a new {@link LayoutResult} instance.
-         *
-         * @param theLayoutGraph
-         * @param theMonitor
-         */
-        public LayoutResult(final KNode theLayoutGraph, final IKielerProgressMonitor theMonitor) {
-            this.layoutGraph = theLayoutGraph;
-            this.monitor = theMonitor;
-        }
-
-        /**
-         *
-         * @return the layout graph
-         */
-        public KNode getLayoutGraph() {
-            return this.layoutGraph;
-        }
-
-        /**
-         * @return the monitor
-         */
-        public IKielerProgressMonitor getMonitor() {
-            return this.monitor;
-        }
-
-    }
-
 }

@@ -56,7 +56,6 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
-import de.cau.cs.kieler.kiml.evol.AdoptingRecursiveLayouterEngine.LayoutResult;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -91,34 +90,34 @@ public final class EvolUtil {
          * diagrams.
          *
          * @param individual
-         *            a {@link Genome}; may not be {@code null}
+         *            a {@link Genome}; must not be {@code null}
          * @param expectedLayoutProviderId
-         *            the expected layout provider id
+         *            the ID of the expected layout provider; must not be
+         *            {@code null}
          */
         private static void applyIndividual(
                 final Genome individual, final String expectedLayoutProviderId) {
-            Assert.isLegal((individual != null) && (expectedLayoutProviderId != null));
             if ((individual == null) || (expectedLayoutProviderId == null)) {
-                return;
+                throw new IllegalArgumentException();
             }
 
             final LayoutServices layoutServices = LayoutServices.getInstance();
-            Assert.isNotNull(layoutServices);
+            assert layoutServices != null;
 
             // Get the expected layout type id.
-            final LayoutProviderData expectedProviderData =
+            LayoutProviderData expectedProviderData =
                     layoutServices.getLayoutProviderData(expectedLayoutProviderId);
-            Assert.isNotNull(expectedProviderData);
-            final String expectedLayoutTypeId = expectedProviderData.getType();
-            Assert.isNotNull(expectedLayoutTypeId);
+            assert expectedProviderData != null;
+            String expectedLayoutTypeId = expectedProviderData.getType();
+            assert expectedLayoutTypeId != null;
 
             // Get the appropriate editors.
-            final Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
-            Assert.isNotNull(editors);
+            Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
+            assert editors != null;
 
-            final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
+            IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
 
-            final boolean useDifferentType =
+            boolean useDifferentType =
                     store.getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
 
             // Iterate the editors and perform layout in each appropriate
@@ -127,37 +126,38 @@ public final class EvolUtil {
                 System.out.println();
                 System.out.print("--- Editor: " + editor.getTitle() + " ");
 
-                final LayoutProviderData data = getLayoutProviderData(editor);
+                LayoutProviderData data = getLayoutProviderData(editor);
 
                 // Check if we can handle its type.
-                final String layoutTypeId = data.getType();
+                String layoutTypeId = data.getType();
                 if (!expectedLayoutTypeId.equalsIgnoreCase(layoutTypeId) && !useDifferentType) {
                     // The type in the editor is not compatible to the current
-                    // population.
+                    // population. We skip this editor.
 
-                    // We skip this editor.
                     System.err.println("The editor " + editor.getTitle() + " is set to "
                             + layoutTypeId + ". Expecting an editor for " + expectedLayoutTypeId
                             + ".");
                     continue;
-
                 }
 
-                final DiagramLayoutManager manager = adoptAndApplyLayout(individual, editor);
+                DiagramLayoutManager manager = adoptAndApplyLayout(individual, editor);
             }
         }
 
         /**
+         * Tries to find a layout provider for the given editor.
+         *
          * @param editor
-         * @return
+         *            an editor
+         * @return a layout provider or {@code null} if none can be found
          */
         private static LayoutProviderData getLayoutProviderData(final IEditorPart editor) {
-            final EditPart editPart = getCurrentEditPart(editor);
+            EditPart editPart = getCurrentEditPart(editor);
 
             // See which layout provider suits for the editor.
-            final LayoutProviderData data = EvolUtil.getLayoutProviderData(editor, editPart);
+            LayoutProviderData data = EvolUtil.getLayoutProviderData(editor, editPart);
 
-            final String layoutProviderId;
+            String layoutProviderId;
             if (data == null) {
                 // no layout provider found --> skip this editor
                 System.err.println("Could not find a layout provider for the editor '"
@@ -171,22 +171,33 @@ public final class EvolUtil {
         }
 
         /**
+         * Adopts the given individual, calculates layout for it and applies it
+         * to the diagram in the given editor.
+         *
          * @param individual
+         *            the genome encoding the layout options to use
          * @param editor
-         * @return
+         *            the editor in which the layout shall be applied
+         * @return the layout manager used to apply the layout
          */
         private static DiagramLayoutManager adoptAndApplyLayout(
                 final Genome individual, final IEditorPart editor) {
             // Adopt the layout options that are encoded in the individual.
-            EvolUtil.adoptIndividual(individual, editor);
+            try {
+                EvolUtil.adoptIndividual(individual, editor);
+            } catch (KielerException exception) {
+                exception.printStackTrace();
+                EvolPlugin.showError("Could not adopt the individual.", exception);
+                return null;
+            }
 
             // We don't specify the edit part because we want a manager for
             // the whole diagram.
-            final DiagramLayoutManager manager =
+            DiagramLayoutManager manager =
                     EclipseLayoutServices.getInstance().getManager(editor, null);
-            Assert.isNotNull(manager);
+            assert manager != null : "Could not get a layout manager for " + editor.getTitle();
 
-            final IKielerProgressMonitor monitor = EvolUtil.calculateLayout(manager, editor);
+            IKielerProgressMonitor monitor = EvolUtil.calculateLayout(manager, editor);
 
             if (monitor != null) {
                 // Apply the layout to the diagram in the editor.
@@ -232,27 +243,29 @@ public final class EvolUtil {
      *
      */
     private static final class IndividualAutoRaterRunnable implements Runnable {
+
         /**
          * Layouts the given individual in the given editors and calculates
          * automatic ratings for it.
          *
-         * @param ind
-         *            the {@link Genome} to be rated; must not be {@code null}
          * @param editors
          *            Specifies the editors in which the individual shall be
          *            laid out; must not be {@code null}.
-         * @param weightsGenomes
          */
         private void autoRateIndividual(final Set<IEditorPart> editors) {
-            Assert.isLegal(editors != null);
-            final Genome ind = this.individual;
-            final Population wg = this.weightsGenomes;
-            if ((ind == null) || (editors == null) || (wg == null)) {
+            if (editors == null) {
+                throw new IllegalArgumentException("Argument must not be null: editors");
+            }
+
+            Genome ind = this.individual;
+            Population genomes = this.weightsGenomes;
+
+            if ((ind == null) || (genomes == null)) {
                 return;
             }
 
-            final double rating = calculateAutoRating(ind, editors, wg);
-            ind.setUserRating(Double.valueOf(rating));
+            double rating = calculateAutoRating(ind, editors, genomes);
+            ind.setUserRating(rating);
         }
 
         /**
@@ -261,43 +274,42 @@ public final class EvolUtil {
          * stored in the individual.
          *
          * @param ind
-         *            a {@link Genome}
+         *            a {@link Genome}; must not be {@code null}
          * @param editors
-         *            set of editors
+         *            set of editors; must not be {@code null}
          * @param weightsGenomes
-         *            the weights genomes
+         *            the weights genomes; must not be {@code null}
          *
          * @return the rating proposal
          */
         private static double calculateAutoRating(
                 final Genome ind, final Set<IEditorPart> editors, final Population weightsGenomes) {
-            Assert.isLegal((ind != null) && (editors != null) && (weightsGenomes != null));
             if ((ind == null) || (editors == null) || (weightsGenomes == null)) {
-                return 0.0;
+                throw new IllegalArgumentException("Arguments must not be null.");
             }
 
             double totalRating = 0.0;
-            final int editorCount = editors.size();
+            int editorCount = editors.size();
 
             for (final IEditorPart editor : editors) {
                 // We don't specify the edit part because we want a manager for
                 // the whole diagram.
-                final DiagramLayoutManager manager =
+                DiagramLayoutManager manager =
                         EclipseLayoutServices.getInstance().getManager(editor, null);
-                Assert.isNotNull(manager);
+                assert manager != null;
 
                 // TODO: what if weights genomes is empty?
-                Assert.isTrue(!weightsGenomes.isEmpty());
+                assert !weightsGenomes.isEmpty();
 
                 double editorRating = 0.0;
                 Map<String, Object> measurements = null;
 
-                final int weightsGenomesCount = weightsGenomes.size();
-                for (final Genome wg : weightsGenomes) {
-                    Assert.isNotNull(wg);
+                int weightsGenomesCount = weightsGenomes.size();
+                for (final Genome weightGenome : weightsGenomes) {
+                    Assert.isNotNull(weightGenome);
 
-                    final Map<String, Double> weightsMap = extractMetricWeights(wg);
-                    Assert.isNotNull(weightsMap);
+                    Map<String, Double> weightsMap = extractMetricWeights(weightGenome);
+                    assert weightsMap != null;
                     normalize(weightsMap);
 
                     // Get measurements, then get rating proposal from each
@@ -307,9 +319,7 @@ public final class EvolUtil {
                     // measurements, or use average ratings instead?
 
                     if (measurements == null) {
-                        measurements =
-                                measure(ind, editor, manager, manager.getLayoutGraph(),
-                                        weightsMap);
+                        measurements = measure(ind, editor, manager.getLayoutGraph(), weightsMap);
 
                         ind.setFeatures(measurements);
                         // TODO: don't set features here. This works only for
@@ -317,18 +327,18 @@ public final class EvolUtil {
                         // must be calculated.
                     }
 
-                    final double scaledSum = weight(measurements, weightsMap);
+                    double scaledSum = weight(measurements, weightsMap);
 
-                    final double rating = scaledSum;
+                    double rating = scaledSum;
 
-                    System.out.println("Rated " + rating + " by " + wg.toString());
-                    wg.addFeature("proposedRating:" + ind.getId(), Double.valueOf(rating));
+                    System.out.println("Rated " + rating + " by " + weightGenome.toString());
+                    weightGenome.addFeature("proposedRating:" + ind.getId(), rating);
 
                     editorRating += rating;
                 }
 
                 if (weightsGenomesCount > 1) {
-                    final double averageEditorRating = editorRating / weightsGenomesCount;
+                    double averageEditorRating = editorRating / weightsGenomesCount;
                     totalRating += averageEditorRating;
                 } else {
                     totalRating += editorRating;
@@ -337,8 +347,7 @@ public final class EvolUtil {
 
             if (editorCount > 1) {
                 // return average rating of all editors
-                final double averageTotalRating =
-                        Math.round(totalRating / Double.valueOf(editorCount).floatValue());
+                double averageTotalRating = totalRating / editorCount;
                 return averageTotalRating;
             }
 
@@ -354,25 +363,25 @@ public final class EvolUtil {
          */
         private static Map<String, Double> extractMetricWeights(final Genome genome) {
 
-            final EvolutionServices evolService = EvolutionServices.getInstance();
-            Assert.isNotNull(evolService);
+            EvolutionServices evolService = EvolutionServices.getInstance();
 
-            final Set<String> metricIds = evolService.getLayoutMetricsIds();
-            Assert.isNotNull(metricIds);
+            // presuming evolService != null
+            Set<String> metricIds = evolService.getLayoutMetricsIds();
 
-            final Map<String, Double> result = new HashMap<String, Double>(metricIds.size());
+            // presuming metricIds != null
+            Map<String, Double> result = new HashMap<String, Double>(metricIds.size());
 
             for (final IGene<?> gene : genome) {
-                Assert.isNotNull(gene);
-                final String id = (String) gene.getId();
+                // presuming gene != null
+                String id = (String) gene.getId();
 
                 if (!metricIds.contains(id)) {
                     // not a metric id --> skip
                     continue;
                 }
 
-                final Float value = (Float) gene.getValue();
-                result.put(id, Double.valueOf(value.doubleValue()));
+                Float value = (Float) gene.getValue();
+                result.put(id, value.doubleValue());
             }
 
             return result;
@@ -387,8 +396,6 @@ public final class EvolUtil {
          *            a {@link Genome}; may not be {@code null}
          * @param editor
          *            an {@link IEditorPart}
-         * @param manager
-         *            a {@link DiagramLayoutManager}
          * @param inspector
          *            a {@link ILayoutInspector}; may not be {@code null}
          * @param weightsMap
@@ -398,29 +405,28 @@ public final class EvolUtil {
          * @return the measured features
          */
         private static Map<String, Object> measure(
-                final Genome ind, final IEditorPart editor, final DiagramLayoutManager manager,
+                final Genome ind, final IEditorPart editor,
                 final KNode graph, final Map<String, Double> weightsMap) {
-            Assert.isLegal((ind != null) && (graph != null) && (weightsMap != null));
             if ((ind == null) || (graph == null) || (weightsMap == null)) {
-                return null;
+                throw new IllegalArgumentException();
             }
 
             AdoptingRecursiveLayouterEngine engine = new AdoptingRecursiveLayouterEngine();
 
-            LayoutResult layoutResult = engine.calculateLayout(ind, (DiagramEditor) editor);
+            IKielerProgressMonitor monitor = new BasicProgressMonitor();
 
+            KNode layoutResult = engine.calculateLayout(ind, (DiagramEditor) editor, monitor);
 
-            final Map<String, Object> measurements =
-                    measure(layoutResult.getLayoutGraph(), weightsMap);
+            Map<String, Object> measurements = measure(layoutResult, weightsMap);
             // Attention: The measurements may contain additional intermediate
             // results we did not ask for. See #1152.
 
-            // add the execution speed
-            final double time = layoutResult.getMonitor().getExecutionTime();
+            // Add the execution speed value.
+            double time = monitor.getExecutionTime();
 
-            final double speed = normalizedSpeed(time);
+            double speed = normalizedSpeed(time);
 
-            measurements.put("executionSpeed", Double.valueOf(speed));
+            measurements.put(EvolPlugin.EXECUTION_SPEED_VALUE_ID, speed);
 
             return measurements;
         }
@@ -440,31 +446,33 @@ public final class EvolUtil {
          */
         private static Map<String, Object> measure(
                 final KNode parentNode, final Map<String, Double> theWeightsMap) {
-            Assert.isLegal(theWeightsMap != null);
+            if (theWeightsMap == null) {
+                throw new IllegalArgumentException();
+            }
 
-            if ((parentNode == null) || (theWeightsMap == null)) {
+            if (parentNode == null) {
                 return Collections.emptyMap();
             }
 
             // Get the metric IDs.
-            final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+            Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
 
             // Get the metrics.
-            final Set<AbstractInfoAnalysis> metrics =
+            Set<AbstractInfoAnalysis> metrics =
                     EvolutionServices.getInstance().getLayoutMetrics();
 
-            final Map<String, Double> weightsMap = new HashMap<String, Double>(theWeightsMap);
+            Map<String, Double> weightsMap = new HashMap<String, Double>(theWeightsMap);
 
-            final List<AbstractInfoAnalysis> wantedMetricsList =
+            List<AbstractInfoAnalysis> wantedMetricsList =
                     new ArrayList<AbstractInfoAnalysis>(metricIds.size());
             for (final AbstractInfoAnalysis metric : metrics) {
 
-                final String metricId = metric.getID();
+                String metricId = metric.getID();
                 if (!weightsMap.containsKey(metricId)) {
                     // Skip this analysis.
                     continue;
                 }
-                final double coeff = weightsMap.get(metricId).doubleValue();
+                double coeff = weightsMap.get(metricId).doubleValue();
 
                 if (coeff == 0.0) {
                     // Skip this analysis.
@@ -479,21 +487,22 @@ public final class EvolUtil {
                 return Collections.emptyMap();
             }
 
-            final Map<String, Object> map = new HashMap<String, Object>();
-            map.put("de.cau.cs.kieler.kiml.evol.weights", weightsMap);
+            Map<String, Object> analyserOptionsMap = new HashMap<String, Object>();
+            analyserOptionsMap.put(EvolPlugin.WEIGHTS_ID, weightsMap);
 
             // Perform the measurement.
-            final boolean showProgressBar = false;
-            final Map<String, Object> analysisResults =
-                    DiagramAnalyser.analyse(parentNode, wantedMetricsList, map, showProgressBar);
+            Map<String, Object> analysisResults =
+                    DiagramAnalyser.analyse(parentNode, wantedMetricsList, analyserOptionsMap,
+                            false /* progressBar */);
 
             for (final String metricId : metricIds) {
-                final Object analysisResult = analysisResults.get(metricId);
+                Object analysisResult = analysisResults.get(metricId);
                 if (analysisResult instanceof Float) {
-                    final Float value = (Float) analysisResult;
+                    Float value = (Float) analysisResult;
                     System.out.println("Result: " + metricId + ": " + value);
 
-                    Assert.isTrue((value.doubleValue() >= 0.0) && (value.doubleValue() <= 1.0));
+                    assert ((value >= 0.0) && (value <= 1.0)) : "Analysis result out of range for "
+                            + metricId + ": " + value;
                 } else {
                     System.err.println("Result: " + metricId + ": " + analysisResult.toString());
                     EvolPlugin.showError("Cannot handle analysis result for " + metricId + ": "
@@ -508,14 +517,16 @@ public final class EvolUtil {
          * Returns a normalized speed value for the given time. The result is
          * between {@code +0.0} and {@code +1.0}. It is {@code +0.0} if
          * {@code time} is positive infinity and {@code 1.0} if {@code time} is
-         * zero.
+         * zero, and monotonically decreasing for increasing time.
          *
          * @param time
          *            time; must be positive
          * @return normed speed value
          */
         private static double normalizedSpeed(final double time) {
-            Assert.isLegal(time >= 0.0, "The value of 'time' must be positive:" + time);
+            if (time < 0.0) {
+                throw new IllegalArgumentException("The value of 'time' must be positive:" + time);
+            }
             return (Math.exp(-time));
         }
 
@@ -528,10 +539,8 @@ public final class EvolUtil {
          *            {@code null}
          */
         private static void normalize(final Map<String, Double> map) {
-            Assert.isLegal(map != null);
-
             if (map == null) {
-                return;
+                throw new IllegalArgumentException();
             }
 
             // Calculate sum.
@@ -542,11 +551,11 @@ public final class EvolUtil {
 
             if (sum != 1.0) {
                 // Need to scale values.
-                final double factor = 1.0 / sum;
+                double factor = 1.0 / sum;
 
                 for (final Entry<String, Double> entry : map.entrySet()) {
-                    final double value = entry.getValue().doubleValue();
-                    entry.setValue(Double.valueOf(value * factor));
+                    double value = entry.getValue();
+                    entry.setValue(value * factor);
                 }
             }
         }
@@ -581,16 +590,16 @@ public final class EvolUtil {
 
             // scale results
             for (final Entry<String, Object> measurement : measurements.entrySet()) {
-                final String metricId = measurement.getKey();
-                final String metricResult = measurement.getValue().toString();
+                String metricId = measurement.getKey();
+                String metricResult = measurement.getValue().toString();
 
                 // Get the weight.
-                Assert.isTrue(weightsMap.containsKey(metricId));
-                final double coeff = weightsMap.get(metricId).doubleValue();
+                assert (weightsMap.containsKey(metricId));
+                double coeff = weightsMap.get(metricId);
 
                 double val;
                 try {
-                    final double parsedResult = Double.parseDouble(metricResult);
+                    double parsedResult = Double.parseDouble(metricResult);
                     val = parsedResult;
 
                 } catch (final NumberFormatException exception) {
@@ -618,16 +627,18 @@ public final class EvolUtil {
         public void run() {
             // Must be run in the UI thread.
 
-            final Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
+            Collection<IEditorPart> editors = EvolUtil.getWantedEditors();
 
-            final Set<IEditorPart> editorsSet = new HashSet<IEditorPart>(editors);
+            Set<IEditorPart> editorsSet = new HashSet<IEditorPart>(editors);
 
             autoRateIndividual(editorsSet);
         }
 
         // private fields
+        /** The individual. */
         private final Genome individual;
 
+        /** The population of weights genomes. */
         private final Population weightsGenomes;
 
     }
@@ -648,7 +659,7 @@ public final class EvolUtil {
         }
 
         public void run() {
-            final LayoutViewPart layoutView = LayoutViewPart.findView();
+            LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
                 layoutView.refresh(); // async!
             }
@@ -676,17 +687,16 @@ public final class EvolUtil {
             final Population thePopulation, final IProgressMonitor theMonitor,
             final Population theWeightsGenomes) {
         // TODO: move code into a class RatingPopulation extends Population.
-        Assert.isLegal((thePopulation != null));
         if (thePopulation == null) {
-            return;
+            throw new IllegalArgumentException();
         }
 
         // Ensure there is a monitor of some sort.
-        final IProgressMonitor monitor;
-        monitor = ((theMonitor != null) ? theMonitor : new NullProgressMonitor());
+        IProgressMonitor monitor =
+                ((theMonitor != null) ? theMonitor : new NullProgressMonitor());
 
-        final int size = thePopulation.size();
-        final int total = size;
+        int size = thePopulation.size();
+        int total = size;
         final int scale = 100;
 
         try {
@@ -729,14 +739,14 @@ public final class EvolUtil {
         }
 
         // Get the layout inspectors of the editors.
-        final List<ILayoutInspector> inspectors = getLayoutInspectors(editors);
-        Assert.isNotNull(inspectors);
+        List<ILayoutInspector> inspectors = getLayoutInspectors(editors);
+        assert inspectors != null;
 
         if (inspectors.isEmpty()) {
             return new Population();
         }
 
-        final Population result = createPopulation(inspectors);
+        Population result = createPopulation(inspectors);
         return result;
     }
 
@@ -750,25 +760,25 @@ public final class EvolUtil {
     public static IEditorPart getCurrentEditor() {
         // Try to get the editor that is tracked by the layout view (must be in
         // UI thread).
-        final LayoutViewPart layoutViewPart = LayoutViewPart.findView();
+        LayoutViewPart layoutViewPart = LayoutViewPart.findView();
         if (layoutViewPart != null) {
-            final IEditorPart editor = layoutViewPart.getCurrentEditor();
+            IEditorPart editor = layoutViewPart.getCurrentEditor();
             if (editor != null) {
                 return editor;
             }
         }
 
         // Try to get the active editor of the workbench (must be in UI thread).
-        final IWorkbench workbench = PlatformUI.getWorkbench();
-        final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+        IWorkbench workbench = PlatformUI.getWorkbench();
+        IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
         if (window == null) {
             return null;
         }
-        final IWorkbenchPage page = window.getActivePage();
+        IWorkbenchPage page = window.getActivePage();
         if (page == null) {
             return null;
         }
-        final IEditorPart editor = page.getActiveEditor();
+        IEditorPart editor = page.getActiveEditor();
         if (editor != null) {
             return editor;
         }
@@ -787,7 +797,7 @@ public final class EvolUtil {
     public static EditPart getCurrentEditPart(final IEditorPart editor) {
         EditPart result = null;
         if (editor != null) {
-            final ISelection selection =
+            ISelection selection =
                     editor.getEditorSite().getSelectionProvider().getSelection();
             Object element = null;
             if (selection != null) {
@@ -809,23 +819,23 @@ public final class EvolUtil {
      */
     public static Set<IEditorPart> getEditors() {
 
-        final Set<IEditorPart> result = new HashSet<IEditorPart>();
+        Set<IEditorPart> result = new HashSet<IEditorPart>();
 
         // Try to get the editors of the workbench.
-        final IWorkbench workbench = PlatformUI.getWorkbench();
-        final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+        IWorkbench workbench = PlatformUI.getWorkbench();
+        IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
         if (window == null) {
             return result;
         }
 
-        final IWorkbenchPage[] pages = window.getPages();
+        IWorkbenchPage[] pages = window.getPages();
         for (final IWorkbenchPage page : pages) {
             if (page.isEditorAreaVisible()) {
-                final IEditorReference[] references = page.getEditorReferences();
-                Assert.isNotNull(references);
+                IEditorReference[] references = page.getEditorReferences();
+                assert references != null;
 
                 for (final IEditorReference ref : references) {
-                    final IEditorPart editor = ref.getEditor(false);
+                    IEditorPart editor = ref.getEditor(false);
                     if (editor instanceof DiagramEditor) {
                         result.add(editor);
                     }
@@ -867,15 +877,15 @@ public final class EvolUtil {
             }
         }
 
-        final DiagramLayoutManager manager =
+        DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(theEditor, rootPart);
         if (manager == null) {
             // No layout manager found. We cannot get the layout inspector.
             return null;
         }
 
-        final ILayoutInspector inspector = manager.getInspector(rootPart);
-        Assert.isNotNull(inspector);
+        ILayoutInspector inspector = manager.getInspector(rootPart);
+        assert inspector != null;
 
         return inspector;
     }
@@ -898,7 +908,7 @@ public final class EvolUtil {
         if (manager == null) {
             return null;
         }
-        final LayoutProviderData result = getLayoutProviderData(manager, editPart);
+        LayoutProviderData result = getLayoutProviderData(manager, editPart);
         return result;
     }
 
@@ -912,11 +922,13 @@ public final class EvolUtil {
      *         given type; may be empty.
      */
     public static List<String> getLayoutProviderIds(final String layoutType) {
-        Assert.isLegal(layoutType != null);
+        if (layoutType == null) {
+            throw new IllegalArgumentException();
+        }
 
-        final List<String> result = new LinkedList<String>();
+        List<String> result = new LinkedList<String>();
 
-        final LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutServices layoutServices = LayoutServices.getInstance();
 
         for (final LayoutProviderData data : layoutServices.getLayoutProviderData()) {
             if (data.getType().equalsIgnoreCase(layoutType)) {
@@ -928,6 +940,7 @@ public final class EvolUtil {
     }
 
     /**
+     * Checks if the given layout provider is of the given type.
      *
      * @param providerId
      *            layout provider ID; must not be {@code null}
@@ -936,13 +949,16 @@ public final class EvolUtil {
      * @return {@code true} iff the given layout provider is of the given type
      */
     public static boolean isCompatibleLayoutProvider(final String providerId, final String typeId) {
-        Assert.isLegal(providerId != null);
-        final LayoutServices layoutServices = LayoutServices.getInstance();
+        if (providerId == null) {
+            throw new IllegalArgumentException();
+        }
 
-        final LayoutProviderData providerData = layoutServices.getLayoutProviderData(providerId);
-        final String newTypeId = providerData.getType();
+        LayoutServices layoutServices = LayoutServices.getInstance();
 
-        final boolean result = typeId.equalsIgnoreCase(newTypeId);
+        LayoutProviderData providerData = layoutServices.getLayoutProviderData(providerId);
+        String newTypeId = providerData.getType();
+
+        boolean result = typeId.equalsIgnoreCase(newTypeId);
 
         if (!result) {
             System.out.println("expected type: " + typeId);
@@ -962,12 +978,13 @@ public final class EvolUtil {
      *            the expected layout provider id
      */
     public static void syncApplyIndividual(final Genome individual, final String providerId) {
-        MonitoredOperation.runInUI(new IndividualApplierRunnable(individual, providerId), true);
+        MonitoredOperation
+                .runInUI(new IndividualApplierRunnable(individual, providerId), true /* synch */);
     }
-    
+
     /**
-     * Saves options the given model to a file.
-     * 
+     * Saves options of the given model to a file.
+     *
      * @param model
      *            the model to save
      * @param canOverWrite
@@ -979,37 +996,44 @@ public final class EvolUtil {
         if (!file.exists() || canOverWrite) {
             try {
                 FileWriter writer = new FileWriter(file);
-                
+
                 Genome genome = model.getCurrentIndividual();
-                
+
                 String newLine = System.getProperty("line.separator");
-                
+
                 for (final IGene<?> gene : genome) {
                     writer.append(gene.getId() + ";" + gene.getValue() + newLine);
                 }
-                
+
             } catch (final IOException exception) {
                 // TODO Auto-generated catch block
                 exception.printStackTrace();
             }
         }
     }
-    
+
     /**
      * Adopts layout options from the given {@link Genome} into the given
      * {@link IEditorPart}.
-     * 
+     *
      * @param individual
      *            the {@link Genome}; must not be {@code null}
      * @param editor
      *            the {@link IEditorPart}
+     * @throws KielerException
+     *             if no layout inspector can be found for the editor.
      */
-    private static void adoptIndividual(final Genome individual, final IEditorPart editor) {
-        Assert.isLegal(individual != null);
+    private static void adoptIndividual(final Genome individual, final IEditorPart editor)
+            throws KielerException {
+        if (individual == null) {
+            throw new IllegalArgumentException();
+        }
 
         final ILayoutInspector inspector = getLayoutInspector(editor, null);
-        Assert.isNotNull(inspector);
 
+        if (inspector == null) {
+            throw new KielerException("Could not get a layout inspector for " + editor.getTitle());
+        }
 
         adoptIndividual(individual, inspector);
     }
@@ -1024,33 +1048,30 @@ public final class EvolUtil {
      *            the {@link ILayoutInspector}; must not be {@code null}
      */
     private static void adoptIndividual(final Genome individual, final ILayoutInspector inspector) {
-        Assert.isLegal((individual != null) && (inspector != null));
         if ((individual == null) || (inspector == null)) {
-            return;
+            throw new IllegalArgumentException();
         }
 
         EvolPlugin.logStatus("Adopting " + individual.toString());
         final LayoutServices layoutServices = LayoutServices.getInstance();
 
-        // Set layout options according to the genome.
-        for (final IGene<?> gene : individual) {
+        final Runnable modelChange = new Runnable() {
 
-            Assert.isNotNull(gene);
+            public void run() {
+                // Set layout options according to the genome.
+                for (final IGene<?> gene : individual) {
+                    // presuming gene != null
 
-            final Object value = gene.getValue();
-            final Object id = gene.getId();
-            System.out.println(id + ": " + value);
+                    final Object value = gene.getValue();
+                    final Object id = gene.getId();
+                    System.out.println(id + ": " + value);
 
-            final LayoutOptionData<?> data = layoutServices.getLayoutOptionData((String) id);
-            Assert.isNotNull(data, "No layout option data for " + id);
+                    final LayoutOptionData<?> data =
+                            layoutServices.getLayoutOptionData((String) id);
+                    assert data != null : "No layout option data for " + id;
 
-            final Type layoutOptionType = data.getType();
+                    final Type layoutOptionType = data.getType();
 
-            // TODO: discuss: should the (gene : individual) loop be put inside
-            // modelChange?
-            final Runnable modelChange = new Runnable() {
-
-                public void run() {
                     switch (layoutOptionType) {
 
                     case BOOLEAN:
@@ -1067,9 +1088,8 @@ public final class EvolUtil {
                         try {
                             inspector.setOption(data, value);
                         } catch (final NullPointerException e) {
-                            EvolPlugin.showError(
-                                    "WARNING: enum property could not be set: " + id, e);
-                            Assert.isTrue(false);
+                            EvolPlugin.showError("Enum property could not be set: " + id, e);
+                            throw new AssertionError(value);
                         }
                         break;
 
@@ -1084,15 +1104,12 @@ public final class EvolUtil {
                     case STRING:
                         if (LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id)) {
                             // Cannot use the int value of the gene because it
-                            // is the
-                            // index for the internal list in the gene, not for
-                            // the
-                            // layout hint array in the property source which we
-                            // would
-                            // need.
+                            // is the index for the internal list in the gene,
+                            // not for the layout hint array in the property
+                            // source which we would need.
 
                             // Are we allowed to set the layout hint?
-                            final boolean canSetLayoutHint =
+                            boolean canSetLayoutHint =
                                     EvolPlugin
                                             .getDefault()
                                             .getPreferenceStore()
@@ -1100,7 +1117,7 @@ public final class EvolUtil {
                                                     EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
 
                             // Even for different types?
-                            final boolean canSetForDifferentType =
+                            boolean canSetForDifferentType =
                                     EvolPlugin
                                             .getDefault()
                                             .getPreferenceStore()
@@ -1114,21 +1131,20 @@ public final class EvolUtil {
                                 break;
                             }
 
-                            final String newLayoutHintId = gene.toString();
+                            String newLayoutHintId = gene.toString();
 
-                            final Set<Object> oldLayoutHintIds =
+                            Set<Object> oldLayoutHintIds =
                                     getPropertyValues(Collections.singletonList(inspector),
                                             LayoutOptions.LAYOUTER_HINT_ID);
 
-                            Assert.isTrue(!oldLayoutHintIds.isEmpty());
-                            final String oldLayoutHintId =
-                                    (String) oldLayoutHintIds.iterator().next();
-                            Assert.isNotNull(oldLayoutHintId);
+                            assert !oldLayoutHintIds.isEmpty();
+                            String oldLayoutHintId = (String) oldLayoutHintIds.iterator().next();
+                            assert oldLayoutHintId != null;
 
-                            final LayoutProviderData providerData =
+                            LayoutProviderData providerData =
                                     layoutServices.getLayoutProviderData(newLayoutHintId, null);
 
-                            final String newType = providerData.getType();
+                            String newType = providerData.getType();
 
                             if ((!canSetForDifferentType && !isCompatibleLayoutProvider(
                                     oldLayoutHintId, newType))) {
@@ -1153,12 +1169,11 @@ public final class EvolUtil {
                     }
 
                 }
-            };
+            }
+        };
 
-            KimlUiUtil.runModelChange(modelChange, inspector.getEditingDomain(),
+        KimlUiUtil.runModelChange(modelChange, inspector.getEditingDomain(),
                     "Adopt individual " + individual);
-
-        }
     }
 
 
@@ -1183,15 +1198,15 @@ public final class EvolUtil {
         EvolPlugin.logStatus("Calculating layout in editor: '" + editor.getTitle() + "'");
 
         // First phase: build the layout graph.
-        final KNode layoutGraph = manager.buildLayoutGraph(editor, null, false);
+        KNode layoutGraph = manager.buildLayoutGraph(editor, null, false);
 
         // Second phase: execute layout algorithms.
         // We need a new monitor each time because the old one
         // gets closed.
-        final IKielerProgressMonitor monitor =
+        IKielerProgressMonitor monitor =
                 new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
 
-        final IStatus status = manager.layout(monitor, false /* layoutAncestors */);
+        IStatus status = manager.layout(monitor, false /* layoutAncestors */);
 
         if (!status.isOK()) {
             // Something went wrong. Report the status.
@@ -1199,8 +1214,10 @@ public final class EvolUtil {
             return null;
         }
 
-        final KNode layoutGraphAfterLayout = manager.getLayoutGraph();
-        Assert.isTrue(layoutGraph == layoutGraphAfterLayout);
+        // We presume the manager worked on the same layout graph it built in
+        // the first phase.
+        KNode layoutGraphAfterLayout = manager.getLayoutGraph();
+        assert layoutGraph == layoutGraphAfterLayout;
 
         return monitor;
     }
@@ -1215,10 +1232,14 @@ public final class EvolUtil {
      */
     private static Population createPopulation(final List<ILayoutInspector> inspectors)
             throws KielerException {
-        Assert.isLegal(inspectors != null);
-        final int size =
+        if (inspectors == null) {
+            throw new IllegalArgumentException();
+        }
+
+        int size =
                 EvolPlugin.getDefault().getPreferenceStore()
                         .getInt(EvolPlugin.PREF_POPULATION_SIZE);
+
         return createPopulation(inspectors, size);
     }
 
@@ -1227,25 +1248,28 @@ public final class EvolUtil {
      * given list of {@link ILayoutInspector} instances.
      *
      * @param inspectors
+     *            the layout inspectors
      * @param size
+     *            desired population size
      * @return the new population
      * @throws KielerException
      */
     private static Population createPopulation(
             final List<ILayoutInspector> inspectors, final int size) throws KielerException {
-        Assert.isLegal(inspectors != null);
-        Assert.isLegal(size >= 0);
+        if ((inspectors == null) || (size < 0)) {
+            throw new IllegalArgumentException();
+        }
 
-        final Population result = new Population();
+        Population result = new Population();
 
-        final Set<Object> presentLayoutHintIds =
+        Set<Object> presentLayoutHintIds =
                 getPropertyValues(inspectors, LayoutOptions.LAYOUTER_HINT_ID);
 
         // Create the individuals one by one.
-        final GenomeFactory genomeFactory = new GenomeFactory(null);
+        GenomeFactory genomeFactory = new GenomeFactory(null);
 
         for (int i = 0; i < size; i++) {
-            final Genome genome = genomeFactory.createGenome(inspectors, presentLayoutHintIds);
+            Genome genome = genomeFactory.createGenome(inspectors, presentLayoutHintIds);
             result.add(genome);
         }
         return result;
@@ -1256,37 +1280,16 @@ public final class EvolUtil {
      *
      * @param inspector
      *            an {@link ILayoutInspector}
-     * @param value
-     *            the integer value indicating the layout hint
+     *
      * @return the layout hint id
      */
-    private static String getLayoutHintId(final ILayoutInspector inspector, final Object value) {
-        // final LayoutPropertySource source = new
-        // LayoutPropertySource(inspector);
+    private static String getLayoutHintId(final ILayoutInspector inspector) {
 
-        // final ILabelProvider labelProvider = ((IPropertyDescriptor)
-        // source).getLabelProvider();
+        LayoutProviderData hintData = inspector.getFocusLayouterData();
 
-        final LayoutOptionData<?> data =
-                LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUTER_HINT_ID);
+        assert hintData != null : "Could not find layout provider id.";
 
-        final LayoutProviderData hintData = inspector.getFocusLayouterData();
-
-       // final Object hintData = inspector.getOption(data);
-
-        // Assert.isNotNull(labelProvider,
-        // "Could not obtain label provider for " + inspector.toString());
-
-        // String text;
-
-        // Get the caption.
-        // text = labelProvider.getText(value);
-
-        // hintId = LayoutPropertySource.getLayoutHint(text);
-
-        Assert.isNotNull(hintData, "Could not find layout provider id.");
-
-        final String hintId = hintData.getId();
+        String hintId = hintData.getId();
         return hintId;
     }
 
@@ -1301,10 +1304,10 @@ public final class EvolUtil {
         final List<ILayoutInspector> inspectors = new LinkedList<ILayoutInspector>();
 
         // Handle current editor.
-        final IEditorPart currentEditor = getCurrentEditor();
+        IEditorPart currentEditor = getCurrentEditor();
 
         if (currentEditor != null) {
-            final ILayoutInspector currentInspector = getLayoutInspector(currentEditor, null);
+            ILayoutInspector currentInspector = getLayoutInspector(currentEditor, null);
             if (currentInspector != null) {
                 inspectors.add(currentInspector);
             }
@@ -1322,7 +1325,7 @@ public final class EvolUtil {
                 continue;
             }
 
-            final ILayoutInspector inspector = getLayoutInspector(editor, null);
+            ILayoutInspector inspector = getLayoutInspector(editor, null);
 
             if (inspector != null) {
                 inspectors.add(inspector);
@@ -1344,16 +1347,16 @@ public final class EvolUtil {
      */
     private static LayoutProviderData getLayoutProviderData(
             final DiagramLayoutManager manager, final EditPart editPart) {
-        Assert.isLegal(manager != null);
         if (manager == null) {
-            return null;
+            throw new IllegalArgumentException();
         }
-        final ILayoutInspector inspector = manager.getInspector(editPart);
+
+        ILayoutInspector inspector = manager.getInspector(editPart);
         if (inspector == null) {
             return null;
         }
         inspector.initOptions();
-        final LayoutProviderData data = inspector.getContainerLayouterData();
+        LayoutProviderData data = inspector.getContainerLayouterData();
         if (data == null) {
             return null;
         }
@@ -1373,7 +1376,9 @@ public final class EvolUtil {
     private static Set<Object> getPropertyValues(
             final List<ILayoutInspector> inspectors, final String id) {
 
-        final Set<Object> result = new LinkedHashSet<Object>();
+        Set<Object> result = new LinkedHashSet<Object>();
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(id);
 
         for (final ILayoutInspector inspector : inspectors) {
             // TODO: get the values via inspector#getOption(), not via
@@ -1381,17 +1386,14 @@ public final class EvolUtil {
             final LayoutPropertySource source = new LayoutPropertySource(inspector);
             Object value;
             try {
-                value = source.getPropertyValue(id);
+                value = inspector.getOption(optionData);
+                // value = source.getPropertyValue(id);
             } catch (final NullPointerException exception) {
                 // getPropertyValue has a problem
                 value = null;
             }
 
             if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
-                // "Layout hint" options have an index as value.
-                // But we want the layout hint identifier instead of its
-                // index.
-
                 if (value == null) {
                     // layout hint not found
                     continue;
@@ -1403,7 +1405,11 @@ public final class EvolUtil {
                     continue;
                 }
 
-                final String item = getLayoutHintId(inspector, value);
+                // Legacy "Layout hint" options have an index as value.
+                // But we want the layout hint identifier instead of its
+                // index.
+
+                String item = getLayoutHintId(inspector);
 
                 if (item != null) {
                     result.add(item);
@@ -1426,7 +1432,7 @@ public final class EvolUtil {
      */
     private static Set<IEditorPart> getWantedEditors() {
         // Get the current editor (may be null).
-        final IEditorPart currentEditor = getCurrentEditor();
+        IEditorPart currentEditor = getCurrentEditor();
 
         final String prefEditors =
                 EvolPlugin.getDefault().getPreferenceStore().getString(EvolPlugin.PREF_EDITORS);
@@ -1445,6 +1451,7 @@ public final class EvolUtil {
 
         return editors;
     }
+
 
     /** Hidden constructor to avoid instantiation. **/
     private EvolUtil() {

@@ -30,7 +30,7 @@ public class EvolPlugin extends AbstractUIPlugin {
      */
     public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.evol";
 
-    // preference constants and default values
+    // Preference constants and default values.
     /**
      * Preference constant for population size.
      */
@@ -40,6 +40,11 @@ public class EvolPlugin extends AbstractUIPlugin {
      * Default value for population size.
      */
     public static final int DEF_POPULATION_SIZE = 12;
+
+    /**
+     * Maximum value for population size.
+     */
+    public static final int MAX_POPULATION_SIZE = 27;
 
     /**
      * Preference constant for editor selection.
@@ -82,6 +87,16 @@ public class EvolPlugin extends AbstractUIPlugin {
      */
     public static final String DEF_EDITORS = CURRENT_EDITOR;
 
+    /**
+     * Identifier for the metric weights.
+     */
+    public static final String WEIGHTS_ID = "de.cau.cs.kieler.kiml.evol.weights";
+
+    /**
+     * Identifier for the execution speed value.
+     */
+    public static final String EXECUTION_SPEED_VALUE_ID =
+            "de.cau.cs.kieler.kiml.evol.executionSpeedValue";
 
     // The shared instance
     private static EvolPlugin plugin;
@@ -102,7 +117,7 @@ public class EvolPlugin extends AbstractUIPlugin {
      *            a low-level exception, or {@code null} if not applicable
      */
     public static void showError(final String message, final Throwable exception) {
-        final Status myStatus =
+        Status myStatus =
                 new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID, message, exception);
         StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
     }

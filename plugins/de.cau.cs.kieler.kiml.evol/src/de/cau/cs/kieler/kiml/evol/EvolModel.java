@@ -45,29 +45,51 @@ import de.cau.cs.kieler.kiml.evol.ui.IEvolModelListener.ModelChangeType;
  */
 public final class EvolModel {
 
-    /**
-     * Number of rating predictors.
-     */
+    /** Number of rating predictors. */
     private static final int NUM_RATING_PREDICTORS = 25;
 
     // private fields
+    /** The evolutionary algorithm for the layout option proposers. */
     private BasicEvolutionaryAlgorithm evolAlg;
+    /** The evolutionary algorithm for the rating predictors. */
     private BasicEvolutionaryAlgorithm predictorsEvolAlg;
+    /** Index of the currently selected individual. */
     private int position;
+    /**
+     * The ID of the layout provider that the current population was created
+     * for.
+     */
     private String layoutProviderId;
-
+    /** The list of listeners to the model. */
     private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
 
     /**
-     * Adds a model listener.
+     * Adds a model listener. Duplicate listeners are ignored.
      *
      * @param listener
-     *            the {@link IEvolModelListener} to add
+     *            the {@link IEvolModelListener} to add; must not be
+     *            {@code null}
+     *
      */
     public void addListener(final IEvolModelListener listener) {
-        if (listener != null) {
+        if (listener == null) {
+            throw new IllegalArgumentException("Argument must not be null: listener");
+        }
+
+        if (!this.listeners.contains(listener)) {
             this.listeners.add(listener);
         }
+    }
+
+    /**
+     * Removes the specified model listener, if present. Requests to remove
+     * non-existent listeners are ignored.
+     *
+     * @param listener
+     *            the {@link IEvolModelListener} to remove
+     */
+    public void removeListener(final IEvolModelListener listener) {
+        this.listeners.remove(listener);
     }
 
     /**
@@ -78,11 +100,11 @@ public final class EvolModel {
      */
     public void autoRateAll(final IProgressMonitor theMonitor) {
 
-        final Population population = getPopulation();
-        Assert.isNotNull(population);
+        Population population = getPopulation();
+        assert population != null;
 
         final Population predictors = getRatingPredictors();
-        Assert.isNotNull(predictors);
+        assert predictors != null;
 
         EvolUtil.autoRate(population, theMonitor, predictors);
 
@@ -98,15 +120,15 @@ public final class EvolModel {
      */
     public void changeCurrentRating(final double theDelta) {
         if (isValid()) {
-            final Genome current = getCurrentIndividual();
+            Genome current = getCurrentIndividual();
 
-            final Population pop = this.getPopulation();
+            Population pop = this.getPopulation();
             double rating = 0.0;
             // TODO: add preference to switch off compensation
             // TODO: Do evolution of rating predictors at lock step with
             // evolution of layout options. Use separate auto-rating and
             // user-rating fields for that purpose.
-            final double compensation = -theDelta / ((pop.size() - 1));
+            double compensation = -theDelta / ((pop.size() - 1));
 
             for (final Genome g : pop) {
                 rating = (g.hasUserRating() ? g.getUserRating() : 0);
@@ -119,14 +141,14 @@ public final class EvolModel {
             }
 
             // Punish predictors
-            final String key = "proposedRating:" + current.getId();
-            final double newRating = (current.hasUserRating() ? current.getUserRating() : 0.0);
+            String key = "proposedRating:" + current.getId();
+            double newRating = (current.hasUserRating() ? current.getUserRating() : 0.0);
             for (final Genome predictor : this.getRatingPredictors()) {
-                final Map<String, Object> features = predictor.getFeatures();
+                Map<String, Object> features = predictor.getFeatures();
                 if ((features != null) && features.containsKey(key)) {
-                    final Double prediction = (Double) features.get(key);
-                    final double diff = newRating - prediction;
-                    final double predictorRating =
+                    Double prediction = (Double) features.get(key);
+                    double diff = newRating - prediction;
+                    double predictorRating =
                             (predictor.hasUserRating() ? predictor.getUserRating() : 0.0);
                     predictor.setUserRating(predictorRating - Math.abs(diff));
                 }
@@ -150,12 +172,12 @@ public final class EvolModel {
         // Ensure there is a monitor of some sort.
         monitor = ((theMonitor != null) ? theMonitor : new NullProgressMonitor());
 
-        final int stepWork = 1;
-        final int afterStepWork = 1;
-        final int autoRateWork = 1;
-        final int listenersWork = 1;
+        int stepWork = 1;
+        int afterStepWork = 1;
+        int autoRateWork = 1;
+        int listenersWork = 1;
 
-        final int total = stepWork + afterStepWork + autoRateWork + listenersWork;
+        int total = stepWork + afterStepWork + autoRateWork + listenersWork;
         final int scale = 100;
 
         try {
@@ -172,13 +194,13 @@ public final class EvolModel {
 
             // Calculate auto-rating for the yet unrated individuals.
             final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
-            Assert.isNotNull(unrated);
+            assert unrated != null;
 
             final Population predictors = this.getRatingPredictors();
-            Assert.isNotNull(predictors);
-            Assert.isTrue(!predictors.isEmpty());
+            // presuming predictors != null
+            assert !predictors.isEmpty();
 
-            final Runnable runnable = new Runnable() {
+            Runnable runnable = new Runnable() {
                 public void run() {
                     EvolUtil.autoRate(unrated, new SubProgressMonitor(monitor, 1 * scale),
                             predictors);
@@ -189,11 +211,10 @@ public final class EvolModel {
             // reward predictors
             // XXX: this should be refactored. The predictors' fitness should
             // be calculated an a more sophisticated way.
-            final double reward = 0.01;
+            double reward = 0.01;
             for (final Genome predictor : predictors) {
-                Assert.isNotNull(predictor);
-                final double oldRating =
-                        (predictor.hasUserRating() ? predictor.getUserRating() : 0);
+                // presuming predictor != null
+                double oldRating = (predictor.hasUserRating() ? predictor.getUserRating() : 0.0);
                 predictor.setUserRating(oldRating + reward);
             }
 
@@ -209,34 +230,32 @@ public final class EvolModel {
     }
 
     /**
-     * Returns the current individual.
+     * Returns the current individual, that is the individual at the current
+     * position.
      *
      * @return the current {@code Individual}, or {@code null} if none is
      *         selected.
      */
     public Genome getCurrentIndividual() {
-        final Population pop = this.getPopulation();
-        final int pos = this.getPosition();
-        Assert.isTrue((pos >= 0) && (pos < pop.size()), "position out of range");
-
-        // ensure that the position is within the valid range
-        if ((pos >= pop.size()) || (pos < 0)) {
-            return null;
-        }
+        Population pop = this.getPopulation();
+        int pos = this.getPosition();
+        assert (pos >= 0) && (pos < pop.size()) : "position out of range";
 
         return pop.get(pos);
     }
 
     /**
+     * Returns the evolutionary algorithm that is used to evolve the layout
+     * option proposers.
      *
      * @return the evolutionary algorithm.
      */
-    public BasicEvolutionaryAlgorithm getEvolAlg() {
+    private BasicEvolutionaryAlgorithm getEvolAlg() {
         return this.evolAlg;
     }
 
     /**
-     * The layout provider id that the population was created for.
+     * Returns the layout provider ID that the population was created for.
      *
      * @return the layout provider id
      */
@@ -266,7 +285,8 @@ public final class EvolModel {
 
     /**
      *
-     * @return the population of rating predictors
+     * @return the population of rating predictors; may be empty but never
+     *         {@code null}
      */
     public Population getRatingPredictors() {
         if (this.predictorsEvolAlg == null) {
@@ -297,16 +317,16 @@ public final class EvolModel {
             return false;
         }
 
-        final Population pop = this.getPopulation();
+        Population pop = this.getPopulation();
         // Population should be non-null in any case.
-        Assert.isNotNull(pop, "Population is not set.");
+        assert pop != null : "Population is not set.";
 
         if (pop.isEmpty()) {
             EvolPlugin.logStatus("Population is empty.");
             return false;
         }
 
-        final Genome currentIndividual = getCurrentIndividual();
+        Genome currentIndividual = getCurrentIndividual();
         if (currentIndividual == null) {
             EvolPlugin.logStatus("No individual selected.");
             return false;
@@ -316,37 +336,26 @@ public final class EvolModel {
     }
 
     /**
-     * Removes the specified model listener.
-     *
-     * @param listener
-     *            the {@link IEvolModelListener} to remove
-     */
-    public void removeListener(final IEvolModelListener listener) {
-        this.listeners.remove(listener);
-    }
-
-    /**
      * Reset the population and restart the algorithm.
      */
     public void reset() {
-        final IEditorPart editor = EvolUtil.getCurrentEditor();
-        final EditPart part = EvolUtil.getCurrentEditPart(editor);
+
         this.position = 0;
         this.evolAlg = null;
         this.predictorsEvolAlg = null;
 
-        final LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, part);
+        IEditorPart editor = EvolUtil.getCurrentEditor();
+        EditPart part = EvolUtil.getCurrentEditPart(editor);
+        LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, part);
 
         if (providerData != null) {
-            final String providerId = providerData.getId();
-            this.layoutProviderId = providerId;
-
+            this.layoutProviderId = providerData.getId();
         } else {
             this.layoutProviderId = null;
         }
 
-        // Create an initial population.
-        final Set<IEditorPart> editors = EvolUtil.getEditors();
+        // Create an initial population of layout option genomes.
+        Set<IEditorPart> editors = EvolUtil.getEditors();
         Population sourcePopulation = null;
         try {
             sourcePopulation = EvolUtil.createPopulation(editors);
@@ -357,25 +366,24 @@ public final class EvolModel {
 
         if ((sourcePopulation != null) && !sourcePopulation.isEmpty()) {
 
-            // Add meta-evolution genes for the layout metrics.
+            // Create initial population of rating predictors.
             EvolPlugin.logStatus("Creating metric weights ...");
-            final Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+            Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
 
-            final Population predictors = new Population();
+            Population predictors = new Population();
             for (int i = 0; i < NUM_RATING_PREDICTORS; i++) {
-                final Genome weightGenes = GenomeFactory.createWeightGenes(metricIds);
-                Assert.isNotNull(weightGenes);
+                Genome weightGenes = GenomeFactory.createWeightGenes(metricIds);
+                assert weightGenes != null;
                 predictors.add(weightGenes);
             }
 
+            // Start evolution of rating predictors.
             this.predictorsEvolAlg = new BasicEvolutionaryAlgorithm(predictors);
             this.predictorsEvolAlg.step();
 
-            // Create and initialize the algorithm.
-            final BasicEvolutionaryAlgorithm alg =
-                    new BasicEvolutionaryAlgorithm(sourcePopulation);
-            this.evolAlg = alg;
-            alg.step();
+            // Start evolution of layout option genomes.
+            this.evolAlg = new BasicEvolutionaryAlgorithm(sourcePopulation);
+            this.evolAlg.step();
         }
 
         // Notify listeners.
@@ -386,13 +394,16 @@ public final class EvolModel {
      * Sets the current position.
      *
      * @param thePosition
-     *            the new position.
+     *            the new position; must be within the range of 0..{@code p},
+     *            where {@code p} is the current population size.
+     * @see #getCurrentIndividual()
      */
     public void setPosition(final int thePosition) {
-        Assert.isLegal(thePosition >= 0);
-        Assert.isLegal((thePosition <= getPopulation().size()));
+        if ((thePosition < 0) || (thePosition > getPopulation().size())) {
+            throw new IllegalArgumentException("position out of range: " + thePosition);
+        }
 
-        final int oldPosition = this.position;
+        int oldPosition = this.position;
 
         if ((oldPosition != thePosition)) {
             this.position = thePosition;
@@ -412,17 +423,18 @@ public final class EvolModel {
     }
 
     /**
-     * Return position of first unrated individual in the list.
+     * Returns the position of the first unrated individual in the population
+     * list.
      *
      * @return {@code -1} if no unrated individual exists.
      */
     private int firstUnrated() {
         final Population pop = this.getPopulation();
-        Assert.isNotNull(pop);
+        assert pop != null;
 
         int result = -1;
         for (int i = 0; i < pop.size(); i++) {
-            final Genome ind = pop.get(i);
+            Genome ind = pop.get(i);
             if (!ind.hasUserRating()) {
                 result = i;
                 break;
@@ -436,7 +448,7 @@ public final class EvolModel {
      */
     private void selectInterestingIndividual() {
 
-        final int firstUnrated = firstUnrated();
+        int firstUnrated = firstUnrated();
         if (firstUnrated > -1) {
             setPosition(firstUnrated);
         }

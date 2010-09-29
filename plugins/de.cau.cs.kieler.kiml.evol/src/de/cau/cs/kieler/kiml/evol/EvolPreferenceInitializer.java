@@ -17,16 +17,17 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
- * Preference initializer for the KIML Evolutionary Plugin.
- *
+ * Preference initializer for the KIML Evolutionary Plugin. This class
+ * initializes the preferences for the plugin.
+ * 
  * @author bdu
- *
+ * 
  */
 public class EvolPreferenceInitializer extends AbstractPreferenceInitializer {
 
     @Override
     public void initializeDefaultPreferences() {
-        final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
 
         // Set default values for preferences.
         store.setDefault(EvolPlugin.PREF_POPULATION_SIZE, EvolPlugin.DEF_POPULATION_SIZE);

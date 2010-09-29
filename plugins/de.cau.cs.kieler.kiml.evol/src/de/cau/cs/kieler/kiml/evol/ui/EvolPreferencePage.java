@@ -85,7 +85,7 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
                 new IntegerFieldEditor(EvolPlugin.PREF_POPULATION_SIZE, "Population size:",
                         algorithmGroup, 30);
         popSizeEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_FOCUS_LOST);
-        popSizeEditor.setValidRange(1, Integer.MAX_VALUE);
+        popSizeEditor.setValidRange(1, EvolPlugin.MAX_POPULATION_SIZE);
         addField(popSizeEditor);
 
         // miscellaneous parameters
