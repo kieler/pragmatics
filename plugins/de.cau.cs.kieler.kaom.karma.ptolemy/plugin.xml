@@ -251,6 +251,42 @@
                   key="_cardinal"
                   value="NORTH">
             </customCondition>
+            <customCondition
+                  borderItemParam="EAST"
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  key="_cardinal"
+                  value="EAST">
+            </customCondition>
+            <customCondition
+                  borderItemParam="SOUTH"
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  key="_cardinal"
+                  value="SOUTH">
+            </customCondition>
+            <customCondition
+                  borderItemParam="WEST"
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  key="_cardinal"
+                  value="WEST">
+            </customCondition>
+            <customCondition
+                  borderItemParam="WEST"
+                  condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                  key="input"
+                  value="input">
+            </customCondition>
+            <customCondition
+                  borderItemParam="EAST"
+                  condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                  key="output"
+                  value="output">
+            </customCondition>
+            <customCondition
+                  borderItemParam="SOUTH"
+                  condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                  key="inputoutput"
+                  value="inputoutput">
+            </customCondition>
          </conditions>
          <editPart
                editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.PortEditPart">

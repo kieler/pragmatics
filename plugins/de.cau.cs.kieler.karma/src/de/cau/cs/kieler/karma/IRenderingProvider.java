@@ -64,6 +64,6 @@ public interface IRenderingProvider {
      * @param input a string representation of the BorderItemLocator
      * @return the new BorderItemLocator
      */
-    public IBorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parentFigure,final Object locator);
+    public IBorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parentFigure,final Object locator, final EObject object);
     
 }

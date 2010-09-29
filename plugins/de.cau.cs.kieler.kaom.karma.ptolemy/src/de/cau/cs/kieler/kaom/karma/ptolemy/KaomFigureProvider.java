@@ -177,7 +177,7 @@ public class KaomFigureProvider implements IRenderingProvider {
     /**
      * {@inheritDoc}
      */
-    public BorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parent, final Object locator) {
+    public BorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parent, final Object locator, final EObject object) {
         // TODO Auto-generated method stub
         return null;
     }

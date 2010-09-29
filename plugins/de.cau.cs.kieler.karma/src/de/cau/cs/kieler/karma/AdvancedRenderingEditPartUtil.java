@@ -142,8 +142,8 @@ public class AdvancedRenderingEditPartUtil {
                         if (editPart instanceof AbstractBorderItemEditPart) {
                             AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart)editPart.getParent());
                             IFigure mainFigure = parent.getMainFigure();
-                            IFigure borderedNodeFigure = figure.getParent().getParent();
-                            IBorderItemLocator newLocator = renderingProvider.getBorderItemLocatorByString(borderItemParam, mainFigure, null);
+                            BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) figure.getParent().getParent();
+                            IBorderItemLocator newLocator = renderingProvider.getBorderItemLocatorByString(borderItemParam, mainFigure, null, modelElement);
                             if (borderedNodeFigure.getParent() != null) {
                                 parent.setLayoutConstraint(editPart, borderedNodeFigure, newLocator);
                             } else {
