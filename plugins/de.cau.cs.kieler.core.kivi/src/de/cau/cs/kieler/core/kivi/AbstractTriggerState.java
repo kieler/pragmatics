@@ -43,7 +43,7 @@ public abstract class AbstractTriggerState implements ITriggerState {
      * {@inheritDoc}
      */
     public long getSequenceNumber() {
-        return sequenceNumber; // TODO determine best point of setting number
+        return sequenceNumber;
     }
     
     void setSequenceNumber() {
@@ -52,5 +52,12 @@ public abstract class AbstractTriggerState implements ITriggerState {
             lastSequenceNumber++;
             sequenceNumber = lastSequenceNumber;
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Class<?> getKeyClass() {
+        return getClass();
     }
 }

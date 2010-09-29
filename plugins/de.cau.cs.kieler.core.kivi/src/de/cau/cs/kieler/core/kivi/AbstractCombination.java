@@ -15,9 +15,13 @@ package de.cau.cs.kieler.core.kivi;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import de.cau.cs.kieler.core.kivi.EffectTrigger.EffectTriggerState;
 
 /**
  * Abstract base implementation for combinations.
@@ -38,15 +42,36 @@ public abstract class AbstractCombination implements ICombination {
     /**
      * {@inheritDoc}
      */
-    public List<IEffect> trigger() {
+    public List<IEffect> trigger(final ITriggerState triggerState) {
+        boolean found = true;
+        if (triggerState instanceof EffectTriggerState<?>) {
+            found = false; // potentially skip execution if wrong effect type
+        }
         Method execute = getExecuteMethod();
         if (execute == null) {
             return new ArrayList<IEffect>();
         }
-        Class<?>[] types = execute.getParameterTypes();
+        Type[] types = execute.getGenericParameterTypes();
         Object[] states = new ITriggerState[types.length];
         for (int i = 0; i < types.length; i++) {
-            states[i] = KiVi.getInstance().getTriggerState(types[i]);
+            if (types[i] instanceof Class<?>) {
+                states[i] = KiVi.getInstance().getTriggerState((Class<?>) types[i]);
+            } else if (types[i] instanceof ParameterizedType) {
+                ParameterizedType paramType = (ParameterizedType) types[i];
+                if (paramType.getRawType() instanceof Class<?>) {
+                    Type[] actualTypes = paramType.getActualTypeArguments();
+                    if (actualTypes.length == 1 && actualTypes[0] instanceof Class<?>) {
+                        states[i] = KiVi.getInstance().getTriggerState((Class<?>) actualTypes[0]);
+                        if (states[i] == triggerState) {
+                            found = true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (!found) {
+            return new ArrayList<IEffect>();
         }
 
         List<IEffect> toUndo = effects;

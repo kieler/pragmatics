@@ -30,6 +30,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kivi.internal.CombinationsWorker;
 import de.cau.cs.kieler.core.kivi.internal.EffectsWorker;
+import de.cau.cs.kieler.core.kivi.internal.IEffectsListener;
 
 /**
  * Core controller for the view management.
@@ -261,13 +262,13 @@ public class KiVi {
      */
     public void distributeTriggerState(final ITriggerState triggerState) {
         synchronized (triggerStates) {
-            ITriggerState previous = triggerStates.get(triggerState.getClass());
+            ITriggerState previous = triggerStates.get(triggerState.getKeyClass());
             if (previous != null) {
                 triggerState.merge(previous);
             } else {
-                error("no previous state found for " + triggerState.getClass());
+                error("no previous state found for " + triggerState.getKeyClass());
             }
-            triggerStates.put(triggerState.getClass(), triggerState);
+            triggerStates.put(triggerState.getKeyClass(), triggerState);
         }
         if (triggerState instanceof AbstractTriggerState) {
             ((AbstractTriggerState) triggerState).setSequenceNumber();
@@ -275,7 +276,7 @@ public class KiVi {
         
         List<ICombination> cs = getCombinations(triggerState.getTriggerClass());
         for (ICombination c : cs) {
-            List<IEffect> effects = c.trigger();
+            List<IEffect> effects = c.trigger(triggerState);
             for (IEffect effect : effects) {
                 executeEffect(effect);
             }
@@ -481,5 +482,23 @@ public class KiVi {
         StatusManager.getManager().handle(new Status(Status.ERROR, KiViPlugin.PLUGIN_ID, m),
                 StatusManager.LOG);
 
+    }
+
+    /**
+     * Add an effects listener to the effects worker.
+     * 
+     * @param listener the listener to add
+     */
+    public void addEffectsListener(final IEffectsListener listener) {
+        effectsWorker.addEffectsListener(listener);
+    }
+    
+    /**
+     * Remove an effects listener from the effects worker.
+     * 
+     * @param listener the listener to remove
+     */
+    public void removeEffectsListener(final IEffectsListener listener) {
+        effectsWorker.removeEffectsListener(listener);
     }
 }

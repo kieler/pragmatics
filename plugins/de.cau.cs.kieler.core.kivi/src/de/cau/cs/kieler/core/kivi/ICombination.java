@@ -25,11 +25,12 @@ import java.util.List;
 public interface ICombination {
 
     /**
-     * Trigger the evaluation and execution of this combination.
+     * Trigger the execution of this combination.
      * 
+     * @param triggerState the trigger state responsible for the triggering
      * @return the list of effects to execute
      */
-    List<IEffect> trigger();
+    List<IEffect> trigger(ITriggerState triggerState);
     
     /**
      * Get the array of trigger state classes this combination listens to.

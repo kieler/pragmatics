@@ -28,8 +28,10 @@ import de.cau.cs.kieler.core.kivi.UndoEffect;
  */
 public class EffectsWorker extends Thread {
 
+    private List<IEffectsListener> effectsListeners = new ArrayList<IEffectsListener>();
+
     private List<IEffect> effects = new ArrayList<IEffect>();
-    
+
     /**
      * Default constructor, sets thread name as effects.
      */
@@ -50,6 +52,11 @@ public class EffectsWorker extends Thread {
                 }
                 try {
                     effect.execute();
+                    synchronized (effectsListeners) {
+                        for (IEffectsListener listener : effectsListeners) {
+                            listener.executedEffect(effect);
+                        }
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -62,7 +69,8 @@ public class EffectsWorker extends Thread {
     /**
      * Enqueue a single effect for execution.
      * 
-     * @param effect the effect to execute
+     * @param effect
+     *            the effect to execute
      */
     public void enqueueEffect(final IEffect effect) {
         IEffect toAdd = effect;
@@ -81,14 +89,37 @@ public class EffectsWorker extends Thread {
             effects.notify();
         }
     }
-    
+
     /**
      * Undo a single effect.
      * 
-     * @param effect the effect to undo
+     * @param effect
+     *            the effect to undo
      */
     public void undoEffect(final IEffect effect) {
         enqueueEffect(new UndoEffect(effect));
     }
-    
+
+    /**
+     * Add an effects listener to the worker.
+     * 
+     * @param listener the listener to add
+     */
+    public void addEffectsListener(final IEffectsListener listener) {
+        synchronized (effectsListeners) {
+            effectsListeners.add(listener);
+        }
+    }
+
+    /**
+     * Remove an effects listener from the worker.
+     * 
+     * @param listener the listener to remove
+     */
+    public void removeEffectsListener(final IEffectsListener listener) {
+        synchronized (effectsListeners) {
+            effectsListeners.remove(listener);
+        }
+    }
+
 }

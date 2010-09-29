@@ -25,22 +25,31 @@ public interface ITriggerState {
     /**
      * Merge this state instance with the previous instance in case of delta trigger events.
      * 
-     * @param previous the previous instance of this trigger state
+     * @param previous
+     *            the previous instance of this trigger state
      */
     void merge(ITriggerState previous);
-    
+
     /**
      * Invalidate any data that is only valid once, for example push button events.
      */
     void finish();
-    
+
     /**
      * Get the trigger class associated with this trigger state.
      * 
      * @return the trigger class
      */
     Class<? extends ITrigger> getTriggerClass();
-    
+
+    /**
+     * Get the class for identifying the type of trigger state. Usually this is the same as
+     * getClass().
+     * 
+     * @return the key class
+     */
+    Class<?> getKeyClass();
+
     /**
      * Get the sequence number of this state to determine a temporal order.
      * 
