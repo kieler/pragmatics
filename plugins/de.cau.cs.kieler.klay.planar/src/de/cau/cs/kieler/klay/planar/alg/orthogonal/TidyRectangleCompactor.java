@@ -14,13 +14,20 @@
 package de.cau.cs.kieler.klay.planar.alg.orthogonal;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.alg.flownetwork.IFlowNetworkSolver;
 import de.cau.cs.kieler.klay.planar.alg.flownetwork.SuccessiveShortestPathFlowSolver;
+import de.cau.cs.kieler.klay.planar.alg.orthogonal.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphElement;
@@ -49,13 +56,17 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ICompac
     /** The graph the algorithm works on. */
     private IGraph graph;
 
+    /** The orthogonal representation of the graph. */
+    private OrthogonalRepresentation orthogonal;
+
     // ======================== Algorithm ==========================================================
 
     /**
      * {@inheritDoc}
      */
-    public void compact(final IGraph g, final OrthogonalRepresentation orthogonal) {
+    public void compact(final IGraph g, final OrthogonalRepresentation o) {
         this.graph = g;
+        this.orthogonal = o;
 
         // Create networks and solve
         Pair<IGraph, IGraph> networks = this.createFlowNetworks();
@@ -90,9 +101,35 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ICompac
         }
 
         // Create arcs for vertical or horizontal edges
-        // TODO
+        // Traverse graph with DFS
+        Set<IEdge> visited = new HashSet<IEdge>(this.graph.getEdgeCount() * 2);
+        Stack<IEdge> edges = new Stack<IEdge>();
+        Stack<Pair<Boolean, Boolean>> direction = new Stack<Pair<Boolean, Boolean>>();
+        for (IEdge edge : this.graph.getEdges()) {
+            if (!visited.contains(edge)) {
+                edges.push(edge);
+                direction.push(new Pair<Boolean, Boolean>(false, false));
+                while (!edges.isEmpty()) {
+                    IEdge current = edges.pop();
+                    Pair<Boolean, Boolean> dir = direction.pop();
+                    // TODO create arcs
+
+                    List<INode> list = new LinkedList<INode>();
+                    list.add(edge.getSource());
+                    list.add(edge.getTarget());
+                    for (INode n : list) {
+                        for (Pair<IEdge, OrthogonalAngle> pair : this.orthogonal.getAngles(n)) {
+                            if (!visited.contains(pair.getFirst())) {
+                                edges.push(pair.getFirst());
+                                // TODO determine directions
+                                direction.push(new Pair<Boolean, Boolean>(false, false));
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         return new Pair<IGraph, IGraph>(vertical, horizontal);
     }
-
 }
