@@ -15,8 +15,6 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -30,6 +28,21 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
  *
  */
 public class EdgeCrossingsMetric implements IAnalysis {
+
+    /**
+     * Identifier for "bend point count".
+     */
+    private static final String GRANA_BENDPOINT_COUNT =
+            "de.cau.cs.kieler.kiml.grana.bendpointCount";
+    /**
+     * Identifier for "edge count".
+     */
+    private static final String GRANA_EDGE_COUNT = "de.cau.cs.kieler.kiml.grana.edgeCount";
+
+    /** Identifier for edge crossings count. */
+    private static final String GRANA_EDGE_CROSSINGS_COUNT =
+            "de.cau.cs.kieler.kiml.grana.edgeCrossings";
+
     /**
      * {@inheritDoc}
      */
@@ -39,23 +52,21 @@ public class EdgeCrossingsMetric implements IAnalysis {
 
         progressMonitor.begin("Edge crossings metric analysis", 1);
 
-        final Float result;
+        Float result;
 
         try {
-            final Object crossingsResult =
-                    results.get("de.cau.cs.kieler.kiml.grana.edgeCrossings");
-            final Object edgesResult = results.get("de.cau.cs.kieler.kiml.grana.edgeCount");
-            final Object bendsResult = results.get("de.cau.cs.kieler.kiml.grana.bendpointCount");
-            final int edgesCount = ((Integer) edgesResult).intValue();
-            final int bendsCount = ((Integer) bendsResult).intValue();
-            final int crossingsCount = ((Integer) crossingsResult).intValue();
+            Object crossingsResult = results.get(GRANA_EDGE_CROSSINGS_COUNT);
+            Object edgesResult = results.get(GRANA_EDGE_COUNT);
+            Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
+            int edgesCount = ((Integer) edgesResult);
+            int bendsCount = ((Integer) bendsResult);
+            int crossingsCount = ((Integer) crossingsResult);
 
-            final int edgesAuxCount = edgesCount + bendsCount;
+            int edgesAuxCount = edgesCount + bendsCount;
 
             int sum = 0;
             for (final KNode node : parentNode.getChildren()) {
-                final int degree =
-                        node.getOutgoingEdges().size() + node.getIncomingEdges().size();
+                int degree = node.getOutgoingEdges().size() + node.getIncomingEdges().size();
                 sum += degree * (degree - 1);
                 // TODO: consider bend points as pseudo nodes
             }
@@ -66,15 +77,15 @@ public class EdgeCrossingsMetric implements IAnalysis {
 
             // In general, this is not guaranteed, so we don't know how many
             // crossings are impossible.
-            final int impossibleCrossingsCount = 0;
+            int impossibleCrossingsCount = 0;
             // TODO: if graph is connected and graph is not a multi graph, we
             // can use
             // impossibleCrossingsCount = sum / 2;
 
-            final int maxCrossingsCount =
+            int maxCrossingsCount =
                     (edgesAuxCount * (edgesAuxCount - 1)) / 2 - impossibleCrossingsCount;
 
-            Assert.isTrue(crossingsCount <= maxCrossingsCount);
+            assert (crossingsCount <= maxCrossingsCount);
 
             if (crossingsCount > maxCrossingsCount) {
                 result = Float.valueOf(0.0f);
@@ -82,13 +93,14 @@ public class EdgeCrossingsMetric implements IAnalysis {
                 result =
                         Float.valueOf(1.0f - (float) ((double) crossingsCount / maxCrossingsCount));
             } else {
-                result = Float.valueOf(1.0f);
+                result = 1.0f;
             }
 
-            Assert.isTrue((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f),
-                    "Metric result out of bounds: " + result);
+            assert ((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f)) : "Metric result out of bounds: "
+                    + result;
 
         } finally {
+            // We must close the monitor.
             progressMonitor.done();
         }
 

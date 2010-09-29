@@ -16,8 +16,6 @@ package de.cau.cs.kieler.kiml.evol.grana;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
-
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -47,11 +45,11 @@ public class WeightedAggregation implements IAnalysis {
             double sum = 0.0;
             int count = 0;
 
-            final Set<String> layoutMetricsIds =
+            Set<String> layoutMetricsIds =
                     EvolutionServices.getInstance().getLayoutMetricsIds();
 
             for (final String metricId : layoutMetricsIds) {
-                final Object val = results.get(metricId);
+                Object val = results.get(metricId);
                 if (val instanceof Float) {
                     sum += ((Float) val).doubleValue();
                     count++;
@@ -64,12 +62,13 @@ public class WeightedAggregation implements IAnalysis {
                 return Float.valueOf(Float.NaN);
             }
 
-            final double result = (sum / count);
-            Assert.isTrue((0.0f <= result) && (result <= 1.0f), "Metric result out of bounds: "
-                    + result);
-            return Double.valueOf(result);
+            double result = (sum / count);
+            assert ((0.0f <= result) && (result <= 1.0f)) : "Metric result out of bounds: "
+                    + result;
+            return result;
 
         } finally {
+            // We must close the monitor.
             progressMonitor.done();
         }
     }

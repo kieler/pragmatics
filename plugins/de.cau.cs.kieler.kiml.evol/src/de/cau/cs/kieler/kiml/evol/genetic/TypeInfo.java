@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
-import org.eclipse.core.runtime.Assert;
 
 /**
  * A type info describes the parameters of a type that is used in an
@@ -46,17 +45,18 @@ public abstract class TypeInfo<T extends Comparable<? super T>> {
             final Class<?> theClass) {
 
         // arguments must not be null
-        Assert.isLegal((theDefaultValue != null) && (theLowerBound != null)
-                && (theUpperBound != null) && (theFormatter != null));
+        if ((theDefaultValue == null) || (theLowerBound == null) || (theUpperBound == null)
+                || (theFormatter == null)) {
+            throw new IllegalArgumentException();
+        }
 
-        Assert.isLegal(theLowerBound.compareTo(theUpperBound) <= 0, "lower bound > upper bound");
-
-        Assert
-                .isLegal(theLowerBound.compareTo(theDefaultValue) <= 0,
-                        "default value < lower bound");
-
-        Assert.isLegal((theDefaultValue != null)
-                && (theDefaultValue.compareTo(theUpperBound) <= 0), "default value > upper bound");
+        if (theLowerBound.compareTo(theUpperBound) > 0) {
+            throw new IllegalArgumentException("lower bound > upper bound");
+        } else if (theLowerBound.compareTo(theDefaultValue) > 0) {
+            throw new IllegalArgumentException("default value < lower bound");
+        } else if (theDefaultValue.compareTo(theUpperBound) > 0) {
+            throw new IllegalArgumentException("default value > upper bound");
+        }
 
         this.defaultValue = theDefaultValue;
         this.lowerBound = theLowerBound;
@@ -94,8 +94,7 @@ public abstract class TypeInfo<T extends Comparable<? super T>> {
      * @return true iff the given value is within the valid range
      */
     public boolean isValueWithinBounds(final T theValue) {
-        final boolean result;
-        result =
+        boolean result =
                 (this.lowerBound.compareTo(theValue) <= 0)
                         && (theValue.compareTo(this.upperBound) <= 0);
         return result;
@@ -118,9 +117,14 @@ public abstract class TypeInfo<T extends Comparable<? super T>> {
     }
 
     // private fields
+    /** The default value. */
     private final T defaultValue;
+    /** The lower bound. */
     private final T lowerBound;
+    /** The upper bound. */
     private final T upperBound;
+    /** The default value formatter. */
     private final IValueFormatter valueFormatter;
+    /** The class of the value. */
     private final Class<?> clazz;
 }

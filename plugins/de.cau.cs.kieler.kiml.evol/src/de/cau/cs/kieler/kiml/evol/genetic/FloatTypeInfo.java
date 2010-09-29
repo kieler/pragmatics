@@ -46,5 +46,4 @@ public final class FloatTypeInfo extends TypeInfo<Float> {
             final Class<?> theClass) {
         super(theDefaultValue, theLowerBound, theUpperBound, theFormatter, theClass);
     }
-
 }

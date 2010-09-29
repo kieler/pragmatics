@@ -13,8 +13,6 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -24,7 +22,7 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 /**
  * Measures the area extent of the given graph layout.
  *
- * Does not care for hierarchy. The returned Object is a float value within the
+ * Does not care for hierarchy. The returned object is a float value within the
  * range of 0.0 to 1.0, where a higher value means more area.
  *
  * @author bdu
@@ -40,13 +38,13 @@ public class AreaMetric implements IAnalysis {
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Area metric analysis", 1);
-        final Float result;
+        Float result;
 
         try {
-            final Object dimsResult = results.get("de.cau.cs.kieler.kiml.grana.dimensions");
-            final Pair<Float, Float> dims;
-            final float xdim;
-            final float ydim;
+            Object dimsResult = results.get("de.cau.cs.kieler.kiml.grana.dimensions");
+            Pair<Float, Float> dims;
+            float xdim;
+            float ydim;
             if (dimsResult instanceof Pair) {
                 dims = (Pair<Float, Float>) dimsResult;
                 xdim = dims.getFirst().floatValue();
@@ -56,7 +54,7 @@ public class AreaMetric implements IAnalysis {
                 ydim = 0.0f;
             }
 
-            final double area = xdim * ydim;
+            double area = xdim * ydim;
 
             // normalize
             if (area < 1.0) {
@@ -65,10 +63,11 @@ public class AreaMetric implements IAnalysis {
                 final double exponent = 0.08;
                 result = Float.valueOf((float) (1.0f - (1.0f / Math.pow(area, exponent))));
             }
-            Assert.isTrue((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f),
-                    "Metric result out of bounds: " + result);
+            assert ((0.0f <= result) && (result <= 1.0f)) : "Metric result out of bounds: "
+                    + result;
 
         } finally {
+            // We must close the monitor.
             progressMonitor.done();
         }
 

@@ -175,7 +175,7 @@ public class EvolView extends ViewPart {
             super(theText);
             setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(EvolPlugin.PLUGIN_ID,
                     "icons/multiple16.png"));
-            final String currentValue =
+            String currentValue =
                     EvolPlugin.getDefault().getPreferenceStore()
                             .getString(EvolPlugin.PREF_EDITORS);
             setChecked(EvolPlugin.ALL_EDITORS.equals(currentValue));
@@ -183,9 +183,9 @@ public class EvolView extends ViewPart {
 
         @Override
         public void run() {
-            final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
+            IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
 
-            final String newValue =
+            String newValue =
                     ((isChecked()) ? EvolPlugin.ALL_EDITORS : EvolPlugin.CURRENT_EDITOR);
 
             store.setValue(EvolPlugin.PREF_EDITORS, newValue);
@@ -257,7 +257,7 @@ public class EvolView extends ViewPart {
         private Object oldElement;
 
         public synchronized void selectionChanged(final SelectionChangedEvent event) {
-            final ISelection selection = event.getSelection();
+            ISelection selection = event.getSelection();
             System.out.println("selectionChanged");
 
             if ((selection == null) || (selection.isEmpty())
@@ -266,19 +266,19 @@ public class EvolView extends ViewPart {
                 return;
             }
 
-            final Object element = ((IStructuredSelection) selection).getFirstElement();
+            Object element = ((IStructuredSelection) selection).getFirstElement();
             if (element instanceof PopulationTableEntry) {
                 this.tv.removeSelectionChangedListener(this);
 
                 // Update the model.
-                final EvolModel em = EvolView.this.getEvolModel();
-                final int oldPos = em.getPosition();
-                final int newPos = ((PopulationTableEntry) element).getIndex();
+                EvolModel em = EvolView.this.getEvolModel();
+                int oldPos = em.getPosition();
+                int newPos = ((PopulationTableEntry) element).getIndex();
                 em.setPosition(newPos);
 
                 if (oldPos != newPos) {
                     // Update the table viewer.
-                    final Object elementAtOldPos = this.tv.getElementAt(oldPos);
+                    Object elementAtOldPos = this.tv.getElementAt(oldPos);
                     if ((elementAtOldPos != element)) {
                         this.tv.update(elementAtOldPos, null);
                     }
@@ -332,15 +332,15 @@ public class EvolView extends ViewPart {
          *            zero-relative row index
          */
         void selectRow(final int row) {
-            final int itemCount = doGetItemCount();
+            int itemCount = doGetItemCount();
             if (itemCount == 0) {
                 return;
             }
 
-            Assert.isTrue((row >= 0) && (row < itemCount), "position out of range");
+            assert ((row >= 0) && (row < itemCount)) : "position out of range";
             Display.getCurrent().syncExec(new Runnable() {
                 public void run() {
-                    final int[] indices = new int[] { row };
+                    int[] indices = new int[] { row };
                     doSetSelection(indices);
                 }
             });
@@ -350,8 +350,8 @@ public class EvolView extends ViewPart {
          * @return
          */
         private Object getSelectedElement() {
-            final IStructuredSelection selection = (IStructuredSelection) this.getSelection();
-            final Object element = selection.getFirstElement();
+            IStructuredSelection selection = (IStructuredSelection) this.getSelection();
+            Object element = selection.getFirstElement();
             return element;
         }
     }
@@ -391,13 +391,13 @@ public class EvolView extends ViewPart {
     public void createPartControl(final Composite parent) {
 
         // create table view
-        final Table table = new Table(parent, SWT.BORDER | SWT.BORDER_SOLID);
+        Table table = new Table(parent, SWT.BORDER | SWT.BORDER_SOLID);
 
-        final TableColumn column = new TableColumn(table, SWT.NONE);
+        TableColumn column = new TableColumn(table, SWT.NONE);
         column.setWidth(WIDE_COLUMN_WIDTH);
-        final TableColumn column2 = new TableColumn(table, SWT.NONE);
+        TableColumn column2 = new TableColumn(table, SWT.NONE);
         column2.setWidth(NARROW_COLUMN_WIDTH);
-        final TableColumn column3 = new TableColumn(table, SWT.NONE);
+        TableColumn column3 = new TableColumn(table, SWT.NONE);
         column3.setWidth(WIDE_COLUMN_WIDTH);
 
         column.setText("Genome");
@@ -407,19 +407,19 @@ public class EvolView extends ViewPart {
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
-        final SelectorTableViewer tv = new SelectorTableViewer(table);
+        SelectorTableViewer tv = new SelectorTableViewer(table);
         tv.setContentProvider(new PopulationTableContentProvider());
         tv.setLabelProvider(new PopulationTableLabelProvider(this));
         this.tableViewer = tv;
 
-        final ISelectionChangedListener listener = new SelectionChangedListener(tv);
+        ISelectionChangedListener listener = new SelectionChangedListener(tv);
         tv.addPostSelectionChangedListener(listener);
 
         // Add the "multiple editors" toggle button. All the other buttons are
         // added later via extension point, so we can't change their order as we
         // would like.
-        final IToolBarManager tm = this.getViewSite().getActionBars().getToolBarManager();
-        final IAction multipleEditorsAction = new MultipleEditorsAction("Multiple editors");
+        IToolBarManager tm = this.getViewSite().getActionBars().getToolBarManager();
+        IAction multipleEditorsAction = new MultipleEditorsAction("Multiple editors");
         tm.add(multipleEditorsAction);
 
         // Set the population as input in order to populate the view.
@@ -457,13 +457,13 @@ public class EvolView extends ViewPart {
 
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
-                final SelectorTableViewer viewer = getTableViewer();
+                SelectorTableViewer viewer = getTableViewer();
                 if (!onlyCurrent) {
                     viewer.refresh();
                 }
 
-                final int pos = getEvolModel().getPosition();
-                final Object element = viewer.selectRowAndGetElement(pos);
+                int pos = getEvolModel().getPosition();
+                Object element = viewer.selectRowAndGetElement(pos);
 
                 if (element != null) {
                     viewer.update(element, null);

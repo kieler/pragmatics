@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.evol.alg;
 
 import java.util.Arrays;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
@@ -42,7 +41,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         this.population = new Population(thePopulation);
         this.offspring = null;
         this.selection = null;
-        final IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
         this.isParthenogenesisAllowed =
                 store.getBoolean(EvolPlugin.PREF_IS_PARTHENOGENESIS_ALLOWED);
 
@@ -70,15 +69,15 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     protected void crossOver() {
         System.out.println("*** cross over");
         if (!selection.isEmpty()) {
-            final int proposal = (int) Math.round(selection.size() * CROSS_OVER_RATIO);
+            int proposal = (int) Math.round(selection.size() * CROSS_OVER_RATIO);
 
             // pad minimum population
-            final int missing =
+            int lacking =
                     ((population.size() < MIN_SURVIVORS) ? MIN_SURVIVORS - population.size() : 0);
 
-            final int min = MIN_CROSS_OVERS + missing;
-            final int max = MAX_CROSS_OVERS;
-            final int crossOvers = ((proposal < min) ? min : (proposal > max) ? max : proposal);
+            int min = MIN_CROSS_OVERS + lacking;
+            int max = MAX_CROSS_OVERS;
+            int crossOvers = ((proposal < min) ? min : (proposal > max) ? max : proposal);
             offspring = new Population();
             System.out.println(" -- generate " + crossOvers + " out of " + selection.size());
 
@@ -99,14 +98,14 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
                     // both parents are different.
                 } while ((parent1 == parent2) && !isParthenogenesisAllowed);
 
-                final Genome newGenome = parent1.newRecombination(parent2);
+                Genome newGenome = parent1.newRecombination(parent2);
                 newGenome.setUserRating(0.0);
                 System.out.println(" -- cross over of " + parent1);
                 System.out.println("              and " + parent2);
                 offspring.add(new Genome(newGenome, getGeneration()));
             }
 
-            // add offspring to survivors
+            // add offspring to old survivors
             population.addAll(0, offspring);
         } else {
             System.out.println("Selection is EMPTY");
@@ -134,7 +133,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     @Override
     public boolean isDone() {
-        // no stop criterion -- algorithm shall run forever
+        // no stop criterion here -- algorithm shall run forever
         return false;
     }
 
@@ -144,9 +143,9 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         final double prob = MUTATION_APPLICATION_PROBABILITY;
         System.out.println(" -- mutate all " + population.size() + ", each with probability of "
                 + prob);
-        final Population mutations = new Population();
+        Population mutations = new Population();
         for (final Genome ind : population) {
-            final Genome mutation = ind.newMutation(prob);
+            Genome mutation = ind.newMutation(prob);
             if (mutation != null) {
                 // individual has mutated --> rating is outdated
                 mutation.fadeUserRating();
@@ -163,17 +162,17 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     protected void select() {
         System.out.println("*** select");
         selection = new Population();
-        final int count = population.size();
-        final Genome[] individuals = new Genome[count];
+        int count = population.size();
+        Genome[] individuals = new Genome[count];
         population.toArray(individuals);
         Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
 
         // Only some are allowed to generate offspring
         // These are selected by truncation.
-        final int min = MIN_SELECT;
-        final int max = MAX_SELECT;
-        final int proposal = (int) Math.round(individuals.length * SELECTION_RATIO);
-        final int select = ((proposal < min) ? min : (proposal > max ? max : proposal));
+        int min = MIN_SELECT;
+        int max = MAX_SELECT;
+        int proposal = (int) Math.round(individuals.length * SELECTION_RATIO);
+        int select = ((proposal < min) ? min : (proposal > max ? max : proposal));
 
         System.out.println(" -- select " + select + " of " + count);
         for (final Genome ind : individuals) {
@@ -189,28 +188,28 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     @Override
     protected void survive() {
         System.out.println("*** survive");
-        final int count = population.size();
-        Assert.isTrue(count > 0);
-        final Genome[] individuals = new Genome[count];
+        int count = population.size();
+        assert count > 0;
+        Genome[] individuals = new Genome[count];
         population.toArray(individuals);
         Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
 
         // only some survive
-        final int min = MIN_SURVIVORS;
-        final int max = MAX_SURVIVORS;
-        final int proposal = (int) Math.round((count * SURVIVAL_RATIO));
-        final int keep = ((proposal < min) ? min : (proposal > max ? max : proposal));
-        final double minDist = individuals[0].size() * .2;
-        final Population survivors = new Population();
-        final Population victims = new Population(population);
+        int min = MIN_SURVIVORS;
+        int max = MAX_SURVIVORS;
+        int proposal = (int) Math.round((count * SURVIVAL_RATIO));
+        int keep = ((proposal < min) ? min : (proposal > max ? max : proposal));
+        double minDist = individuals[0].size() * .2;
+        Population survivors = new Population();
+        Population victims = new Population(population);
 
         System.out.println(" -- keep " + keep + " of " + count);
         for (final Genome ind : individuals) {
             // in order to keep some variety, prevent too similar genomes from
             // surviving
             if (survivors.size() < keep) {
-                final Genome comp = survivors.pick();
-                final Genome comp2 = survivors.pick();
+                Genome comp = survivors.pick();
+                Genome comp2 = survivors.pick();
                 if ((comp == null)
                         || ((Genome.distance(ind, comp) > minDist) && ((comp == comp2) || (Genome
                                 .distance(ind, comp2) > minDist)))) {
@@ -231,12 +230,34 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     }
 
     // private fields
+    /** The current population. */
     private Population population;
+
+    /** The selected individuals. */
     private Population selection;
+
+    /** The offspring individuals. */
     private Population offspring;
+
+    /**
+     * The selection ratio. Indicates the ratio of the population that shall be
+     * selected for recombination.
+     */
     private static final double SELECTION_RATIO = .70;
+
+    /**
+     * The cross over ratio. Indicates how many offspring individuals shall be
+     * created per selected individual.
+     */
     private static final double CROSS_OVER_RATIO = 1.2;
+
+    /**
+     * The mutation application probability. This is the probability for each
+     * individual to be subject to mutation.
+     */
     private static final double MUTATION_APPLICATION_PROBABILITY = .6;
+
+    /** The survival ratio. This indicates the ratio of surviving individuals. */
     private static final double SURVIVAL_RATIO = .54;
 
     // To obtain a constant population size, the following condition must hold:
@@ -245,10 +266,21 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         return (1 / (1 + SELECTION_RATIO * CROSS_OVER_RATIO));
     }
 
+    /** Minimum number of individuals to select. */
     private static final int MIN_SELECT = 2;
+
+    /** Minimum number of individuals to create by cross over. */
     private static final int MIN_CROSS_OVERS = 1;
+
+    /** Minimum number of individuals that must survive. */
     private static final int MIN_SURVIVORS = 5;
+
+    /** Maximum number of individuals to select. */
     private static final int MAX_SELECT = 1000;
+
+    /** Maximum number of individuals the create by cross over. */
     private static final int MAX_CROSS_OVERS = 1000;
+
+    /** Maximum number of individuals that may survive. */
     private static final int MAX_SURVIVORS = 1000;
 }

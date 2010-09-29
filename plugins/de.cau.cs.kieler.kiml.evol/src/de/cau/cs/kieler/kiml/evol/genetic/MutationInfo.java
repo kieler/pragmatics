@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
-import org.eclipse.core.runtime.Assert;
 
 /**
  * This class comprises the mutation parameters.
@@ -63,27 +62,32 @@ public class MutationInfo {
 
     /**
      * Constructor for a mutation info.
-     * 
+     *
      * @param prob
-     *            the probability that a mutation occurs.
+     *            the probability that a mutation occurs. Must be within the
+     *            interval of {@code 0.0} and {@code 1.0}.
      * @param var
-     *            the variance (used for Gaussian distribution).
+     *            the variance (used for Gaussian distribution); must be >= 0.0
      * @param distr
      *            the probability distribution.
      */
     public MutationInfo(final double prob, final double var, final Distribution distr) {
-        Assert.isLegal(distr != null);
-        Assert.isLegal((prob >= 0.0) && (prob <= 1.0));
-        Assert.isLegal(var >= 0.0);
+        if ((distr == null) || (prob < 0.0) || (prob > 1.0) || (var < 0.0)) {
+            throw new IllegalArgumentException();
+        }
+
         this.probability = prob;
         this.variance = var;
         this.distribution = distr;
     }
 
+    /** The probability distribution. */
     private final Distribution distribution;
 
+    /** The mutation application probability. */
     private final double probability;
     // discuss: encapsulate parameters of distribution
+    /** The variance, used for Gaussian distribution. */
     private final double variance;
 
     /**
@@ -91,7 +95,7 @@ public class MutationInfo {
      * @return the distribution.
      */
     public Distribution getDistr() {
-        Assert.isNotNull(this.distribution);
+        assert this.distribution != null;
         return this.distribution;
     }
 

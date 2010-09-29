@@ -38,12 +38,12 @@ public class PopulationTableContentProvider implements IStructuredContentProvide
      */
     public Object[] getElements(final Object inputElement) {
         // suppose inputElement contains a reference to a Population object.
-        final Population inputPopulation;
+        Population inputPopulation;
         if (!(inputElement instanceof Population)) {
             return new PopulationTableEntry[] {};
         }
         inputPopulation = (Population) inputElement;
-        final PopulationTableEntry[] result = new PopulationTableEntry[inputPopulation.size()];
+        PopulationTableEntry[] result = new PopulationTableEntry[inputPopulation.size()];
         int i = 0;
         for (final Genome individual : inputPopulation) {
             result[i] = new PopulationTableEntry();

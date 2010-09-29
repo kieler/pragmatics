@@ -43,7 +43,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.ListItemGene;
 import de.cau.cs.kieler.kiml.evol.genetic.ListItemTypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
-import de.cau.cs.kieler.kiml.evol.genetic.UniversalGene;
+import de.cau.cs.kieler.kiml.evol.genetic.UniversalNumberGene;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
@@ -58,7 +58,7 @@ import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 final class GenomeFactory {
 
     /**
-     * A factory for genes.
+     * A factory for genes, used to create genes that encode layout option.
      *
      * @author bdu
      *
@@ -100,16 +100,16 @@ final class GenomeFactory {
             IGene<?> result;
 
             // Get the evolution data for the layout option.
-            final IConfigurationElement evolutionData =
+            IConfigurationElement evolutionData =
                     EvolutionServices.getInstance().getEvolutionData((String) theId);
             if (evolutionData == null) {
                 throw new IllegalArgumentException("No evolution data registered for " + theId);
             }
 
-            final String lowerBoundAttr = evolutionData.getAttribute(ATTRIBUTE_LOWER_BOUND);
-            final String upperBoundAttr = evolutionData.getAttribute(ATTRIBUTE_UPPER_BOUND);
-            final String distrNameAttr = evolutionData.getAttribute(ATTRIBUTE_DISTRIBUTION);
-            final String varianceAttr = evolutionData.getAttribute(ATTRIBUTE_VARIANCE);
+            String lowerBoundAttr = evolutionData.getAttribute(ATTRIBUTE_LOWER_BOUND);
+            String upperBoundAttr = evolutionData.getAttribute(ATTRIBUTE_UPPER_BOUND);
+            String distrNameAttr = evolutionData.getAttribute(ATTRIBUTE_DISTRIBUTION);
+            String varianceAttr = evolutionData.getAttribute(ATTRIBUTE_VARIANCE);
 
             Distribution distr = null;
             try {
@@ -124,13 +124,12 @@ final class GenomeFactory {
 
             // Get the layout option data, so we know what kind of gene to
             // produce.
-            final LayoutOptionData<?> layoutOptionData =
+            LayoutOptionData<?> layoutOptionData =
                     LayoutServices.getInstance().getLayoutOptionData((String) theId);
             if (layoutOptionData == null) {
                 throw new IllegalArgumentException("No layout option data for " + theId);
             }
-
-            final Type layoutOptionDataType = layoutOptionData.getType();
+            Type layoutOptionDataType = layoutOptionData.getType();
 
             switch (layoutOptionDataType) {
             case BOOLEAN:
@@ -161,12 +160,13 @@ final class GenomeFactory {
         }
 
         /**
-         * Returns always {@code null}.
+         * Not implemented here. Throws an {@link UnsupportedOperationException}
+         * .
          */
         public IGene<?> newGene(
                 final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
                 final MutationInfo theMutationInfo) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**
@@ -176,50 +176,58 @@ final class GenomeFactory {
          * @param theValue
          *            an object containing "1" or "0"
          * @param theMutationProbability
+         *            the mutation probability
          * @param distr
-         * @return
+         *            the distribution
+         * @return the new gene
          */
         private IGene<?> newBooleanGene(
                 final Object theId, final Object theValue, final double theMutationProbability,
                 final Distribution distr) {
             IGene<?> result;
-            final boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
-            final Float floatValue = Float.valueOf((booleanValue ? 1.0f : 0.0f));
-            final MutationInfo mutationInfo = new MutationInfo(theMutationProbability, distr);
+            boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
+            Float floatValue = (booleanValue ? 1.0f : 0.0f);
+            MutationInfo mutationInfo = new MutationInfo(theMutationProbability, distr);
             result =
-                    new UniversalGene(theId, floatValue, UniversalGene.BOOLEAN_TYPE_INFO,
+                    new UniversalNumberGene(theId, floatValue, UniversalNumberGene.BOOLEAN_TYPE_INFO,
                             mutationInfo);
             EvolPlugin.logStatus(theId + ": " + result);
             return result;
         }
 
         /**
-         * Creates a gene for an enum value.
+         * Creates a gene for an enum value, using the given value and the given
+         * layout option data.
          *
          * @param theId
+         *            the id
          * @param theRawValue
+         *            the raw value; may be an integer, a string or a enum
+         *            constant
          * @param theMutationProbability
+         *            the mutation probability
          * @param layoutOptionData
-         * @return
+         *            the layout option data
+         * @return the new gene
          */
         private IGene<?> newEnumGene(
                 final Object theId, final Object theRawValue,
                 final double theMutationProbability, final LayoutOptionData<?> layoutOptionData) {
             IGene<?> result;
-            final int choicesCount = layoutOptionData.getChoices().length;
-            final Class<? extends Enum<?>> enumClass =
+            int choicesCount = layoutOptionData.getChoices().length;
+            Class<? extends Enum<?>> enumClass =
                     (Class<? extends Enum<?>>) layoutOptionData.getOptionClass();
-            Assert.isNotNull(enumClass);
+            assert enumClass != null;
             final Enum<?>[] constants = enumClass.getEnumConstants();
-            Assert.isTrue(constants.length == choicesCount);
+            assert (constants.length == choicesCount);
             Integer value = null;
             if (theRawValue instanceof Integer) {
                 value = Integer.valueOf(theRawValue.toString());
             } else if (theRawValue instanceof String) {
-                final List<Enum<?>> constantsList = Arrays.asList(constants);
-                for (final Enum<?> enum1 : constantsList) {
-                    if (enum1.toString().equals(theRawValue)) {
-                        value = Integer.valueOf(enum1.ordinal());
+                List<Enum<?>> constantsList = Arrays.asList(constants);
+                for (final Enum<?> enumConstant : constantsList) {
+                    if (enumConstant.toString().equals(theRawValue)) {
+                        value = enumConstant.ordinal();
                         break;
                     }
                 }
@@ -227,9 +235,9 @@ final class GenomeFactory {
                     value = 0;
                 }
             } else if (theRawValue instanceof Enum) {
-                value = Integer.valueOf(((Enum<Type>) theRawValue).ordinal());
+                value = ((Enum<Type>) theRawValue).ordinal();
             } else {
-                value = Integer.valueOf(0);
+                value = 0;
             }
             result = new EnumGene(theId, value.intValue(), enumClass, theMutationProbability);
             EvolPlugin.logStatus("Enum " + enumClass.getSimpleName() + "(" + choicesCount + "): "
@@ -241,14 +249,20 @@ final class GenomeFactory {
          * Creates a gene for a float value.
          *
          * @param theId
+         *            the id
          * @param theRawValue
          *            an object containing a string that represents a float
          * @param theMutationProbability
+         *            the mutation probability
          * @param lowerBoundAttr
+         *            the lower bound attribute as defined in the evolution data
          * @param upperBoundAttr
+         *            the upper bound attribute as defined in the evolution data
          * @param varianceAttr
+         *            the variance attribute as defined in the evolution data
          * @param distr
-         * @return
+         *            the distribution
+         * @return the new gene
          */
         private IGene<?> newFloatGene(
                 final Object theId, final Object theRawValue,
@@ -256,14 +270,14 @@ final class GenomeFactory {
                 final String upperBoundAttr, final String varianceAttr, final Distribution distr) {
             IGene<?> result;
             Float value = Float.valueOf((String) theRawValue);
-            final Float lowerBound =
+            Float lowerBound =
                     Float.valueOf((lowerBoundAttr == null ? Float.NEGATIVE_INFINITY : Float
                             .parseFloat(lowerBoundAttr)));
-            final Float upperBound =
+            Float upperBound =
                     Float.valueOf(((upperBoundAttr == null) ? Float.POSITIVE_INFINITY : Float
                             .parseFloat(upperBoundAttr)));
 
-            final double variance;
+            double variance;
             if (varianceAttr != null) {
                 // get variance from evolution data
                 variance = Double.parseDouble(varianceAttr);
@@ -280,24 +294,24 @@ final class GenomeFactory {
                 }
             }
 
-            final IValueFormatter formatter;
+            IValueFormatter formatter;
             if (lowerBound.floatValue() >= 0.0f) {
                 // we use a strictly positive float gene
-                formatter = UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER;
+                formatter = UniversalNumberGene.STRICTLY_POSITIVE_FLOAT_FORMATTER;
 
             } else {
                 // we use a general float gene
-                formatter = UniversalGene.FLOAT_FORMATTER;
+                formatter = UniversalNumberGene.FLOAT_FORMATTER;
             }
 
             value = sanitize(value, lowerBound, upperBound, (String) theId);
 
-            final TypeInfo<Float> typeInfo =
+            TypeInfo<Float> typeInfo =
                     new FloatTypeInfo(value, lowerBound, upperBound, formatter, Float.class);
 
-            final MutationInfo mutationInfo =
+            MutationInfo mutationInfo =
                     new MutationInfo(theMutationProbability, variance, distr);
-            result = new UniversalGene(theId, value, typeInfo, mutationInfo);
+            result = new UniversalNumberGene(theId, value, typeInfo, mutationInfo);
             EvolPlugin.logStatus(theId + ": " + result);
             return result;
         }
@@ -306,13 +320,20 @@ final class GenomeFactory {
          * Creates a gene for an integer value.
          *
          * @param theId
+         *            the ID
          * @param theRawValue
+         *            the raw value
          * @param theMutationProbability
+         *            the mutation probability
          * @param lowerBoundAttr
+         *            the lower bound attribute as defined in the evolution data
          * @param upperBoundAttr
+         *            the upper bound attribute as defined in the evolution data
          * @param varianceAttr
+         *            the variance attribute as defined in the evolution data
          * @param distr
-         * @return
+         *            the distribution
+         * @return the new gene
          */
         private IGene<?> newIntegerGene(
                 final Object theId, final Object theRawValue,
@@ -321,7 +342,7 @@ final class GenomeFactory {
             IGene<?> result;
             Integer value = Integer.valueOf((String) theRawValue);
 
-            final double variance;
+            double variance;
             if (varianceAttr != null) {
                 // get variance from evolution data
                 variance = Double.parseDouble(varianceAttr);
@@ -330,31 +351,28 @@ final class GenomeFactory {
                 variance = Math.abs(value.intValue()) * VARIANCE_SCALING_FACTOR;
             }
 
-            final Integer lowerBound =
+            Integer lowerBound =
                     Integer.valueOf(((lowerBoundAttr == null) ? Integer.MIN_VALUE : (Integer
                             .parseInt(lowerBoundAttr))));
 
-            final Integer upperBound =
+            Integer upperBound =
                     Integer.valueOf(((upperBoundAttr == null) ? Integer.MAX_VALUE : (Integer
                             .parseInt(upperBoundAttr))));
 
-            final IValueFormatter formatter = UniversalGene.INTEGER_FORMATTER;
+            IValueFormatter formatter = UniversalNumberGene.INTEGER_FORMATTER;
 
             // enforce that the value is within the legal bounds
             value =
                     Integer.valueOf((sanitize(value.floatValue(), lowerBound.floatValue(),
                             upperBound.floatValue(), (String) theId).intValue()));
 
-            final TypeInfo<Float> typeInfo =
-                    new FloatTypeInfo(Float.valueOf(value.floatValue()), Float.valueOf(lowerBound
-                            .floatValue()), Float.valueOf(upperBound.floatValue()), formatter,
-                            Integer.class);
+            TypeInfo<Float> typeInfo =
+                    new FloatTypeInfo(value.floatValue(), lowerBound.floatValue(),
+                            upperBound.floatValue(), formatter, Integer.class);
 
-            final MutationInfo mutationInfo =
+            MutationInfo mutationInfo =
                     new MutationInfo(theMutationProbability, variance, distr);
-            result =
-                    new UniversalGene(theId, Float.valueOf(value.floatValue()), typeInfo,
-                            mutationInfo);
+            result = new UniversalNumberGene(theId, value.floatValue(), typeInfo, mutationInfo);
             EvolPlugin.logStatus(theId + ": " + result);
             return result;
         }
@@ -363,8 +381,11 @@ final class GenomeFactory {
          * Enforces that the value is within the specified legal bounds.
          *
          * @param theValue
+         *            the value
          * @param theLowerBound
+         *            the lower bound
          * @param theUpperBound
+         *            the upper bound
          * @param id
          *            identifier of the value
          * @return the specified value, if it is within the specified bounds, or
@@ -400,43 +421,43 @@ final class GenomeFactory {
      * @return a genome
      */
     public static Genome createWeightGenes(final Set<String> metricIds) {
-        Assert.isLegal(metricIds != null);
         if (metricIds == null) {
-            return null;
+            throw new IllegalArgumentException();
         }
 
-        final IGeneFactory factory = new IGeneFactory() {
+        IGeneFactory factory = new IGeneFactory() {
+            private final Float UPPER_BOUND = 10.0f;
+            private final double VARIANCE = .2;
+
             public IGene<?> newGene(
                     final Object theId, final Object theValue, final double theMutationProb) {
 
-                final TypeInfo<Float> typeInfo =
-                        new FloatTypeInfo(Float.valueOf(1.0f), Float.valueOf(0.0f),
-                                Float.valueOf(10.0f),
-                                UniversalGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
-                final MutationInfo mutationInfo =
-                        new MutationInfo(theMutationProb, .2, Distribution.GAUSSIAN);
+                TypeInfo<Float> typeInfo =
+                        new FloatTypeInfo(1.0f, 0.0f, this.UPPER_BOUND,
+                                UniversalNumberGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
+                MutationInfo mutationInfo =
+                        new MutationInfo(theMutationProb, this.VARIANCE, Distribution.GAUSSIAN);
 
                 return this.newGene(theId, theValue, typeInfo, mutationInfo);
             }
 
+
             public IGene<?> newGene(
                     final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
                     final MutationInfo theMutationInfo) {
-                Assert.isLegal(theTypeInfo instanceof FloatTypeInfo);
-
-                if (theTypeInfo instanceof FloatTypeInfo) {
-                    return new UniversalGene(theId, (Float) theValue,
-                            (FloatTypeInfo) theTypeInfo, theMutationInfo);
+                if (!(theTypeInfo instanceof FloatTypeInfo)) {
+                    throw new IllegalArgumentException();
                 }
 
-                return null;
+                return new UniversalNumberGene(theId, (Float) theValue, (FloatTypeInfo) theTypeInfo,
+                        theMutationInfo);
             }
         };
 
-        final Genome result = new Genome();
-        final Float value = Float.valueOf(1.0f);
+        Genome result = new Genome();
+        float value = 1.0f;
         for (final String id : metricIds) {
-            final IGene<?> gene = factory.newGene(id, value, 0.02);
+            IGene<?> gene = factory.newGene(id, value, 0.02);
             Assert.isNotNull(gene, "Failed to create gene for " + id);
             result.add(gene);
         }
@@ -462,7 +483,7 @@ final class GenomeFactory {
             return Collections.emptySet();
         }
 
-        final Set<String> accepted;
+        Set<String> accepted;
         if (acceptedProperties == null) {
             // Get the set of all registered learnable properties.
             accepted = EvolutionServices.getInstance().getEvolutionDataIds();
@@ -470,19 +491,19 @@ final class GenomeFactory {
             accepted = acceptedProperties;
         }
 
-        final LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutServices layoutServices = LayoutServices.getInstance();
 
-        final Set<IPropertyDescriptor> result = new HashSet<IPropertyDescriptor>();
+        Set<IPropertyDescriptor> result = new HashSet<IPropertyDescriptor>();
 
         // Iterate the given property descriptors.
         for (final IPropertyDescriptor p : descriptors) {
-            final String id = (String) p.getId();
+            String id = (String) p.getId();
             // check property descriptor id
             if (!LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                 final LayoutOptionData<?> data = layoutServices.getLayoutOptionData(id);
-                Assert.isNotNull(data, "Layout option not registered: " + id);
+                assert data != null : "Layout option not registered: " + id;
 
-                final Type type = data.getType();
+                Type type = data.getType();
                 switch (type) {
                 case BOOLEAN:
                 case ENUM:
@@ -517,26 +538,26 @@ final class GenomeFactory {
             final List<ILayoutInspector> inspectors) {
 
         final int expectedNumberOfPropsPerInspector = 10;
-        final HashMap<String, Object> propertyId2ValueMap =
+        HashMap<String, Object> propertyId2ValueMap =
                 new HashMap<String, Object>(inspectors.size() * expectedNumberOfPropsPerInspector);
 
-        final EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
+        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
 
         // Iterate the layout inspectors.
         for (final ILayoutInspector inspector : inspectors) {
             // Iterate the available layout options.
             inspector.initOptions();
 
-            final List<LayoutOptionData<?>> optionDescriptors = inspector.getOptionData();
+            List<LayoutOptionData<?>> optionDescriptors = inspector.getOptionData();
 
             for (final LayoutOptionData<?> data : optionDescriptors) {
 
-                final String id = data.getId();
+                String id = data.getId();
 
                 if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                     // Property is a layout hint --> skip
-                    final Object value = inspector.getContainerLayouterData().getId();
-                    Assert.isNotNull(value, "layout hint value is null");
+                    Object value = inspector.getContainerLayouterData().getId();
+                    assert value != null : "layout hint value is null";
                     continue;
 
                 } else if (!propertyId2ValueMap.containsKey(id)) {
@@ -582,22 +603,21 @@ final class GenomeFactory {
      */
     private static ListItemGene createLayoutHintGene(
             final List<String> providerIds, final int defaultEntry) {
-
-        Assert.isLegal(providerIds != null);
         if (providerIds == null) {
-            return null;
+            throw new IllegalArgumentException();
         }
-        Assert.isLegal((defaultEntry >= 0) && (defaultEntry < providerIds.size()),
-                "Index out of range.");
 
-        final ListItemTypeInfo typeInfo =
-                new ListItemTypeInfo(Integer.valueOf(defaultEntry), providerIds);
-        final double prob = 0.05;
-        final MutationInfo mutationInfo = new MutationInfo(prob);
+        if ((defaultEntry < 0) || (defaultEntry >= providerIds.size())) {
+            throw new IllegalArgumentException("Index out of range.");
+        }
 
-        final ListItemGene hintGene =
-                new ListItemGene(LayoutOptions.LAYOUTER_HINT_ID, Integer.valueOf(defaultEntry),
-                        typeInfo, mutationInfo);
+        ListItemTypeInfo typeInfo = new ListItemTypeInfo(defaultEntry, providerIds);
+        double prob = DEFAULT_LAYOUT_HINT_GENE_PROB;
+        MutationInfo mutationInfo = new MutationInfo(prob);
+
+        ListItemGene hintGene =
+                new ListItemGene(LayoutOptions.LAYOUTER_HINT_ID, defaultEntry, typeInfo,
+                        mutationInfo);
         return hintGene;
     }
 
@@ -605,20 +625,20 @@ final class GenomeFactory {
      * Creates a layout hint gene.
      *
      * @param providerIds
+     *            a list of layout provider identifiers
      * @param defaultProviderId
-     * @return a gene that mutates over the given providers
+     *            the identifier of the default layout provider
+     * @return a gene that mutates over the given layout providers
      */
     private static ListItemGene createLayoutHintGene(
             final List<String> providerIds, final String defaultProviderId) {
-        Assert.isLegal((providerIds != null) && !providerIds.isEmpty());
-        Assert.isLegal(defaultProviderId != null);
-
-        if (providerIds == null) {
-            return null;
+        // presuming providerIds != null
+        if (providerIds.isEmpty() || (defaultProviderId == null)) {
+            throw new IllegalArgumentException();
         }
 
-        final int indexOfProviderId = providerIds.indexOf(defaultProviderId);
-        Assert.isTrue(indexOfProviderId >= 0);
+        int indexOfProviderId = providerIds.indexOf(defaultProviderId);
+        assert indexOfProviderId >= 0;
         return createLayoutHintGene(providerIds, indexOfProviderId);
     }
 
@@ -626,21 +646,23 @@ final class GenomeFactory {
      * Collects the property descriptors from the given layout inspectors.
      *
      * @param theInspectors
-     *            a list of {@link ILayoutInspector} instances
+     *            a list of {@link ILayoutInspector} instances; must not be
+     *            {@code null}
      * @return a map containing property descriptor IDs and the respective
      *         property descriptors.
      */
     private static Map<String, IPropertyDescriptor> getPropertyDescriptors(
             final List<ILayoutInspector> theInspectors) {
-        final Map<String, IPropertyDescriptor> allPropertyDescriptors =
+        Map<String, IPropertyDescriptor> allPropertyDescriptors =
                 new HashMap<String, IPropertyDescriptor>();
 
-        for (final ILayoutInspector inspector : theInspectors) {
-            final LayoutPropertySource source = new LayoutPropertySource(inspector);
-            final IPropertyDescriptor[] propertyDescriptorsArray =
-                    source.getPropertyDescriptors();
+        // presuming theInspectors != null
 
-            final List<IPropertyDescriptor> propertyDescriptorsList =
+        for (final ILayoutInspector inspector : theInspectors) {
+            LayoutPropertySource source = new LayoutPropertySource(inspector);
+            IPropertyDescriptor[] propertyDescriptorsArray = source.getPropertyDescriptors();
+
+            List<IPropertyDescriptor> propertyDescriptorsList =
                     Arrays.asList(propertyDescriptorsArray);
 
             for (final IPropertyDescriptor pd : propertyDescriptorsList) {
@@ -651,12 +673,14 @@ final class GenomeFactory {
     }
 
     /**
+     * Returns uniform probability for the given number of choices.
+     *
      * @param choicesCount
      * @return the multiplicative inverse of the given number, or 0.0 if it is
      *         not > 0.
      */
     private static double uniformProbability(final int choicesCount) {
-        final double uniformProb;
+        double uniformProb;
         if (choicesCount > 0) {
             uniformProb = 1.0 / choicesCount;
         } else {
@@ -687,6 +711,11 @@ final class GenomeFactory {
     private final IGeneFactory layoutOptionGeneFactory = new LayoutOptionGeneFactory();
 
     /**
+     * Default probability for layout hint genes.
+     */
+    private static final double DEFAULT_LAYOUT_HINT_GENE_PROB = 0.05;
+
+    /**
      * Create a {@link Genome} from the given layout inspectors.
      *
      * @param inspectors
@@ -695,6 +724,7 @@ final class GenomeFactory {
      *            a set of layout hint IDs; must not be {@code null}
      * @return a genome, or {@code null}.
      * @throws KielerException
+     *             in case of an error
      */
     public Genome createGenome(
             final List<ILayoutInspector> inspectors, final Set<Object> layoutHintIds)
@@ -714,49 +744,48 @@ final class GenomeFactory {
          * What about duplicate properties?
          * */
 
-        final Genome result = new Genome();
+        Genome result = new Genome();
 
         // Get property descriptors for the layout inspectors.
-        final Map<String, IPropertyDescriptor> allPropertyDescriptors =
+        Map<String, IPropertyDescriptor> allPropertyDescriptors =
                 getPropertyDescriptors(inspectors);
 
         // Collect the learnable properties from the property descriptors.
-        final Set<IPropertyDescriptor> presentLearnables =
+        Set<IPropertyDescriptor> presentLearnables =
                 collectLearnableProperties(allPropertyDescriptors.values(), this.learnableOptions);
 
         // Determine uniformly distributed mutation probability.
-        final double uniformProb = uniformProbability(presentLearnables.size());
+        double uniformProb = uniformProbability(presentLearnables.size());
 
         EvolPlugin.logStatus("Creating genome of " + presentLearnables.size()
                 + " layout property genes ...");
 
         // Collect the property values from the layout inspectors.
         // XXX This should be done once by the GenomeFactory constructor.
-        final Map<String, Object> propertyId2ValueMap = collectPropertyValues(inspectors);
+        Map<String, Object> propertyId2ValueMap = collectPropertyValues(inspectors);
 
         // Create genes for the property values.
         for (final Entry<String, Object> entry : propertyId2ValueMap.entrySet()) {
 
-            final String id = entry.getKey();
-            final Object value = entry.getValue();
+            String id = entry.getKey();
+            Object value = entry.getValue();
 
             // Check the property descriptor id.
-            Assert.isTrue(!LayoutOptions.LAYOUTER_HINT_ID.equals(id),
-                    "There should be no layout hint in the collected options.");
+            assert !LayoutOptions.LAYOUTER_HINT_ID.equals(id) : "There should be no layout hint in the collected options.";
 
             // There should not be a gene for this option yet.
-            Assert.isTrue(result.find(id) == null, "Duplicate property: " + id);
+            assert (result.find(id) == null) : "Duplicate property: " + id;
 
             // learnable option?
             if (this.learnableOptions.contains(id)) {
                 IGene<?> gene = null;
                 try {
-                    Assert.isNotNull(value, "Value is null: " + id);
+                    assert value != null : "Value is null: " + id;
                     // XXX convert value to string for legacy reasons
                     gene =
                             this.layoutOptionGeneFactory.newGene(id, value.toString(),
                                     uniformProb);
-                    Assert.isNotNull(gene, "Failed to create gene for " + id);
+                    assert gene != null : "Failed to create gene for " + id;
                     result.add(gene);
                 } catch (final IllegalArgumentException exception) {
                     throw new KielerException("Failed to create gene for " + id, exception);
@@ -767,23 +796,21 @@ final class GenomeFactory {
             }
         }
 
-        Assert.isTrue(
-                presentLearnables.size() == result.size(),
+        assert presentLearnables.size() == result.size() :
                 "The number of genes does not have the predicted count of "
-                        + presentLearnables.size());
+                + presentLearnables.size();
 
-        Assert.isTrue(!layoutHintIds.isEmpty(), "No layout hint specified.");
+        assert !layoutHintIds.isEmpty() : "No layout hint specified.";
 
         // Add a gene for the layout hint (a gene that can mutate over a list of
         // layout hint IDs).
 
         // TODO: If we have more than one layout hint, we use the first as
         // default, but what about the others?
-        final String hintId = (String) layoutHintIds.iterator().next();
+        String hintId = (String) layoutHintIds.iterator().next();
 
-        final LayoutServices layoutServices = LayoutServices.getInstance();
-        final LayoutProviderData providerData =
-                layoutServices.getLayoutProviderData(hintId, null);
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        LayoutProviderData providerData = layoutServices.getLayoutProviderData(hintId, null);
 
         if (providerData == null) {
             // no provider for the given layout hint
@@ -791,28 +818,28 @@ final class GenomeFactory {
         }
 
         // Get the type of the provider.
-        final String typeId = providerData.getType();
+        String typeId = providerData.getType();
 
         // Get the IDs of all suitable providers for this type.
-        final List<String> providerIds = EvolUtil.getLayoutProviderIds(typeId);
+        List<String> providerIds = EvolUtil.getLayoutProviderIds(typeId);
 
-        final String providerId = providerData.getId();
+        String providerId = providerData.getId();
 
         // Create the layout hint gene.
-        final ListItemGene hintGene = createLayoutHintGene(providerIds, providerId);
-        Assert.isNotNull(hintGene, "Failed to create layout hint gene for " + typeId);
+        ListItemGene hintGene = createLayoutHintGene(providerIds, providerId);
+        assert hintGene != null : "Failed to create layout hint gene for " + typeId;
         result.add(hintGene);
 
         // Collect all learnable layout options that are known by the
         // providers.
-        final Set<String> knownOptionIds = getLearnableKnownOptions(providerIds);
+        Set<String> knownOptionIds = getLearnableKnownOptions(providerIds);
 
         // Add extra genes for the suitable options that have not been
         // added yet.
-        final List<String> presentIds = result.getIds();
+        List<String> presentIds = result.getIds();
 
         try {
-            final Genome extraGenes = createGenes(knownOptionIds, presentIds, uniformProb, null);
+            Genome extraGenes = createGenes(knownOptionIds, presentIds, uniformProb, null);
             result.addAll(extraGenes);
         } catch (final Exception exception) {
             throw new KielerException("Genome could not be created.", exception);
@@ -824,63 +851,75 @@ final class GenomeFactory {
     }
 
     /**
+     * Creates a genome of extra genes (for known options that are not present).
+     *
      * @param knownOptionIds
+     *            set of identifiers of the known options; must not be
+     *            {@code null}
      * @param presentIds
+     *            list of identifiers that are present; must not be {@code null}
      * @param prob
+     *            mutation probability
      * @param theGeneFactory
      *            an {@link IGeneFactory}; may be {@code null}
-     * @return
+     * @return the created genome
      * @throws KielerException
+     *             in case of an error
      */
     private Genome createGenes(
             final Set<String> knownOptionIds, final List<String> presentIds, final double prob,
             final IGeneFactory theGeneFactory) throws KielerException {
-        Assert.isNotNull(knownOptionIds);
-        Assert.isNotNull(presentIds);
 
-        final Genome extraGenes = new Genome();
+        if ((knownOptionIds == null) || (presentIds == null)) {
+            throw new IllegalArgumentException();
+        }
 
-        final IGeneFactory gf;
+        Genome extraGenes = new Genome();
+
+        IGeneFactory geneFactory;
         if (theGeneFactory == null) {
-            gf = this.layoutOptionGeneFactory;
+            geneFactory = this.layoutOptionGeneFactory;
         } else {
-            gf = theGeneFactory;
+            geneFactory = theGeneFactory;
         }
 
         for (final String optionId : knownOptionIds) {
             if (!presentIds.contains(optionId)) {
-                EvolPlugin.logStatus("Creating gene for " + optionId);
-                final LayoutOptionData<?> optionData =
+                EvolPlugin.logStatus("Creating extra gene for " + optionId);
+                LayoutOptionData<?> optionData =
                         LayoutServices.getInstance().getLayoutOptionData(optionId);
 
                 if (optionData == null) {
                     throw new KielerException("Could not get layout option data: " + optionId);
                 }
 
-                final Object value = optionData.getDefault();
+                Object value = optionData.getDefault();
 
-                final IGene<?> gene = gf.newGene(optionId, value.toString(), prob);
-                Assert.isNotNull(gene, "Failed to create gene for " + optionId);
+                IGene<?> gene = geneFactory.newGene(optionId, value.toString(), prob);
+                assert gene != null : "Failed to create gene for " + optionId;
                 extraGenes.add(gene);
             }
         }
         return extraGenes;
     }
-
+    
     /**
      * Determines which of the registered layout options are known by the
      * specified providers.
-     *
+     * 
      * @param providerIds
-     *            a list of layout provider IDs
+     *            a list of layout provider IDs; must not be {@code null}
      * @return a set containing the IDs of the layout options that are known by
      *         the specified providers and that are registered as evolutionData
      */
     private Set<String> getLearnableKnownOptions(final List<String> providerIds) {
-        final Set<String> knownOptionIds = new HashSet<String>();
+        if (providerIds == null) {
+            throw new IllegalArgumentException();
+        }
+
+        Set<String> knownOptionIds = new HashSet<String>();
         for (final String id : providerIds) {
-            final LayoutProviderData provider =
-                    LayoutServices.getInstance().getLayoutProviderData(id);
+            LayoutProviderData provider = LayoutServices.getInstance().getLayoutProviderData(id);
             for (final String optionId : this.learnableOptions) {
                 if (provider.knowsOption(optionId)) {
                     knownOptionIds.add(optionId);

@@ -74,7 +74,7 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
     public Image getColumnImage(final Object element, final int columnIndex) {
         switch (columnIndex) {
         case 0:
-            final int pos = this.evolView.getEvolModel().getPosition();
+            int pos = this.evolView.getEvolModel().getPosition();
             if ((element instanceof PopulationTableEntry)
                     && (((PopulationTableEntry) element).getIndex() == pos)) {
                 return this.currentImage;
@@ -97,12 +97,12 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
             return ((PopulationTableEntry) element).getId();
         case 1:
             final int ratingFactor = 100;
-            final int scaledRating =
+            int scaledRating =
                     (int) Math.round(individual.hasUserRating() ? individual.getUserRating()
                             * ratingFactor : 0);
             return (scaledRating + "");
         case 2:
-            final IGene<?> hintGene = individual.find(LayoutOptions.LAYOUTER_HINT_ID);
+            IGene<?> hintGene = individual.find(LayoutOptions.LAYOUTER_HINT_ID);
             String providerName = null;
             if (hintGene instanceof ListItemGene) {
                 final String hintId = hintGene.toString();
@@ -124,5 +124,4 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
     public boolean isLabelProperty(final Object element, final String property) {
         return false;
     }
-
 }

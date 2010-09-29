@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ import de.cau.cs.kieler.kiml.evol.IItemFilter;
 public class Population extends ArrayList<Genome> implements IFilterable<Population, Genome> {
 
     /**
-     *
+     * For {@link Serializable}.
      */
     private static final long serialVersionUID = -5511104369758838181L;
 
@@ -93,7 +94,7 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
     public Genome pick() {
         Genome result = null;
         if (size() > 0) {
-            final int pos = (int) (Math.random() * size());
+            int pos = (int) (Math.random() * size());
             result = get(pos);
         }
         return result;
@@ -107,8 +108,9 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
      *         that pass the filter.
      */
     public Population select(final IItemFilter<Genome> filter) {
-        final Population result = new Population();
+        Population result = new Population();
         for (final Genome g : this) {
+            // TODO: use FilteredIterator from kieler.core(.util)
             if (filter.isMatch(g)) {
                 result.add(g);
             }
@@ -118,8 +120,8 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
 
     @Override
     public String toString() {
-        final String newLine = System.getProperty("line.separator");
-        final StringBuilder result = new StringBuilder();
+        String newLine = System.getProperty("line.separator");
+        StringBuilder result = new StringBuilder();
         int i = 0;
         for (final Genome ind : this) {
             result.append("#" + ++i + ": " + ind.toString() + newLine);
@@ -131,8 +133,8 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
      * @return a string containing detailed information about the population.
      */
     public String getDetails() {
-        final String newLine = System.getProperty("line.separator");
-        final StringBuilder result = new StringBuilder(this.size() * 70);
+        String newLine = System.getProperty("line.separator");
+        StringBuilder result = new StringBuilder(this.size() * 70);
 
         int i = 0;
         for (final Genome ind : this) {

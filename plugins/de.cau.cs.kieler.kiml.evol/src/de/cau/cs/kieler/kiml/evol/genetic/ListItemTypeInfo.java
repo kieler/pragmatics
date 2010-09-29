@@ -57,7 +57,7 @@ public class ListItemTypeInfo extends TypeInfo<Integer> {
      *            the list
      */
     public ListItemTypeInfo(final Integer theDefaultValue, final List<?> theList) {
-        this(theDefaultValue, ListItemGene.RADIO_GENE_FORMATTER, theList);
+        this(theDefaultValue, ListItemGene.LIST_ITEM_GENE_FORMATTER, theList);
     }
 
     @SuppressWarnings("unchecked")

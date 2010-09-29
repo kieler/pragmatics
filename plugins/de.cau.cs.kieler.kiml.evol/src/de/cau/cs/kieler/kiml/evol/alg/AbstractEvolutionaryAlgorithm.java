@@ -189,7 +189,15 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
     }
 
     // private fields
+    /** The number of the current generation. */
     private int generation = 0;
+
+    /**
+     * Indicates whether the algorithm has been initialized. Some methods
+     * require it to be initialized.
+     */
     private boolean isInitialized = false;
+
+    /** The list of listeners to the evolutionary algorithm. */
     private final List<IEvolutionListener> listeners = new LinkedList<IEvolutionListener>();
 }

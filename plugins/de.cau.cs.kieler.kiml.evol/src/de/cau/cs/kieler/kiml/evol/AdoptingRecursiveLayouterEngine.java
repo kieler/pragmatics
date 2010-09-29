@@ -122,13 +122,14 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
             Type layoutOptionType = data.getType();
 
+            // TODO: discuss: polymorphism should rather be used instead of
+            // switch case statement
             switch (layoutOptionType) {
             case BOOLEAN:
                 if (value instanceof Boolean) {
                     shapeLayout.setProperty(data, Integer.valueOf((((Boolean) value) ? 1 : 0)));
                 } else {
-                    shapeLayout.setProperty(data,
-                            Integer.valueOf(Math.round(((Float) value).floatValue())));
+                    shapeLayout.setProperty(data, Math.round(((Float) value).floatValue()));
                 }
                 break;
 

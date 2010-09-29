@@ -15,8 +15,6 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -36,6 +34,9 @@ import de.cau.cs.kieler.kiml.grana.MinAvgMaxResult;
  */
 public class EdgeUniformityMetric implements IAnalysis {
 
+    /** Identifier for "edge length". */
+    private static final String GRANA_EDGE_LENGTH = "de.cau.cs.kieler.kiml.grana.edgeLength";
+
     /**
      * {@inheritDoc}
      */
@@ -48,40 +49,40 @@ public class EdgeUniformityMetric implements IAnalysis {
         Float result = null;
 
         try {
-            final Object edgeLengthResult = results.get("de.cau.cs.kieler.kiml.grana.edgeLength");
+            Object edgeLengthResult = results.get(GRANA_EDGE_LENGTH);
 
             if (edgeLengthResult instanceof MinAvgMaxResult<?, ?>) {
 
-                final MinAvgMaxResult<?, ?> mmr = ((MinAvgMaxResult<?, ?>) edgeLengthResult);
-                final Float min = (Float) mmr.getMin();
-                final Float max = (Float) mmr.getMax();
-                final Float avg = (Float) mmr.getAvg();
+                MinAvgMaxResult<?, ?> mmr = ((MinAvgMaxResult<?, ?>) edgeLengthResult);
+                Float min = (Float) mmr.getMin();
+                Float max = (Float) mmr.getMax();
+                Float avg = (Float) mmr.getAvg();
 
-                final float range = max.floatValue() - min.floatValue();
+                float range = max - min;
 
-                final float rangeToAverageRatio = range / avg.floatValue();
+                float rangeToAverageRatio = range / avg;
 
                 final float half = .5f;
                 // FIXME this correlates with the layout size?
                 if (rangeToAverageRatio < 1.0f) {
                     // relatively small range
-                    result = Float.valueOf(1.0f - rangeToAverageRatio * half);
+                    result = 1.0f - rangeToAverageRatio * half;
                 } else {
                     // relatively big range
-                    result = Float.valueOf((1.0f / rangeToAverageRatio) * half);
+                    result = (1.0f / rangeToAverageRatio) * half;
                 }
 
-                Assert.isTrue((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f),
-                        "Metric result out of bounds: " + result);
+                assert ((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f)) : "Metric result out of bounds: "
+                        + result;
             } else {
                 throw new KielerException("Edge length uniformity analysis failed.");
             }
 
         } finally {
+            // We must close the monitor.
             progressMonitor.done();
         }
 
         return result;
     }
-
 }

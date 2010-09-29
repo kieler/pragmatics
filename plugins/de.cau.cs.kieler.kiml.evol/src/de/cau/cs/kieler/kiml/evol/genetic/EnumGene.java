@@ -39,7 +39,7 @@ public final class EnumGene extends AbstractGene<Integer> {
      * {@inheritDoc}
      */
     public IGene<Integer> newMutation() {
-        final EnumGene result = this.newMutation(this, getMutationInfo());
+        EnumGene result = this.newMutation(this, getMutationInfo());
         return result;
     }
 
@@ -59,10 +59,12 @@ public final class EnumGene extends AbstractGene<Integer> {
             final int theValue,
             final Class<? extends Enum<?>> theEnumClass,
             final double theMutationProbability) {
-        super(theId, Integer.valueOf(theValue), new EnumTypeInfo(Integer.valueOf(0),
-                ENUM_FORMATTER, theEnumClass), new MutationInfo(theMutationProbability,
-                Distribution.UNIFORM));
-        Assert.isLegal(theEnumClass != null);
+        super(theId, Integer.valueOf(theValue),
+                new EnumTypeInfo(0, ENUM_FORMATTER, theEnumClass), new MutationInfo(
+                        theMutationProbability, Distribution.UNIFORM));
+        if (theEnumClass == null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -72,13 +74,14 @@ public final class EnumGene extends AbstractGene<Integer> {
     @Override
     public String toString() {
         Assert.isNotNull(getEnumClass());
-        final Enum<?>[] constants = getEnumClass().getEnumConstants();
+        Enum<?>[] constants = getEnumClass().getEnumConstants();
         if (constants == null) {
             return "";
         }
-        final int value = getValue().intValue();
-        Assert.isTrue((value >= 0) && (value < constants.length));
-        final String result = constants[value].toString();
+        int value = getValue().intValue();
+        assert (value >= 0) && (value < constants.length);
+
+        String result = constants[value].toString();
         return result;
     }
 
@@ -88,10 +91,11 @@ public final class EnumGene extends AbstractGene<Integer> {
             return false;
         }
 
-        final EnumGene eg2 = (EnumGene) theObj;
+        EnumGene other = (EnumGene) theObj;
 
-        return (eg2.getEnumClass().equals(this.getEnumClass())
-                && (eg2.getId().equals(this.getId())) && eg2.getValue().equals(this.getValue()));
+        return (other.getEnumClass().equals(this.getEnumClass())
+                && (other.getId().equals(this.getId())) && other.getValue().equals(
+                this.getValue()));
     }
 
     @Override
@@ -105,11 +109,11 @@ public final class EnumGene extends AbstractGene<Integer> {
             final int f1 = 17881;
             final int f2 = 41;
             this.cachedHash =
-                    Integer.valueOf((this.getEnumClass().hashCode() * f1
-                            + this.getId().hashCode() * f2 + this.getValue().hashCode()));
+                    (this.getEnumClass().hashCode() * f1 + this.getId().hashCode() * f2 + this
+                            .getValue().hashCode());
         }
 
-        return this.cachedHash.intValue();
+        return this.cachedHash;
     }
 
     private EnumGene newMutation(final EnumGene template, final MutationInfo mutationInfo) {
@@ -133,35 +137,30 @@ public final class EnumGene extends AbstractGene<Integer> {
         }
 
         public EnumGene newMutation(final EnumGene template, final MutationInfo mutationInfo) {
-            Assert.isLegal(template != null);
-            Assert.isLegal(mutationInfo != null);
-
             if ((template == null) || (mutationInfo == null)) {
-                return null;
+                throw new IllegalArgumentException();
             }
 
-            final EnumTypeInfo typeInfo = template.getTypeInfo();
-            Assert.isNotNull(typeInfo);
+            EnumTypeInfo typeInfo = template.getTypeInfo();
+            assert typeInfo != null;
 
-            final Random r = template.getRandomGenerator();
-            Assert.isNotNull(r);
+            Random random = template.getRandomGenerator();
+            assert random != null;
 
-            final double prob = mutationInfo.getProbability();
+            double prob = mutationInfo.getProbability();
 
-            final Distribution distr = mutationInfo.getDistr();
-            Assert.isTrue(distr == Distribution.UNIFORM);
+            Distribution distr = mutationInfo.getDistr();
+            assert (distr == Distribution.UNIFORM);
 
-            final Class<? extends Enum<?>> enumClass = typeInfo.getTypeClass();
-            final Integer lowerBound = typeInfo.getLowerBound();
-            final Integer upperBound = typeInfo.getUpperBound();
-            final Integer value = template.getValue();
+            Class<? extends Enum<?>> enumClass = typeInfo.getTypeClass();
+            Integer lowerBound = typeInfo.getLowerBound();
+            Integer upperBound = typeInfo.getUpperBound();
+            Integer value = template.getValue();
 
             int newInt = value.intValue();
-            if (r.nextDouble() < prob) {
+            if (random.nextDouble() < prob) {
                 // Uniform distribution
-                newInt =
-                        (r.nextInt((upperBound.intValue() - lowerBound.intValue() + 1)) + lowerBound
-                                .intValue());
+                newInt = (random.nextInt((upperBound - lowerBound + 1)) + lowerBound);
             }
             return new EnumGene(template.getId(), newInt, enumClass, prob);
         }
@@ -189,13 +188,13 @@ public final class EnumGene extends AbstractGene<Integer> {
                 Assert.isTrue((value >= 0) && (value < constants.length));
                 final String result = constants[value].toString();
                 return result;
-            } else if (o instanceof UniversalGene) {
-                final Class<?> enumClass = ((UniversalGene) o).getTypeInfo().getTypeClass();
+            } else if (o instanceof UniversalNumberGene) {
+                final Class<?> enumClass = ((UniversalNumberGene) o).getTypeInfo().getTypeClass();
                 @SuppressWarnings("unchecked")
                 final Enum<?>[] constants =
                         ((Class<? extends Enum<?>>) enumClass).getEnumConstants();
 
-                final Integer value = Integer.valueOf(((UniversalGene) o).getIntValue());
+                final Integer value = Integer.valueOf(((UniversalNumberGene) o).getIntValue());
 
                 if (constants == null) {
                     return value.toString();

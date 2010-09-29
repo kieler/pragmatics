@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.evol.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -63,8 +62,8 @@ public class AutoRateAllHandler extends AbstractHandler {
 
             final int scale = 1000;
             final int autoRatingWork = 4;
-            final int averageRatingWork = 1;
-            final int total = autoRatingWork + averageRatingWork;
+            int averageRatingWork = 1;
+            int total = autoRatingWork + averageRatingWork;
 
             try {
                 monitor.beginTask("Performing Auto-rating", total * scale);
@@ -110,7 +109,7 @@ public class AutoRateAllHandler extends AbstractHandler {
     public Object execute(final ExecutionEvent event) throws ExecutionException {
 
         // Get the EvolView (must be in UI thread).
-        final EvolView view =
+        EvolView view =
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
         if ((view == null)) {
@@ -118,15 +117,15 @@ public class AutoRateAllHandler extends AbstractHandler {
         }
 
         // Get the evolution model.
-        final EvolModel model = view.getEvolModel();
-        Assert.isNotNull(model);
+        EvolModel model = view.getEvolModel();
+        assert model != null;
 
         if (model.isValid()) {
             // Create job for auto-rating.
-            final Job autoRateAllJob = new AutoRateAllJob("Auto-Rating", model);
+            Job autoRateAllJob = new AutoRateAllJob("Auto-Rating", model);
 
             // Process the job.
-            final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
+            IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
 
             autoRateAllJob.setProgressGroup(monitor, IProgressMonitor.UNKNOWN);
             autoRateAllJob.setUser(true);

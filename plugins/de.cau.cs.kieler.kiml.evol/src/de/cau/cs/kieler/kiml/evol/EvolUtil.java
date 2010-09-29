@@ -102,7 +102,7 @@ public final class EvolUtil {
             }
 
             final LayoutServices layoutServices = LayoutServices.getInstance();
-            assert layoutServices != null;
+            // presuming layoutServices != null
 
             // Get the expected layout type id.
             LayoutProviderData expectedProviderData =
@@ -954,8 +954,9 @@ public final class EvolUtil {
         }
 
         LayoutServices layoutServices = LayoutServices.getInstance();
-
+        // presuming layoutServices != null
         LayoutProviderData providerData = layoutServices.getLayoutProviderData(providerId);
+        // presuming providerData != null
         String newTypeId = providerData.getType();
 
         boolean result = typeId.equalsIgnoreCase(newTypeId);
@@ -1126,8 +1127,7 @@ public final class EvolUtil {
 
                             if (!canSetLayoutHint) {
                                 // We have nothing to do, for we are not allowed
-                                // to set
-                                // the layout hint at all.
+                                // to set the layout hint at all.
                                 break;
                             }
 
@@ -1301,7 +1301,7 @@ public final class EvolUtil {
      * @return a list of layout inspectors
      */
     private static List<ILayoutInspector> getLayoutInspectors(final Set<IEditorPart> editors) {
-        final List<ILayoutInspector> inspectors = new LinkedList<ILayoutInspector>();
+        List<ILayoutInspector> inspectors = new LinkedList<ILayoutInspector>();
 
         // Handle current editor.
         IEditorPart currentEditor = getCurrentEditor();
@@ -1383,7 +1383,7 @@ public final class EvolUtil {
         for (final ILayoutInspector inspector : inspectors) {
             // TODO: get the values via inspector#getOption(), not via
             // LayoutPropertySource
-            final LayoutPropertySource source = new LayoutPropertySource(inspector);
+            LayoutPropertySource source = new LayoutPropertySource(inspector);
             Object value;
             try {
                 value = inspector.getOption(optionData);
@@ -1434,13 +1434,13 @@ public final class EvolUtil {
         // Get the current editor (may be null).
         IEditorPart currentEditor = getCurrentEditor();
 
-        final String prefEditors =
+        String prefEditors =
                 EvolPlugin.getDefault().getPreferenceStore().getString(EvolPlugin.PREF_EDITORS);
 
-        final boolean wantAllEditors = EvolPlugin.ALL_EDITORS.equalsIgnoreCase(prefEditors);
+        boolean wantAllEditors = EvolPlugin.ALL_EDITORS.equalsIgnoreCase(prefEditors);
 
         // Collect the editor(s).
-        final Set<IEditorPart> editors;
+        Set<IEditorPart> editors;
         if (wantAllEditors) {
             editors = getEditors();
         } else if (currentEditor != null) {
@@ -1466,18 +1466,16 @@ public final class EvolUtil {
      *            the evolution model; must be valid
      */
     public static void applyCurrentIndividual(final EvolModel model) {
-        Assert.isNotNull(model);
-
-        Assert.isTrue(model.isValid(),
-                "Attempt to apply an individual when the model was not valid.");
+        // presuming model != null
+        assert model.isValid() : "Attempt to apply an individual when the model was not valid.";
 
         // Get the current individual from the model.
-        final Genome individual = model.getCurrentIndividual();
-        Assert.isNotNull(individual);
+        Genome individual = model.getCurrentIndividual();
+        assert individual != null;
 
         // Get the expected layout provider id.
-        final String expectedLayoutProviderId = model.getLayoutProviderId();
-        Assert.isNotNull(expectedLayoutProviderId);
+        String expectedLayoutProviderId = model.getLayoutProviderId();
+        assert expectedLayoutProviderId != null;
 
         // Adopt and layout the current individual.
         syncApplyIndividual(individual, expectedLayoutProviderId);
@@ -1485,5 +1483,4 @@ public final class EvolUtil {
         // Refresh the layout view.
         asyncRefreshLayoutView();
     }
-
 }

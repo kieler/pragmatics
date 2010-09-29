@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.evol.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -85,7 +84,7 @@ public class EvolveHandler extends AbstractHandler {
                     this.model.autoRateAll(new SubProgressMonitor(this.monitor, ticks));
                 }
 
-                Assert.isNotNull(this.model.getPopulation());
+                assert (this.model.getPopulation() != null);
 
             } else {
                 EvolPlugin.showError("The evolution job did not complete successfully.", null);
@@ -138,7 +137,7 @@ public class EvolveHandler extends AbstractHandler {
      */
     private static final String PARAM_STEPS_PER_AUTO_RATING =
             "de.cau.cs.kieler.kiml.evol.stepsBeforeAutoRating";
-    
+
     /**
      * Identifier for the parameter "maximum steps".
      */
@@ -159,7 +158,7 @@ public class EvolveHandler extends AbstractHandler {
      * {@inheritDoc}
      */
     public Object execute(final ExecutionEvent executionEvent) throws ExecutionException {
-        final EvolView view =
+        EvolView view =
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
 
@@ -167,30 +166,30 @@ public class EvolveHandler extends AbstractHandler {
             return null;
         }
 
-        final EvolModel model = view.getEvolModel();
+        EvolModel model = view.getEvolModel();
         if (((model == null) || !model.isValid())) {
             return null;
         }
 
-        final String maxStepsAttr = executionEvent.getParameter(PARAM_MAX_STEPS);
-        final int maxSteps = (maxStepsAttr == null ? MAX_STEPS : Integer.parseInt(maxStepsAttr));
+        String maxStepsAttr = executionEvent.getParameter(PARAM_MAX_STEPS);
+        int maxSteps = (maxStepsAttr == null ? MAX_STEPS : Integer.parseInt(maxStepsAttr));
 
-        final String stepsBeforeAutoRatingAttr =
+        String stepsBeforeAutoRatingAttr =
                 executionEvent.getParameter(PARAM_STEPS_PER_AUTO_RATING);
-        final int stepsBeforeAutoRating =
+        int stepsBeforeAutoRating =
                 (stepsBeforeAutoRatingAttr == null ? STEPS_PER_AUTO_RATING : Integer
                         .parseInt(stepsBeforeAutoRatingAttr));
 
-        final EvolveJob evolveJob = new EvolveJob("Evolving", model);
+        EvolveJob evolveJob = new EvolveJob("Evolving", model);
 
-        final IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
+        IProgressMonitor monitor = Job.getJobManager().createProgressGroup();
 
         evolveJob.setProgressGroup(monitor, IProgressMonitor.UNKNOWN);
         evolveJob.setPriority(Job.LONG);
         evolveJob.setUser(true);
 
         for (int steps = 0; steps < maxSteps; steps++) {
-            final boolean wantAutoRating = isAutoRatingStep(steps, stepsBeforeAutoRating);
+            boolean wantAutoRating = isAutoRatingStep(steps, stepsBeforeAutoRating);
 
             evolveJob.addJobChangeListener(new EvolutionJobChangeAdapter(monitor,
                     model, wantAutoRating));

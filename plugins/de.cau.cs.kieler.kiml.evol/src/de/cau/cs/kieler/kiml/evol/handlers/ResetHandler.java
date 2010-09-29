@@ -32,7 +32,7 @@ public class ResetHandler extends AbstractHandler {
      * {@inheritDoc}
      */
     public Object execute(final ExecutionEvent event) throws ExecutionException {
-        final IViewPart view =
+        IViewPart view =
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
         if (view instanceof EvolView) {

@@ -13,8 +13,6 @@ package de.cau.cs.kieler.kiml.evol.grana;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -30,12 +28,12 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 public class BendsMetric implements IAnalysis {
 
     /**
-     *
+     * Identifier for "bend point count".
      */
     private static final String GRANA_BENDPOINT_COUNT =
             "de.cau.cs.kieler.kiml.grana.bendpointCount";
     /**
-     *
+     * Identifier for "edge count".
      */
     private static final String GRANA_EDGE_COUNT = "de.cau.cs.kieler.kiml.grana.edgeCount";
 
@@ -51,13 +49,10 @@ public class BendsMetric implements IAnalysis {
         Float result;
         try {
             // load numbers from analyses
-            final Object edgesResult = results.get(GRANA_EDGE_COUNT);
-            final Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
-            final int edgesCount = ((Integer) edgesResult).intValue();
-            final int bendsCount = ((Integer) bendsResult).intValue();
-
-            // System.out.println("edges: " + edgesCount + " bends: " +
-            // bendsCount);
+            Object edgesResult = results.get(GRANA_EDGE_COUNT);
+            Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
+            int edgesCount = ((Integer) edgesResult).intValue();
+            int bendsCount = ((Integer) bendsResult).intValue();
 
             // FIXME: For some reason, the bends count in the layout graph may
             // be reduced after the layout is applied. This means the result
@@ -67,16 +62,15 @@ public class BendsMetric implements IAnalysis {
 
             // normalize
             if (edgesCount + bendsCount > 0) {
-                result =
-                        Float.valueOf(1.0f - (float) bendsCount
-                                / (float) (edgesCount + bendsCount));
+                result = 1.0f - (float) bendsCount / (float) (edgesCount + bendsCount);
             } else {
-                result = Float.valueOf(1.0f);
+                result = 1.0f;
             }
-            Assert.isTrue((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f),
-                    "Metric result out of bounds: " + result);
+            assert ((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f)) : "Metric result out of bounds: "
+                    + result;
 
         } finally {
+            // We must close the monitor.
             progressMonitor.done();
         }
 

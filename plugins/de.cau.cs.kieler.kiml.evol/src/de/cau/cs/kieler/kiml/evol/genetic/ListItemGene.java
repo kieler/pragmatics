@@ -19,8 +19,6 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 import java.util.List;
 import java.util.Random;
 
-import org.eclipse.core.runtime.Assert;
-
 /**
  * A gene that can mutate over the elements of a list.
  *
@@ -32,28 +30,24 @@ public class ListItemGene extends AbstractGene<Integer> {
     /**
      * Default formatter for integer values.
      */
-    public static final IValueFormatter RADIO_GENE_FORMATTER = new IValueFormatter() {
+    public static final IValueFormatter LIST_ITEM_GENE_FORMATTER = new IValueFormatter() {
         /**
          * {@inheritDoc}
          */
         public String getString(final Object o) {
             if (o instanceof ListItemGene) {
-                final ListItemGene gene = (ListItemGene) o;
-                final ListItemTypeInfo typeInfo = gene.getTypeInfo();
-                final List<?> list = typeInfo.getList();
-                Assert.isNotNull(list);
-                if (list == null) {
-                    return "";
-                }
-                final int value = gene.getValue().intValue();
-                Assert.isTrue((value >= 0) && (value < list.size()));
-                final String result = list.get(value).toString();
-                return result;
+                ListItemGene gene = (ListItemGene) o;
+                ListItemTypeInfo typeInfo = gene.getTypeInfo();
+                List<?> list = typeInfo.getList();
+                assert list != null;
 
+                int value = gene.getValue().intValue();
+                assert (value >= 0) && (value < list.size());
+                String result = list.get(value).toString();
+                return result;
             }
             return null;
         }
-
     };
 
     /**
@@ -77,6 +71,7 @@ public class ListItemGene extends AbstractGene<Integer> {
         super(theId, theValue, theTypeInfo, theMutationInfo);
     }
 
+    /** The cached has value. */
     private Integer cachedHash;
 
     @Override
@@ -91,40 +86,37 @@ public class ListItemGene extends AbstractGene<Integer> {
         if (!(template instanceof ListItemGene)) {
             return null;
         }
-        final ListItemGene radioTemplate = (ListItemGene) template;
-        return new ListItemGene(radioTemplate.getId(), radioTemplate.getValue(),
-                radioTemplate.getTypeInfo(), radioTemplate.getMutationInfo());
+        ListItemGene listItemTemplate = (ListItemGene) template;
+        return new ListItemGene(listItemTemplate.getId(), listItemTemplate.getValue(),
+                listItemTemplate.getTypeInfo(), listItemTemplate.getMutationInfo());
     }
 
     /**
      * {@inheritDoc}
      */
     public IGene<Integer> newMutation() {
-        final ListItemGene result;
+        ListItemGene result;
 
-        final Random r = this.getRandomGenerator();
-        final MutationInfo mutationInfo = this.getMutationInfo();
-        final double prob = mutationInfo.getProbability();
+        Random random = this.getRandomGenerator();
+        MutationInfo mutationInfo = this.getMutationInfo();
+        double prob = mutationInfo.getProbability();
 
         // must be uniform distribution
-        final Distribution distr = mutationInfo.getDistr();
-        Assert.isTrue(distr == Distribution.UNIFORM);
+        Distribution distr = mutationInfo.getDistr();
+        assert distr == Distribution.UNIFORM;
 
-        final TypeInfo<Integer> typeInfo = this.getTypeInfo();
-        final Integer lowerBound = typeInfo.getLowerBound();
-        final Integer upperBound = typeInfo.getUpperBound();
+        TypeInfo<Integer> typeInfo = this.getTypeInfo();
+        Integer lowerBound = typeInfo.getLowerBound();
+        Integer upperBound = typeInfo.getUpperBound();
 
-        final Integer value = Integer.valueOf(this.getValue().intValue());
+        Integer value = this.getValue().intValue();
         int newInt = value.intValue();
-        if (r.nextDouble() < prob) {
-            newInt =
-                    (r.nextInt((upperBound.intValue() - lowerBound.intValue() + 1)) + lowerBound
-                            .intValue());
+        if (random.nextDouble() < prob) {
+            newInt = (random.nextInt((upperBound - lowerBound + 1)) + lowerBound);
         }
 
         result =
-                new ListItemGene(this.getId(), Integer.valueOf(newInt), this.getTypeInfo(),
-                        this.getMutationInfo());
+                new ListItemGene(this.getId(), newInt, this.getTypeInfo(), this.getMutationInfo());
 
         return result;
     }
@@ -144,12 +136,11 @@ public class ListItemGene extends AbstractGene<Integer> {
             final int f1 = 17881;
             final int f2 = 41;
             this.cachedHash =
-                    Integer.valueOf(this.getTypeInfo().getList().hashCode() * f1
-                            + this.getId().hashCode() * f2 + this.getValue().hashCode());
-
+                    this.getTypeInfo().getList().hashCode() * f1 + this.getId().hashCode() * f2
+                            + this.getValue().hashCode();
         }
 
-        return this.cachedHash.intValue();
+        return this.cachedHash;
     }
 
     @Override
@@ -158,10 +149,10 @@ public class ListItemGene extends AbstractGene<Integer> {
             return false;
         }
 
-        final ListItemGene rg2 = (ListItemGene) theObj;
+        final ListItemGene other = (ListItemGene) theObj;
 
-        return (rg2.getTypeInfo().getList().equals(this.getTypeInfo().getList())
-                && (rg2.getId().equals(this.getId())) && rg2.getValue().equals(this.getValue()));
+        return (other.getTypeInfo().getList().equals(this.getTypeInfo().getList())
+                && (other.getId().equals(this.getId())) && other.getValue().equals(
+                this.getValue()));
     }
-
 }

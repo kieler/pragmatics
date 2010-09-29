@@ -44,8 +44,8 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public static final Comparator<Genome> DESCENDING_RATING_COMPARATOR = new Comparator<Genome>() {
         public int compare(final Genome ind0, final Genome ind1) {
-                    final double v0 = (ind0.getUserRating() == null ? 0.0 : ind0.getUserRating());
-                    final double v1 = (ind1.getUserRating() == null ? 0.0 : ind1.getUserRating());
+                    double v0 = (ind0.getUserRating() == null ? 0.0 : ind0.getUserRating());
+                    double v1 = (ind1.getUserRating() == null ? 0.0 : ind1.getUserRating());
 
                     if (v0 == v1) {
                         return 0;
@@ -56,10 +56,19 @@ public class Genome extends ArrayList<IGene<?>> {
                 }
             };
 
+    /**
+     * Default distance for list item genes.
+     */
     private static final double LIST_ITEM_GENE_DISTANCE = 2.5;
 
+    /**
+     * Default gene distance.
+     */
     private static final double DEFAULT_GENE_DISTANCE = 1.0;
 
+    /**
+     * Scaling factor for float gene distances.
+     */
     private static final float FLOAT_GENE_SCALE = 0.8f;
 
     /**
@@ -73,11 +82,8 @@ public class Genome extends ArrayList<IGene<?>> {
      * @return the distance between the genomes
      */
     public static final double distance(final Genome genome0, final Genome genome1) {
-
-        Assert.isLegal((genome0 != null) && (genome1 != null)
-                && (genome0.size() == genome1.size()));
-        if ((genome0 == null) || (genome1 == null)) {
-            return 0.0;
+        if ((genome0 == null) || (genome1 == null) || (genome0.size() != genome1.size())) {
+            throw new IllegalArgumentException();
         }
 
         Iterator<?> iter0;
@@ -85,24 +91,24 @@ public class Genome extends ArrayList<IGene<?>> {
         double dist = 0.0;
         for (iter0 = genome0.iterator(), iter1 = genome1.iterator(); iter0.hasNext()
                 && iter1.hasNext();) {
-            final IGene<?> gene0 = (IGene<?>) iter0.next();
-            final IGene<?> gene1 = (IGene<?>) iter1.next();
+            IGene<?> gene0 = (IGene<?>) iter0.next();
+            IGene<?> gene1 = (IGene<?>) iter1.next();
 
             if (!gene0.equals(gene1)) {
-                System.out.println(gene0 + " !equals " + gene1);
+                System.out.println(gene0.getId() + ": " + gene0 + " differs from " + gene1);
                 if (gene0 instanceof ListItemGene) {
                     dist += LIST_ITEM_GENE_DISTANCE;
-                } else if ((gene0 instanceof UniversalGene)
-                        && (((UniversalGene) gene0).getTypeInfo().getTypeClass() == Float.class)) {
+                } else if ((gene0 instanceof UniversalNumberGene)
+                        && (((UniversalNumberGene) gene0).getTypeInfo().getTypeClass() == Float.class)) {
                     // Distance of float genes is analogous to the absolute
                     // difference, related to the variance in order to make it
                     // more comparable.
-                    final UniversalGene g0 = ((UniversalGene) gene0);
-                    final UniversalGene g1 = ((UniversalGene) gene1);
-                    final double var0 = g0.getMutationInfo().getVariance();
-                    final double var1 = g1.getMutationInfo().getVariance();
-                    final double var = (var0 + var1) * .5;
-                    final float absDiff =
+                    UniversalNumberGene g0 = ((UniversalNumberGene) gene0);
+                    UniversalNumberGene g1 = ((UniversalNumberGene) gene1);
+                    double var0 = g0.getMutationInfo().getVariance();
+                    double var1 = g1.getMutationInfo().getVariance();
+                    double var = (var0 + var1) * .5;
+                    float absDiff =
                             Math.abs(g0.getValue().floatValue() - g1.getValue().floatValue());
                     dist += absDiff * FLOAT_GENE_SCALE / var;
 
@@ -144,17 +150,18 @@ public class Genome extends ArrayList<IGene<?>> {
      *
      */
     public Genome(final Genome theGenome, final int theGeneration) {
-
-        Assert.isLegal(theGenome != null);
-        if (theGenome != null) {
-            for (final IGene<?> gene : theGenome) {
-                if (gene != null) {
-                    this.add(gene);
-                }
-            }
-            this.userRating = theGenome.getUserRating();
-            this.features = theGenome.getFeatures();
+        if (theGenome == null) {
+            throw new IllegalArgumentException();
         }
+
+        for (final IGene<?> gene : theGenome) {
+            if (gene != null) {
+                this.add(gene);
+            }
+        }
+        this.userRating = theGenome.getUserRating();
+        this.features = theGenome.getFeatures();
+
         this.generation = theGeneration;
         System.out.println("Created individual " + toString());
     }
@@ -219,21 +226,22 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public String getId() {
         return Integer.toHexString(this.hashCode());
-        // return this.id;
     }
 
     /**
      *
      * @return the user-defined rating. A higher value means a better rating.
      *         The value may be negative.
+     * @see #hasUserRating()
      */
-    public synchronized Double getUserRating() {
+    public Double getUserRating() {
         return this.userRating;
     }
 
     /**
      *
      * @return {@code true} if this individual has been rated.
+     * @see #getUserRating()
      */
     public boolean hasUserRating() {
         return (this.userRating != null);
@@ -274,13 +282,13 @@ public class Genome extends ArrayList<IGene<?>> {
      * Sets the user-defined rating.
      *
      * @param theRating
-     *            An Integer (may be negative). A higher value means a better
-     *            rating.
+     *            a double value (may be negative). A higher value means a
+     *            better rating.
      */
     public synchronized void setUserRating(final Double theRating) {
         System.out.println("Assign rating " + theRating + " to individual" + ": " + getId());
 
-        final Double oldRating = getUserRating();
+        Double oldRating = getUserRating();
 
         // compare new rating to previous one
         if (hasUserRating() && (theRating != null)) {
@@ -296,7 +304,7 @@ public class Genome extends ArrayList<IGene<?>> {
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder();
         result.append(this.generation);
         result.append(".");
         result.append(getId());
@@ -315,11 +323,11 @@ public class Genome extends ArrayList<IGene<?>> {
      * mutated version of itself.
      */
     private Genome newMutation() {
-        final Genome newGenome = new Genome(this.generation);
+        Genome newGenome = new Genome(this.generation);
         for (final IGene<?> gene : this) {
-            Assert.isNotNull(gene);
-            final IGene<?> newGene = gene.newMutation();
-            Assert.isNotNull(newGene, "Invalid mutation of " + gene);
+            // presuming gene != null
+            IGene<?> newGene = gene.newMutation();
+            assert newGene != null : "Invalid mutation of " + gene;
             newGenome.add(newGene);
         }
         newGenome.setUserRating(this.userRating);
@@ -330,15 +338,15 @@ public class Genome extends ArrayList<IGene<?>> {
     // return a recombination of the given genomes.
     private static Genome newRecombination(final Genome... genomes) {
         Genome result = new Genome();
-        final Genome oldGenome = genomes[0];
+        Genome oldGenome = genomes[0];
         if (genomes.length == 1) {
             result = new Genome(oldGenome);
             result.setUserRating(oldGenome.getUserRating());
         } else {
-            final int size = genomes[0].size();
+            int size = genomes[0].size();
             // iterate genes
             for (int g = 0; g < size; g++) {
-                final LinkedList<IGene<?>> geneList = new LinkedList<IGene<?>>();
+                LinkedList<IGene<?>> geneList = new LinkedList<IGene<?>>();
                 int gm = 0;
                 for (final Genome genome : genomes) {
                     if (gm++ > 0) {
@@ -358,16 +366,25 @@ public class Genome extends ArrayList<IGene<?>> {
             for (final Genome genome : genomes) {
                 ratingSum += (genome.hasUserRating() ? genome.getUserRating() : 0.0);
             }
-            final double average = ratingSum / genomes.length;
+            double average = ratingSum / genomes.length;
             result.setUserRating(Double.valueOf(average));
         }
         return result;
     }
 
     // private fields
+    /**
+     * Indicates the generation in which the individual was created.
+     */
     private final int generation;
+    /**
+     * The user-defined rating.
+     */
     private Double userRating = null;
 
+    /**
+     * A map of features associated to this genome.
+     */
     private Map<String, Object> features = Collections.emptyMap();
 
     /**
@@ -390,7 +407,7 @@ public class Genome extends ArrayList<IGene<?>> {
      * @return a list of the IDs occurring in this genome.
      */
     public List<String> getIds() {
-        final List<String> result = new LinkedList<String>();
+        List<String> result = new LinkedList<String>();
         for (final IGene<?> gene : this) {
             result.add((String) gene.getId());
         }
@@ -408,16 +425,14 @@ public class Genome extends ArrayList<IGene<?>> {
      *         was no mapping for key.
      */
     public Object addFeature(final String key, final Object value) {
-        Assert.isLegal(key != null);
-        Assert.isNotNull(this.features);
-
-        if (this.features != null) {
-            this.features = new HashMap<String, Object>(this.features);
-
-            return this.features.put(key, value);
+        if (key == null) {
+            throw new IllegalArgumentException();
         }
 
-        return null;
-    }
+        assert this.features != null;
 
+        this.features = new HashMap<String, Object>(this.features);
+
+        return this.features.put(key, value);
+    }
 }

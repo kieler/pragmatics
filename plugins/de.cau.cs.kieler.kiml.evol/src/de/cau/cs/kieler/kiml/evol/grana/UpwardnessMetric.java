@@ -50,28 +50,28 @@ public class UpwardnessMetric implements IAnalysis {
 
         progressMonitor.begin("Upwardness metric analysis", 1);
 
-        final Float result;
+        Float result;
 
         try {
-            final Queue<KNode> nodes = new LinkedList<KNode>();
-            final List<KEdge> totalEdges = new LinkedList<KEdge>();
-            final List<KEdge> upwardEdges = new LinkedList<KEdge>();
+            Queue<KNode> nodes = new LinkedList<KNode>();
+            List<KEdge> totalEdges = new LinkedList<KEdge>();
+            List<KEdge> upwardEdges = new LinkedList<KEdge>();
 
             nodes.add(parentNode);
             while (!nodes.isEmpty()) {
-                final KNode current = nodes.remove();
+                KNode current = nodes.remove();
 
-                final EList<KEdge> edges = current.getOutgoingEdges();
+                EList<KEdge> edges = current.getOutgoingEdges();
 
-                final KShapeLayout currentLayout = current.getData(KShapeLayout.class);
-                final float currentYpos = currentLayout.getYpos();
+                KShapeLayout currentLayout = current.getData(KShapeLayout.class);
+                float currentYpos = currentLayout.getYpos();
 
                 for (final KEdge edge : edges) {
                     totalEdges.add(edge);
-                    final KNode target = edge.getTarget();
+                    KNode target = edge.getTarget();
 
-                    final KShapeLayout targetLayout = target.getData(KShapeLayout.class);
-                    final float targetYpos = targetLayout.getYpos();
+                    KShapeLayout targetLayout = target.getData(KShapeLayout.class);
+                    float targetYpos = targetLayout.getYpos();
 
                     if (targetYpos < currentYpos) {
                         // this is an upward edge
@@ -82,9 +82,10 @@ public class UpwardnessMetric implements IAnalysis {
                 nodes.addAll(current.getChildren());
             }
 
-            result = Float.valueOf(((float) upwardEdges.size() / totalEdges.size()));
+            result = ((float) upwardEdges.size() / totalEdges.size());
 
         } finally {
+            // We must close the monitor.
             progressMonitor.done();
         }
 

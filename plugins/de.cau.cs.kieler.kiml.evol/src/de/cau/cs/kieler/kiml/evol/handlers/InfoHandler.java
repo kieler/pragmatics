@@ -33,7 +33,7 @@ public class InfoHandler extends AbstractHandler {
      */
     public Object execute(final ExecutionEvent theEvent) throws ExecutionException {
 
-        final EvolView view =
+        EvolView view =
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
 
@@ -41,7 +41,7 @@ public class InfoHandler extends AbstractHandler {
             return null;
         }
 
-        final EvolModel model = view.getEvolModel();
+        EvolModel model = view.getEvolModel();
         if ((model == null) || !model.isValid()) {
             return null;
         }

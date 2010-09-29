@@ -46,11 +46,11 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
     public void propertyChange(final PropertyChangeEvent event) {
         super.propertyChange(event);
 
-        final Object source = event.getSource();
+        Object source = event.getSource();
         if (source instanceof BooleanFieldEditor) {
-            final String preferenceName = ((BooleanFieldEditor) source).getPreferenceName();
+            String preferenceName = ((BooleanFieldEditor) source).getPreferenceName();
             if (EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME.equals(preferenceName)) {
-                final boolean booleanValue = ((BooleanFieldEditor) source).getBooleanValue();
+                boolean booleanValue = ((BooleanFieldEditor) source).getBooleanValue();
 
                 this.useDifferentTypeLayoutHint.setEnabled(booleanValue, this.miscGroup);
             }
@@ -77,13 +77,13 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
 
     @Override
     protected void createFieldEditors() {
-        final Composite parent = getFieldEditorParent();
+        Composite parent = getFieldEditorParent();
         // evolution parameters
-        final Group algorithmGroup = new Group(parent, SWT.NONE);
+        Group algorithmGroup = new Group(parent, SWT.NONE);
         algorithmGroup.setText("Evolution parameters");
-        final IntegerFieldEditor popSizeEditor =
+        IntegerFieldEditor popSizeEditor =
                 new IntegerFieldEditor(EvolPlugin.PREF_POPULATION_SIZE, "Population size:",
-                        algorithmGroup, 30);
+                        algorithmGroup, TEXT_LIMIT);
         popSizeEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_FOCUS_LOST);
         popSizeEditor.setValidRange(1, EvolPlugin.MAX_POPULATION_SIZE);
         addField(popSizeEditor);
@@ -98,13 +98,12 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         // true /* useGroup */);
         // addField(editorsEditor);
 
-        final String useLayoutHintText = "Adopt layout hint from genome";
-        final String useDifferentTypeLayoutText = "... also for different types";
+        String useLayoutHintText = "Adopt layout hint from genome";
+        String useDifferentTypeLayoutText = "... also for different types";
         this.useLayoutHint =
                 new BooleanFieldEditor(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME,
                         useLayoutHintText, this.miscGroup);
-        this.useLayoutHint
-.getDescriptionControl(this.miscGroup)
+        this.useLayoutHint.getDescriptionControl(this.miscGroup)
                 .setToolTipText(
                 "If this option is checked, layout hints from the individuals are "
                         + "transferred to the diagram editor(s). For editors with "
@@ -130,5 +129,9 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         parent.setLayout(new FillLayout());
     }
 
+    /** Number of columns. */
     private static final int NUM_COLUMNS = 2;
+    
+    /** Default text limit to use. */
+    private static final int TEXT_LIMIT = 30;
 }

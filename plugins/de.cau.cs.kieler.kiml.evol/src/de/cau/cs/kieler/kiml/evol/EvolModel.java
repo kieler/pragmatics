@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -50,16 +49,22 @@ public final class EvolModel {
 
     // private fields
     /** The evolutionary algorithm for the layout option proposers. */
+
     private BasicEvolutionaryAlgorithm evolAlg;
+
     /** The evolutionary algorithm for the rating predictors. */
     private BasicEvolutionaryAlgorithm predictorsEvolAlg;
+
     /** Index of the currently selected individual. */
+
     private int position;
+
     /**
      * The ID of the layout provider that the current population was created
      * for.
      */
     private String layoutProviderId;
+
     /** The list of listeners to the model. */
     private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
 
@@ -211,7 +216,7 @@ public final class EvolModel {
             // reward predictors
             // XXX: this should be refactored. The predictors' fitness should
             // be calculated an a more sophisticated way.
-            double reward = 0.01;
+            final double reward = 0.01;
             for (final Genome predictor : predictors) {
                 // presuming predictor != null
                 double oldRating = (predictor.hasUserRating() ? predictor.getUserRating() : 0.0);
@@ -245,16 +250,6 @@ public final class EvolModel {
     }
 
     /**
-     * Returns the evolutionary algorithm that is used to evolve the layout
-     * option proposers.
-     *
-     * @return the evolutionary algorithm.
-     */
-    private BasicEvolutionaryAlgorithm getEvolAlg() {
-        return this.evolAlg;
-    }
-
-    /**
      * Returns the layout provider ID that the population was created for.
      *
      * @return the layout provider id
@@ -264,8 +259,9 @@ public final class EvolModel {
     }
 
     /**
+     * Returns the current population.
      *
-     * @return the population
+     * @return the population; may be empty.
      */
     public Population getPopulation() {
         if (this.evolAlg == null) {
@@ -454,7 +450,7 @@ public final class EvolModel {
         }
 
         updatePosition();
-        Assert.isTrue(getPosition() >= 0);
+        assert (getPosition() >= 0);
     }
 
     /**

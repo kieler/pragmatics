@@ -15,8 +15,6 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.util.Random;
 
-import org.eclipse.core.runtime.Assert;
-
 /**
  * A gene is an immutable value container that is able to provide similar
  * versions of itself via mutation and recombination. It carries information
@@ -28,9 +26,16 @@ import org.eclipse.core.runtime.Assert;
  */
 public abstract class AbstractGene<T extends Comparable<? super T>> implements IGene<T> {
     /**
+     * Creates a new {@link AbstractGene} instance.
      *
      * @param theId
+     *            the ID
      * @param theValue
+     *            the value
+     * @param theTypeInfo
+     *            the type info
+     * @param theMutationInfo
+     *            the mutation info
      */
     AbstractGene(
             final Object theId,
@@ -38,11 +43,15 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
             final TypeInfo<T> theTypeInfo,
             final MutationInfo theMutationInfo) {
         // arguments must not be null
-        Assert.isLegal((theId != null) && (theValue != null) && (theTypeInfo != null)
-                && (theMutationInfo != null));
+        if ((theId == null) || (theValue == null) || (theTypeInfo == null)
+                || (theMutationInfo == null)) {
+            throw new IllegalArgumentException();
+        }
+
         // is value within bounds?
-        Assert.isLegal(theTypeInfo.isValueWithinBounds(theValue), "value out of bounds: "
-                + theValue);
+        if (!theTypeInfo.isValueWithinBounds(theValue)) {
+            throw new IllegalArgumentException("value out of bounds: " + theValue);
+        }
 
         // TODO discuss: make constructor private + factory method instead?
         this.id = theId;
@@ -77,14 +86,16 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
     private final Random randomGenerator = new Random();
 
     /**
+     * Returns the ID that is assigned to the gene.
      *
-     * @return the id
+     * @return the ID
      */
     public Object getId() {
         return this.id;
     }
 
     /**
+     * Returns the value that is encoded in the gene.
      *
      * @return the value
      */
@@ -105,7 +116,7 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
     public IGene<T> recombineWith(final IGene<T>... otherGenes) {
         // TODO: discuss: rather use a static recombine() method?
         IGene<T> result;
-        final int pos = (int) (getRandomGenerator().nextDouble() * (otherGenes.length + 1));
+        int pos = (int) (getRandomGenerator().nextDouble() * (otherGenes.length + 1));
         if (pos < otherGenes.length) {
             result = newInstance((AbstractGene<T>) otherGenes[pos]);
         } else {
@@ -115,30 +126,32 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
     }
 
     /**
+     * Returns the mutation info that is associated to this gene.
      *
      * @return the mutation info
      */
     protected MutationInfo getMutationInfo() {
-        Assert.isNotNull(this.mutationInfo);
+        assert this.mutationInfo != null;
         return this.mutationInfo;
     }
-
+    
     /**
-     * Return the random generator instance.
-     *
+     * Return the random generator instance that is used by the gene.
+     * 
      * @return the random generator.
      */
     protected Random getRandomGenerator() {
-        Assert.isNotNull(this.randomGenerator);
+        assert this.randomGenerator != null;
         return this.randomGenerator;
     }
 
     /**
+     * Returns the type info that is attached to this gene.
      *
      * @return the type info
      */
     protected TypeInfo<T> getTypeInfo() {
-        Assert.isNotNull(this.typeInfo);
+        assert this.typeInfo != null;
         return this.typeInfo;
     }
 }

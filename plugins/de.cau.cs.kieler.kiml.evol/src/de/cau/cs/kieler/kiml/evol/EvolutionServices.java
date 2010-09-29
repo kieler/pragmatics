@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
@@ -54,7 +53,7 @@ public final class EvolutionServices {
      * the extension data can be accessed.
      */
     public static synchronized void createExtensionData() {
-        Assert.isTrue(instance == null, "EvolutionServices data already loaded.");
+        assert instance == null : "EvolutionServices data already loaded.";
 
         // create instance of the evolution data holder class
         instance = new EvolutionServices();
@@ -74,7 +73,7 @@ public final class EvolutionServices {
      * @return the singleton instance
      */
     public static EvolutionServices getInstance() {
-        Assert.isNotNull(instance);
+        assert instance != null;
         return instance;
     }
 
@@ -107,8 +106,8 @@ public final class EvolutionServices {
      *         found.
      */
     public IConfigurationElement getEvolutionData(final String id) {
-        Assert.isNotNull(this.evolutionDataMap);
-        final IConfigurationElement result = this.evolutionDataMap.get(id);
+        assert this.evolutionDataMap != null;
+        IConfigurationElement result = this.evolutionDataMap.get(id);
         return result;
     }
 
@@ -120,7 +119,7 @@ public final class EvolutionServices {
      * @return a copy of the registered evolution data IDs.
      */
     public Set<String> getEvolutionDataIds() {
-        Assert.isNotNull(this.evolutionDataMap);
+        assert this.evolutionDataMap != null;
         return Collections.unmodifiableSet(this.evolutionDataMap.keySet());
     }
 
@@ -135,8 +134,8 @@ public final class EvolutionServices {
      *         none is found.
      */
     public IConfigurationElement getLayoutMetric(final String id) {
-        Assert.isNotNull(this.layoutMetricsMap);
-        final IConfigurationElement result = this.layoutMetricsMap.get(id);
+        assert this.layoutMetricsMap != null;
+        IConfigurationElement result = this.layoutMetricsMap.get(id);
         return result;
     }
 
@@ -148,7 +147,7 @@ public final class EvolutionServices {
      * @return a copy of the registered layout metrics IDs.
      */
     public Set<String> getLayoutMetricsIds() {
-        Assert.isNotNull(this.layoutMetricsMap);
+        assert this.layoutMetricsMap != null;
         return Collections.unmodifiableSet(this.layoutMetricsMap.keySet());
     }
 
@@ -160,6 +159,7 @@ public final class EvolutionServices {
      * @return the set of layout metrics
      */
     public Set<AbstractInfoAnalysis> getLayoutMetrics() {
+        assert this.cachedMetrics != null;
         return Collections.unmodifiableSet(this.cachedMetrics);
     }
 
@@ -168,13 +168,13 @@ public final class EvolutionServices {
      */
     private void loadEvolutionDataExtensions() {
         this.evolutionDataMap = new HashMap<String, IConfigurationElement>();
-        final IConfigurationElement[] extensions =
+        IConfigurationElement[] extensions =
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
                         EXTP_ID_EVOLUTION_DATA);
 
         for (final IConfigurationElement element : extensions) {
             if (ELEMENT_DATA.equals(element.getName())) {
-                final String option = element.getAttribute("option");
+                String option = element.getAttribute("option");
                 this.evolutionDataMap.put(option, element);
             }
         }
@@ -184,16 +184,16 @@ public final class EvolutionServices {
      * Loads and registers all metrics from the extension point.
      */
     private void loadLayoutMetricsExtensions() {
-        final IConfigurationElement[] extensions =
+        IConfigurationElement[] extensions =
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
                         AnalysisServices.EXTP_ID_ANALYSIS_PROVIDERS);
 
         // get the metrics via the respective analysis category
-        final AnalysisCategory metricsCategory =
+        AnalysisCategory metricsCategory =
                 AnalysisServices.getInstance().getCategoryById(METRICS_CATEGORY);
-        final List<AbstractInfoAnalysis> metrics = metricsCategory.getAnalyses();
-        Assert.isNotNull(metrics);
-        final List<String> metricIds = new ArrayList<String>(metrics.size());
+        List<AbstractInfoAnalysis> metrics = metricsCategory.getAnalyses();
+        assert metrics != null;
+        List<String> metricIds = new ArrayList<String>(metrics.size());
 
         for (final AbstractInfoAnalysis metric : metrics) {
             metricIds.add(metric.getID());
@@ -204,7 +204,7 @@ public final class EvolutionServices {
         // Store the configuration elements of the metrics.
         for (final IConfigurationElement element : extensions) {
             if (AnalysisServices.ELEMENT_ANALYSIS_PROVIDER.equals(element.getName())) {
-                final String id = element.getAttribute("id");
+                String id = element.getAttribute("id");
                 if (metricIds.contains(id)) {
                     this.layoutMetricsMap.put(id, element);
                 }
