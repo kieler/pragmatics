@@ -20,6 +20,14 @@
                   size="&lt;0"
                   type="Entity">
             </listSizeCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="ptolemy.actor.lib.Const"
+                  figureSize="50,30"
+                  key="ptolemyClass"
+                  layoutParam="ptolemy.actor.lib.Const"
+                  value="ptolemy.actor.lib.Const">
+            </customCondition>
             <compoundCondition
                   figureParam="icon">
                <customCondition

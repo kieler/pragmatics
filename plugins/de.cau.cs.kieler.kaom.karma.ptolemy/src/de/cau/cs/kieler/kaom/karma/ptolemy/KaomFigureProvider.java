@@ -32,6 +32,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
@@ -48,9 +49,11 @@ import ptolemy.kernel.Entity;
 import ptolemy.kernel.util.ConfigurableAttribute;
 import ptolemy.moml.test.TestIconLoader;
 import ptolemy.vergil.icon.EditorIcon;
+import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.core.ui.figures.RoundedRectangleFigure;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.kvid.KvidUtil;
 import de.cau.cs.kieler.kvid.data.DataObject;
@@ -119,6 +122,21 @@ public class KaomFigureProvider implements IRenderingProvider {
             throw new RuntimeException("initializing svg from ptolemyClass failed");
         } else if (input.equals("ptolemy.actor.lib.MonitorValue")) {
             return createMonitorValue(object);
+        } else if (input.equals("ptolemy.actor.lib.Const")) {
+            IFigure constFigure = getDefaultFigure();
+            if (object instanceof Annotatable) {
+                Annotation valueAnn = ((Annotatable)object).getAnnotation("value");
+                if (valueAnn instanceof StringAnnotation) {
+                    String value = ((StringAnnotation) valueAnn).getValue();
+                    Label valueLabel = new Label();
+                    valueLabel.setText(value);
+                    valueLabel.setBounds(new Rectangle(10,10,30,10));
+                    
+                    constFigure.setLayoutManager(new BorderLayout());
+                    constFigure.add(valueLabel);
+                }
+            }
+            return constFigure;
         } else if (input.equals("Director")) {
             return createDirector();
         } else {

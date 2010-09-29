@@ -34,7 +34,7 @@ public class KaomPortProvider implements IRenderingProvider {
     }
 
     public BorderItemLocator getBorderItemLocatorByString(String input, IFigure parentFigure, Object locator) {
-        BorderItemLocator newlocator = new BorderItemLocator(parentFigure);
+        BorderItemLocator newlocator = new BorderItemLocator(parentFigure, PositionConstants.NORTH);
         if (input.equals("NORTH")) {
             newlocator.setPreferredSideOfParent(PositionConstants.NORTH);
             newlocator.setCurrentSideOfParent(PositionConstants.NORTH);
