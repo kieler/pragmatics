@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
@@ -77,16 +78,29 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
         return this.getNotationView().getElement();
     }
     
-private boolean updateTriggerFigure = true;
-    
     @Override
     public IFigure getFigure() {
         IFigure figure = super.getFigure();
+        /*
+        if (figure.getParent() != null){
         if (updateTriggerFigure) {
-        updateFigure(primaryShape);
-        updateTriggerFigure = false;
+            updateTriggerFigure = false;
+            updateFigure(primaryShape);
         }
+        
+        }
+        */
         return figure;
+    }
+    
+    private boolean updateTriggerFigure = true;
+    @Override
+    public void refresh(){
+        super.refresh();
+        if (updateTriggerFigure) {
+            updateTriggerFigure = false;
+            updateFigure(primaryShape);
+        }
     }
 
 }

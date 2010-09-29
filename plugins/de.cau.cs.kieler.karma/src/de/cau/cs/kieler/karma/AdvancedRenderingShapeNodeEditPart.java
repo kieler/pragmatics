@@ -81,8 +81,18 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
     @Override
     public IFigure getFigure() {
         IFigure figure = super.getFigure();
-        updateFigure(primaryShape);
+        //updateFigure(primaryShape);
         return figure;
+    }
+    
+    private boolean updateTriggerFigure = true;
+    @Override
+    public void refresh(){
+        super.refresh();
+        if (updateTriggerFigure) {
+            updateTriggerFigure = false;
+            updateFigure(primaryShape);
+        }
     }
 
 }

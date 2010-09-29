@@ -75,17 +75,27 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
     public EObject getModelElement() {
         return this.getNotationView().getElement();
     }
-
-    private boolean updateTriggerFigure = true;
     
     @Override
     public IFigure getFigure() {
         IFigure figure = super.getFigure();
+        /*
         if (updateTriggerFigure) {
-        updateFigure(primaryShape);
-        updateTriggerFigure = false;
+            updateTriggerFigure = false;
+            updateFigure(primaryShape);            
         }
+        */
         return figure;
+    }
+    
+    private boolean updateTriggerFigure = true;
+    @Override
+    public void refresh(){
+        super.refresh();
+        if (updateTriggerFigure) {
+            updateTriggerFigure = false;
+            updateFigure(primaryShape);
+        }
     }
     
 }

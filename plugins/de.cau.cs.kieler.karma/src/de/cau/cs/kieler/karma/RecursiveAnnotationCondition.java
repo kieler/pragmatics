@@ -14,7 +14,7 @@
 
 package de.cau.cs.kieler.karma;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -96,7 +96,7 @@ public class RecursiveAnnotationCondition extends ICustomCondition<EObject> {
             }
             return annotations;
         }
-        return new ArrayList<Annotation>();
+        return Collections.emptyList();
     }
 
     /**

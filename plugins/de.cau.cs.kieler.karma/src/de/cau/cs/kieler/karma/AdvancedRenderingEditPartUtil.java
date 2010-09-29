@@ -110,6 +110,7 @@ public class AdvancedRenderingEditPartUtil {
                     if (lastCondition == condition) {
                         return false;
                     } else {
+                        lastCondition = condition;
                         @SuppressWarnings("unchecked")
                         Pair<Integer, Integer> figureSize = (Pair<Integer, Integer>) conditionElement
                                 .get("figureSize");
@@ -139,11 +140,20 @@ public class AdvancedRenderingEditPartUtil {
 
                         // sets the new BoderItemLocator
                         if (editPart instanceof AbstractBorderItemEditPart) {
-                            IFigure mainFigure = ((AbstractBorderedShapeEditPart)editPart.getParent()).getMainFigure();
+                            AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart)editPart.getParent());
+                            IFigure mainFigure = parent.getMainFigure();
+                            IFigure borderedNodeFigure = figure.getParent().getParent();
                             IBorderItemLocator newLocator = renderingProvider.getBorderItemLocatorByString(borderItemParam, mainFigure, null);
+                            if (borderedNodeFigure.getParent() != null) {
+                                parent.setLayoutConstraint(editPart, borderedNodeFigure, newLocator);
+                            } else {
+                                lastCondition = null;
+                            }
+                            /*
                             if (newLocator != null && figure.getLayoutManager() != null) {
                                 figure.getLayoutManager().setConstraint(figure, newLocator);
                             }
+                            */
                             /*
                             BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) ((AdvancedRenderingBorderedShapeEditPart) editPart.getParent()).getFigure();
                             BorderItemContainerFigure borderItemContainerFigure = (BorderItemContainerFigure) borderedNodeFigure.getBorderItemContainer();
@@ -163,19 +173,9 @@ public class AdvancedRenderingEditPartUtil {
                         // setting a fixed node size
                         if (((figureSize.getFirst() >= 0) && (figureSize.getSecond() >= 0))
                                 && attrFigure != null) {
-                            Dimension dim = new Dimension(figureSize.getFirst(),
-                                    figureSize.getSecond());
-                            figure.getBounds().setSize(dim);
-                            figure.setMaximumSize(dim.getCopy());
-                            figure.setMinimumSize(dim.getCopy());
-                            figure.setPreferredSize(dim.getCopy());
-                            if (figure.getParent() instanceof DefaultSizeNodeFigure) {
-                                ((DefaultSizeNodeFigure) figure.getParent()).setDefaultSize(figure
-                                        .getSize().getCopy());
-                            }
-                            attrFigure.setResizeable(false);
+                            setFixedNodeSize(attrFigure, figure, figureSize);
                         }
-                        lastCondition = condition;
+                        
                         return true;
                     }
                 }
@@ -184,4 +184,18 @@ public class AdvancedRenderingEditPartUtil {
         return false;
     }
 
+    private void setFixedNodeSize(SwitchableFigure attrFigure, IFigure figure, Pair<Integer, Integer> figureSize) {
+        Dimension dim = new Dimension(figureSize.getFirst(),
+                figureSize.getSecond());
+        figure.getBounds().setSize(dim);
+        figure.setMaximumSize(dim.getCopy());
+        figure.setMinimumSize(dim.getCopy());
+        figure.setPreferredSize(dim.getCopy());
+        if (figure.getParent() instanceof DefaultSizeNodeFigure) {
+            ((DefaultSizeNodeFigure) figure.getParent()).setDefaultSize(figure
+                    .getSize().getCopy());
+        }
+        attrFigure.setResizeable(false);
+    }
+    
 }

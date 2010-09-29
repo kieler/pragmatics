@@ -37,6 +37,7 @@ public class AnnotationCondition extends ICustomCondition<EObject> {
      * {@inheritDoc}
      */
     public boolean evaluate(final EObject object) {
+        try {
         if (object instanceof Annotatable) {
             Annotatable annotatable = ((Annotatable) object);
             Annotation annotation = annotatable.getAnnotation(key);
@@ -70,6 +71,10 @@ public class AnnotationCondition extends ICustomCondition<EObject> {
                 //return stringAnnotation.getValue().equals(value);
                 return stringAnnotation.getValue().equals(value);
             }
+        }
+        } catch (Exception e) {
+            //throw new RuntimeException(e.getMessage());
+            return false;
         }
         return false;
     }
