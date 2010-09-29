@@ -120,6 +120,10 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
                 // connect the node path
                 int pathNodeCounter = 0;
+
+                List<IEdge> sourcePreEdges = getSourcePreEdges(path, shortestFacePath);
+                List<IEdge> targetPreEdges = getTargetPreEdges(path, shortestFacePath);
+
                 while (pathNodeCounter < path.size() - 1) {
 
                     // split up the crossed hypernodes
@@ -129,9 +133,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
                     // connecting new normal nodes
                     else {
-
-                        List<IEdge> sourcePreEdges = getSourcePreEdges(path, shortestFacePath);
-                        List<IEdge> targetPreEdges = getTargetPreEdges(path, shortestFacePath);
 
                         INode src = path.get(pathNodeCounter);
                         INode dst = path.get(pathNodeCounter + 1);
