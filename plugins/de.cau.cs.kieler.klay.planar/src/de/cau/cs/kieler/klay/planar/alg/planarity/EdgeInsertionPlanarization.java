@@ -57,20 +57,13 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
     public void planarize(final IGraph graph, final List<IEdge> edges) {
-        if (edges == null) {
-            System.out.println("No new Edges");
-        } else {
+        if (edges != null) {
             // bring graph in point-based standard
             mergeHyperNodes(graph);
             // initialize path finder
             AbstractPathFinder dijkstra = new DijkstraPathFinder();
 
             for (IEdge insertingEdge : edges) {
-
-                System.out.println("Subgraph");
-                System.out.println(graph);
-                System.out.println("Neue Kanten\n\n");
-                System.out.println(edges.toString());
 
                 // get the dual graph of the given graph
                 IGraph dualGraph = new PGraphFactory().createDualGraph(graph);
@@ -108,9 +101,6 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
 
                 // get a path of faces in the original graph
                 LinkedList<IFace> shortestFacePath = getShortestFacePath(dualEdgePath);
-
-                System.out.println("Der Face Path:");
-                System.out.println(shortestFacePath.toString());
 
                 // find the borders to cross
                 LinkedList<IEdge> crossingBorders = findCrossingBorders(shortestFacePath);
