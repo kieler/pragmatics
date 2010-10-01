@@ -1,3 +1,18 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ *****************************************************************************/
+
 package de.cau.cs.kieler.karma;
 
 import java.util.HashMap;
@@ -11,12 +26,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
-import org.eclipse.gmf.runtime.diagram.ui.internal.figures.BorderItemContainerFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
-import org.eclipse.gmf.runtime.notation.impl.BasicCompartmentImpl;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
@@ -44,8 +56,6 @@ public class AdvancedRenderingEditPartUtil {
      * 
      * @param theConditions
      *            The list of conditions and the corresponding string for generating the figure.
-     * @param theRenderingProvider
-     *            The figure provider for generating the figures from a string.
      */
     public AdvancedRenderingEditPartUtil(final List<HashMap<String, Object>> theConditions) {
         conditions = theConditions;
@@ -87,6 +97,8 @@ public class AdvancedRenderingEditPartUtil {
      *            the figure to be updated.
      * @param modelElement
      *            the modelelement the figure belongs to.
+     * @param editPart
+     *            the edit part of the model element
      * @return true if the figure actually changed, false else.
      */
     public boolean updateFigure(final IFigure figure, final EObject modelElement,
@@ -126,10 +138,8 @@ public class AdvancedRenderingEditPartUtil {
                                 modelElement);
                         if (attrFigure != null && newFigure != null) {
                             attrFigure.setCurrentFigure(newFigure);
-                        } else {
-
                         }
-                        
+
                         // setting the LayoutManager
                         LayoutManager newLayoutManager = renderingProvider
                                 .getLayoutManagerByString(layoutParam, figure.getLayoutManager(),
@@ -140,34 +150,22 @@ public class AdvancedRenderingEditPartUtil {
 
                         // sets the new BoderItemLocator
                         if (editPart instanceof AbstractBorderItemEditPart) {
-                            AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart)editPart.getParent());
+                            AbstractBorderedShapeEditPart parent = 
+                                ((AbstractBorderedShapeEditPart) editPart.getParent());
                             IFigure mainFigure = parent.getMainFigure();
-                            BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) figure.getParent().getParent();
-                            IBorderItemLocator newLocator = renderingProvider.getBorderItemLocatorByString(borderItemParam, mainFigure, null, modelElement);
+                            BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) figure
+                                    .getParent().getParent();
                             if (borderedNodeFigure.getParent() != null) {
+                                IBorderItemLocator oldLocator = (IBorderItemLocator) borderedNodeFigure
+                                        .getParent().getLayoutManager()
+                                        .getConstraint(borderedNodeFigure);
+                                IBorderItemLocator newLocator = renderingProvider
+                                        .getBorderItemLocatorByString(borderItemParam, mainFigure,
+                                                oldLocator, modelElement);
                                 parent.setLayoutConstraint(editPart, borderedNodeFigure, newLocator);
                             } else {
                                 lastCondition = null;
                             }
-                            /*
-                            if (newLocator != null && figure.getLayoutManager() != null) {
-                                figure.getLayoutManager().setConstraint(figure, newLocator);
-                            }
-                            */
-                            /*
-                            BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) ((AdvancedRenderingBorderedShapeEditPart) editPart.getParent()).getFigure();
-                            BorderItemContainerFigure borderItemContainerFigure = (BorderItemContainerFigure) borderedNodeFigure.getBorderItemContainer();
-                            IBorderItemLocator oldBorderItemLocator = (IBorderItemLocator) borderItemContainerFigure.getLayoutManager().getConstraint(figure.getParent().getParent());//(IBorderItemLocator) borderItemContainerFigure.getLayoutManager().getConstraint(figure);
-                            IBorderItemLocator newBorderItemLocatior = renderingProvider
-                                    .getBorderItemLocatorByString(borderItemParam,
-                                            figure, oldBorderItemLocator);
-                            if (newBorderItemLocatior != null) {
-                                borderItemContainerFigure.getLayoutManager().setConstraint(figure, newBorderItemLocatior);
-                            }
-                            //oldBorderItemLocator = (IBorderItemLocator) figure.getParent().getLayoutManager().getConstraint(figure);
-                            oldBorderItemLocator = (IBorderItemLocator) borderItemContainerFigure.getLayoutManager().getConstraint(figure);
-                            int f = 7;
-                            */
                         }
 
                         // setting a fixed node size
@@ -175,7 +173,7 @@ public class AdvancedRenderingEditPartUtil {
                                 && attrFigure != null) {
                             setFixedNodeSize(attrFigure, figure, figureSize);
                         }
-                        
+
                         return true;
                     }
                 }
@@ -184,18 +182,17 @@ public class AdvancedRenderingEditPartUtil {
         return false;
     }
 
-    private void setFixedNodeSize(SwitchableFigure attrFigure, IFigure figure, Pair<Integer, Integer> figureSize) {
-        Dimension dim = new Dimension(figureSize.getFirst(),
-                figureSize.getSecond());
+    private void setFixedNodeSize(final SwitchableFigure attrFigure, final IFigure figure,
+            final Pair<Integer, Integer> figureSize) {
+        Dimension dim = new Dimension(figureSize.getFirst(), figureSize.getSecond());
         figure.getBounds().setSize(dim);
         figure.setMaximumSize(dim.getCopy());
         figure.setMinimumSize(dim.getCopy());
         figure.setPreferredSize(dim.getCopy());
         if (figure.getParent() instanceof DefaultSizeNodeFigure) {
-            ((DefaultSizeNodeFigure) figure.getParent()).setDefaultSize(figure
-                    .getSize().getCopy());
+            ((DefaultSizeNodeFigure) figure.getParent()).setDefaultSize(figure.getSize().getCopy());
         }
         attrFigure.setResizeable(false);
     }
-    
+
 }

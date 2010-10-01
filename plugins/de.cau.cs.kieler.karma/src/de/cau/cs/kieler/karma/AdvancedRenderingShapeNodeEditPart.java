@@ -78,16 +78,13 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
         return this.getNotationView().getElement();
     }
     
-    @Override
-    public IFigure getFigure() {
-        IFigure figure = super.getFigure();
-        //updateFigure(primaryShape);
-        return figure;
-    }
-    
+    /**
+     * Flag for calling the updateFigure method only once while initializing the diagram.
+     */
     private boolean updateTriggerFigure = true;
+    
     @Override
-    public void refresh(){
+    public void refresh() {
         super.refresh();
         if (updateTriggerFigure) {
             updateTriggerFigure = false;

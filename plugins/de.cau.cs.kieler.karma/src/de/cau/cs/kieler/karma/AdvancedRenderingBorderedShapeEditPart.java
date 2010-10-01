@@ -33,6 +33,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
     /**
      * Figure that that represents the model element.
      */
+ // SUPPRESS CHECKSTYLE NEXT VisibilityModifier
     protected IFigure primaryShape;
 
     /**
@@ -76,21 +77,13 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
         return this.getNotationView().getElement();
     }
     
-    @Override
-    public IFigure getFigure() {
-        IFigure figure = super.getFigure();
-        /*
-        if (updateTriggerFigure) {
-            updateTriggerFigure = false;
-            updateFigure(primaryShape);            
-        }
-        */
-        return figure;
-    }
-    
+    /**
+     * Flag for calling the updateFigure method only once while initializing the diagram.
+     */
     private boolean updateTriggerFigure = true;
+    
     @Override
-    public void refresh(){
+    public void refresh() {
         super.refresh();
         if (updateTriggerFigure) {
             updateTriggerFigure = false;

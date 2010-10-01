@@ -53,7 +53,6 @@ import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
-import de.cau.cs.kieler.core.ui.figures.RoundedRectangleFigure;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.kvid.KvidUtil;
 import de.cau.cs.kieler.kvid.data.DataObject;
@@ -75,68 +74,11 @@ public class KaomFigureProvider implements IRenderingProvider {
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object) {
         if (input.equals("_IconDescription")) {
-            if (object instanceof de.cau.cs.kieler.kaom.Entity) {
-                de.cau.cs.kieler.kaom.Entity myEntity = (de.cau.cs.kieler.kaom.Entity) object;
-                Annotation annotation = myEntity.getAnnotation("ptolemyClass");
-                if (annotation != null && annotation instanceof StringAnnotation) {
-                    String ptolemyClassString = ((StringAnnotation) annotation).getValue();
-                    try {
-                        Class ptolemy = Class.forName(ptolemyClassString);
-                        Constructor constr = ptolemy.getConstructor(CompositeEntity.class,
-                                String.class);
-                        Object obj = constr.newInstance(new CompositeEntity(), "test");
-                        if (obj instanceof Entity) {
-                            Entity entity = (Entity) obj;
-                            TestIconLoader til = new TestIconLoader();
-                            try {
-                                til.loadIconForClass(Ramp.class.getName(), entity);
-                            } catch (Exception e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                            List<EditorIcon> icons = entity.attributeList(EditorIcon.class);
-                            ConfigurableAttribute ca = null;
-                            String svg = "";
-                            if (icons.isEmpty()) {
-                                ca = (ConfigurableAttribute) entity
-                                        .getAttribute("_iconDescription");
-
-                                svg = ca.getConfigureText();
-                            }
-                            svg = repairSvg(svg);
-                            if (svg == null) {
-                                return getDefaultFigure();
-                            } else {
-                                return createSvg(svg);
-                            }
-                        }
-                    } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    return getDefaultFigure();
-                }
-            }
-            throw new RuntimeException("initializing svg from ptolemyClass failed");
+            return createFigureFromIconDescription(object);
         } else if (input.equals("ptolemy.actor.lib.MonitorValue")) {
             return createMonitorValue(object);
         } else if (input.equals("ptolemy.actor.lib.Const")) {
-            IFigure constFigure = getDefaultFigure();
-            if (object instanceof Annotatable) {
-                Annotation valueAnn = ((Annotatable)object).getAnnotation("value");
-                if (valueAnn instanceof StringAnnotation) {
-                    String value = ((StringAnnotation) valueAnn).getValue();
-                    Label valueLabel = new Label();
-                    valueLabel.setText(value);
-                    valueLabel.setBounds(new Rectangle(10,10,30,10));
-                    
-                    constFigure.setLayoutManager(new BorderLayout());
-                    constFigure.add(valueLabel);
-                }
-            }
-            return constFigure;
+            return createConstFigure(object);
         } else if (input.equals("Director")) {
             return createDirector();
         } else {
@@ -177,7 +119,8 @@ public class KaomFigureProvider implements IRenderingProvider {
     /**
      * {@inheritDoc}
      */
-    public BorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parent, final Object locator, final EObject object) {
+    public BorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parent,
+            final Object locator, final EObject object) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -240,23 +183,23 @@ public class KaomFigureProvider implements IRenderingProvider {
             int xoffset = 0;
             int yoffset = 0;
             if (nodeList.getLength() != 0) {
-                    Element rectElement = (Element) doc.getElementsByTagName("rect").item(0);
+                Element rectElement = (Element) doc.getElementsByTagName("rect").item(0);
 
-                        svgElement.setAttribute("height",
-                    String.valueOf(Integer.parseInt(rectElement.getAttribute("height")) + 1));
-                        svgElement.setAttribute("width",
-                    String.valueOf(Integer.parseInt(rectElement.getAttribute("width")) + 1));
+                svgElement.setAttribute("height",
+                        String.valueOf(Integer.parseInt(rectElement.getAttribute("height")) + 1));
+                svgElement.setAttribute("width",
+                        String.valueOf(Integer.parseInt(rectElement.getAttribute("width")) + 1));
 
-            xoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("x")));
-            yoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("y")));
+                xoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("x")));
+                yoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("y")));
             } else {
-                //TODO hacked else case, think of something better
+                // TODO hacked else case, think of something better
                 int childPointer = 0;
-                Object object = svgElement.getChildNodes().item(childPointer);                
-                while (!(object instanceof Element) && (object != svgElement )) {
+                Object object = svgElement.getChildNodes().item(childPointer);
+                while (!(object instanceof Element) && (object != svgElement)) {
                     object = svgElement.getElementsByTagName("*").item(childPointer);
                 }
-                Element firstElement = (Element)object;
+                Element firstElement = (Element) object;
                 xoffset = Math.abs(Integer.parseInt(firstElement.getAttribute("x")));
                 yoffset = Math.abs(Integer.parseInt(firstElement.getAttribute("y")));
             }
@@ -408,7 +351,8 @@ public class KaomFigureProvider implements IRenderingProvider {
      * @return a figure represention an director
      */
     private IFigure createDirector() {
-        String directorsvg = "<svg width=\"102\" height=\"32\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
+        String directorsvg = "<svg width=\"102\" height=\"32\"><rect x=\"0\" y=\"0\" width=\"100\" " 
+            + " height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
         return createSvg(directorsvg);
     }
 
@@ -439,6 +383,11 @@ public class KaomFigureProvider implements IRenderingProvider {
 
         private String referredDataUri;
 
+        private static final int LABELSIZE_WIDTH = 140;
+        private static final int LABELSIZE_HEIGHT = 10;
+        private static final int LABELLOCATION_X = 70;
+        private static final int LABELLOCATION_Y = 10;
+
         /**
          * constructs this figure and adds a label that displays the current value.
          * 
@@ -447,8 +396,8 @@ public class KaomFigureProvider implements IRenderingProvider {
          */
         public MonitorValueFigure(final EObject object) {
             value = new Label();
-            value.getBounds().setSize(140, 10);
-            value.getBounds().setLocation(70, 10);
+            value.getBounds().setSize(LABELSIZE_WIDTH, LABELSIZE_HEIGHT);
+            value.getBounds().setLocation(LABELLOCATION_X, LABELLOCATION_Y);
             this.setLayoutManager(new BorderLayout());
             this.add(value);
             String uri = object.eResource().getURIFragment(object);
@@ -480,6 +429,90 @@ public class KaomFigureProvider implements IRenderingProvider {
         public void triggerWrapup() {
             value.setText("");
         }
+
+    }
+
+    private static final int LABELSIZE_WIDTH = 30;
+    private static final int LABELSIZE_HEIGHT = 10;
+    private static final int LABELLOCATION_X = 10;
+    private static final int LABELLOCATION_Y = 10;
+
+    /**
+     * creates a figure representing a constant.
+     * 
+     * @param object
+     *            the model element
+     * @return the constant figure
+     */
+    private IFigure createConstFigure(final EObject object) {
+        IFigure constFigure = getDefaultFigure();
+        if (object instanceof Annotatable) {
+            Annotation valueAnn = ((Annotatable) object).getAnnotation("value");
+            if (valueAnn instanceof StringAnnotation) {
+                String value = ((StringAnnotation) valueAnn).getValue();
+                Label valueLabel = new Label();
+                valueLabel.setText(value);
+                valueLabel.setBounds(new Rectangle(LABELLOCATION_X, LABELLOCATION_Y,
+                        LABELSIZE_WIDTH, LABELSIZE_HEIGHT));
+                constFigure.setLayoutManager(new BorderLayout());
+                constFigure.add(valueLabel);
+            }
+        }
+        return constFigure;
+    }
+
+    /**
+     * creates an appropriate figure according to the _IconDescription attribute of a ptolemy actor.
+     * 
+     * @param object
+     *            the model element
+     * @return the figure
+     */
+    private IFigure createFigureFromIconDescription(final EObject object) {
+        if (object instanceof de.cau.cs.kieler.kaom.Entity) {
+            de.cau.cs.kieler.kaom.Entity myEntity = (de.cau.cs.kieler.kaom.Entity) object;
+            Annotation annotation = myEntity.getAnnotation("ptolemyClass");
+            if (annotation != null && annotation instanceof StringAnnotation) {
+                String ptolemyClassString = ((StringAnnotation) annotation).getValue();
+                try {
+                    Class<?> ptolemy = Class.forName(ptolemyClassString);
+                    Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class,
+                            String.class);
+                    Object obj = constr.newInstance(new CompositeEntity(), "test");
+                    if (obj instanceof Entity) {
+                        Entity entity = (Entity) obj;
+                        TestIconLoader til = new TestIconLoader();
+                        try {
+                            til.loadIconForClass(Ramp.class.getName(), entity);
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        List<?> icons = entity.attributeList(EditorIcon.class);
+                        ConfigurableAttribute ca = null;
+                        String svg = "";
+                        if (icons.isEmpty()) {
+                            ca = (ConfigurableAttribute) entity.getAttribute("_iconDescription");
+
+                            svg = ca.getConfigureText();
+                        }
+                        svg = repairSvg(svg);
+                        if (svg == null) {
+                            return getDefaultFigure();
+                        } else {
+                            return createSvg(svg);
+                        }
+                    }
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+            } else {
+                return getDefaultFigure();
+            }
+        }
+        throw new RuntimeException("initializing svg from ptolemyClass failed");
 
     }
 

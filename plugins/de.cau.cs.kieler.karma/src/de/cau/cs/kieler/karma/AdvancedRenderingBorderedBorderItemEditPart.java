@@ -21,12 +21,13 @@ import java.util.List;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
 /**
  * @author ckru
+ * 
+ * EditPart for using KARMA with BorderedBorderItems 
  */
 public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
         BorderedBorderItemEditPart implements IAdvancedRenderingEditPart {
@@ -34,6 +35,7 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
     /**
      * Figure that that represents the model element.
      */
+    // SUPPRESS CHECKSTYLE NEXT VisibilityModifier
     protected IFigure primaryShape;
 
     /**
@@ -78,24 +80,13 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
         return this.getNotationView().getElement();
     }
     
-    @Override
-    public IFigure getFigure() {
-        IFigure figure = super.getFigure();
-        /*
-        if (figure.getParent() != null){
-        if (updateTriggerFigure) {
-            updateTriggerFigure = false;
-            updateFigure(primaryShape);
-        }
-        
-        }
-        */
-        return figure;
-    }
-    
+    /**
+     * Flag for calling the updateFigure method only once while initializing the diagram.
+     */
     private boolean updateTriggerFigure = true;
+    
     @Override
-    public void refresh(){
+    public void refresh() {
         super.refresh();
         if (updateTriggerFigure) {
             updateTriggerFigure = false;
