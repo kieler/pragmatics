@@ -73,6 +73,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="active" type="boolean">
+            <annotation>
+               <documentation>
+                  Determines whether the combination is active by default, overridden by user preferences.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

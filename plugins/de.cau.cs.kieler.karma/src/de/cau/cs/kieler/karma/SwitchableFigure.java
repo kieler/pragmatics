@@ -220,6 +220,22 @@ public class SwitchableFigure extends Shape {
             return -1;
         }
     }
+    
+    @Override
+    public void setLineStyle(int style) {
+        if (currentFigure instanceof Shape) {
+            ((Shape) currentFigure).setLineStyle(style);
+        }
+    }
+    
+    @Override
+    public int getLineStyle() {
+        if (currentFigure instanceof Shape) {
+            return ((Shape) currentFigure).getLineStyle();
+        } else {
+            return -1;
+        }
+    }
 
     public boolean getResizeable() {
         return resizeable;

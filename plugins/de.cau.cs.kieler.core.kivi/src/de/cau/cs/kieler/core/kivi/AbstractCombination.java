@@ -38,6 +38,8 @@ public abstract class AbstractCombination implements ICombination {
     private List<IEffect> effects = new ArrayList<IEffect>();
 
     private boolean doNothing = false;
+    
+    private boolean noUndo = false;
 
     /**
      * {@inheritDoc}
@@ -92,8 +94,12 @@ public abstract class AbstractCombination implements ICombination {
         }
 
         List<IEffect> result = new ArrayList<IEffect>();
-        for (IEffect effect : toUndo) {
-            result.add(new UndoEffect(effect));
+        if (!noUndo) {
+            for (IEffect effect : toUndo) {
+                result.add(new UndoEffect(effect));
+            }
+        } else {
+            noUndo = false;
         }
 
         List<IEffect> toRemove = new ArrayList<IEffect>();
@@ -132,6 +138,14 @@ public abstract class AbstractCombination implements ICombination {
      */
     protected void doNothing() {
         doNothing = true;
+    }
+    
+    /**
+     * Called by execute() to make sure previous effects are not undone when an execution wants to
+     * keep those effects visible indefinitely.
+     */
+    protected void dontUndo() {
+        noUndo = true;
     }
 
     /**

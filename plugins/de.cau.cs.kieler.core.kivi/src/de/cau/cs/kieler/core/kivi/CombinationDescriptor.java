@@ -27,6 +27,8 @@ public class CombinationDescriptor {
     private Class<? extends ICombination> clazz;
 
     private boolean active = false;
+    
+    private boolean defaultActive = false;
 
     /**
      * Create a new descriptor.
@@ -89,6 +91,25 @@ public class CombinationDescriptor {
      */
     public boolean isActive() {
         return active;
+    }
+    
+    /**
+     * Set the element described as active or inactive by default.
+     * 
+     * @param a
+     *            true if activating
+     */
+    public void setDefaultActive(final boolean a) {
+        defaultActive = a;
+    }
+
+    /**
+     * Get the default active state of the element described.
+     * 
+     * @return true if activated
+     */
+    public boolean isDefaultActive() {
+        return defaultActive;
     }
 
 }

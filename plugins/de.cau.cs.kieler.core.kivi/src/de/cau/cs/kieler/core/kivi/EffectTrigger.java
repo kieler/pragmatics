@@ -27,7 +27,11 @@ public class EffectTrigger extends AbstractTrigger implements IEffectsListener {
      * {@inheritDoc}
      */
     public void executedEffect(final IEffect effect) {
-        trigger(new EffectTriggerState<IEffect>(effect));
+        if (effect instanceof UndoEffect) {
+            trigger(new EffectTriggerState<IEffect>(((UndoEffect) effect).getEffect(), true));
+        } else {
+            trigger(new EffectTriggerState<IEffect>(effect, false));
+        }
     }
 
     @Override
@@ -52,6 +56,8 @@ public class EffectTrigger extends AbstractTrigger implements IEffectsListener {
 
         private Effect effect;
 
+        private boolean isUndo = false;
+
         /**
          * Default constructor.
          */
@@ -63,13 +69,16 @@ public class EffectTrigger extends AbstractTrigger implements IEffectsListener {
          * 
          * @param e
          *            the effect
+         * @param undo
+         *            true if the effect was undone
          */
-        public EffectTriggerState(final Effect e) {
+        public EffectTriggerState(final Effect e, final boolean undo) {
             effect = e;
+            isUndo = undo;
         }
 
         /**
-         * Get the effect.
+         * Get the effect. May be null if the effect never was executed
          * 
          * @return the effect
          */
@@ -78,12 +87,21 @@ public class EffectTrigger extends AbstractTrigger implements IEffectsListener {
         }
 
         /**
+         * Checks whether the effect was undone or not.
+         * 
+         * @return true if undone, false if executed
+         */
+        public boolean isUndo() {
+            return isUndo;
+        }
+
+        /**
          * {@inheritDoc}
          */
         public Class<? extends ITrigger> getTriggerClass() {
             return EffectTrigger.class;
         }
-        
+
         @Override
         public Class<?> getKeyClass() {
             if (effect == null) {

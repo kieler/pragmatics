@@ -85,7 +85,7 @@ public class CombinationParameter {
      */
     public static final IParameterType BOOLEAN_TYPE = new IParameterType() {
         public void initialize(final IPreferenceStore p, final String k, final Object o) {
-            p.setDefault(k, (String) o);
+            p.setDefault(k, (Boolean) o);
         }
         
         public Class<?> getType() {

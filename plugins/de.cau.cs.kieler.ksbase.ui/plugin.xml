@@ -78,7 +78,8 @@
      <combination
            class="de.cau.cs.kieler.ksbase.ui.kivi.KSBasECombination"
            description="Performs automatic layout and zoom-to-fit after a KSBasE transformation."
-           name="KSBasECombination">
+           name="KSBasECombination"
+           active="true">
      </combination>
   </extension>
       <!--

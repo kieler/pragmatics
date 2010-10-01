@@ -67,7 +67,8 @@ public class KiViPreferencePage extends PreferencePage implements IWorkbenchPref
 
     private Composite combinationsComposite;
 
-    private List<CombinationDescriptor> combinations = KiVi.getInstance().getAvailableCombinations();
+    private List<CombinationDescriptor> combinations = KiVi.getInstance()
+            .getAvailableCombinations();
 
     /**
      * Default constructor.
@@ -107,6 +108,13 @@ public class KiViPreferencePage extends PreferencePage implements IWorkbenchPref
     protected void performDefaults() {
         kiviActive.setSelection(getPreferenceStore().getDefaultBoolean(KiVi.PROPERTY_ACTIVE));
         enableComposites(getPreferenceStore().getDefaultBoolean(KiVi.PROPERTY_ACTIVE));
+        for (CombinationDescriptor d : combinations) {
+            boolean checked = getPreferenceStore().getDefaultBoolean(
+                    d.getClazz().getCanonicalName() + ".active");
+            checkboxViewer.setChecked(d, checked);
+            getPreferenceStore().setValue(d.getClazz().getCanonicalName() + ".active", checked);
+            d.setActive(checked);
+        }
     }
 
     @Override
@@ -167,7 +175,8 @@ public class KiViPreferencePage extends PreferencePage implements IWorkbenchPref
             private Comparator<CombinationDescriptor> c = new Comparator<CombinationDescriptor>() {
                 private Collator collator = Collator.getInstance();
 
-                public int compare(final CombinationDescriptor arg0, final CombinationDescriptor arg1) {
+                public int compare(final CombinationDescriptor arg0,
+                        final CombinationDescriptor arg1) {
                     String s1 = arg0.getName();
                     String s2 = arg1.getName();
                     return collator.compare(s1, s2);
@@ -199,7 +208,8 @@ public class KiViPreferencePage extends PreferencePage implements IWorkbenchPref
             public void selectionChanged(final SelectionChangedEvent event) {
                 if (event.getSelection() instanceof IStructuredSelection) {
                     IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-                    CombinationDescriptor descriptor = (CombinationDescriptor) sel.getFirstElement();
+                    CombinationDescriptor descriptor = (CombinationDescriptor) sel
+                            .getFirstElement();
                     if (descriptor == null) {
                         clearDescription();
                     } else {
