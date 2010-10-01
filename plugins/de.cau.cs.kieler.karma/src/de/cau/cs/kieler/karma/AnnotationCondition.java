@@ -68,7 +68,6 @@ public class AnnotationCondition extends ICustomCondition<EObject> {
                 return eObject.eClass().getName().equals(value);
             } else if (annotation instanceof StringAnnotation) {
                 StringAnnotation stringAnnotation = (StringAnnotation) annotation;
-                //return stringAnnotation.getValue().equals(value);
                 return stringAnnotation.getValue().equals(value);
             }
         }

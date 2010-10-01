@@ -28,6 +28,8 @@ import org.eclipse.swt.graphics.Color;
 /**
  * 
  * @author ckru
+ * Class for encapsulating the actual drawn figure to avoid inheritance problems.
+ * Also has some additional methods for example changing resizeability. 
  * 
  */
 public class SwitchableFigure extends Shape {
@@ -37,6 +39,9 @@ public class SwitchableFigure extends Shape {
      */
     private IFigure currentFigure;
 
+    /**
+     * Trigger for the figure being resizeable or not.
+     */
     private boolean resizeable = true;
 
     /**
@@ -46,7 +51,7 @@ public class SwitchableFigure extends Shape {
         super();
         currentFigure = defaultFigure();
     }
-    
+
     private IFigure defaultFigure() {
         RectangleFigure rectangle = new RectangleFigure();
         rectangle.setLineWidth(1);
@@ -88,12 +93,14 @@ public class SwitchableFigure extends Shape {
         currentFigure = figure;
         currentFigure.setParent(this.getParent());
         currentFigure.setBounds(super.getBounds());
-        
-        if (this.getParent() instanceof DefaultSizeNodeFigure &&  figure instanceof ScalableImageFigure) {            
-        ((DefaultSizeNodeFigure)this.getParent()).setDefaultSize(
-                ((ScalableImageFigure)figure).getImage().getBounds().width + 2, ((ScalableImageFigure)figure).getImage().getBounds().height + 2);
+
+        if (this.getParent() instanceof DefaultSizeNodeFigure
+                && figure instanceof ScalableImageFigure) {
+            ((DefaultSizeNodeFigure) this.getParent()).setDefaultSize(
+                    ((ScalableImageFigure) figure).getImage().getBounds().width + 2,
+                    ((ScalableImageFigure) figure).getImage().getBounds().height + 2);
         }
-        // this.repaint();         
+        // this.repaint();
     }
 
     /**
@@ -123,13 +130,6 @@ public class SwitchableFigure extends Shape {
      */
     @Override
     public void setBounds(final Rectangle rect) {
-        // Notifier target = getTarget();
-        /*
-         * LayoutManager layoutManager = getLayoutManager(); if (((StateLayout)
-         * layoutManager).getNotifier() instanceof State && layoutManager instanceof StateLayout) {
-         * ((StateLayout) layoutManager).checkNewSize(this, (State) ((StateLayout)
-         * layoutManager).getNotifier(), rect); }
-         */
         if (resizeable) {
             super.setBounds(rect);
             if (currentFigure != null) {
@@ -145,52 +145,52 @@ public class SwitchableFigure extends Shape {
      *            the new bounds
      */
     public void setBoundsDirect(final Rectangle rect) {
-            super.setBounds(rect);
-            if (currentFigure != null) {
-                this.currentFigure.setBounds(rect);
-            }
+        super.setBounds(rect);
+        if (currentFigure != null) {
+            this.currentFigure.setBounds(rect);
+        }
     }
 
     @Override
-    public void setMinimumSize(Dimension d) {
+    public void setMinimumSize(final Dimension d) {
         if (resizeable) {
             super.setMinimumSize(d);
         }
     }
 
     @Override
-    public void setMaximumSize(Dimension d) {
+    public void setMaximumSize(final Dimension d) {
         if (resizeable) {
             super.setMaximumSize(d);
         }
     }
-    
+
     @Override
-    public void setSize(int w, int h) {
+    public void setSize(final int w, final int h) {
         if (resizeable) {
             super.setSize(w, h);
         }
     }
 
     @Override
-    public void setPreferredSize(Dimension d) {
+    public void setPreferredSize(final Dimension d) {
         if (resizeable) {
             super.setPreferredSize(d);
         }
     }
 
     @Override
-    protected void fillShape(Graphics graphics) {
+    protected void fillShape(final Graphics graphics) {
 
     }
 
     @Override
-    protected void outlineShape(Graphics graphics) {
+    protected void outlineShape(final Graphics graphics) {
 
     }
 
     @Override
-    public void setLineWidth(int w) {
+    public void setLineWidth(final int w) {
         if (currentFigure instanceof Shape) {
             ((Shape) currentFigure).setLineWidth(w);
         }
@@ -206,7 +206,7 @@ public class SwitchableFigure extends Shape {
     }
 
     @Override
-    public void setLineWidthFloat(float value) {
+    public void setLineWidthFloat(final float value) {
         if (currentFigure instanceof Shape) {
             ((Shape) currentFigure).setLineWidthFloat(value);
         }
@@ -220,14 +220,14 @@ public class SwitchableFigure extends Shape {
             return -1;
         }
     }
-    
+
     @Override
-    public void setLineStyle(int style) {
+    public void setLineStyle(final int style) {
         if (currentFigure instanceof Shape) {
             ((Shape) currentFigure).setLineStyle(style);
         }
     }
-    
+
     @Override
     public int getLineStyle() {
         if (currentFigure instanceof Shape) {
@@ -237,11 +237,21 @@ public class SwitchableFigure extends Shape {
         }
     }
 
+    /**
+     * check if the figure may be be resized.
+     * 
+     * @return true if resizeable else false
+     */
     public boolean getResizeable() {
         return resizeable;
     }
 
-    public void setResizeable(Boolean b) {
+    /**
+     * set the figure to be resizeable or not.
+     * 
+     * @param b false for not resizeable
+     */
+    public void setResizeable(final Boolean b) {
         resizeable = b;
     }
 

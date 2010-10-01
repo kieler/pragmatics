@@ -85,7 +85,7 @@ public class RecursiveAnnotationCondition extends ICustomCondition<EObject> {
         return result;
     }
 
-    private List<Annotation> getAnnotationByKeyRecursive(Annotatable annotatable) {
+    private List<Annotation> getAnnotationByKeyRecursive(final Annotatable annotatable) {
         if (!annotatable.getAnnotations().isEmpty()) {
             List<Annotation> annotations = annotatable.getAllAnnotations(key);
             for (Annotation ann : annotatable.getAnnotations()) {

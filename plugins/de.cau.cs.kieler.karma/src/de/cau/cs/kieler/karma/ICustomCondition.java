@@ -40,9 +40,9 @@ public abstract class ICustomCondition<T> implements ICondition<T> {
      * Feed the condition with some initial values because extension points support only the
      * standard constructor.
      * 
-     * @param key
+     * @param thekey
      *            a key for referencing something.
-     * @param value
+     * @param thevalue
      *            the value the condition could evaluate for.
      */
     public void initialize(final String thekey, final String thevalue) {

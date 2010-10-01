@@ -24,45 +24,65 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
  * Class for providing figures represented by a string.
  * 
  * @author ckru
- *
+ * 
  */
 public interface IRenderingProvider {
-    
+
     /**
      * Method that returns a figure according to a given string.
-     * @param input a string representation of the figure
-     * @param oldFigure the old figure
+     * 
+     * @param input
+     *            a string representation of the figure
+     * @param oldFigure
+     *            the old figure
      * @param object
+     *            the model element
      * @return the figure
      */
-    public IFigure getFigureByString(final String input, final IFigure oldFigure, final EObject object);
-    
+    IFigure getFigureByString(final String input, final IFigure oldFigure, final EObject object);
+
     /**
      * Returns the figure to be displayed on default.
+     * 
      * @return the default figure
      */
-    public IFigure getDefaultFigure();
+    IFigure getDefaultFigure();
 
     /**
      * Method that returns a LayoutManager according to a given string.
-     * @param input a string representation of the LayoutManager
-     * @param oldLayoutManager the old LayoutManager
+     * 
+     * @param input
+     *            a string representation of the LayoutManager
+     * @param oldLayoutManager
+     *            the old LayoutManager
      * @param object
+     *            the model element
      * @return the new LayoutManager
      */
-    public LayoutManager getLayoutManagerByString(final String input, final LayoutManager oldLayoutManager, final EObject object);
-    
+    LayoutManager getLayoutManagerByString(final String input,
+            final LayoutManager oldLayoutManager, final EObject object);
+
     /**
      * Returns the default LayoutManager.
+     * 
      * @return the default LayoutManager
      */
-    public LayoutManager getDefaultLayoutManager();
-    
+    LayoutManager getDefaultLayoutManager();
+
     /**
      * Method that returns a BorderItemLocator according to a given string.
-     * @param input a string representation of the BorderItemLocator
+     * 
+     * @param input
+     *            a string representation of the BorderItemLocator
+     * @param parentFigure
+     *            the parentFigure
+     * @param locator
+     *            the old BorderItemLocator
+     * @param object
+     *            the model element
      * @return the new BorderItemLocator
      */
-    public IBorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parentFigure,final Object locator, final EObject object);
-    
+    IBorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parentFigure,
+            final Object locator, final EObject object);
+
 }

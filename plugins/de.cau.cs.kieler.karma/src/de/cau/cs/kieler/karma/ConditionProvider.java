@@ -53,13 +53,15 @@ public final class ConditionProvider {
      * HashTable for caching condition pairs so that the ExtensionPoint is parsed only once per edit
      * part.
      */
-    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = new HashMap<String, List<HashMap<String, Object>>>();
+    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = 
+        new HashMap<String, List<HashMap<String, Object>>>();
 
     /**
      * HashTable for caching the relevant features and feature ids. Not yet used, will probably
      * removed again.
      */
-    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = new HashMap<Integer, EStructuralFeature>();
+    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = 
+        new HashMap<Integer, EStructuralFeature>();
 
     /**
      * Constructor set to private to ensure usage of singleton instance.
@@ -110,7 +112,7 @@ public final class ConditionProvider {
                 System.out.println("faulty extensionpoint");
                 continue;
             }
-            IConfigurationElement[] parts = settings.getChildren("editPart");            
+            IConfigurationElement[] parts = settings.getChildren("editPart");
             if (checkCompatibleEditParts(parts, callingEditPart)) {
                 int prio = 1;
                 String prioString = settings.getAttribute("Priority");
@@ -125,23 +127,22 @@ public final class ConditionProvider {
                         HashMap<String, Object> conditionElement = new HashMap<String, Object>();
 
                         conditionElement.put("prio", prio);
-                        
+
                         IRenderingProvider renderingProvider = null;
-                        try {                  
+                        try {
                             renderingProvider = (IRenderingProvider) settings
                                     .createExecutableExtension("RenderingProvider");
                         } catch (CoreException e1) {
                             throw new RuntimeException("renderingProvider failed to load.");
                         }
                         conditionElement.put("renderingProvider", renderingProvider);
-                    
 
                         String figureParam = condition.getAttribute("figureParam");
                         if (figureParam == null) {
                             figureParam = "";
                         }
                         conditionElement.put("figureParam", figureParam);
-                        
+
                         String borderItemParam = condition.getAttribute("borderItemParam");
                         if (borderItemParam == null) {
                             borderItemParam = "";
@@ -244,7 +245,8 @@ public final class ConditionProvider {
                 String value = condition.getAttribute("value");
                 if (customConditionObject instanceof ICustomCondition<?>) {
                     @SuppressWarnings("unchecked")
-                    ICustomCondition<EObject> customCondition = (ICustomCondition<EObject>) customConditionObject;
+                    ICustomCondition<EObject> customCondition = 
+                        (ICustomCondition<EObject>) customConditionObject;
                     customCondition.initialize(key, value);
                     return customCondition;
                 }
@@ -382,9 +384,19 @@ public final class ConditionProvider {
         }
     }
 
+    /**
+     * 
+     * @author ckru
+     *
+     * Comparator for sorting the list of condition extensions by priority.  
+     *
+     */
     private class ConditionElementComparator implements Comparator<HashMap<String, Object>> {
 
-        public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
+        /**
+         * Compare by priority.
+         */
+        public int compare(final HashMap<String, Object> o1, final HashMap<String, Object> o2) {
             int prio1 = (Integer) o1.get("prio");
             int prio2 = (Integer) o2.get("prio");
             if (prio1 == prio2) {
