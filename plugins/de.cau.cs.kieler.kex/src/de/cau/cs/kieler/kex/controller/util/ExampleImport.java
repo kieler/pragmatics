@@ -97,6 +97,7 @@ public class ExampleImport {
 					IProject project = root.getProject(destPath);
 					project.create(progressMonitor);
 					project.open(progressMonitor);
+					destFolder = root.getLocation().toPortableString();
 					break;
 
 				case FOLDER:
