@@ -126,30 +126,6 @@ public class ImportExamplePage extends WizardResourceImportPage {
         descData.heightHint = 100;
         descData.minimumHeight = 80;
         this.exampleDescription.setLayoutData(descData);
-        // Font initialFont = descriptionLabel.getFont();
-        // FontData[] fontData = initialFont.getFontData();
-        // for (int i = 0; i < fontData.length; i++) {
-        // fontData[i].setHeight(24);
-        // }
-        // FontData[] fontData = this.exampleDescription.getFont().getFontData();
-        // for (FontData fd : fontData) {
-        //
-        // int lfHeight = fd.data.lfHeight;
-        // System.err.println(lfHeight);
-        // }
-        // this.exampleDescription.setFont(new Font(parent.getDisplay(), fontData));
-        // FontData[] fontData2 = this.exampleDescription.getFont().getFontData();
-        // for (FontData fd : fontData) {
-        // fd.setHeight(25);
-        // }
-        // this.exampleDescription = new StyledText(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL
-        // | SWT.BORDER);
-        // this.exampleDescription.setEditable(false);
-        // GridData descData = new GridData(GridData.FILL_HORIZONTAL);
-        // descData.heightHint = 80;
-        // descData.minimumHeight = 80;
-        // this.exampleDescription.setLayoutData(descData);
-
     }
 
     private Control createTreeComposite(Composite parent) {
