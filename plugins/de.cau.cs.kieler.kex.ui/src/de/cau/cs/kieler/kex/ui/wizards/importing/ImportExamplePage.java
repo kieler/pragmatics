@@ -5,14 +5,17 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -204,6 +207,12 @@ public class ImportExamplePage extends WizardResourceImportPage {
                     private Rectangle bounds;
 
                     @Override
+                    protected void createButtonsForButtonBar(Composite parent) {
+                        super.createButton(parent, IDialogConstants.OK_ID,
+                                IDialogConstants.OK_LABEL, true);
+                    }
+
+                    @Override
                     protected Control createDialogArea(Composite parent) {
                         Composite composite = (Composite) super.createDialogArea(parent);
                         Composite innerComp = new Composite(composite, SWT.CENTER | SWT.BORDER);
@@ -231,6 +240,12 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
                 };
                 dialog.open();
+            }
+        });
+        imageLabel.addMouseTrackListener(new MouseTrackAdapter() {
+            @Override
+            public void mouseHover(MouseEvent e) {
+                imageLabel.setCursor(new Cursor(imageLabel.getDisplay(), SWT.CURSOR_HAND));
             }
         });
     }
@@ -300,8 +315,8 @@ public class ImportExamplePage extends WizardResourceImportPage {
         String htmlDesc = selectedExample.getDescription().replaceAll("\n", "<br>");
         sb.append("<font face=\"Tahoma, sans-serif\" size=\"-1\">");
         sb.append("Title: ").append(selectedExample.getTitle()).append("<br>").append("Author:")
-                .append(selectedExample.getAuthor()).append("<br>").append("Contact: ")
-                .append(selectedExample.getContact()).append("<br>").append("<br>")
+                .append(selectedExample.getAuthor()).append("<br>").append("Contact: ").append(
+                        selectedExample.getContact()).append("<br>").append("<br>")
                 .append(htmlDesc);
         sb.append("</font>");
         getExampleDescription().setText(sb.toString());
