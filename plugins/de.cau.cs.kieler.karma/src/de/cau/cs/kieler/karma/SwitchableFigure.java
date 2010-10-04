@@ -236,6 +236,22 @@ public class SwitchableFigure extends Shape {
             return -1;
         }
     }
+    
+    @Override
+    public void setLineDash(final float[] dash) {
+        if (currentFigure instanceof Shape) {
+            ((Shape) currentFigure).setLineDash(dash);
+        }
+    }
+    
+    @Override
+    public float[] getLineDash() {
+        if (currentFigure instanceof Shape) {
+            return ((Shape) currentFigure).getLineDash();
+        } else {
+            return null;
+        }
+    }
 
     /**
      * check if the figure may be be resized.
