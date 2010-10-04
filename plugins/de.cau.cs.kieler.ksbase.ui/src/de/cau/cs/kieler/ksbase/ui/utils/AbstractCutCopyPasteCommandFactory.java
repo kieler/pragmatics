@@ -365,10 +365,6 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                 throws ExecutionException {
             performPreOperationActions(monitor);
 
-            // We need the view management
-            // FIXME: adapt to new kivi
-            // RunLogic.getInstance().registerListeners();
-
             // Notify event listeners:
             for (ITransformationEventListener te : TransformationUIManager.INSTANCE
                     .getTransformationEventListeners()) {

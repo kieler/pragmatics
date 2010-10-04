@@ -119,12 +119,6 @@ public final class TransformationUIManager {
             final EditorTransformationSettings editorSettings,
             final KSBasETransformation transformation,
             final List<EObject> selection) {
-        // We need the view management
-        // FIXME: adapt to new kivi
-        // if (!RunLogic.getInstance().getState()) {
-        // RunLogic.getInstance().registerListeners();
-        // }
-
         // Notify event listeners:
         for (ITransformationEventListener te : transformationEventListeners) {
             te.transformationAboutToExecute(new Object[] {});
