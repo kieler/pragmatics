@@ -53,7 +53,6 @@ import de.cau.cs.kieler.core.ui.handler.ICutCopyPasteCommandFactory;
 import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommand;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
-import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
  * Creates the cut, copy and paste commands from ksbase.
@@ -367,7 +366,8 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
             performPreOperationActions(monitor);
 
             // We need the view management
-            RunLogic.getInstance().registerListeners();
+            // FIXME: adapt to new kivi
+            // RunLogic.getInstance().registerListeners();
 
             // Notify event listeners:
             for (ITransformationEventListener te : TransformationUIManager.INSTANCE

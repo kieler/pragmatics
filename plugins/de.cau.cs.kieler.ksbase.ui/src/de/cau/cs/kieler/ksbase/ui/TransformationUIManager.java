@@ -40,7 +40,6 @@ import de.cau.cs.kieler.ksbase.core.TransformationFrameworkFactory;
 import de.cau.cs.kieler.ksbase.ui.handler.ExecuteTransformationRequest;
 import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 import de.cau.cs.kieler.ksbase.ui.utils.TransformationUtils;
-import de.cau.cs.kieler.viewmanagement.RunLogic;
 
 /**
  * Transformation-UI manager. Handles creation and execution of commands and
@@ -121,9 +120,10 @@ public final class TransformationUIManager {
             final KSBasETransformation transformation,
             final List<EObject> selection) {
         // We need the view management
-        if (!RunLogic.getInstance().getState()) {
-            RunLogic.getInstance().registerListeners();
-        }
+        // FIXME: adapt to new kivi
+        // if (!RunLogic.getInstance().getState()) {
+        // RunLogic.getInstance().registerListeners();
+        // }
 
         // Notify event listeners:
         for (ITransformationEventListener te : transformationEventListeners) {
