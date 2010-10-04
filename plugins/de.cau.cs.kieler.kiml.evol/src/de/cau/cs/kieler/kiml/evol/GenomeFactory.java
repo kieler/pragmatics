@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
@@ -458,7 +457,7 @@ final class GenomeFactory {
         float value = 1.0f;
         for (final String id : metricIds) {
             IGene<?> gene = factory.newGene(id, value, 0.02);
-            Assert.isNotNull(gene, "Failed to create gene for " + id);
+            assert gene != null : "Failed to create gene for " + id;
             result.add(gene);
         }
         return result;
@@ -500,7 +499,7 @@ final class GenomeFactory {
             String id = (String) p.getId();
             // check property descriptor id
             if (!LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
-                final LayoutOptionData<?> data = layoutServices.getLayoutOptionData(id);
+                LayoutOptionData<?> data = layoutServices.getLayoutOptionData(id);
                 assert data != null : "Layout option not registered: " + id;
 
                 Type type = data.getType();
@@ -902,11 +901,11 @@ final class GenomeFactory {
         }
         return extraGenes;
     }
-    
+
     /**
      * Determines which of the registered layout options are known by the
      * specified providers.
-     * 
+     *
      * @param providerIds
      *            a list of layout provider IDs; must not be {@code null}
      * @return a set containing the IDs of the layout options that are known by

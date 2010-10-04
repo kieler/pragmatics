@@ -15,8 +15,6 @@ package de.cau.cs.kieler.kiml.evol.genetic;
 
 import java.util.Random;
 
-import org.eclipse.core.runtime.Assert;
-
 /**
  *
  * @author bdu
@@ -73,7 +71,7 @@ public final class EnumGene extends AbstractGene<Integer> {
      */
     @Override
     public String toString() {
-        Assert.isNotNull(getEnumClass());
+        assert getEnumClass() != null;
         Enum<?>[] constants = getEnumClass().getEnumConstants();
         if (constants == null) {
             return "";
@@ -185,7 +183,7 @@ public final class EnumGene extends AbstractGene<Integer> {
                     return "";
                 }
                 final int value = ((EnumGene) o).getValue().intValue();
-                Assert.isTrue((value >= 0) && (value < constants.length));
+                assert ((value >= 0) && (value < constants.length));
                 final String result = constants[value].toString();
                 return result;
             } else if (o instanceof UniversalNumberGene) {
@@ -199,7 +197,7 @@ public final class EnumGene extends AbstractGene<Integer> {
                 if (constants == null) {
                     return value.toString();
                 }
-                Assert.isTrue((value.intValue() >= 0) && (value.intValue() < constants.length));
+                assert ((value.intValue() >= 0) && (value.intValue() < constants.length));
                 final String result = constants[value.intValue()].toString();
 
                 return result;

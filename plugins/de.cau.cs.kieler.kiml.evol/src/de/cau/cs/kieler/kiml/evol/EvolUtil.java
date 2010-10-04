@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -306,7 +305,7 @@ public final class EvolUtil {
 
                 int weightsGenomesCount = weightsGenomes.size();
                 for (final Genome weightGenome : weightsGenomes) {
-                    Assert.isNotNull(weightGenome);
+                    assert (weightGenome != null);
 
                     Map<String, Double> weightsMap = extractMetricWeights(weightGenome);
                     assert weightsMap != null;

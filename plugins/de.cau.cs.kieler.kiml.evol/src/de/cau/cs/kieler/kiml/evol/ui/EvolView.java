@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.evol.ui;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
@@ -103,7 +102,7 @@ public class EvolView extends ViewPart {
 
             EvolPlugin.logStatus("afterChange: " + cause);
 
-            Assert.isNotNull(source);
+            assert (source != null);
 
             if (EvolUtil.getCurrentEditor() == null) {
                 System.err.println("There is no current editor: " + cause);
@@ -135,7 +134,7 @@ public class EvolView extends ViewPart {
 
             final int row = source.getPosition();
             if (cause == ModelChangeType.RESET) {
-                Assert.isTrue(row == 0);
+                assert (row == 0);
             }
 
             // synchronously
@@ -144,7 +143,7 @@ public class EvolView extends ViewPart {
                     tv.selectRow(row);
                     getEvolView().refresh(isOnlyCurrent);
                 }
-            }, true);
+            }, true /* synch */);
         }
     };
 
@@ -153,7 +152,7 @@ public class EvolView extends ViewPart {
         super.init(theSite);
 
         // Reset the model.
-        assert this.evolModel != null;
+        // presuming this.evolModel != null
         this.evolModel.reset();
     }
 

@@ -22,8 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-
 /**
  *
  * A genome is a List of Gene objects. It can be used as an individual in an
@@ -350,7 +348,7 @@ public class Genome extends ArrayList<IGene<?>> {
                 int gm = 0;
                 for (final Genome genome : genomes) {
                     if (gm++ > 0) {
-                        Assert.isTrue(genome.size() == size);
+                        assert (genome.size() == size);
                         geneList.add(genome.get(g));
                     }
                 }

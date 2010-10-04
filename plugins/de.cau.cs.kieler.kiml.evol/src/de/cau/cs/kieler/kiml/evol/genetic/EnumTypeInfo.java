@@ -16,7 +16,6 @@
  */
 package de.cau.cs.kieler.kiml.evol.genetic;
 
-import org.eclipse.core.runtime.Assert;
 
 /**
  * Convenience integer type info. Use only for enums.
@@ -60,10 +59,10 @@ public final class EnumTypeInfo extends TypeInfo<Integer> {
      * @return number of choices in the given enumeration.
      */
     private static int choicesCount(final Class<? extends Enum<?>> theEnumClass) {
-        Assert.isLegal(theEnumClass != null);
         if (theEnumClass == null) {
-            return 0;
+            throw new IllegalArgumentException();
         }
+
         if (theEnumClass.getEnumConstants() == null) {
             return 0;
         }
