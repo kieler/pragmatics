@@ -17,12 +17,13 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 
 /**
  * The handler which is responsible to perform layout in a graphical diagram.
@@ -61,12 +62,16 @@ public class LayoutHandler extends AbstractHandler {
             IStructuredSelection structuredSelection = (IStructuredSelection) selection;
             if (structuredSelection.getFirstElement() instanceof EditPart) {
                 EditPart selectedElement = (EditPart) structuredSelection.getFirstElement();
-                EclipseLayoutServices.getInstance().layout(
-                        editorPart, selectedElement, true, true);
+                // EclipseLayoutServices.getInstance().layout(
+                // editorPart, selectedElement, true, true);
+                // FIXME quick & dirty way of using the effect with the proper thread
+                new LayoutEffect(editorPart, ((View) selectedElement.getModel()).getElement())
+                        .schedule();
                 return null;
             }
         }
-        EclipseLayoutServices.getInstance().layout(editorPart, null, true, true);
+//        EclipseLayoutServices.getInstance().layout(editorPart, null, true, true);
+        new LayoutEffect(editorPart, null).schedule();
         return null;
     }
 
