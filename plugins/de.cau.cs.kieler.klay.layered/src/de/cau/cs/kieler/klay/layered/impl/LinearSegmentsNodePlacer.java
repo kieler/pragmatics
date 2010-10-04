@@ -250,6 +250,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
      *            a linear segment
      */
     private void fillSegment(final LNode node, final LinearSegment segment) {
+        if (node.id >= 0) {
+            return;
+        }
         node.id = segment.id;
         segment.nodes.add(node);
 
