@@ -182,26 +182,37 @@ public final class EvolUtil {
         private static DiagramLayoutManager adoptAndApplyLayout(
                 final Genome individual, final IEditorPart editor) {
             // Adopt the layout options that are encoded in the individual.
-            try {
-                EvolUtil.adoptIndividual(individual, editor);
-            } catch (KielerException exception) {
-                exception.printStackTrace();
-                EvolPlugin.showError("Could not adopt the individual.", exception);
-                return null;
-            }
+            // try {
+            // // EvolUtil.adoptIndividual(individual, editor);
+            // } catch (KielerException exception) {
+            // exception.printStackTrace();
+            // EvolPlugin.showError("Could not adopt the individual.",
+            // exception);
+            // return null;
+            // }
+
+            AdoptingRecursiveLayouterEngine engine = new AdoptingRecursiveLayouterEngine();
+
+            IKielerProgressMonitor monitor = new BasicProgressMonitor();
+
+            KNode layoutResult =
+                    engine.calculateLayout(individual, (DiagramEditor) editor, monitor);
+
+            DiagramLayoutManager manager = engine.getManager();
 
             // We don't specify the edit part because we want a manager for
             // the whole diagram.
-            DiagramLayoutManager manager =
-                    EclipseLayoutServices.getInstance().getManager(editor, null);
+            // DiagramLayoutManager manager =
+            // EclipseLayoutServices.getInstance().getManager(editor, null);
             assert manager != null : "Could not get a layout manager for " + editor.getTitle();
 
-            IKielerProgressMonitor monitor = EvolUtil.calculateLayout(manager, editor);
+            // IKielerProgressMonitor monitor =
+            // EvolUtil.calculateLayout(manager, editor);
 
-            if (monitor != null) {
+            // if (monitor != null) {
                 // Apply the layout to the diagram in the editor.
-                manager.applyAnimatedLayout(false /* animate */, false /* cacheLayout */, 0);
-            }
+            manager.applyAnimatedLayout(true /* animate */, false /* cacheLayout */, 0);
+            // }
 
             return manager;
         }

@@ -49,9 +49,19 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         super(null);
     }
 
+    /** Cached layout manager. */
+    private DiagramLayoutManager manager;
+    
+    /**
+     * @return the layout manager most recently used by this engine.
+     */
+    public DiagramLayoutManager getManager() {
+        return this.manager;
+    }
+    
     /**
      * Calculates a layout for the given individual in the given editor.
-     *
+     * 
      * @param individual
      *            the {@link Genome} from which layout options shall be adopted;
      *            may not be {@code null}
@@ -67,9 +77,12 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             final Genome individual, final DiagramEditor editor,
             final IKielerProgressMonitor progressMonitor) {
 
-        DiagramLayoutManager manager =
+        if (this.manager == null) {
+            this.manager =
                 EclipseLayoutServices.getInstance().getManager(editor, null);
-        KNode layoutGraph = manager.buildLayoutGraph(editor, null, false);
+        }
+
+        KNode layoutGraph = this.manager.buildLayoutGraph(editor, null, false);
         // TODO: discuss: can we have manager.getEditor() ?
 
         // Transfer layout options from the individual to the KGraph.
@@ -223,4 +236,5 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         }
         return copy;
     }
+
 }
