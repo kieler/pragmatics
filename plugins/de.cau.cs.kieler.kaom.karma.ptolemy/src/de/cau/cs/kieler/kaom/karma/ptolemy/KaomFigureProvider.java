@@ -77,7 +77,7 @@ public class KaomFigureProvider implements IRenderingProvider {
             return createFigureFromIconDescription(object);
         } else if (input.equals("ptolemy.actor.lib.MonitorValue")) {
             return createMonitorValue(object);
-        } else if (input.equals("ptolemy.actor.lib.Const")) {
+        } else if (input.equals("valueDisplay")) {
             return createConstFigure(object);
         } else if (input.equals("Director")) {
             return createDirector();
@@ -432,9 +432,9 @@ public class KaomFigureProvider implements IRenderingProvider {
 
     }
 
-    private static final int LABELSIZE_WIDTH = 30;
+    private static final int LABELSIZE_WIDTH = 50;
     private static final int LABELSIZE_HEIGHT = 10;
-    private static final int LABELLOCATION_X = 10;
+    private static final int LABELLOCATION_X = 20;
     private static final int LABELLOCATION_Y = 10;
 
     /**
