@@ -54,6 +54,48 @@ public class EvolView extends ViewPart {
      */
     private abstract static class EvolModelListener implements IEvolModelListener {
         /**
+         * A Runnable that sets a population as input for a table viewer.
+         *
+         * @author bdu
+         *
+         */
+        private static final class InputSetterRunnable implements Runnable {
+            /**
+             * The population that shall be used as input.
+             */
+            private final Population population;
+            /**
+             * The target table viewer.
+             */
+            private final TableViewer tableViewer;
+
+            /**
+             * Creates a new {@link InputSetterRunnable} instance.
+             *
+             * @param thePopulation
+             *            the population that shall be set as new input for the
+             *            table viewer
+             * @param theTableViewer
+             *            the table viewer
+             */
+            InputSetterRunnable(final Population thePopulation, final TableViewer theTableViewer) {
+                this.population = thePopulation;
+                this.tableViewer = theTableViewer;
+            }
+
+            /**
+             * Sets the population as input for the table viewer.
+             */
+            public void run() {
+                if (this.tableViewer.getInput() != this.population) {
+                    this.tableViewer.setInput(this.population);
+                } else {
+                    EvolPlugin.showError("TableViewer: input already set.", null);
+                }
+            }
+        }
+
+        /**
          * The associated view.
          */
         private final EvolView evolView;
@@ -85,7 +127,7 @@ public class EvolView extends ViewPart {
         void populationChange(final Population pop, final SelectorTableViewer tv) {
             if (pop != null) {
                 final Runnable inputSetterRunnable = new InputSetterRunnable(pop, tv);
-                MonitoredOperation.runInUI(inputSetterRunnable, true);
+                MonitoredOperation.runInUI(inputSetterRunnable, true /* synch */);
             }
         }
     }
@@ -188,48 +230,6 @@ public class EvolView extends ViewPart {
                     ((isChecked()) ? EvolPlugin.ALL_EDITORS : EvolPlugin.CURRENT_EDITOR);
 
             store.setValue(EvolPlugin.PREF_EDITORS, newValue);
-        }
-    }
-
-    /**
-     * A Runnable that sets a population as input for a table viewer.
-     *
-     * @author bdu
-     *
-     */
-    private static final class InputSetterRunnable implements Runnable {
-        /**
-         *
-         */
-        private final Population population;
-        /**
-         *
-         */
-        private final TableViewer tableViewer;
-
-        /**
-         * Creates a new {@link InputSetterRunnable} instance.
-         *
-         * @param thePopulation
-         *            the population that shall be set as new input for the
-         *            table viewer
-         * @param theTableViewer
-         *            the table viewer
-         */
-        InputSetterRunnable(final Population thePopulation, final TableViewer theTableViewer) {
-            this.population = thePopulation;
-            this.tableViewer = theTableViewer;
-        }
-
-        /**
-         * Sets the population as input for the table viewer.
-         */
-        public void run() {
-            if (this.tableViewer.getInput() != this.population) {
-                this.tableViewer.setInput(this.population);
-            } else {
-                EvolPlugin.showError("TableViewer: input already set.", null);
-            }
         }
     }
 
@@ -408,7 +408,7 @@ public class EvolView extends ViewPart {
 
         SelectorTableViewer tv = new SelectorTableViewer(table);
         tv.setContentProvider(new PopulationTableContentProvider());
-        tv.setLabelProvider(new PopulationTableLabelProvider(this));
+        tv.setLabelProvider(new PopulationTableLabelProvider(this.evolModel));
         this.tableViewer = tv;
 
         ISelectionChangedListener listener = new SelectionChangedListener(tv);

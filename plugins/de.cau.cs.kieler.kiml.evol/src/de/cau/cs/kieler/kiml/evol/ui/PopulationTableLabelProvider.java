@@ -20,6 +20,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
@@ -34,18 +35,18 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class PopulationTableLabelProvider extends LabelProvider implements ITableLabelProvider {
     /**
-     * The evolution view.
+     * The associated evolution model.
      */
-    private final EvolView evolView;
+    private final EvolModel evolModel;
 
     /**
      * Creates a new {@link PopulationTableLabelProvider}.
-     *
-     * @param theEvolView
-     *            the evolution view
+     * 
+     * @param theEvolModel
+     *            the associated evolution model
      */
-    public PopulationTableLabelProvider(final EvolView theEvolView) {
-        this.evolView = theEvolView;
+    public PopulationTableLabelProvider(final EvolModel theEvolModel) {
+        this.evolModel = theEvolModel;
         // Nothing to do here.
     }
 
@@ -74,9 +75,10 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
     public Image getColumnImage(final Object element, final int columnIndex) {
         switch (columnIndex) {
         case 0:
-            int pos = this.evolView.getEvolModel().getPosition();
+            int pos = this.evolModel.getPosition();
             if ((element instanceof PopulationTableEntry)
                     && (((PopulationTableEntry) element).getIndex() == pos)) {
+                // it is the current individual
                 return this.currentImage;
             }
             return this.defaultImage;
