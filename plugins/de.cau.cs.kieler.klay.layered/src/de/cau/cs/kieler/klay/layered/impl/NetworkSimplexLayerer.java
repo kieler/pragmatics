@@ -367,8 +367,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         layeredGraph = theLayeredGraph;
 
         // support wide nodes, if requested
-        IBigNodeHandler bigNodeHandler = new BigNodeHandler();
+        IBigNodeHandler bigNodeHandler = null;
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
+            bigNodeHandler = new BigNodeHandler();
             bigNodeHandler.splitWideNodes(theNodes, theLayeredGraph);
         }
 
@@ -385,9 +386,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
 
             if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
-                normalize(false);
+                normalize();
             } else {
-                balance(normalize(false));
+                balance(normalize());
             }
             // put nodes into their assigned layers
             for (LNode node : nodes) {
@@ -395,9 +396,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
         }
 
-        // correct layering concerning wide nodes
-        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
-            bigNodeHandler.correctLayering();
+        // segmentate layering, if requested
+        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)
+                && layeredGraph.getProperty(Properties.SEGMENTATE_LAYERING)) {
+            bigNodeHandler.segmentateLayering();
         }
 
         getMonitor().done();
@@ -616,10 +618,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
     /**
      * Helper method for the network simplex layerer. It returns the non-tree edge incident on the
-     * tree and a non-tree node with a minimal amount of slack (i.e. an edge with the lowest
-     * difference between its current and minimal length) or {@code null}, if no such edge exists.
-     * Note, that the returned edge's slack is never {@code 0}, since otherwise, the edge would be a
-     * tree-edge.
+     * tree and incident to a non-tree node with a minimal amount of slack (i.e. an edge with the
+     * lowest difference between its current and minimal length) or {@code null}, if no such edge
+     * exists. Note, that the returned edge's slack is never {@code 0}, since otherwise, the edge
+     * would be a tree-edge.
      * 
      * @return a non-tree edge incident on the tree with a minimal amount of slack or {@code null},
      *         if no such edge exists
@@ -784,7 +786,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                         }
                     }
                 }
-                // remove edge from unknownCutvalues
+                // remove edge from 'unknownCutvalues'
                 unknownCutvalues.get(source.id).remove(toDetermine);
                 unknownCutvalues.get(target.id).remove(toDetermine);
                 // proceed with next node
@@ -941,14 +943,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * assigned to which layer. Note that the total number of layers necessary to layer the graph is
      * indicated thereby, which is the size if the array.
      * 
-     * @param mode
-     *            if {@code false}, only the amount of nodes in the currently layered connected
-     *            component will be considered for determining the layer's filling structure.
-     *            Otherwise, all nodes, that have been layered already will be considered.
-     * 
      * @return an integer array indicating how many nodes are assigned to which layer
      */
-    private int[] normalize(final boolean mode) {
+    private int[] normalize() {
 
         // determine lowest assigned layer and layer count
         int highest = Integer.MIN_VALUE;
@@ -970,13 +967,11 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             layer[node.id] -= lowest;
             filling[layer[node.id]]++;
         }
-        if (mode) {
-            // also consider nodes of already layered connected components of the graph
-            for (Layer eLayer : layeredGraph.getLayers()) {
-                filling[layerID++] += eLayer.getNodes().size();
-                if (filling.length == layerID) {
-                    break;
-                }
+        // also consider nodes of already layered connected components
+        for (Layer eLayer : layeredGraph.getLayers()) {
+            filling[layerID++] += eLayer.getNodes().size();
+            if (filling.length == layerID) {
+                break;
             }
         }
         return filling;

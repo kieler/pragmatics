@@ -22,19 +22,21 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.modules.IBigNodeHandler;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 import lpsolve.AbortListener;
-import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
+import lpsolve.LpSolve;
 
 /**
  * The main class of the LpSolve-layerer component. It offers an algorithm to determine an optimal
- * layering of all nodes in the graph concerning a minimal edge length using the LP-solver of
+ * layering of all nodes in the graph concerning a minimal edge span using the LP-solver of
  * lpsolve.sourceforge.net.
  * 
  * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
@@ -113,41 +115,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         }
     }
 
-    /**
-     * An exception for the LpSolveLayerer. It is thrown whenever the LpSolver execution failed for
-     * some reason.
-     * 
-     * @see java.lang.RuntimeException RuntimeException
-     */
-    private class LpSolveLayererException extends RuntimeException {
-
-        /** The generated serial version UID for serialization. */
-        private static final long serialVersionUID = 5549313074239264699L;
-
-        /**
-         * Constructs a new LpSolveLayerer exception with the specified detail message.
-         * 
-         * @param message
-         *            the detail message
-         */
-        public LpSolveLayererException(final String message) {
-            super(message);
-        }
-
-        /**
-         * Constructs a new LpSolveLayerer exception with the specified detail message and cause.
-         * 
-         * @param message
-         *            the detail message
-         * @param cause
-         *            the cause of the exception or {@code null} indicating that the cause is not
-         *            existent or unknown
-         */
-        public LpSolveLayererException(final String message, final Throwable cause) {
-            super(message, cause);
-        }
-    }
-
     // =============================== Initialization Methods =====================================
 
     /**
@@ -207,14 +174,13 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
 
     /**
      * The main method of the LpSolve-layerer component. It determines an optimal layering of all
-     * nodes in the graph concerning a minimal edge length using the LP-solver of
+     * nodes in the graph concerning a minimal edge span using the LP-solver of
      * lpsolve.sourceforge.net.
      * 
      * @param nodes
      *            a {@code Collection} of all nodes of the graph to layer
      * @param layeredGraph
      *            an initially empty layered graph which is filled with layers
-     * 
      * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
@@ -232,6 +198,14 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             return;
         }
         layerGraph = layeredGraph;
+        
+        // support wide nodes, if requested
+        IBigNodeHandler bigNodeHandler = null;
+        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
+            bigNodeHandler = new BigNodeHandler();
+            bigNodeHandler.splitWideNodes(nodes, layeredGraph);
+        }
+        
         initialize(nodes);
 
         // determine optimal layering
@@ -246,14 +220,19 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             if (solution == LpSolve.OPTIMAL || solution == LpSolve.SUBOPTIMAL) {
                 // apply the solution
                 applySolution(lp);
+                // segmentate layering, if requested
+                if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)
+                        && layeredGraph.getProperty(Properties.SEGMENTATE_LAYERING)) {
+                    bigNodeHandler.segmentateLayering();
+                }
             } else {
                 if (solution == LpSolve.USERABORT && abortListener.timeout) {
                     solution = LpSolve.TIMEOUT;
                 }
-                throw new LpSolveLayererException(getErrorMessage(solution));
+                throw new RuntimeException(getErrorMessage(solution));
             }
         } catch (LpSolveException exception) {
-            throw new LpSolveLayererException("LpSolver execution failed.", exception);
+            throw new RuntimeException("LpSolver execution failed.", exception);
         } finally {
             if (lp != null) {
                 lp.deleteLp();
@@ -456,18 +435,24 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
                 if (filling[newLayer] < filling[layer[node.id]]) {
                     filling[layer[node.id]]--;
                     filling[newLayer]++;
-                    layer[node.id] = newLayer;
+                    layer[node.id] = newLayer;                  
                 }
             }
         }
     }
 
     /**
-     * Helper method for the LpSolve-layerer. It puts the specified node into its assigned layer in
-     * the layered graph.
+     * Helper method for the network simplex layerer. It puts the specified node into its assigned
+     * layer indicated by {@code layer} in the layered graph. If the layered graph does not contain
+     * the specified layer (i.e. the number of layers in {@code layeredGraph} is lesser than the
+     * supposed height in the layering), additional layers will be added to match the required
+     * amount.
      * 
      * @param node
-     *            the node to put into the layered graph
+     *            the node to put into its assigned layer in the layered graph
+     * 
+     * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#layeredGraph layeredGraph
+     * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#layer layer
      */
     private void putNode(final LNode node) {
 

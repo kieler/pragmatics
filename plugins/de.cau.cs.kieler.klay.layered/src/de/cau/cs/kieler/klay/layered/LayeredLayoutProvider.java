@@ -22,8 +22,12 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer;
@@ -112,11 +116,11 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             }
             break;
         }
-        
+
         // transform the input graph
         IGraphImporter graphImporter = new KGraphImporter(layoutNode);
         LayeredGraph layeredGraph = graphImporter.getGraph();
-        
+
         // set object spacing option
         float objSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
         if (objSpacing >= 0) {
@@ -131,7 +135,10 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // set minimal edge angle
         layeredGraph.setProperty(Properties.MIN_EDGE_ANGLE,
                 parentLayout.getProperty(Properties.MIN_EDGE_ANGLE));
-        
+        // add information for the layering algorithm
+        layeredGraph.setProperty(Properties.SEGMENTATE_LAYERING,
+                parentLayout.getProperty(Properties.SEGMENTATE_LAYERING));
+
         // set debug mode option
         Boolean debugMode = parentLayout.getProperty(LayoutOptions.DEBUG_MODE);
         if (debugMode) {
@@ -157,11 +164,12 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /**
      * Perform the five phases of the layered layouter.
      * 
-     * @param importer the graph importer
-     * @param themonitor a progress monitor, or {@code null}
+     * @param importer
+     *            the graph importer
+     * @param themonitor
+     *            a progress monitor, or {@code null}
      */
-    public void layout(final IGraphImporter importer,
-            final IKielerProgressMonitor themonitor) {
+    public void layout(final IGraphImporter importer, final IKielerProgressMonitor themonitor) {
         IKielerProgressMonitor monitor = themonitor;
         if (monitor == null) {
             monitor = new BasicProgressMonitor();

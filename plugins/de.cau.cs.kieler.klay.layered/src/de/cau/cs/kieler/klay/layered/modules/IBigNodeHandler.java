@@ -20,7 +20,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * Interface for big node splitter modules. Its purpose is to split wide nodes into several smaller
+ * Interface for big-node-splitter modules. Its purpose is to split wide nodes into several smaller
  * nodes, so that layerer can handle them properly.
  * 
  * @author pdo
@@ -28,9 +28,10 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 public interface IBigNodeHandler extends IAlgorithm {
 
     /**
-     * Split wide nodes of the input collection into several smaller nodes. All incoming edges of
-     * each original node should be connected to the first resulting node. All outgoing edges should
-     * be connected to the last created node.
+     * Split wide nodes of the input collection into several smaller nodes, so that all nodes of the
+     * graph almost have almost the same width. All incoming edges of each original node should be
+     * connected to the first resulting node. All outgoing edges should be connected to the last
+     * created node.
      * 
      * @param nodes
      *            a {@code Collection} containing all nodes of the graph
@@ -40,9 +41,11 @@ public interface IBigNodeHandler extends IAlgorithm {
     void splitWideNodes(Collection<LNode> nodes, LayeredGraph layeredGraph);
 
     /**
-     * This method removes all edges previously added to the graph to fixate big nodes in their
-     * segments. This removal is necessary, since that edges are not part of the original graph and
-     * will reduce the quality of the result of the crossing minimization phase.
+     * Segmentate the layering after layerer execution by shifting single nodes to the right (i.e.
+     * placing them into a layer with a higher ID). Two wide nodes (i.e. nodes with a {@code width}
+     * > 1) have to be placed into layers, so that they are not disjunct regarding the layers, they
+     * are assigned to, and the narrower of the two nodes is not assigned to all layers, the wider
+     * nodes is also placed in.
      */
-    void correctLayering();
+    void segmentateLayering();
 }

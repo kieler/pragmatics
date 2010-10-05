@@ -49,35 +49,41 @@ public final class Properties {
     /** debug canvas. */
     public static final IProperty<IDebugCanvas> DEBUG_CANVAS = new Property<IDebugCanvas>(
             "debugCanvas");
-    
-    ///  USER INTERFACE OPTIONS
-    
+
+    // / USER INTERFACE OPTIONS
+
     /** default value for object spacing. */
     public static final float DEF_SPACING = 20.0f;
     /** minimal spacing between objects. */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(
             LayoutOptions.OBJ_SPACING, DEF_SPACING);
-    
+
     /** priority of elements. */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(
-            LayoutOptions.PRIORITY, 0);
-    
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
+            0);
+
     /** port constraints. */
     public static final Property<PortConstraints> PORT_CONS = new Property<PortConstraints>(
             LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
-    
+
     /** option identifier for minimal angle. */
     public static final String MIN_EDGE_ANGLE_ID = "de.cau.cs.kieler.klay.layered.minimalAngle";
     /** defines the minimal angle a short edge may have. */
     public static final IProperty<Integer> MIN_EDGE_ANGLE = new Property<Integer>(
             MIN_EDGE_ANGLE_ID, 0);
-    
+
     /** option identifier for straight edges. */
     public static final String STRAIGHT_EDGES_ID = "de.cau.cs.kieler.klay.layered.straightEdges";
     /** whether edges shall be straightened as much as possible. */
     public static final IProperty<Boolean> STRAIGHT_EDGES = new Property<Boolean>(
             STRAIGHT_EDGES_ID, false);
-    
+    /** option identifier for layering segmentation. */
+    public static final String SEGMENTATE_LAYERING_ID =
+        "de.cau.cs.kieler.klay.layered.segmentateLayering";
+    /** indicates, whether the layering shall be arranged in segments. */
+    public static final IProperty<Boolean> SEGMENTATE_LAYERING = new Property<Boolean>(
+            SEGMENTATE_LAYERING_ID, false);
+
     /** option identifier for distribute nodes. */
     public static final String DISTRIBUTE_NODES_ID = "de.cau.cs.kieler.klay.layered.distributeNodes";
     /** whether nodes shall be distributed during layer assignment. */
@@ -89,14 +95,13 @@ public final class Properties {
     /** property to choose an edge routing strategy. */
     public static final IProperty<LayeredEdgeRouting> EDGE_ROUTING = new Property<LayeredEdgeRouting>(
             EDGE_ROUTING_ID, LayeredEdgeRouting.POLYLINE);
-    
+
     /** option identifier for node layering. */
     public static final String NODE_LAYERING_ID = "de.cau.cs.kieler.klay.layered.nodeLayering";
     /** property to choose a node layering strategy. */
     public static final IProperty<NodeLayering> NODE_LAYERING = new Property<NodeLayering>(
             NODE_LAYERING_ID, NodeLayering.NETWORK_SIMPLEX);
 
-    
     /**
      * Hidden default constructor.
      */

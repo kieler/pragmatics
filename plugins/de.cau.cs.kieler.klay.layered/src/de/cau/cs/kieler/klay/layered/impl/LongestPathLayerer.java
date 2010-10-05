@@ -13,13 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -27,6 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.modules.IBigNodeHandler;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 
 /**
@@ -41,8 +39,6 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
     private LayeredGraph layeredGraph;
     /** map of nodes to their height in the layering. */
     private int[] nodeHeights;
-    /** minimal spacing between objects. */
-    private float spacing;
     
     /**
      * {@inheritDoc}
@@ -50,10 +46,12 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
     public void layer(final Collection<LNode> nodes, final LayeredGraph thelayeredGraph) {
         getMonitor().begin("Longest path layering", 1);
         layeredGraph = thelayeredGraph;
-        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         
+        // support wide nodes, if requested
+        IBigNodeHandler bigNodeHandler = null;
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
-            distributeBigNodes(nodes);
+            bigNodeHandler = new BigNodeHandler();
+            bigNodeHandler.splitWideNodes(nodes, thelayeredGraph);
         }
         
         nodeHeights = new int[nodes.size()];
@@ -68,69 +66,16 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
         for (LNode node : nodes) {
             visit(node);
         }
+        
+        // segmentate layering, if requested
+        if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)
+                && layeredGraph.getProperty(Properties.SEGMENTATE_LAYERING)) {
+            bigNodeHandler.segmentateLayering();
+        }
+        
         getMonitor().done();
     }
     
-    /**
-     * @param nodes Nodes of the Graph
-     */
-    public void distributeBigNodes(final Collection<LNode> nodes) {
-        double minWidth = Float.MAX_VALUE;
-        // Compute minimal width of Nodes
-        for (Iterator<LNode> nodeIter = nodes.iterator(); nodeIter.hasNext();) {
-            LNode node = (LNode) nodeIter.next();
-            double width = node.getSize().x;
-            if (width < minWidth) {
-                minWidth = width;
-            }
-        }
-
-        // List of dummy nodes to be inserted in the graph
-        Collection<LNode> addNodes = new ArrayList<LNode>();
-        for (Iterator<LNode> nodeIter = nodes.iterator(); nodeIter.hasNext();) {
-            LNode node = (LNode) nodeIter.next();
-            double width = node.getSize().x;
-            double treshold = (2 * minWidth) + spacing;
-            int numDummys = 0;
-            while (treshold <= width) {
-                numDummys++;
-                treshold += minWidth + spacing;
-            } 
-
-            // All nodes in the segment get the same width (temporarily)
-            double newWidth = (width - (numDummys * spacing)) / (numDummys + 1);
-            node.getSize().x = newWidth;
-            
-            for (int d = 0; d < numDummys; d++) {
-                // expand node by one dummynode
-                LNode addNode = new LNode();
-                addNode.getSize().y = node.getSize().y;
-                addNode.getSize().x = newWidth;
-                
-                // Reassign ports
-                Iterator<LPort> portIter = node.getPorts(PortType.OUTPUT).iterator();
-                List<LPort> ports = new ArrayList<LPort>();
-                while (portIter.hasNext()) {
-                    LPort lPort = (LPort) portIter.next();
-                    ports.add(lPort);
-                }
-                for (LPort port : ports) {
-                    port.setNode(addNode);
-                }
-                
-                // Add edge
-                LPort outPort = new LPort(PortType.OUTPUT);
-                LPort inPort = new LPort(PortType.INPUT);
-                outPort.setNode(node);
-                inPort.setNode(addNode);
-                LEdge edge = new LEdge();
-                edge.setSource(outPort);
-                edge.setTarget(inPort);
-                addNodes.add(addNode);
-            }
-        }
-        nodes.addAll(addNodes);
-    }
 
     /**
      * Visit a node: if not already visited, find the longest path to a sink.
