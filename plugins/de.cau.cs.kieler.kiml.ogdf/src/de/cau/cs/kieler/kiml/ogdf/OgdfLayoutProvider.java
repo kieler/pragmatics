@@ -17,6 +17,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
 
 /**
  * The OGDF layout provider, that is the entry class used by KIML to call
@@ -26,28 +27,6 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
  * @author mri
  */
 public class OgdfLayoutProvider extends AbstractLayoutProvider {
-
-    /** Definition of available layout algorithms. */
-    public enum LayoutAlgorithm {
-        /** Sugiyama's layout algorithm. */
-        SUGIYAMA,
-        /** The planarization layout algorithm. */
-        UMLPLANARIZATION,
-        /** The fmmm layout algorithm. */
-        FMMM,
-        /** The Davidson-Harel layout algorithm. */
-        DAVIDSON_HAREL,
-        /** The Fruchterman-Reingold algorithm. */
-        FRUCHTERMAN_REINGOLD,
-        /** The circular layout algorithm. */
-        CIRCULAR,
-        /** The tree layout algorithm. */
-        TREE,
-        /** The radial tree layout algorithm. */
-        RADIAL_TREE,
-        /** The upward-planarization layout algorithm. */
-        UPWARD_PLANARIZATION
-    }
 
     /** the selected layouter. */
     private OgdfLayouter layoutAlgorithm;
@@ -63,40 +42,49 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
             throw new KielerException("Could not initialize OGDF layouter.");
         }
         try {
-            switch (LayoutAlgorithm.valueOf(parameter)) {
-            case SUGIYAMA:
-                layoutAlgorithm = new SugiyamaLayouter();
-                break;
-            case UMLPLANARIZATION:
-                layoutAlgorithm = new PlanarizationLayouter();
-                break;
-            case FMMM:
-                layoutAlgorithm = new FMMMLayouter();
-                break;
-            case DAVIDSON_HAREL:
-                layoutAlgorithm = new DavidsonHarelLayouter();
-                break;
-            case FRUCHTERMAN_REINGOLD:
-                layoutAlgorithm = new SpringEmbedderFRLayouter();
-                break;
-            case CIRCULAR:
-                layoutAlgorithm = new CircularLayouter();
-                break;
-            case TREE:
-                layoutAlgorithm = new TreeLayouter();
-                break;
-            case RADIAL_TREE:
-                layoutAlgorithm = new RadialTreeLayouter();
-                break;
-            case UPWARD_PLANARIZATION:
-                layoutAlgorithm = new UpwardPlanarizationLayouter();
-                break;
-            default:
-                layoutAlgorithm = null;
-            }
+            initialize(LayoutAlgorithm.valueOf(parameter));
         } catch (IllegalArgumentException exception) {
             throw new KielerException("Could not initialize OGDF layouter.",
                     exception);
+        }
+    }
+
+    /**
+     * Initialize the layout provider with the given algorithm constant.
+     * 
+     * @param algo a layout algorithm constant
+     */
+    public void initialize(final LayoutAlgorithm algo) {
+        switch (algo) {
+        case SUGIYAMA:
+            layoutAlgorithm = new SugiyamaLayouter();
+            break;
+        case UMLPLANARIZATION:
+            layoutAlgorithm = new PlanarizationLayouter();
+            break;
+        case FMMM:
+            layoutAlgorithm = new FMMMLayouter();
+            break;
+        case DAVIDSON_HAREL:
+            layoutAlgorithm = new DavidsonHarelLayouter();
+            break;
+        case FRUCHTERMAN_REINGOLD:
+            layoutAlgorithm = new SpringEmbedderFRLayouter();
+            break;
+        case CIRCULAR:
+            layoutAlgorithm = new CircularLayouter();
+            break;
+        case TREE:
+            layoutAlgorithm = new TreeLayouter();
+            break;
+        case RADIAL_TREE:
+            layoutAlgorithm = new RadialTreeLayouter();
+            break;
+        case UPWARD_PLANARIZATION:
+            layoutAlgorithm = new UpwardPlanarizationLayouter();
+            break;
+        default:
+            layoutAlgorithm = null;
         }
     }
 
