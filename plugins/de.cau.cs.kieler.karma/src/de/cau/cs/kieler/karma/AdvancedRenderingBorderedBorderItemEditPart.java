@@ -16,18 +16,20 @@
 package de.cau.cs.kieler.karma;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
 /**
  * @author ckru
  * 
- * EditPart for using KARMA with BorderedBorderItems 
+ *         EditPart for using KARMA with BorderedBorderItems
  */
 public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
         BorderedBorderItemEditPart implements IAdvancedRenderingEditPart {
@@ -53,8 +55,7 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
         super(view);
         String className = this.getClass().getName();
         ConditionProvider conditionProvider = ConditionProvider.getInstance();
-        List<HashMap<String, Object>> conditions = conditionProvider
-                .getPairs(className);
+        List<HashMap<String, Object>> conditions = conditionProvider.getPairs(className);
         util = new AdvancedRenderingEditPartUtil(conditions);
     }
 
@@ -79,12 +80,12 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
     public EObject getModelElement() {
         return this.getNotationView().getElement();
     }
-    
+
     /**
      * Flag for calling the updateFigure method only once while initializing the diagram.
      */
     private boolean updateTriggerFigure = true;
-    
+
     @Override
     public void refresh() {
         super.refresh();
@@ -93,5 +94,4 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
             updateFigure(primaryShape);
         }
     }
-
 }

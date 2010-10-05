@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kaom.karma.ptolemy;
 
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.transform.Result;
@@ -90,8 +92,6 @@ public class KaomFigureProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public IFigure getDefaultFigure() {
-        // TODO Auto-generated method stub
-        // org.ptolemy.
         RectangleFigure defaultFigure = new RectangleFigure();
         defaultFigure.setLineWidth(1);
         defaultFigure.setForegroundColor(ColorConstants.black);
@@ -133,7 +133,6 @@ public class KaomFigureProvider implements IRenderingProvider {
      * @return a scalable image figure
      */
     private IFigure createSvg(final String file) {
-
         RenderedImage img = RenderedImageFactory.getInstance(file.getBytes());
         ScalableImageFigure fig = new ScalableImageFigure(img, false, true, true);
         return fig;
@@ -200,8 +199,28 @@ public class KaomFigureProvider implements IRenderingProvider {
                     object = svgElement.getElementsByTagName("*").item(childPointer);
                 }
                 Element firstElement = (Element) object;
-                xoffset = Math.abs(Integer.parseInt(firstElement.getAttribute("x")));
-                yoffset = Math.abs(Integer.parseInt(firstElement.getAttribute("y")));
+                if (firstElement.hasAttribute("points")) {
+                    String points = firstElement.getAttribute("points");
+                    String[] splittedPoints = points.split(" +");
+                    String firstPoint = splittedPoints[0];
+                    String[] firstPointCoords = firstPoint.split(",");
+                    xoffset = Math.abs(Integer.parseInt(firstPointCoords[0]));
+                    yoffset = Math.abs(Integer.parseInt(firstPointCoords[1]));
+                    List<Integer> pointsX = new LinkedList<Integer>();
+                    List<Integer> pointsY = new LinkedList<Integer>();
+                    for (String singlePoint: splittedPoints) {
+                        String[] pointCoord = singlePoint.split(",");
+                        pointsX.add(Integer.parseInt(pointCoord[0]));
+                        pointsY.add(Integer.parseInt(pointCoord[1]));
+                    }
+                    int maxX = Collections.max(pointsX);
+                    int maxY = Collections.max(pointsY);
+                    svgElement.setAttribute("height",
+                            String.valueOf(maxX + xoffset + 1));
+                    svgElement.setAttribute("width",
+                            String.valueOf(maxY + yoffset + 1));
+                }
+                
             }
             for (int i = 0; i < doc.getElementsByTagName("rect").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("rect").item(i);
@@ -478,7 +497,7 @@ public class KaomFigureProvider implements IRenderingProvider {
                     Class<?> ptolemy = Class.forName(ptolemyClassString);
                     Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class,
                             String.class);
-                    Object obj = constr.newInstance(new CompositeEntity(), "test");
+                    Object obj = constr.newInstance(new CompositeEntity(), "cache");
                     if (obj instanceof Entity) {
                         Entity entity = (Entity) obj;
                         TestIconLoader til = new TestIconLoader();

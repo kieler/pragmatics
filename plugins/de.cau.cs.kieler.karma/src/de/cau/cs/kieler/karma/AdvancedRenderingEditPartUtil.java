@@ -136,10 +136,11 @@ public class AdvancedRenderingEditPartUtil {
                         // setting the new figure
                         newFigure = renderingProvider.getFigureByString(figureParam, oldFigure,
                                 modelElement);
-                        if (attrFigure != null && newFigure != null) {
-                            attrFigure.setCurrentFigure(newFigure);
+                        if (newFigure != null) {
+                            if (attrFigure != null) {
+                                attrFigure.setCurrentFigure(newFigure);
+                            }
                         }
-
                         // setting the LayoutManager
                         LayoutManager newLayoutManager = renderingProvider
                                 .getLayoutManagerByString(layoutParam, figure.getLayoutManager(),
@@ -150,24 +151,28 @@ public class AdvancedRenderingEditPartUtil {
 
                         // sets the new BoderItemLocator
                         if (editPart instanceof AbstractBorderItemEditPart) {
-                            AbstractBorderedShapeEditPart parent = 
-                                ((AbstractBorderedShapeEditPart) editPart.getParent());
-                            IFigure mainFigure = parent.getMainFigure();
-                            BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) figure
-                                    .getParent().getParent();
-                            if (borderedNodeFigure.getParent() != null) {
-                                IBorderItemLocator oldLocator = (IBorderItemLocator) borderedNodeFigure
-                                        .getParent().getLayoutManager()
-                                        .getConstraint(borderedNodeFigure);
-                                IBorderItemLocator newLocator = renderingProvider
-                                        .getBorderItemLocatorByString(borderItemParam, mainFigure,
-                                                oldLocator, modelElement);
-                                parent.setLayoutConstraint(editPart, borderedNodeFigure, newLocator);
-                            } else {
-                                lastCondition = null;
+                            if (editPart.getParent() instanceof AbstractBorderedShapeEditPart) {
+                                AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart) editPart
+                                        .getParent());
+                                IFigure mainFigure = parent.getMainFigure();
+                                if (figure.getParent().getParent() instanceof BorderedNodeFigure) {
+                                    BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) figure
+                                            .getParent().getParent();
+                                    if (borderedNodeFigure.getParent() != null) {
+                                        IBorderItemLocator oldLocator = (IBorderItemLocator) borderedNodeFigure
+                                                .getParent().getLayoutManager()
+                                                .getConstraint(borderedNodeFigure);
+                                        IBorderItemLocator newLocator = renderingProvider
+                                                .getBorderItemLocatorByString(borderItemParam,
+                                                        mainFigure, oldLocator, modelElement);
+                                        parent.setLayoutConstraint(editPart, borderedNodeFigure,
+                                                newLocator);
+                                    } else {
+                                        lastCondition = null;
+                                    }
+                                }
                             }
                         }
-
                         // setting a fixed node size
                         if (((figureSize.getFirst() >= 0) && (figureSize.getSecond() >= 0))
                                 && attrFigure != null) {
