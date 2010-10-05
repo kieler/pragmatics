@@ -29,7 +29,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.gef.EditPart;
@@ -44,7 +43,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
@@ -52,7 +50,6 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -64,8 +61,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
-import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
-import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -83,6 +78,54 @@ public final class EvolUtil {
      *
      */
     private static final class IndividualApplierRunnable implements Runnable {
+        /**
+         * Adopts the given individual, calculates layout for it and applies it
+         * to the diagram in the given editor.
+         *
+         * @param individual
+         *            the genome encoding the layout options to use
+         * @param editor
+         *            the editor in which the layout shall be applied
+         * @return the layout manager used to apply the layout
+         */
+        private static DiagramLayoutManager adoptAndApplyLayout(
+                final Genome individual, final IEditorPart editor) {
+            // Adopt the layout options that are encoded in the individual.
+            // try {
+            // // EvolUtil.adoptIndividual(individual, editor);
+            // } catch (KielerException exception) {
+            // exception.printStackTrace();
+            // EvolPlugin.showError("Could not adopt the individual.",
+            // exception);
+            // return null;
+            // }
+
+            AdoptingRecursiveLayouterEngine engine = new AdoptingRecursiveLayouterEngine();
+
+            IKielerProgressMonitor monitor = new BasicProgressMonitor();
+
+            KNode layoutResult =
+                    engine.calculateLayout(individual, (DiagramEditor) editor, monitor);
+
+            DiagramLayoutManager manager = engine.getManager();
+
+            // We don't specify the edit part because we want a manager for
+            // the whole diagram.
+            // DiagramLayoutManager manager =
+            // EclipseLayoutServices.getInstance().getManager(editor, null);
+            assert manager != null : "Could not get a layout manager for " + editor.getTitle();
+
+            // IKielerProgressMonitor monitor =
+            // EvolUtil.calculateLayout(manager, editor);
+
+            // if (monitor != null) {
+                // Apply the layout to the diagram in the editor.
+            manager.applyAnimatedLayout(true /* animate */, false /* cacheLayout */, 0);
+            // }
+
+            return manager;
+        }
+
         /**
          * Adopt the given individual and calculate layout for it in the
          * appropriate editor(s). The obtained layout is applied to the
@@ -170,54 +213,6 @@ public final class EvolUtil {
         }
 
         /**
-         * Adopts the given individual, calculates layout for it and applies it
-         * to the diagram in the given editor.
-         *
-         * @param individual
-         *            the genome encoding the layout options to use
-         * @param editor
-         *            the editor in which the layout shall be applied
-         * @return the layout manager used to apply the layout
-         */
-        private static DiagramLayoutManager adoptAndApplyLayout(
-                final Genome individual, final IEditorPart editor) {
-            // Adopt the layout options that are encoded in the individual.
-            // try {
-            // // EvolUtil.adoptIndividual(individual, editor);
-            // } catch (KielerException exception) {
-            // exception.printStackTrace();
-            // EvolPlugin.showError("Could not adopt the individual.",
-            // exception);
-            // return null;
-            // }
-
-            AdoptingRecursiveLayouterEngine engine = new AdoptingRecursiveLayouterEngine();
-
-            IKielerProgressMonitor monitor = new BasicProgressMonitor();
-
-            KNode layoutResult =
-                    engine.calculateLayout(individual, (DiagramEditor) editor, monitor);
-
-            DiagramLayoutManager manager = engine.getManager();
-
-            // We don't specify the edit part because we want a manager for
-            // the whole diagram.
-            // DiagramLayoutManager manager =
-            // EclipseLayoutServices.getInstance().getManager(editor, null);
-            assert manager != null : "Could not get a layout manager for " + editor.getTitle();
-
-            // IKielerProgressMonitor monitor =
-            // EvolUtil.calculateLayout(manager, editor);
-
-            // if (monitor != null) {
-                // Apply the layout to the diagram in the editor.
-            manager.applyAnimatedLayout(true /* animate */, false /* cacheLayout */, 0);
-            // }
-
-            return manager;
-        }
-
-        /**
          * Creates a new {@link IndividualApplierRunnable} instance.
          *
          * @param theIndividual
@@ -255,30 +250,6 @@ public final class EvolUtil {
     private static final class IndividualAutoRaterRunnable implements Runnable {
 
         /**
-         * Layouts the given individual in the given editors and calculates
-         * automatic ratings for it.
-         *
-         * @param editors
-         *            Specifies the editors in which the individual shall be
-         *            laid out; must not be {@code null}.
-         */
-        private void autoRateIndividual(final Set<IEditorPart> editors) {
-            if (editors == null) {
-                throw new IllegalArgumentException("Argument must not be null: editors");
-            }
-
-            Genome ind = this.individual;
-            Population genomes = this.weightsGenomes;
-
-            if ((ind == null) || (genomes == null)) {
-                return;
-            }
-
-            double rating = calculateAutoRating(ind, editors, genomes);
-            ind.setUserRating(rating);
-        }
-
-        /**
          * Lays out the given individual in the given editors and calculates
          * automatic ratings for it. <strong>Note</strong>: The rating is not
          * stored in the individual.
@@ -302,11 +273,12 @@ public final class EvolUtil {
             int editorCount = editors.size();
 
             for (final IEditorPart editor : editors) {
-                // We don't specify the edit part because we want a manager for
-                // the whole diagram.
-                DiagramLayoutManager manager =
-                        EclipseLayoutServices.getInstance().getManager(editor, null);
-                assert manager != null;
+                // // We don't specify the edit part because we want a manager
+                // for
+                // // the whole diagram.
+                // DiagramLayoutManager manager =
+                // EclipseLayoutServices.getInstance().getManager(editor, null);
+                // assert manager != null;
 
                 // TODO: what if weights genomes is empty?
                 assert !weightsGenomes.isEmpty();
@@ -316,7 +288,7 @@ public final class EvolUtil {
 
                 int weightsGenomesCount = weightsGenomes.size();
                 for (final Genome weightGenome : weightsGenomes) {
-                    assert (weightGenome != null);
+                    assert weightGenome != null;
 
                     Map<String, Double> weightsMap = extractMetricWeights(weightGenome);
                     assert weightsMap != null;
@@ -329,7 +301,7 @@ public final class EvolUtil {
                     // measurements, or use average ratings instead?
 
                     if (measurements == null) {
-                        measurements = measure(ind, editor, manager.getLayoutGraph(), weightsMap);
+                        measurements = measure(ind, editor, weightsMap);
 
                         ind.setFeatures(measurements);
                         // TODO: don't set features here. This works only for
@@ -399,15 +371,12 @@ public final class EvolUtil {
 
         /**
          * Adopts the given individual, calculates a layout for it in the given
-         * editor and measures its features, using the given manager and layout
-         * inspector.
+         * editor and measures its features.
          *
          * @param ind
          *            a {@link Genome}; may not be {@code null}
          * @param editor
          *            an {@link IEditorPart}
-         * @param inspector
-         *            a {@link ILayoutInspector}; may not be {@code null}
          * @param weightsMap
          *            a map that associates weights to metric IDs; must not be
          *            {@code null}. This map indicates which features shall be
@@ -415,9 +384,8 @@ public final class EvolUtil {
          * @return the measured features
          */
         private static Map<String, Object> measure(
-                final Genome ind, final IEditorPart editor,
-                final KNode graph, final Map<String, Double> weightsMap) {
-            if ((ind == null) || (graph == null) || (weightsMap == null)) {
+                final Genome ind, final IEditorPart editor, final Map<String, Double> weightsMap) {
+            if ((ind == null) || (weightsMap == null)) {
                 throw new IllegalArgumentException();
             }
 
@@ -524,23 +492,6 @@ public final class EvolUtil {
         }
 
         /**
-         * Returns a normalized speed value for the given time. The result is
-         * between {@code +0.0} and {@code +1.0}. It is {@code +0.0} if
-         * {@code time} is positive infinity and {@code 1.0} if {@code time} is
-         * zero, and monotonically decreasing for increasing time.
-         *
-         * @param time
-         *            time; must be positive
-         * @return normed speed value
-         */
-        private static double normalizedSpeed(final double time) {
-            if (time < 0.0) {
-                throw new IllegalArgumentException("The value of 'time' must be positive:" + time);
-            }
-            return (Math.exp(-time));
-        }
-
-        /**
          * Scales the values in the given map so that their sum equals one. This
          * operation modifies the map entries of the given map.
          *
@@ -568,6 +519,23 @@ public final class EvolUtil {
                     entry.setValue(value * factor);
                 }
             }
+        }
+
+        /**
+         * Returns a normalized speed value for the given time. The result is
+         * between {@code +0.0} and {@code +1.0}. It is {@code +0.0} if
+         * {@code time} is positive infinity and {@code 1.0} if {@code time} is
+         * zero, and monotonically decreasing for increasing time.
+         *
+         * @param time
+         *            time; must be positive
+         * @return normed speed value
+         */
+        private static double normalizedSpeed(final double time) {
+            if (time < 0.0) {
+                throw new IllegalArgumentException("The value of 'time' must be positive:" + time);
+            }
+            return Math.exp(-time);
         }
 
         /**
@@ -604,7 +572,7 @@ public final class EvolUtil {
                 String metricResult = measurement.getValue().toString();
 
                 // Get the weight.
-                assert (weightsMap.containsKey(metricId));
+                assert weightsMap.containsKey(metricId);
                 double coeff = weightsMap.get(metricId);
 
                 double val;
@@ -634,6 +602,13 @@ public final class EvolUtil {
             this.weightsGenomes = theWeightsGenomes;
         }
 
+        // private fields
+        /** The individual. */
+        private final Genome individual;
+
+        /** The population of weights genomes. */
+        private final Population weightsGenomes;
+
         public void run() {
             // Must be run in the UI thread.
 
@@ -644,12 +619,29 @@ public final class EvolUtil {
             autoRateIndividual(editorsSet);
         }
 
-        // private fields
-        /** The individual. */
-        private final Genome individual;
+        /**
+         * Layouts the given individual in the given editors and calculates
+         * automatic ratings for it.
+         *
+         * @param editors
+         *            Specifies the editors in which the individual shall be
+         *            laid out; must not be {@code null}.
+         */
+        private void autoRateIndividual(final Set<IEditorPart> editors) {
+            if (editors == null) {
+                throw new IllegalArgumentException("Argument must not be null: editors");
+            }
 
-        /** The population of weights genomes. */
-        private final Population weightsGenomes;
+            Genome ind = this.individual;
+            Population genomes = this.weightsGenomes;
+
+            if ((ind == null) || (genomes == null)) {
+                return;
+            }
+
+            double rating = calculateAutoRating(ind, editors, genomes);
+            ind.setUserRating(rating);
+        }
 
     }
 
@@ -674,6 +666,32 @@ public final class EvolUtil {
                 layoutView.refresh(); // async!
             }
         }
+    }
+
+    /**
+     * Synchronously refreshes the layout according to the current individual of
+     * the given model.
+     *
+     * @param model
+     *            the evolution model; must be valid
+     */
+    public static void applyCurrentIndividual(final EvolModel model) {
+        // presuming model != null
+        assert model.isValid() : "Attempt to apply an individual when the model was not valid.";
+
+        // Get the current individual from the model.
+        Genome individual = model.getCurrentIndividual();
+        assert individual != null;
+
+        // Get the expected layout provider id.
+        String expectedLayoutProviderId = model.getLayoutProviderId();
+        assert expectedLayoutProviderId != null;
+
+        // Adopt and layout the current individual.
+        syncApplyIndividual(individual, expectedLayoutProviderId);
+
+        // Refresh the layout view.
+        asyncRefreshLayoutView();
     }
 
     /**
@@ -702,8 +720,7 @@ public final class EvolUtil {
         }
 
         // Ensure there is a monitor of some sort.
-        IProgressMonitor monitor =
-                ((theMonitor != null) ? theMonitor : new NullProgressMonitor());
+        IProgressMonitor monitor = (theMonitor != null) ? theMonitor : new NullProgressMonitor();
 
         int size = thePopulation.size();
         int total = size;
@@ -718,9 +735,11 @@ public final class EvolUtil {
                     throw new OperationCanceledException();
                 }
 
+                Runnable runnable =
+                        new IndividualAutoRaterRunnable(ind, theWeightsGenomes);
+
                 // Synchronously auto-rate the individual.
-                MonitoredOperation.runInUI(
-                        new IndividualAutoRaterRunnable(ind, theWeightsGenomes), true);
+                MonitoredOperation.runInUI(runnable, true /* synch */);
 
                 monitor.worked(1 * scale);
             }
@@ -949,6 +968,7 @@ public final class EvolUtil {
         return result;
     }
 
+
     /**
      * Checks if the given layout provider is of the given type.
      *
@@ -979,7 +999,6 @@ public final class EvolUtil {
         return result;
     }
 
-
     /**
      * Synchronously applies the given individual.
      *
@@ -991,245 +1010,6 @@ public final class EvolUtil {
     public static void syncApplyIndividual(final Genome individual, final String providerId) {
         MonitoredOperation
                 .runInUI(new IndividualApplierRunnable(individual, providerId), true /* synch */);
-    }
-
-    /**
-     * Saves options of the given model to a file.
-     *
-     * @param model
-     *            the model to save
-     * @param canOverWrite
-     *            indicates whether the output file may be overwritten if it
-     *            exists
-     */
-    public void saveOptionsToFile(final EvolModel model, final boolean canOverWrite) {
-        File file = new File("evol");
-        if (!file.exists() || canOverWrite) {
-            try {
-                FileWriter writer = new FileWriter(file);
-
-                Genome genome = model.getCurrentIndividual();
-
-                String newLine = System.getProperty("line.separator");
-
-                for (final IGene<?> gene : genome) {
-                    writer.append(gene.getId() + ";" + gene.getValue() + newLine);
-                }
-
-            } catch (final IOException exception) {
-                // TODO Auto-generated catch block
-                exception.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Adopts layout options from the given {@link Genome} into the given
-     * {@link IEditorPart}.
-     *
-     * @param individual
-     *            the {@link Genome}; must not be {@code null}
-     * @param editor
-     *            the {@link IEditorPart}
-     * @throws KielerException
-     *             if no layout inspector can be found for the editor.
-     */
-    private static void adoptIndividual(final Genome individual, final IEditorPart editor)
-            throws KielerException {
-        if (individual == null) {
-            throw new IllegalArgumentException();
-        }
-
-        final ILayoutInspector inspector = getLayoutInspector(editor, null);
-
-        if (inspector == null) {
-            throw new KielerException("Could not get a layout inspector for " + editor.getTitle());
-        }
-
-        adoptIndividual(individual, inspector);
-    }
-
-    /**
-     * Adopts layout options from the given {@link Genome} into the given
-     * {@link ILayoutInspector}.
-     *
-     * @param individual
-     *            the {@link Genome}; must not be {@code null}
-     * @param inspector
-     *            the {@link ILayoutInspector}; must not be {@code null}
-     */
-    private static void adoptIndividual(final Genome individual, final ILayoutInspector inspector) {
-        if ((individual == null) || (inspector == null)) {
-            throw new IllegalArgumentException();
-        }
-
-        EvolPlugin.logStatus("Adopting " + individual.toString());
-        final LayoutServices layoutServices = LayoutServices.getInstance();
-
-        final Runnable modelChange = new Runnable() {
-
-            public void run() {
-                // Set layout options according to the genome.
-                for (final IGene<?> gene : individual) {
-                    // presuming gene != null
-
-                    final Object value = gene.getValue();
-                    final Object id = gene.getId();
-                    System.out.println(id + ": " + value);
-
-                    final LayoutOptionData<?> data =
-                            layoutServices.getLayoutOptionData((String) id);
-                    assert data != null : "No layout option data for " + id;
-
-                    final Type layoutOptionType = data.getType();
-
-                    switch (layoutOptionType) {
-
-                    case BOOLEAN:
-                        if (value instanceof Boolean) {
-                            inspector.setOption(data,
-                                    Integer.valueOf((((Boolean) value).booleanValue() ? 1 : 0)));
-                        } else {
-                            inspector.setOption(data,
-                                    Integer.valueOf(Math.round(((Float) value).floatValue())));
-                        }
-                        break;
-
-                    case ENUM:
-                        try {
-                            inspector.setOption(data, value);
-                        } catch (final NullPointerException e) {
-                            EvolPlugin.showError("Enum property could not be set: " + id, e);
-                            throw new AssertionError(value);
-                        }
-                        break;
-
-                    case INT:
-                        if (value instanceof Integer) {
-                            inspector.setOption(data, value);
-                        } else {
-                            inspector.setOption(data, gene.toString());
-                        }
-                        break;
-
-                    case STRING:
-                        if (LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id)) {
-                            // Cannot use the int value of the gene because it
-                            // is the index for the internal list in the gene,
-                            // not for the layout hint array in the property
-                            // source which we would need.
-
-                            // Are we allowed to set the layout hint?
-                            boolean canSetLayoutHint =
-                                    EvolPlugin
-                                            .getDefault()
-                                            .getPreferenceStore()
-                                            .getBoolean(
-                                                    EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
-
-                            // Even for different types?
-                            boolean canSetForDifferentType =
-                                    EvolPlugin
-                                            .getDefault()
-                                            .getPreferenceStore()
-                                            .getBoolean(
-                                                    EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
-
-                            if (!canSetLayoutHint) {
-                                // We have nothing to do, for we are not allowed
-                                // to set the layout hint at all.
-                                break;
-                            }
-
-                            String newLayoutHintId = gene.toString();
-
-                            Set<Object> oldLayoutHintIds =
-                                    getPropertyValues(Collections.singletonList(inspector),
-                                            LayoutOptions.LAYOUTER_HINT_ID);
-
-                            assert !oldLayoutHintIds.isEmpty();
-                            String oldLayoutHintId = (String) oldLayoutHintIds.iterator().next();
-                            assert oldLayoutHintId != null;
-
-                            LayoutProviderData providerData =
-                                    layoutServices.getLayoutProviderData(newLayoutHintId, null);
-
-                            String newType = providerData.getType();
-
-                            if ((!canSetForDifferentType && !isCompatibleLayoutProvider(
-                                    oldLayoutHintId, newType))) {
-                                // we are not allowed do this
-                                System.err
-                                        .println("Attempt to set the layout hint to incompatible type: "
-                                                + newLayoutHintId);
-                                break;
-                            }
-
-                            inspector.setOption(data, newLayoutHintId);
-
-                        } else {
-                            // a normal string option
-                            inspector.setOption(data, value.toString());
-                        }
-                        break;
-
-                    default:
-                        inspector.setOption(data, value.toString());
-                        break;
-                    }
-
-                }
-            }
-        };
-
-        KimlUiUtil.runModelChange(modelChange, inspector.getEditingDomain(),
-                    "Adopt individual " + individual);
-    }
-
-
-    /**
-     * Builds the layout graph for the given editor, using the given manager,
-     * and performs layout on it. <strong>NOTE</strong>: The resulting layout is
-     * not applied to the diagram. It can be obtained from the {@code manager}.
-     *
-     * @param manager
-     *            a {@link DiagramLayoutManager}
-     * @param editor
-     *            an {@link IEditorPart}
-     * @return the progress monitor, or {@code null} in case of an error.
-     */
-    private static IKielerProgressMonitor calculateLayout(
-            final DiagramLayoutManager manager, final IEditorPart editor) {
-        if ((editor == null) || (manager == null)) {
-            // We cannot perform the layout.
-            return null;
-        }
-
-        EvolPlugin.logStatus("Calculating layout in editor: '" + editor.getTitle() + "'");
-
-        // First phase: build the layout graph.
-        KNode layoutGraph = manager.buildLayoutGraph(editor, null, false);
-
-        // Second phase: execute layout algorithms.
-        // We need a new monitor each time because the old one
-        // gets closed.
-        IKielerProgressMonitor monitor =
-                new BasicProgressMonitor(DiagramLayoutManager.MAX_PROGRESS_LEVELS);
-
-        IStatus status = manager.layout(monitor, false /* layoutAncestors */);
-
-        if (!status.isOK()) {
-            // Something went wrong. Report the status.
-            StatusManager.getManager().handle(status, StatusManager.LOG);
-            return null;
-        }
-
-        // We presume the manager worked on the same layout graph it built in
-        // the first phase.
-        KNode layoutGraphAfterLayout = manager.getLayoutGraph();
-        assert layoutGraph == layoutGraphAfterLayout;
-
-        return monitor;
     }
 
     /**
@@ -1367,9 +1147,7 @@ public final class EvolUtil {
         }
         inspector.initOptions();
         LayoutProviderData data = inspector.getContainerLayouterData();
-        if (data == null) {
-            return null;
-        }
+
         return data;
     }
 
@@ -1391,17 +1169,9 @@ public final class EvolUtil {
         LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(id);
 
         for (final ILayoutInspector inspector : inspectors) {
-            // TODO: get the values via inspector#getOption(), not via
-            // LayoutPropertySource
-            LayoutPropertySource source = new LayoutPropertySource(inspector);
-            Object value;
-            try {
+            Object
                 value = inspector.getOption(optionData);
                 // value = source.getPropertyValue(id);
-            } catch (final NullPointerException exception) {
-                // getPropertyValue has a problem
-                value = null;
-            }
 
             if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                 if (value == null) {
@@ -1469,28 +1239,32 @@ public final class EvolUtil {
     }
 
     /**
-     * Synchronously refreshes the layout according to the current individual of
-     * the given model.
+     * Saves options of the given model to a file.
      *
      * @param model
-     *            the evolution model; must be valid
+     *            the model to save
+     * @param canOverWrite
+     *            indicates whether the output file may be overwritten if it
+     *            exists
      */
-    public static void applyCurrentIndividual(final EvolModel model) {
-        // presuming model != null
-        assert model.isValid() : "Attempt to apply an individual when the model was not valid.";
+    public void saveOptionsToFile(final EvolModel model, final boolean canOverWrite) {
+        File file = new File("evol");
+        if (!file.exists() || canOverWrite) {
+            try {
+                FileWriter writer = new FileWriter(file);
 
-        // Get the current individual from the model.
-        Genome individual = model.getCurrentIndividual();
-        assert individual != null;
+                Genome genome = model.getCurrentIndividual();
 
-        // Get the expected layout provider id.
-        String expectedLayoutProviderId = model.getLayoutProviderId();
-        assert expectedLayoutProviderId != null;
+                String newLine = System.getProperty("line.separator");
 
-        // Adopt and layout the current individual.
-        syncApplyIndividual(individual, expectedLayoutProviderId);
+                for (final IGene<?> gene : genome) {
+                    writer.append(gene.getId() + ";" + gene.getValue() + newLine);
+                }
 
-        // Refresh the layout view.
-        asyncRefreshLayoutView();
+            } catch (final IOException exception) {
+                // TODO Auto-generated catch block
+                exception.printStackTrace();
+            }
+        }
     }
 }
