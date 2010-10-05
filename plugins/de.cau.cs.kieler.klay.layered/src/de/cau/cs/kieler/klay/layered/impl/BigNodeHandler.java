@@ -40,7 +40,7 @@ import de.cau.cs.kieler.klay.layered.modules.IBigNodeHandler;
  * disjunct regarding the layers, they are assigned to, and the narrower of the two nodes is not
  * assigned to all layers, the wider nodes is also placed in unless there exists a node, that covers
  * all layers, the two nodes are assigned to. For more information, see Philipp Döhring:
- * "Algorithms for Layer Assignment", Bachelor Thesis, German.
+ * "Algorithmen zur Layerzuweisung", Bachelor Thesis, German.
  * 
  * 
  * @author pdo
@@ -83,8 +83,7 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
     private int longestPath;
 
     /**
-     * A map, in which for every node in the graph its ID will be saved. Since the layerer invoked
-     * right after
+     * A map, in which for every node in the graph its ID will be saved.
      */
     private LinkedHashMap<LNode, Integer> nodeIDs;
 
@@ -321,13 +320,13 @@ public class BigNodeHandler extends AbstractAlgorithm implements IBigNodeHandler
 
     /**
      * Helper method for the Big-Node-Handler. It puts all nodes reachable by a path beginning with
-     * the input node traversing outgoing edges only into the their floor layers.
+     * the input node traversing outgoing edges only into the their floor layers, i.e. the layers
+     * with a lowest possible index, where the layer assignment remains feasible.
      * 
      * @param node
      *            the root of the DFS-subtree
      * @param start
      *            The index of the layer to put the given input node into
-     * 
      */
     private void minimalLayer(final LNode node, final int start) {
 
