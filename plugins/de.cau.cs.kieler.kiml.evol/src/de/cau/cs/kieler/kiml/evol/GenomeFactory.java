@@ -267,6 +267,7 @@ final class GenomeFactory {
                 final Object theId, final Object theRawValue,
                 final double theMutationProbability, final String lowerBoundAttr,
                 final String upperBoundAttr, final String varianceAttr, final Distribution distr) {
+            // TODO: Too many parameters --> refactor. Remove variance stuff.
             IGene<?> result;
             Float value = Float.valueOf((String) theRawValue);
             Float lowerBound =
@@ -338,6 +339,7 @@ final class GenomeFactory {
                 final Object theId, final Object theRawValue,
                 final double theMutationProbability, final String lowerBoundAttr,
                 final String upperBoundAttr, final String varianceAttr, final Distribution distr) {
+            // TODO: Too many parameters --> refactor. Remove variance stuff.
             IGene<?> result;
             Integer value = Integer.valueOf((String) theRawValue);
 
@@ -773,7 +775,7 @@ final class GenomeFactory {
             assert !LayoutOptions.LAYOUTER_HINT_ID.equals(id) : "There should be no layout hint in the collected options.";
 
             // There should not be a gene for this option yet.
-            assert (result.find(id) == null) : "Duplicate property: " + id;
+            assert result.find(id) == null : "Duplicate property: " + id;
 
             // learnable option?
             if (this.learnableOptions.contains(id)) {

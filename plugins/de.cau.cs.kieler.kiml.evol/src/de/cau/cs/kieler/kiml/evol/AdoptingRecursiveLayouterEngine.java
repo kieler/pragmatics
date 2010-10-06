@@ -51,17 +51,17 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
     /** Cached layout manager. */
     private DiagramLayoutManager manager;
-    
+
     /**
      * @return the layout manager most recently used by this engine.
      */
     public DiagramLayoutManager getManager() {
         return this.manager;
     }
-    
+
     /**
      * Calculates a layout for the given individual in the given editor.
-     * 
+     *
      * @param individual
      *            the {@link Genome} from which layout options shall be adopted;
      *            may not be {@code null}
@@ -135,7 +135,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
             Type layoutOptionType = data.getType();
 
-            // TODO: discuss: polymorphism should rather be used instead of
+            // Nice-to-have: polymorphism should rather be used instead of
             // switch case statement
             switch (layoutOptionType) {
             case BOOLEAN:
@@ -189,16 +189,17 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
                             EvolPlugin.getDefault().getPreferenceStore()
                                     .getBoolean(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
 
-                    // Even for different types?
-                    boolean canSetForDifferentType =
-                            EvolPlugin.getDefault().getPreferenceStore()
-                                    .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
-
                     if (!canSetLayoutHint) {
                         // We have nothing to do, for we are not allowed
                         // to set the layout hint at all.
                         break;
                     }
+
+                    // Are we allowed to set the layout hint for different
+                    // types?
+                    boolean canSetForDifferentType =
+                            EvolPlugin.getDefault().getPreferenceStore()
+                                    .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
 
                     String newLayoutHintId = gene.toString();
 
@@ -210,8 +211,8 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
                     String newType = providerData.getType();
 
-                    if ((!canSetForDifferentType && !EvolUtil.isCompatibleLayoutProvider(
-                            oldLayoutHintId, newType))) {
+                    if (!canSetForDifferentType
+                            && !EvolUtil.isCompatibleLayoutProvider(oldLayoutHintId, newType)) {
                         // we are not allowed do this
                         System.err
                                 .println("Attempt to set the layout hint to incompatible type: "
@@ -233,7 +234,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
                 // TODO: make sure the omitted properties are removed
                 break;
             }
-        }
+        } // for (IGene<?> gene : individual)
         return copy;
     }
 

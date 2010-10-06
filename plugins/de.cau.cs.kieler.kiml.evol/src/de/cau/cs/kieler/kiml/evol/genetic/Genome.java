@@ -348,7 +348,7 @@ public class Genome extends ArrayList<IGene<?>> {
                 int gm = 0;
                 for (final Genome genome : genomes) {
                     if (gm++ > 0) {
-                        assert (genome.size() == size);
+                        assert genome.size() == size;
                         geneList.add(genome.get(g));
                     }
                 }
@@ -362,7 +362,7 @@ public class Genome extends ArrayList<IGene<?>> {
             // determine the rating
             double ratingSum = 0;
             for (final Genome genome : genomes) {
-                ratingSum += (genome.hasUserRating() ? genome.getUserRating() : 0.0);
+                ratingSum += genome.hasUserRating() ? genome.getUserRating() : 0.0;
             }
             double average = ratingSum / genomes.length;
             result.setUserRating(Double.valueOf(average));

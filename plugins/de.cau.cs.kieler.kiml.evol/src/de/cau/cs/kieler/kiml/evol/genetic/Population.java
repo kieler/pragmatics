@@ -134,7 +134,8 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
      */
     public String getDetails() {
         String newLine = System.getProperty("line.separator");
-        StringBuilder result = new StringBuilder(this.size() * 70);
+        final int expectedLengthPerEntry = 70;
+        StringBuilder result = new StringBuilder(this.size() * expectedLengthPerEntry);
 
         int i = 0;
         for (final Genome ind : this) {
