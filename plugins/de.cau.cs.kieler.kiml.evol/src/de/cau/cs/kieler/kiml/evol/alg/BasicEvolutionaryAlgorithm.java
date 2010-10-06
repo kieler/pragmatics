@@ -99,7 +99,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
                 } while ((parent1 == parent2) && !isParthenogenesisAllowed);
 
                 Genome newGenome = parent1.newRecombination(parent2);
-                newGenome.setUserRating(0.0);
+                newGenome.setUserRating(null);
                 System.out.println(" -- cross over of " + parent1);
                 System.out.println("              and " + parent2);
                 offspring.add(new Genome(newGenome, getGeneration()));
@@ -121,13 +121,13 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     @Override
     protected void initialize() {
+        System.out.println("*** initialize");
         super.initialize();
         // obtain more initial diversity by performing some mutations
         final int some = 20;
         for (int i = 0; i < some; i++) {
             mutate();
         }
-        System.out.println("*** initialize");
         System.out.println("  population: " + population);
     }
 

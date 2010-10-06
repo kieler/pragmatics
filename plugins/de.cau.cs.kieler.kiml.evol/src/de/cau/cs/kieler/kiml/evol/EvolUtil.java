@@ -1055,11 +1055,14 @@ public final class EvolUtil {
         Set<Object> presentLayoutHintIds =
                 getPropertyValues(inspectors, LayoutOptions.LAYOUTER_HINT_ID);
 
+        assert !presentLayoutHintIds.isEmpty() : "Layout hint missing.";
+
         // Create the individuals one by one.
         GenomeFactory genomeFactory = new GenomeFactory(null);
 
         for (int i = 0; i < size; i++) {
             Genome genome = genomeFactory.createGenome(inspectors, presentLayoutHintIds);
+            assert genome != null : "Failed to create genome.";
             result.add(genome);
         }
         return result;
@@ -1099,6 +1102,7 @@ public final class EvolUtil {
         if (currentEditor != null) {
             ILayoutInspector currentInspector = getLayoutInspector(currentEditor, null);
             if (currentInspector != null) {
+                currentInspector.initOptions();
                 inspectors.add(currentInspector);
             }
         }
