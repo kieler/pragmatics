@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -71,42 +72,54 @@ public class LayoutEffect extends AbstractEffect {
                 }
             }, true);
             final IStatus status = manager.layout(new BasicProgressMonitor(0), true);
-
-            // determine pre- or post-layout zoom
-            ILayoutInspector inspector = manager.getInspector(manager.getCurrentEditPart());
-            final ZoomManager zoomManager = inspector.getZoomManager();
-            KNode current = manager.getLayoutGraph();
-            while (current.eContainer() instanceof KNode) {
-                current = (KNode) current.eContainer();
-            }
-            KShapeLayout layout = current.getData(KShapeLayout.class);
-            Dimension available = zoomManager.getViewport().getClientArea().getSize();
-            Dimension desired = new Dimension((int) layout.getWidth(), (int) layout.getHeight());
-            double scaleX = Math.min(available.width / (double) desired.width,
-                    zoomManager.getMaxZoom());
-            double scaleY = Math.min(available.height / (double) desired.height,
-                    zoomManager.getMaxZoom());
-            final double scale = Math.min(scaleX, scaleY);
-            final double oldScale = zoomManager.getZoom();
-
-            MonitoredOperation.runInUI(new Runnable() {
-                // third phase: apply layout with animation
-                public void run() {
-                    if (scale < oldScale) {
-                        zoomManager.setViewLocation(new Point(0, 0));
-                        zoomManager.setZoom(scale);
-                        zoomManager.setViewLocation(new Point(0, 0));
-                    }
-                    int nodeCount = status == null ? 0 : status.getCode();
-                    manager.applyAnimatedLayout(true, false, nodeCount);
-                    if (scale > oldScale) {
-                        zoomManager.setViewLocation(new Point(0, 0));
-                        zoomManager.setZoom(scale);
-                        zoomManager.setViewLocation(new Point(0, 0));
-                    }
+            
+            if (status.getSeverity() == IStatus.OK) {
+                // determine pre- or post-layout zoom
+                ILayoutInspector inspector = manager.getInspector(manager.getCurrentEditPart());
+                final ZoomManager zoomManager = inspector.getZoomManager();
+                KNode current = manager.getLayoutGraph();
+                while (current.eContainer() instanceof KNode) {
+                    current = (KNode) current.eContainer();
                 }
-            }, false);
+                KShapeLayout layout = current.getData(KShapeLayout.class);
+                Dimension available = zoomManager.getViewport().getClientArea().getSize();
+                Dimension desired = new Dimension((int) layout.getWidth(), (int) layout.getHeight());
+                double scaleX = Math.min(available.width / (double) desired.width,
+                        zoomManager.getMaxZoom());
+                double scaleY = Math.min(available.height / (double) desired.height,
+                        zoomManager.getMaxZoom());
+                final double scale = Math.min(scaleX, scaleY);
+                final double oldScale = zoomManager.getZoom();
+    
+                MonitoredOperation.runInUI(new Runnable() {
+                    // third phase: apply layout with animation
+                    public void run() {
+                        if (scale < oldScale) {
+                            zoomManager.setViewLocation(new Point(0, 0));
+                            zoomManager.setZoom(scale);
+                            zoomManager.setViewLocation(new Point(0, 0));
+                        }
+                        int nodeCount = status == null ? 0 : status.getCode();
+                        manager.applyAnimatedLayout(true, false, nodeCount);
+                        if (scale > oldScale) {
+                            zoomManager.setViewLocation(new Point(0, 0));
+                            zoomManager.setZoom(scale);
+                            zoomManager.setViewLocation(new Point(0, 0));
+                        }
+                    }
+                }, false);
+            } else {
+                int handlingStyle;
+                switch (status.getSeverity()) {
+                case IStatus.ERROR:
+                    handlingStyle = StatusManager.SHOW | StatusManager.LOG;
+                    break;
+                default:
+                    handlingStyle = StatusManager.LOG;
+                }
+                StatusManager.getManager().handle(status, handlingStyle);
 
+            }
         }
     }
 

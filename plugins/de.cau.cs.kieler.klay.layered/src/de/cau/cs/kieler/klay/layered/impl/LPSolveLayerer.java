@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -184,20 +185,21 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
      */
     public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
-
-        if (nodes == null) {
-            throw new NullPointerException("Input collection of nodes is null.");
-        }
-        if (layeredGraph == null) {
-            throw new NullPointerException("Input graph is null.");
-        }
-
+        assert nodes != null;
+        assert layeredGraph != null;
         getMonitor().begin("LpSolve layering", 1);
         if (nodes.size() < 1) {
             getMonitor().done();
             return;
         }
         layerGraph = layeredGraph;
+        // initialize the LpSolve library, which may cause an UnsatisfiedLinkError
+        try {
+            LpSolve.initialize();
+        } catch (UnsatisfiedLinkError error) {
+            throw new KielerRuntimeException("LpSolve is not available for your platform."
+                    + " Please choose another layering method.", error);
+        }
         
         // support wide nodes, if requested
         IBigNodeHandler bigNodeHandler = null;

@@ -22,14 +22,26 @@ package de.cau.cs.kieler.core;
  */
 public class KielerRuntimeException extends RuntimeException {
 
-
-    /**
-     * 
-     */
+    /** the serial version UID. */
     private static final long serialVersionUID = 5052139882180628740L;
 
-    public KielerRuntimeException(String message) {
+    /**
+     * Creates a KIELER runtime exception.
+     * 
+     * @param message a message
+     */
+    public KielerRuntimeException(final String message) {
         super(message);
+    }
+    
+    /**
+     * Creates a KIELER runtime exception as wrapper for another exception.
+     * 
+     * @param message a message
+     * @param cause the original error
+     */
+    public KielerRuntimeException(final String message, final Throwable cause) {
+        super(message, cause);
     }
     
 }
