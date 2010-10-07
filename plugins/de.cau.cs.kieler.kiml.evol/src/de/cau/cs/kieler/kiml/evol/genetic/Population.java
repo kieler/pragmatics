@@ -78,11 +78,11 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
         if (this.isEmpty()) {
             return Double.valueOf(Double.NaN);
         }
-        int ratingSum = 0;
+        double ratingSum = 0.0;
         for (final Genome ind : this) {
-            ratingSum += (ind.hasUserRating() ? ind.getUserRating().intValue() : 0);
+            ratingSum += ind.hasUserRating() ? ind.getUserRating() : 0.0;
         }
-        return Double.valueOf((ratingSum / (double) this.size()));
+        return ratingSum / this.size();
     }
 
     /**
