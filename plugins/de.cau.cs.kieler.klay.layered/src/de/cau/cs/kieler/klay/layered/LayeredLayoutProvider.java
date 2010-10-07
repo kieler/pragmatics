@@ -16,18 +16,15 @@ package de.cau.cs.kieler.klay.layered;
 import java.util.List;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer;
@@ -107,7 +104,13 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             break;
         case LP_SOLVER:
             if (!(layerer instanceof LPSolveLayerer)) {
-                layerer = new LPSolveLayerer();
+                try {
+                    layerer = new LPSolveLayerer();
+                } catch (Throwable throwable) {
+                    // this will only occur if the required LpSolve classes can't be loaded
+                    throw new KielerRuntimeException("The LpSolve plug-in is not installed."
+                            + " Please choose another layering method.", throwable); 
+                }
             }
             break;
         default:
