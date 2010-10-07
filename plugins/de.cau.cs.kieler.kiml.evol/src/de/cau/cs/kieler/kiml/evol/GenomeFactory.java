@@ -173,7 +173,7 @@ final class GenomeFactory {
          *
          * @param theId
          * @param theValue
-         *            an object containing "1" or "0"
+         *            a string that can be parsed into a Boolean
          * @param theMutationProbability
          *            the mutation probability
          * @param distr
@@ -184,7 +184,8 @@ final class GenomeFactory {
                 final Object theId, final Object theValue, final double theMutationProbability,
                 final Distribution distr) {
             IGene<?> result;
-            boolean booleanValue = (Integer.parseInt(theValue.toString()) == 1);
+            boolean booleanValue = Boolean.parseBoolean(theValue.toString());
+
             Float floatValue = (booleanValue ? 1.0f : 0.0f);
             MutationInfo mutationInfo = new MutationInfo(theMutationProbability, distr);
             result =

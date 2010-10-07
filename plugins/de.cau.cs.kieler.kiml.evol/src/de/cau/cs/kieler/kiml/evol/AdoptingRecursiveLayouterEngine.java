@@ -94,8 +94,9 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         try {
             layout(adopted, monitor, false);
         } catch (final KielerException exception) {
-            // TODO: do something about the failed layout
+            // layout failed
             exception.printStackTrace();
+            return null;
         }
         return adopted;
     }
@@ -140,9 +141,11 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             switch (layoutOptionType) {
             case BOOLEAN:
                 if (value instanceof Boolean) {
-                    shapeLayout.setProperty(data, Integer.valueOf((((Boolean) value) ? 1 : 0)));
+                    shapeLayout.setProperty(data, value);
                 } else {
-                    shapeLayout.setProperty(data, Math.round(((Float) value).floatValue()));
+                    // XXX legacy handling of boolean values
+                    shapeLayout
+                            .setProperty(data, Math.round(((Float) value).floatValue()) == 1.0);
                 }
                 break;
 

@@ -104,6 +104,7 @@ public final class EvolUtil {
 
             IKielerProgressMonitor monitor = new BasicProgressMonitor();
 
+            // TODO: layout might fail
             KNode layoutResult =
                     engine.calculateLayout(individual, (DiagramEditor) editor, monitor);
 
@@ -273,12 +274,6 @@ public final class EvolUtil {
             int editorCount = editors.size();
 
             for (final IEditorPart editor : editors) {
-                // // We don't specify the edit part because we want a manager
-                // for
-                // // the whole diagram.
-                // DiagramLayoutManager manager =
-                // EclipseLayoutServices.getInstance().getManager(editor, null);
-                // assert manager != null;
 
                 // TODO: what if weights genomes is empty?
                 assert !weightsGenomes.isEmpty();
@@ -301,7 +296,12 @@ public final class EvolUtil {
                     // measurements, or use average ratings instead?
 
                     if (measurements == null) {
-                        measurements = measure(ind, editor, weightsMap);
+                        try {
+                            measurements = measure(ind, editor, weightsMap);
+                        } catch (Exception exception) {
+                            measurements = null;
+                            totalRating = 0.0;
+                        }
 
                         ind.setFeatures(measurements);
                         // TODO: don't set features here. This works only for
@@ -309,10 +309,12 @@ public final class EvolUtil {
                         // must be calculated.
                     }
 
-                    double scaledSum = weight(measurements, weightsMap);
+                    double scaledSum = 0.0;
+                    if (measurements != null) {
+                        scaledSum = weight(measurements, weightsMap);
+                    }
 
                     double rating = scaledSum;
-
                     System.out.println("Rated " + rating + " by " + weightGenome.toString());
                     weightGenome.addFeature("proposedRating:" + ind.getId(), rating);
 
@@ -393,6 +395,7 @@ public final class EvolUtil {
 
             IKielerProgressMonitor monitor = new BasicProgressMonitor();
 
+            // calculate layout (might throw an exception)
             KNode layoutResult = engine.calculateLayout(ind, (DiagramEditor) editor, monitor);
 
             Map<String, Object> measurements = measure(layoutResult, weightsMap);
@@ -639,8 +642,15 @@ public final class EvolUtil {
                 return;
             }
 
-            double rating = calculateAutoRating(ind, editors, genomes);
-            ind.setUserRating(rating);
+            double rating = 0.0;
+            try {
+                rating = calculateAutoRating(ind, editors, genomes);
+            } catch (Exception exception) {
+                rating = 0.0;
+                exception.printStackTrace();
+            } finally {
+                ind.setUserRating(rating);
+            }
         }
 
     }
