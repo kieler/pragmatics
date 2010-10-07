@@ -51,7 +51,9 @@ public class EffectsWorker extends Thread {
                     effect = effects.remove(0);
                 }
                 try {
+                    long time = System.nanoTime();
                     effect.execute();
+                    System.out.printf("%7dµs - %s\n", (System.nanoTime() - time) / 1000, effect);
                     synchronized (effectsListeners) {
                         for (IEffectsListener listener : effectsListeners) {
                             listener.executedEffect(effect);
@@ -103,7 +105,8 @@ public class EffectsWorker extends Thread {
     /**
      * Add an effects listener to the worker.
      * 
-     * @param listener the listener to add
+     * @param listener
+     *            the listener to add
      */
     public void addEffectsListener(final IEffectsListener listener) {
         synchronized (effectsListeners) {
@@ -114,7 +117,8 @@ public class EffectsWorker extends Thread {
     /**
      * Remove an effects listener from the worker.
      * 
-     * @param listener the listener to remove
+     * @param listener
+     *            the listener to remove
      */
     public void removeEffectsListener(final IEffectsListener listener) {
         synchronized (effectsListeners) {
