@@ -14,12 +14,23 @@
 
 package de.cau.cs.kieler.kaom.karma.ptolemy;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.Icon;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -37,9 +48,13 @@ import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -55,12 +70,17 @@ import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.core.ui.util.CoreUiUtil;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.kvid.KvidUtil;
 import de.cau.cs.kieler.kvid.data.DataObject;
 import de.cau.cs.kieler.kvid.data.KvidUri;
 import de.cau.cs.kieler.kvid.datadistributor.DataDistributor;
 import de.cau.cs.kieler.kvid.datadistributor.IDataListener;
+import diva.canvas.CanvasUtilities;
+import diva.canvas.Figure;
+import diva.canvas.toolbox.ImageFigure;
+import diva.gui.toolbox.FigureIcon;
 
 /**
  * Karma rendering provider for rendering ptolemy diagrams in kaom.
@@ -83,6 +103,13 @@ public class KaomFigureProvider implements IRenderingProvider {
             return createConstFigure(object);
         } else if (input.equals("Director")) {
             return createDirector();
+        } else if (input.equals("connection")) {
+            if (oldFigure instanceof PolylineConnectionEx) {
+                ((PolylineConnectionEx) oldFigure).setTargetDecoration(null);
+                return oldFigure;
+            } else {
+                return null;
+            }
         } else {
             return getDefaultFigure();
         }
@@ -208,19 +235,17 @@ public class KaomFigureProvider implements IRenderingProvider {
                     yoffset = Math.abs(Integer.parseInt(firstPointCoords[1]));
                     List<Integer> pointsX = new LinkedList<Integer>();
                     List<Integer> pointsY = new LinkedList<Integer>();
-                    for (String singlePoint: splittedPoints) {
+                    for (String singlePoint : splittedPoints) {
                         String[] pointCoord = singlePoint.split(",");
                         pointsX.add(Integer.parseInt(pointCoord[0]));
                         pointsY.add(Integer.parseInt(pointCoord[1]));
                     }
                     int maxX = Collections.max(pointsX);
                     int maxY = Collections.max(pointsY);
-                    svgElement.setAttribute("height",
-                            String.valueOf(maxX + xoffset + 1));
-                    svgElement.setAttribute("width",
-                            String.valueOf(maxY + yoffset + 1));
+                    svgElement.setAttribute("height", String.valueOf(maxX + xoffset + 1));
+                    svgElement.setAttribute("width", String.valueOf(maxY + yoffset + 1));
                 }
-                
+
             }
             for (int i = 0; i < doc.getElementsByTagName("rect").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("rect").item(i);
@@ -370,8 +395,8 @@ public class KaomFigureProvider implements IRenderingProvider {
      * @return a figure represention an director
      */
     private IFigure createDirector() {
-        String directorsvg = "<svg width=\"102\" height=\"32\"><rect x=\"0\" y=\"0\" width=\"100\" " 
-            + " height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
+        String directorsvg = "<svg width=\"102\" height=\"32\"><rect x=\"0\" y=\"0\" width=\"100\" "
+                + " height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
         return createSvg(directorsvg);
     }
 
@@ -502,18 +527,60 @@ public class KaomFigureProvider implements IRenderingProvider {
                         Entity entity = (Entity) obj;
                         TestIconLoader til = new TestIconLoader();
                         try {
-                            til.loadIconForClass(Ramp.class.getName(), entity);
+                            til.loadIconForClass(ptolemyClassString, entity);
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
-                        List<?> icons = entity.attributeList(EditorIcon.class);
+                        List<EditorIcon> icons = entity.attributeList(EditorIcon.class);
                         ConfigurableAttribute ca = null;
                         String svg = "";
                         if (icons.isEmpty()) {
                             ca = (ConfigurableAttribute) entity.getAttribute("_iconDescription");
 
                             svg = ca.getConfigureText();
+                        } else {
+                            EditorIcon icon = icons.get(0);
+                            Icon ic = icon.createIcon();
+                            Figure shape = icon.createBackgroundFigure();
+                            /*
+                             shape.getBounds().setRect(0, 0, shape.getBounds().getWidth(),
+                                     shape.getBounds().getHeight());
+                                     */
+                            Image img;
+                            /*
+                            if (shape instanceof ImageFigure) {
+                                img = ((ImageFigure) shape).getImage();
+                            } else {
+                            // Figure shape2 = icon.createFigure();
+                            // int testint = ((FigureIcon)ic).getIconHeight();
+                            //shape.getOrigin().setLocation(0, 0);
+                            FigureIcon fIcon = new FigureIcon(shape, true);// new FigureIcon(shape,
+                                                                           // true);
+                            img = fIcon.getImage(); // ((FigureIcon)ic).getImage();
+                            }
+                            */
+                            img = getImageFromFigure(shape);
+                            BufferedImage resizedImage = new BufferedImage(img.getWidth(null),
+                                    img.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                            Graphics2D g = resizedImage.createGraphics();
+                            g.drawImage(img, 0, 0, null);
+                            // g.drawImage(img, 0, 0, 60, 45, null);
+                            g.dispose();
+                            g.setComposite(AlphaComposite.Src);
+                            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                            g.setRenderingHint(RenderingHints.KEY_RENDERING,
+                                    RenderingHints.VALUE_RENDER_QUALITY);
+                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                    RenderingHints.VALUE_ANTIALIAS_ON);
+                            // ((BufferedImage)img).
+                            ScalableImageFigure fig = new ScalableImageFigure(
+                                    /* makeSWTImage(Display.getCurrent(), resizedImage) */new org.eclipse.swt.graphics.Image(
+                                            Display.getCurrent(), CoreUiUtil
+                                                    .convertAWTImageToSWT(resizedImage)));
+                            // int g = 7;
+                            return fig;
                         }
                         svg = repairSvg(svg);
                         if (svg == null) {
@@ -533,6 +600,58 @@ public class KaomFigureProvider implements IRenderingProvider {
         }
         throw new RuntimeException("initializing svg from ptolemyClass failed");
 
+    }
+    
+    private Image getImageFromFigure(Figure figure) {
+        if (figure instanceof ImageFigure ) {
+            ImageFigure imageFigure = (ImageFigure) figure;
+            Image image = imageFigure.getImage();
+            if (image != null) {
+                image = image.getScaledInstance(image.getWidth(null), image.getHeight(null), Image.SCALE_DEFAULT);
+                return image;
+            } else {
+                throw new NullPointerException("Failed to get an image from "
+                        + imageFigure);
+            }
+        } else {
+            Rectangle2D bounds = figure.getBounds();
+            Rectangle2D size = new Rectangle2D.Double(0, 0, figure.getBounds().getWidth(), figure.getBounds().getHeight());
+            AffineTransform transform = CanvasUtilities.computeFitTransform(
+                    bounds, size);
+            figure.transform(transform);
+
+            BufferedImage image = new BufferedImage((int)figure.getBounds().getWidth(), (int)figure.getBounds().getHeight(),
+                    BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics2D graphics = image.createGraphics();
+            
+                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+           
+
+            graphics.setBackground(new Color(255, 255, 255, 255));
+            graphics.clearRect(0, 0, (int)figure.getBounds().getWidth(), (int)figure.getBounds().getHeight());
+            figure.paint(graphics);
+            return image;
+        }
+    }
+
+    private static org.eclipse.swt.graphics.Image makeSWTImage(Display display,
+            BufferedImage /* java.awt.Image ai */bufferedImage) throws Exception {
+        int width = bufferedImage.getWidth(null);
+        int height = bufferedImage.getHeight(null);
+        // BufferedImage bufferedImage = new BufferedImage(width, height,
+        // BufferedImage.TYPE_INT_RGB);
+        // Graphics2D g2d = bufferedImage.createGraphics();
+        // g2d.drawImage(ai, 0, 0, null);
+        // g2d.dispose();
+        int[] data = ((DataBufferInt) bufferedImage.getData().getDataBuffer()).getData();
+        ImageData imageData = new ImageData(width, height, 24, new PaletteData(0xFF0000, 0x00FF00,
+                0x0000FF));
+        imageData.setPixels(0, 0, data.length, data, 0);
+
+        org.eclipse.swt.graphics.Image swtImage = new org.eclipse.swt.graphics.Image(display,
+                imageData);
+        return swtImage;
     }
 
 }
