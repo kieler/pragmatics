@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
@@ -142,19 +143,39 @@ public class AdvancedRenderingEditPartUtil {
                             }
                         }
                         // setting the LayoutManager
+                        if (figure != null) {
                         LayoutManager newLayoutManager = renderingProvider
                                 .getLayoutManagerByString(layoutParam, figure.getLayoutManager(),
                                         modelElement);
                         if (newLayoutManager != null) {
                             figure.setLayoutManager(newLayoutManager);
                         }
+                        }
 
                         // sets the new BoderItemLocator
-                        if (editPart instanceof AbstractBorderItemEditPart) {
+                        if (editPart instanceof IBorderItemEditPart) {
                             if (editPart.getParent() instanceof AbstractBorderedShapeEditPart) {
                                 AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart) editPart
                                         .getParent());
                                 IFigure mainFigure = parent.getMainFigure();
+                                if (editPart instanceof AdvancedRenderingLabelEditPart) {
+                                IFigure contentPane = editPart.getContentPane();
+                                if (contentPane != null) {
+                                    IBorderItemLocator oldLocator = (IBorderItemLocator) contentPane
+                                    .getParent().getLayoutManager()
+                                    .getConstraint(contentPane);
+                                    
+                                    IBorderItemLocator newLocator = renderingProvider
+                                    .getBorderItemLocatorByString(borderItemParam,
+                                            mainFigure, oldLocator, modelElement);
+                                    
+                                    parent.setLayoutConstraint(editPart, contentPane,
+                                            newLocator);
+                                } else {
+                                    lastCondition = null;
+                                }
+                                } else {
+                                
                                 if (figure.getParent().getParent() instanceof BorderedNodeFigure) {
                                     BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) figure
                                             .getParent().getParent();
@@ -170,6 +191,7 @@ public class AdvancedRenderingEditPartUtil {
                                     } else {
                                         lastCondition = null;
                                     }
+                                }
                                 }
                             }
                         }
