@@ -28,8 +28,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.core.ui.util.EditorUtils;
 
 /**
  * Listens for selection and deselection of graphical elements.
@@ -150,17 +149,12 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
             if (editor != null) {
                 return editor;
             } else {
-                final Maybe<DiagramEditor> maybe = new Maybe<DiagramEditor>();
-                MonitoredOperation.runInUI(new Runnable() {
-                    public void run() {
-                        IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                                .getActivePage().getActiveEditor();
-                        if (part instanceof DiagramEditor) {
-                            maybe.set((DiagramEditor) part);
-                        }
-                    }
-                }, true);
-                return maybe.get();
+                IEditorPart editorPart = EditorUtils.getLastActiveEditor();
+                if (editorPart instanceof DiagramEditor) {
+                    return (DiagramEditor) editorPart;
+                } else {
+                    return null;
+                }
             }
         }
     }
