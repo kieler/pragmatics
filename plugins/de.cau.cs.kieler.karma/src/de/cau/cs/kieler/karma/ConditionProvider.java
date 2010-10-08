@@ -248,7 +248,7 @@ public final class ConditionProvider {
                     ICustomCondition<EObject> customCondition = 
                         (ICustomCondition<EObject>) customConditionObject;
                     customCondition.initialize(key, value);
-                    return customCondition;
+                    return customCondition;                    
                 }
             } catch (CoreException e) {
                 throw new RuntimeException("customCondition failed to load.");

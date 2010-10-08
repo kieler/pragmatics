@@ -144,12 +144,12 @@ public class AdvancedRenderingEditPartUtil {
                         }
                         // setting the LayoutManager
                         if (figure != null) {
-                        LayoutManager newLayoutManager = renderingProvider
-                                .getLayoutManagerByString(layoutParam, figure.getLayoutManager(),
-                                        modelElement);
-                        if (newLayoutManager != null) {
-                            figure.setLayoutManager(newLayoutManager);
-                        }
+                            LayoutManager newLayoutManager = renderingProvider
+                                    .getLayoutManagerByString(layoutParam,
+                                            figure.getLayoutManager(), modelElement);
+                            if (newLayoutManager != null) {
+                                figure.setLayoutManager(newLayoutManager);
+                            }
                         }
 
                         // sets the new BoderItemLocator
@@ -159,39 +159,39 @@ public class AdvancedRenderingEditPartUtil {
                                         .getParent());
                                 IFigure mainFigure = parent.getMainFigure();
                                 if (editPart instanceof AdvancedRenderingLabelEditPart) {
-                                IFigure contentPane = editPart.getContentPane();
-                                if (contentPane != null) {
-                                    IBorderItemLocator oldLocator = (IBorderItemLocator) contentPane
-                                    .getParent().getLayoutManager()
-                                    .getConstraint(contentPane);
-                                    
-                                    IBorderItemLocator newLocator = renderingProvider
-                                    .getBorderItemLocatorByString(borderItemParam,
-                                            mainFigure, oldLocator, modelElement);
-                                    
-                                    parent.setLayoutConstraint(editPart, contentPane,
-                                            newLocator);
-                                } else {
-                                    lastCondition = null;
-                                }
-                                } else {
-                                
-                                if (figure.getParent().getParent() instanceof BorderedNodeFigure) {
-                                    BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) figure
-                                            .getParent().getParent();
-                                    if (borderedNodeFigure.getParent() != null) {
-                                        IBorderItemLocator oldLocator = (IBorderItemLocator) borderedNodeFigure
+                                    IFigure contentPane = editPart.getContentPane();
+                                    if (contentPane != null) {
+                                        IBorderItemLocator oldLocator = (IBorderItemLocator) contentPane
                                                 .getParent().getLayoutManager()
-                                                .getConstraint(borderedNodeFigure);
+                                                .getConstraint(contentPane);
+
                                         IBorderItemLocator newLocator = renderingProvider
                                                 .getBorderItemLocatorByString(borderItemParam,
                                                         mainFigure, oldLocator, modelElement);
-                                        parent.setLayoutConstraint(editPart, borderedNodeFigure,
+
+                                        parent.setLayoutConstraint(editPart, contentPane,
                                                 newLocator);
                                     } else {
                                         lastCondition = null;
                                     }
-                                }
+                                } else {
+
+                                    if (figure.getParent().getParent() instanceof BorderedNodeFigure) {
+                                        BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) figure
+                                                .getParent().getParent();
+                                        if (borderedNodeFigure.getParent() != null) {
+                                            IBorderItemLocator oldLocator = (IBorderItemLocator) borderedNodeFigure
+                                                    .getParent().getLayoutManager()
+                                                    .getConstraint(borderedNodeFigure);
+                                            IBorderItemLocator newLocator = renderingProvider
+                                                    .getBorderItemLocatorByString(borderItemParam,
+                                                            mainFigure, oldLocator, modelElement);
+                                            parent.setLayoutConstraint(editPart,
+                                                    borderedNodeFigure, newLocator);
+                                        } else {
+                                            lastCondition = null;
+                                        }
+                                    }
                                 }
                             }
                         }
