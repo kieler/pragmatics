@@ -116,11 +116,9 @@ public class ImportExamplePage extends WizardResourceImportPage {
         Control createTreeComposite = createTreeComposite(composite);
         createPreviewComp(composite, createTreeComposite);
         composite.getShell().redraw();
-
     }
 
     private void createBottomComponent(Composite parent) {
-
         Label descriptionLabel = new Label(parent, SWT.NONE);
         descriptionLabel.setText("Example Description");
 
@@ -315,8 +313,8 @@ public class ImportExamplePage extends WizardResourceImportPage {
         String htmlDesc = selectedExample.getDescription().replaceAll("\n", "<br>");
         sb.append("<font face=\"Tahoma, sans-serif\" size=\"-1\">");
         sb.append("Title: ").append(selectedExample.getTitle()).append("<br>").append("Author:")
-                .append(selectedExample.getAuthor()).append("<br>").append("Contact: ").append(
-                        selectedExample.getContact()).append("<br>").append("<br>")
+                .append(selectedExample.getAuthor()).append("<br>").append("Contact: ")
+                .append(selectedExample.getContact()).append("<br>").append("<br>")
                 .append(htmlDesc);
         sb.append("</font>");
         getExampleDescription().setText(sb.toString());
