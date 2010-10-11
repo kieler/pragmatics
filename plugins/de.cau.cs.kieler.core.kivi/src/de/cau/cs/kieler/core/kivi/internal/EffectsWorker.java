@@ -53,7 +53,7 @@ public class EffectsWorker extends Thread {
                 try {
                     long time = System.nanoTime();
                     effect.execute();
-                    System.out.printf("%7dµs - %s\n", (System.nanoTime() - time) / 1000, effect);
+                    System.out.printf("%7dÂµs - %s\n", (System.nanoTime() - time) / 1000, effect);
                     synchronized (effectsListeners) {
                         for (IEffectsListener listener : effectsListeners) {
                             listener.executedEffect(effect);
