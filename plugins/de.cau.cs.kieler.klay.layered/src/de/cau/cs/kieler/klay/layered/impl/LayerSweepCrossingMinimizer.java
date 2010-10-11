@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.impl;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -23,6 +24,7 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -37,6 +39,10 @@ import de.cau.cs.kieler.klay.layered.modules.ICrossingMinimizer;
  */
 public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ICrossingMinimizer {
 
+    private float[] portPos;
+    private float[] nodeBarycenter;
+    private float[] portBarycenter;
+    
     /**
      * {@inheritDoc}
      */
@@ -45,21 +51,59 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         int layerCount = layeredGraph.getLayers().size();
         
         if (layerCount >= 2) {
-            // perform a single forth-and-back sweep
-            // TODO extend to support multiple sweeps (fixed or dynamic)
+            // determine the total number of nodes and ports in the graph
+            int nodeCount = 0, portCount = 0;
+            for (Layer layer : layeredGraph.getLayers()) {
+                for (LNode node : layer.getNodes()) {
+                    node.id = nodeCount++;
+                    boolean freePorts = node.getProperty(Properties.PORT_CONS) == PortConstraints.FREE;
+                    for (LPort port : node.getPorts()) {
+                        port.id = portCount++;
+                        if (freePorts) {
+                            // set input ports left, output ports right
+                            switch (port.getType()) {
+                            case INPUT:
+                                port.setSide(PortSide.WEST);
+                                break;
+                            case OUTPUT:
+                                port.setSide(PortSide.EAST);
+                            }
+                        }
+                    }
+                }
+            }
+            portPos = new float[portCount];
+            nodeBarycenter = new float[nodeCount];
+            portBarycenter = new float[portCount];
+            Arrays.fill(portBarycenter, -1);
+            
             ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
             Layer fixedLayer = layerIter.next();
-            while (layerIter.hasNext()) {
-                Layer freeLayer = layerIter.next();
-                minimizeCrossings(fixedLayer, freeLayer, true);
-                fixedLayer = freeLayer;
-            }
-            layerIter.previous();
-            while (layerIter.hasPrevious()) {
-                Layer freeLayer = layerIter.previous();
-                minimizeCrossings(fixedLayer, freeLayer, false);
-                fixedLayer = freeLayer;
-            }
+            assignRanks(fixedLayer);
+            int previousCross, curCross = Integer.MAX_VALUE;
+            do {
+                previousCross = curCross;
+                curCross = 0;
+                while (layerIter.hasNext()) {
+                    Layer freeLayer = layerIter.next();
+                    curCross += minimizeCrossings(fixedLayer, freeLayer, true);
+                    fixedLayer = freeLayer;
+                }
+                System.out.println("-> " + curCross);
+                if (curCross < previousCross) {
+                    previousCross = curCross;
+                    curCross = 0;
+                    layerIter.previous();
+                    while (layerIter.hasPrevious()) {
+                        Layer freeLayer = layerIter.previous();
+                        curCross += minimizeCrossings(fixedLayer, freeLayer, false);
+                        fixedLayer = freeLayer;
+                    }
+                    System.out.println("<- " + curCross);
+                    layerIter.next();
+                }
+            } while (curCross < previousCross);
+            // TODO restore last ordering if crossing number has worsened
         }
         
         getMonitor().done();
@@ -72,88 +116,135 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * @param fixedLayer the fixed layer
      * @param freeLayer the free layer whose nodes are reordered
      * @param forward whether the free layer is after the fixed layer
+     * @return the new number of crossings between the two layers
      */
-    public void minimizeCrossings(final Layer fixedLayer, final Layer freeLayer,
-            final boolean forward) {
-        // set the port ranks for the fixed layer
-        if (forward) { 
-            assignForwardRanks(fixedLayer);
-        } else {
-            assignBackwardRanks(fixedLayer);
-        }
-        
-        float[] nodeBarycenters = new float[freeLayer.getNodes().size()];
-        int nodeId = 0, portId;
+    public int minimizeCrossings(final Layer fixedLayer, final Layer freeLayer,
+            final boolean forward) {        
+        int totalEdges = 0;
         for (LNode node : freeLayer.getNodes()) {
-            node.id = nodeId;
-            nodeBarycenters[nodeId] = -1;
+            nodeBarycenter[node.id] = -1;
             float nodeSum = 0;
             int portCount = 0;
-            float[] portBarycenters = new float[node.getPorts().size()];
-            portId = 0;
             for (LPort freePort : node.getPorts()) {
-                freePort.id = portId;
-                portBarycenters[portId] = -1;
+                portBarycenter[freePort.id] = -1;
                 if (freePort.getType() == (forward ? PortType.INPUT : PortType.OUTPUT)) {
                     int edgeCount = freePort.getEdges().size();
                     if (edgeCount > 0) {
-                        int portSum = 0;
+                        float portSum = 0;
                         for (LPort fixedPort : freePort.getConnectedPorts()) {
-                            portSum += fixedPort.id;
+                            portSum += portPos[fixedPort.id];
+                            totalEdges++;
                         }
-                        portBarycenters[portId] = (float) portSum / edgeCount;
-                        nodeSum += portBarycenters[portId];
+                        float bary = portSum / edgeCount;
+                        portBarycenter[freePort.id] = bary;
+                        nodeSum += bary;
                         portCount++;
                     }
                 }
-                portId++;
             }
             if (portCount > 0) {
                 PortConstraints constraints = node.getProperty(Properties.PORT_CONS);
                 if (constraints == PortConstraints.FREE
                         || constraints == PortConstraints.FIXED_SIDE) {
-                    sortPorts(node, portBarycenters, forward);
+                    sortPorts(node, forward);
                 }
-                nodeBarycenters[nodeId] = nodeSum / portCount;
+                nodeBarycenter[node.id] = nodeSum / portCount;
             }
-            nodeId++;
         }
-        sortNodes(freeLayer, nodeBarycenters);
+        sortNodes(freeLayer);
+        assignRanks(freeLayer);
+        Layer leftLayer = forward ? fixedLayer : freeLayer;
+        return countCrossings(leftLayer, totalEdges);
     }
     
     /**
-     * Assigns ranks to all ports in the given layer, assuming that a forward sweep is
-     * being done. This means that only output ports are processed.
+     * Calculate the number of crossings between the given layer and the following one.
      * 
-     * @param layer a layer
+     * @param leftLayer the left layer
+     * @param edgeCount the total number of edges in the layer
+     * @return the number of edge crossings
      */
-    private void assignForwardRanks(final Layer layer) {
-        int portId = 0;
-        for (LNode node : layer.getNodes()) {
+    private int countCrossings(final Layer leftLayer, final int edgeCount) {
+        LEdge[] edges = new LEdge[edgeCount];
+        int i = 0;
+        for (LNode node : leftLayer.getNodes()) {
             for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                port.id = portId;
-                portId++;
+                for (LEdge edge : port.getEdges()) {
+                    edges[i++] = edge;
+                }
             }
         }
+        
+        int crossings = 0;
+        for (i = 0; i < edgeCount; i++) {
+            for (int j = i + 1; j < edgeCount; j++) {
+                float source1pos = portPos[edges[i].getSource().id];
+                float target1pos = portPos[edges[i].getTarget().id];
+                float source2pos = portPos[edges[j].getSource().id];
+                float target2pos = portPos[edges[j].getTarget().id];
+                if (source1pos < source2pos && target1pos > target2pos
+                        || source1pos > source2pos && target1pos < target2pos) {
+                    crossings++;
+                }
+            }
+        }
+        return crossings;
     }
     
+    /** amount by which the position of free ports is drawn to the center of nodes. */
+    private static final int FREE_PORTS_PENALTY = 8;
+    
     /**
-     * Assigns ranks to all ports in the given layer, assuming that a backwards sweep is
-     * being done. This means that only input ports are processed.
+     * Determine positions for all ports in the given layer. Input and output ports are processed
+     * separately.
      * 
      * @param layer a layer
      */
-    private void assignBackwardRanks(final Layer layer) {
-        int portId = 0;
+    private void assignRanks(final Layer layer) {
+        int nodeIx = 0;
         for (LNode node : layer.getNodes()) {
-            ListIterator<LPort> portIter = node.getPorts().listIterator(node.getPorts().size());
-            while (portIter.hasPrevious()) {
-                LPort port = portIter.previous();
-                if (port.getType() == PortType.INPUT) {
-                    port.id = portId;
-                    portId++;
+            // count the input and output ports
+            int inputPorts = 0, outputPorts = 0;
+            for (LPort port : node.getPorts()) {
+                switch (port.getType()) {
+                case INPUT:
+                    inputPorts++;
+                    break;
+                case OUTPUT:
+                    outputPorts++;
+                    break;
                 }
             }
+            PortConstraints cons = node.getProperty(Properties.PORT_CONS);
+            // set positions for the input ports
+            if (inputPorts > 0) {
+                float pos = nodeIx, incr = 1.0f / inputPorts;
+                if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
+                    incr /= FREE_PORTS_PENALTY;
+                    pos += (1 - inputPorts * incr) / 2;
+                }
+                ListIterator<LPort> portIter = node.getPorts().listIterator(node.getPorts().size());
+                while (portIter.hasPrevious()) {
+                    LPort port = portIter.previous();
+                    if (port.getType() == PortType.INPUT) {
+                        portPos[port.id] = pos;
+                        pos += incr;
+                    }
+                }
+            }
+            // set positions for the output ports
+            if (outputPorts > 0) {
+                float pos = nodeIx, incr = 1.0f / outputPorts;
+                if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
+                    incr /= FREE_PORTS_PENALTY;
+                    pos += (1 - outputPorts * incr) / 2;
+                }
+                for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                    portPos[port.id] = pos;
+                    pos += incr;
+                }
+            }
+            nodeIx++;
         }
     }
     
@@ -162,24 +253,11 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * or output status.
      * 
      * @param node node whose ports shall be sorted
-     * @param posValues array of position values
      * @param input if true, all ports with position value greater or equal zero
      *     are assumed to be input ports and the others to be output ports; else the
      *     contrary is assumed
      */
-    private void sortPorts(final LNode node, final float[] posValues, final boolean input) {
-        if (node.getProperty(Properties.PORT_CONS) == PortConstraints.FREE) {
-            // set input ports left, output ports right
-            for (LPort port : node.getPorts()) {
-                switch (port.getType()) {
-                case INPUT:
-                    port.setSide(PortSide.WEST);
-                    break;
-                case OUTPUT:
-                    port.setSide(PortSide.EAST);
-                }
-            }
-        }
+    private void sortPorts(final LNode node, final boolean input) {
         Collections.sort(node.getPorts(), new Comparator<LPort>() {
             public int compare(final LPort port1, final LPort port2) {
                 PortSide side1 = port1.getSide();
@@ -188,7 +266,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                     // sort according to the node side 
                     return side1.ordinal() - side2.ordinal();
                 } else {
-                    float bary1 = posValues[port1.id], bary2 = posValues[port2.id];
+                    float bary1 = portBarycenter[port1.id], bary2 = portBarycenter[port2.id];
                     // input ports are counter-clockwise, output ports are clockwise
                     if (bary1 >= 0 && bary2 >= 0) {
                         return input ? Float.compare(bary2, bary1)
@@ -208,11 +286,15 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                         }
                     // take the previous ordering
                     } else {
-                        return port1.id - port2.id;
+                        return port1.getIndex() - port2.getIndex();
                     }
                 }
             }
         });
+        // reset barycenter values for the ports of the current node
+        for (LPort port : node.getPorts()) {
+            portBarycenter[port.id] = -1;
+        }
     }
     
     /**
@@ -220,45 +302,33 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * for nodes whose position value is < 0.
      * 
      * @param layer layer whose nodes shall be sorted
-     * @param posValues array of position values
      */
-    private void sortNodes(final Layer layer, final float[] posValues) {
+    private void sortNodes(final Layer layer) {
         List<LNode> nodes = layer.getNodes();
         // determine placements for nodes with undefined position value
-        final double[] filteredValues = new double[nodes.size()];
-        for (int index = 0; index < posValues.length; index++) {
-            float value = posValues[index];
-            if (value >= 0.0) {
-                filteredValues[index] = value;
-            } else {
-                int definedRanks = 0, il = index, ir = index;
-                float sum = 0.0f;
-                do {
-                    if (il >= 0) {
-                        il--;
-                        if (il < 0) {
-                            definedRanks++;
-                        } else if (posValues[il] >= 0.0) {
-                            sum += posValues[il];
-                            definedRanks++;
-                        }
+        ListIterator<LNode> iter1 = nodes.listIterator(0);
+        float lastValue = -1;
+        while (iter1.hasNext()) {
+            int nodeid = iter1.next().id;
+            float value = nodeBarycenter[nodeid];
+            if (value < 0) {
+                ListIterator<LNode> iter2 = nodes.listIterator(iter1.nextIndex());
+                float nextValue = lastValue + 1;
+                while (iter2.hasNext()) {
+                    float x = nodeBarycenter[iter2.next().id];
+                    if (x >= 0) {
+                        nextValue = x;
+                        break;
                     }
-                    if (ir < posValues.length) {
-                        ir++;
-                        if (ir < posValues.length && posValues[ir] >= 0.0) {
-                            sum += posValues[ir];
-                            definedRanks++;
-                        }
-                    }
-                } while (definedRanks == 0);
-                filteredValues[index] = sum / definedRanks;
+                }
+                nodeBarycenter[nodeid] = (lastValue + nextValue) / 2;
             }
         }
 
         // sort all nodes by the filtered ranks
         Collections.sort(nodes, new Comparator<LNode>() {
             public int compare(final LNode node1, final LNode node2) {
-                return Double.compare(filteredValues[node1.id], filteredValues[node2.id]);
+                return Float.compare(nodeBarycenter[node1.id], nodeBarycenter[node2.id]);
             }
         });
     }

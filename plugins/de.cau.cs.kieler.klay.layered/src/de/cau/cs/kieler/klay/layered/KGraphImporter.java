@@ -140,6 +140,7 @@ public class KGraphImporter implements IGraphImporter {
                 // exclude edges that pass hierarchy bounds and self-loops
                 if (kedge.getTarget().getParent() == child.getParent()
                         && kedge.getSource() != kedge.getTarget()) {
+                    // TODO handle fixed port constraints for edges without ports
                     LNode sourceNode = (LNode) elemMap.get(child);
                     LPort sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
                     LNode targetNode = (LNode) elemMap.get(kedge.getTarget());
