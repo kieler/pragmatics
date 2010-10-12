@@ -27,13 +27,13 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
- * A graph analysis that computes the number of edge-node crossings. It assumes
+ * A graph analysis that computes the number of edge-node overlaps. It assumes
  * that the edge bend points describe polylines (splines are not supported).<br>
  * The algorithm used is based on the Cohen-Sutherland algorithm.
  * 
  * @author mri
  */
-public class NodeCrossingsAnalysis implements IAnalysis {
+public class NodeEdgeOverlapsAnalysis implements IAnalysis {
 
     /**
      * Returns whether two line segments have an intersection.
@@ -57,7 +57,7 @@ public class NodeCrossingsAnalysis implements IAnalysis {
         float s =
                 (y2 - y1) * (p2.getX() - p1.getX()) - (x2 - x1)
                         * (p2.getY() - p1.getY());
-        // are the line segements parallel?
+        // are the line segments parallel?
         if (s == 0) {
             return false;
         }
@@ -67,7 +67,7 @@ public class NodeCrossingsAnalysis implements IAnalysis {
                         - (p2.getY() - p1.getY()) * (p1.getX() - x1);
         float t1 = a1 / s;
         float t2 = a2 / s;
-        // the line segements intersect when t1 and t2 lie in the interval (0,1)
+        // the line segments intersect when t1 and t2 lie in the interval (0,1)
         return 0.0f < t1 && t1 < 1 && 0 < t2 && t2 < 1;
     }
 
@@ -239,12 +239,10 @@ public class NodeCrossingsAnalysis implements IAnalysis {
         while (nodes.size() > 0) {
             // pop first element
             KNode node = nodes.remove(0);
-            // compute intersections of all edge segements with all nodes on
-            // the same hierarchy
+            // compute intersections of all edge segments with all nodes on the same hierarchy
             for (KNode node1 : node.getChildren()) {
                 for (KNode node2 : node.getChildren()) {
-                    // count crossings between edges of the first node and the
-                    // second node
+                    // count crossings between edges of the first node and the second node
                     numberOfCrossings += computeNumberOfCrossings(node1, node2);
                 }
             }

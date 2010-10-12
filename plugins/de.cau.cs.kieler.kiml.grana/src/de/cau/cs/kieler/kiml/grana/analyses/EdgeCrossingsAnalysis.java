@@ -15,8 +15,8 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
-import java.util.Queue;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -40,31 +40,28 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
      * @param p1
      *            start point of the first line segment
      * @param p2
-     *            end point of the first line segement
+     *            end point of the first line segment
      * @param q1
      *            start point of the second line segment
      * @param q2
-     *            end point of the second line segement
+     *            end point of the second line segment
      * @return true if the lines have an intersection
      */
     private static boolean hasIntersection(final KPoint p1, final KPoint p2,
             final KPoint q1, final KPoint q2) {
-        float s =
-                (q2.getY() - q1.getY()) * (p2.getX() - p1.getX())
-                        - (q2.getX() - q1.getX()) * (p2.getY() - p1.getY());
-        // are the line segements parallel?
+        float s = (q2.getY() - q1.getY()) * (p2.getX() - p1.getX())
+                - (q2.getX() - q1.getX()) * (p2.getY() - p1.getY());
+        // are the line segments parallel?
         if (s == 0) {
             return false;
         }
-        float a1 =
-                (q2.getX() - q1.getX()) * (p1.getY() - q1.getY())
-                        - (q2.getY() - q1.getY()) * (p1.getX() - q1.getX());
-        float a2 =
-                (p2.getX() - p1.getX()) * (p1.getY() - q1.getY())
-                        - (p2.getY() - p1.getY()) * (p1.getX() - q1.getX());
+        float a1 = (q2.getX() - q1.getX()) * (p1.getY() - q1.getY())
+                - (q2.getY() - q1.getY()) * (p1.getX() - q1.getX());
+        float a2 = (p2.getX() - p1.getX()) * (p1.getY() - q1.getY())
+                - (p2.getY() - p1.getY()) * (p1.getX() - q1.getX());
         float t1 = a1 / s;
         float t2 = a2 / s;
-        // the line segements intersect when t1 and t2 lie in the interval (0,1)
+        // the line segments intersect when t1 and t2 lie in the interval (0,1)
         return 0.0f < t1 && t1 < 1 && 0 < t2 && t2 < 1;
     }
 
@@ -78,45 +75,35 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
      *            the second node
      * @return the number of crossings
      */
-    private int computeNumberOfCrossings(final KNode node1, final KNode node2) {
+    private int computeNumberOfCrossings(final KEdge edge1, final KEdge edge2) {
         int numberOfCrossings = 0;
-        for (KEdge edge1 : node1.getOutgoingEdges()) {
-            for (KEdge edge2 : node2.getOutgoingEdges()) {
-                if (edge1 != edge2) {
-                    KEdgeLayout edge1Layout = edge1.getData(KEdgeLayout.class);
-                    KEdgeLayout edge2Layout = edge2.getData(KEdgeLayout.class);
-                    KPoint p1 = edge1Layout.getSourcePoint();
-                    for (KPoint p2 : edge1Layout.getBendPoints()) {
-                        KPoint q1 = edge2Layout.getSourcePoint();
-                        for (KPoint q2 : edge2Layout.getBendPoints()) {
-                            numberOfCrossings +=
-                                    hasIntersection(p1, p2, q1, q2) ? 1 : 0;
-                            q1 = q2;
-                        }
-                        // target point has to be handled separately
-                        KPoint q2 = edge2Layout.getTargetPoint();
-
-                        numberOfCrossings +=
-                                hasIntersection(p1, p2, q1, q2) ? 1 : 0;
-
-                        p1 = p2;
-                    }
-                    // target point has to be handled separately
-                    KPoint p2 = edge1Layout.getTargetPoint();
-
-                    KPoint q1 = edge2Layout.getSourcePoint();
-                    for (KPoint q2 : edge2Layout.getBendPoints()) {
-                        numberOfCrossings +=
-                                hasIntersection(p1, p2, q1, q2) ? 1 : 0;
-                        q1 = q2;
-                    }
-                    // target point has to be handled separately
-                    KPoint q2 = edge2Layout.getTargetPoint();
-                    numberOfCrossings +=
-                            hasIntersection(p1, p2, q1, q2) ? 1 : 0;
-                }
+        KEdgeLayout edge1Layout = edge1.getData(KEdgeLayout.class);
+        KEdgeLayout edge2Layout = edge2.getData(KEdgeLayout.class);
+        KPoint p1 = edge1Layout.getSourcePoint();
+        for (KPoint p2 : edge1Layout.getBendPoints()) {
+            KPoint q1 = edge2Layout.getSourcePoint();
+            for (KPoint q2 : edge2Layout.getBendPoints()) {
+                numberOfCrossings += hasIntersection(p1, p2, q1, q2) ? 1 : 0;
+                q1 = q2;
             }
+            // target point has to be handled separately
+            KPoint q2 = edge2Layout.getTargetPoint();
+
+            numberOfCrossings += hasIntersection(p1, p2, q1, q2) ? 1 : 0;
+
+            p1 = p2;
         }
+        // target point has to be handled separately
+        KPoint p2 = edge1Layout.getTargetPoint();
+
+        KPoint q1 = edge2Layout.getSourcePoint();
+        for (KPoint q2 : edge2Layout.getBendPoints()) {
+            numberOfCrossings += hasIntersection(p1, p2, q1, q2) ? 1 : 0;
+            q1 = q2;
+        }
+        // target point has to be handled separately
+        KPoint q2 = edge2Layout.getTargetPoint();
+        numberOfCrossings += hasIntersection(p1, p2, q1, q2) ? 1 : 0;
         return numberOfCrossings;
     }
 
@@ -129,23 +116,27 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
             throws KielerException {
         progressMonitor.begin("Edge Crossings analysis", 1);
         int numberOfCrossings = 0;
-        List<KNode> nodes = new LinkedList<KNode>();
-        nodes.add(parentNode);
-        while (nodes.size() > 0) {
-            // pop first element
-            KNode node = nodes.remove(0);
-            // compute intersections of all edge segements with all other edge
-            // segments on
-            // the same hierarchy
-            Queue<KNode> children = new LinkedList<KNode>(node.getChildren());
-            while (!children.isEmpty()) {
-                KNode node1 = children.remove();
-                for (KNode node2 : children) {
-                    // count crossings between edges of both nodes
-                    numberOfCrossings += computeNumberOfCrossings(node1, node2);
-                }
+        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
+        List<KEdge> edges = new LinkedList<KEdge>();
+        nodeQueue.offer(parentNode);
+        while (!nodeQueue.isEmpty()) {
+            // poll the first element
+            KNode node = nodeQueue.poll();
+            // collect the outgoing edges
+            edges.addAll(node.getOutgoingEdges());
+            // enqueue the child nodes
+            nodeQueue.addAll(node.getChildren());
+        }
+        
+        // count the number of crossings between all edges of the compound graph
+        ListIterator<KEdge> iter1 = edges.listIterator();
+        while (iter1.hasNext()) {
+            KEdge edge1 = iter1.next();
+            ListIterator<KEdge> iter2 = edges.listIterator(iter1.nextIndex());
+            while (iter2.hasNext()) {
+                KEdge edge2 = iter2.next();
+                numberOfCrossings += computeNumberOfCrossings(edge1, edge2);
             }
-            nodes.addAll(node.getChildren());
         }
 
         progressMonitor.done();

@@ -11,62 +11,69 @@
       </category>
       <category
             description="Basic graph analyses."
-            id="de.cau.cs.kieler.kiml.grana.basicAnalyses"
+            id="de.cau.cs.kieler.kiml.grana.basic"
             name="Basic Analyses">
       </category>
       <category
             description="Analyses that analyse the graph drawing."
-            id="de.cau.cs.kieler.kiml.grana.drawingsCategory"
+            id="de.cau.cs.kieler.kiml.grana.drawing"
             name="Drawing Analyses">
       </category>
       <provider
-            category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
+            category="de.cau.cs.kieler.kiml.grana.basic"
             class="de.cau.cs.kieler.kiml.grana.analyses.NodeDegreeAnalysis"
             description="The minimum, average and maximum node degree of all nodes including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.averageNodeDegree"
             name="Node Degree">
       </provider>
       <provider
-            category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
+            category="de.cau.cs.kieler.kiml.grana.basic"
             class="de.cau.cs.kieler.kiml.grana.analyses.EdgeCountAnalysis"
             description="The number of edges including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.edgeCount"
             name="Edge Count">
       </provider>
       <provider
-            category="de.cau.cs.kieler.kiml.grana.basicAnalyses"
+            category="de.cau.cs.kieler.kiml.grana.basic"
             class="de.cau.cs.kieler.kiml.grana.analyses.NodeCountAnalysis"
             description="The number of nodes including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.nodeCount"
             name="Node Count">
       </provider>
       <provider
-            category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
+            category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.BendsAnalysis"
             description="The number of bendpoints in the graph including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.bendpointCount"
             name="Number of Bends">
       </provider>
       <provider
-            category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
+            category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.EdgeLengthAnalysis"
             description="The minimum, average and maximum edge length."
             id="de.cau.cs.kieler.kiml.grana.edgeLength"
             name="Edge Length">
       </provider>
       <provider
-            category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
+            category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.EdgeCrossingsAnalysis"
             description="The number of edge crossings including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.edgeCrossings"
             name="Number of Edge Crossings">
       </provider>
       <provider
-            category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
-            class="de.cau.cs.kieler.kiml.grana.analyses.NodeCrossingsAnalysis"
-            description="The number of crossings between nodes and edges on all hierarchy levels."
-            id="de.cau.cs.kieler.kiml.grana.nodeCrossings"
-            name="Number of Node Crossings">
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.NodeEdgeOverlapsAnalysis"
+            description="The number of overlaps between nodes and edges on all hierarchy levels."
+            id="de.cau.cs.kieler.kiml.grana.nodeEdgeOverlaps"
+            name="Number of Node-Edge Overlaps">
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.LayersAnalysis"
+            description="Counts the number of horizontal and vertical layers in which the nodes are arranged."
+            id="de.cau.cs.kieler.kiml.grana.layers"
+            name="Horizontal / Vertical Layers">
       </provider>
       <resultVisualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.ToStringVisualizer"
@@ -78,6 +85,10 @@
       </resultVisualizer>
       <resultVisualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.AnalysisFailedVisualizer"
+            priority="10">
+      </resultVisualizer>
+      <resultVisualizer
+            class="de.cau.cs.kieler.kiml.grana.visualizers.PairResultVisualizer"
             priority="10">
       </resultVisualizer>
    </extension>

@@ -137,6 +137,32 @@ public final class KielerMath {
     }
     
     /**
+     * The first argument raised to the power of the second argument.
+     * 
+     * @param a the base
+     * @param b the exponent
+     * @return a to the power of b
+     */
+    public static float pow(final float a, final int b) {
+        float result = 1.0f, base = a;
+        int exp = (b >= 0 ? b : -b);
+        while (exp > 0) {
+            if (exp % 2 == 0) {
+                base *= base;
+                exp /= 2;
+            } else {
+                result *= base;
+                exp -= 1;
+            }
+        }
+        if (b < 0) {
+            return 1.0f / result;
+        } else {
+            return result;
+        }
+    }
+    
+    /**
      * Calculates a number of points on the Bezier curve defined by the given control points.
      * The degree of the curve is derived from the number of control points. The array of
      * resulting curve points includes the target point, but does not include the source point
