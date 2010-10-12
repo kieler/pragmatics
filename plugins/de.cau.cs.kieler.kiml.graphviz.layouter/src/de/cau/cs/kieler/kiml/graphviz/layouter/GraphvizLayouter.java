@@ -747,17 +747,30 @@ public class GraphvizLayouter {
                     // the first point in the list is the start point, if no arrowhead is given
                     if (sourcePoint == null) {
                         sourcePoint = layoutDataFactory.createKPoint();
-                        KVector firstPoint = splines.get(0).remove(0);
-                        sourcePoint.setX((float) firstPoint.x);
-                        sourcePoint.setY((float) firstPoint.y);
+                        List<KVector> points = splines.get(0);
+                        if (!points.isEmpty()) {
+                            KVector firstPoint = points.remove(0);
+                            sourcePoint.setX((float) firstPoint.x);
+                            sourcePoint.setY((float) firstPoint.y);
+                        } else {
+                            KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
+                            sourcePoint.setX(sourceLayout.getXpos() + sourceLayout.getWidth() / 2);
+                            sourcePoint.setY(sourceLayout.getYpos() + sourceLayout.getHeight() / 2);
+                        }
                     }
                     // the last point in the list is the end point, if no arrowhead is given
                     if (targetPoint == null) {
                         targetPoint = layoutDataFactory.createKPoint();
                         List<KVector> points = splines.get(splines.size() - 1);
-                        KVector lastPoint = points.remove(points.size() - 1);
-                        targetPoint.setX((float) lastPoint.x);
-                        targetPoint.setY((float) lastPoint.y);
+                        if (!points.isEmpty()) {
+                            KVector lastPoint = points.remove(points.size() - 1);
+                            targetPoint.setX((float) lastPoint.x);
+                            targetPoint.setY((float) lastPoint.y);
+                        } else {
+                            KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
+                            targetPoint.setX(targetLayout.getXpos() + targetLayout.getWidth() / 2);
+                            targetPoint.setY(targetLayout.getYpos() + targetLayout.getHeight() / 2);
+                        }
                     }
                     // add all other control points to the edge
                     for (List<KVector> points : splines) {
