@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.impl;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -39,9 +38,14 @@ import de.cau.cs.kieler.klay.layered.modules.ICrossingMinimizer;
  */
 public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ICrossingMinimizer {
 
-    private float[] portPos;
-    private float[] nodeBarycenter;
+    /** barycenter values for nodes. */
     private float[] portBarycenter;
+    /** port position array. */
+    private float[] portPos;
+    /** barycenter values for nodes. */
+    private float[] nodeBarycenter;
+    /** node ordering from previous run. */
+    private int[] nodeIndex;
     
     /**
      * {@inheritDoc}
@@ -49,64 +53,98 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
     public void minimizeCrossings(final LayeredGraph layeredGraph) {
         getMonitor().begin("Layer sweep crossing minimization", 1);
         int layerCount = layeredGraph.getLayers().size();
+        if (layerCount < 2) {
+            getMonitor().done();
+            return;
+        }
         
-        if (layerCount >= 2) {
-            // determine the total number of nodes and ports in the graph
-            int nodeCount = 0, portCount = 0;
-            for (Layer layer : layeredGraph.getLayers()) {
-                for (LNode node : layer.getNodes()) {
-                    node.id = nodeCount++;
-                    boolean freePorts = node.getProperty(Properties.PORT_CONS) == PortConstraints.FREE;
-                    for (LPort port : node.getPorts()) {
-                        port.id = portCount++;
-                        if (freePorts) {
-                            // set input ports left, output ports right
-                            switch (port.getType()) {
-                            case INPUT:
-                                port.setSide(PortSide.WEST);
-                                break;
-                            case OUTPUT:
-                                port.setSide(PortSide.EAST);
-                            }
+        // determine the total number of nodes and ports in the graph
+        int nodeCount = 0, portCount = 0;
+        for (Layer layer : layeredGraph.getLayers()) {
+            for (LNode node : layer.getNodes()) {
+                node.id = nodeCount++;
+                boolean freePorts = node.getProperty(Properties.PORT_CONS) == PortConstraints.FREE;
+                for (LPort port : node.getPorts()) {
+                    port.id = portCount++;
+                    if (freePorts) {
+                        // set input ports left, output ports right
+                        switch (port.getType()) {
+                        case INPUT:
+                            port.setSide(PortSide.WEST);
+                            break;
+                        case OUTPUT:
+                            port.setSide(PortSide.EAST);
                         }
                     }
                 }
             }
-            portPos = new float[portCount];
-            nodeBarycenter = new float[nodeCount];
-            portBarycenter = new float[portCount];
-            Arrays.fill(portBarycenter, -1);
-            
-            ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
-            Layer fixedLayer = layerIter.next();
-            assignRanks(fixedLayer);
-            int previousCross, curCross = Integer.MAX_VALUE;
-            do {
+        }
+        portBarycenter = new float[portCount];
+        portPos = new float[portCount];
+        nodeBarycenter = new float[nodeCount];
+        nodeIndex = new int[nodeCount];
+        
+        ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
+        Layer fixedLayer = layerIter.next();
+        assignPortPos(fixedLayer);
+        int previousCross, curCross = Integer.MAX_VALUE;
+        do {
+            // perform a forward sweep
+            previousCross = curCross;
+            curCross = 0;
+            while (layerIter.hasNext()) {
+                Layer freeLayer = layerIter.next();
+                curCross += minimizeCrossings(fixedLayer, freeLayer, true);
+                fixedLayer = freeLayer;
+            }
+            System.out.println("-> " + curCross);
+            if (curCross < previousCross) {
+                // perform a backwards sweep
                 previousCross = curCross;
                 curCross = 0;
-                while (layerIter.hasNext()) {
-                    Layer freeLayer = layerIter.next();
-                    curCross += minimizeCrossings(fixedLayer, freeLayer, true);
+                layerIter.previous();
+                while (layerIter.hasPrevious()) {
+                    Layer freeLayer = layerIter.previous();
+                    curCross += minimizeCrossings(fixedLayer, freeLayer, false);
                     fixedLayer = freeLayer;
                 }
-                System.out.println("-> " + curCross);
-                if (curCross < previousCross) {
-                    previousCross = curCross;
-                    curCross = 0;
-                    layerIter.previous();
-                    while (layerIter.hasPrevious()) {
-                        Layer freeLayer = layerIter.previous();
-                        curCross += minimizeCrossings(fixedLayer, freeLayer, false);
-                        fixedLayer = freeLayer;
-                    }
-                    System.out.println("<- " + curCross);
-                    layerIter.next();
-                }
-            } while (curCross < previousCross);
-            // TODO restore last ordering if crossing number has worsened
+                System.out.println("<- " + curCross);
+                layerIter.next();
+            }
+        } while (curCross < previousCross);
+        
+        // restore last ordering if it has become worse
+        if (curCross > previousCross) {
+            restoreOrder(layeredGraph);
         }
         
+        // distribute the ports of all nodes with free port constraints
+        distributePorts(layeredGraph);
+        
         getMonitor().done();
+    }
+    
+    /**
+     * Restores the node order for the whole layered graph as it was present before the last
+     * forward or backwards sweep.
+     * 
+     * @param layeredGraph a layered graph
+     */
+    private void restoreOrder(final LayeredGraph layeredGraph) {
+        for (Layer layer : layeredGraph.getLayers()) {
+            LNode[] sortedNodes = new LNode[layer.getNodes().size()];
+            for (LNode node : layer.getNodes()) {
+                sortedNodes[nodeIndex[node.id]] = node;
+            }
+            // rearrange the nodes in the list
+            ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
+            while (nodeIter.hasNext()) {
+                nodeIter.next();
+                nodeIter.set(sortedNodes[nodeIter.previousIndex()]);
+            }
+            // reassign port position values
+            assignPortPos(layer);
+        }
     }
 
     /**
@@ -124,35 +162,20 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         for (LNode node : freeLayer.getNodes()) {
             nodeBarycenter[node.id] = -1;
             float nodeSum = 0;
-            int portCount = 0;
-            for (LPort freePort : node.getPorts()) {
-                portBarycenter[freePort.id] = -1;
-                if (freePort.getType() == (forward ? PortType.INPUT : PortType.OUTPUT)) {
-                    int edgeCount = freePort.getEdges().size();
-                    if (edgeCount > 0) {
-                        float portSum = 0;
-                        for (LPort fixedPort : freePort.getConnectedPorts()) {
-                            portSum += portPos[fixedPort.id];
-                            totalEdges++;
-                        }
-                        float bary = portSum / edgeCount;
-                        portBarycenter[freePort.id] = bary;
-                        nodeSum += bary;
-                        portCount++;
-                    }
+            int edgeCount = 0;
+            for (LPort freePort : node.getPorts(forward ? PortType.INPUT : PortType.OUTPUT)) {
+                for (LPort fixedPort : freePort.getConnectedPorts()) {
+                    nodeSum += portPos[fixedPort.id];
                 }
+                edgeCount += freePort.getEdges().size();
             }
-            if (portCount > 0) {
-                PortConstraints constraints = node.getProperty(Properties.PORT_CONS);
-                if (constraints == PortConstraints.FREE
-                        || constraints == PortConstraints.FIXED_SIDE) {
-                    sortPorts(node, forward);
-                }
-                nodeBarycenter[node.id] = nodeSum / portCount;
+            if (edgeCount > 0) {
+                nodeBarycenter[node.id] = nodeSum / edgeCount;
+                totalEdges += edgeCount;
             }
         }
         sortNodes(freeLayer);
-        assignRanks(freeLayer);
+        assignPortPos(freeLayer);
         Layer leftLayer = forward ? fixedLayer : freeLayer;
         return countCrossings(leftLayer, totalEdges);
     }
@@ -191,16 +214,13 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         return crossings;
     }
     
-    /** amount by which the position of free ports is drawn to the center of nodes. */
-    private static final int FREE_PORTS_PENALTY = 8;
-    
     /**
      * Determine positions for all ports in the given layer. Input and output ports are processed
      * separately.
      * 
      * @param layer a layer
      */
-    private void assignRanks(final Layer layer) {
+    private void assignPortPos(final Layer layer) {
         int nodeIx = 0;
         for (LNode node : layer.getNodes()) {
             // count the input and output ports
@@ -215,86 +235,90 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                     break;
                 }
             }
-            PortConstraints cons = node.getProperty(Properties.PORT_CONS);
             // set positions for the input ports
             if (inputPorts > 0) {
-                float pos = nodeIx, incr = 1.0f / inputPorts;
-                if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
-                    incr /= FREE_PORTS_PENALTY;
-                    pos += (1 - inputPorts * incr) / 2;
-                }
-                ListIterator<LPort> portIter = node.getPorts().listIterator(node.getPorts().size());
-                while (portIter.hasPrevious()) {
-                    LPort port = portIter.previous();
-                    if (port.getType() == PortType.INPUT) {
-                        portPos[port.id] = pos;
-                        pos += incr;
-                    }
-                }
+                assignPortPos(node, nodeIx, PortType.INPUT, inputPorts);
             }
             // set positions for the output ports
             if (outputPorts > 0) {
-                float pos = nodeIx, incr = 1.0f / outputPorts;
-                if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
-                    incr /= FREE_PORTS_PENALTY;
-                    pos += (1 - outputPorts * incr) / 2;
-                }
-                for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                    portPos[port.id] = pos;
-                    pos += incr;
-                }
+                assignPortPos(node, nodeIx, PortType.OUTPUT, outputPorts);
             }
             nodeIx++;
         }
     }
     
     /**
-     * Sort the ports of the given node by their sides, position values, and input
-     * or output status.
+     * Assign port positions for the input or output ports of the given node.
      * 
-     * @param node node whose ports shall be sorted
-     * @param input if true, all ports with position value greater or equal zero
-     *     are assumed to be input ports and the others to be output ports; else the
-     *     contrary is assumed
+     * @param node a node
+     * @param nodeIx the node's index in its layer
+     * @param type the type of ports to process
+     * @param count the number of ports of that type
      */
-    private void sortPorts(final LNode node, final boolean input) {
-        Collections.sort(node.getPorts(), new Comparator<LPort>() {
-            public int compare(final LPort port1, final LPort port2) {
-                PortSide side1 = port1.getSide();
-                PortSide side2 = port2.getSide();
-                if (side1 != side2) {
-                    // sort according to the node side 
-                    return side1.ordinal() - side2.ordinal();
-                } else {
-                    float bary1 = portBarycenter[port1.id], bary2 = portBarycenter[port2.id];
-                    // input ports are counter-clockwise, output ports are clockwise
-                    if (bary1 >= 0 && bary2 >= 0) {
-                        return input ? Float.compare(bary2, bary1)
-                                : Float.compare(bary1, bary2);
-                    // north side: first inputs, then outputs; other sides: reverse
-                    } else if (bary1 >= 0) {
-                        if (side1 == PortSide.NORTH) {
-                            return input ? -1 : 1;
-                        } else {
-                            return input ? 1 : -1;
-                        }
-                    } else if (bary2 >= 0) {
-                        if (side2 == PortSide.NORTH) {
-                            return input ? 1 : -1;
-                        } else {
-                            return input ? -1 : 1;
-                        }
-                    // take the previous ordering
-                    } else {
-                        return port1.getIndex() - port2.getIndex();
-                    }
-                }
+    private void assignPortPos(final LNode node, final int nodeIx,
+            final PortType type, final int count) {
+        float pos = nodeIx;
+        PortConstraints cons = node.getProperty(Properties.PORT_CONS);
+        switch (cons) {
+        case FREE:
+            pos += 1.0f / 2;
+            for (LPort port : node.getPorts(type)) {
+                portPos[port.id] = pos;
             }
-        });
-        // reset barycenter values for the ports of the current node
-        for (LPort port : node.getPorts()) {
-            portBarycenter[port.id] = -1;
+            break;
+        case FIXED_SIDE:
+            for (LPort port : node.getPorts(type)) {
+                portPos[port.id] = getPortIncr(type, port.getSide());
+            }
+            break;
+        default:
+            float incr = 1.0f / count;
+            if (type == PortType.INPUT) {
+                incr = -incr;
+                pos = pos + 1 + incr;
+            }
+            for (LPort port : node.getPorts(type)) {
+                portPos[port.id] = pos;
+                pos += incr;
+            }
         }
+    }
+    
+    private static final float INCR_ONE = 0.25f;
+    private static final float INCR_TWO = 0.5f;
+    private static final float INCR_THREE = 0.75f;
+    
+    /**
+     * Return an increment value for the position of a port with given type and side.
+     * 
+     * @param type the port type
+     * @param side the port side
+     * @return a position increment for the port
+     */
+    private static float getPortIncr(final PortType type, final PortSide side) {
+        switch (type) {
+        case INPUT:
+            switch (side) {
+            case WEST:
+                return INCR_ONE;
+            case SOUTH:
+                return INCR_TWO;
+            case EAST:
+                return INCR_THREE;
+            }
+            break;
+        case OUTPUT:
+            switch (side) {
+            case EAST:
+                return INCR_ONE;
+            case SOUTH:
+                return INCR_TWO;
+            case WEST:
+                return INCR_THREE;
+            }
+            break;
+        }
+        return 0;
     }
     
     /**
@@ -321,14 +345,95 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                         break;
                     }
                 }
-                nodeBarycenter[nodeid] = (lastValue + nextValue) / 2;
+                value = (lastValue + nextValue) / 2;
+                nodeBarycenter[nodeid] = value;
             }
+            lastValue = value;
+            // store previous ordering for the node
+            nodeIndex[nodeid] = iter1.previousIndex();
         }
 
         // sort all nodes by the filtered ranks
         Collections.sort(nodes, new Comparator<LNode>() {
             public int compare(final LNode node1, final LNode node2) {
                 return Float.compare(nodeBarycenter[node1.id], nodeBarycenter[node2.id]);
+            }
+        });
+    }
+    
+    /**
+     * Distribute the ports of the layered graph depending on the port constraints.
+     * 
+     * @param layeredGraph a layered graph
+     */
+    private void distributePorts(final LayeredGraph layeredGraph) {
+        for (Layer layer : layeredGraph.getLayers()) {
+            int nodeIx = 0;
+            for (LNode node : layer.getNodes()) {
+                PortConstraints cons = node.getProperty(Properties.PORT_CONS);
+                if (cons == PortConstraints.FREE || cons == PortConstraints.FIXED_SIDE) {
+                    distributePorts(node);
+                    node.setProperty(Properties.PORT_CONS, PortConstraints.FIXED_ORDER);
+                    int portCount = 0;
+                    for (LPort port : node.getPorts()) {
+                        if (port.getType() == PortType.OUTPUT) {
+                            portCount++;
+                        }
+                    }
+                    if (portCount > 0) {
+                        assignPortPos(node, nodeIx, PortType.OUTPUT, portCount);
+                    }
+                }
+                nodeIx++;
+            }
+        }
+    }
+    
+    /**
+     * Distribute the ports of the given node by their sides, connected ports, and input
+     * or output type.
+     * 
+     * @param node node whose ports shall be sorted
+     */
+    private void distributePorts(final LNode node) {
+        // calculate barycenter values for the ports of the node
+        for (LPort port : node.getPorts()) {
+            float sum = 0;
+            for (LPort connectedPort : port.getConnectedPorts()) {
+                sum += portPos[connectedPort.id];
+            }
+            if (port.getEdges().isEmpty()) {
+                portBarycenter[port.id] = -1;
+            } else {
+                portBarycenter[port.id] = sum / port.getEdges().size();
+            }
+        }
+        // sort the ports by considering the side, type, and barycenter values
+        Collections.sort(node.getPorts(), new Comparator<LPort>() {
+            public int compare(final LPort port1, final LPort port2) {
+                PortSide side1 = port1.getSide();
+                PortType type1 = port1.getType();
+                PortSide side2 = port2.getSide();
+                PortType type2 = port2.getType();
+                if (side1 != side2) {
+                    // sort according to the node side 
+                    return side1.ordinal() - side2.ordinal();
+                } else if (type1 != type2) {
+                    // north side: first inputs, then outputs; other sides: reverse
+                    if (side1 == PortSide.NORTH) {
+                        return type1.ordinal() - type2.ordinal();
+                    } else {
+                        return type2.ordinal() - type1.ordinal();
+                    }
+                } else {
+                    float bary1 = portBarycenter[port1.id], bary2 = portBarycenter[port2.id];
+                    // input ports are counter-clockwise, output ports are clockwise
+                    if (type1 == PortType.INPUT) {
+                        return Float.compare(bary2, bary1);
+                    } else {
+                        return Float.compare(bary1, bary2);
+                    }
+                }
             }
         });
     }
