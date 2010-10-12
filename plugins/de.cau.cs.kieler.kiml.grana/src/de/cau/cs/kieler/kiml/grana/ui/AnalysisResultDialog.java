@@ -16,6 +16,8 @@ package de.cau.cs.kieler.kiml.grana.ui;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
@@ -26,7 +28,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.ui.CoreUIPlugin;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 
 /**
@@ -88,8 +92,9 @@ public class AnalysisResultDialog extends Dialog {
                 browser.setText(html);
             }
         } catch (SWTError e) {
-            System.out.println("Could not instantiate Browser: "
-                    + e.getMessage());
+            IStatus status = new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
+                    "Could not instantiate Browser.", e);
+            StatusManager.getManager().handle(status);
         }
         return composite;
     }

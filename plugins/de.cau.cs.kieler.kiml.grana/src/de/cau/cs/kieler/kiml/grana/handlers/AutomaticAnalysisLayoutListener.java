@@ -56,7 +56,6 @@ public class AutomaticAnalysisLayoutListener extends AbstractAnalysisHandler
             }
         }, true);
         if (viewPart.get() != null) {
-            System.out.println("check");
             monitor.begin("Performing graph analysis", 1);
             // let the user select the analyses
             final List<AbstractInfoAnalysis> analyses =

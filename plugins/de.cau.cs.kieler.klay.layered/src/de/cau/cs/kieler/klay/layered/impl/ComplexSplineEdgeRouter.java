@@ -214,10 +214,6 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
 
         }
 
-        if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
-            System.out.println("BoxTime: " + cumBoxTime + "s, SplineTime: " + cumSplineTime + "s");
-        }
-
         IKielerProgressMonitor labelMon = getMonitor().subTask(1);
         labelMon.begin("Label placing", 1);
         /**
@@ -294,16 +290,6 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
             // TODO remove the count, as soon as the line splits (0,0) problem is fixed
             int count = 0;
             while (!splineFits(spline, boxes, lines) && count <= MAX_ITERATIONS) {
-                // currently looks good :) no infinite loop
-                // if (lineFits(boxes, lines, spline.getCurves().getFirst().start,
-                // spline.getCurves()
-                // .getFirst().end)) {
-                // System.out.println("SPLINE DOESNT FIT: BUT LINEFITS: ");
-                // System.out.println("BOXES: " + boxes);
-                // lineFits(boxes, lines, spline.getCurves().getFirst().start, spline.getCurves()
-                // .getFirst().end);
-                // splineFits(spline, boxes, lines);
-                // }
                 splineGenerator.straightenSpline(spline);
                 count++;
             }
