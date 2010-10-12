@@ -430,9 +430,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
                 LEdge e = minimalSlack();
                 int slack = layer[e.getTarget().getNode().id] - layer[e.getSource().getNode().id]
                         - minSpan[e.id];
-                if (treeNode[e.getSource().getNode().id]) {
+                if (treeNode[e.getTarget().getNode().id]) {
                     slack = -slack;
                 }
+
                 // update tree
                 for (LNode node : nodes) {
                     if (treeNode[node.id]) {
@@ -495,7 +496,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
         }
     }
-
+   
     /**
      * Helper method for the network simplex layerer. It determines an (initial) feasible layering
      * for the graph by traversing it by a modified depth-first-search arranging the nodes to the
@@ -614,7 +615,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             }
         }
         return nodeCount;
-    }
+    }  
 
     /**
      * Helper method for the network simplex layerer. It returns the non-tree edge incident on the
