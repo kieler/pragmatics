@@ -38,7 +38,7 @@ public abstract class AbstractCombination implements ICombination {
     private List<IEffect> effects = new ArrayList<IEffect>();
 
     private boolean doNothing = false;
-    
+
     private boolean noUndo = false;
 
     /**
@@ -56,22 +56,31 @@ public abstract class AbstractCombination implements ICombination {
         Type[] types = execute.getGenericParameterTypes();
         Object[] states = new ITriggerState[types.length];
         for (int i = 0; i < types.length; i++) {
-            if (types[i] instanceof Class<?>) {
+            if (types[i] instanceof Class<?>) { // trigger state without generic parameter
                 states[i] = KiVi.getInstance().getTriggerState((Class<?>) types[i]);
-            } else if (types[i] instanceof ParameterizedType) {
+            } else if (types[i] instanceof ParameterizedType) { // EffectTriggerState<SomeEffect>
                 ParameterizedType paramType = (ParameterizedType) types[i];
-                if (paramType.getRawType() instanceof Class<?>) {
-                    Type[] actualTypes = paramType.getActualTypeArguments();
-                    if (actualTypes.length == 1 && actualTypes[0] instanceof Class<?>) {
-                        states[i] = KiVi.getInstance().getTriggerState((Class<?>) actualTypes[0]);
-                        if (states[i] == triggerState) {
-                            found = true;
+                Type[] actualTypes = paramType.getActualTypeArguments();
+                if (actualTypes.length == 1 && actualTypes[0] instanceof Class<?>) {
+                    states[i] = KiVi.getInstance().getTriggerState((Class<?>) actualTypes[0]);
+                    if (states[i] == triggerState) {
+                        found = true;
+                    } else if (states[i] == null) {
+                        try {
+                            states[i] = new EffectTriggerState<IEffect>(
+                                    (IEffect) ((Class<?>) actualTypes[0]).newInstance(), false);
+                        } catch (InstantiationException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
                         }
                     }
                 }
             }
         }
-        
+
         if (!found) {
             return new ArrayList<IEffect>();
         }
@@ -139,7 +148,7 @@ public abstract class AbstractCombination implements ICombination {
     protected void doNothing() {
         doNothing = true;
     }
-    
+
     /**
      * Called by execute() to make sure previous effects are not undone when an execution wants to
      * keep those effects visible indefinitely.
