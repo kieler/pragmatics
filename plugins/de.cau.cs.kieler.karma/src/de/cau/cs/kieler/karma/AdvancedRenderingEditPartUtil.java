@@ -77,13 +77,13 @@ public class AdvancedRenderingEditPartUtil {
             final IFigure primaryShape, final EObject modelElement,
             final AbstractGraphicalEditPart editPart) {
         if (!(notification.isTouch())) {
-            if (primaryShape != null) {
-                IFigure attrFigure = primaryShape;
-                boolean changed = this.updateFigure(attrFigure, modelElement, editPart);
+            IFigure figure = primaryShape;
+            if (figure != null) {
+                boolean changed = this.updateFigure(figure, modelElement, editPart);
                 if (changed) {
-                    LayoutManager layoutManager = attrFigure.getLayoutManager();
+                    LayoutManager layoutManager = figure.getLayoutManager();
                     if (layoutManager != null) {
-                        layoutManager.layout(attrFigure);
+                        layoutManager.layout(figure);
                     }
                 }
 
@@ -175,10 +175,9 @@ public class AdvancedRenderingEditPartUtil {
                                         lastCondition = null;
                                     }
                                 } else {
-
-                                    if (figure.getParent().getParent() instanceof BorderedNodeFigure) {
-                                        BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) figure
-                                                .getParent().getParent();
+                                    IFigure parentsParent = figure.getParent().getParent();
+                                    if (parentsParent instanceof BorderedNodeFigure) {
+                                        BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) parentsParent;
                                         if (borderedNodeFigure.getParent() != null) {
                                             IBorderItemLocator oldLocator = (IBorderItemLocator) borderedNodeFigure
                                                     .getParent().getLayoutManager()
@@ -188,9 +187,7 @@ public class AdvancedRenderingEditPartUtil {
                                                             mainFigure, oldLocator, modelElement);
                                             parent.setLayoutConstraint(editPart,
                                                     borderedNodeFigure, newLocator);
-                                        } else {
-                                            lastCondition = null;
-                                        }
+                                        } 
                                     }
                                 }
                             }
