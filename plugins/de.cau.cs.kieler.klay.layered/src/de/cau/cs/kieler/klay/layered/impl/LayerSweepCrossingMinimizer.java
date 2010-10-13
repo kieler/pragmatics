@@ -89,6 +89,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         assignPortPos(fixedLayer);
         int previousCross, curCross = Integer.MAX_VALUE;
         do {
+            saveOrder(fixedLayer);
             // perform a forward sweep
             previousCross = curCross;
             curCross = 0;
@@ -97,8 +98,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                 curCross += minimizeCrossings(fixedLayer, freeLayer, true);
                 fixedLayer = freeLayer;
             }
-            System.out.println("-> " + curCross);
             if (curCross < previousCross) {
+                saveOrder(fixedLayer);
                 // perform a backwards sweep
                 previousCross = curCross;
                 curCross = 0;
@@ -108,7 +109,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                     curCross += minimizeCrossings(fixedLayer, freeLayer, false);
                     fixedLayer = freeLayer;
                 }
-                System.out.println("<- " + curCross);
                 layerIter.next();
             }
         } while (curCross < previousCross);
@@ -122,6 +122,19 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         distributePorts(layeredGraph);
         
         getMonitor().done();
+    }
+    
+    /**
+     * Save the order of nodes for the given layer so it can be restored later.
+     * 
+     * @param layer a layer
+     */
+    private void saveOrder(final Layer layer) {
+        ListIterator<LNode> iter = layer.getNodes().listIterator();
+        while (iter.hasNext()) {
+            int index = iter.nextIndex();
+            nodeIndex[iter.next().id] = index;
+        }
     }
     
     /**

@@ -42,6 +42,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.segmentateLayering">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.enhanceLayering">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
@@ -91,6 +94,13 @@
             description="Segmentates the Layering, if wide nodes are existing"
             id="de.cau.cs.kieler.klay.layered.segmentateLayering"
             name="Segmentate Layering"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            id="de.cau.cs.kieler.klay.layered.enhanceLayering"
+            name="Enhance Layering"
             type="boolean">
       </layoutOption>
    </extension>

@@ -201,6 +201,13 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
                     + " Please choose another layering method.", error);
         }
         
+        // enhance layering, if requested
+        LayeringEnhancer enhancer = null;
+        if (layeredGraph.getProperty(Properties.ENHANCE_LAYERING)) {
+            enhancer = new LayeringEnhancer();
+            enhancer.preProcess(nodes);
+        }
+        
         // support wide nodes, if requested
         IBigNodeHandler bigNodeHandler = null;
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
@@ -227,6 +234,10 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
                         && layeredGraph.getProperty(Properties.SEGMENTATE_LAYERING)) {
                     bigNodeHandler.segmentateLayering();
                 }
+                
+                if (enhancer != null) {
+                    enhancer.postProcess();
+                }
             } else {
                 if (solution == LpSolve.USERABORT && abortListener.timeout) {
                     solution = LpSolve.TIMEOUT;
@@ -234,7 +245,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
                 throw new RuntimeException(getErrorMessage(solution));
             }
         } catch (LpSolveException exception) {
-            throw new RuntimeException("LpSolver execution failed.", exception);
+            throw new RuntimeException("LpSolve layering failed.", exception);
         } finally {
             if (lp != null) {
                 lp.deleteLp();

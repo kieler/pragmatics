@@ -365,6 +365,13 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             return;
         }
         layeredGraph = theLayeredGraph;
+        
+        // enhance layering, if requested
+        LayeringEnhancer enhancer = null;
+        if (layeredGraph.getProperty(Properties.ENHANCE_LAYERING)) {
+            enhancer = new LayeringEnhancer();
+            enhancer.preProcess(theNodes);
+        }
 
         // support wide nodes, if requested
         IBigNodeHandler bigNodeHandler = null;
@@ -400,6 +407,10 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)
                 && layeredGraph.getProperty(Properties.SEGMENTATE_LAYERING)) {
             bigNodeHandler.segmentateLayering();
+        }
+        
+        if (enhancer != null) {
+            enhancer.postProcess();
         }
 
         getMonitor().done();

@@ -141,6 +141,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // add information for the layering algorithm
         layeredGraph.setProperty(Properties.SEGMENTATE_LAYERING,
                 parentLayout.getProperty(Properties.SEGMENTATE_LAYERING));
+        layeredGraph.setProperty(Properties.ENHANCE_LAYERING,
+                parentLayout.getProperty(Properties.ENHANCE_LAYERING));
 
         // set debug mode option
         Boolean debugMode = parentLayout.getProperty(LayoutOptions.DEBUG_MODE);

@@ -37,10 +37,10 @@ import de.cau.cs.kieler.klay.layered.modules.IBigNodeHandler;
  * to be assigned to multiple consecutive layers. After layerer execution, the thereby determined
  * layer assignment may be esthetically optimized be invoking {@code segmentateLayering()}, which
  * segmentates the layering, i.e. two nodes will be be placed into layers, so that they are not
- * disjunct regarding the layers, they are assigned to, and the narrower of the two nodes is not
+ * disjunct regarding the layers they are assigned to, and the narrower of the two nodes is not
  * assigned to all layers, the wider nodes is also placed in unless there exists a node, that covers
- * all layers, the two nodes are assigned to. For more information, see Philipp Döhring:
- * "Algorithmen zur Layerzuweisung", Bachelor Thesis, German.
+ * all layers, the two nodes are assigned to. For more information, see Philipp Doehring:
+ * <em>Algorithmen zur Layerzuweisung</em>, Bachelor Thesis, 2010.
  * 
  * 
  * @author pdo

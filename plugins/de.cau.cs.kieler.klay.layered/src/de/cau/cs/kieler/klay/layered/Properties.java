@@ -77,12 +77,19 @@ public final class Properties {
     /** whether edges shall be straightened as much as possible. */
     public static final IProperty<Boolean> STRAIGHT_EDGES = new Property<Boolean>(
             STRAIGHT_EDGES_ID, false);
+    
     /** option identifier for layering segmentation. */
     public static final String SEGMENTATE_LAYERING_ID =
         "de.cau.cs.kieler.klay.layered.segmentateLayering";
     /** indicates, whether the layering shall be arranged in segments. */
     public static final IProperty<Boolean> SEGMENTATE_LAYERING = new Property<Boolean>(
             SEGMENTATE_LAYERING_ID, false);
+    
+    /** option identifier for layering enhancement. */
+    public static final String ENHANCE_LAYERING_ID = "de.cau.cs.kieler.klay.layered.enhanceLayering";
+    /** whether the layering shall be enhanced. */
+    public static final IProperty<Boolean> ENHANCE_LAYERING = new Property<Boolean>(
+            ENHANCE_LAYERING_ID, false);
 
     /** option identifier for distribute nodes. */
     public static final String DISTRIBUTE_NODES_ID = "de.cau.cs.kieler.klay.layered.distributeNodes";

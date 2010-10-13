@@ -47,6 +47,13 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
         getMonitor().begin("Longest path layering", 1);
         layeredGraph = thelayeredGraph;
         
+        // enhance layering, if requested
+        LayeringEnhancer enhancer = null;
+        if (layeredGraph.getProperty(Properties.ENHANCE_LAYERING)) {
+            enhancer = new LayeringEnhancer();
+            enhancer.preProcess(nodes);
+        }
+        
         // support wide nodes, if requested
         IBigNodeHandler bigNodeHandler = null;
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
@@ -71,6 +78,10 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)
                 && layeredGraph.getProperty(Properties.SEGMENTATE_LAYERING)) {
             bigNodeHandler.segmentateLayering();
+        }
+        
+        if (enhancer != null) {
+            enhancer.postProcess();
         }
         
         getMonitor().done();
