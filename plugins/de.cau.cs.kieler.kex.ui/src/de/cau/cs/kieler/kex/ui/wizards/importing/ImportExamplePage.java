@@ -40,6 +40,14 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 
+/**
+ * This class represents the import page of importwizard. It contains a tree which shows the
+ * importable examples. Secondly there is a description and a preview picture field. The
+ * {@link WizardResourceImportPage} is extended because of getting a Workspace Directory Chooser.
+ * 
+ * @author pkl
+ * 
+ */
 public class ImportExamplePage extends WizardResourceImportPage {
 
     private static final int IMAGE_MAX_WIDTH = 800;
@@ -60,6 +68,14 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
     private Label previewDesc;
 
+    /**
+     * The constructor will be called with following parameters.
+     * 
+     * @param name
+     *            , the name of page, works as page title, too.
+     * @param selection
+     *            , the selected resource will be set as default as import location.
+     */
     protected ImportExamplePage(String name, IStructuredSelection selection) {
         super(name, selection);
         setTitle(name);
@@ -101,8 +117,13 @@ public class ImportExamplePage extends WizardResourceImportPage {
         return null;
     }
 
-    private void createTopGroup(Composite composite) {
-        Group topGroup = new Group(composite, SWT.NONE);
+    /**
+     * creates the import location group with label, textfield and button.
+     * 
+     * @param parent
+     */
+    private void createTopGroup(Composite parent) {
+        Group topGroup = new Group(parent, SWT.NONE);
         topGroup.setLayout(new GridLayout());
         topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         topGroup.setText("Set Destination");
@@ -110,6 +131,11 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
     }
 
+    /**
+     * in the middle of the page there is the exampletree and the preview picture.
+     * 
+     * @param parent
+     */
     private void createMiddleComponent(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FormLayout());
@@ -118,6 +144,11 @@ public class ImportExamplePage extends WizardResourceImportPage {
         composite.getShell().redraw();
     }
 
+    /**
+     * the bottom component contains the description field.
+     * 
+     * @param parent
+     */
     private void createBottomComponent(Composite parent) {
         Label descriptionLabel = new Label(parent, SWT.NONE);
         descriptionLabel.setText("Example Description");
@@ -129,6 +160,12 @@ public class ImportExamplePage extends WizardResourceImportPage {
         this.exampleDescription.setLayoutData(descData);
     }
 
+    /**
+     * creates the composite of the tree with importable examples.
+     * 
+     * @param parent
+     * @return Control, the created composite.
+     */
     private Control createTreeComposite(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FormLayout());
@@ -142,6 +179,13 @@ public class ImportExamplePage extends WizardResourceImportPage {
         return composite;
     }
 
+    /**
+     * creates the tree object and fills it with categories and examples.
+     * 
+     * @param composite
+     * @param topControl
+     * @return exampleTree
+     */
     private Control createTree(Composite composite, Control topControl) {
         exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL);
         FormData formData = new FormData(190, 100);
@@ -166,6 +210,14 @@ public class ImportExamplePage extends WizardResourceImportPage {
         return exampleTree;
     }
 
+    /**
+     * creates new tree items for a category tree item
+     * 
+     * @param category
+     *            , category id
+     * @param tItem
+     *            , category tree item
+     */
     private void addExamplesToItem(String category, TreeItem tItem) {
         for (Example example : ExampleManager.get().getExamples().values()) {
             if (example.contains(category)) {
@@ -176,6 +228,12 @@ public class ImportExamplePage extends WizardResourceImportPage {
         }
     }
 
+    /**
+     * creates the preview picture component.
+     * 
+     * @param composite
+     * @param controlComp
+     */
     private void createPreviewComp(Composite composite, Control controlComp) {
 
         previewComp = new Composite(composite, SWT.NONE);
@@ -248,6 +306,11 @@ public class ImportExamplePage extends WizardResourceImportPage {
         });
     }
 
+    /**
+     * updates description and preview pictures of an example.
+     * 
+     * @param e
+     */
     private void updateElements(SelectionEvent e) {
         if (!(e.item instanceof TreeItem)) {
             getExampleDescription().setText("");
@@ -277,6 +340,11 @@ public class ImportExamplePage extends WizardResourceImportPage {
         }
     }
 
+    /**
+     * updates the label of preview picture.
+     * 
+     * @param image
+     */
     private void updateImageLabel(Image image) {
         FormData formData = new FormData(image.getImageData().width, image.getImageData().height);
         formData.top = new FormAttachment(previewDesc, 5);
@@ -285,6 +353,14 @@ public class ImportExamplePage extends WizardResourceImportPage {
         imageLabel.pack();
     }
 
+    /**
+     * loads preview image. The parameters define the max width and heigt of an image. The loaded
+     * image will scaled to the parameter values, while keeping the imageformat.
+     * 
+     * @param image_width
+     * @param image_height
+     * @return
+     */
     private Image loadImage(double image_width, double image_height) {
         final String previewPicPath = selectedExample.getOverviewPic();
         if (previewPicPath != null && previewPicPath.length() > 1) {
@@ -324,10 +400,20 @@ public class ImportExamplePage extends WizardResourceImportPage {
     // so muss auf jeden fall eine meldung kommen... am besten schon beim export
     // darauf reagieren.
 
+    /**
+     * loads "no preview" picture.
+     * 
+     * @return "no preview" picture
+     */
     private Image noPreviewPic(Display display) {
         return new Image(display, ExampleManager.get().loadStandardPic());
     }
 
+    /**
+     * initializes the preview image.
+     * 
+     * @return
+     */
     private Image initPreviewImage() {
         Image preview = new Image(previewComp.getDisplay(), IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
         GC gc = new GC(preview);
@@ -336,6 +422,11 @@ public class ImportExamplePage extends WizardResourceImportPage {
         return preview;
     }
 
+    /**
+     * filtered checked examples from example tree.
+     * 
+     * @return list of examples.
+     */
     public List<Example> getCheckedExamples() {
         List<Example> result = new ArrayList<Example>();
         for (TreeItem item : exampleTree.getItems()) {
@@ -357,7 +448,4 @@ public class ImportExamplePage extends WizardResourceImportPage {
         return super.getContainerFullPath();
     }
 
-    public boolean isQuickStart() {
-        return super.getContainerFullPath() == null && getCheckedExamples().size() == 0;
-    }
 }
