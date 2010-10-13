@@ -13,10 +13,13 @@
  */
 package de.cau.cs.kieler.klay.layered.impl;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -38,14 +41,14 @@ import de.cau.cs.kieler.klay.layered.modules.ICrossingMinimizer;
  */
 public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ICrossingMinimizer {
 
-    /** barycenter values for nodes. */
+    /** barycenter values for ports. */
     private float[] portBarycenter;
     /** port position array. */
     private float[] portPos;
     /** barycenter values for nodes. */
     private float[] nodeBarycenter;
     /** node ordering from previous run. */
-    private int[] nodeIndex;
+    private int[] lastNodeIndex;
     
     /**
      * {@inheritDoc}
@@ -82,7 +85,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         portBarycenter = new float[portCount];
         portPos = new float[portCount];
         nodeBarycenter = new float[nodeCount];
-        nodeIndex = new int[nodeCount];
+        lastNodeIndex = new int[nodeCount];
         
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         Layer fixedLayer = layerIter.next();
@@ -98,6 +101,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                 curCross += minimizeCrossings(fixedLayer, freeLayer, true);
                 fixedLayer = freeLayer;
             }
+            System.out.println("-> " + curCross);
             if (curCross < previousCross) {
                 saveOrder(fixedLayer);
                 // perform a backwards sweep
@@ -110,6 +114,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                     fixedLayer = freeLayer;
                 }
                 layerIter.next();
+                System.out.println("<- " + curCross);
             }
         } while (curCross < previousCross);
         
@@ -133,7 +138,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         ListIterator<LNode> iter = layer.getNodes().listIterator();
         while (iter.hasNext()) {
             int index = iter.nextIndex();
-            nodeIndex[iter.next().id] = index;
+            lastNodeIndex[iter.next().id] = index;
         }
     }
     
@@ -147,7 +152,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         for (Layer layer : layeredGraph.getLayers()) {
             LNode[] sortedNodes = new LNode[layer.getNodes().size()];
             for (LNode node : layer.getNodes()) {
-                sortedNodes[nodeIndex[node.id]] = node;
+                sortedNodes[lastNodeIndex[node.id]] = node;
             }
             // rearrange the nodes in the list
             ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
@@ -169,7 +174,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * @param forward whether the free layer is after the fixed layer
      * @return the new number of crossings between the two layers
      */
-    public int minimizeCrossings(final Layer fixedLayer, final Layer freeLayer,
+    private int minimizeCrossings(final Layer fixedLayer, final Layer freeLayer,
             final boolean forward) {        
         int totalEdges = 0;
         for (LNode node : freeLayer.getNodes()) {
@@ -190,41 +195,109 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         sortNodes(freeLayer);
         assignPortPos(freeLayer);
         Layer leftLayer = forward ? fixedLayer : freeLayer;
-        return countCrossings(leftLayer, totalEdges);
+        Layer rightLayer = forward ? freeLayer : fixedLayer;
+        return countCrossings(leftLayer, rightLayer, totalEdges);
     }
     
     /**
-     * Calculate the number of crossings between the given layer and the following one.
+     * Calculate the number of crossings between the two given layers.
+     * Taken from W. Barth , M. Juenger, P. Mutzel: <em>Simple and efficient
+     * bilayer cross counting</em>, LNCS 2528, pp. 331-360, 2002.
      * 
      * @param leftLayer the left layer
+     * @param rightLayer the right layer
      * @param edgeCount the total number of edges in the layer
      * @return the number of edge crossings
      */
-    private int countCrossings(final Layer leftLayer, final int edgeCount) {
-        LEdge[] edges = new LEdge[edgeCount];
+    private int countCrossings(final Layer leftLayer, final Layer rightLayer,
+            final int edgeCount) {
+        // assign index values to the ports of the right layer
+        int targetCount = 0;
+        Map<LPort, Integer> targetMap = new HashMap<LPort, Integer>();
+        for (LNode node : rightLayer.getNodes()) {
+            PortConstraints cons = node.getProperty(Properties.PORT_CONS);
+            if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
+                ListIterator<LPort> portIter = node.getPorts().listIterator(node.getPorts().size());
+                while (portIter.hasPrevious()) {
+                    LPort port = portIter.previous();
+                    if (port.getType() == PortType.INPUT) {
+                        targetMap.put(port, targetCount++);
+                    }
+                }
+            } else {
+                for (LPort port : node.getPorts(PortType.INPUT)) {
+                    targetMap.put(port, targetCount);
+                }
+                targetCount++;
+            }
+        }
+        
+        // determine the sequence of edge target positions sorted by source and target index
+        int[] southSequence = new int[edgeCount];
         int i = 0;
         for (LNode node : leftLayer.getNodes()) {
-            for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                for (LEdge edge : port.getEdges()) {
-                    edges[i++] = edge;
+            PortConstraints cons = node.getProperty(Properties.PORT_CONS);
+            if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
+                for (LPort port : node.getPorts()) {
+                    int start = i;
+                    for (LEdge edge : port.getEdges()) {
+                        int pos = targetMap.get(edge.getTarget());
+                        insert(southSequence, start, i++, pos);
+                    }
+                }
+            } else {
+                int start = i;
+                for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                    for (LEdge edge : port.getEdges()) {
+                        int pos = targetMap.get(edge.getTarget());
+                        insert(southSequence, start, i++, pos);
+                    }
                 }
             }
         }
         
-        int crossings = 0;
-        for (i = 0; i < edgeCount; i++) {
-            for (int j = i + 1; j < edgeCount; j++) {
-                float source1pos = portPos[edges[i].getSource().id];
-                float target1pos = portPos[edges[i].getTarget().id];
-                float source2pos = portPos[edges[j].getSource().id];
-                float target2pos = portPos[edges[j].getTarget().id];
-                if (source1pos < source2pos && target1pos > target2pos
-                        || source1pos > source2pos && target1pos < target2pos) {
-                    crossings++;
+        // build the accumulator tree
+        int firstIndex = 1;
+        while (firstIndex < targetCount) {
+            firstIndex *= 2;
+        }
+        int treeSize = 2 * firstIndex - 1;
+        firstIndex -= 1;
+        int[] tree = new int[treeSize];
+        
+        // count the crossings
+        int crossCount = 0;
+        for (int k = 0; k < edgeCount; k++) {
+            int index = southSequence[k] + firstIndex;
+            tree[index]++;
+            while (index > 0) {
+                if (index % 2 > 0) {
+                    crossCount += tree[index + 1];
                 }
+                index = (index - 1) / 2;
+                tree[index]++;
             }
         }
-        return crossings;
+        return crossCount;
+    }
+    
+    /**
+     * Insert a number into a sorted range of an array.
+     * 
+     * @param array an integer array
+     * @param start the start index of the search range (inclusive)
+     * @param end the end index of the search range (exclusive)
+     * @param n the number to insert
+     */
+    private static void insert(final int[] array, final int start, final int end, final int n) {
+        int insx = Arrays.binarySearch(array, start, end, n);
+        if (insx < 0) {
+            insx = -insx - 1;
+        }
+        for (int j = end - 1; j >= insx; j--) {
+            array[j + 1] = array[j];
+        }
+        array[insx] = n;
     }
     
     /**
@@ -363,7 +436,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
             }
             lastValue = value;
             // store previous ordering for the node
-            nodeIndex[nodeid] = iter1.previousIndex();
+            lastNodeIndex[nodeid] = iter1.previousIndex();
         }
 
         // sort all nodes by the filtered ranks
