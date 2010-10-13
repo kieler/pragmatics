@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.ksbase.ui.kivi;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasETrigger.KSBasEState;
 
 /**
@@ -32,7 +31,7 @@ public class KSBasECombination extends AbstractCombination {
      *            the KSBasEState
      */
     public void execute(final KSBasEState state) {
-        schedule(new LayoutEffect(state.getDiagramEditor(), state.getEObject()));
+//        schedule(new LayoutEffect(state.getDiagramEditor(), state.getEObject()));
     }
 
 }

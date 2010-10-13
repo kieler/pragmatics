@@ -66,16 +66,7 @@ public abstract class AbstractCombination implements ICombination {
                     if (states[i] == triggerState) {
                         found = true;
                     } else if (states[i] == null) {
-                        try {
-                            states[i] = new EffectTriggerState<IEffect>(
-                                    (IEffect) ((Class<?>) actualTypes[0]).newInstance(), false);
-                        } catch (InstantiationException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
+                        states[i] = new EffectTriggerState<IEffect>(null, false);
                     }
                 }
             }
