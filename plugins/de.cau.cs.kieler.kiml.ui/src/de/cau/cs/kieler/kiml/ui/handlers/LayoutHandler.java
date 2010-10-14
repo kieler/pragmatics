@@ -28,6 +28,8 @@ import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 /**
  * The handler which is responsible to perform layout in a graphical diagram.
  * 
+ * FIXME obsolete, superseded by kivi?
+ * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */

@@ -35,7 +35,7 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="de.cau.cs.kieler"
-            defaultHandler="de.cau.cs.kieler.kiml.ui.handlers.LayoutHandler"
+            defaultHandler="de.cau.cs.kieler.core.kivi.triggers.ButtonTrigger$ButtonHandler"
             id="de.cau.cs.kieler.kiml.ui.command.layout"
             name="%command.name.0">
          <commandParameter
@@ -205,6 +205,15 @@ point="org.eclipse.ui.menus">
           name="%view.name.0"
           restorable="true">
     </view>
+ </extension>
+ <extension
+       point="de.cau.cs.kieler.core.kivi.combinations">
+    <combination
+          active="true"
+          class="de.cau.cs.kieler.kiml.ui.layout.LayoutCombination"
+          description="Performs automatic layout when either of the buttons or the key combination is pressed."
+          name="Automatic Layout">
+    </combination>
  </extension>
    
 </plugin>
