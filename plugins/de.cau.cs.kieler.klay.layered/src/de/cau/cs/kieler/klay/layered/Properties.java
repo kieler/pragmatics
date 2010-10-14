@@ -19,6 +19,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;
+import de.cau.cs.kieler.klay.layered.options.CrossingMinimization;
+import de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting;
+import de.cau.cs.kieler.klay.layered.options.NodeLayering;
 
 /**
  * Container for priority definitions.
@@ -59,8 +62,7 @@ public final class Properties {
             LayoutOptions.OBJ_SPACING, DEF_SPACING);
 
     /** priority of elements. */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
-            0);
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
 
     /** port constraints. */
     public static final Property<PortConstraints> PORT_CONS = new Property<PortConstraints>(
@@ -108,6 +110,12 @@ public final class Properties {
     /** property to choose a node layering strategy. */
     public static final IProperty<NodeLayering> NODE_LAYERING = new Property<NodeLayering>(
             NODE_LAYERING_ID, NodeLayering.NETWORK_SIMPLEX);
+    
+    /** option identifier for crossing minimization. */
+    public static final String CROSS_MIN_ID = "de.cau.cs.kieler.klay.layered.crossingMinimization";
+    /** property to choose a crossing minimization strategy. */
+    public static final IProperty<CrossingMinimization> CROSS_MIN = new Property<CrossingMinimization>(
+            CROSS_MIN_ID, CrossingMinimization.LAYER_SWEEP);
 
     /**
      * Hidden default constructor.

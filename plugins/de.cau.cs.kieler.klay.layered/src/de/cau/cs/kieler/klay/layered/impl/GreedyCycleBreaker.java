@@ -156,7 +156,17 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
             index++;
         }
 
+        dispose();
         getMonitor().done();
+    }
+    
+    /**
+     * Release all created resources so the GC can reap them.
+     */
+    private void dispose() {
+        this.indeg = null;
+        this.outdeg = null;
+        this.mark = null;
     }
 
     /**

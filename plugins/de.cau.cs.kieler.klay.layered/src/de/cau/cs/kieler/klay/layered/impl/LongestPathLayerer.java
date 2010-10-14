@@ -84,6 +84,9 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
             enhancer.postProcess();
         }
         
+        // release the created resources
+        this.layeredGraph = null;
+        this.nodeHeights = null;
         getMonitor().done();
     }
     

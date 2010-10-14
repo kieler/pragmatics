@@ -83,7 +83,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
      * A Region contains Nodes or LinearSegments, that are touching and therefor need to be moved as
      * a unit.
      */
-    public static class Region {
+    public class Region {
         /** The nodes that forms the region. */
         private List<LNode> nodes = new LinkedList<LNode>();
         /** The accumulated force of the contained nodes. */
@@ -124,8 +124,17 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
 
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
-    /** List of regions. */
-    private static List<Region> regions = new LinkedList<Region>();
+    /** list of regions. */
+    private List<Region> regions = new LinkedList<Region>();
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() {
+        super.reset();
+        regions.clear();
+    }
 
     /**
      * {@inheritDoc}
@@ -151,6 +160,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             graphSize.y = Math.max(graphSize.y, layer.getSize().y);
         }
 
+        // release the created resources
+        this.linearSegments = null;
         getMonitor().done();
     }
 

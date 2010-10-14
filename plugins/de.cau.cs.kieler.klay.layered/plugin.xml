@@ -22,6 +22,9 @@
                option="de.cau.cs.kieler.klay.layered.nodeLayering">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.klay.layered.crossingMinimization">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.edgeRouting">
          </knownOption>
          <knownOption
@@ -48,9 +51,9 @@
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.LayeredEdgeRouting"
+            class="de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting"
             default="POLYLINE"
-            description="Style of edge routing"
+            description="Strategy for edge routing"
             id="de.cau.cs.kieler.klay.layered.edgeRouting"
             name="Edge Routing"
             type="enum">
@@ -81,11 +84,20 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.NodeLayering"
+            class="de.cau.cs.kieler.klay.layered.options.NodeLayering"
             default="NETWORK_SIMPLEX"
-            description="Style of the node layering"
+            description="Strategy for node layering"
             id="de.cau.cs.kieler.klay.layered.nodeLayering"
             name="Node Layering"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.options.CrossingMinimization"
+            default="LAYER_SWEEP"
+            description="Strategy for crossing minimization."
+            id="de.cau.cs.kieler.klay.layered.crossingMinimization"
+            name="Crossing Minimization"
             type="enum">
       </layoutOption>
       <layoutOption

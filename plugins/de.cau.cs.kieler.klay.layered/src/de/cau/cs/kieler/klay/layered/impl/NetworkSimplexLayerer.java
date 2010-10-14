@@ -258,9 +258,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     /**
      * Helper method for the network simplex layerer. It instantiates all necessary attributes for
      * the execution of the network simplex layerer and initializes them with their default values.
-     * If the attributes already exist (i.e. they were created by a previous function call) and if
-     * their size fits for the nodes of the current graph, then the old instances will be reused as
-     * far as possible. Furthermore, all edges in the connected component given by the input
+     * All edges in the connected component given by the input
      * argument will be determined, as well as the number of incoming and outgoing edges of each
      * node ( {@code inDegree}, respectively {@code outDegree}). All sinks and source nodes in the
      * connected component identified in this step will be added to {@code sinks}, respectively
@@ -270,23 +268,15 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *            a {@code Collection} containing all nodes of the graph
      */
     private void initialize(final Collection<LNode> theNodes) {
-
         // initialize node attributes
         int numNodes = theNodes.size();
-        if (inDegree == null || inDegree.length < numNodes) {
-            inDegree = new int[numNodes];
-            outDegree = new int[numNodes];
-            layer = new int[numNodes];
-            revLayer = new int[numNodes];
-            treeNode = new boolean[numNodes];
-            poID = new int[numNodes];
-            lowestPoID = new int[numNodes];
-        } else {
-            Arrays.fill(inDegree, 0);
-            Arrays.fill(outDegree, 0);
-            Arrays.fill(layer, 0);
-            Arrays.fill(treeNode, false);
-        }
+        inDegree = new int[numNodes];
+        outDegree = new int[numNodes];
+        layer = new int[numNodes];
+        revLayer = new int[numNodes];
+        treeNode = new boolean[numNodes];
+        poID = new int[numNodes];
+        lowestPoID = new int[numNodes];
         Arrays.fill(revLayer, numNodes);
 
         sources = new LinkedList<LNode>();
@@ -333,10 +323,34 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         edges = theEdges;
         postOrder = 1;
     }
+    
+    /**
+     * Release all created resources so the GC can reap them.
+     */
+    private void dispose() {
+        this.componentNodes = null;
+        this.cutvalue = null;
+        this.edges = null;
+        this.edgeVisited = null;
+        this.inDegree = null;
+        this.layer = null;
+        this.layeredGraph = null;
+        this.lowestPoID = null;
+        this.minSpan = null;
+        this.nodes = null;
+        this.nodeVisited = null;
+        this.outDegree = null;
+        this.poID = null;
+        this.revLayer = null;
+        this.sinks = null;
+        this.sources = null;
+        this.treeEdge = null;
+        this.treeNode = null;
+    }
 
     // ============================== Network-Simplex Algorithm ===================================
 
-/**
+    /**
      * The main method of the network simplex layerer. It determines an optimal layering of all
      * nodes in the graph concerning a minimal length of all edges by using the network simplex
      * algorithm described in {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
@@ -351,15 +365,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
      */
     public void layer(final Collection<LNode> theNodes, final LayeredGraph theLayeredGraph) {
-
-        if (theNodes == null) {
-            throw new NullPointerException("Input collection of nodes is null.");
-        }
-        if (theLayeredGraph == null) {
-            throw new NullPointerException("Input graph is null.");
-        }
-
-        getMonitor().begin("Network-Simplex-Layering", 1);
+        assert theNodes != null;
+        assert theLayeredGraph != null;
+        getMonitor().begin("Network-Simplex Layering", 1);
         if (theNodes.size() < 1) {
             getMonitor().done();
             return;
@@ -413,6 +421,8 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             enhancer.postProcess();
         }
 
+        // release the created resources
+        dispose();
         getMonitor().done();
     }
 

@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
+import de.cau.cs.kieler.klay.layered.impl.LPSolveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer;
 import de.cau.cs.kieler.klay.layered.impl.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer;
@@ -41,6 +42,9 @@ import de.cau.cs.kieler.klay.layered.modules.ICycleBreaker;
 import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
+import de.cau.cs.kieler.klay.layered.options.CrossingMinimization;
+import de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting;
+import de.cau.cs.kieler.klay.layered.options.NodeLayering;
 
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
@@ -54,7 +58,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** phase 2: layering module. */
     private ILayerer layerer;
     /** phase 3: crossing minimization module. */
-    private ICrossingMinimizer crossingMinimizer = new LayerSweepCrossingMinimizer();
+    private ICrossingMinimizer crossingMinimizer;
     /** phase 4: node placement module. */
     private INodePlacer nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
@@ -69,56 +73,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Layered layout", 1);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
 
-        // check which EdgeRouter to use
-        LayeredEdgeRouting routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
-        switch (routing) {
-        case ORTHOGONAL:
-            if (!(edgeRouter instanceof OrthogonalEdgeRouter)) {
-                edgeRouter = new OrthogonalEdgeRouter();
-            }
-            break;
-        case SIMPLE_SPLINES:
-            if (!(edgeRouter instanceof SimpleSplineEdgeRouter)) {
-                edgeRouter = new SimpleSplineEdgeRouter();
-            }
-            break;
-        case COMPLEX_SPLINES:
-            if (!(edgeRouter instanceof ComplexSplineEdgeRouter)) {
-                edgeRouter = new ComplexSplineEdgeRouter();
-            }
-            break;
-        default:
-            if (!(edgeRouter instanceof PolylineEdgeRouter)) {
-                edgeRouter = new PolylineEdgeRouter();
-            }
-            break;
-        }
-
-        // check which nodeLayouter to use
-        NodeLayering placing = parentLayout.getProperty(Properties.NODE_LAYERING);
-        switch (placing) {
-        case LONGEST_PATH:
-            if (!(layerer instanceof LongestPathLayerer)) {
-                layerer = new LongestPathLayerer();
-            }
-            break;
-        case LP_SOLVER:
-            if (!(layerer instanceof LPSolveLayerer)) {
-                try {
-                    layerer = new LPSolveLayerer();
-                } catch (Throwable throwable) {
-                    // this will only occur if the required LpSolve classes can't be loaded
-                    throw new KielerRuntimeException("The LpSolve plug-in is not installed."
-                            + " Please choose another layering method.", throwable); 
-                }
-            }
-            break;
-        default:
-            if (!(layerer instanceof NetworkSimplexLayerer)) {
-                layerer = new NetworkSimplexLayerer();
-            }
-            break;
-        }
+        // update the modules depending on user options
+        updateModules(parentLayout);
 
         // transform the input graph
         IGraphImporter graphImporter = new KGraphImporter(layoutNode);
@@ -164,6 +120,76 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         graphImporter.applyLayout();
 
         progressMonitor.done();
+    }
+    
+    /**
+     * Update the modules depending on user options.
+     * 
+     * @param parentLayout the parent layout data
+     */
+    private void updateModules(final KShapeLayout parentLayout) {
+        // check which layering strategy to use
+        NodeLayering placing = parentLayout.getProperty(Properties.NODE_LAYERING);
+        switch (placing) {
+        case LONGEST_PATH:
+            if (!(layerer instanceof LongestPathLayerer)) {
+                layerer = new LongestPathLayerer();
+            }
+            break;
+        case LP_SOLVER:
+            if (!(layerer instanceof LPSolveLayerer)) {
+                try {
+                    layerer = new LPSolveLayerer();
+                } catch (Throwable throwable) {
+                    // this will only occur if the required LpSolve classes can't be loaded
+                    throw new KielerRuntimeException("The LpSolve plug-in is not installed."
+                            + " Please choose another layering method.", throwable); 
+                }
+            }
+            break;
+        default:
+            if (!(layerer instanceof NetworkSimplexLayerer)) {
+                layerer = new NetworkSimplexLayerer();
+            }
+        }
+        
+        // check which crossing minimization strategy to use
+        CrossingMinimization crossMin = parentLayout.getProperty(Properties.CROSS_MIN);
+        switch (crossMin) {
+        case LP_SOLVER:
+            if (!(crossingMinimizer instanceof LPSolveCrossingMinimizer)) {
+                crossingMinimizer = new LPSolveCrossingMinimizer();
+            }
+            break;
+        default:
+            if (!(crossingMinimizer instanceof LayerSweepCrossingMinimizer)) {
+                crossingMinimizer = new LayerSweepCrossingMinimizer();
+            }
+        }
+
+        // check which edge router to use
+        LayeredEdgeRouting routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
+        switch (routing) {
+        case ORTHOGONAL:
+            if (!(edgeRouter instanceof OrthogonalEdgeRouter)) {
+                edgeRouter = new OrthogonalEdgeRouter();
+            }
+            break;
+        case SIMPLE_SPLINES:
+            if (!(edgeRouter instanceof SimpleSplineEdgeRouter)) {
+                edgeRouter = new SimpleSplineEdgeRouter();
+            }
+            break;
+        case COMPLEX_SPLINES:
+            if (!(edgeRouter instanceof ComplexSplineEdgeRouter)) {
+                edgeRouter = new ComplexSplineEdgeRouter();
+            }
+            break;
+        default:
+            if (!(edgeRouter instanceof PolylineEdgeRouter)) {
+                edgeRouter = new PolylineEdgeRouter();
+            }
+        }
     }
 
     /**

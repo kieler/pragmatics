@@ -77,6 +77,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                             break;
                         case OUTPUT:
                             port.setSide(PortSide.EAST);
+                            break;
                         }
                     }
                 }
@@ -101,7 +102,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                 curCross += minimizeCrossings(fixedLayer, freeLayer, true);
                 fixedLayer = freeLayer;
             }
-            System.out.println("-> " + curCross);
             if (curCross < previousCross) {
                 saveOrder(fixedLayer);
                 // perform a backwards sweep
@@ -114,7 +114,6 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                     fixedLayer = freeLayer;
                 }
                 layerIter.next();
-                System.out.println("<- " + curCross);
             }
         } while (curCross < previousCross);
         
@@ -126,7 +125,18 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         // distribute the ports of all nodes with free port constraints
         distributePorts(layeredGraph);
         
+        dispose();
         getMonitor().done();
+    }
+    
+    /**
+     * Release all created resources so the GC can reap them.
+     */
+    private void dispose() {
+        this.lastNodeIndex = null;
+        this.nodeBarycenter = null;
+        this.portBarycenter = null;
+        this.portPos = null;
     }
     
     /**
@@ -495,33 +505,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
             }
         }
         // sort the ports by considering the side, type, and barycenter values
-        Collections.sort(node.getPorts(), new Comparator<LPort>() {
-            public int compare(final LPort port1, final LPort port2) {
-                PortSide side1 = port1.getSide();
-                PortType type1 = port1.getType();
-                PortSide side2 = port2.getSide();
-                PortType type2 = port2.getType();
-                if (side1 != side2) {
-                    // sort according to the node side 
-                    return side1.ordinal() - side2.ordinal();
-                } else if (type1 != type2) {
-                    // north side: first inputs, then outputs; other sides: reverse
-                    if (side1 == PortSide.NORTH) {
-                        return type1.ordinal() - type2.ordinal();
-                    } else {
-                        return type2.ordinal() - type1.ordinal();
-                    }
-                } else {
-                    float bary1 = portBarycenter[port1.id], bary2 = portBarycenter[port2.id];
-                    // input ports are counter-clockwise, output ports are clockwise
-                    if (type1 == PortType.INPUT) {
-                        return Float.compare(bary2, bary1);
-                    } else {
-                        return Float.compare(bary1, bary2);
-                    }
-                }
-            }
-        });
+        node.sortPorts(portBarycenter);
     }
 
 }

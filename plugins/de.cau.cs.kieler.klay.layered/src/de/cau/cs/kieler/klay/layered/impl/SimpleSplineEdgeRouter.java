@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -166,15 +165,9 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRo
 
         }
 
-        IKielerProgressMonitor labelMon = getMonitor().subTask(1);
-        labelMon.begin("Label placing", 1);
-        /**
-         * LABEL PLACING
-         */
         // place labels
         labelPlacer.placeLabels(layeredGraph);
-
-        labelMon.done();
+        
         getMonitor().done();
     }
 

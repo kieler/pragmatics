@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.impl;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,14 +30,13 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.IBigNodeHandler;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
-import lpsolve.AbortListener;
 import lpsolve.LpSolveException;
 import lpsolve.LpSolve;
 
 /**
- * The main class of the LpSolve-layerer component. It offers an algorithm to determine an optimal
+ * The main class of the LpSolve layerer component. It offers an algorithm to determine an optimal
  * layering of all nodes in the graph concerning a minimal edge span using the LP-solver of
- * lpsolve.sourceforge.net.
+ * <a href="http://lpsolve.sourceforge.net/">lpsolve.sourceforge.net</a>.
  * 
  * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
  * 
@@ -51,7 +49,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     /** The timeout in milliseconds after which the LP solver is aborted. */
     private static final long LPSOLVE_TIMEOUT = 5000;
 
-    /** The layered graph all methods in this class operate on. */
+    /** The layered graph which all methods in this class operate on. */
     private LayeredGraph layerGraph;
 
     /** A {@code Collection} containing all nodes in the graph to layer. */
@@ -79,51 +77,12 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      */
     private int[] layer;
 
-    // ================================== Constructor =============================================
-
-    /**
-     * Default Constructor for {@link LPSolveLayerer}. It creates a new instance of this class.
-     */
-    public LPSolveLayerer() {
-    }
-
-    // ================================= Inner Classes ============================================
-
-    /**
-     * A abort listener for the LpSolve-Layerer used to abort the execution when the timeout was
-     * reached.
-     * 
-     * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#LPSOLVE_TIMEOUT LPSOLVE_TIMEOUT
-     */
-    private class LpSolveLayererAborter implements AbortListener {
-
-        /** A flag indicating whether a timeout has occurred. */
-        private boolean timeout = false;
-
-        /**
-         * The start time for the timeout. It is set, when the specific instance of this class is
-         * created.
-         */
-        private long startTime = System.currentTimeMillis();
-
-        /**
-         * {@inheritDoc}
-         */
-        public boolean abortfunc(final LpSolve problem, final Object userhandle)
-                throws LpSolveException {
-
-            return System.currentTimeMillis() - startTime > LPSOLVE_TIMEOUT;
-        }
-    }
-
     // =============================== Initialization Methods =====================================
 
     /**
-     * Helper method for the LpSolve-layerer. It instantiates all necessary attributes for the
-     * execution of the LpSolve-layerer and initializes them with their default values. If the
-     * attributes already exist (i.e. they were created by a previous function call) and if their
-     * size fits for the nodes of the current graph, then the old instances will be reused as far as
-     * possible. Furthermore, all edges in the graph will be determined, as well as the number of
+     * Instantiates all necessary attributes for the
+     * execution of the LpSolve-layerer and initializes them with their default values.
+     * All edges in the graph will be determined, as well as the number of
      * incoming and outgoing edges of each node ( {@code inDegree}, respectively {@code outDegree}).
      * All sinks nodes in the graph identified in this step will be added to {@code sinks}.
      * 
@@ -131,18 +90,11 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      *            a {@code Collection} containing all nodes of the graph
      */
     private void initialize(final Collection<LNode> nodes) {
-
         // initialize node attributes
         int numNodes = nodes.size();
-        if (inDegree == null || inDegree.length < nodes.size()) {
-            inDegree = new int[nodes.size()];
-            outDegree = new int[nodes.size()];
-            layer = new int[numNodes];
-        } else {
-            Arrays.fill(inDegree, 0);
-            Arrays.fill(outDegree, 0);
-            Arrays.fill(layer, 0);
-        }
+        inDegree = new int[nodes.size()];
+        outDegree = new int[nodes.size()];
+        layer = new int[numNodes];
         sinks = new LinkedList<LNode>();
         layerNodes = nodes;
 
@@ -169,6 +121,19 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             edge.id = counter++;
         }
         layerEdges = edges;
+    }
+    
+    /**
+     * Release all created resources so the garbage collector can reap them.
+     */
+    private void dispose() {
+        this.inDegree = null;
+        this.outDegree = null;
+        this.layer = null;
+        this.layerEdges = null;
+        this.layerNodes = null;
+        this.layerGraph = null;
+        this.sinks = null;
     }
 
     // ============================== LpSolve-Layering Algorithm ==================================
@@ -222,7 +187,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         try {
             // construct LP
             lp = createLp();
-            LpSolveLayererAborter abortListener = new LpSolveLayererAborter();
+            LPSolveAborter abortListener = new LPSolveAborter(LPSOLVE_TIMEOUT, getMonitor());
             lp.putAbortfunc(abortListener, null);
             // execute LpSolver with the given LP
             int solution = lp.solve();
@@ -239,18 +204,20 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
                     enhancer.postProcess();
                 }
             } else {
-                if (solution == LpSolve.USERABORT && abortListener.timeout) {
+                if (solution == LpSolve.USERABORT && abortListener.isTimeoutOccurred()) {
                     solution = LpSolve.TIMEOUT;
                 }
-                throw new RuntimeException(getErrorMessage(solution));
+                throw new KielerRuntimeException(LPSolveAborter.getErrorMessage(solution));
             }
         } catch (LpSolveException exception) {
-            throw new RuntimeException("LpSolve layering failed.", exception);
+            throw new KielerRuntimeException("LpSolve layering failed.", exception);
         } finally {
             if (lp != null) {
                 lp.deleteLp();
             }
             getMonitor().done();
+            // release the created resources
+            dispose();
         }
     }
 
@@ -263,15 +230,17 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      *             if the LP creation failed
      */
     private LpSolve createLp() throws LpSolveException {
-
         // create LP instance
         LpSolve lp = LpSolve.makeLp(layerEdges.size(), layerNodes.size());
         lp.setMinim();
         // set objective function
         double[] objFct = new double[layerNodes.size() + 1];
         for (LEdge edge : layerEdges) {
-            objFct[edge.getSource().getNode().id + 1]--;
-            objFct[edge.getTarget().getNode().id + 1]++;
+            int priority = edge.getProperty(Properties.PRIORITY);
+            if (priority >= 0) {
+                objFct[edge.getSource().getNode().id + 1]--;
+                objFct[edge.getTarget().getNode().id + 1]++;
+            }
         }
         lp.setObjFn(objFct);
         // set variable bounds
@@ -296,20 +265,14 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     }
 
     /**
-     * Helper method for the LpSolve-layerer. It applies the determined solution of the LP to the
+     * Applies the determined solution of the LP to the
      * graph, i.e. retrieves the solution from the LP-Solver, balances the layering and assigns each
      * node to its determined layer in {@code layeredGraph}.
      * 
-     * @param lp
-     *            the LP to apply its solution
-     * @throws LpSolveException
-     *             if an error occurred during solution retrieving
-     * 
-     * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#balance(int[]) balance()
-     * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#putNode(LNode) putNode()
+     * @param lp the LP to apply its solution
+     * @throws LpSolveException if an error occurred during solution retrieving
      */
     private void applySolution(final LpSolve lp) throws LpSolveException {
-
         int rowCount = lp.getNrows();
         double[] solution = new double[1 + rowCount + lp.getNcolumns()];
         lp.getPrimalSolution(solution);
@@ -335,44 +298,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     }
 
     /**
-     * Helper method for the LpSolve-Layerer. It returns a readable error message for an LpSolve
-     * error.
-     * 
-     * @param lpSolveError
-     *            the return value of LpSolve indicating an error
-     * @return the readable message created for the LpSolve error
-     */
-    private String getErrorMessage(final int lpSolveError) {
-
-        switch (lpSolveError) {
-        case LpSolve.NOMEMORY:
-            return "The LpSolver has run out of memory";
-        case LpSolve.INFEASIBLE:
-            return "The LP is infeasible.";
-        case LpSolve.UNBOUNDED:
-            return "The LP is unbounded.";
-        case LpSolve.DEGENERATE:
-            return "The LP is degenerative.";
-        case LpSolve.NUMFAILURE:
-            return "A numerical failure has been encountered.";
-        case LpSolve.USERABORT:
-            return "LpSolver aborted by user.";
-        case LpSolve.TIMEOUT:
-            return "No feasible solution found after " + LPSOLVE_TIMEOUT + "ms.";
-        case LpSolve.PROCFAIL:
-            return "The branch and bound routine failed.";
-        case LpSolve.PROCBREAK:
-            return "The branch and bound was stopped because of a break-at-first or a break-at-value.";
-        case LpSolve.NOFEASFOUND:
-            return "No feasible branch-and-bound solution found.";
-        default:
-            return "No feasible solution found. LpSolver return value: " + lpSolveError;
-        }
-    }
-
-    /**
-     * Helper method for the LpSolve-layerer. It determines the length of the shortest incoming
-     * respectively outgoing edge of the input node.
+     * Determines the length of the shortest incoming, respectively outgoing edge of the input node.
      * 
      * @param node
      *            the node to determine the length of its shortest incident incoming and outgoing
@@ -384,7 +310,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      * @see de.cau.cs.kieler.core.util.Pair Pair
      */
     private Pair<Integer, Integer> minimalSpan(final LNode node) {
-
         int minSpanOut = Integer.MAX_VALUE;
         int minSpanIn = Integer.MAX_VALUE;
         int currentSpan;
@@ -411,14 +336,13 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     }
 
     /**
-     * Helper method for the LpSolve-layerer. It balances the layering concerning its width, i.e.
+     * Balances the layering concerning its width, i.e.
      * the number of nodes in each layer. If the graph allows multiple optimal layerings regarding a
      * minimal edge length, this method moves separate nodes to a layer with a minimal amount of
      * contained nodes with respect to the retention of feasibility and optimality of the given
      * layering.
      */
     private void balance() {
-
         // determine filling structure of the layers
         int highest = Integer.MIN_VALUE;
         for (LNode node : sinks) {
@@ -455,7 +379,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     }
 
     /**
-     * Helper method for the network simplex layerer. It puts the specified node into its assigned
+     * Puts the specified node into its assigned
      * layer indicated by {@code layer} in the layered graph. If the layered graph does not contain
      * the specified layer (i.e. the number of layers in {@code layeredGraph} is lesser than the
      * supposed height in the layering), additional layers will be added to match the required
@@ -468,7 +392,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      * @see de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer#layer layer
      */
     private void putNode(final LNode node) {
-
         List<Layer> layers = layerGraph.getLayers();
         // add additional layers to match required amount
         while (layers.size() <= layer[node.id]) {
