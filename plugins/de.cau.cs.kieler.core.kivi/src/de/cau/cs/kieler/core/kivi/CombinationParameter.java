@@ -215,19 +215,15 @@ public class CombinationParameter {
                 return (CombinationParameter[]) result;
             }
         } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            KiVi.error(e);
         } catch (NoSuchMethodException e) {
             // nothing to do, return empty array later
         } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            KiVi.error(e);
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            KiVi.error(e);
         } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            KiVi.error(e);
         }
         return new CombinationParameter[0];
     }
