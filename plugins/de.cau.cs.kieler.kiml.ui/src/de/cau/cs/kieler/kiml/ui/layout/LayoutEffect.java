@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.ui.layout;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
@@ -27,6 +28,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
@@ -45,6 +47,10 @@ public class LayoutEffect extends AbstractEffect {
 
     private EditPart editPart;
 
+    private boolean zoom = true;
+
+    private boolean progressMonitor = false;
+
     /**
      * Create a new layout effect for the given DiagramEditor and EObject.
      * 
@@ -59,66 +65,151 @@ public class LayoutEffect extends AbstractEffect {
     }
 
     /**
+     * Create a new layout effect for the given DiagramEditor and EObject.
+     * 
+     * @param editor
+     *            the DiagramEditor containing the diagram to layout
+     * @param object
+     *            the EObject to layout
+     * @param zoomToFit
+     *            true if zoom to fit shall be performed
+     * @param progressBar
+     *            true if a progress bar shall be displayed
+     */
+    public LayoutEffect(final IEditorPart editor, final EObject object, final boolean zoomToFit,
+            final boolean progressBar) {
+        this(editor, object);
+        zoom = zoomToFit;
+        progressMonitor = progressBar;
+
+    }
+
+    /**
      * {@inheritDoc}
+     * 
+     * TODO avoid some copypasta.
      */
     public void execute() {
         final DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(
                 diagramEditor, editPart);
         if (manager != null) {
-            MonitoredOperation.runInUI(new Runnable() {
-                // first phase: build the layout graph
-                public void run() {
-                    manager.buildLayoutGraph(diagramEditor, editPart, true);
-                }
-            }, true);
-            final IStatus status = manager.layout(new BasicProgressMonitor(0), true);
-            
-            if (status.getSeverity() == IStatus.OK) {
-                // determine pre- or post-layout zoom
-                ILayoutInspector inspector = manager.getInspector(manager.getCurrentEditPart());
-                final ZoomManager zoomManager = inspector.getZoomManager();
-                KNode current = manager.getLayoutGraph();
-                while (current.eContainer() instanceof KNode) {
-                    current = (KNode) current.eContainer();
-                }
-                KShapeLayout layout = current.getData(KShapeLayout.class);
-                Dimension available = zoomManager.getViewport().getClientArea().getSize();
-                Dimension desired = new Dimension((int) layout.getWidth(), (int) layout.getHeight());
-                double scaleX = Math.min(available.width / (double) desired.width,
-                        zoomManager.getMaxZoom());
-                double scaleY = Math.min(available.height / (double) desired.height,
-                        zoomManager.getMaxZoom());
-                final double scale = Math.min(scaleX, scaleY);
-                final double oldScale = zoomManager.getZoom();
-    
-                MonitoredOperation.runInUI(new Runnable() {
-                    // third phase: apply layout with animation
-                    public void run() {
-                        if (scale < oldScale) {
-                            zoomManager.setViewLocation(new Point(0, 0));
-                            zoomManager.setZoom(scale);
-                            zoomManager.setViewLocation(new Point(0, 0));
+            if (zoom) {
+                if (progressMonitor) {
+                    final MonitoredOperation monitoredOperation = new MonitoredOperation() {
+                        // first phase: build the layout graph
+                        @Override
+                        protected void preUIexec() {
+                            manager.buildLayoutGraph(diagramEditor, editPart, true);
                         }
-                        int nodeCount = status == null ? 0 : status.getCode();
-                        manager.applyAnimatedLayout(true, false, nodeCount);
-                        if (scale > oldScale) {
-                            zoomManager.setViewLocation(new Point(0, 0));
-                            zoomManager.setZoom(scale);
-                            zoomManager.setViewLocation(new Point(0, 0));
-                        }
-                    }
-                }, false);
-            } else {
-                int handlingStyle;
-                switch (status.getSeverity()) {
-                case IStatus.ERROR:
-                    handlingStyle = StatusManager.SHOW | StatusManager.LOG;
-                    break;
-                default:
-                    handlingStyle = StatusManager.LOG;
-                }
-                StatusManager.getManager().handle(status, handlingStyle);
 
+                        // second phase: execute layout algorithms
+                        @Override
+                        protected IStatus execute(final IProgressMonitor monitor) {
+                            return manager.layout(new KielerProgressMonitor(monitor,
+                                    DiagramLayoutManager.MAX_PROGRESS_LEVELS), true);
+                        }
+
+                        // third phase: apply layout with animation
+                        @Override
+                        protected void postUIexec(final IStatus status) {
+                            if (status.getSeverity() == IStatus.OK) {
+                                // determine pre- or post-layout zoom
+                                ILayoutInspector inspector = manager.getInspector(manager
+                                        .getCurrentEditPart());
+                                final ZoomManager zoomManager = inspector.getZoomManager();
+                                KNode current = manager.getLayoutGraph();
+                                while (current.eContainer() instanceof KNode) {
+                                    current = (KNode) current.eContainer();
+                                }
+                                KShapeLayout layout = current.getData(KShapeLayout.class);
+                                Dimension available = zoomManager.getViewport().getClientArea()
+                                        .getSize();
+                                Dimension desired = new Dimension((int) layout.getWidth(),
+                                        (int) layout.getHeight());
+                                double scaleX = Math.min(available.width / (double) desired.width,
+                                        zoomManager.getMaxZoom());
+                                double scaleY = Math.min(
+                                        available.height / (double) desired.height,
+                                        zoomManager.getMaxZoom());
+                                final double scale = Math.min(scaleX, scaleY);
+                                final double oldScale = zoomManager.getZoom();
+
+                                if (scale < oldScale) {
+                                    zoomManager.setViewLocation(new Point(0, 0));
+                                    zoomManager.setZoom(scale);
+                                    zoomManager.setViewLocation(new Point(0, 0));
+                                }
+                                int nodeCount = status == null ? 0 : status.getCode();
+                                manager.applyAnimatedLayout(true, true, nodeCount);
+                                if (scale > oldScale) {
+                                    zoomManager.setViewLocation(new Point(0, 0));
+                                    zoomManager.setZoom(scale);
+                                    zoomManager.setViewLocation(new Point(0, 0));
+                                }
+                            }
+                        }
+                    };
+                    monitoredOperation.runMonitored();
+                } else {
+                    MonitoredOperation.runInUI(new Runnable() {
+                        // first phase: build the layout graph
+                        public void run() {
+                            manager.buildLayoutGraph(diagramEditor, editPart, true);
+                        }
+                    }, true);
+                    final IStatus status = manager.layout(new BasicProgressMonitor(0), true);
+
+                    if (status.getSeverity() == IStatus.OK) {
+                        // determine pre- or post-layout zoom
+                        ILayoutInspector inspector = manager.getInspector(manager
+                                .getCurrentEditPart());
+                        final ZoomManager zoomManager = inspector.getZoomManager();
+                        KNode current = manager.getLayoutGraph();
+                        while (current.eContainer() instanceof KNode) {
+                            current = (KNode) current.eContainer();
+                        }
+                        KShapeLayout layout = current.getData(KShapeLayout.class);
+                        Dimension available = zoomManager.getViewport().getClientArea().getSize();
+                        Dimension desired = new Dimension((int) layout.getWidth(),
+                                (int) layout.getHeight());
+                        double scaleX = Math.min(available.width / (double) desired.width,
+                                zoomManager.getMaxZoom());
+                        double scaleY = Math.min(available.height / (double) desired.height,
+                                zoomManager.getMaxZoom());
+                        final double scale = Math.min(scaleX, scaleY);
+                        final double oldScale = zoomManager.getZoom();
+
+                        MonitoredOperation.runInUI(new Runnable() {
+                            // third phase: apply layout with animation
+                            public void run() {
+                                if (scale < oldScale) {
+                                    zoomManager.setViewLocation(new Point(0, 0));
+                                    zoomManager.setZoom(scale);
+                                    zoomManager.setViewLocation(new Point(0, 0));
+                                }
+                                int nodeCount = status == null ? 0 : status.getCode();
+                                manager.applyAnimatedLayout(true, true, nodeCount);
+                                if (scale > oldScale) {
+                                    zoomManager.setViewLocation(new Point(0, 0));
+                                    zoomManager.setZoom(scale);
+                                    zoomManager.setViewLocation(new Point(0, 0));
+                                }
+                            }
+                        }, false);
+                    } else {
+                        int handlingStyle;
+                        switch (status.getSeverity()) {
+                        case IStatus.ERROR:
+                            handlingStyle = StatusManager.SHOW | StatusManager.LOG;
+                            break;
+                        default:
+                            handlingStyle = StatusManager.LOG;
+                        }
+                        StatusManager.getManager().handle(status, handlingStyle);
+                    }
+                }
+            } else {
+                manager.layout(diagramEditor, editPart, true, progressMonitor, true, true);
             }
         }
     }
@@ -140,8 +231,10 @@ public class LayoutEffect extends AbstractEffect {
             LayoutEffect other = (LayoutEffect) otherEffect;
             if (diagramEditor == other.diagramEditor) {
                 editPart = commonAncestorOrSelf(editPart, other.editPart);
+                zoom |= other.zoom;
+                progressMonitor |= progressMonitor;
                 return this;
-            } 
+            }
         }
         if (otherEffect instanceof UndoEffect) {
             if (((UndoEffect) otherEffect).getEffect() instanceof LayoutEffect) {
@@ -152,7 +245,7 @@ public class LayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Find the first common ancestor of two EditParts. Modelled after
+     * Find the first common ancestor of two EditParts. Modeled after
      * GmfDiagramLayoutManager.addDummyEdgesForInterlevelConnections().
      * 
      * @param a
@@ -191,46 +284,4 @@ public class LayoutEffect extends AbstractEffect {
         } while (!(aParent == null && bParent == null));
         return null;
     }
-
-    /**
-     * Find the first common ancestor of two EditParts. Modelled after
-     * GmfDiagramLayoutManager.addDummyEdgesForInterlevelConnections().
-     * 
-     * @param a
-     * @param b
-     * @return
-     */
-    private EObject commonAncestorOrSelf(final EObject a, final EObject b) {
-        if (a == b) {
-            return a;
-        }
-        EObject aParent = a;
-        EObject bParent = b;
-        List<EObject> aAncestors = new ArrayList<EObject>();
-        List<EObject> bAncestors = new ArrayList<EObject>();
-        aAncestors.add(a);
-        bAncestors.add(b);
-        do {
-            if (aParent != null) {
-                aParent = aParent.eContainer();
-            }
-            if (bParent != null) {
-                bParent = bParent.eContainer();
-            }
-            if (aParent != null) {
-                aAncestors.add(aParent);
-            }
-            if (bParent != null) {
-                bAncestors.add(bParent);
-            }
-            if (aAncestors.contains(bParent)) {
-                return bParent;
-            }
-            if (bAncestors.contains(aParent)) {
-                return aParent;
-            }
-        } while (!(aParent == null && bParent == null));
-        return null;
-    }
-
 }
