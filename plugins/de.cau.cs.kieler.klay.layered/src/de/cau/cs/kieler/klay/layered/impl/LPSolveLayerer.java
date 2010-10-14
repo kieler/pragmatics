@@ -232,6 +232,8 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     private LpSolve createLp() throws LpSolveException {
         // create LP instance
         LpSolve lp = LpSolve.makeLp(layerEdges.size(), layerNodes.size());
+        lp.setVerbose(LpSolve.SEVERE);
+        lp.setLpName("Layering");
         lp.setMinim();
         // set objective function
         double[] objFct = new double[layerNodes.size() + 1];

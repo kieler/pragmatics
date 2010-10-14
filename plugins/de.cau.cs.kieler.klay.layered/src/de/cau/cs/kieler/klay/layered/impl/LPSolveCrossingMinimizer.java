@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
@@ -101,36 +103,33 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ICros
             }
         }
         
-        // assign crossing variable indices and collect edges
+        // collect the edges of the layered graph, without multi-edges
         layerEdges = new LEdge[layerNodes.length - 1][];
+        Set<Integer> edgeHashes = new HashSet<Integer>();
         for (int r = 0; r < layerNodes.length - 1; r++) {
             LNode[] nodes = layerNodes[r];
-            Set<LEdge> edges = new HashSet<LEdge>();
+            List<LEdge> edges = new LinkedList<LEdge>();
             for (int i = 0; i < nodes.length; i++) {
-                for (LPort port1 : nodes[i].getPorts(PortType.OUTPUT)) {
-                    for (LEdge edge1 : port1.getEdges()) {
-                        boolean gotIndex = false;
-                        for (int j = i + 1; j < nodes.length; j++) {
-                            for (LPort port2 : nodes[j].getPorts(PortType.OUTPUT)) {
-                                for (LEdge edge2 : port2.getEdges()) {
-                                    if (edge1 != edge2) {
-                                        Integer hash = getHash(edge1, edge2);
-                                        if (!crossingVariables.containsKey(hash)) {
-                                            crossingVariables.put(hash, index++);
-                                            edges.add(edge2);
-                                            gotIndex = true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (gotIndex) {
-                            edges.add(edge1);
+                for (LPort port : nodes[i].getPorts(PortType.OUTPUT)) {
+                    for (LEdge edge : port.getEdges()) {
+                        Integer hash = getHash(edge.getSource().getNode(), edge.getTarget().getNode());
+                        if (!edgeHashes.contains(hash)) {
+                            edges.add(edge);
                         }
                     }
                 }
             }
             layerEdges[r] = edges.toArray(new LEdge[edges.size()]);
+        }
+        
+        // assign crossing variable indices
+        for (int r = 0; r < layerEdges.length; r++) {
+            LEdge[] edges = layerEdges[r];
+            for (int i = 0; i < edges.length; i++) {
+                for (int j = i + 1; j < edges.length; j++) {
+                    crossingVariables.put(getHash(edges[i], edges[j]), index++);
+                }
+            }
         }
     }
 
@@ -164,7 +163,6 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ICros
             LPSolveAborter abortListener = new LPSolveAborter(LPSOLVE_TIMEOUT, getMonitor());
             lp.putAbortfunc(abortListener, null);
             // execute LpSolver with the given LP
-            lp.printLp();
             int solution = lp.solve();
             if (solution == LpSolve.OPTIMAL || solution == LpSolve.SUBOPTIMAL) {
                 // apply the solution
@@ -218,10 +216,6 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ICros
         return node1s.id ^ (node2s.id << QUARTER_WORD)
                 ^ (node1t.id << HALF_WORD) ^ (node2t.id << (HALF_WORD + QUARTER_WORD));
     }
-
-    private static final double[] CONSTR_PPP = new double[] {  1,  1,  1 };
-    private static final double[] CONSTR_PPN = new double[] {  1,  1, -1 };
-    private static final double[] CONSTR_PNN = new double[] {  1, -1, -1 };
     
     /**
      * Creates a new LP representing the crossing minimization problem of this graph.
@@ -236,6 +230,8 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ICros
         int crossingCount = crossingVariables.size();
         int totalVars = orderingCount + crossingCount;
         LpSolve lp = LpSolve.makeLp(0, totalVars);
+        lp.setVerbose(LpSolve.SEVERE);
+        lp.setLpName("Crossing Minimization");
         lp.setMinim();
         
         // set variable types and bounds
@@ -256,12 +252,15 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ICros
             for (int i = 0; i < nodes.length; i++) {
                 for (int j = i + 1; j < nodes.length; j++) {
                     for (int k = j + 1; k < nodes.length; k++) {
-                        int[] colno = new int[3];
-                        colno[0] = orderingVariables.get(getHash(nodes[i], nodes[j]));
-                        colno[1] = orderingVariables.get(getHash(nodes[j], nodes[k]));
-                        colno[2] = orderingVariables.get(getHash(nodes[i], nodes[k]));
-                        lp.addConstraintex(3, CONSTR_PPN, colno, LpSolve.GE, 0);
-                        lp.addConstraintex(3, CONSTR_PPN, colno, LpSolve.LE, 1);
+                        int[] colno1 = new int[3];
+                        colno1[0] = orderingVariables.get(getHash(nodes[i], nodes[j]));
+                        colno1[1] = orderingVariables.get(getHash(nodes[j], nodes[k]));
+                        colno1[2] = orderingVariables.get(getHash(nodes[i], nodes[k]));
+                        int[] colno2 = Arrays.copyOf(colno1, colno1.length);
+                        lp.addConstraintex(3, new double[] { 1, 1, -1 },
+                                colno1, LpSolve.GE, 0);
+                        lp.addConstraintex(3, new double[] { 1, 1, -1 },
+                                colno2, LpSolve.LE, 1);
                     }
                 }
             }
@@ -280,24 +279,33 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ICros
                     LNode target2 = edge2.getTarget().getNode();
                     if (source1 != source2 && target1 != target2) {
                         int crossIndex = crossingVariables.get(getHash(edge1, edge2));
-                        int[] colno = new int[3];
+                        int[] colno1 = new int[3];
                         if (target1.id < target2.id) {
-                            colno[0] = orderingVariables.get(getHash(target1, target2));
-                            colno[1] = crossIndex;
-                            colno[2] = orderingVariables.get(getHash(source1, source2));
-                            lp.addConstraintex(3, CONSTR_PPN, colno, LpSolve.GE, 0);
-                            lp.addConstraintex(3, CONSTR_PNN, colno, LpSolve.LE, 0);
+                            colno1[0] = orderingVariables.get(getHash(target1, target2));
+                            colno1[1] = orderingVariables.get(getHash(source1, source2));
+                            colno1[2] = crossIndex;
+                            int[] colno2 = Arrays.copyOf(colno1, colno1.length);
+                            lp.addConstraintex(3, new double[] { 1, -1, 1 },
+                                    colno1, LpSolve.GE, 0);
+                            lp.addConstraintex(3, new double[] { 1, -1, -1 },
+                                    colno2, LpSolve.LE, 0);
                         } else  {
-                            colno[0] = orderingVariables.get(getHash(target2, target1));
-                            colno[1] = orderingVariables.get(getHash(source1, source2));
-                            colno[2] = crossIndex;
-                            lp.addConstraintex(3, CONSTR_PPP, colno, LpSolve.GE, 1);
-                            lp.addConstraintex(3, CONSTR_PPN, colno, LpSolve.LE, 1);
+                            colno1[0] = orderingVariables.get(getHash(target2, target1));
+                            colno1[1] = orderingVariables.get(getHash(source1, source2));
+                            colno1[2] = crossIndex;
+                            int[] colno2 = Arrays.copyOf(colno1, colno1.length);
+                            lp.addConstraintex(3, new double[] { 1, 1, 1 },
+                                    colno1, LpSolve.GE, 1);
+                            lp.addConstraintex(3, new double[] { 1, 1, -1 },
+                                    colno2, LpSolve.LE, 1);
                         }
                     }
                 }
             }
         }
+        
+        // break symmetry by setting a single ordering variable to 1
+        lp.setLowbo(1, 1);
         
         return lp;
         // CHECKSTYLEON MagicNumber
