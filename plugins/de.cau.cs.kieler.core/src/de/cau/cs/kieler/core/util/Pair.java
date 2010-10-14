@@ -120,6 +120,10 @@ public class Pair<F, S> {
         }
     }
 
+    private static final int HALF_WORD = Integer.SIZE / 2;
+    private static final int MASK1 = (1 << HALF_WORD) - 1;
+    private static final int MASK2 = ~MASK1;
+    
     /**
      * {@inheritDoc}
      */
@@ -132,7 +136,14 @@ public class Pair<F, S> {
         } else if (second == null) {
             return first.hashCode();
         } else {
-            return first.hashCode() + second.hashCode();
+            int firstCode = first.hashCode();
+            int first1 = firstCode & MASK1;
+            int first2 = firstCode & MASK2;
+            int secondCode = second.hashCode();
+            int second1 = secondCode & MASK1;
+            int second2 = secondCode & MASK2;
+            return (first1 ^ ((second2 >> HALF_WORD) & MASK1))
+                    | (first2 ^ (second1 << HALF_WORD));
         }
     }
 
