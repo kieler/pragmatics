@@ -11,8 +11,14 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.kivi;
+package de.cau.cs.kieler.core.kivi.triggers;
 
+import de.cau.cs.kieler.core.kivi.AbstractTrigger;
+import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
+import de.cau.cs.kieler.core.kivi.IEffect;
+import de.cau.cs.kieler.core.kivi.ITrigger;
+import de.cau.cs.kieler.core.kivi.KiVi;
+import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.kivi.internal.IEffectsListener;
 
 /**

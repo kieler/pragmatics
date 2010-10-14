@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import de.cau.cs.kieler.core.kivi.EffectTrigger.EffectTriggerState;
+import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 
 /**
  * Abstract base implementation for combinations.
