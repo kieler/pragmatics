@@ -30,17 +30,17 @@ import de.cau.cs.kieler.ksbase.ui.kivi.KSBasETrigger.KSBasEState;
 public class KSBasECombination extends AbstractCombination {
 
     public void execute(final KSBasEState ksbase, ModelChangeState change) {
-        System.out.println("== NEW KSBASE COMBINATION ==");
-        System.out.println("Event: "+change.getChange());
-        for (Notification notification : change.getChange().getNotifications()) {
-            System.out.println(notification);
-            if(notification.getEventType() == Notification.ADD && notification.getNewValue() instanceof EObject){
-                EObject newObject = (EObject) notification.getNewValue();
-                System.out.println("NEW: "+newObject);
-             //   CreateViewRequest.ViewDescriptor viewDesc = new CreateViewRequest.ViewDescriptor();
-             //   CreateViewRequest request = new CreateViewRequest();
-            }
-        }
+//        System.out.println("== NEW KSBASE COMBINATION ==");
+//        System.out.println("Event: "+change.getChange());
+//        for (Notification notification : change.getChange().getNotifications()) {
+//            System.out.println(notification);
+//            if(notification.getEventType() == Notification.ADD && notification.getNewValue() instanceof EObject){
+//                EObject newObject = (EObject) notification.getNewValue();
+//                System.out.println("NEW: "+newObject);
+//             //   CreateViewRequest.ViewDescriptor viewDesc = new CreateViewRequest.ViewDescriptor();
+//             //   CreateViewRequest request = new CreateViewRequest();
+//            }
+//        }
     }
 
 }
