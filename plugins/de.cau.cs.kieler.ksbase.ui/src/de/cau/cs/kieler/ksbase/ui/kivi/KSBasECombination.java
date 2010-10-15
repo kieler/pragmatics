@@ -13,7 +13,12 @@
  */
 package de.cau.cs.kieler.ksbase.ui.kivi;
 
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewRequest;
+
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.model.trigger.ModelChangeTrigger.ModelChangeState;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasETrigger.KSBasEState;
 
 /**
@@ -24,14 +29,18 @@ import de.cau.cs.kieler.ksbase.ui.kivi.KSBasETrigger.KSBasEState;
  */
 public class KSBasECombination extends AbstractCombination {
 
-    /**
-     * Execute the KSBasECombination after the KSBasEState was updated.
-     * 
-     * @param state
-     *            the KSBasEState
-     */
-    public void execute(final KSBasEState state) {
-//        schedule(new LayoutEffect(state.getDiagramEditor(), state.getEObject()));
+    public void execute(final KSBasEState ksbase, ModelChangeState change) {
+        System.out.println("== NEW KSBASE COMBINATION ==");
+        System.out.println("Event: "+change.getChange());
+        for (Notification notification : change.getChange().getNotifications()) {
+            System.out.println(notification);
+            if(notification.getEventType() == Notification.ADD && notification.getNewValue() instanceof EObject){
+                EObject newObject = (EObject) notification.getNewValue();
+                System.out.println("NEW: "+newObject);
+             //   CreateViewRequest.ViewDescriptor viewDesc = new CreateViewRequest.ViewDescriptor();
+             //   CreateViewRequest request = new CreateViewRequest();
+            }
+        }
     }
 
 }
