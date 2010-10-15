@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewRequest;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.model.trigger.ModelChangeTrigger.ModelChangeState;
+//import de.cau.cs.kieler.core.model.trigger.ModelChangeTrigger.ModelChangeState;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasETrigger.KSBasEState;
 
 /**
@@ -29,7 +29,7 @@ import de.cau.cs.kieler.ksbase.ui.kivi.KSBasETrigger.KSBasEState;
  */
 public class KSBasECombination extends AbstractCombination {
 
-    public void execute(final KSBasEState ksbase, ModelChangeState change) {
+    public void execute(final KSBasEState ksbase/*, ModelChangeState change*/) {
 //        System.out.println("== NEW KSBASE COMBINATION ==");
 //        System.out.println("Event: "+change.getChange());
 //        for (Notification notification : change.getChange().getNotifications()) {
