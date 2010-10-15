@@ -270,5 +270,12 @@ public class SwitchableFigure extends Shape {
     public void setResizeable(final Boolean b) {
         resizeable = b;
     }
+    
+    @Override
+    public void setFill(final boolean fill) {
+        if (currentFigure instanceof Shape) {
+            ((Shape) currentFigure).setFill(fill);
+        }
+    }
 
 }
