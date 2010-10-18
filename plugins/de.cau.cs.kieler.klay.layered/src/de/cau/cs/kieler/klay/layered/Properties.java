@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import java.util.Random;
+
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -52,6 +54,8 @@ public final class Properties {
     /** debug canvas. */
     public static final IProperty<IDebugCanvas> DEBUG_CANVAS = new Property<IDebugCanvas>(
             "debugCanvas");
+    /** random number generator for the algorithm. */
+    public static final IProperty<Random> RANDOM = new Property<Random>("random");
 
     // / USER INTERFACE OPTIONS
 

@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered;
 
 import java.util.List;
+import java.util.Random;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerRuntimeException;
@@ -99,6 +100,19 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 parentLayout.getProperty(Properties.SEGMENTATE_LAYERING));
         layeredGraph.setProperty(Properties.ENHANCE_LAYERING,
                 parentLayout.getProperty(Properties.ENHANCE_LAYERING));
+        
+        // set the random seed
+        Integer randomSeed = parentLayout.getProperty(LayoutOptions.RANDOM_SEED);
+        if (randomSeed != null) {
+            int val = randomSeed;
+            if (val == 0) {
+                layeredGraph.setProperty(Properties.RANDOM, new Random());
+            } else {
+                layeredGraph.setProperty(Properties.RANDOM, new Random(val));
+            }
+        } else {
+            layeredGraph.setProperty(Properties.RANDOM, new Random(1));
+        }
 
         // set debug mode option
         Boolean debugMode = parentLayout.getProperty(LayoutOptions.DEBUG_MODE);
@@ -238,6 +252,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             return Properties.DEF_SPACING;
         } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
             return Properties.DEF_SPACING;
+        } else if (LayoutOptions.RANDOM_SEED_ID.equals(optionId)) {
+            return 1;
         }
         return null;
     }

@@ -14,12 +14,11 @@
 package de.cau.cs.kieler.klay.layered.impl;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -41,14 +40,17 @@ import de.cau.cs.kieler.klay.layered.modules.ICrossingMinimizer;
  */
 public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ICrossingMinimizer {
 
+    /** number of randomized iterations to perform, of which the best one is chosen. */
+    private static final int RANDOM_RUNS = 4;
+    
     /** barycenter values for ports. */
     private float[] portBarycenter;
     /** port position array. */
     private float[] portPos;
     /** barycenter values for nodes. */
     private float[] nodeBarycenter;
-    /** node ordering from previous run. */
-    private int[] lastNodeIndex;
+    /** the random number generator. */
+    private Random random;
     
     /**
      * {@inheritDoc}
@@ -61,10 +63,21 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
             return;
         }
         
-        // determine the total number of nodes and ports in the graph
+        // determine the total number of nodes and ports in the graph, collect nodes
+        LNode[][] bestRun = new LNode[layerCount][], curRun = new LNode[layerCount][],
+                lastRun = new LNode[layerCount][];
         int nodeCount = 0, portCount = 0;
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
+        while (layerIter.hasNext()) {
+            Layer layer = layerIter.next();
+            int n = layer.getNodes().size(), i = layerIter.previousIndex();
+            bestRun[i] = new LNode[n];
+            lastRun[i] = new LNode[n];
+            curRun[i] = new LNode[n];
+            ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
+            while (nodeIter.hasNext()) {
+                LNode node = nodeIter.next();
+                curRun[layerIter.previousIndex()][nodeIter.previousIndex()] = node;
                 node.id = nodeCount++;
                 boolean freePorts = node.getProperty(Properties.PORT_CONS) == PortConstraints.FREE;
                 for (LPort port : node.getPorts()) {
@@ -86,44 +99,65 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         portBarycenter = new float[portCount];
         portPos = new float[portCount];
         nodeBarycenter = new float[nodeCount];
-        lastNodeIndex = new int[nodeCount];
-        
-        ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
-        Layer fixedLayer = layerIter.next();
-        assignPortPos(fixedLayer);
-        int previousCross, curCross = Integer.MAX_VALUE;
-        do {
-            saveOrder(fixedLayer);
-            // perform a forward sweep
-            previousCross = curCross;
-            curCross = 0;
-            while (layerIter.hasNext()) {
-                Layer freeLayer = layerIter.next();
-                curCross += minimizeCrossings(fixedLayer, freeLayer, true);
-                fixedLayer = freeLayer;
-            }
-            if (curCross < previousCross) {
-                saveOrder(fixedLayer);
-                // perform a backwards sweep
-                previousCross = curCross;
+        random = layeredGraph.getProperty(Properties.RANDOM);
+
+        int bestCross = Integer.MAX_VALUE;
+        for (int r = 0; r < RANDOM_RUNS; r++) {
+            boolean forward = random.nextBoolean();
+            LNode[] fixedLayer = forward ? curRun[0] : curRun[layerCount - 1];
+            randomize(fixedLayer);
+            assignPortPos(fixedLayer);
+            int lastCross, curCross = Integer.MAX_VALUE;
+            boolean forwDone = false, backDone = false;
+            do {
+                copy(curRun, lastRun);
+                lastCross = curCross;
                 curCross = 0;
-                layerIter.previous();
-                while (layerIter.hasPrevious()) {
-                    Layer freeLayer = layerIter.previous();
-                    curCross += minimizeCrossings(fixedLayer, freeLayer, false);
-                    fixedLayer = freeLayer;
+                if (forward) {
+                    // perform a forward sweep
+                    for (int i = 1; i < layerCount; i++) {
+                        LNode[] freeLayer = curRun[i];
+                        curCross += minimizeCrossings(fixedLayer, freeLayer, true, backDone);
+                        fixedLayer = freeLayer;
+                    }
+                } else {
+                    // perform a backwards sweep
+                    for (int i = layerCount - 2; i >= 0; i--) {
+                        LNode[] freeLayer = curRun[i];
+                        curCross += minimizeCrossings(fixedLayer, freeLayer, false, forwDone);
+                        fixedLayer = freeLayer;
+                    }
                 }
-                layerIter.next();
+                forward = !forward;
+            } while (curCross < lastCross);
+            
+            // compare the current result with the best one
+            if (curCross < bestCross || lastCross < bestCross) {
+                // restore last ordering if it has become worse
+                if (curCross > lastCross) {
+                    copy(lastRun, bestRun);
+                    bestCross = lastCross;
+                } else {
+                    copy(curRun, bestRun);
+                    bestCross = curCross;
+                }
             }
-        } while (curCross < previousCross);
-        
-        // restore last ordering if it has become worse
-        if (curCross > previousCross) {
-            restoreOrder(layeredGraph);
         }
         
         // distribute the ports of all nodes with free port constraints
-        distributePorts(layeredGraph);
+        distributePorts(bestRun);
+        
+        // apply the ordering to the original layered graph
+        layerIter = layeredGraph.getLayers().listIterator();
+        while (layerIter.hasNext()) {
+            Layer layer = layerIter.next();
+            LNode[] nodes = bestRun[layerIter.previousIndex()];
+            ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
+            while (nodeIter.hasNext()) {
+                nodeIter.next();
+                nodeIter.set(nodes[nodeIter.previousIndex()]);
+            }
+        }
         
         dispose();
         getMonitor().done();
@@ -133,45 +167,38 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * Release all created resources so the GC can reap them.
      */
     private void dispose() {
-        this.lastNodeIndex = null;
         this.nodeBarycenter = null;
         this.portBarycenter = null;
         this.portPos = null;
     }
     
     /**
-     * Save the order of nodes for the given layer so it can be restored later.
+     * Randomize the order of nodes for the given layer.
      * 
      * @param layer a layer
      */
-    private void saveOrder(final Layer layer) {
-        ListIterator<LNode> iter = layer.getNodes().listIterator();
-        while (iter.hasNext()) {
-            int index = iter.nextIndex();
-            lastNodeIndex[iter.next().id] = index;
+    private void randomize(final LNode[] layer) {
+        for (int i = 0; i < layer.length; i++) {
+            int j = random.nextInt(layer.length);
+            if (i != j) {
+                LNode temp = layer[j];
+                layer[j] = layer[i];
+                layer[i] = temp;
+            }
         }
     }
-    
+
     /**
-     * Restores the node order for the whole layered graph as it was present before the last
-     * forward or backwards sweep.
+     * Copy the content of the source node array to the target node array.
      * 
-     * @param layeredGraph a layered graph
+     * @param source a layered graph
+     * @param dest a node array to copy the graph into
      */
-    private void restoreOrder(final LayeredGraph layeredGraph) {
-        for (Layer layer : layeredGraph.getLayers()) {
-            LNode[] sortedNodes = new LNode[layer.getNodes().size()];
-            for (LNode node : layer.getNodes()) {
-                sortedNodes[lastNodeIndex[node.id]] = node;
+    private static void copy(final LNode[][] source, final LNode[][] dest) {
+        for (int i = 0; i < dest.length; i++) {
+            for (int j = 0; j < dest[i].length; j++) {
+                dest[i][j] = source[i][j];
             }
-            // rearrange the nodes in the list
-            ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
-            while (nodeIter.hasNext()) {
-                nodeIter.next();
-                nodeIter.set(sortedNodes[nodeIter.previousIndex()]);
-            }
-            // reassign port position values
-            assignPortPos(layer);
         }
     }
 
@@ -182,12 +209,13 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * @param fixedLayer the fixed layer
      * @param freeLayer the free layer whose nodes are reordered
      * @param forward whether the free layer is after the fixed layer
+     * @param preOrdered whether the nodes have been ordered in a previous run
      * @return the new number of crossings between the two layers
      */
-    private int minimizeCrossings(final Layer fixedLayer, final Layer freeLayer,
-            final boolean forward) {        
+    private int minimizeCrossings(final LNode[] fixedLayer, final LNode[] freeLayer,
+            final boolean forward, final boolean preOrdered) {        
         int totalEdges = 0;
-        for (LNode node : freeLayer.getNodes()) {
+        for (LNode node : freeLayer) {
             nodeBarycenter[node.id] = -1;
             float nodeSum = 0;
             int edgeCount = 0;
@@ -202,10 +230,10 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                 totalEdges += edgeCount;
             }
         }
-        sortNodes(freeLayer);
+        sortNodes(freeLayer, preOrdered);
         assignPortPos(freeLayer);
-        Layer leftLayer = forward ? fixedLayer : freeLayer;
-        Layer rightLayer = forward ? freeLayer : fixedLayer;
+        LNode[] leftLayer = forward ? fixedLayer : freeLayer;
+        LNode[] rightLayer = forward ? freeLayer : fixedLayer;
         return countCrossings(leftLayer, rightLayer, totalEdges);
     }
     
@@ -219,12 +247,12 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * @param edgeCount the total number of edges in the layer
      * @return the number of edge crossings
      */
-    private int countCrossings(final Layer leftLayer, final Layer rightLayer,
+    private int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer,
             final int edgeCount) {
         // assign index values to the ports of the right layer
         int targetCount = 0;
         Map<LPort, Integer> targetMap = new HashMap<LPort, Integer>();
-        for (LNode node : rightLayer.getNodes()) {
+        for (LNode node : rightLayer) {
             PortConstraints cons = node.getProperty(Properties.PORT_CONS);
             if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
                 ListIterator<LPort> portIter = node.getPorts().listIterator(node.getPorts().size());
@@ -245,7 +273,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         // determine the sequence of edge target positions sorted by source and target index
         int[] southSequence = new int[edgeCount];
         int i = 0;
-        for (LNode node : leftLayer.getNodes()) {
+        for (LNode node : leftLayer) {
             PortConstraints cons = node.getProperty(Properties.PORT_CONS);
             if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
                 for (LPort port : node.getPorts()) {
@@ -316,9 +344,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * 
      * @param layer a layer
      */
-    private void assignPortPos(final Layer layer) {
+    private void assignPortPos(final LNode[] layer) {
         int nodeIx = 0;
-        for (LNode node : layer.getNodes()) {
+        for (LNode node : layer) {
             // count the input and output ports
             int inputPorts = 0, outputPorts = 0;
             for (LPort port : node.getPorts()) {
@@ -422,35 +450,45 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * for nodes whose position value is < 0.
      * 
      * @param layer layer whose nodes shall be sorted
+     * @param preOrdered whether the nodes have been ordered in a previous run
      */
-    private void sortNodes(final Layer layer) {
-        List<LNode> nodes = layer.getNodes();
+    private void sortNodes(final LNode[] layer, final boolean preOrdered) {
         // determine placements for nodes with undefined position value
-        ListIterator<LNode> iter1 = nodes.listIterator(0);
-        float lastValue = -1;
-        while (iter1.hasNext()) {
-            int nodeid = iter1.next().id;
-            float value = nodeBarycenter[nodeid];
-            if (value < 0) {
-                ListIterator<LNode> iter2 = nodes.listIterator(iter1.nextIndex());
-                float nextValue = lastValue + 1;
-                while (iter2.hasNext()) {
-                    float x = nodeBarycenter[iter2.next().id];
-                    if (x >= 0) {
-                        nextValue = x;
-                        break;
+        if (preOrdered) {
+            float lastValue = -1;
+            for (int i = 0; i < layer.length; i++) {
+                int nodeid = layer[i].id;
+                float value = nodeBarycenter[nodeid];
+                if (value < 0) {
+                    float nextValue = lastValue + 1;
+                    for (int j = i + 1; j < layer.length; j++) {
+                        float x = nodeBarycenter[layer[j].id];
+                        if (x >= 0) {
+                            nextValue = x;
+                            break;
+                        }
                     }
+                    value = (lastValue + nextValue) / 2;
+                    nodeBarycenter[nodeid] = value;
                 }
-                value = (lastValue + nextValue) / 2;
-                nodeBarycenter[nodeid] = value;
+                lastValue = value;
             }
-            lastValue = value;
-            // store previous ordering for the node
-            lastNodeIndex[nodeid] = iter1.previousIndex();
+        } else {
+            // no previous ordering - determine random placement for new nodes
+            float maxBary = 0;
+            for (LNode node : layer) {
+                maxBary = Math.max(maxBary, nodeBarycenter[node.id]);
+            }
+            for (LNode node : layer) {
+                float value = nodeBarycenter[node.id];
+                if (value < 0) {
+                    nodeBarycenter[node.id] = random.nextFloat() * maxBary;
+                }
+            }
         }
 
         // sort all nodes by the filtered ranks
-        Collections.sort(nodes, new Comparator<LNode>() {
+        Arrays.sort(layer, new Comparator<LNode>() {
             public int compare(final LNode node1, final LNode node2) {
                 return Float.compare(nodeBarycenter[node1.id], nodeBarycenter[node2.id]);
             }
@@ -462,10 +500,14 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * 
      * @param layeredGraph a layered graph
      */
-    private void distributePorts(final LayeredGraph layeredGraph) {
-        for (Layer layer : layeredGraph.getLayers()) {
-            int nodeIx = 0;
-            for (LNode node : layer.getNodes()) {
+    private void distributePorts(final LNode[][] layeredGraph) {
+        for (int l = 0; l < layeredGraph.length; l++) {
+            if (l + 1 < layeredGraph.length) {
+                assignPortPos(layeredGraph[l + 1]);
+            }
+            LNode[] layer = layeredGraph[l];
+            for (int i = 0; i < layer.length; i++) {
+                LNode node = layer[i];
                 PortConstraints cons = node.getProperty(Properties.PORT_CONS);
                 if (cons == PortConstraints.FREE || cons == PortConstraints.FIXED_SIDE) {
                     distributePorts(node);
@@ -477,10 +519,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                         }
                     }
                     if (portCount > 0) {
-                        assignPortPos(node, nodeIx, PortType.OUTPUT, portCount);
+                        assignPortPos(node, i, PortType.OUTPUT, portCount);
                     }
                 }
-                nodeIx++;
             }
         }
     }
