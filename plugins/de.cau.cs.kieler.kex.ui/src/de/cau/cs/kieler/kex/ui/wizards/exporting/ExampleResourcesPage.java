@@ -105,11 +105,11 @@ public class ExampleResourcesPage extends WizardPage {
      */
     private void initResourceGroup(Composite parent, List<Object> input) {
         this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
-                getResourceProvider(IResource.FOLDER), WorkbenchLabelProvider
-                        .getDecoratingWorkbenchLabelProvider(),
-                getResourceProvider(IResource.FILE), WorkbenchLabelProvider
-                        .getDecoratingWorkbenchLabelProvider(), SWT.BORDER, DialogUtil
-                        .inRegularFontMode(parent));
+                getResourceProvider(IResource.FOLDER),
+                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
+                getResourceProvider(IResource.FILE),
+                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.BORDER,
+                DialogUtil.inRegularFontMode(parent));
         this.resourceGroup.addCheckStateListener(new ICheckStateListener() {
 
             public void checkStateChanged(CheckStateChangedEvent event) {

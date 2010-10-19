@@ -423,7 +423,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
     }
 
     /**
-     * filtered checked examples from example tree.
+     * filters checked examples from example tree.
      * 
      * @return list of examples.
      */
@@ -440,6 +440,11 @@ public class ImportExamplePage extends WizardResourceImportPage {
         return result;
     }
 
+    /**
+     * getter for example description field. It is a browser.
+     * 
+     * @return Browser
+     */
     public Browser getExampleDescription() {
         return exampleDescription;
     }

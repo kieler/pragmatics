@@ -15,18 +15,18 @@ import de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard;
 
 public class ImportWizardAction implements IIntroAction {
 
-	/**
-	 * closes the Introscreen and starts the ExampleImportWizard.
-	 */
-	@SuppressWarnings("restriction")
-	public void run(IIntroSite site, Properties params) {
-		IntroPlugin.closeIntro();
-		IWorkbench wb = PlatformUI.getWorkbench();
-		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-		ExampleImportWizard wizard = new ExampleImportWizard();
-		wizard.init(wb, StructuredSelection.EMPTY);
-		WizardDialog dialog = new WizardDialog(win.getShell(), wizard);
-		dialog.create();
-		dialog.open();
-	}
+    /**
+     * closes the Introscreen and starts the ExampleImportWizard.
+     */
+    @SuppressWarnings("restriction")
+    public void run(IIntroSite site, Properties params) {
+        IntroPlugin.closeIntro();
+        IWorkbench wb = PlatformUI.getWorkbench();
+        IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+        ExampleImportWizard wizard = new ExampleImportWizard();
+        wizard.init(wb, StructuredSelection.EMPTY);
+        WizardDialog dialog = new WizardDialog(win.getShell(), wizard);
+        dialog.create();
+        dialog.open();
+    }
 }
