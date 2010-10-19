@@ -5,31 +5,31 @@ import org.eclipse.core.runtime.IPath;
 
 public class ExportResource {
 
-	private final IResource resource;
+    private final IResource resource;
 
-	private final IPath localPath;
+    private final IPath localPath;
 
-	private boolean directOpen;
+    private boolean directOpen;
 
-	public ExportResource(IResource resource, IPath localPath) {
-		this.resource = resource;
-		this.localPath = localPath;
-	}
+    public ExportResource(IResource resource, IPath localPath) {
+        this.resource = resource;
+        this.localPath = localPath;
+    }
 
-	public IResource getResource() {
-		return resource;
-	}
+    public IResource getResource() {
+        return resource;
+    }
 
-	public IPath getLocalPath() {
-		return localPath;
-	}
+    public IPath getLocalPath() {
+        return localPath;
+    }
 
-	public void setDirectOpen(boolean directOpen) {
-		this.directOpen = directOpen;
-	}
+    public void setDirectOpen(boolean directOpen) {
+        this.directOpen = directOpen;
+    }
 
-	public boolean isDirectOpen() {
-		return directOpen;
-	}
+    public boolean isDirectOpen() {
+        return directOpen;
+    }
 
 }

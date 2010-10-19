@@ -17,6 +17,6 @@ public class ErrorMessage {
     public static final String DUPLICATE_ELEMENT = "Duplicate element. ";
     public static final String NO_DEST_SET = "No destination set for import.";
     public static final String LOAD_ERROR = "Error while loading example \"";
-    public static final Object RESOURCE_WRITE_ERROR = "Error appears at writing resource.";
+    public static final String NO_EXAMPLE_FOUND = "Could not find example. ";
 
 }

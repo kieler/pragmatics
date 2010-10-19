@@ -44,11 +44,11 @@ public class Example {
 
     @Override
     public String toString() {
-        return new StringBuffer().append("Example [title= ").append(getTitle()).append(
-                ",source type= ").append(SourceType.map(this.sourceType)).append(getContact())
-                .append(", author= ").append(this.author).append(", generated at= ").append(
-                        this.generationDate.toString()).append(", description= ").append(
-                        getDescription()).append("]").toString();
+        return new StringBuffer().append("Example [title= ").append(getTitle())
+                .append(",source type= ").append(SourceType.map(this.sourceType))
+                .append(getContact()).append(", author= ").append(this.author)
+                .append(", generated at= ").append(this.generationDate.toString())
+                .append(", description= ").append(getDescription()).append("]").toString();
     }
 
     public boolean contains(String category) {

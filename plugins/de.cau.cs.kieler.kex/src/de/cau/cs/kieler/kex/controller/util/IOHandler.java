@@ -47,11 +47,9 @@ public class IOHandler {
         }
     }
 
-    public static void deleteFile(File deletable) {
-        // TODO delete wird so nicht gehen, da ordner nicht gelöscht werden
-        // es müssen erst alle dateien dann die ordner gelöscht werden
-        // struktur von unten beginnend
-        deletable.delete();
+    public static boolean deleteFile(File deletable) {
+
+        return deletable.delete();
     }
 
     /**

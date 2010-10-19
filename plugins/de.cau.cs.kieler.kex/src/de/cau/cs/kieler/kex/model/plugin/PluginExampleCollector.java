@@ -163,8 +163,8 @@ public class PluginExampleCollector extends ExampleCollector {
             String resourceType = configurationElement.getAttribute(PluginConstants.RESOURCE_TYPE);
             String localPath = configurationElement.getAttribute(PluginConstants.LOCAL_PATH);
             if (resourceType != null && localPath != null) {
-                ExampleResource exRe = new ExampleResource(localPath, ExampleResource.Type
-                        .valueOf(resourceType.toUpperCase()));
+                ExampleResource exRe = new ExampleResource(localPath,
+                        ExampleResource.Type.valueOf(resourceType.toUpperCase()));
                 String direct_open = configurationElement.getAttribute(PluginConstants.DIRECT_OPEN);
                 if (direct_open != null)
                     exRe.setDirectOpen(Boolean.parseBoolean(direct_open));
