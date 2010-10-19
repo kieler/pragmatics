@@ -265,8 +265,8 @@ public class KiVi {
             ITriggerState previous = triggerStates.get(triggerState.getKeyClass());
             if (previous != null) {
                 triggerState.merge(previous);
-            } else {
-                error("no previous state found for " + triggerState.getKeyClass());
+//            } else {
+//                error("no previous state found for " + triggerState.getKeyClass());
             }
             triggerStates.put(triggerState.getKeyClass(), triggerState);
         }
