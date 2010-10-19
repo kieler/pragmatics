@@ -15,10 +15,16 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 
+/**
+ * This class provides all methods to access I/O.
+ * 
+ * @author pkl
+ * 
+ */
 public class IOHandler {
 
-    public static String PROJECT_FILE = ".project";
-    public static String MANIFEST_MF = "MANIFEST.MF";
+    public static final String PROJECT_FILE = ".project";
+    public static final String MANIFEST_MF = "MANIFEST.MF";
     public static final String PLUGIN_XML = "plugin.xml";
     public static final int BUFFER_SIZE = 1024;
 
@@ -47,8 +53,24 @@ public class IOHandler {
         }
     }
 
+    /**
+     * deletes a file or a directory. If a directory is choosen, all subdirectories and files will
+     * be deleted.
+     * 
+     * @param deletable
+     *            , File
+     * @return true, if deleting success, otherwise false.
+     */
     public static boolean deleteFile(File deletable) {
-
+        if (!deletable.exists()) {
+            return true;
+        }
+        if (deletable.isDirectory()) {
+            String[] entries = deletable.list();
+            for (int i = 0; i < entries.length; i++) {
+                deleteFile(new File(deletable.getPath(), entries[i]));
+            }
+        }
         return deletable.delete();
     }
 
@@ -56,8 +78,8 @@ public class IOHandler {
      * 
      * filters the plugin.xml of plugin project for given destination.<br>
      * Searches first for a java project by checking parent dirs for containing ".project" file. <br>
-     * Searches than in found project for the "manifest.mf" file of an plugin project and if that
-     * found, finally searches the plugin.xml.
+     * Searches than in found project for "manifest.mf" file of an plugin project and if that found,
+     * finally searches the plugin.xml.
      * 
      * @param location
      *            , folder in an plugin project.
@@ -193,9 +215,8 @@ public class IOHandler {
         if (checkDuplicate && target.exists()) {
             throw new KielerModelException(ErrorMessage.DUPLICATE_EXAMPLE, target.getName());
         }
-
         InputStream is = sourceUrl.openStream();
-        OutputStream os = new FileOutputStream(target, true);
+        OutputStream os = new FileOutputStream(target, false);
         byte[] buf = new byte[1024];
         int len;
         while ((len = is.read(buf)) > 0) {

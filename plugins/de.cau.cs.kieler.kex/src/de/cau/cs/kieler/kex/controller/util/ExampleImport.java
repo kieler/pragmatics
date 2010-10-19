@@ -72,9 +72,6 @@ public class ExampleImport {
         for (String resourcePath : finishedResources) {
             IOHandler.deleteFile(new File(resourcePath));
         }
-        // TODO delete wird so nicht gehen, da ordner nicht gelöscht werden
-        // es müssen erst alle dateien dann die ordner gelöscht werden
-        // struktur von unten beginnend
     }
 
     private static void handleResources(List<String> directOpens, List<ExampleResource> resources,
@@ -111,11 +108,11 @@ public class ExampleImport {
 
                 case FILE:
                     URL entry = bundle.getEntry(localPath);
-                    String dest = destFolder + destPath;
+                    String dest = destFolder + "/" + destPath;
                     finishedResources.add(dest);
                     IOHandler.writeFile(entry, dest, checkDuplicate);
                     if (resource.isDirectOpen())
-                        directOpens.add(destFolder + destPath);
+                        directOpens.add(dest);
                     break;
 
                 }
