@@ -255,6 +255,8 @@ public class LayoutEffect extends AbstractEffect {
     private EditPart commonAncestorOrSelf(final EditPart a, final EditPart b) {
         if (a == b) {
             return a;
+        } else if (a == null || b == null) {
+            return null;
         }
         EditPart aParent = a;
         EditPart bParent = b;
