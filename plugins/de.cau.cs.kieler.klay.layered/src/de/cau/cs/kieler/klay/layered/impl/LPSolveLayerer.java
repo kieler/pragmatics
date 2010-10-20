@@ -35,8 +35,8 @@ import lpsolve.LpSolve;
 
 /**
  * The main class of the LpSolve layerer component. It offers an algorithm to determine an optimal
- * layering of all nodes in the graph concerning a minimal edge span using the LP-solver of
- * <a href="http://lpsolve.sourceforge.net/">lpsolve.sourceforge.net</a>.
+ * layering of all nodes in the graph concerning a minimal edge span using the LP-solver of <a
+ * href="http://lpsolve.sourceforge.net/">lpsolve.sourceforge.net</a>.
  * 
  * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
  * 
@@ -77,14 +77,20 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      */
     private int[] layer;
 
+    /**
+     * The length of the longest path in the graph from a source to sink node defined by the number
+     * of nodes in this path minus one.
+     */
+    private int longestPath;
+
     // =============================== Initialization Methods =====================================
 
     /**
-     * Instantiates all necessary attributes for the
-     * execution of the LpSolve-layerer and initializes them with their default values.
-     * All edges in the graph will be determined, as well as the number of
-     * incoming and outgoing edges of each node ( {@code inDegree}, respectively {@code outDegree}).
-     * All sinks nodes in the graph identified in this step will be added to {@code sinks}.
+     * Instantiates all necessary attributes for the execution of the LpSolve-layerer and
+     * initializes them with their default values. All edges in the graph will be determined, as
+     * well as the number of incoming and outgoing edges of each node ( {@code inDegree},
+     * respectively {@code outDegree}). All sinks nodes in the graph identified in this step will be
+     * added to {@code sinks}.
      * 
      * @param nodes
      *            a {@code Collection} containing all nodes of the graph
@@ -121,8 +127,33 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             edge.id = counter++;
         }
         layerEdges = edges;
+        // determine longest path
+        longestPath = 0;
+        for (LNode node : sinks) {
+            longestPath = Math.max(longestPath, longestPathDFS(node));
+        }
     }
-    
+
+    /**
+     * Helper method for the LpSolve-layerer. It determines the length of the longest path from a
+     * source node to the specified node defined by the number of nodes in this path minus one.
+     * 
+     * @param sink
+     *            the node to determine the length of the longest path from a source node to it
+     * @return the length of the longest path from a source node to the specified node defined by
+     *         the number of nodes in this path minus one.
+     */
+    private int longestPathDFS(final LNode sink) {
+
+        int path = 0;
+        for (LPort port : sink.getPorts(PortType.INPUT)) {
+            for (LEdge edge : port.getEdges()) {
+                path = Math.max(path, longestPathDFS(edge.getSource().getNode()) + 1);
+            }
+        }
+        return path;
+    }
+
     /**
      * Release all created resources so the garbage collector can reap them.
      */
@@ -165,21 +196,21 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             throw new KielerRuntimeException("LpSolve is not available for your platform."
                     + " Please choose another layering method.", error);
         }
-        
+
         // enhance layering, if requested
         LayeringEnhancer enhancer = null;
         if (layeredGraph.getProperty(Properties.ENHANCE_LAYERING)) {
             enhancer = new LayeringEnhancer();
             enhancer.preProcess(nodes);
         }
-        
+
         // support wide nodes, if requested
         IBigNodeHandler bigNodeHandler = null;
         if (layeredGraph.getProperty(Properties.DISTRIBUTE_NODES)) {
             bigNodeHandler = new BigNodeHandler();
             bigNodeHandler.splitWideNodes(nodes, layeredGraph);
         }
-        
+
         initialize(nodes);
 
         // determine optimal layering
@@ -199,7 +230,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
                         && layeredGraph.getProperty(Properties.SEGMENTATE_LAYERING)) {
                     bigNodeHandler.segmentateLayering();
                 }
-                
+
                 if (enhancer != null) {
                     enhancer.postProcess();
                 }
@@ -246,9 +277,8 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         }
         lp.setObjFn(objFct);
         // set variable bounds
-        int upperBound = layerNodes.size() - 1;
         for (int i = 1; i <= layerNodes.size(); i++) {
-            lp.setBounds(i, 0, upperBound);
+            lp.setBounds(i, 0, longestPath);
         }
         // set variable types
         for (int i = 1; i < objFct.length; i++) {
@@ -267,12 +297,14 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     }
 
     /**
-     * Applies the determined solution of the LP to the
-     * graph, i.e. retrieves the solution from the LP-Solver, balances the layering and assigns each
-     * node to its determined layer in {@code layeredGraph}.
+     * Applies the determined solution of the LP to the graph, i.e. retrieves the solution from the
+     * LP-Solver, balances the layering and assigns each node to its determined layer in
+     * {@code layeredGraph}.
      * 
-     * @param lp the LP to apply its solution
-     * @throws LpSolveException if an error occurred during solution retrieving
+     * @param lp
+     *            the LP to apply its solution
+     * @throws LpSolveException
+     *             if an error occurred during solution retrieving
      */
     private void applySolution(final LpSolve lp) throws LpSolveException {
         int rowCount = lp.getNrows();
@@ -338,11 +370,10 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
     }
 
     /**
-     * Balances the layering concerning its width, i.e.
-     * the number of nodes in each layer. If the graph allows multiple optimal layerings regarding a
-     * minimal edge length, this method moves separate nodes to a layer with a minimal amount of
-     * contained nodes with respect to the retention of feasibility and optimality of the given
-     * layering.
+     * Balances the layering concerning its width, i.e. the number of nodes in each layer. If the
+     * graph allows multiple optimal layerings regarding a minimal edge length, this method moves
+     * separate nodes to a layer with a minimal amount of contained nodes with respect to the
+     * retention of feasibility and optimality of the given layering.
      */
     private void balance() {
         // determine filling structure of the layers
@@ -362,8 +393,13 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
         Pair<Integer, Integer> range = null;
         for (LNode node : layerNodes) {
             if (inDegree[node.id] == outDegree[node.id]) {
-                newLayer = layer[node.id];
-                range = minimalSpan(node);
+                if (inDegree[node.id] != 0) {
+                    newLayer = layer[node.id];
+                    range = minimalSpan(node);
+                } else {
+                    newLayer = 0;
+                    range = new Pair<Integer, Integer>(1, longestPath + 1);
+                }
                 for (int i = layer[node.id] - range.getFirst() + 1; i < layer[node.id]
                         + range.getSecond(); i++) {
                     if (filling[i] < filling[newLayer]) {
@@ -374,18 +410,18 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
                 if (filling[newLayer] < filling[layer[node.id]]) {
                     filling[layer[node.id]]--;
                     filling[newLayer]++;
-                    layer[node.id] = newLayer;                  
+                    layer[node.id] = newLayer;
                 }
+
             }
         }
     }
 
     /**
-     * Puts the specified node into its assigned
-     * layer indicated by {@code layer} in the layered graph. If the layered graph does not contain
-     * the specified layer (i.e. the number of layers in {@code layeredGraph} is lesser than the
-     * supposed height in the layering), additional layers will be added to match the required
-     * amount.
+     * Puts the specified node into its assigned layer indicated by {@code layer} in the layered
+     * graph. If the layered graph does not contain the specified layer (i.e. the number of layers
+     * in {@code layeredGraph} is lesser than the supposed height in the layering), additional
+     * layers will be added to match the required amount.
      * 
      * @param node
      *            the node to put into its assigned layer in the layered graph
