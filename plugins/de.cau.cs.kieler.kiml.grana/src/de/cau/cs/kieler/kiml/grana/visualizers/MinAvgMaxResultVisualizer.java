@@ -33,7 +33,7 @@ public class MinAvgMaxResultVisualizer extends AbstractAnalysisResultVisualizer 
         return (result instanceof MinAvgMaxResult<?, ?>);
     }
 
-    private static final float D = KielerMath.pow(10, MAX_DECIMAL_PLACE);
+    private static final float D = (float) KielerMath.pow(10, MAX_DECIMAL_PLACE);
     
     private Object anonymousRound(final Object o) {
         if (o instanceof Float) {
