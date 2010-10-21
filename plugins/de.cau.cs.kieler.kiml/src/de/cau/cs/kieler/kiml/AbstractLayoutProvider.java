@@ -49,11 +49,11 @@ public abstract class AbstractLayoutProvider {
      * Performs the actual layout process, that is attaches layout information
      * to the given node object.
      * 
-     * @param layoutNode the parent node which should be laid out
+     * @param parentNode the parent node which should be laid out
      * @param progressMonitor progress monitor used to keep track of progress
      * @throws KielerException if the method fails to perform layout
      */
-    public abstract void doLayout(KNode layoutNode, IKielerProgressMonitor progressMonitor)
+    public abstract void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor)
             throws KielerException;
 
     /**

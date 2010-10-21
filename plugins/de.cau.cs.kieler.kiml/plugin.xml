@@ -19,6 +19,11 @@
             name="KIELER">
       </category>
       <layoutProvider
+            class="de.cau.cs.kieler.kiml.util.NullLayoutProvider"
+            id="de.cau.cs.kieler.kiml.layouter.null"
+            name="No Layout">
+      </layoutProvider>
+      <layoutProvider
             class="de.cau.cs.kieler.kiml.util.BoxLayoutProvider"
             category="de.cau.cs.kieler"
             id="de.cau.cs.kieler.kiml.layouter.boxLayout"
@@ -41,6 +46,24 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.fixedSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.aspectRatio">
+         </knownOption>
+      </layoutProvider>
+      <layoutProvider
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.util.RandomLayoutProvider"
+            id="de.cau.cs.kieler.kiml.layouter.random"
+            name="Randomizer">
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layout.options.aspectRatio">
