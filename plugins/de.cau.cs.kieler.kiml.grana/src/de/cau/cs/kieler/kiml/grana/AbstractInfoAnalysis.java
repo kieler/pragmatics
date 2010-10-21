@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * Analyses that derive from this class are required to provide an id, name and
- * description.
+ * description. A category, strong and weak dependencies are optional.
  * 
  * @author mri
  */
@@ -46,6 +46,15 @@ public abstract class AbstractInfoAnalysis implements IAnalysis,
     public abstract String getDescription();
 
     /**
+     * Returns whether this analysis is a helper analysis.
+     * 
+     * @return true if this analysis is a helper analysis
+     */
+    public boolean isHelper() {
+        return false;
+    }
+    
+    /**
      * Returns the analysis category.
      * 
      * @return the category id
@@ -57,7 +66,7 @@ public abstract class AbstractInfoAnalysis implements IAnalysis,
     /**
      * {@inheritDoc}
      */
-    public List<String> getDependencies() {
+    public List<Dependency<String>> getDependencies() {
         return null;
     }
     

@@ -210,7 +210,7 @@ public final class XtendAnalysesManager {
         String serializedAnalysis =
                 analysis.getName() + "," + analysis.getFilename() + ","
                         + analysis.getExtension();
-        for (String analysisId : analysis.getDependencies()) {
+        for (String analysisId : analysis.getDependencyIds()) {
             serializedAnalysis += "," + analysisId;
         }
         return serializedAnalysis;

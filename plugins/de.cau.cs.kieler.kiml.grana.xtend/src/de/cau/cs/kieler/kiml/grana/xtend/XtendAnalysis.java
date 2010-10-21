@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 import de.cau.cs.kieler.core.model.transformation.TransformationException;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.grana.AbstractSimpleInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 
 /**
@@ -35,7 +35,7 @@ import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
  * 
  * @author mri
  */
-public class XtendAnalysis extends AbstractInfoAnalysis {
+public class XtendAnalysis extends AbstractSimpleInfoAnalysis {
 
     /** the prefix for all xtend ids. */
     private static final String ID_PREFIX =
@@ -160,7 +160,7 @@ public class XtendAnalysis extends AbstractInfoAnalysis {
     /**
      * {@inheritDoc}
      */
-    public List<String> getDependencies() {
+    public List<String> getDependencyIds() {
         return dependencies;
     }
 

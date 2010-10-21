@@ -102,6 +102,13 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="helper" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -204,6 +211,13 @@
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.analysisProviders/provider/@id"/>
                </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="weak" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

@@ -83,6 +83,10 @@ public final class AnalysisServices implements IBundleChangedListener {
     public static final String ATTRIBUTE_NAME = "name";
     /** name of the 'priority' attribute in the extension points. */
     public static final String ATTRIBUTE_PRIORITY = "priority";
+    /** name of the 'weak' attribute in the extension point. */ 
+    private static final String ATTRIBUTE_WEAK = "weak";
+    /** name of the 'helper' attribute in the extension point. */ 
+    private static final String ATTRIBUTE_HELPER = "helper";
     /** id of the default category. */
     public static final String DEFAULT_CATEGORY_ID =
             "de.cau.cs.kieler.kiml.grana.defaultCategory";
@@ -213,6 +217,11 @@ public final class AnalysisServices implements IBundleChangedListener {
                                 element.getAttribute(ATTRIBUTE_DESCRIPTION);
                         String category =
                                 element.getAttribute(ATTRIBUTE_CATEGORY);
+                        String helperString = element.getAttribute(ATTRIBUTE_HELPER);
+                        // if the weak string is invalid the
+                        // parser returns false, which handles
+                        // the case correctly
+                        boolean helper = Boolean.parseBoolean(helperString);
                         if (id == null || id.length() == 0) {
                             reportError(EXTP_ID_ANALYSIS_PROVIDERS, element,
                                     ATTRIBUTE_ID, null);
@@ -228,7 +237,7 @@ public final class AnalysisServices implements IBundleChangedListener {
                             }
                             InfoAnalysis infoAnalysis =
                                     new InfoAnalysis(analysis, id, name,
-                                            description, category);
+                                            description, category, helper);
                             analyses.add(infoAnalysis);
                             analysisIdMapping.put(id, infoAnalysis);
                             // read the analysis dependencies
@@ -238,13 +247,20 @@ public final class AnalysisServices implements IBundleChangedListener {
                                         .getName())) {
                                     String analysisId =
                                             child.getAttribute(ATTRIBUTE_ANALYSIS);
+                                    String weakString = child.getAttribute(ATTRIBUTE_WEAK);
                                     if (analysisId == null
                                             || analysisId.length() == 0) {
                                         reportError(EXTP_ID_ANALYSIS_PROVIDERS,
                                                 child, ATTRIBUTE_ANALYSIS, null);
                                     } else {
+                                        // if the weak string is invalid the
+                                        // parser returns false, which handles
+                                        // the case correctly
+                                        boolean weak =
+                                                Boolean.parseBoolean(weakString);
                                         infoAnalysis.getDependencies().add(
-                                                analysisId);
+                                                new Dependency<String>(
+                                                        analysisId, weak));
                                     }
                                 }
                             }
@@ -274,7 +290,8 @@ public final class AnalysisServices implements IBundleChangedListener {
                             for (AbstractInfoAnalysis analysis : analysisBundle
                                     .getAnalyses()) {
                                 analyses.add(analysis);
-                                analysisIdMapping.put(analysis.getID(), analysis);
+                                analysisIdMapping.put(analysis.getID(),
+                                        analysis);
                             }
                             analysisBundle.addBundleChangedListener(this);
                         }
@@ -309,8 +326,7 @@ public final class AnalysisServices implements IBundleChangedListener {
             }
         }
         // add the analyses to the dependency graph and remove analyses which
-        // had
-        // unresolved or cyclic dependencies
+        // had unresolved or cyclic dependencies
         List<AbstractInfoAnalysis> unresolvedAnalyses =
                 dependencyGraph.addAll(analyses);
         analyses.removeAll(unresolvedAnalyses);
@@ -330,14 +346,16 @@ public final class AnalysisServices implements IBundleChangedListener {
         defaultCategory = categoryIdMapping.get(DEFAULT_CATEGORY_ID);
         // sort analyses into the categories
         for (AbstractInfoAnalysis analysis : analyses) {
-            AnalysisCategory category =
-                    categoryIdMapping.get(analysis.getCategory());
-            // if the category does not exists take default one
-            if (category == null) {
-                category = defaultCategory;
-            }
-            if (category != null) {
-                category.getAnalyses().add(analysis);
+            if (!analysis.isHelper()) {
+                AnalysisCategory category =
+                        categoryIdMapping.get(analysis.getCategory());
+                // if the category does not exists take default one
+                if (category == null) {
+                    category = defaultCategory;
+                }
+                if (category != null) {
+                    category.getAnalyses().add(analysis);
+                }
             }
         }
         // sort the categories
@@ -358,7 +376,7 @@ public final class AnalysisServices implements IBundleChangedListener {
     public List<AnalysisCategory> getCategories() {
         return categories;
     }
-    
+
     /**
      * Returns the analyses.
      * 
@@ -543,8 +561,11 @@ public final class AnalysisServices implements IBundleChangedListener {
         private final String analysisDescription;
         /** the analysis category. */
         private final String analysisCategory;
+        /** is the analysis a helper analysis? */
+        private final boolean analysisHelper;
         /** the analysis dependencies. */
-        private final List<String> dependencies = new LinkedList<String>();
+        private final List<Dependency<String>> dependencies =
+                new LinkedList<Dependency<String>>();
 
         /**
          * Constructs a analysis with attached information.
@@ -562,12 +583,13 @@ public final class AnalysisServices implements IBundleChangedListener {
          */
         public InfoAnalysis(final IAnalysis analysis, final String id,
                 final String name, final String description,
-                final String category) {
+                final String category, final boolean helper) {
             wrappedAnalysis = analysis;
             analysisId = id;
             analysisName = name;
             analysisDescription = description;
             analysisCategory = category;
+            analysisHelper = helper;
         }
 
         /**
@@ -606,7 +628,15 @@ public final class AnalysisServices implements IBundleChangedListener {
          * {@inheritDoc}
          */
         @Override
-        public List<String> getDependencies() {
+        public boolean isHelper() {
+            return analysisHelper;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public List<Dependency<String>> getDependencies() {
             return dependencies;
         }
 

@@ -42,7 +42,7 @@ public class AnalysisHandler extends AbstractAnalysisHandler {
        
         // get the active editor
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-        // let the user select the analyses
+        // get the last selected analyses
         Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
         List<AbstractInfoAnalysis> analyses = getLastAnalysesSelection();
         // perform the analyses on the active diagram

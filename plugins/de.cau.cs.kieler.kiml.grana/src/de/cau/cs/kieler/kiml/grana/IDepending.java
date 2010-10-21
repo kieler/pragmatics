@@ -34,10 +34,10 @@ public interface IDepending<T extends Comparable<T>> {
     T getID();
 
     /**
-     * Returns a list of identifiers this object is depending on.
+     * Returns a list of dependencies.
      * 
-     * @return the list of dependency identifiers or null if the object has no
+     * @return the list of dependencies or null if the object has no
      *         dependencies
      */
-    List<T> getDependencies();
+    List<Dependency<T>> getDependencies();
 }

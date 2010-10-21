@@ -14,10 +14,18 @@
 package de.cau.cs.kieler.kiml.grana.ui;
 
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+
+import de.cau.cs.kieler.kiml.ui.Messages;
 
 /**
  * The general grana preference page.
@@ -44,7 +52,24 @@ public class GranaGeneralPreferencePage extends PreferencePage implements
      * {@inheritDoc}
      */
     protected Control createContents(final Composite parent) {
-        return null;
+        Composite composite = new Composite(parent, SWT.NONE);
+        Group group = new Group(composite, SWT.NONE);
+        group.setText("General Options");
+        Button checkBox = new Button(group, SWT.CHECK | SWT.LEFT);
+        checkBox.setText("Enable Result Dialog");
+        checkBox.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        checkBox = new Button(group, SWT.CHECK | SWT.LEFT);
+        checkBox.setText("Enable Result View");
+        checkBox.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        checkBox = new Button(group, SWT.CHECK | SWT.LEFT);
+        checkBox.setText("Perform analyses after layout");
+        checkBox.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        GridLayout layout = new GridLayout(1, false);
+        group.setLayout(layout);
+        group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        GridLayout compositeLayout = new GridLayout(1, false);
+        composite.setLayout(compositeLayout);
+        return composite;
     }
 
 }

@@ -30,24 +30,23 @@ import java.util.Stack;
  * @param <T>
  *            the object type
  */
-public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
+public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>>
+        implements IDependencyGraph<S, T> {
 
     /** the removed marker. */
     private static final int MARKER_REMOVED = 0;
+    /** the not-visited-and-known marker. */
+    private static final int MARKER_NOT_VISITED_AND_KNOWN = 1;
     /** the not-visited marker. */
-    private static final int MARKER_NOT_VISITED = 1;
+    private static final int MARKER_NOT_VISITED = 2;
     /** the visited marker. */
-    private static final int MARKER_VISITED = 2;
+    private static final int MARKER_VISITED = 3;
 
     /** a mapping of the objects identifiers on the nodes holding them. */
     private Map<S, Node> nodes = new HashMap<S, Node>();
 
     /**
-     * Adds an object to the graph if all dependencies can be resolved.
-     * 
-     * @param object
-     *            the object
-     * @return true if the object was added
+     * {@inheritDoc}
      */
     public boolean add(final T object) {
         Node node = new Node(object);
@@ -60,11 +59,7 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
     }
 
     /**
-     * Removes an object from the graph and all objects depending on it.
-     * 
-     * @param object
-     *            the object to remove
-     * @return the removed objects
+     * {@inheritDoc}
      */
     public List<T> remove(final T object) {
         if (nodes.containsKey(object.getID())) {
@@ -81,14 +76,7 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
     }
 
     /**
-     * Adds a collection of objects to the graph and tries to resolve
-     * dependencies.<br>
-     * Returns a list of objects that could not be added cause they had missing
-     * dependencies or were part of a cycle.
-     * 
-     * @param objects
-     *            the objects to add
-     * @return the list of objects that could not be added
+     * {@inheritDoc}
      */
     public List<T> addAll(final Collection<T> objects) {
         Queue<Node> nodeQueue = new LinkedList<Node>();
@@ -122,11 +110,7 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
     }
 
     /**
-     * Returns an object by it's identifier.
-     * 
-     * @param id
-     *            the identifier
-     * @return the object
+     * {@inheritDoc}
      */
     public T get(final S id) {
         if (nodes.containsKey(id)) {
@@ -137,13 +121,7 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
     }
 
     /**
-     * Returns a sorted list of the objects so that an object that depends on
-     * another object precedes it in the list. Removes objects that are not
-     * represented in this graph.
-     * 
-     * @param objects
-     *            the objects
-     * @return a sorted list respecting dependencies between the objects
+     * {@inheritDoc}
      */
     public List<T> dependencySort(final List<T> objects) {
         LinkedList<T> sorted = new LinkedList<T>();
@@ -151,11 +129,12 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
         for (Node node : nodes.values()) {
             node.setMarker(MARKER_NOT_VISITED);
         }
-        // DFS
         Stack<Node> stack = new Stack<Node>();
         for (T object : objects) {
-            if (nodes.containsKey(object.getID())) {
-                stack.add(nodes.get(object.getID()));
+            Node node = nodes.get(object.getID());
+            if (node != null) {
+                node.setMarker(MARKER_NOT_VISITED_AND_KNOWN);
+                stack.add(node);
             }
         }
         while (!stack.isEmpty()) {
@@ -163,7 +142,14 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
             if (node.getMarker() < MARKER_VISITED) {
                 node.setMarker(MARKER_VISITED);
                 stack.add(node);
-                stack.addAll(node.getDependencies());
+                for (Node dependency : node.getStrongDependencies()) {
+                    stack.add(dependency);
+                }
+                for (Node dependency : node.getWeakDependencies()) {
+                    if (dependency.getMarker() == MARKER_NOT_VISITED_AND_KNOWN) {
+                        stack.add(dependency);
+                    }
+                }
             } else if (node.getMarker() != MARKER_VISITED + 1) {
                 node.setMarker(MARKER_VISITED + 1);
                 sorted.addLast(node.getObject());
@@ -191,12 +177,12 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
             // DFS
             Stack<Node> stack = new Stack<Node>();
             node.setMarker(MARKER_VISITED + i);
-            stack.addAll(node.getDependants());
+            stack.addAll(node.getStrongDependants());
             while (!stack.isEmpty()) {
                 Node currentNode = stack.pop();
                 if (currentNode.getMarker() != MARKER_VISITED + i) {
                     currentNode.setMarker(MARKER_VISITED + i);
-                    stack.addAll(currentNode.getDependants());
+                    stack.addAll(currentNode.getStrongDependants());
                 } else if (node == currentNode) {
                     // cycle detected
                     List<Node> removedNodes =
@@ -230,17 +216,20 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
         while (!nodesToRemove.isEmpty()) {
             Node removeNode = nodesToRemove.remove();
             removedNodes.add(removeNode);
-            // dependant nodes have to be removed as well
-            for (Node dependantNode : removeNode.getDependants()) {
+            // strongly dependant nodes have to be removed as well
+            for (Node dependantNode : removeNode.getStrongDependants()) {
                 if (dependantNode.getMarker() != MARKER_REMOVED) {
-                    dependantNode.getDependencies().remove(removeNode);
+                    dependantNode.getStrongDependencies().remove(removeNode);
                     dependantNode.setMarker(MARKER_REMOVED);
                     nodesToRemove.add(dependantNode);
                 }
             }
             // remove node from dependencies
-            for (Node dependencyNode : removeNode.getDependencies()) {
-                dependencyNode.getDependants().remove(removeNode);
+            for (Node dependencyNode : removeNode.getWeakDependencies()) {
+                dependencyNode.getWeakDependants().remove(removeNode);
+            }
+            for (Node dependencyNode : removeNode.getStrongDependencies()) {
+                dependencyNode.getStrongDependants().remove(removeNode);
             }
             // remove the node from the mapping
             nodes.remove(removeNode.getObject().getID());
@@ -253,13 +242,17 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
      */
     private class Node {
 
-        /** a list of nodes that depend on this node. */
-        private List<Node> dependants = new LinkedList<Node>();
-        /** a list of nodes that this node is depending on. */
-        private List<Node> dependencies = new LinkedList<Node>();
+        /** a list of nodes that depend weakly on this node. */
+        private List<Node> weakDependants = new LinkedList<Node>();
+        /** a list of nodes that depend strongly on this node. */
+        private List<Node> strongDependants = new LinkedList<Node>();
+        /** a list of nodes that this node is depending weakly on. */
+        private List<Node> weakDependencies = new LinkedList<Node>();
+        /** a list of nodes that this node is depending strongly on. */
+        private List<Node> strongDependencies = new LinkedList<Node>();
         /** the object this node is representing. */
         private T object;
-        /** a utility marker attribute. */
+        /** an utility marker attribute. */
         private int marker = 0;
 
         /**
@@ -280,37 +273,64 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
         public boolean initDependencies() {
             // find dependency nodes
             if (object.getDependencies() != null) {
-                for (S dependency : object.getDependencies()) {
-                    if (nodes.containsKey(dependency)) {
-                        dependencies.add(nodes.get(dependency));
+                for (Dependency<S> dependency : object.getDependencies()) {
+                    Node depNode = nodes.get(dependency.getID());
+                    if (depNode != null) {
+                        if (dependency.isWeak()) {
+                            weakDependencies.add(depNode);
+                        } else {
+                            strongDependencies.add(depNode);
+                        }
                     } else {
                         return false;
                     }
                 }
-                // add this to dependency nodes dependants
-                for (Node node : dependencies) {
-                    node.dependants.add(this);
+                // add this to weak dependency nodes dependants
+                for (Node node : weakDependencies) {
+                    node.getWeakDependants().add(this);
+                }
+                // add this to strong dependency nodes dependants
+                for (Node node : strongDependencies) {
+                    node.getStrongDependants().add(this);
                 }
             }
             return true;
         }
 
         /**
-         * Returns this nodes dependants.
+         * Returns this nodes weak dependants.
          * 
          * @return the dependants
          */
-        public List<Node> getDependants() {
-            return dependants;
+        public List<Node> getWeakDependants() {
+            return weakDependants;
         }
 
         /**
-         * Returns this nodes dependencies.
+         * Returns this nodes strong dependants.
+         * 
+         * @return the dependants
+         */
+        public List<Node> getStrongDependants() {
+            return strongDependants;
+        }
+
+        /**
+         * Returns this nodes weak dependencies.
          * 
          * @return the dependencies
          */
-        public List<Node> getDependencies() {
-            return dependencies;
+        public List<Node> getWeakDependencies() {
+            return weakDependencies;
+        }
+
+        /**
+         * Returns this nodes strong dependencies.
+         * 
+         * @return the dependencies
+         */
+        public List<Node> getStrongDependencies() {
+            return strongDependencies;
         }
 
         /**
