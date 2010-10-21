@@ -51,6 +51,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.enhanceLayering">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.thoroughness">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
@@ -117,6 +120,14 @@
             id="de.cau.cs.kieler.klay.layered.enhanceLayering"
             name="Enhance Layering"
             type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="5"
+            description="How much effort should be spent to produce a nice layout"
+            id="de.cau.cs.kieler.klay.layered.thoroughness"
+            name="Thoroughness"
+            type="int">
       </layoutOption>
    </extension>
 

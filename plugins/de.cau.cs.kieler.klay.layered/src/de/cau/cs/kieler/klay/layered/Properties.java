@@ -120,6 +120,11 @@ public final class Properties {
     /** property to choose a crossing minimization strategy. */
     public static final IProperty<CrossingMinimization> CROSS_MIN = new Property<CrossingMinimization>(
             CROSS_MIN_ID, CrossingMinimization.LAYER_SWEEP);
+    
+    /** option identifier for thoroughness. */
+    public static final String THOROUGHNESS_ID = "de.cau.cs.kieler.klay.layered.thoroughness";
+    /** property that determines how much effort should be spent. */
+    public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(THOROUGHNESS_ID, 5);
 
     /**
      * Hidden default constructor.

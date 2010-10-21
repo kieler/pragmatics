@@ -39,9 +39,6 @@ import de.cau.cs.kieler.klay.layered.modules.ICrossingMinimizer;
  * @author msp
  */
 public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ICrossingMinimizer {
-
-    /** number of randomized iterations to perform, of which the best one is chosen. */
-    private static final int RANDOM_RUNS = 4;
     
     /** barycenter values for ports. */
     private float[] portBarycenter;
@@ -99,10 +96,11 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         portBarycenter = new float[portCount];
         portPos = new float[portCount];
         nodeBarycenter = new float[nodeCount];
+        
         random = layeredGraph.getProperty(Properties.RANDOM);
-
+        int randomRuns = layeredGraph.getProperty(Properties.THOROUGHNESS);
         int bestCross = Integer.MAX_VALUE;
-        for (int r = 0; r < RANDOM_RUNS; r++) {
+        for (int r = 0; r < randomRuns; r++) {
             boolean forward = random.nextBoolean();
             LNode[] fixedLayer = forward ? curRun[0] : curRun[layerCount - 1];
             randomize(fixedLayer);
