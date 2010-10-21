@@ -32,6 +32,7 @@ import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 
 /**
  * Listens for selection and deselection of graphical elements.
@@ -53,12 +54,12 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
      */
     public void register() {
         final ISelectionListener isl = this;
-        Display.getDefault().syncExec(new Runnable() {
+        MonitoredOperation.runInUI(new Runnable() {
             public void run() {
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
                         .addSelectionListener(isl);
             }
-        });
+        }, false);
     }
 
     /**
@@ -66,12 +67,12 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
      */
     public void unregister() {
         final ISelectionListener isl = this;
-        Display.getDefault().syncExec(new Runnable() {
+        MonitoredOperation.runInUI(new Runnable() {
             public void run() {
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
                         .removeSelectionListener(isl);
             }
-        });
+        }, false);
     }
 
     /**

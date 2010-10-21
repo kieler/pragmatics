@@ -265,8 +265,8 @@ public class KiVi {
             ITriggerState previous = triggerStates.get(triggerState.getKeyClass());
             if (previous != null) {
                 triggerState.merge(previous);
-//            } else {
-//                error("no previous state found for " + triggerState.getKeyClass());
+                // } else {
+                // error("no previous state found for " + triggerState.getKeyClass());
             }
             triggerStates.put(triggerState.getKeyClass(), triggerState);
         }
@@ -347,33 +347,13 @@ public class KiVi {
     }
 
     /**
-     * Get the instance registered for the class if there is any.
-     * 
-     * @param clazz
-     *            the combination class
-     * @return the combination instance or null
-     */
-    public ICombination getCombinationInstance(final Class<?> clazz) {
-        synchronized (combinationsByTrigger) {
-            for (List<ICombination> list : combinationsByTrigger.values()) {
-                for (ICombination combination : list) {
-                    if (clazz.isInstance(combination)) {
-                        return combination;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Check whether any combination of the given class is active.
      * 
      * @param clazz
      *            the combination class to look for
      * @return true if an active combination was found
      */
-    private boolean isCombinationClassActive(final Class<?> clazz) {
+    public boolean isCombinationClassActive(final Class<?> clazz) {
         synchronized (combinationsByTrigger) {
             for (List<ICombination> l : combinationsByTrigger.values()) {
                 for (ICombination combination : l) {
@@ -383,6 +363,7 @@ public class KiVi {
                 }
             }
         }
+        System.out.println("returning false");
         return false;
     }
 
@@ -397,28 +378,31 @@ public class KiVi {
     private void addCombination(final Class<? extends ITriggerState> clazz,
             final ICombination combination) {
         try {
+            ITriggerState triggerState = null;
+            ITrigger trigger = null;
             synchronized (combinationsByTrigger) {
                 synchronized (triggerStates) {
-                    ITriggerState triggerState = triggerStates.get(clazz);
+                    triggerState = triggerStates.get(clazz);
                     if (triggerState == null) {
                         triggerState = clazz.newInstance();
                         triggerStates.put(clazz, triggerState);
                     }
-                    for (Map.Entry<ITrigger, List<ICombination>> entry : combinationsByTrigger
-                            .entrySet()) {
-                        if (triggerState.getTriggerClass().isInstance(entry.getKey())) {
-                            entry.getValue().add(combination);
-                            return;
-                        }
-                    }
-                    // trigger not found, add new list for new trigger
-                    ITrigger trigger = triggerState.getTriggerClass().newInstance();
-                    trigger.setActive(isActive());
-                    List<ICombination> list = new ArrayList<ICombination>();
-                    list.add(combination);
-                    combinationsByTrigger.put(trigger, list);
                 }
+                for (Map.Entry<ITrigger, List<ICombination>> entry : combinationsByTrigger
+                        .entrySet()) {
+                    if (triggerState.getTriggerClass().isInstance(entry.getKey())) {
+                        entry.getValue().add(combination);
+                        return;
+                    }
+                }
+                // trigger not found, add new list for new trigger
+                trigger = triggerState.getTriggerClass().newInstance();
+                List<ICombination> list = new ArrayList<ICombination>();
+                list.add(combination);
+                combinationsByTrigger.put(trigger, list);
             }
+            // moved outside the synchronized to avoid deadlock by foreign trigger code
+            trigger.setActive(isActive());
         } catch (InstantiationException e) {
             error(e);
         } catch (IllegalAccessException e) {
