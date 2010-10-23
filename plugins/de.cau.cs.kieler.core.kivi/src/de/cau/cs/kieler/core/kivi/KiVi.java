@@ -14,8 +14,10 @@
 package de.cau.cs.kieler.core.kivi;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +57,7 @@ public class KiVi {
 
     private List<CombinationDescriptor> availableCombinations = new ArrayList<CombinationDescriptor>();
 
-    private Map<ITrigger, List<ICombination>> combinationsByTrigger;;
+    private Map<ITrigger, Collection<ICombination>> combinationsByTrigger;;
 
     private boolean active = false;
 
@@ -63,7 +65,7 @@ public class KiVi {
      * Instantiate the singleton class.
      */
     public KiVi() {
-        combinationsByTrigger = new HashMap<ITrigger, List<ICombination>>();
+        combinationsByTrigger = new HashMap<ITrigger, Collection<ICombination>>();
         combinationsWorker.start();
         effectsWorker.start();
     }
@@ -100,7 +102,7 @@ public class KiVi {
                 }
                 // undo combinations
                 Set<ICombination> cs = new HashSet<ICombination>();
-                for (List<ICombination> l : combinationsByTrigger.values()) {
+                for (Collection<ICombination> l : combinationsByTrigger.values()) {
                     cs.addAll(l);
                 }
                 for (ICombination c : cs) {
@@ -151,7 +153,7 @@ public class KiVi {
             for (CombinationDescriptor d : availableCombinations) {
                 if (d.isActive()) {
                     boolean found = false;
-                    outer: for (List<ICombination> l : combinationsByTrigger.values()) {
+                    outer: for (Collection<ICombination> l : combinationsByTrigger.values()) {
                         for (ICombination c : l) {
                             if (d.getClazz().isInstance(c)) {
                                 found = true;
@@ -169,7 +171,7 @@ public class KiVi {
                         }
                     }
                 } else {
-                    for (List<ICombination> l : combinationsByTrigger.values()) {
+                    for (Collection<ICombination> l : combinationsByTrigger.values()) {
                         for (ICombination c : l) {
                             if (d.getClazz().isInstance(c)) {
                                 toDeactivate.add(c);
@@ -274,7 +276,7 @@ public class KiVi {
             ((AbstractTriggerState) triggerState).setSequenceNumber();
         }
 
-        List<ICombination> cs = getCombinations(triggerState.getTriggerClass());
+        Collection<ICombination> cs = getCombinations(triggerState.getTriggerClass());
         for (ICombination c : cs) {
             List<IEffect> effects = c.trigger(triggerState);
             for (IEffect effect : effects) {
@@ -332,11 +334,11 @@ public class KiVi {
      *            class of triggers
      * @return list of availableCombinations
      */
-    private List<ICombination> getCombinations(final Class<?> trigger) {
+    private Collection<ICombination> getCombinations(final Class<?> trigger) {
         synchronized (combinationsByTrigger) {
             for (ITrigger t : combinationsByTrigger.keySet()) {
                 if (trigger.isInstance(t)) {
-                    List<ICombination> list = combinationsByTrigger.get(t);
+                    Collection<ICombination> list = combinationsByTrigger.get(t);
                     if (list != null) {
                         return list;
                     }
@@ -355,7 +357,7 @@ public class KiVi {
      */
     public boolean isCombinationClassActive(final Class<?> clazz) {
         synchronized (combinationsByTrigger) {
-            for (List<ICombination> l : combinationsByTrigger.values()) {
+            for (Collection<ICombination> l : combinationsByTrigger.values()) {
                 for (ICombination combination : l) {
                     if (clazz.isInstance(combination)) {
                         return true;
@@ -388,7 +390,7 @@ public class KiVi {
                         triggerStates.put(clazz, triggerState);
                     }
                 }
-                for (Map.Entry<ITrigger, List<ICombination>> entry : combinationsByTrigger
+                for (Map.Entry<ITrigger, Collection<ICombination>> entry : combinationsByTrigger
                         .entrySet()) {
                     if (triggerState.getTriggerClass().isInstance(entry.getKey())) {
                         entry.getValue().add(combination);
@@ -397,9 +399,9 @@ public class KiVi {
                 }
                 // trigger not found, add new list for new trigger
                 trigger = triggerState.getTriggerClass().newInstance();
-                List<ICombination> list = new ArrayList<ICombination>();
-                list.add(combination);
-                combinationsByTrigger.put(trigger, list);
+                Set<ICombination> set = new LinkedHashSet<ICombination>();
+                set.add(combination);
+                combinationsByTrigger.put(trigger, set);
             }
             // moved outside the synchronized to avoid deadlock by foreign trigger code
             trigger.setActive(isActive());
@@ -427,8 +429,8 @@ public class KiVi {
                     if (triggerState == null) {
                         triggerState = clazz.newInstance();
                     }
-                    Map.Entry<ITrigger, List<ICombination>> toRemove = null;
-                    for (Map.Entry<ITrigger, List<ICombination>> entry : combinationsByTrigger
+                    Map.Entry<ITrigger, Collection<ICombination>> toRemove = null;
+                    for (Map.Entry<ITrigger, Collection<ICombination>> entry : combinationsByTrigger
                             .entrySet()) {
                         if (triggerState.getTriggerClass().isInstance(entry.getKey())) {
                             entry.getValue().remove(combination);
