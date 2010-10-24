@@ -10,8 +10,7 @@
             description="This is the &lt;b&gt;quick start &lt;/b&gt; example."
             generation_date="Fri Jul 07 09:05:16 CEST 2010"
             root_directory="files/"
-            title="QuickStart"
-            version="1.0">
+            title="QuickStart">
          <category
                id="de.cau.cs.kieler.syncchart">
          </category>
@@ -19,11 +18,6 @@
                direct_open="false"
                local_path="files/quick_start/"
                resource_type="project">
-         </example_resource>
-         <example_resource
-               direct_open="false"
-               local_path="files/quick_start/project"
-               resource_type="file">
          </example_resource>
          <example_resource
                direct_open="false"

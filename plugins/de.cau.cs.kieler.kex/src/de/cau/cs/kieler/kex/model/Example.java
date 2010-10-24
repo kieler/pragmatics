@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kex.model;
 
 import java.util.ArrayList;
@@ -7,149 +20,152 @@ import java.util.List;
 
 public class Example {
 
-    /**
-     * unique field.
-     */
-    private final String title;
+	/**
+	 * unique field.
+	 */
+	private final String title;
 
-    private final List<ExampleResource> resources;
+	private final List<ExampleResource> resources;
 
-    private final List<String> categories;
+	private final List<String> categories;
 
-    private final SourceType sourceType;
+	private final SourceType sourceType;
 
-    private final Date generationDate;
+	private final Date generationDate;
 
-    private String description;
+	private String description;
 
-    private String contact;
+	private String contact;
 
-    private String author;
+	private String author;
 
-    private String namespaceId;
+	private String namespaceId;
 
-    private String rootDir;
+	private String rootDir;
 
-    private String overviewPic;
+	private String overviewPic;
 
-    private Boolean isProject;
+	private Boolean isProject;
 
-    public Example(final String title, SourceType importType) {
-        this.title = title;
-        this.sourceType = importType;
-        this.resources = new ArrayList<ExampleResource>();
-        this.categories = new ArrayList<String>();
-        this.generationDate = Calendar.getInstance().getTime();
-    }
+	public Example(final String title, SourceType importType) {
+		this.title = title;
+		this.sourceType = importType;
+		this.resources = new ArrayList<ExampleResource>();
+		this.categories = new ArrayList<String>();
+		this.generationDate = Calendar.getInstance().getTime();
+	}
 
-    @Override
-    public String toString() {
-        return new StringBuffer().append("Example [title= ").append(getTitle())
-                .append(",source type= ").append(SourceType.map(this.sourceType))
-                .append(getContact()).append(", author= ").append(this.author)
-                .append(", generated at= ").append(this.generationDate.toString())
-                .append(", description= ").append(getDescription()).append("]").toString();
-    }
+	@Override
+	public String toString() {
+		return new StringBuffer().append("Example [title= ").append(getTitle())
+				.append(",source type= ")
+				.append(SourceType.map(this.sourceType)).append(getContact())
+				.append(", author= ").append(this.author)
+				.append(", generated at= ")
+				.append(this.generationDate.toString())
+				.append(", description= ").append(getDescription()).append("]")
+				.toString();
+	}
 
-    public boolean contains(String category) {
-        for (String element : getCategories()) {
-            if (category.equals(element))
-                return true;
-        }
-        return false;
-    }
+	public boolean contains(String category) {
+		for (String element : getCategories()) {
+			if (category.equals(element))
+				return true;
+		}
+		return false;
+	}
 
-    public String getTitle() {
-        return this.title;
-    }
+	public String getTitle() {
+		return this.title;
+	}
 
-    public Date getGenerationDate() {
-        return this.generationDate;
-    }
+	public Date getGenerationDate() {
+		return this.generationDate;
+	}
 
-    public SourceType getSourceType() {
-        return this.sourceType;
-    }
+	public SourceType getSourceType() {
+		return this.sourceType;
+	}
 
-    public void addCategories(List<String> categories) {
-        this.categories.addAll(categories);
-    }
+	public void addCategories(List<String> categories) {
+		this.categories.addAll(categories);
+	}
 
-    public List<String> getCategories() {
-        return categories;
-    }
+	public List<String> getCategories() {
+		return categories;
+	}
 
-    public void addResources(List<ExampleResource> exampleResources) {
-        this.resources.addAll(exampleResources);
-    }
+	public void addResources(List<ExampleResource> exampleResources) {
+		this.resources.addAll(exampleResources);
+	}
 
-    public List<ExampleResource> getResources() {
-        return resources;
-    }
+	public List<ExampleResource> getResources() {
+		return resources;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getContact() {
-        return this.contact;
-    }
+	public String getContact() {
+		return this.contact;
+	}
 
-    public void setContact(String contact) {
-        this.contact = contact;
-    }
+	public void setContact(String contact) {
+		this.contact = contact;
+	}
 
-    public void setNamespaceId(String namespaceId) {
-        this.namespaceId = namespaceId;
-    }
+	public void setNamespaceId(String namespaceId) {
+		this.namespaceId = namespaceId;
+	}
 
-    public String getNamespaceId() {
-        return this.namespaceId;
-    }
+	public String getNamespaceId() {
+		return this.namespaceId;
+	}
 
-    public void setRootDir(String rootDir) {
-        this.rootDir = rootDir;
-    }
+	public void setRootDir(String rootDir) {
+		this.rootDir = rootDir;
+	}
 
-    public String getRootDir() {
-        return this.rootDir;
-    }
+	public String getRootDir() {
+		return this.rootDir;
+	}
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+	public void setAuthor(String author) {
+		this.author = author;
+	}
 
-    public String getAuthor() {
-        return author;
-    }
+	public String getAuthor() {
+		return author;
+	}
 
-    public void setOverviewPic(String overviewPic) {
-        this.overviewPic = overviewPic;
-    }
+	public void setOverviewPic(String overviewPic) {
+		this.overviewPic = overviewPic;
+	}
 
-    public String getOverviewPic() {
-        return overviewPic;
-    }
+	public String getOverviewPic() {
+		return overviewPic;
+	}
 
-    public boolean isProject() {
-        // should only be loaded one time.
-        if (isProject == null) {
-            for (ExampleResource resource : resources) {
-                if (ExampleResource.Type.PROJECT == resource.getResourceType()) {
-                    isProject = Boolean.valueOf(true);
-                    return isProject;
-                }
-            }
-            isProject = Boolean.valueOf(false);
-            return isProject;
-        } else {
-            return isProject;
-        }
+	public boolean isProject() {
+		// should only be loaded one time.
+		if (isProject == null) {
+			for (ExampleResource resource : resources) {
+				if (ExampleResource.Type.PROJECT == resource.getResourceType()) {
+					isProject = Boolean.valueOf(true);
+					return isProject;
+				}
+			}
+			isProject = Boolean.valueOf(false);
+			return isProject;
+		} else {
+			return isProject;
+		}
 
-    }
+	}
 
 }
