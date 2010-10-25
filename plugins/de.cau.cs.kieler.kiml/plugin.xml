@@ -2,7 +2,6 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension-point id="layoutProviders" name="Layout Providers" schema="schema/layoutProviders.exsd"/>
-   <extension-point id="layoutListeners" name="Layout Listeners" schema="schema/layoutListeners.exsd"/>
    <extension-point id="layoutInfo" name="Layout Info" schema="schema/layoutInfo.exsd"/>
    <extension
          point="org.eclipse.emf.ecore.generated_package">

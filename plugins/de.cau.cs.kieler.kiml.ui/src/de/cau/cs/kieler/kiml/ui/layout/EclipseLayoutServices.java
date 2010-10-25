@@ -36,7 +36,6 @@ import org.osgi.framework.Bundle;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.ILayoutListener;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
@@ -57,8 +56,6 @@ public class EclipseLayoutServices extends LayoutServices {
 
     /** identifier of the extension point for layout providers. */
     public static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layoutProviders";
-    /** identifier of the extension point for layout listeners. */
-    public static final String EXTP_ID_LAYOUT_LISTENERS = "de.cau.cs.kieler.kiml.layoutListeners";
     /** identifier of the extension point for layout info. */
     public static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutInfo";
     /** identifier of the extension point for layout managers. */
@@ -138,7 +135,6 @@ public class EclipseLayoutServices extends LayoutServices {
         LayoutServices.createLayoutServices(layoutServices);
         // build layout services for all extension points
         layoutServices.loadLayoutProviderExtensions();
-        layoutServices.loadLayoutListenerExtensions();
         layoutServices.loadLayoutInfoExtensions();
         layoutServices.loadLayoutManagerExtensions();
         layoutServices.loadDefaultOptions();
@@ -675,29 +671,6 @@ public class EclipseLayoutServices extends LayoutServices {
                 }
                 optionData.setTargets(element.getAttribute(ATTRIBUTE_APPLIESTO));
                 registry().addLayoutOption(optionData);
-            }
-        }
-    }
-
-    /**
-     * Loads and registers all layout listeners from the extension point.
-     */
-    private void loadLayoutListenerExtensions() {
-        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_LAYOUT_LISTENERS);
-
-        for (IConfigurationElement element : extensions) {
-            if (ELEMENT_LAYOUT_LISTENER.equals(element.getName())) {
-                // register a layout listener from the extension
-                try {
-                    ILayoutListener layoutListener = (ILayoutListener) element
-                            .createExecutableExtension(ATTRIBUTE_CLASS);
-                    if (layoutListener != null) {
-                        registry().addLayoutListener(layoutListener);
-                    }
-                } catch (CoreException exception) {
-                    StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
-                }
             }
         }
     }

@@ -24,7 +24,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.ui.AnalysisResultDialog;
-import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
+import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.grana.views.AnalysisResultViewPart;
 
 /**
@@ -47,7 +47,7 @@ public class AnalysisHandler extends AbstractAnalysisHandler {
         List<AbstractInfoAnalysis> analyses = getLastAnalysesSelection();
         // perform the analyses on the active diagram
         Map<String, Object> results =
-                DiagramAnalyser.analyse(editorPart, null, analyses, true);
+                DiagramAnalyzer.analyse(editorPart, null, analyses, true);
         // refresh the result view
         AnalysisResultViewPart view = AnalysisResultViewPart.findView();
         if (view != null) {

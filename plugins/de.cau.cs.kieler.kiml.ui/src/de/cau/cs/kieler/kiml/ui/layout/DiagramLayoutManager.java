@@ -26,7 +26,6 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
-import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
@@ -186,13 +185,8 @@ public abstract class DiagramLayoutManager {
     public IStatus layout(final IKielerProgressMonitor progressMonitor,
             final boolean layoutAncestors) {
         try {
-            LayoutServices layoutServices = LayoutServices.getInstance();
-
             // get the layout graph instance
             KNode layoutGraph = getLayoutGraph();
-
-            // notify layout listeners about the layout request
-            layoutServices.layoutRequested(layoutGraph);
 
             // perform layout on the layout graph
             DEBUG_CANVAS.setManager(this);
@@ -201,9 +195,6 @@ public abstract class DiagramLayoutManager {
                 return new Status(IStatus.CANCEL, KimlUiPlugin.PLUGIN_ID, 0,
                         null, null);
             }
-
-            // notify layout listeners about the performed layout
-            layoutServices.layoutPerformed(layoutGraph, progressMonitor);
 
             // return a positive status including graph size
             int graphSize = countNodes(layoutGraph);

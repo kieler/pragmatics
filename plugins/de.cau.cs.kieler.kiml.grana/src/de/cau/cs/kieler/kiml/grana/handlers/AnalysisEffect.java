@@ -16,39 +16,46 @@ package de.cau.cs.kieler.kiml.grana.handlers;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.ILayoutListener;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyser;
+import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.grana.views.AnalysisResultViewPart;
 
 /**
- * A listener on the automatic graph layout that invokes the currently
- * configured analyses and refreshes the analysis result view.
- * 
- * @author mri
+ * A view management effect for graph analysis.
+ *
+ * @author msp
  */
-public class AutomaticAnalysisLayoutListener extends AbstractAnalysisHandler
-        implements ILayoutListener {
+public class AnalysisEffect extends AbstractEffect {
 
+    /** the parent node. */
+    private KNode parentNode;
+    /** the analyses to perform. */
+    private List<AbstractInfoAnalysis> analyses;
+    /** whether a progress bar should be used. */
+    private boolean progressBar;
+    
     /**
-     * {@inheritDoc}
+     * Creates an analysis effect.
+     * 
+     * @param theparentNode the parent node
+     * @param theanalyses the analyses to perform
+     * @param theprogressBar whether a progress bar should be used
      */
-    public void layoutRequested(final KNode layoutGraph) {
-        // nothing
+    public AnalysisEffect(final KNode theparentNode,
+            final List<AbstractInfoAnalysis> theanalyses, final boolean theprogressBar) {
+        this.parentNode = theparentNode;
+        this.analyses = theanalyses;
+        this.progressBar = theprogressBar;
     }
-
+    
     /**
      * {@inheritDoc}
      */
-    public void layoutPerformed(final KNode layoutGraph,
-            final IKielerProgressMonitor monitor) {
+    public void execute() {
         final Maybe<AnalysisResultViewPart> viewPart = new Maybe<AnalysisResultViewPart>();
         MonitoredOperation.runInUI(new Runnable() {
             public void run() {
@@ -56,28 +63,16 @@ public class AutomaticAnalysisLayoutListener extends AbstractAnalysisHandler
             }
         }, true);
         if (viewPart.get() != null) {
-            monitor.begin("Performing graph analysis", 1);
-            // let the user select the analyses
-            final List<AbstractInfoAnalysis> analyses =
-                    getLastAnalysesSelection();
             // perform the analyses on the active diagram
             final Map<String, Object> results =
-                    DiagramAnalyser.analyse(layoutGraph, analyses, false);
+                    DiagramAnalyzer.analyse(parentNode, analyses, progressBar);
             // refresh the result view
             MonitoredOperation.runInUI(new Runnable() {
                 public void run() {
                     viewPart.get().setAnalysisResults(analyses, results);
                 }
             }, false);
-            monitor.done();
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Object execute(final ExecutionEvent event) throws ExecutionException {
-        // ignore, this is not a real handler
-        return null;
-    }
 }

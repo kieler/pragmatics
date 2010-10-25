@@ -3,6 +3,74 @@
 <plugin>
    <extension-point id="analysisProviders" name="AnalysisProviders" schema="schema/analysisProviders.exsd"/>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.AnalysisHandler"
+            id="de.cau.cs.kieler.kiml.grana.command.analyse"
+            name="Analyse">
+      </command>
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.ConfigureAnalysesHandler"
+            id="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
+            name="Configure Analyses">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:de.cau.cs.kieler">
+         <command
+               commandId="de.cau.cs.kieler.kiml.grana.command.analyse"
+               icon="icons/menu16/analyzediagram.gif"
+               id="de.cau.cs.kieler.kiml.grana.menu.analysis"
+               label="Analyse"
+               style="pulldown"
+               tooltip="Analyse the current diagram with KIELER">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditor">
+                  <test
+                        forcePluginActivation="false"
+                        property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:de.cau.cs.kieler.kiml.grana.menu.analysis">
+         <command
+               commandId="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
+               label="Configure..."
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.grana.ui.GranaGeneralPreferencePage"
+            id="de.cau.cs.kieler.kiml.grana.general"
+            name="Graph Analysis">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.grana.views.AnalysisResultViewPart"
+            icon="icons/menu16/analyzediagramquick.gif"
+            id="de.cau.cs.kieler.kiml.grana.views.analysisResults"
+            name="Analysis Results"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">
       <category
             description="This is the default category."
@@ -93,78 +161,12 @@
       </resultVisualizer>
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="de.cau.cs.kieler"
-            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.AnalysisHandler"
-            id="de.cau.cs.kieler.kiml.grana.command.analyse"
-            name="Analyse">
-      </command>
-      <command
-            categoryId="de.cau.cs.kieler"
-            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.ConfigureAnalysesHandler"
-            id="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
-            name="Configure Analyses">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="toolbar:de.cau.cs.kieler">
-         <command
-               commandId="de.cau.cs.kieler.kiml.grana.command.analyse"
-               icon="icons/menu16/analyzediagram.gif"
-               id="de.cau.cs.kieler.kiml.grana.menu.analysis"
-               label="Analyse"
-               style="pulldown"
-               tooltip="Analyse the current diagram with KIELER">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeEditor">
-                  <test
-                        forcePluginActivation="false"
-                        property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
-                  </test>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="menu:de.cau.cs.kieler.kiml.grana.menu.analysis">
-         <command
-               commandId="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
-               label="Configure..."
-               style="push">
-         </command>
-      </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kiml.grana.ui.GranaGeneralPreferencePage"
-            id="de.cau.cs.kieler.kiml.grana.general"
-            name="Graph Analysis">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kiml.grana.views.AnalysisResultViewPart"
-            icon="icons/menu16/analyzediagramquick.gif"
-            id="de.cau.cs.kieler.kiml.grana.views.analysisResults"
-            name="Analysis Results"
-            restorable="true">
-      </view>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.kiml.layoutListeners">
-      <layoutListener
-            class="de.cau.cs.kieler.kiml.grana.handlers.AutomaticAnalysisLayoutListener">
-      </layoutListener>
+         point="de.cau.cs.kieler.core.kivi.combinations">
+      <combination
+            class="de.cau.cs.kieler.kiml.grana.handlers.LayoutAnalysisCombination"
+            description="Perform automatic graph analysis after a layout has been calculated"
+            name="Analysis after Layout">
+      </combination>
    </extension>
 
 </plugin>

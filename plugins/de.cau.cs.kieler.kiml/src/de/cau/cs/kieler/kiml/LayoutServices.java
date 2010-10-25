@@ -19,12 +19,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -53,8 +51,6 @@ public class LayoutServices {
 
     /** the instance of the registry class. */
     private Registry registry = null;
-    /** the list of layout listeners that have been loaded at startup. */
-    private List<ILayoutListener> listeners = new LinkedList<ILayoutListener>();
     /** mapping of layout provider identifiers to their data instances. */
     private Map<String, LayoutProviderData> layoutProviderMap
             = new LinkedHashMap<String, LayoutProviderData>();
@@ -142,25 +138,6 @@ public class LayoutServices {
         }
 
         /**
-         * Adds the given layout listener to the list of registered listeners.
-         * 
-         * @param listener layout listener to register
-         */
-        public void addLayoutListener(final ILayoutListener listener) {
-            listeners.add(listener);
-        }
-
-        /**
-         * Removes the given layout listener from the list of registered
-         * listeners.
-         * 
-         * @param listener layout listener to remove
-         */
-        public void removeLayoutListener(final ILayoutListener listener) {
-            listeners.remove(listener);
-        }
-
-        /**
          * Registers the given layout provider. If there is already a registered
          * provider data instance with the same identifier, it is overwritten.
          * 
@@ -232,41 +209,6 @@ public class LayoutServices {
             optionsMap.put(optionId, value);
         }
 
-    }
-
-    /**
-     * Calls the {@link ILayoutListener#layoutRequested layoutRequested} method
-     * of all registered layout listeners.
-     * 
-     * @param layoutGraph layout graph for which layout is requested
-     */
-    public final void layoutRequested(final KNode layoutGraph) {
-        // find the root node if the given layout node is not the root
-        KNode rootGraph = layoutGraph;
-        while (rootGraph.getParent() != null) {
-            rootGraph = rootGraph.getParent();
-        }
-        for (ILayoutListener listener : listeners) {
-            listener.layoutRequested(rootGraph);
-        }
-    }
-
-    /**
-     * Calls the {@link ILayoutListener#layoutPerformed layoutPerformed} method
-     * of all registered layout listeners.
-     * 
-     * @param layoutGraph layout graph for which layout was performed
-     * @param monitor progress monitor containing execution time results
-     */
-    public final void layoutPerformed(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
-        // find the root node if the given layout node is not the root
-        KNode rootGraph = layoutGraph;
-        while (rootGraph.getParent() != null) {
-            rootGraph = rootGraph.getParent();
-        }
-        for (ILayoutListener listener : listeners) {
-            listener.layoutPerformed(rootGraph, monitor);
-        }
     }
 
     /**

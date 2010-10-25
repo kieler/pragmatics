@@ -16,29 +16,44 @@ package de.cau.cs.kieler.kiml.grana.handlers;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 
 /**
- * The base class for handlers that perform an analysis of any kind.
+ * A view management combination that performs graph analysis after layout.
  * 
- * @author mri
+ * @author msp
  */
-public abstract class AbstractAnalysisHandler extends AbstractHandler {
+public class LayoutAnalysisCombination extends AbstractCombination {
+
+    /**
+     * Execute this combination with an effect trigger state.
+     * 
+     * @param layoutState the trigger state of the last layout effect
+     */
+    public void execute(final EffectTriggerState<LayoutEffect> layoutState) {
+        DiagramLayoutManager manager = layoutState.getEffect().getManager();
+        if (manager != null) {
+            final List<AbstractInfoAnalysis> analyses = getLastAnalysesSelection();
+            KNode parentNode = manager.getLayoutGraph();
+            schedule(new AnalysisEffect(parentNode, analyses, false));
+        }
+    }
     
-    /** the name for the last analyses preference. */
-    public static final String LAST_ANALYSES_PREFERENCE = "lastAnalysesPreference"; 
-   
     /**
      * Returns the last selected analyses from the preference store.
      * 
      * @return the last selected analyses
      */
-    protected List<AbstractInfoAnalysis> getLastAnalysesSelection() {
+    private List<AbstractInfoAnalysis> getLastAnalysesSelection() {
         List<AbstractInfoAnalysis> result =
                 new LinkedList<AbstractInfoAnalysis>();
         // get the preference store
@@ -46,7 +61,7 @@ public abstract class AbstractAnalysisHandler extends AbstractHandler {
                 GranaPlugin.getDefault().getPreferenceStore();
         // get the serialized analyses ids from the preference store
         String analysesIdsSerialized =
-                preferenceStore.getString(LAST_ANALYSES_PREFERENCE);
+                preferenceStore.getString(AbstractAnalysisHandler.LAST_ANALYSES_PREFERENCE);
         String[] analysesIds = analysesIdsSerialized.split(";");
         for (String analysisId : analysesIds) {
             AbstractInfoAnalysis analysis =
@@ -58,24 +73,5 @@ public abstract class AbstractAnalysisHandler extends AbstractHandler {
         }
         return result;
     }
-
-    /**
-     * Sets the last selected analyses in the preference store.
-     * 
-     * @param analyses
-     *            the analyses
-     */
-    protected void setLastAnalysesSelection(
-            final List<AbstractInfoAnalysis> analyses) {
-        // get the preference store
-        IPreferenceStore preferenceStore =
-                GranaPlugin.getDefault().getPreferenceStore();
-        // serialize the analyses ids
-        String analysesIdsSerialized = "";
-        for (AbstractInfoAnalysis analysis : analyses) {
-            analysesIdsSerialized += analysis.getID() + ";";
-        }
-        preferenceStore.setValue(LAST_ANALYSES_PREFERENCE,
-                analysesIdsSerialized);
-    }
+    
 }

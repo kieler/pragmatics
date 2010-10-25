@@ -40,7 +40,7 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
  * 
  * @author mri
  */
-public final class DiagramAnalyser {
+public final class DiagramAnalyzer {
 
     /** maximal number of recursion levels for which progress is displayed. */
     private static final int MAX_PROGRESS_LEVELS = 3;
@@ -52,7 +52,7 @@ public final class DiagramAnalyser {
     /**
      * This class is an utility class and should not be instantiated.
      */
-    private DiagramAnalyser() {
+    private DiagramAnalyzer() {
     }
 
     /**
@@ -73,7 +73,7 @@ public final class DiagramAnalyser {
     public static Object analyse(final IEditorPart editorPart,
             final EditPart editPart, final AbstractInfoAnalysis analysis,
             final boolean progressBar) {
-    	return analyse(editorPart, editPart, analysis, null, progressBar);
+        return analyse(editorPart, editPart, analysis, null, progressBar);
     }
 
     /**
@@ -221,7 +221,7 @@ public final class DiagramAnalyser {
      */
     public static Object analyse(final KNode parentNode,
             final AbstractInfoAnalysis analysis, final boolean progressBar) {
-    	return analyse(parentNode, analysis, null, progressBar);
+        return analyse(parentNode, analysis, null, progressBar);
     }
 
     /**
@@ -264,7 +264,7 @@ public final class DiagramAnalyser {
      */
     public static Map<String, Object> analyse(final KNode parentNode,
             final List<AbstractInfoAnalysis> analyses, final boolean progressBar) {
-    	return analyse(parentNode, analyses, null, progressBar);
+        return analyse(parentNode, analyses, null, progressBar);
     }
 
     /**

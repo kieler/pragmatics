@@ -21,16 +21,16 @@ import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.ILayoutListener;
 import de.cau.cs.kieler.kiml.viewer.views.ExecutionView;
 import de.cau.cs.kieler.kiml.viewer.views.LayoutGraphView;
 
 /**
  * Layout listener implementation that displays the layout graphs in a view.
  * 
+ * @deprecated FIXME the layout listeners extension point is no more; use KiVi instead!
  * @author msp
  */
-public class ViewLayoutListener implements ILayoutListener {
+public class ViewLayoutListener {
 
     /** the currently open layout graph view. */
     private LayoutGraphView layoutGraphView;

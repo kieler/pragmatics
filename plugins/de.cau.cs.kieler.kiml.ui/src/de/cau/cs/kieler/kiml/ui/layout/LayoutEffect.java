@@ -50,6 +50,8 @@ public class LayoutEffect extends AbstractEffect {
     private boolean zoom = true;
 
     private boolean progressMonitor = false;
+    
+    private DiagramLayoutManager manager;
 
     /**
      * Create a new layout effect for the given DiagramEditor and EObject.
@@ -90,8 +92,7 @@ public class LayoutEffect extends AbstractEffect {
      * TODO avoid some copypasta.
      */
     public void execute() {
-        final DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(
-                diagramEditor, editPart);
+        manager = EclipseLayoutServices.getInstance().getManager(diagramEditor, editPart);
         if (manager != null) {
             if (zoom) {
                 if (progressMonitor) {
@@ -212,6 +213,16 @@ public class LayoutEffect extends AbstractEffect {
                 manager.layout(diagramEditor, editPart, true, progressMonitor, true, true);
             }
         }
+    }
+    
+    /**
+     * Returns the diagram layout manager that was used for this layout effect, or
+     * {@code null} if the effect has not been executed yet.
+     * 
+     * @return the diagram layout manager
+     */
+    public DiagramLayoutManager getManager() {
+        return manager;
     }
 
     /**

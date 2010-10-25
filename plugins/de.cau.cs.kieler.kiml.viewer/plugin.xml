@@ -22,11 +22,5 @@
             restorable="true">
       </view>
    </extension>
-   <extension
-         point="de.cau.cs.kieler.kiml.layoutListeners">
-      <layoutListener
-            class="de.cau.cs.kieler.kiml.viewer.ViewLayoutListener">
-      </layoutListener>
-   </extension>
 
 </plugin>
