@@ -64,7 +64,6 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
     /**
      * {@inheritDoc}
      */
-    @Override
     protected boolean isContextMenuApplicable(final IFeature feature) {
         boolean ret = (feature instanceof ICustomFeature);
         return ret;
