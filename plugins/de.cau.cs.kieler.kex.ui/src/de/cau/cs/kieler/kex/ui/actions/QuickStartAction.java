@@ -40,9 +40,24 @@ import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.SourceType;
 
+/**
+ * This class contains the contents to run a quick start example.
+ * 
+ * @author pkl
+ */
 public class QuickStartAction implements IIntroAction {
 
-	public void run(IIntroSite site, Properties params) {
+	/**
+	 * executes a quick start. Filters from the given parameters the sourcetype
+	 * and prompt depending on that a import. The welcomepage will closed
+	 * automatically.
+	 * 
+	 * @param site
+	 *            , {@link IIntroSite}
+	 * @param params
+	 *            , {@link Properties}
+	 */
+	public final void run(final IIntroSite site, final Properties params) {
 
 		String sourceType = params.getProperty("sourceType");
 		SourceType sourcetype = null;
@@ -87,12 +102,26 @@ public class QuickStartAction implements IIntroAction {
 		}
 	}
 
+	/**
+	 * opens up a error dialog with given title and message.
+	 * 
+	 * @param title
+	 *            , String
+	 * @param message
+	 *            , String
+	 */
 	private void showError(String title, String message) {
 		IWorkbench wb = PlatformUI.getWorkbench();
 		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
 		MessageDialog.openError(win.getShell(), title, message);
 	}
 
+	/**
+	 * refreshes the workspace and opens up the direct open files with an
+	 * editor.
+	 * 
+	 * @param directOpens
+	 */
 	private void postfix(List<String> directOpens) {
 		// refresh workspace
 		IContainer element = ResourcesPlugin.getWorkspace().getRoot();

@@ -22,6 +22,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * This class contains all elements to opens a {@link WizardPage} with example
+ * attributes.
+ * 
+ * @author pkl
+ */
 public class ExampleAttributesPage extends WizardPage {
 
 	private static final int exDescHeight = 100;
