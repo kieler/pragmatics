@@ -50,9 +50,7 @@ import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
 import de.cau.cs.kieler.core.model.transformation.xtend.XtendTransformationFramework;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.core.ui.handler.ICutCopyPasteCommandFactory;
-import de.cau.cs.kieler.ksbase.ui.TransformationUIManager;
 import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommand;
-import de.cau.cs.kieler.ksbase.ui.listener.ITransformationEventListener;
 
 /**
  * Creates the cut, copy and paste commands from ksbase.
@@ -365,11 +363,13 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                 throws ExecutionException {
             performPreOperationActions(monitor);
 
-            // Notify event listeners:
-            for (ITransformationEventListener te : TransformationUIManager.INSTANCE
-                    .getTransformationEventListeners()) {
-                te.transformationAboutToExecute(new Object[] {});
-            }
+            // Notify event listeners: (no longer needed, triggerlistener takes
+            // care)
+            // for (ITransformationEventListener te :
+            // TransformationUIManager.INSTANCE
+            // .getTransformationEventListeners()) {
+            // te.transformationAboutToExecute(new Object[] {});
+            // }
 
             CommandResult res = super.doExecuteWithResult(monitor, info);
             if (label.equalsIgnoreCase("paste")) {
@@ -443,11 +443,12 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                 myException = e;
             }
 
-            // Notify event listeners:
-            for (ITransformationEventListener te : TransformationUIManager.INSTANCE
-                    .getTransformationEventListeners()) {
-                te.transformationExecuted(new Object[] { obj, editor });
-            }
+            // Notify event listeners: (no longer needed)
+            // for (ITransformationEventListener te :
+            // TransformationUIManager.INSTANCE
+            // .getTransformationEventListeners()) {
+            // te.transformationExecuted(new Object[] { obj, editor });
+            // }
 
             performPostOperationActions(monitor);
 
