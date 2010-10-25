@@ -59,6 +59,7 @@ public class DiagramDefaultAction extends Action {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void run() {
         IEditorPart editorPart = layoutView.getCurrentEditor();
         if (editorPart instanceof GraphicalEditor) {

@@ -51,6 +51,28 @@ public class LayoutOptionData<T> implements IProperty<T> {
         FLOAT,
         /** enumeration type. */
         ENUM;
+        
+        /**
+         * Returns a user-friendly literal for the enumeration value.
+         * 
+         * @return a literal
+         */
+        public String literal() {
+            switch (this) {
+            case BOOLEAN:
+                return BOOLEAN_LITERAL;
+            case INT:
+                return INT_LITERAL;
+            case STRING:
+                return STRING_LITERAL;
+            case FLOAT:
+                return FLOAT_LITERAL;
+            case ENUM:
+                return ENUM_LITERAL;
+            default:
+                return toString();
+            }
+        }
     }
 
     /** literal value constant for diagram target. */

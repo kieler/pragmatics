@@ -23,6 +23,7 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -176,6 +177,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
             }
         });
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+        
+        // add actions to the toolbar, view menu, and context menu
         IActionBars actionBars = getViewSite().getActionBars();
         page.setActionBars(actionBars);
         ActionContributionItem categoriesItem = (ActionContributionItem) actionBars
@@ -187,6 +190,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
         addPopupActions(page.getControl().getMenu());
         IMenuManager menuManager = actionBars.getMenuManager();
         menuManager.add(new RemoveOptionsAction(this, Messages.getString("kiml.ui.30")));
+        IToolBarManager toolBarManager = actionBars.getToolBarManager();
+        toolBarManager.add(new SelectionInfoAction(this, Messages.getString("kiml.ui.37")));
         
         IWorkbenchWindow workbenchWindow = getSite().getWorkbenchWindow();
         IWorkbenchPage activePage = workbenchWindow.getActivePage();
