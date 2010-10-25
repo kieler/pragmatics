@@ -286,7 +286,8 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 // calculate offset for edge and label coordinates
                 KNode sourceParent = layoutEdge.getSource().getParent();
                 IGraphicalEditPart sourceParentEP = getGraphElem2EditPartMap().get(sourceParent);
-                Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParentEP.getFigure());
+                Rectangle sourceParentBounds = sourceParentEP == null ? new Rectangle()
+                        : KimlUiUtil.getAbsoluteBounds(sourceParentEP.getFigure());
                 KInsets insets = sourceParent.getData(KShapeLayout.class)
                         .getProperty(LayoutOptions.INSETS);
                 float offsetx = sourceParentBounds.x + insets.getLeft();

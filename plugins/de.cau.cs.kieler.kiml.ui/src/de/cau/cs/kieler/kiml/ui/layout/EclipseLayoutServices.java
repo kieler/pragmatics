@@ -119,8 +119,6 @@ public class EclipseLayoutServices extends LayoutServices {
     
     /** list of registered diagram layout managers. */
     private final List<DiagramLayoutManager> managers = new LinkedList<DiagramLayoutManager>();
-    /** the last used diagram layout manager. */
-    private DiagramLayoutManager lastManager;
     /** set of registered diagram elements. */
     private Set<String> registeredElements = new HashSet<String>();
     /** list of default options read from the extension point. */
@@ -186,15 +184,6 @@ public class EclipseLayoutServices extends LayoutServices {
      */
     public ILayoutInspector getInspector(final EditPart editPart) {
         return getManager(null, editPart).getInspector(editPart);
-    }
-    
-    /**
-     * Returns the last used layout manager instance.
-     * 
-     * @return the last used instance
-     */
-    public DiagramLayoutManager getLastManager() {
-        return lastManager;
     }
     
     /**
@@ -299,11 +288,12 @@ public class EclipseLayoutServices extends LayoutServices {
      *            if true, Draw2D animation is activated
      * @param progressBar
      *            if true, a progress bar is displayed
+     * @return the diagram layout manager that was used for layout
      */
-    public void layout(final IEditorPart editorPart,
+    public DiagramLayoutManager layout(final IEditorPart editorPart,
             final EditPart editPart, final boolean animate,
             final boolean progressBar) {
-        layout(editorPart, editPart, animate, progressBar, false);
+        return layout(editorPart, editPart, animate, progressBar, false);
     }
 
     /**
@@ -326,8 +316,8 @@ public class EclipseLayoutServices extends LayoutServices {
     public ICachedLayout cacheLayout(
             final IEditorPart editorPart, final EditPart editPart,
             final boolean animate, final boolean progressBar) {
-        layout(editorPart, editPart, animate, progressBar, true);
-        return lastManager.getCachedLayout();
+        DiagramLayoutManager manager = layout(editorPart, editPart, animate, progressBar, true);
+        return manager.getCachedLayout();
     }
 
     /**
@@ -348,15 +338,16 @@ public class EclipseLayoutServices extends LayoutServices {
      * @param layoutAncestors
      *            if true, layout is not only performed for the selected edit
      *            part, but also for its ancestors
+     * @return the diagram layout manager that was used for layout
      */
-    public void layout(final IEditorPart editorPart,
+    public DiagramLayoutManager layout(final IEditorPart editorPart,
             final EditPart editPart, final boolean animate,
             final boolean progressBar, final boolean layoutAncestors) {
         DiagramLayoutManager manager = getManager(editorPart, editPart);
         if (manager != null) {
-            lastManager = manager;
             manager.layout(editorPart, editPart, animate, progressBar,
                     layoutAncestors, false);
+            return manager;
         } else {
             throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
                     + editorPart.getTitle() + ".");

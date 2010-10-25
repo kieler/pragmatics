@@ -17,7 +17,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.Animation;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 
@@ -27,6 +30,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -69,7 +73,7 @@ public abstract class DiagramLayoutManager {
     public final void setPriority(final int thepriority) {
         this.priority = thepriority;
     }
-
+    
     /**
      * Performs layout on the given editor or edit part using this layout
      * manager. A progress bar indicating progress of the layout algorithm is
@@ -95,6 +99,36 @@ public abstract class DiagramLayoutManager {
             final EditPart editPart, final boolean animate,
             final boolean progressBar, final boolean layoutAncestors,
             final boolean cacheLayout) {
+        layout(editorPart, editPart, animate, progressBar, layoutAncestors, cacheLayout, false);
+    }
+
+    /**
+     * Performs layout on the given editor or edit part using this layout
+     * manager. A progress bar indicating progress of the layout algorithm is
+     * optionally shown to the user.
+     * 
+     * @param editorPart
+     *            the editor for which layout is performed, or {@code null} if
+     *            the diagram is not part of an editor
+     * @param editPart
+     *            the parent edit part for which layout is performed, or {@code
+     *            null} if the whole diagram shall be layouted
+     * @param animate
+     *            if true, Draw2D animation is activated
+     * @param progressBar
+     *            if true, a progress bar is displayed
+     * @param layoutAncestors
+     *            if true, layout is not only performed for the selected edit
+     *            part, but also for its ancestors
+     * @param cacheLayout
+     *            if true, the layout result is cached for the underlying model
+     * @param zoom
+     *            if true, automatic zoom-to-fit is activated
+     */
+    public final void layout(final IEditorPart editorPart,
+            final EditPart editPart, final boolean animate,
+            final boolean progressBar, final boolean layoutAncestors,
+            final boolean cacheLayout, final boolean zoom) {
         // perform layout with a progress bar
         if (progressBar) {
             final MonitoredOperation monitoredOperation = new MonitoredOperation() {
@@ -116,13 +150,17 @@ public abstract class DiagramLayoutManager {
                 protected void postUIexec(final IStatus status) {
                     if (status.getSeverity() == IStatus.OK) {
                         int nodeCount = status == null ? 0 : status.getCode();
-                        applyAnimatedLayout(animate, cacheLayout, nodeCount);
+                        if (zoom) {
+                            applyAndZoom(nodeCount, animate, cacheLayout);
+                        } else {
+                            applyAnimatedLayout(animate, cacheLayout, nodeCount);
+                        }
                     }
                 }
             };
             monitoredOperation.runMonitored();
 
-            // perform layout without a progress bar
+        // perform layout without a progress bar
         } else {
             MonitoredOperation.runInUI(new Runnable() {
                 // first phase: build the layout graph
@@ -136,23 +174,62 @@ public abstract class DiagramLayoutManager {
                 // third phase: apply layout with animation
                 public void run() {
                     int nodeCount = status == null ? 0 : status.getCode();
-                    applyAnimatedLayout(animate, cacheLayout, nodeCount);
+                    if (zoom) {
+                        applyAndZoom(nodeCount, animate, cacheLayout);
+                    } else {
+                        applyAnimatedLayout(animate, cacheLayout, nodeCount);
+                    }
                 }
             }, false);
+        }
+    }
+    
+    /**
+     * Apply layout with zoom and animation.
+     * 
+     * @param animate if true, activate Draw2D animation
+     * @param cacheLayout if true, the layout result is cached for the underlying model
+     * @param nodeCount the number of nodes in the layouted diagram
+     */
+    public final void applyAndZoom(final int nodeCount, final boolean animate,
+            final boolean cacheLayout) {
+        // determine pre- or post-layout zoom
+        ILayoutInspector inspector = getInspector(getCurrentEditPart());
+        final ZoomManager zoomManager = inspector.getZoomManager();
+        KNode parentNode = getLayoutGraph();
+        while (parentNode.getParent() != null) {
+            parentNode = parentNode.getParent();
+        }
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+        Dimension available = zoomManager.getViewport().getClientArea().getSize();
+        float desiredWidth = parentLayout.getWidth();
+        double scaleX = Math.min(available.width / desiredWidth, zoomManager.getMaxZoom());
+        float desiredHeight = parentLayout.getHeight();
+        double scaleY = Math.min(available.height / desiredHeight, zoomManager.getMaxZoom());
+        final double scale = Math.min(scaleX, scaleY);
+        final double oldScale = zoomManager.getZoom();
+
+        if (scale < oldScale) {
+            zoomManager.setViewLocation(new Point(0, 0));
+            zoomManager.setZoom(scale);
+            zoomManager.setViewLocation(new Point(0, 0));
+        }
+        applyAnimatedLayout(animate, cacheLayout, nodeCount);
+        if (scale > oldScale) {
+            zoomManager.setViewLocation(new Point(0, 0));
+            zoomManager.setZoom(scale);
+            zoomManager.setViewLocation(new Point(0, 0));
         }
     }
 
     /**
      * Apply layout with or without animation.
      * 
-     * @param animate
-     *            if true, activate Draw2D animation
-     * @param cacheLayout
-     *            if true, the layout result is cached for the underlying model
-     * @param nodeCount
-     *            the number of nodes in the layouted diagram
+     * @param animate if true, activate Draw2D animation
+     * @param cacheLayout if true, the layout result is cached for the underlying model
+     * @param nodeCount the number of nodes in the layouted diagram
      */
-    public void applyAnimatedLayout(final boolean animate, final boolean cacheLayout,
+    public final void applyAnimatedLayout(final boolean animate, final boolean cacheLayout,
             final int nodeCount) {
         // transfer layout to the diagram
         transferLayout(cacheLayout);
