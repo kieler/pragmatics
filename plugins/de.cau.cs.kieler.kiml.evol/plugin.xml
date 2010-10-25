@@ -236,7 +236,7 @@
       </category>
       <provider
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.grana.AreaMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.AreaMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.areaMetric"
             name="Area Metric">
@@ -246,7 +246,7 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.grana.BendsMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.BendsMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.bendsMetric"
             name="Bends Metric">
@@ -259,14 +259,14 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawingsCategory"
-            class="de.cau.cs.kieler.kiml.evol.grana.DimensionsAnalysis"
+            class="de.cau.cs.kieler.kiml.evol.metrics.DimensionsAnalysis"
             description="measures the horizontal and vertical dimensions of the given graph drawing"
             id="de.cau.cs.kieler.kiml.grana.dimensions"
             name="Dimensions">
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.grana.FlatnessMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.FlatnessMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.flatnessMetric"
             name="Flatness Metric">
@@ -276,7 +276,7 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.grana.NarrownessMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.NarrownessMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.narrownessMetric"
             name="Narrowness Metric">
@@ -286,7 +286,7 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.grana.EdgeCrossingsMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.EdgeCrossingsMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.edgeCrossingsMetric"
             name="Edge Crossings Metric">
@@ -302,13 +302,13 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.grana.UpwardnessMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.UpwardnessMetric"
             description="Measures the fraction of upward edges."
             id="de.cau.cs.kieler.kiml.evol.upwardnessMetric"
             name="Upwardness Metric">
       </provider>
       <provider
-            class="de.cau.cs.kieler.kiml.evol.grana.WeightedAggregation"
+            class="de.cau.cs.kieler.kiml.evol.metrics.WeightedAggregation"
             description="Returns the weighted sum of the metrics."
             id="de.cau.cs.kieler.kiml.evol.weightedAggregation"
             name="Weighted Aggregation">
@@ -330,7 +330,7 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.evol.metricCategory"
-            class="de.cau.cs.kieler.kiml.evol.grana.EdgeUniformityMetric"
+            class="de.cau.cs.kieler.kiml.evol.metrics.EdgeUniformityMetric"
             description="description"
             id="de.cau.cs.kieler.kiml.evol.edgeUniformityMetric"
             name="Edge Uniformity Metric">

@@ -14,5 +14,5 @@
 /**
  * Layout metrics for Evolutionary Meta Layout.
  */
-package de.cau.cs.kieler.kiml.evol.grana;
+package de.cau.cs.kieler.kiml.evol.metrics;
 

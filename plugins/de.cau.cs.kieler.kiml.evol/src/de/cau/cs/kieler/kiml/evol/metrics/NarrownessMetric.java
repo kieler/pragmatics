@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.evol.grana;
+package de.cau.cs.kieler.kiml.evol.metrics;
 
 import java.util.Map;
 
@@ -22,16 +22,16 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 /**
- * A layout metric that computes the vertical compactness (flatness) of the
+ * A layout metric that computes the horizontal compactness (narrowness) of the
  * given graph layout.
- * 
- * Does not care for hierarchy. The returned object is a float value within the
- * range of 0.0 to 1.0, where a higher value means more vertical compactness.
- * 
+ *
+ * Does not care for hierarchy. The returned Object is a float value within the
+ * range of 0.0 to 1.0, where a higher value means more horizontal compactness.
+ *
  * @author bdu
- * 
+ *
  */
-public class FlatnessMetric implements IAnalysis {
+public class NarrownessMetric implements IAnalysis {
 
     /** Identifier for "dimensions". */
     private static final String GRANA_DIMENSIONS = "de.cau.cs.kieler.kiml.grana.dimensions";
@@ -45,15 +45,15 @@ public class FlatnessMetric implements IAnalysis {
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
 
-        progressMonitor.begin("Flatness metric analysis", 1);
-
+        progressMonitor.begin("Narrowness metric analysis", 1);
         Float result;
+
         try {
             Object dimsResult = results.get(GRANA_DIMENSIONS);
             Pair<Float, Float> dims;
             float xdim;
             float ydim;
-            if (dimsResult instanceof Pair<?, ?>) {
+            if (dimsResult instanceof Pair) {
                 dims = (Pair<Float, Float>) dimsResult;
                 xdim = dims.getFirst();
                 ydim = dims.getSecond();
@@ -65,22 +65,20 @@ public class FlatnessMetric implements IAnalysis {
             boolean isXdimZero = (xdim == 0.0f);
             boolean isYdimZero = (ydim == 0.0f);
             if (isXdimZero && isYdimZero) {
-                throw new KielerException("Flatness metric analysis failed.");
+                throw new KielerException("Narrowness metric analysis failed.");
             }
-
             float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
             float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
             final float half = .5f;
-            if (widthToHeightRatio < 1.0f) {
-                // narrow
-                result = (widthToHeightRatio * half);
-            } else {
+            if (heightToWidthRatio < 1.0) {
                 // wide
-                result = (1.0f - (heightToWidthRatio * half));
+                result = (heightToWidthRatio * half);
+            } else {
+                // narrow
+                result = (1.0f - (widthToHeightRatio * half));
             }
-
-            assert ((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f)) : "Metric result out of bounds: "
-                    + result;
+            assert ((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f)):
+                    "Metric result out of bounds: " + result;
 
         } finally {
             // We must close the monitor.
