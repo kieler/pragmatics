@@ -70,6 +70,18 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	private static final int IMAGE_PRE_WIDTH = 208;
 	private static final int IMAGE_PRE_HEIGHT = 117;
 
+	private static final int DESC_HEIGHT_HINT = 100;
+	private static final int DESC_MIN_HEIGHT = 80;
+
+	private static final int EXTREE_WIDTH = 190;
+	private static final int EXTREE_HEIGHT = 100;
+
+	private static final int OFFSET = 5;
+	private static final int PREVIEW_OFFSET = 20;
+
+	private static final int IMG_PADDINGS_WIDTH = 40;
+	private static final int IMG_PADDINGS_HEIGHT = 120;
+
 	private Browser exampleDescription;
 
 	private Tree exampleTree;
@@ -91,7 +103,8 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	 *            , the selected resource will be set as default as import
 	 *            location.
 	 */
-	protected ImportExamplePage(String name, IStructuredSelection selection) {
+	protected ImportExamplePage(final String name,
+			final IStructuredSelection selection) {
 		super(name, selection);
 		setTitle(name);
 		super.setDescription("Choose examples to import and set destination location.");
@@ -101,7 +114,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	// set font der elemente geloest werden.
 
 	@Override
-	public void createControl(Composite parent) {
+	public void createControl(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -113,12 +126,12 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	}
 
 	@Override
-	protected void createOptionsGroup(Composite parent) {
+	protected void createOptionsGroup(final Composite parent) {
 		// no options
 	}
 
 	@Override
-	protected void createSourceGroup(Composite parent) {
+	protected void createSourceGroup(final Composite parent) {
 		// no sourceGroup
 	}
 
@@ -133,11 +146,12 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	}
 
 	/**
-	 * creates the import location group with label, textfield and button.
+	 * Creates the import location group with label, textfield and button.
 	 * 
 	 * @param parent
+	 *            , {@link Composite}
 	 */
-	private void createTopGroup(Composite parent) {
+	private void createTopGroup(final Composite parent) {
 		Group topGroup = new Group(parent, SWT.NONE);
 		topGroup.setLayout(new GridLayout());
 		topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -147,12 +161,12 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	}
 
 	/**
-	 * in the middle of the page there is the exampletree and the preview
-	 * picture.
+	 * There is the example tree and the preview picture in the middle of the
+	 * page.
 	 * 
 	 * @param parent
 	 */
-	private void createMiddleComponent(Composite parent) {
+	private void createMiddleComponent(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new FormLayout());
 		Control createTreeComposite = createTreeComposite(composite);
@@ -165,14 +179,14 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	 * 
 	 * @param parent
 	 */
-	private void createBottomComponent(Composite parent) {
+	private void createBottomComponent(final Composite parent) {
 		Label descriptionLabel = new Label(parent, SWT.NONE);
 		descriptionLabel.setText("Example Description");
 
 		this.exampleDescription = new Browser(parent, SWT.NONE | SWT.BORDER);
 		GridData descData = new GridData(GridData.FILL_HORIZONTAL);
-		descData.heightHint = 100;
-		descData.minimumHeight = 80;
+		descData.heightHint = DESC_HEIGHT_HINT;
+		descData.minimumHeight = DESC_MIN_HEIGHT;
 		this.exampleDescription.setLayoutData(descData);
 	}
 
@@ -182,7 +196,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	 * @param parent
 	 * @return Control, the created composite.
 	 */
-	private Control createTreeComposite(Composite parent) {
+	private Control createTreeComposite(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new FormLayout());
 		FormData formData = new FormData();
@@ -202,18 +216,19 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	 * @param topControl
 	 * @return exampleTree
 	 */
-	private Control createTree(Composite composite, Control topControl) {
+	private Control createTree(final Composite composite,
+			final Control topControl) {
 		exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL
 				| SWT.H_SCROLL);
-		FormData formData = new FormData(190, 100);
-		formData.top = new FormAttachment(topControl, 5);
+		FormData formData = new FormData(EXTREE_WIDTH, EXTREE_HEIGHT);
+		formData.top = new FormAttachment(topControl, OFFSET);
 		exampleTree.setLayoutData(formData);
 		exampleTree.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				updateElements(e);
 			}
 
-			public void widgetDefaultSelected(SelectionEvent e) {
+			public void widgetDefaultSelected(final SelectionEvent e) {
 				updateElements(e);
 			}
 		});
@@ -228,14 +243,14 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	}
 
 	/**
-	 * creates new tree items for a category tree item
+	 * Creates new tree items for a category tree item.
 	 * 
 	 * @param category
 	 *            , category id
 	 * @param tItem
 	 *            , category tree item
 	 */
-	private void addExamplesToItem(String category, TreeItem tItem) {
+	private void addExamplesToItem(final String category, final TreeItem tItem) {
 		for (Example example : ExampleManager.get().getExamples().values()) {
 			if (example.contains(category)) {
 				TreeItem item = new TreeItem(tItem, SWT.NONE);
@@ -246,17 +261,18 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	}
 
 	/**
-	 * creates the preview picture component.
+	 * Creates the preview picture component.
 	 * 
 	 * @param composite
 	 * @param controlComp
 	 */
-	private void createPreviewComp(Composite composite, Control controlComp) {
+	private void createPreviewComp(final Composite composite,
+			final Control controlComp) {
 
 		previewComp = new Composite(composite, SWT.NONE);
 		previewComp.setLayout(new FormLayout());
 		FormData prevData = new FormData();
-		prevData.left = new FormAttachment(controlComp, 20);
+		prevData.left = new FormAttachment(controlComp, PREVIEW_OFFSET);
 		previewComp.setLayoutData(prevData);
 		previewDesc = new Label(previewComp, SWT.NONE);
 		previewDesc.setText("Example Preview");
@@ -266,11 +282,11 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		imageLabel.setImage(initPreviewImage());
 		// 16 : 9
 		FormData formData2 = new FormData(IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
-		formData2.top = new FormAttachment(previewDesc, 5);
+		formData2.top = new FormAttachment(previewDesc, OFFSET);
 		imageLabel.setLayoutData(formData2);
 		imageLabel.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void mouseDown(final MouseEvent e) {
 				super.mouseDown(e);
 				if (selectedExample == null) {
 					return;
@@ -280,36 +296,38 @@ public class ImportExamplePage extends WizardResourceImportPage {
 					private Rectangle bounds;
 
 					@Override
-					protected void createButtonsForButtonBar(Composite parent) {
+					protected void createButtonsForButtonBar(
+							final Composite parent) {
 						super.createButton(parent, IDialogConstants.OK_ID,
 								IDialogConstants.OK_LABEL, true);
 					}
 
 					@Override
-					protected Control createDialogArea(Composite parent) {
+					protected Control createDialogArea(final Composite parent) {
 						Composite composite = (Composite) super
 								.createDialogArea(parent);
 						Composite innerComp = new Composite(composite,
 								SWT.CENTER | SWT.BORDER);
 						innerComp.setLayout(new GridLayout());
-						Label imageLabel = new Label(innerComp, SWT.BORDER
+						Label imgLabel = new Label(innerComp, SWT.BORDER
 								| SWT.V_SCROLL | SWT.H_SCROLL);
-						imageLabel.setLayoutData(new GridData(GridData.CENTER));
+						imgLabel.setLayoutData(new GridData(GridData.CENTER));
 						Image image = loadImage(IMAGE_MAX_WIDTH,
 								IMAGE_MAX_HEIGHT);
 						bounds = image.getBounds();
-						imageLabel.setImage(image);
+						imgLabel.setImage(image);
 						return composite;
 					}
 
 					@Override
 					protected Point getInitialSize() {
 						// imagesize + paddings
-						return new Point(bounds.width + 40, bounds.height + 120);
+						return new Point(bounds.width + IMG_PADDINGS_WIDTH,
+								bounds.height + IMG_PADDINGS_HEIGHT);
 					}
 
 					@Override
-					protected void configureShell(Shell newShell) {
+					protected void configureShell(final Shell newShell) {
 						super.configureShell(newShell);
 						newShell.setText("Preview Picture");
 					}
@@ -320,7 +338,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		});
 		imageLabel.addMouseTrackListener(new MouseTrackAdapter() {
 			@Override
-			public void mouseHover(MouseEvent e) {
+			public void mouseHover(final MouseEvent e) {
 				imageLabel.setCursor(new Cursor(imageLabel.getDisplay(),
 						SWT.CURSOR_HAND));
 			}
@@ -332,7 +350,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	 * 
 	 * @param e
 	 */
-	private void updateElements(SelectionEvent e) {
+	private void updateElements(final SelectionEvent e) {
 		if (!(e.item instanceof TreeItem)) {
 			getExampleDescription().setText("");
 			imageLabel.setImage(initPreviewImage());
@@ -362,14 +380,15 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	}
 
 	/**
-	 * updates the label of preview picture.
+	 * Updates the label of preview picture.
 	 * 
 	 * @param image
+	 *            , {@link Image}
 	 */
-	private void updateImageLabel(Image image) {
+	private void updateImageLabel(final Image image) {
 		FormData formData = new FormData(image.getImageData().width,
 				image.getImageData().height);
-		formData.top = new FormAttachment(previewDesc, 5);
+		formData.top = new FormAttachment(previewDesc, OFFSET);
 		imageLabel.setLayoutData(formData);
 		imageLabel.setImage(image);
 		imageLabel.pack();
@@ -384,15 +403,15 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	 * @param image_height
 	 * @return
 	 */
-	private Image loadImage(double image_width, double image_height) {
+	private Image loadImage(final double imageWidth, final double imageHeight) {
 		final String previewPicPath = selectedExample.getOverviewPic();
 		if (previewPicPath != null && previewPicPath.length() > 1) {
 			try {
 				ImageData imgData = new ImageData(ExampleManager.get()
 						.loadOverviewPic(selectedExample));
 
-				double tempSize = Math.max(imgData.width / image_width,
-						imgData.height / image_height);
+				double tempSize = Math.max(imgData.width / imageWidth,
+						imgData.height / imageHeight);
 				imgData = imgData.scaledTo((int) (imgData.width / tempSize),
 						(int) (imgData.height / tempSize));
 				return new Image(previewComp.getDisplay(), imgData);
@@ -406,17 +425,15 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
 	}
 
-	private void updateDescriptionLabel(Example selectedExample) {
+	private void updateDescriptionLabel(final Example example) {
 		StringBuilder sb = new StringBuilder();
 
-		String htmlDesc = selectedExample.getDescription().replaceAll("\n",
-				"<br>");
+		String htmlDesc = example.getDescription().replaceAll("\n", "<br>");
 		sb.append("<font face=\"Tahoma, sans-serif\" size=\"-1\">");
-		sb.append("Title: ").append(selectedExample.getTitle()).append("<br>")
-				.append("Author:").append(selectedExample.getAuthor())
-				.append("<br>").append("Contact: ")
-				.append(selectedExample.getContact()).append("<br>")
-				.append("<br>").append(htmlDesc);
+		sb.append("Title: ").append(example.getTitle()).append("<br>")
+				.append("Author:").append(example.getAuthor()).append("<br>")
+				.append("Contact: ").append(example.getContact())
+				.append("<br>").append("<br>").append(htmlDesc);
 		sb.append("</font>");
 		getExampleDescription().setText(sb.toString());
 	}
@@ -430,7 +447,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 	 * 
 	 * @return "no preview" picture
 	 */
-	private Image noPreviewPic(Display display) {
+	private Image noPreviewPic(final Display display) {
 		return new Image(display, ExampleManager.get().loadStandardPic());
 	}
 
@@ -475,6 +492,11 @@ public class ImportExamplePage extends WizardResourceImportPage {
 		return exampleDescription;
 	}
 
+	/**
+	 * getter for container path.
+	 * 
+	 * @return {@link IPath}
+	 */
 	public IPath getContainerPath() {
 		return super.getContainerFullPath();
 	}

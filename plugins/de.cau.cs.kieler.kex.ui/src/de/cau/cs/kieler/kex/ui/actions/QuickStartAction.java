@@ -110,7 +110,7 @@ public class QuickStartAction implements IIntroAction {
 	 * @param message
 	 *            , String
 	 */
-	private void showError(String title, String message) {
+	private void showError(final String title, final String message) {
 		IWorkbench wb = PlatformUI.getWorkbench();
 		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
 		MessageDialog.openError(win.getShell(), title, message);
@@ -122,7 +122,7 @@ public class QuickStartAction implements IIntroAction {
 	 * 
 	 * @param directOpens
 	 */
-	private void postfix(List<String> directOpens) {
+	private void postfix(final List<String> directOpens) {
 		// refresh workspace
 		IContainer element = ResourcesPlugin.getWorkspace().getRoot();
 		try {
@@ -133,7 +133,7 @@ public class QuickStartAction implements IIntroAction {
 			// do nothing
 		}
 
-		// open direct opens
+		// open directopen files in editor.
 		if (directOpens != null) {
 			IWorkbenchWindow win = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow();
@@ -148,9 +148,7 @@ public class QuickStartAction implements IIntroAction {
 					IEditorDescriptor defaultEditor = PlatformUI.getWorkbench()
 							.getEditorRegistry()
 							.getDefaultEditor(files[0].getName());
-					if (defaultEditor != null) {
-
-					} else {
+					if (defaultEditor == null) {
 						defaultEditor = PlatformUI
 								.getWorkbench()
 								.getEditorRegistry()

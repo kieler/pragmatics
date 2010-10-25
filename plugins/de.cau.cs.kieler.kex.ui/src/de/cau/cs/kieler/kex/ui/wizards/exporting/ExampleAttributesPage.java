@@ -30,10 +30,6 @@ import org.eclipse.swt.widgets.Text;
  */
 public class ExampleAttributesPage extends WizardPage {
 
-	private static final int exDescHeight = 100;
-
-	private static final int exDescMinHeight = 80;
-
 	private Text exampleTitle;
 
 	private Text author;
@@ -42,11 +38,23 @@ public class ExampleAttributesPage extends WizardPage {
 
 	private Text exampleDescription;
 
-	public ExampleAttributesPage(String pageName, IStructuredSelection selection) {
+	private static final int EX_DESC_HEIGHT = 100;
+
+	private static final int EX_DESC_MINHEIGHT = 80;
+
+	/**
+	 * Constructor for {@link ExampleAttributesPage}.
+	 * 
+	 * @param pageName
+	 *            , {@link String}
+	 * @param selection
+	 *            , {@link IStructuredSelection}
+	 */
+	public ExampleAttributesPage(final String pageName,
+			final IStructuredSelection selection) {
 		super(pageName);
 		setTitle(pageName);
 		setDescription("Please enter example attributes.");
-
 	}
 
 	/**
@@ -55,14 +63,20 @@ public class ExampleAttributesPage extends WizardPage {
 	 * @param parent
 	 *            , parent composite
 	 */
-	public void createControl(Composite parent) {
+	public void createControl(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		setControl(composite);
 		addAttributeFields(composite);
 	}
 
-	private void addAttributeFields(Composite parent) {
+	/**
+	 * creates attribute fields and adds them to given parent composite.
+	 * 
+	 * @param parent
+	 *            , Composite
+	 */
+	private void addAttributeFields(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.BORDER);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -89,40 +103,84 @@ public class ExampleAttributesPage extends WizardPage {
 		exampleDescription = new Text(composite, SWT.BORDER | SWT.MULTI
 				| SWT.V_SCROLL | SWT.H_SCROLL);
 		GridData descData = new GridData(GridData.FILL_HORIZONTAL);
-		descData.heightHint = exDescHeight;
-		descData.minimumHeight = exDescMinHeight;
+		descData.heightHint = EX_DESC_HEIGHT;
+		descData.minimumHeight = EX_DESC_MINHEIGHT;
 		exampleDescription.setLayoutData(descData);
 
 	}
 
-	public void setExampleTitle(Text exampleTitle) {
-		this.exampleTitle = exampleTitle;
+	/**
+	 * setter for example title.
+	 * 
+	 * @param exampleTitleParam
+	 *            , Text
+	 */
+	public void setExampleTitle(final Text exampleTitleParam) {
+		this.exampleTitle = exampleTitleParam;
 	}
 
+	/**
+	 * getter for example title.
+	 * 
+	 * @return String
+	 */
 	public String getExampleTitle() {
 		return exampleTitle.getText();
 	}
 
-	public void setAuthor(Text author) {
-		this.author = author;
+	/**
+	 * setter for author.
+	 * 
+	 * @param authorParam
+	 *            , Text
+	 */
+	public void setAuthor(final Text authorParam) {
+		this.author = authorParam;
 	}
 
+	/**
+	 * getter for author.
+	 * 
+	 * @return String
+	 */
 	public String getAuthor() {
 		return this.author.getText();
 	}
 
-	public void setExampleDescription(Text exampleDescription) {
-		this.exampleDescription = exampleDescription;
+	/**
+	 * setter for example description.
+	 * 
+	 * @param exampleDescriptionParam
+	 *            , Text
+	 */
+	public void setExampleDescription(final Text exampleDescriptionParam) {
+		this.exampleDescription = exampleDescriptionParam;
 	}
 
+	/**
+	 * getter for example description.
+	 * 
+	 * @return String
+	 */
 	public String getExampleDescription() {
 		return exampleDescription.getText();
 	}
 
-	public void setContact(Text contact) {
-		this.contact = contact;
+	/**
+	 * setter for contact.
+	 * 
+	 * @param contactParam
+	 *            , Text
+	 */
+	public void setContact(final Text contactParam) {
+		this.contact = contactParam;
 	}
 
+	/**
+	 * getter for contact.
+	 * 
+	 * @return String
+	 */
 	public String getContact() {
 		return contact.getText();
 	}

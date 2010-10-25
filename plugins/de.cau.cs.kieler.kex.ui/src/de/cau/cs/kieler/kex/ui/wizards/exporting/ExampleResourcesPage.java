@@ -43,11 +43,17 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import de.cau.cs.kieler.kex.controller.ExportResource;
 
-@SuppressWarnings("restriction")
+/**
+ * The examples resource page manages the resources for an export.
+ * 
+ * @author pkl
+ * 
+ */
 public class ExampleResourcesPage extends WizardPage {
 
 	private Tree directOpenTree;
 
+	@SuppressWarnings("restriction")
 	private ResourceTreeAndListGroup resourceGroup;
 
 	private final List<IProject> exportedProjects;
@@ -55,8 +61,16 @@ public class ExampleResourcesPage extends WizardPage {
 
 	private final List<ExportResource> exportResources;
 
-	protected ExampleResourcesPage(String pageName,
-			IStructuredSelection selection) {
+	/**
+	 * Constructor of {@link ExampleResourcesPage}.
+	 * 
+	 * @param pageName
+	 *            , {@link String}
+	 * @param selection
+	 *            , {@link IStructuredSelection}
+	 */
+	protected ExampleResourcesPage(final String pageName,
+			final IStructuredSelection selection) {
 		super(pageName);
 		this.setTitle(pageName);
 		this.setDescription("Choose resources to export and set direct opens.");
@@ -65,7 +79,14 @@ public class ExampleResourcesPage extends WizardPage {
 		exportedProjects = new ArrayList<IProject>();
 	}
 
-	public void createControl(Composite parent) {
+	/**
+	 * Creates a new composite and adds it to parent composite. Besides to that
+	 * a group with resources and and composite with directopens will create.
+	 * 
+	 * @param parent
+	 *            , {@link Composite}
+	 */
+	public void createControl(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.BORDER);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -75,13 +96,13 @@ public class ExampleResourcesPage extends WizardPage {
 		setControl(composite);
 	}
 
-	private void createDirectOpenComposite(Composite composite) {
+	private void createDirectOpenComposite(final Composite composite) {
 		Composite childComp = new Composite(composite, SWT.BORDER);
 		childComp.setLayout(new GridLayout());
 		childComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Label directOpenDesc = new Label(childComp, SWT.NONE);
-		directOpenDesc
-				.setText("Select files, that should open directly after importing that example.");
+		directOpenDesc.setText("Select files, that should "
+				+ "open directly after importing that example.");
 		this.directOpenTree = new Tree(childComp, SWT.CHECK | SWT.BORDER);
 		directOpenTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fillDirectOpenTree();
@@ -94,7 +115,8 @@ public class ExampleResourcesPage extends WizardPage {
 	 * @param parent
 	 *            , Composite
 	 */
-	protected final void createResourcesGroup(Composite parent) {
+	@SuppressWarnings("restriction")
+	protected final void createResourcesGroup(final Composite parent) {
 
 		List<Object> input = new ArrayList<Object>();
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
@@ -119,7 +141,9 @@ public class ExampleResourcesPage extends WizardPage {
 	 * @param input
 	 *            , input elements for {@link ResourceTreeAndListGroup}
 	 */
-	private void initResourceGroup(Composite parent, List<Object> input) {
+	@SuppressWarnings("restriction")
+	private void initResourceGroup(final Composite parent,
+			final List<Object> input) {
 		this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
 				getResourceProvider(IResource.FOLDER),
 				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
@@ -128,19 +152,21 @@ public class ExampleResourcesPage extends WizardPage {
 				SWT.BORDER, DialogUtil.inRegularFontMode(parent));
 		this.resourceGroup.addCheckStateListener(new ICheckStateListener() {
 
-			public void checkStateChanged(CheckStateChangedEvent event) {
+			public void checkStateChanged(final CheckStateChangedEvent event) {
 				Object element = event.getElement();
 				if (element instanceof IFolder) {
-					if (event.getChecked())
+					if (event.getChecked()) {
 						getExportedFolders().add((IFolder) element);
-					else
+					} else {
 						getExportedFolders().remove(element);
+					}
 				}
 				if (element instanceof IProject) {
-					if (event.getChecked())
+					if (event.getChecked()) {
 						getExportedProjects().add((IProject) element);
-					else
+					} else {
 						getExportedProjects().remove(element);
+					}
 				}
 				// TODO update tree muss implementiert werden, nicht immer alles
 				// neu machen...
@@ -155,7 +181,7 @@ public class ExampleResourcesPage extends WizardPage {
 
 		this.directOpenTree.removeAll();
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "restriction" })
 		List<IFile> allCheckedListItems = this.resourceGroup
 				.getAllCheckedListItems();
 		int size = allCheckedListItems.size();
@@ -176,21 +202,17 @@ public class ExampleResourcesPage extends WizardPage {
 	private ITreeContentProvider getResourceProvider(final int resourceType) {
 		return new WorkbenchContentProvider() {
 			@Override
-			public Object[] getChildren(Object o) {
-				if (o instanceof IContainer) {
+			public Object[] getChildren(final Object param) {
+				if (param instanceof IContainer) {
 					IResource[] members = null;
 					try {
-						members = ((IContainer) o).members();
+						members = ((IContainer) param).members();
 					} catch (CoreException e) {
-						// just return an empty set of children
 						return new Object[0];
 					}
 
-					// filter out the desired resource types
 					ArrayList<IResource> results = new ArrayList<IResource>();
 					for (int i = 0; i < members.length; i++) {
-						// And the test bits with the resource types to see if
-						// they are what we want
 						if ((members[i].getType() & resourceType) > 0
 								&& !members[i].getName().startsWith(".")) {
 							results.add(members[i]);
@@ -198,9 +220,8 @@ public class ExampleResourcesPage extends WizardPage {
 					}
 					return results.toArray();
 				}
-				// input element case
-				if (o instanceof ArrayList<?>) {
-					return ((ArrayList<?>) o).toArray();
+				if (param instanceof ArrayList<?>) {
+					return ((ArrayList<?>) param).toArray();
 				}
 				return new Object[0];
 			}
@@ -210,9 +231,9 @@ public class ExampleResourcesPage extends WizardPage {
 	/**
 	 * Gives all files which are selected in the tree.
 	 * 
-	 * @return
+	 * @return {@link List} of {@link IFile}s
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "restriction", "unchecked" })
 	public List<IFile> getExportedFiles() {
 		return resourceGroup.getAllCheckedListItems();
 	}
@@ -229,25 +250,31 @@ public class ExampleResourcesPage extends WizardPage {
 	/**
 	 * Gives all folders which are selected in the tree.
 	 * 
-	 * @return
+	 * @return {@link List} of {@link IFolder}s
 	 */
 	public List<IFolder> getExportedFolders() {
 		return this.exportedFolders;
 	}
 
+	/**
+	 * getter for head file.
+	 * 
+	 * @return {@link IPath}
+	 */
 	public IPath getHeadFile() {
 		return null;
 	}
-
-	// TODO validier mechanismen schon bei umschlagen auf den neue page
-	// abpr�fen,
-	// im wizard, nicht erst bei finish.
 
 	@Override
 	public boolean isPageComplete() {
 		return true;
 	}
 
+	/**
+	 * builds the resource structure out of the choosen komponents of the
+	 * resource tree. The exportResources will be generated from the exported
+	 * projects, exported directories and export files.
+	 */
 	public void buildResourceStructure() {
 		List<IResource> duplicateChecker = new ArrayList<IResource>();
 		for (IProject iProject : getExportedProjects()) {
@@ -255,8 +282,9 @@ public class ExampleResourcesPage extends WizardPage {
 				this.exportResources.add(new ExportResource(iProject,
 						makeRelativePath(iProject, iProject)));
 				for (IResource resource : iProject.members()) {
-					if (checkHiddenResource(resource))
+					if (checkHiddenResource(resource)) {
 						continue;
+					}
 					if (resource instanceof IFolder) {
 						addFolderWithElements((IContainer) resource,
 								(IContainer) iProject, duplicateChecker);
@@ -277,15 +305,17 @@ public class ExampleResourcesPage extends WizardPage {
 			}
 		}
 		for (IContainer folder : getExportedFolders()) {
-			if (checkHiddenResource(folder))
+			if (checkHiddenResource(folder)) {
 				continue;
+			}
 			if (!duplicateChecker.contains(folder)) {
 				addFolderWithElements(folder, folder, duplicateChecker);
 			}
 		}
 		for (IFile file : getExportedFiles()) {
-			if (checkHiddenResource(file))
+			if (checkHiddenResource(file)) {
 				continue;
+			}
 			if (!duplicateChecker.contains(file)) {
 
 				IPath fileRootPath = filterResourceName(file);
@@ -297,16 +327,17 @@ public class ExampleResourcesPage extends WizardPage {
 		setDirectOpens();
 	}
 
+	/**
+	 * getter for exported resources.
+	 * 
+	 * @return {@link List} of {@link ExportResource}s
+	 */
 	public List<ExportResource> getExportedResources() {
 		return this.exportResources;
 	}
 
-	private boolean checkHiddenResource(IResource resource) {
-		if (resource.getName().startsWith(".")) {
-			return true;
-		} else {
-			return false;
-		}
+	private boolean checkHiddenResource(final IResource resource) {
+		return resource.getName().startsWith(".");
 	}
 
 	/**
@@ -320,8 +351,8 @@ public class ExampleResourcesPage extends WizardPage {
 	 * @param resourcePath
 	 * @param duplicateChecker
 	 */
-	private void addFolderWithElements(IContainer resource, IContainer root,
-			List<IResource> duplicateChecker) {
+	private void addFolderWithElements(final IContainer resource,
+			final IContainer root, final List<IResource> duplicateChecker) {
 		IPath rootPath = makeRelativePath(root, resource);
 		this.exportResources.add(new ExportResource(resource, rootPath));
 		duplicateChecker.add(resource);
@@ -353,13 +384,13 @@ public class ExampleResourcesPage extends WizardPage {
 	 * @param child
 	 * @return
 	 */
-	private IPath makeRelativePath(IResource parent, IResource child) {
+	private IPath makeRelativePath(final IResource parent, final IResource child) {
 		IPath relativePath = child.getFullPath().makeRelativeTo(
 				parent.getFullPath().removeLastSegments(1));
 		return relativePath;
 	}
 
-	private IPath filterResourceName(IResource resource) {
+	private IPath filterResourceName(final IResource resource) {
 		IPath resourcePath = resource.getFullPath();
 		return resourcePath
 				.removeFirstSegments(resourcePath.segmentCount() - 1);

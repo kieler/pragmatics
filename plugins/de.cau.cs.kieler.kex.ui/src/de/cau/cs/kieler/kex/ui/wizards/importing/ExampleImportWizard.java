@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IImportWizard;
@@ -38,26 +39,45 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 
+/**
+ * This wizard contains all elements for an kex import wizard.
+ * 
+ * @author pkl
+ * 
+ */
 public class ExampleImportWizard extends Wizard implements IImportWizard {
 
 	private ImportExamplePage mainPage;
 
 	private boolean checkDuplicate;
 
-	private final String ERROR_TITLE = "Could not complete Import";
+	private static final String ERROR_TITLE = "Could not complete Import";
 
+	/**
+	 * Constructor for {@link ExampleImportWizard}.
+	 */
 	public ExampleImportWizard() {
 		super();
 	}
 
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
+	/**
+	 * initializes the Wizard and adds the mainpage of Type {@link WizardPage}
+	 * to it.
+	 * 
+	 * @param workbench
+	 *            , {@link IWorkbench}
+	 * @param selection
+	 *            , {@link IStructuredSelection}
+	 */
+	public void init(final IWorkbench workbench,
+			final IStructuredSelection selection) {
 		setWindowTitle("Kieler Example Import");
 		setNeedsProgressMonitor(true);
 		this.checkDuplicate = false;
 		try {
 			ExampleManager.get().load(false);
 		} catch (KielerException e) {
-			// TODO überdenken
+			// TODO ueberdenken
 			MessageDialog.openError(this.getShell(), "Could not load example",
 					e.getLocalizedMessage());
 		}
@@ -117,9 +137,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 					IEditorDescriptor defaultEditor = PlatformUI.getWorkbench()
 							.getEditorRegistry()
 							.getDefaultEditor(files[0].getName());
-					if (defaultEditor != null) {
-
-					} else {
+					if (defaultEditor == null) {
 						defaultEditor = PlatformUI
 								.getWorkbench()
 								.getEditorRegistry()

@@ -42,33 +42,50 @@ import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.SourceType;
 
+/**
+ * This class is a wizard page for the export wizard.
+ * 
+ * @author pkl
+ * 
+ */
 public class ExampleExportPage extends WizardResourceImportPage {
 
 	private Text destPath;
 
-	private Text overviewPic;
+	private Text previewPic;
 
 	private Button createExampleFolder;
 
-	private final int THREE_COLUMNS = 3;
+	private static final int THREE_COLUMNS = 3;
+	private static final int CATEGORY_MINLENGTH = 4;
 
 	private Tree categoryTree;
 	private final List<String> checkedCategories;
 	private final List<String> creatableCategories;
 
-	private final String WORKSPACE_DIR = ResourcesPlugin.getWorkspace()
+	private static final String WORKSPACE_DIR = ResourcesPlugin.getWorkspace()
 			.getRoot().getLocation().toOSString();
 
-	protected ExampleExportPage(String name, IStructuredSelection selection) {
+	/**
+	 * contstructor for {@link ExampleExportPage}.
+	 * 
+	 * @param name
+	 *            , String
+	 * @param selection
+	 *            , String
+	 */
+	protected ExampleExportPage(final String name,
+			final IStructuredSelection selection) {
 		super(name, selection);
 		setTitle(name);
-		setDescription("Set destination and preview picture for exported example and determine example cateories.");
+		setDescription("Set destination and preview picture "
+				+ "for exported example and determine example cateories.");
 		checkedCategories = new ArrayList<String>();
 		creatableCategories = new ArrayList<String>();
 	}
 
 	@Override
-	public void createControl(Composite parent) {
+	public void createControl(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		setControl(composite);
@@ -84,7 +101,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 	}
 
 	@Override
-	protected void createSourceGroup(Composite parent) {
+	protected void createSourceGroup(final Composite parent) {
 		// no sourceGroup
 	}
 
@@ -99,7 +116,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 	}
 
 	@Override
-	protected void createOptionsGroup(Composite parent) {
+	protected void createOptionsGroup(final Composite parent) {
 		// no options
 	}
 
@@ -107,7 +124,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
 		Group topGroup = new Group(composite, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = this.THREE_COLUMNS;
+		topLayout.numColumns = THREE_COLUMNS;
 		topGroup.setLayout(topLayout);
 		topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		topGroup.setText("Set Example Destination");
@@ -120,7 +137,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
 		addDestPath.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent event) {
+			public void widgetSelected(final SelectionEvent event) {
 				DirectoryDialog dirDiag = new DirectoryDialog(composite
 						.getShell());
 
@@ -138,7 +155,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 	private void createMiddleGroup(final Composite composite) {
 		Group bottomGroup = new Group(composite, SWT.NONE);
 		GridLayout bottomLayout = new GridLayout();
-		bottomLayout.numColumns = 3;
+		bottomLayout.numColumns = THREE_COLUMNS;
 		bottomGroup.setText("Set Preview Picture");
 		bottomGroup
 				.setToolTipText("Enter a picture like a screenshot of example diagram.");
@@ -151,18 +168,18 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		picDialog.setFilterExtensions(extensions);
 		Label label = new Label(bottomGroup, SWT.NONE);
 		label.setText("Set Picture:");
-		this.overviewPic = new Text(bottomGroup, SWT.BORDER);
-		overviewPic.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.previewPic = new Text(bottomGroup, SWT.BORDER);
+		previewPic.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Button browse = new Button(bottomGroup, SWT.NONE);
 		browse.setText("Browse...");
 		browse.addSelectionListener(new SelectionAdapter() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				super.widgetSelected(e);
 				String pic = picDialog.open();
 				if (pic != null) {
-					getOverviewPic().setText(pic);
+					getPreviewPic().setText(pic);
 				}
 			}
 
@@ -170,7 +187,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
 	}
 
-	private void createButtonComposite(Group middleGroup) {
+	private void createButtonComposite(final Group middleGroup) {
 		Composite buttonCompo = new Composite(middleGroup, SWT.NONE);
 		GridLayout buttonCompoLayout = new GridLayout();
 		buttonCompoLayout.numColumns = THREE_COLUMNS;
@@ -183,15 +200,18 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		addCategory.addSelectionListener(new SelectionAdapter() {
 
 			@Override
-			public void widgetSelected(SelectionEvent event) {
+			public void widgetSelected(final SelectionEvent event) {
 				IInputValidator validator = new IInputValidator() {
-					public String isValid(String newText) {
-						if (newText.length() < 4) {
-							return "Category name has to have at least 4 characters.";
+					public String isValid(final String newText) {
+						if (newText.length() < CATEGORY_MINLENGTH) {
+							return "Category name has to "
+									+ "have at least 4 characters.";
 						}
 						for (TreeItem item : categoryTree.getItems()) {
-							if (newText.equals(item.getText()))
-								return "Category exists already! Please enter another name.";
+							if (newText.equals(item.getText())) {
+								return "Category exists already! "
+										+ "Please enter another name.";
+							}
 						}
 						return null;
 
@@ -202,7 +222,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 						"", validator);
 				dialog.open();
 				String value = dialog.getValue();
-				if (value != null && value.length() > 3) {
+				if (value != null && value.length() >= CATEGORY_MINLENGTH) {
 					TreeItem item = new TreeItem(categoryTree, SWT.NONE);
 					item.setText(value);
 					creatableCategories.add(value);
@@ -214,7 +234,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		revertTree.setText("Revert");
 		revertTree.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				categoryTree.removeAll();
 				fillTree(categoryTree);
 				creatableCategories.clear();
@@ -224,7 +244,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
 	}
 
-	private void createBottomGroup(Composite composite) {
+	private void createBottomGroup(final Composite composite) {
 		Group middleGroup = new Group(composite, SWT.NONE);
 		GridLayout middleLayout = new GridLayout();
 		middleGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -237,12 +257,12 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
 	}
 
-	private void createCheckedTree(Composite parent) {
+	private void createCheckedTree(final Composite parent) {
 		this.categoryTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		categoryTree.setLayoutData(data);
 		categoryTree.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+			public void handleEvent(final Event event) {
 				// fill per hand checked elements list
 				if (event.detail == SWT.CHECK) {
 					int removeCount = -1;
@@ -256,8 +276,9 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
 					if (removeCount == -1) {
 						checkedCategories.add(category);
-					} else
+					} else {
 						checkedCategories.remove(removeCount);
+					}
 				}
 			}
 
@@ -266,12 +287,12 @@ public class ExampleExportPage extends WizardResourceImportPage {
 	}
 
 	/**
-	 * Helper method to fill a tree with data
+	 * Helper method to fill a tree with data.
 	 * 
 	 * @param tree
 	 *            the tree to fill
 	 */
-	public static void fillTree(Tree tree) {
+	public static void fillTree(final Tree tree) {
 		// disable drawing to avoid flicker
 		tree.setRedraw(false);
 		List<String> categories = ExampleManager.get().getCategories();
@@ -283,14 +304,29 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		tree.setRedraw(true);
 	}
 
+	/**
+	 * Getter for checked categories.
+	 * 
+	 * @return {@link List} of {@link String}s
+	 */
 	public List<String> getCheckedCategories() {
 		return checkedCategories;
 	}
 
+	/**
+	 * Getter for destination location.
+	 * 
+	 * @return String
+	 */
 	public String getDestLocation() {
 		return this.destPath.getText();
 	}
 
+	/**
+	 * Getter for sourctype.
+	 * 
+	 * @return {@link SourceType}
+	 */
 	public SourceType getSourceType() {
 		// TODO for extending KEX with database,
 		// there have to define a second type
@@ -298,15 +334,21 @@ public class ExampleExportPage extends WizardResourceImportPage {
 		return SourceType.KIELER;
 	}
 
+	/**
+	 * Getter for categories that have to be created.
+	 * 
+	 * @return {@link List} of {@link String}s
+	 */
 	public List<String> getCreatableCategories() {
 		return creatableCategories;
 	}
 
-	public boolean createExampleFolder() {
-		return this.createExampleFolder.getSelection();
-	}
-
-	public Text getOverviewPic() {
-		return this.overviewPic;
+	/**
+	 * Getter for preview picture.
+	 * 
+	 * @return {@link Text}
+	 */
+	public Text getPreviewPic() {
+		return this.previewPic;
 	}
 }

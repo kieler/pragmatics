@@ -27,17 +27,37 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 
+/**
+ * This is a wizard for the example export of kex. It contains of three
+ * wizardpages.
+ * 
+ * @author pkl
+ * 
+ */
 public class ExampleExportWizard extends Wizard implements IExportWizard {
 
 	private ExampleAttributesPage examplePage;
 	private ExampleResourcesPage resourcePage;
 	private ExampleExportPage exportPage;
 
+	/**
+	 * Constructor for {@link ExampleExportWizard}.
+	 */
 	public ExampleExportWizard() {
 		super();
 	}
 
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
+	/**
+	 * Creates three wizard pages and sets the window title.
+	 * 
+	 * @param workbench
+	 *            , {@link IWorkbench}
+	 * @param selection
+	 *            , {@link IStructuredSelection}, if no selection should be set,
+	 *            the parameter has to {@code StructuredSelection.EMPTY}.
+	 */
+	public void init(final IWorkbench workbench,
+			final IStructuredSelection selection) {
 		setWindowTitle("Kieler Example Export");
 		setNeedsProgressMonitor(true);
 		examplePage = new ExampleAttributesPage("Example Export", selection);
@@ -64,7 +84,7 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 			result.put(ExampleElement.DESCRIPTION,
 					examplePage.getExampleDescription());
 			result.put(ExampleElement.CONTACT, examplePage.getContact());
-			result.put(ExampleElement.OVERVIEW_PIC, exportPage.getOverviewPic()
+			result.put(ExampleElement.OVERVIEW_PIC, exportPage.getPreviewPic()
 					.getText());
 
 			result.put(ExampleElement.SOURCETYPE, exportPage.getSourceType());
