@@ -1,3 +1,17 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ */
 package de.cau.cs.kieler.kex.controller.util;
 
 import java.io.File;
@@ -68,15 +82,16 @@ public class ExampleImport {
         return directOpens;
     }
 
-    private static void deleteResources(List<String> finishedResources) {
+    private static void deleteResources(final List<String> finishedResources) {
         for (String resourcePath : finishedResources) {
             IOHandler.deleteFile(new File(resourcePath));
         }
     }
 
-    private static void handleResources(List<String> directOpens, List<ExampleResource> resources,
-            String destFolder, String nameSpaceId, int exampleBeginIndex, boolean checkDuplicate,
-            List<String> finishedResources) throws KielerException {
+    private static void handleResources(final List<String> directOpens,
+            final List<ExampleResource> resources, String destFolder, final String nameSpaceId,
+            final int exampleBeginIndex, final boolean checkDuplicate,
+            final List<String> finishedResources) throws KielerException {
         Bundle bundle = Platform.getBundle(nameSpaceId);
 
         for (ExampleResource resource : resources) {
@@ -111,8 +126,9 @@ public class ExampleImport {
                     String dest = destFolder + "/" + destPath;
                     finishedResources.add(dest);
                     IOHandler.writeFile(entry, dest, checkDuplicate);
-                    if (resource.isDirectOpen())
+                    if (resource.isDirectOpen()) {
                         directOpens.add(dest);
+                    }
                     break;
 
                 }
@@ -126,7 +142,7 @@ public class ExampleImport {
         }
     }
 
-    private static String solveDuplicate(IWorkspaceRoot root, String destPath)
+    private static String solveDuplicate(final IWorkspaceRoot root, final String destPath)
             throws KielerException {
         // FIXME it´s not enough, cause other resources of example would import
         // to wrong project. But that´s the way to solve that problem.
@@ -147,7 +163,7 @@ public class ExampleImport {
         return destPath;
     }
 
-    public static InputStream loadOverviewPic(Example example) throws KielerException {
+    public static InputStream loadOverviewPic(final Example example) throws KielerException {
         Bundle bundle = Platform.getBundle(example.getNamespaceId());
         URL entry = bundle.getEntry(example.getOverviewPic());
         try {
@@ -169,8 +185,8 @@ public class ExampleImport {
         return null;
     }
 
-    public static void validate(IPath selectedResource, List<Example> selectedExamples,
-            boolean checkDuplicate) throws KielerException {
+    public static void validate(final IPath selectedResource, final List<Example> selectedExamples,
+            final boolean checkDuplicate) throws KielerException {
         if (selectedExamples == null || selectedExamples.size() == 0) {
             throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
         }

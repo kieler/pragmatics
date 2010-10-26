@@ -1,3 +1,17 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ */
 package de.cau.cs.kieler.kex.controller.util;
 
 import java.io.File;
@@ -61,7 +75,7 @@ public class IOHandler {
      *            , File
      * @return true, if deleting success, otherwise false.
      */
-    public static boolean deleteFile(File deletable) {
+    public static boolean deleteFile(final File deletable) {
         if (!deletable.exists()) {
             return true;
         }
@@ -119,7 +133,7 @@ public class IOHandler {
      * @return true, if exactly one file is found, otherwise false
      * @throws KielerException
      */
-    private static File getFile(File sourceDir, final String fileName) throws KielerException {
+    private static File getFile(final File sourceDir, final String fileName) throws KielerException {
         List<File> resultList = new ArrayList<File>();
         collectFiles(sourceDir, fileName, resultList);
         return filterFoundFile(resultList, fileName, sourceDir);
@@ -134,8 +148,8 @@ public class IOHandler {
      * @param resultList
      * @throws KielerException
      */
-    private static void collectFiles(File sourceDir, final String fileName, List<File> resultList)
-            throws KielerException {
+    private static void collectFiles(final File sourceDir, final String fileName,
+            final List<File> resultList) throws KielerException {
         for (File file : sourceDir.listFiles()) {
             if (fileName.equals(file.getName())) {
                 resultList.add(file);
@@ -150,49 +164,56 @@ public class IOHandler {
      * Searches for an file with matching fileName in parent folders of source directory.
      * 
      * @param sourceDir
+     *            , File
      * @param fileName
+     *            , String
      * @return File, if exactly one file is found otherwise null;
      * @throws KielerException
      */
-    public static File searchUP(File sourceDir, final String fileName) throws KielerException {
+    public static File searchUP(final File sourceDir, final String fileName) throws KielerException {
         File parent = sourceDir;
         File[] foundFiles = null;
         while (parent != null && parent.exists() && parent.isDirectory()) {
             foundFiles = parent.listFiles(new FilenameFilter() {
 
-                public boolean accept(File dir, String name) {
+                public boolean accept(final File dir, final String name) {
                     return fileName.equals(name);
                 }
             });
-            if (foundFiles.length > 0)
+            if (foundFiles.length > 0) {
                 break;
+            }
             parent = parent.getParentFile();
         }
         return filterFoundFile(foundFiles, fileName, parent);
 
     }
 
-    private static File filterFoundFile(List<File> foundFiles, String searchName, File source)
-            throws KielerException {
+    private static File filterFoundFile(final List<File> foundFiles, final String searchName,
+            final File source) throws KielerException {
         int fileCount = foundFiles.size();
-        if (fileCount == 0)
+        if (fileCount == 0) {
             return null;
-        if (fileCount > 1)
+        }
+        if (fileCount > 1) {
             throw new KielerException(new StringBuffer()
                     .append("There are more than one file with name \"" + source + "\" in")
                     .append(source.getPath()).toString());
+        }
         return foundFiles.get(0);
     }
 
-    private static File filterFoundFile(File[] foundFiles, String searchName, File source)
-            throws KielerException {
+    private static File filterFoundFile(final File[] foundFiles, final String searchName,
+            File source) throws KielerException {
         int fileCount = foundFiles.length;
-        if (fileCount == 0)
+        if (fileCount == 0) {
             return null;
-        if (fileCount > 1)
+        }
+        if (fileCount > 1) {
             throw new KielerException(new StringBuffer()
                     .append("There are more than one file with name \"" + source + "\" in")
                     .append(source.getPath()).toString());
+        }
         return foundFiles[0];
 
     }
@@ -203,8 +224,6 @@ public class IOHandler {
      *            , source URL
      * @param destPath
      *            , destination path as String
-     * @param overwrite
-     *            , boolean
      * @throws KielerException
      * @throws IOException
      * @throws KielerModelException

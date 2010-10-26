@@ -1,3 +1,17 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ * 
+ */
 package de.cau.cs.kieler.kex.controller.util;
 
 import java.io.File;
@@ -18,20 +32,31 @@ import de.cau.cs.kieler.kex.model.ExampleResource.Type;
 import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.model.plugin.PluginExampleCreator;
 
+/**
+ * A collection of example export functions.
+ * 
+ * @author pkl
+ * 
+ */
 public class ExampleExport {
 
-    private final static String projectClass = "org.eclipse.core.internal.resources.Project";
-    private final static String folderClass = "org.eclipse.core.internal.resources.Folder";
-    private final static String fileClass = "org.eclipse.core.internal.resources.File";
+    private static final String PROJECT_CLASS = "org.eclipse.core.internal.resources.Project";
+    private static final String FOLDER_CLASS = "org.eclipse.core.internal.resources.Folder";
+    private static final String FILE_CLASS = "org.eclipse.core.internal.resources.File";
+
+    private ExampleExport() {
+        // should not be called
+    }
 
     @SuppressWarnings("unchecked")
-    public static void validate(Map<ExampleElement, Object> map,
+    public static void validate(final Map<ExampleElement, Object> map,
             final ExampleCollector... collectors) throws KielerException {
         checkAttributes(map);
 
         Object sourceType = map.get(ExampleElement.SOURCETYPE);
-        if (!(sourceType instanceof SourceType))
+        if (!(sourceType instanceof SourceType)) {
             throw new KielerException("No source type has been defined.");
+        }
 
         String destLocation = (String) map.get(ExampleElement.DEST_LOCATION);
         validateField(destLocation, 2, "Destination Location");
@@ -48,7 +73,8 @@ public class ExampleExport {
 
     }
 
-    private static void checkAttributes(Map<ExampleElement, Object> map) throws KielerException {
+    private static void checkAttributes(final Map<ExampleElement, Object> map)
+            throws KielerException {
         String exampleTitle = (String) map.get(ExampleElement.TITLE);
         validateField(exampleTitle, 4, "Example Title");
 
@@ -62,11 +88,10 @@ public class ExampleExport {
         String exampleContact = (String) map.get(ExampleElement.CONTACT);
         // min 5 chars a@b.c
         validateField(exampleContact, 5, "Example Contact");
-
     }
 
-    private static void validateElement(List<?> list, int minLength, String listName)
-            throws KielerException {
+    private static void validateElement(final List<?> list, final int minLength,
+            final String listName) throws KielerException {
         if (list == null || list.size() < minLength) {
             StringBuilder errorMsg = new StringBuilder();
             errorMsg.append("No ").append(listName).append(" has been selected.\n")
@@ -75,8 +100,8 @@ public class ExampleExport {
         }
     }
 
-    private static void validateField(String checkable, int minLength, String checkableName)
-            throws KielerException {
+    private static void validateField(final String checkable, final int minLength,
+            final String checkableName) throws KielerException {
         if (checkable == null || checkable.length() < minLength) {
             StringBuilder errorMsg = new StringBuilder();
             errorMsg.append("The field ").append(checkableName)
@@ -87,29 +112,49 @@ public class ExampleExport {
     }
 
     /**
+     * checks the collectors for given exampleTitle. If exists, a {@link KielerException} will
+     * thrown.
      * 
-     * @param example
+     * @param exampleTitle
+     *            , String
+     * @param collectors
+     *            , {@link ExampleCollector}...
      * @throws KielerException
+     *             , throws if duplicate found.
+     * 
      */
-    public static void checkDuplicate(String exampleTitle, ExampleCollector... collectors)
-            throws KielerException {
-        if (exampleTitle == null)
+    public static void checkDuplicate(final String exampleTitle,
+            final ExampleCollector... collectors) throws KielerException {
+        if (exampleTitle == null) {
             throw new KielerException("Title of an example could not be null.");
+        }
         for (ExampleCollector collector : collectors) {
-            if (collector.getExamplePool().containsKey(exampleTitle))
+            if (collector.getExamplePool().containsKey(exampleTitle)) {
                 throw new KielerException("Duplicate example title. Please choose an other one!");
+            }
         }
     }
 
+    /**
+     * extends a plugin with a new example.
+     * 
+     * @param properties
+     *            , {@link Map} with {@link ExampleElement} as key and an {@link Object} as value.
+     * @param extensionCreator
+     *            , {@link PluginExampleCreator}
+     * @throws KielerException
+     *             , will be caused if some errors occurs.
+     */
     @SuppressWarnings("unchecked")
     public static void exportInPlugin(final Map<ExampleElement, Object> properties,
-            PluginExampleCreator extensionCreator) throws KielerException {
+            final PluginExampleCreator extensionCreator) throws KielerException {
 
         Example mappedExample = ExampleExport.mapToExample(properties);
 
         File destFile = new File(mappedExample.getRootDir());
-        if (!destFile.exists())
+        if (!destFile.exists()) {
             throw new KielerException(ErrorMessage.DESTFILE_NOT_EXIST + mappedExample.getRootDir());
+        }
 
         List<ExportResource> exportResources = (List<ExportResource>) properties
                 .get(ExampleElement.RESOURCES);
@@ -132,9 +177,9 @@ public class ExampleExport {
         }
     }
 
-    private static String copyOverviewPic(String overviewPic,
-            PluginExampleCreator extensionCreator, File destFile, List<IPath> finishedResources)
-            throws KielerException {
+    private static String copyOverviewPic(final String overviewPic,
+            final PluginExampleCreator extensionCreator, final File destFile,
+            final List<IPath> finishedResources) throws KielerException {
         if (overviewPic != null && overviewPic.length() > 1) {
             String absolutePath = extensionCreator.copyOverviewPic(destFile.getPath(), overviewPic,
                     finishedResources);
@@ -152,7 +197,7 @@ public class ExampleExport {
      * @return Example
      */
     @SuppressWarnings("unchecked")
-    public static Example mapToExample(Map<ExampleElement, Object> properties) {
+    public static Example mapToExample(final Map<ExampleElement, Object> properties) {
         Example result = new Example((String) properties.get(ExampleElement.TITLE),
                 (SourceType) properties.get(ExampleElement.SOURCETYPE));
         result.setDescription((String) properties.get(ExampleElement.DESCRIPTION));
@@ -164,7 +209,8 @@ public class ExampleExport {
         return result;
     }
 
-    private static List<ExampleResource> mapToExampleResource(List<ExportResource> exportResources) {
+    private static List<ExampleResource> mapToExampleResource(
+            final List<ExportResource> exportResources) {
         List<ExampleResource> result = new ArrayList<ExampleResource>();
         for (ExportResource exRe : exportResources) {
             ExampleResource.Type st = filterSourceType(exRe.getResource().getClass().getName());
@@ -176,13 +222,16 @@ public class ExampleExport {
         return result;
     }
 
-    private static ExampleResource.Type filterSourceType(String name) {
-        if (projectClass.equals(name))
+    private static ExampleResource.Type filterSourceType(final String name) {
+        if (PROJECT_CLASS.equals(name)) {
             return Type.PROJECT;
-        if (folderClass.equals(name))
+        }
+        if (FOLDER_CLASS.equals(name)) {
             return Type.FOLDER;
-        if (fileClass.equals(name))
+        }
+        if (FILE_CLASS.equals(name)) {
             return Type.FILE;
+        }
         return null;
     }
 }
