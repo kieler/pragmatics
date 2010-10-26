@@ -19,6 +19,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
@@ -95,25 +96,42 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     public BorderItemLocator getBorderItemLocatorByString(final String input,
             final IFigure parentFigure, final Object locator, final EObject object) {
-
-        if (input.equals("NORTH")) {
-            BorderItemLocator newlocator = new BorderItemLocator(parentFigure,
+        if (locator instanceof BorderItemLocator) {
+            BorderItemLocator borderItemLocator = (BorderItemLocator) locator;
+        if (input.equals("NORTH")) {            
+            if (borderItemLocator.getCurrentSideOfParent() != PositionConstants.NORTH) {
+                BorderItemLocator newlocator = new BorderItemLocator(parentFigure,
                     PositionConstants.NORTH);
-            return newlocator;
+                return newlocator;
+            }
+           borderItemLocator.setPreferredSideOfParent(PositionConstants.NORTH);
+           return borderItemLocator;
+            
         } else if (input.equals("EAST")) {
-            BorderItemLocator newlocator = new BorderItemLocator(parentFigure,
+            if (borderItemLocator.getCurrentSideOfParent() != PositionConstants.EAST) {
+                BorderItemLocator newlocator = new BorderItemLocator(parentFigure,
                     PositionConstants.EAST);
-            return newlocator;
+                return newlocator;
+            }
+            return borderItemLocator;
         } else if (input.equals("SOUTH")) {
-            BorderItemLocator newlocator = new BorderItemLocator(parentFigure,
+            if (borderItemLocator.getCurrentSideOfParent() != PositionConstants.SOUTH) {
+                BorderItemLocator newlocator = new BorderItemLocator(parentFigure,
                     PositionConstants.SOUTH);
-            return newlocator;
+                return newlocator;
+            }
+            return borderItemLocator;
         } else if (input.equals("WEST")) {
-            BorderItemLocator newlocator = new BorderItemLocator(parentFigure,
+            
+            if (borderItemLocator.getCurrentSideOfParent() != PositionConstants.WEST) {
+                BorderItemLocator newlocator = new BorderItemLocator(parentFigure,
                     PositionConstants.WEST);
-            return newlocator;
+                return newlocator;
+            }
+            return borderItemLocator;
         }
 
+        }
         return null;
     }
 
