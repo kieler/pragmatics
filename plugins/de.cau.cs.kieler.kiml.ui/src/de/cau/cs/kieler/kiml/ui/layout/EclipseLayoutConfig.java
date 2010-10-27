@@ -26,7 +26,6 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
  * A layout configuration for extension point configurations and user preferences.
@@ -34,6 +33,59 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
  * @author msp
  */
 public class EclipseLayoutConfig extends DefaultLayoutConfig {
+
+    /**
+     * Retrieves a layout option from the given edit part by using the layout inspector
+     * associated with the edit part type.
+     * 
+     * @param editPart an edit part
+     * @param optionId layout option identifier
+     * @return the current value for the given option, or {@code null}
+     */
+    public static Object getOption(final EditPart editPart, final String optionId) {
+        ILayoutInspector inspector = EclipseLayoutServices.getInstance().getInspector(editPart);
+        if (inspector != null) {
+            return getOption(inspector, optionId);
+        }
+        return null;
+    }
+    
+    /**
+     * Retrieves a layout option from the given layout inspector by querying the option
+     * for the edit part's class name and its domain model name. 
+     * 
+     * @param inspector a layout inspector for an edit part
+     * @param optionId layout option identifier
+     * @return the current value for the given option, or {@code null}
+     */
+    public static Object getOption(final ILayoutInspector inspector, final String optionId) {
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        EditPart editPart = inspector.getFocusPart();
+        String clazzName = editPart == null ? null : editPart.getClass().getName();
+        Object value = layoutServices.getOption(clazzName, optionId);
+        if (value != null) {
+            return value;
+        } else {
+            EObject model = inspector.getFocusModel();
+            clazzName = model == null ? null : model.eClass().getInstanceTypeName();
+            return layoutServices.getOption(clazzName, optionId);
+        }        
+    }
+    
+    /**
+     * Determines whether the given edit part should not be layouted.
+     * 
+     * @param editPart an edit part
+     * @return true if no layout should be performed for the edit part
+     */
+    public static boolean isNoLayout(final EditPart editPart) {
+        Boolean result = (Boolean) getOption(editPart, LayoutOptions.NO_LAYOUT_ID);
+        if (result != null) {
+            return result;
+        } else {
+            return false;
+        }
+    }
 
     /** the edit part that contains the content of the selected element. */
     private EditPart containmentEditPart;
@@ -49,10 +101,14 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      */
     public final void initialize(final EditPart thecontainmentEditPart,
             final String contentLayoutHint) {
-        String contentDiagramType = (String) KimlUiUtil.getOption(
-                thecontainmentEditPart, LayoutOptions.DIAGRAM_TYPE_ID);
-        initialize(contentLayoutHint, contentDiagramType);
         this.containmentEditPart = thecontainmentEditPart;
+        String contentDiagramType = (String) getOption(thecontainmentEditPart,
+                LayoutOptions.DIAGRAM_TYPE_ID);
+        String layoutHint = contentLayoutHint;
+        if (layoutHint == null) {
+            layoutHint = (String) getOption(thecontainmentEditPart, LayoutOptions.LAYOUTER_HINT_ID);
+        }
+        initialize(layoutHint, contentDiagramType);
     }
     
     /**
@@ -65,10 +121,14 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      */
     public final void initialize(final LayoutOptionData.Target targetType,
             final EditPart thecontainerEditPart, final String containerLayoutHint) {
-        String containerDiagramType = (String) KimlUiUtil.getOption(thecontainerEditPart,
-                LayoutOptions.DIAGRAM_TYPE_ID);
-        initialize(targetType, containerLayoutHint, containerDiagramType);
         this.containerEditPart = thecontainerEditPart;
+        String containerDiagramType = (String) getOption(thecontainerEditPart,
+                LayoutOptions.DIAGRAM_TYPE_ID);
+        String layoutHint = containerLayoutHint;
+        if (layoutHint == null) {
+            layoutHint = (String) getOption(thecontainerEditPart, LayoutOptions.LAYOUTER_HINT_ID);
+        }
+        initialize(targetType, layoutHint, containerDiagramType);
     }
     
     /**
@@ -88,7 +148,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
             
             if (containmentEditPart != null) {
                 // check default value set for the actual edit part or its model element
-                result = KimlUiUtil.getOption(containmentEditPart, optionData.getId());
+                result = getOption(containmentEditPart, optionData.getId());
                 if (result != null) {
                     return (T) result;
                 }
@@ -96,7 +156,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     
             if (containerEditPart != null) {
                 // check default option of the diagram type
-                String diagramType = (String) KimlUiUtil.getOption(containerEditPart,
+                String diagramType = (String) getOption(containerEditPart,
                         LayoutOptions.DIAGRAM_TYPE_ID);
                 result = layoutServices.getOption(diagramType, optionData.getId());
                 if (result != null) {
@@ -104,7 +164,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
                 }
         
                 // check default value for the container edit part
-                result = KimlUiUtil.getOption(containerEditPart, optionData.getId());
+                result = getOption(containerEditPart, optionData.getId());
                 if (result != null) {
                     return (T) result;
                 }
@@ -151,7 +211,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         LayoutServices layoutServices = LayoutServices.getInstance();
 
         // get default layout options for the diagram type
-        String diagramType = (String) KimlUiUtil.getOption(editPart, LayoutOptions.DIAGRAM_TYPE_ID);
+        String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE_ID);
         Map<String, Object> options = new LinkedHashMap<String, Object>(
                 layoutServices.getOptions(diagramType));
         

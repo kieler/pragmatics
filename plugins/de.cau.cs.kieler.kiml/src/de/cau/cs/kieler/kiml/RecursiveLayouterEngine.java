@@ -31,6 +31,8 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
  */
 public class RecursiveLayouterEngine {
 
+    /** the default layout configuration. */
+    private DefaultLayoutConfig layoutConfig = new DefaultLayoutConfig();
     /** the last used layout provider. */
     private AbstractLayoutProvider lastLayoutProvider;
     /** the debug canvas to use. */
@@ -75,7 +77,7 @@ public class RecursiveLayouterEngine {
                 if (progressMonitor.isCanceled()) {
                     break;
                 }
-                lastLayoutProvider = LayoutServices.getInstance().getLayoutProvider(parent);
+                lastLayoutProvider = getLayoutProvider(parent);
                 lastLayoutProvider.doLayout(parent, progressMonitor.subTask(0));
                 checkLayout(parent);
                 parent = parent.getParent();
@@ -97,8 +99,7 @@ public class RecursiveLayouterEngine {
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         if (!layoutNode.getChildren().isEmpty()) {
-            AbstractLayoutProvider layoutProvider = LayoutServices.getInstance()
-                    .getLayoutProvider(layoutNode);
+            AbstractLayoutProvider layoutProvider = getLayoutProvider(layoutNode);
             // if the layout provider supports hierarchy, it is expected to layout the children
             int nodeCount;
             if (layoutProvider.supportsHierarchy(layoutNode)) {
@@ -118,6 +119,26 @@ public class RecursiveLayouterEngine {
             layoutProvider.setDebugCanvas(debugCanvas);
             layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
             checkLayout(layoutNode);
+        }
+    }
+
+    /**
+     * Returns the most appropriate layout provider for the given node.
+     * 
+     * @param layoutNode node for which a layout provider is requested
+     * @return a layout provider instance that fits the layout hints for the given node
+     * @throws KielerException if there is no registered layout provider
+     */
+    private AbstractLayoutProvider getLayoutProvider(final KNode layoutNode)
+            throws KielerException {
+        KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
+        String layoutHint = nodeLayout.getProperty(LayoutOptions.LAYOUTER_HINT);
+        String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
+        LayoutProviderData providerData = layoutConfig.getLayouterData(layoutHint, diagramType);
+        if (providerData != null) {
+            return providerData.getInstance();
+        } else {
+            throw new KielerException("No registered layout provider is available.");
         }
     }
     

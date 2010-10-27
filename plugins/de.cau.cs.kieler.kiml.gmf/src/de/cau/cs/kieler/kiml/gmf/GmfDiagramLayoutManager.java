@@ -70,6 +70,7 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -527,7 +528,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             } else if (obj instanceof ShapeCompartmentEditPart
                 && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
-                if (!KimlUiUtil.isNoLayout(compartment)) {
+                if (!EclipseLayoutConfig.isNoLayout(compartment)) {
                     IFigure compartmentFigure = compartment.getFigure();
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
                         ResizableCompartmentFigure resizCompFigure
@@ -547,7 +548,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 // process nodes, which may be parents of compartments
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
-                if (!KimlUiUtil.isNoLayout(childNodeEditPart)) {
+                if (!EclipseLayoutConfig.isNoLayout(childNodeEditPart)) {
                     IFigure nodeFigure = childNodeEditPart.getFigure();
                     KNode childLayoutNode = KimlUtil.createInitializedNode();
 

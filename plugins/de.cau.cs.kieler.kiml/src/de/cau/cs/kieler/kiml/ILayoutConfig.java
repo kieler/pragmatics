@@ -70,5 +70,14 @@ public interface ILayoutConfig extends IPropertyHolder {
      * @param value new default value
      */
     void setDiagramDefault(LayoutOptionData<?> optionData, Object value);
+    
+    /**
+     * Returns the most appropriate layout provider for the given layout hint and diagram type.
+     * 
+     * @param layoutHint identifier of either a layout provider or a layout type
+     * @param diagramType identifier of a diagram type
+     * @return the most appropriate layout provider, or {@code null}
+     */
+    LayoutProviderData getLayouterData(final String layoutHint, final String diagramType);
 
 }

@@ -21,10 +21,8 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gef.EditPart;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -38,7 +36,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 
 /**
  * Utility methods used for the KIML UI.
@@ -146,59 +143,6 @@ public final class KimlUiUtil {
                 runnable.run();
             }
         });
-    }
-    
-    /**
-     * Retrieves a layout option from the given edit part by using the layout inspector
-     * associated with the edit part type.
-     * 
-     * @param editPart an edit part
-     * @param optionId layout option identifier
-     * @return the current value for the given option, or {@code null}
-     */
-    public static Object getOption(final EditPart editPart, final String optionId) {
-        ILayoutInspector inspector = EclipseLayoutServices.getInstance().getInspector(editPart);
-        if (inspector != null) {
-            return getOption(inspector, optionId);
-        }
-        return null;
-    }
-
-    /**
-     * Retrieves a layout option from the given layout inspector by querying the option
-     * for the edit part's class name and its domain model name. 
-     * 
-     * @param inspector a layout inspector for an edit part
-     * @param optionId layout option identifier
-     * @return the current value for the given option, or {@code null}
-     */
-    public static Object getOption(final ILayoutInspector inspector, final String optionId) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
-        EditPart editPart = inspector.getFocusPart();
-        String clazzName = editPart == null ? null : editPart.getClass().getName();
-        Object value = layoutServices.getOption(clazzName, optionId);
-        if (value != null) {
-            return value;
-        } else {
-            EObject model = inspector.getFocusModel();
-            clazzName = model == null ? null : model.eClass().getInstanceTypeName();
-            return layoutServices.getOption(clazzName, optionId);
-        }        
-    }
-    
-    /**
-     * Determines whether the given edit part should not be layouted.
-     * 
-     * @param editPart an edit part
-     * @return true if no layout should be performed for the edit part
-     */
-    public static boolean isNoLayout(final EditPart editPart) {
-        Boolean result = (Boolean) getOption(editPart, LayoutOptions.NO_LAYOUT_ID);
-        if (result != null) {
-            return result;
-        } else {
-            return false;
-        }
     }
 
     /**

@@ -28,6 +28,7 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
@@ -781,8 +782,7 @@ final class GenomeFactory {
         // default, but what about the others?
         String hintId = (String) layoutHintIds.iterator().next();
 
-        LayoutServices layoutServices = LayoutServices.getInstance();
-        LayoutProviderData providerData = layoutServices.getLayoutProviderData(hintId, null);
+        LayoutProviderData providerData = new DefaultLayoutConfig().getLayouterData(hintId, null);
 
         if (providerData == null) {
             // no provider for the given layout hint

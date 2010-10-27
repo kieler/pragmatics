@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
@@ -209,8 +210,8 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
                     String oldLayoutHintId = (String) shapeLayout.getProperty(data);
                     assert oldLayoutHintId != null;
 
-                    LayoutProviderData providerData =
-                            layoutServices.getLayoutProviderData(newLayoutHintId, null);
+                    LayoutProviderData providerData = new DefaultLayoutConfig().getLayouterData(
+                            newLayoutHintId, null);
 
                     String newType = providerData.getType();
 

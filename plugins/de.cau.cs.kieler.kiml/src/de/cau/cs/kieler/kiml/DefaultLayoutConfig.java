@@ -46,8 +46,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      */
     public final void initialize(final String contentLayoutHint, final String contentDiagramType) {
         LayoutServices layoutServices = LayoutServices.getInstance();
-        contentLayouterData = layoutServices.getLayoutProviderData(
-                contentLayoutHint, contentDiagramType);
+        contentLayouterData = getLayouterData(contentLayoutHint, contentDiagramType);
         if (contentLayouterData != null) {
             List<LayoutOptionData<?>> options = layoutServices.getLayoutOptions(
                     contentLayouterData, LayoutOptionData.Target.PARENTS);
@@ -70,8 +69,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     public final void initialize(final LayoutOptionData.Target targetType,
             final String containerLayoutHint, final String containerDiagramType) {
         LayoutServices layoutServices = LayoutServices.getInstance();
-        containerLayouterData = layoutServices.getLayoutProviderData(
-                containerLayoutHint, containerDiagramType);
+        containerLayouterData = getLayouterData(containerLayoutHint, containerDiagramType);
         if (containerLayouterData != null) {
             List<LayoutOptionData<?>> options = layoutServices.getLayoutOptions(
                     containerLayouterData, targetType);
@@ -185,6 +183,112 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      */
     public LayoutProviderData getContainerLayouterData() {
         return containerLayouterData;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public LayoutProviderData getLayouterData(final String layoutHint, final String diagramType) {
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        // try to get a specific provider for the given hint
+        LayoutProviderData directHitData = layoutServices.getLayoutProviderData(layoutHint);
+        if (directHitData != null) {
+            return directHitData;
+        }
+
+        // look for the provider with highest priority, interpreting the hint as layout type
+        LayoutProviderData bestProvider = null;
+        int bestPrio = LayoutProviderData.MIN_PRIORITY;
+        boolean matchesLayoutType = false, matchesDiagramType = false, matchesGeneralDiagram = false;
+        for (LayoutProviderData providerData : layoutServices.getLayoutProviderData()) {
+            int currentPrio = providerData.getSupportedPriority(diagramType);
+            if (matchesLayoutType) {
+                if (providerData.getType().equals(layoutHint)) {
+                    if (matchesDiagramType) {
+                        if (currentPrio > bestPrio) {
+                            bestProvider = providerData;
+                            bestPrio = currentPrio;
+                        }
+                    } else {
+                        if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                            bestProvider = providerData;
+                            bestPrio = currentPrio;
+                            matchesDiagramType = true;
+                            matchesGeneralDiagram = false;
+                        } else {
+                            currentPrio = providerData.getSupportedPriority(
+                                    LayoutServices.DIAGRAM_TYPE_GENERAL);
+                            if (matchesGeneralDiagram) {
+                                if (currentPrio > bestPrio) {
+                                    bestProvider = providerData;
+                                    bestPrio = currentPrio;
+                                }
+                            } else {
+                                if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                                    bestProvider = providerData;
+                                    bestPrio = currentPrio;
+                                    matchesGeneralDiagram = true;
+                                } else if (bestProvider == null) {
+                                    bestProvider = providerData;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (providerData.getType().equals(layoutHint)) {
+                    bestProvider = providerData;
+                    matchesLayoutType = true;
+                    if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                        bestPrio = currentPrio;
+                        matchesDiagramType = true;
+                        matchesGeneralDiagram = false;
+                    } else {
+                        matchesDiagramType = false;
+                        currentPrio = providerData.getSupportedPriority(
+                                LayoutServices.DIAGRAM_TYPE_GENERAL);
+                        if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                            bestPrio = currentPrio;
+                            matchesGeneralDiagram = true;
+                        } else {
+                            matchesGeneralDiagram = false;
+                        }
+                    }
+                } else {
+                    if (matchesDiagramType) {
+                        if (currentPrio > bestPrio) {
+                            bestProvider = providerData;
+                            bestPrio = currentPrio;
+                        }
+                    } else {
+                        if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                            bestProvider = providerData;
+                            bestPrio = currentPrio;
+                            matchesDiagramType = true;
+                            matchesGeneralDiagram = false;
+                        } else {
+                            currentPrio = providerData.getSupportedPriority(
+                                    LayoutServices.DIAGRAM_TYPE_GENERAL);
+                            if (matchesGeneralDiagram) {
+                                if (currentPrio > bestPrio) {
+                                    bestProvider = providerData;
+                                    bestPrio = currentPrio;
+                                }
+                            } else {
+                                if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                                    bestProvider = providerData;
+                                    bestPrio = currentPrio;
+                                    matchesGeneralDiagram = true;
+                                } else if (bestProvider == null) {
+                                    bestProvider = providerData;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return bestProvider;
     }
 
     /**

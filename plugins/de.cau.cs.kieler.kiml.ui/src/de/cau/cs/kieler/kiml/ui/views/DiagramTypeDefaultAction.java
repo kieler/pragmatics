@@ -21,6 +21,7 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
@@ -61,7 +62,8 @@ public class DiagramTypeDefaultAction extends Action {
     public void run() {
         EditPart editPart = layoutView.getCurrentEditPart();
         if (editPart != null) {
-            String diagramType = (String) KimlUiUtil.getOption(editPart, LayoutOptions.DIAGRAM_TYPE_ID);
+            String diagramType = (String) EclipseLayoutConfig.getOption(editPart,
+                    LayoutOptions.DIAGRAM_TYPE_ID);
             if (diagramType != null) {
                 for (IPropertySheetEntry entry : layoutView.getSelection()) {
                     setDefault(diagramType, entry);

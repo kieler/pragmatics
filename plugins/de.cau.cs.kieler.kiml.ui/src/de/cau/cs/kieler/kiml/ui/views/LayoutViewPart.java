@@ -64,9 +64,9 @@ import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
-import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
  * A view that displays layout options for selected objects.
@@ -431,7 +431,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                 }
                 // add the "set as default for diagram type" action
                 LayoutServices layoutServices = LayoutServices.getInstance();
-                String diagramType = (String) KimlUiUtil.getOption(editPart,
+                String diagramType = (String) EclipseLayoutConfig.getOption(editPart,
                         LayoutOptions.DIAGRAM_TYPE_ID);
                 if (diagramType == null) {
                     if (diagramTypeDefaultItem != null) {

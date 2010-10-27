@@ -16,16 +16,12 @@ package de.cau.cs.kieler.kiml;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -233,47 +229,6 @@ public class LayoutServices {
     }
 
     /**
-     * Returns the layout provider with highest priority for the given layout
-     * hint and diagram type.
-     * 
-     * @param layoutHint identifier of either a layout provider or a layout type
-     * @param diagramType identifier of a diagram type
-     * @return the layout provider with highest priority, or {@code null} if
-     *         there is no registered layout provider
-     */
-    public final LayoutProviderData getLayoutProviderData(final String layoutHint,
-            final String diagramType) {
-        // try to get a specific provider for the given node
-        LayoutProviderData providerData = layoutProviderMap.get(layoutHint);
-        if (providerData != null) {
-            return providerData;
-        }
-        // find the most appropriate provider from the layout type and diagram type
-        return findAppropriateProvider(layoutHint, diagramType);
-    }
-
-    /**
-     * Returns the most appropriate layout provider for the given node.
-     * 
-     * @param layoutNode node for which a layout provider is requested
-     * @return a layout provider instance that fits the layout hints for the
-     *         given node
-     * @throws KielerException if there is no registered layout provider
-     */
-    public final AbstractLayoutProvider getLayoutProvider(final KNode layoutNode)
-            throws KielerException {
-        KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
-        String layoutHint = nodeLayout.getProperty(LayoutOptions.LAYOUTER_HINT);
-        String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
-        LayoutProviderData providerData = getLayoutProviderData(layoutHint, diagramType);
-        if (providerData != null) {
-            return providerData.getInstance();
-        } else {
-            throw new KielerException("No registered layout provider is available.");
-        }
-    }
-
-    /**
      * Returns the layout option data associated with the given identifier.
      * 
      * @param id layout option identifier
@@ -421,112 +376,6 @@ public class LayoutServices {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Determines an appropriate layout provider for the given layout type and
-     * diagram type.
-     * 
-     * @param layoutType hint about the layout type to choose, or {@code null}
-     *            if no specific layout type is selected
-     * @param diagramType identifier of the diagram type that is to be layouted
-     * @return data instance for the most appropriate layout provider, or
-     *         {@code null} if there is no layout provider
-     */
-    private LayoutProviderData findAppropriateProvider(final String layoutType,
-            final String diagramType) {
-        Iterator<LayoutProviderData> providerIter = layoutProviderMap.values().iterator();
-        LayoutProviderData bestProvider = null;
-        int bestPrio = LayoutProviderData.MIN_PRIORITY;
-        boolean matchesLayoutType = false, matchesDiagramType = false, matchesGeneralDiagram = false;
-        // look for an appropriate provider and return the best one
-        while (providerIter.hasNext()) {
-            LayoutProviderData providerData = providerIter.next();
-            int currentPrio = providerData.getSupportedPriority(diagramType);
-            if (matchesLayoutType) {
-                if (providerData.getType().equals(layoutType)) {
-                    if (matchesDiagramType) {
-                        if (currentPrio > bestPrio) {
-                            bestProvider = providerData;
-                            bestPrio = currentPrio;
-                        }
-                    } else {
-                        if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
-                            bestProvider = providerData;
-                            bestPrio = currentPrio;
-                            matchesDiagramType = true;
-                            matchesGeneralDiagram = false;
-                        } else {
-                            currentPrio = providerData.getSupportedPriority(DIAGRAM_TYPE_GENERAL);
-                            if (matchesGeneralDiagram) {
-                                if (currentPrio > bestPrio) {
-                                    bestProvider = providerData;
-                                    bestPrio = currentPrio;
-                                }
-                            } else {
-                                if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
-                                    bestProvider = providerData;
-                                    bestPrio = currentPrio;
-                                    matchesGeneralDiagram = true;
-                                } else if (bestProvider == null) {
-                                    bestProvider = providerData;
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (providerData.getType().equals(layoutType)) {
-                    bestProvider = providerData;
-                    matchesLayoutType = true;
-                    if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
-                        bestPrio = currentPrio;
-                        matchesDiagramType = true;
-                        matchesGeneralDiagram = false;
-                    } else {
-                        matchesDiagramType = false;
-                        currentPrio = providerData.getSupportedPriority(DIAGRAM_TYPE_GENERAL);
-                        if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
-                            bestPrio = currentPrio;
-                            matchesGeneralDiagram = true;
-                        } else {
-                            matchesGeneralDiagram = false;
-                        }
-                    }
-                } else {
-                    if (matchesDiagramType) {
-                        if (currentPrio > bestPrio) {
-                            bestProvider = providerData;
-                            bestPrio = currentPrio;
-                        }
-                    } else {
-                        if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
-                            bestProvider = providerData;
-                            bestPrio = currentPrio;
-                            matchesDiagramType = true;
-                            matchesGeneralDiagram = false;
-                        } else {
-                            currentPrio = providerData.getSupportedPriority(DIAGRAM_TYPE_GENERAL);
-                            if (matchesGeneralDiagram) {
-                                if (currentPrio > bestPrio) {
-                                    bestProvider = providerData;
-                                    bestPrio = currentPrio;
-                                }
-                            } else {
-                                if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
-                                    bestProvider = providerData;
-                                    bestPrio = currentPrio;
-                                    matchesGeneralDiagram = true;
-                                } else if (bestProvider == null) {
-                                    bestProvider = providerData;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return bestProvider;
     }
 
 }

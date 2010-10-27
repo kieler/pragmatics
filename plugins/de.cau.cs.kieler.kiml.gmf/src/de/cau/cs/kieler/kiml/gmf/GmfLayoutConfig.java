@@ -42,7 +42,6 @@ import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsFactory;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
@@ -174,8 +173,8 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             editPart = (IGraphicalEditPart) editPart.getParent();
         }
         if (editPart instanceof ShapeNodeEditPart) {
-            if (KimlUiUtil.isNoLayout(editPart)
-                    || KimlUiUtil.isNoLayout(editPart.getParent())) {
+            if (EclipseLayoutConfig.isNoLayout(editPart)
+                    || EclipseLayoutConfig.isNoLayout(editPart.getParent())) {
                 return null;
             }
         }
@@ -241,13 +240,13 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         for (Object child : editPart.getChildren()) {
             if (child instanceof ShapeNodeEditPart
                     && !(child instanceof AbstractBorderItemEditPart)
-                    && !KimlUiUtil.isNoLayout((EditPart) child)) {
+                    && !EclipseLayoutConfig.isNoLayout((EditPart) child)) {
                 return editPart;
             } else if (child instanceof CompartmentEditPart
-                    && !KimlUiUtil.isNoLayout((EditPart) child)) {
+                    && !EclipseLayoutConfig.isNoLayout((EditPart) child)) {
                 for (Object grandChild : ((CompartmentEditPart) child).getChildren()) {
                     if (grandChild instanceof ShapeNodeEditPart
-                            && !KimlUiUtil.isNoLayout((EditPart) grandChild)) {
+                            && !EclipseLayoutConfig.isNoLayout((EditPart) grandChild)) {
                         return (IGraphicalEditPart) child;
                     }
                 }
