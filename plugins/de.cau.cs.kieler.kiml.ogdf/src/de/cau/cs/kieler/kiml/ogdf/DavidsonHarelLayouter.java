@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.ogdf;
 import net.ogdf.lib.Ogdf;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ogdf.options.Costs;
@@ -41,16 +42,6 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
     
     /** default value for desired edge length. */
     private static final float DEF_DESIRED_EDGE_LENGTH = 0.0f;
-    /** default value for costs. */
-    private static final int DEF_COSTS = Ogdf.COSTS_STANDARD;
-    /** default value for speed. */
-    private static final int DEF_SPEED = Ogdf.SPEED_MEDIUM;
-    /** default value for border spacing. */
-    private static final float DEF_BORDER_SPACING = 15;
-    /** default value for label edge distance. */
-    private static final float DEF_LABEL_SPACING = 15.0f;
-    /** default value for label margin distance. */
-    private static final float DEF_LABEL_MARGIN_DISTANCE = 15.0f;
 
     /**
      * {@inheritDoc}
@@ -100,21 +91,10 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
     /**
      * {@inheritDoc}
      */
-    public Object getDefault(final String optionId) {
-        if (optionId.equals(LayoutOptions.OBJ_SPACING_ID)) {
-            return DEF_DESIRED_EDGE_LENGTH;
-        } else if (optionId.equals(COSTS)) {
-            return DEF_COSTS;
-        } else if (optionId.equals(SPEED)) {
-            return DEF_SPEED;
-        } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
-            return DEF_BORDER_SPACING;
-        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
-            return DEF_LABEL_SPACING;
-        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
-            return DEF_LABEL_MARGIN_DISTANCE;
-        } else {
-            return null;
-        }
+    @Override
+    public void initDefaults(final IPropertyHolder defaultsHolder) {
+        super.initDefaults(defaultsHolder);
+        defaultsHolder.setProperty(LayoutOptions.OBJ_SPACING, DEF_DESIRED_EDGE_LENGTH);
     }
+    
 }

@@ -55,12 +55,21 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
 
     /** parameter value for the compound version of the layout algorithm. */
     public static final String PARAM_COMPOUND = "Compound";
-
     /** default value for minimal spacing. */
     private static final float DEF_MIN_SPACING = 16.0f;
     
     /** indicates whether the compound graph version of the algorithm shall be used. */
     private boolean compoundMode = false;
+    
+    /**
+     * Initialize default options for the layout provider.
+     */
+    public Draw2DLayoutProvider() {
+        setProperty(LayoutOptions.OBJ_SPACING, DEF_MIN_SPACING);
+        setProperty(LayoutOptions.BORDER_SPACING, DEF_MIN_SPACING);
+        setProperty(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.DOWN);
+        setProperty(LayoutOptions.FIXED_SIZE, false);
+    }
     
     /**
      * {@inheritDoc}
@@ -85,24 +94,6 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         applyLayout(layoutNode, graph);
         
         progressMonitor.done();
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getDefault(final String optionId) {
-        if (LayoutOptions.OBJ_SPACING_ID.equals(optionId)) {
-            return DEF_MIN_SPACING;
-        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
-            return DEF_MIN_SPACING;
-        } else if (LayoutOptions.LAYOUT_DIRECTION_ID.equals(optionId)) {
-            return LayoutDirection.DOWN;
-        } else if (LayoutOptions.FIXED_SIZE_ID.equals(optionId)) {
-            return false;
-        } else {
-            return null;
-        }
     }
     
     /**

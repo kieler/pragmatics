@@ -49,6 +49,7 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
@@ -60,7 +61,6 @@ import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -778,14 +778,12 @@ public final class EvolUtil {
         }
 
         // Get the layout inspectors of the editors.
-        List<ILayoutInspector> inspectors = getLayoutInspectors(editors);
-        assert inspectors != null;
-
-        if (inspectors.isEmpty()) {
+        List<ILayoutConfig> configs = getLayoutConfigs(editors);
+        if (configs.isEmpty()) {
             return new Population();
         }
 
-        Population result = createPopulation(inspectors);
+        Population result = createPopulation(configs);
         return result;
     }
 
@@ -886,50 +884,6 @@ public final class EvolUtil {
     }
 
     /**
-     * Returns a layout inspector for the given editor and edit part.
-     *
-     * @param theEditor
-     *            an {@link IEditorPart}
-     * @param theEditPart
-     *            an {@link EditPart}. If this is {@code null}, the rootPart is
-     *            used instead.
-     * @return a {@link ILayoutInspector} for the given editor and edit part, or
-     *         {@code null} if none can be found.
-     */
-    public static ILayoutInspector getLayoutInspector(
-            final IEditorPart theEditor, final EditPart theEditPart) {
-
-        if (!(theEditor instanceof DiagramEditor)) {
-            // We can only handle diagram editors.
-            return null;
-        }
-
-        EditPart rootPart;
-        if (theEditPart == null) {
-            rootPart = ((DiagramEditor) theEditor).getDiagramEditPart();
-        } else {
-            // find root edit part
-            rootPart = theEditPart;
-
-            while (rootPart.getParent() != null) {
-                rootPart = rootPart.getParent();
-            }
-        }
-
-        DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(theEditor, rootPart);
-        if (manager == null) {
-            // No layout manager found. We cannot get the layout inspector.
-            return null;
-        }
-
-        ILayoutInspector inspector = manager.getInspector(rootPart);
-        assert inspector != null;
-
-        return inspector;
-    }
-
-    /**
      * Finds a layout provider for the given {@link IEditorPart} and
      * {@link EditPart}.
      *
@@ -942,13 +896,13 @@ public final class EvolUtil {
      */
     public static LayoutProviderData getLayoutProviderData(
             final IEditorPart editor, final EditPart editPart) {
-        final DiagramLayoutManager manager =
-                EclipseLayoutServices.getInstance().getManager(editor, editPart);
-        if (manager == null) {
-            return null;
+        final DiagramLayoutManager manager = EclipseLayoutServices.getInstance()
+                .getManager(editor, editPart);
+        if (manager != null) {
+            ILayoutConfig config = manager.getLayoutConfig(editPart);
+            return config.getContentLayouterData();
         }
-        LayoutProviderData result = getLayoutProviderData(manager, editPart);
-        return result;
+        return null;
     }
 
     /**
@@ -1026,44 +980,36 @@ public final class EvolUtil {
      * Creates a population of default size, taking initial values from the
      * given list of {@link ILayoutInspector} instances.
      *
-     * @param inspectors
+     * @param configs list of layout configurations
      * @return the new population
      * @throws KielerException
      */
-    private static Population createPopulation(final List<ILayoutInspector> inspectors)
+    private static Population createPopulation(final List<ILayoutConfig> configs)
             throws KielerException {
-        if (inspectors == null) {
-            throw new IllegalArgumentException();
-        }
-
-        int size =
-                EvolPlugin.getDefault().getPreferenceStore()
+        int size = EvolPlugin.getDefault().getPreferenceStore()
                         .getInt(EvolPlugin.PREF_POPULATION_SIZE);
 
-        return createPopulation(inspectors, size);
+        return createPopulation(configs, size);
     }
 
     /**
      * Creates a population of the given size, taking initial values from the
      * given list of {@link ILayoutInspector} instances.
      *
-     * @param inspectors
-     *            the layout inspectors
-     * @param size
-     *            desired population size
+     * @param configs list of layout configurations
+     * @param size desired population size
      * @return the new population
      * @throws KielerException
      */
-    private static Population createPopulation(
-            final List<ILayoutInspector> inspectors, final int size) throws KielerException {
-        if ((inspectors == null) || (size < 0)) {
+    private static Population createPopulation(final List<ILayoutConfig> configs,
+            final int size) throws KielerException {
+        if ((configs == null) || (size < 0)) {
             throw new IllegalArgumentException();
         }
 
         Population result = new Population();
 
-        Set<Object> presentLayoutHintIds =
-                getPropertyValues(inspectors, LayoutOptions.LAYOUTER_HINT_ID);
+        Set<Object> presentLayoutHintIds = getPropertyValues(configs, LayoutOptions.LAYOUTER_HINT_ID);
 
         assert !presentLayoutHintIds.isEmpty() : "Layout hint missing.";
 
@@ -1071,7 +1017,7 @@ public final class EvolUtil {
         GenomeFactory genomeFactory = new GenomeFactory(null);
 
         for (int i = 0; i < size; i++) {
-            Genome genome = genomeFactory.createGenome(inspectors, presentLayoutHintIds);
+            Genome genome = genomeFactory.createGenome(configs, presentLayoutHintIds);
             assert genome != null : "Failed to create genome.";
             result.add(genome);
         }
@@ -1079,112 +1025,58 @@ public final class EvolUtil {
     }
 
     /**
-     * Obtains the layout hint identifier from the given layout inspector.
-     *
-     * @param inspector
-     *            an {@link ILayoutInspector}
-     *
-     * @return the layout hint id
-     */
-    private static String getLayoutHintId(final ILayoutInspector inspector) {
-
-        LayoutProviderData hintData = inspector.getFocusLayouterData();
-
-        assert hintData != null : "Could not find layout provider id.";
-
-        String hintId = hintData.getId();
-        return hintId;
-    }
-
-    /**
-     * Collect the layout inspectors of the given editors. The current editor is
+     * Collect the layout configuration handlers of the given editors. The current editor is
      * treated first, if there is any.
      *
-     * @param editors
-     * @return a list of layout inspectors
+     * @param editors set of diagram editors
+     * @return a list of layout configurations
      */
-    private static List<ILayoutInspector> getLayoutInspectors(final Set<IEditorPart> editors) {
-        List<ILayoutInspector> inspectors = new LinkedList<ILayoutInspector>();
+    private static List<ILayoutConfig> getLayoutConfigs(final Set<IEditorPart> editors) {
+        List<ILayoutConfig> configs = new LinkedList<ILayoutConfig>();
+        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
 
         // Handle current editor.
         IEditorPart currentEditor = getCurrentEditor();
-
         if (currentEditor != null) {
-            ILayoutInspector currentInspector = getLayoutInspector(currentEditor, null);
-            if (currentInspector != null) {
-                currentInspector.initOptions();
-                inspectors.add(currentInspector);
+            ILayoutConfig currentConfig = layoutServices.getLayoutConfig(currentEditor);
+            if (currentConfig != null) {
+                configs.add(currentConfig);
             }
         }
 
-        // Collect the layout property sources of the other editors.
+        // Collect the layout configurations of the other editors.
         for (final IEditorPart editor : editors) {
             if (editor == currentEditor) {
                 // Already handled this one.
                 continue;
             }
 
-            if (!(editor instanceof DiagramEditor)) {
-                // Editor is not a DiagramEditor. Skip it.
-                continue;
-            }
-
-            ILayoutInspector inspector = getLayoutInspector(editor, null);
-
-            if (inspector != null) {
-                inspectors.add(inspector);
+            ILayoutConfig config = layoutServices.getLayoutConfig(editor);
+            if (config != null) {
+                configs.add(config);
             }
         }
 
-        return inspectors;
-    }
-
-    /**
-     * Finds a layout provider for the given manager and the given edit part.
-     *
-     * @param manager
-     *            a {@link DiagramLayoutManager}; must not be {@code null}
-     * @param editPart
-     *            an {@link EditPart}
-     * @return the {@link LayoutProviderData} of the layout provider, or
-     *         {@code null} if none can be found
-     */
-    private static LayoutProviderData getLayoutProviderData(
-            final DiagramLayoutManager manager, final EditPart editPart) {
-        if (manager == null) {
-            throw new IllegalArgumentException();
-        }
-
-        ILayoutInspector inspector = manager.getInspector(editPart);
-        if (inspector == null) {
-            return null;
-        }
-        inspector.initOptions();
-        LayoutProviderData data = inspector.getContainerLayouterData();
-
-        return data;
+        return configs;
     }
 
     /**
      * Retrieve the values of the given IDs in from the given layout inspectors.
      * For layout hint, the (non-null) layout hint identifiers are returned.
      *
-     * @param inspectors
-     *            layout inspectors
-     * @param id
-     *            an identifier
+     * @param configs list of layout configurations
+     * @param id an identifier
      * @return the set of values having the specified ID
      */
-    private static Set<Object> getPropertyValues(
-            final List<ILayoutInspector> inspectors, final String id) {
-
+    private static Set<Object> getPropertyValues(final List<ILayoutConfig> configs,
+            final String id) {
         Set<Object> result = new LinkedHashSet<Object>();
         LayoutServices layoutServices = LayoutServices.getInstance();
         LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(id);
 
-        for (final ILayoutInspector inspector : inspectors) {
+        for (final ILayoutConfig config : configs) {
             Object
-                value = inspector.getOption(optionData);
+                value = config.getProperty(optionData);
                 // value = source.getPropertyValue(id);
 
             if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
@@ -1203,12 +1095,10 @@ public final class EvolUtil {
                 // But we want the layout hint identifier instead of its
                 // index.
 
-                String item = getLayoutHintId(inspector);
-
-                if (item != null) {
-                    result.add(item);
+                LayoutProviderData provider = config.getContentLayouterData();
+                if (provider != null) {
+                    result.add(provider.getId());
                 }
-
             } else {
                 // normal option
                 result.add(value);

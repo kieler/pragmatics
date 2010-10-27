@@ -29,6 +29,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
@@ -347,6 +348,11 @@ public abstract class DiagramLayoutManager {
         return null;
     }
     
+    
+    /*-------------------------------------------------------------------------------------------*/
+    /*------------------- Abstract methods to be implemented by subclasses ----------------------*/
+    // FIXME which methods could go to ILayoutInspector?
+    
     /**
      * Returns the currently processed top level edit part. This is only valid after
      * {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was called.
@@ -401,6 +407,22 @@ public abstract class DiagramLayoutManager {
      * @return a layout inspector for the edit part
      */
     public abstract ILayoutInspector getInspector(EditPart editPart);
+    
+    /**
+     * Returns a layout inspector for the given editor part.
+     * 
+     * @param editorPart an editor part
+     * @return a layout inspector for the editor part
+     */
+    public abstract ILayoutInspector getInspector(IEditorPart editorPart);
+    
+    /**
+     * Returns a layout configuration for the given edit part.
+     * 
+     * @param editPart an edit part
+     * @return a layout configuration for the edit part
+     */
+    public abstract ILayoutConfig getLayoutConfig(EditPart editPart);
 
     /**
      * Transfers all layout data from the last created KGraph instance to the

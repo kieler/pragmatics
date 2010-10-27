@@ -41,6 +41,16 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
     private static final float DEF_SPACING = 20.0f;
     
     /**
+     * Initialize default options of the layout provider.
+     */
+    public RandomLayoutProvider() {
+        setProperty(LayoutOptions.RANDOM_SEED, 0);
+        setProperty(LayoutOptions.ASPECT_RATIO, DEF_ASPECT_RATIO);
+        setProperty(LayoutOptions.OBJ_SPACING, DEF_SPACING);
+        setProperty(LayoutOptions.BORDER_SPACING, DEF_SPACING);
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -82,23 +92,6 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         randomize(parentNode, random, aspectRatio, spacing, offset);
 
         progressMonitor.done();
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getDefault(final String optionId) {
-        if (LayoutOptions.RANDOM_SEED_ID.equals(optionId)) {
-            return 0;
-        } else if (LayoutOptions.ASPECT_RATIO_ID.equals(optionId)) {
-            return DEF_ASPECT_RATIO;
-        } else if (LayoutOptions.OBJ_SPACING_ID.equals(optionId)) {
-            return DEF_SPACING;
-        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
-            return DEF_SPACING;
-        }
-        return null;
     }
     
     /**

@@ -56,6 +56,7 @@ import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -168,9 +169,10 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
             public IPropertySource getPropertySource(final Object object) {
                 if (object instanceof EditPart) {
                     ILayoutInspector inspector = currentManager.getInspector((EditPart) object);
-                    if (inspector != null) {
+                    ILayoutConfig layoutConfig = currentManager.getLayoutConfig((EditPart) object);
+                    if (inspector != null && layoutConfig != null) {
                         lastInspector = inspector;
-                        return new LayoutPropertySource(inspector);
+                        return new LayoutPropertySource(layoutConfig, inspector);
                     }
                 }
                 return null;

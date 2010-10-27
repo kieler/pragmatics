@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -43,23 +44,42 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public abstract class OgdfLayouter {
 
+    /** default value for border spacing. */
+    public static final float DEF_BORDER_SPACING = 15;
+    
     /** layout option identifier for label edge distance. */
     public static final String LABEL_EDGE_DIST_ID
             = "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance";
     /** label edge distance property. */
-    private static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
+    public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
             LABEL_EDGE_DIST_ID, -1.0f);
+    /** default value for label edge distance. */
+    public static final float DEF_LABEL_EDGE_DIST = 15.0f;
     
     /** layout option identifier for label margin distance. */
     public static final String LABEL_MARGIN_DIST_ID
             = "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance";
     /** label margin distance property. */
-    private static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
+    public static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
             LABEL_MARGIN_DIST_ID, -1.0f);
+    /** default value for label margin distance. */
+    public static final float DEF_LABEL_MARGIN_DIST = 15.0f;
     
     /** the minimal distance between the source point and the first bend point. */
     private static final float SOURCE_POINT_FIRST_BEND_DISTANCE = 4;
 
+    /**
+     * Initialize the default values for the layout provider. Subclasses should extend
+     * this method with their own default values.
+     * 
+     * @param defaultsHolder the layout options holder for default values
+     */
+    public void initDefaults(final IPropertyHolder defaultsHolder) {
+        defaultsHolder.setProperty(LayoutOptions.BORDER_SPACING, DEF_BORDER_SPACING);
+        defaultsHolder.setProperty(LABEL_EDGE_DIST, DEF_LABEL_EDGE_DIST);
+        defaultsHolder.setProperty(LABEL_MARGIN_DIST, DEF_LABEL_MARGIN_DIST);
+    }
+    
     /**
      * Layouts the given graph.
      * 
@@ -130,40 +150,20 @@ public abstract class OgdfLayouter {
         // TODO as soon as OGDF provides a better label layouter this should be reworked
         float edgeDistance = parentLayout.getProperty(LABEL_EDGE_DIST);
         if (edgeDistance < 0) {
-            Object edgeDistanceObj = getDefault(LABEL_EDGE_DIST_ID);
-            if (edgeDistanceObj instanceof Float) {
-                edgeDistance = (Float) edgeDistanceObj;
-            } else {
-                edgeDistance = 0;
-            }
+            edgeDistance = DEF_LABEL_EDGE_DIST;
         }
         Ogdf.LabelLayouter_setEdgeDistance(edgeDistance);
 
         // get the margin distance
         float marginDistance = parentLayout.getProperty(LABEL_MARGIN_DIST);
         if (marginDistance < 0) {
-            Object marginDistanceObj = getDefault(LABEL_MARGIN_DIST_ID);
-            if (marginDistanceObj instanceof Float) {
-                marginDistance = (Float) marginDistanceObj;
-            } else {
-                marginDistance = 0;
-            }
+            marginDistance = DEF_LABEL_MARGIN_DIST;
         }
         Ogdf.LabelLayouter_setMarginDistance(marginDistance);
 
         // call the label layouter
         Ogdf.LabelLayouter_layout();
     }
-
-    /**
-     * Returns the default value for the given layout option.
-     * 
-     * @param optionId
-     *            a layout option identifier
-     * @return the corresponding default value, or {@code null} if the option is
-     *         not known
-     */
-    public abstract Object getDefault(final String optionId);
 
     /** map of KIELER nodes to OGDF node identifier. */
     private Map<KNode, Long> knode2ogdfNodeMap =
@@ -343,12 +343,7 @@ public abstract class OgdfLayouter {
         // get the border spacing
         float borderSpacing = parentNodeLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
-            Object borderSpacingObj = getDefault(LayoutOptions.BORDER_SPACING_ID);
-            if (borderSpacingObj instanceof Float) {
-                borderSpacing = (Float) borderSpacingObj;
-            } else {
-                borderSpacing = 0.0f;
-            }
+            borderSpacing = DEF_BORDER_SPACING;
         }
         // calculate offsets
         float offsetX = (float) -boundingBoxX + borderSpacing;

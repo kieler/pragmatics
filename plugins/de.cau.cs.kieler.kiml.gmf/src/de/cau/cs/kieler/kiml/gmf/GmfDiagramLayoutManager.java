@@ -58,6 +58,7 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
@@ -243,6 +244,32 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
+    public ILayoutInspector getInspector(final IEditorPart editorPart) {
+        if (editorPart instanceof DiagramEditor) {
+            return new GmfLayoutInspector(((DiagramEditor) editorPart).getDiagramEditPart());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ILayoutConfig getLayoutConfig(final EditPart editPart) {
+        GmfLayoutConfig config = new GmfLayoutConfig();
+        if (editPart instanceof IGraphicalEditPart) {
+            config.initialize((IGraphicalEditPart) editPart);
+        } else if (editPart instanceof DiagramRootEditPart) {
+            config.initialize((IGraphicalEditPart) ((DiagramRootEditPart) editPart).getContents());
+        }
+        return config;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public KNode buildLayoutGraph(final IEditorPart editorPart, final EditPart editPart,
         final boolean layoutAncestors) {
         graphElem2EditPartMap.clear();
@@ -407,11 +434,12 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         graphElem2EditPartMap.put(topNode, rootPart);
 
         // traverse the children of the layout root part
-        buildLayoutGraphRecursively(rootPart, topNode, rootPart);
+        GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
+        buildLayoutGraphRecursively(rootPart, topNode, rootPart, layoutConfig);
         // set user defined layout options for the diagram
-        GmfLayoutInspector.setLayoutOptions(rootPart, shapeLayout, true);
+        layoutConfig.setOptions(rootPart, shapeLayout);
         // transform all connections in the selected area
-        processConnections();
+        processConnections(layoutConfig);
 
         return cleanupAncestryPath(topNode);
     }
@@ -422,9 +450,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * @param parentEditPart the parent edit part of the current elements
      * @param parentLayoutNode the corresponding KNode
      * @param currentEditPart the currently analyzed edit part
+     * @param layoutConfig layout configuration handler
      */
     private void buildLayoutGraphRecursively(final IGraphicalEditPart parentEditPart,
-        final KNode parentLayoutNode, final IGraphicalEditPart currentEditPart) {
+            final KNode parentLayoutNode, final IGraphicalEditPart currentEditPart,
+            final GmfLayoutConfig layoutConfig) {
         boolean hasChildNodes = false, hasChildCompartments = false,
                 hasPorts = false, isCollapsed = false;
         KInsets kinsets = null;
@@ -464,7 +494,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 portLayout.setHeight(portBounds.height);
                 hasPorts = true;
                 // set user defined layout options for the port
-                GmfLayoutInspector.setLayoutOptions(borderItem, portLayout, true);
+                layoutConfig.setOptions(borderItem, portLayout);
 
                 // store all the connections to process them later
                 addConnections(borderItem);
@@ -510,7 +540,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     }
 
                     hasChildCompartments = true;
-                    buildLayoutGraphRecursively(parentEditPart, parentLayoutNode, compartment);
+                    buildLayoutGraphRecursively(parentEditPart, parentLayoutNode,
+                            compartment, layoutConfig);
                 }
 
                 // process nodes, which may be parents of compartments
@@ -553,10 +584,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     hasChildNodes = true;
                     // process the child as new current edit part
                     buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode,
-                        childNodeEditPart);
+                            childNodeEditPart, layoutConfig);
 
                     // set user defined layout options for the node
-                    GmfLayoutInspector.setLayoutOptions(childNodeEditPart, nodeLayout, true);
+                    layoutConfig.setOptions(childNodeEditPart, nodeLayout);
                 }
 
                 // process labels of nodes
@@ -629,8 +660,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * Creates new edges and takes care of the labels for each connection identified in the
      * {@code buildLayoutGraphRecursively} method.
+     * 
+     * @param layoutConfig layout configuration handler
      */
-    private void processConnections() {
+    private void processConnections(final GmfLayoutConfig layoutConfig) {
         Map<EReference, KEdge> reference2EdgeMap = new HashMap<EReference, KEdge>();
         for (ConnectionEditPart connection : connections) {
             boolean isOppositeEdge = false;
@@ -731,7 +764,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 setEdgeLayout(edgeLayout, connection, offsetx, offsety);
 
                 // set user defined layout options for the edge
-                GmfLayoutInspector.setLayoutOptions(connection, edgeLayout, true);
+                layoutConfig.setOptions(connection, edgeLayout);
             }
 
             // process edge labels

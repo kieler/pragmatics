@@ -19,9 +19,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorPart;
 
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -63,14 +63,15 @@ public class RemoveOptionsAction extends Action {
                         Messages.getString("kiml.ui.31"), Messages.getString("kiml.ui.32")
                         + " " + diagramName + "?");
                 if (userResponse) {
-                    final ILayoutInspector inspector = manager.getInspector(diagram);
+                    final ILayoutConfig config = manager.getLayoutConfig(diagram);
                     Runnable runnable = new Runnable() {
                         public void run() {
-                            inspector.removeAllOptions();
+                            config.clearProperties();
                             LayoutViewPart.findView().refresh();
                         }
                     };
-                    KimlUiUtil.runModelChange(runnable, inspector.getEditingDomain(),
+                    KimlUiUtil.runModelChange(runnable,
+                            manager.getInspector(diagram).getEditingDomain(),
                             Messages.getString("kiml.ui.30"));
                 }
             }

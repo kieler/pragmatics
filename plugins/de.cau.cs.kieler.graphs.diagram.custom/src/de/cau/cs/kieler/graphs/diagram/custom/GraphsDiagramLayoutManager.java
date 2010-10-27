@@ -41,6 +41,7 @@ import de.cau.cs.kieler.graphs.Node;
 import de.cau.cs.kieler.graphs.Port;
 import de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditor;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
+import de.cau.cs.kieler.kiml.gmf.GmfLayoutConfig;
 import de.cau.cs.kieler.kiml.gmf.GmfLayoutInspector;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -123,9 +124,10 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         EObject rootNode = rootPart.getNotationView().getElement();
         if (rootNode instanceof KNode) {
             // traverse the children of the layout root
-            KNode topNode = buildLayoutGraphRecursively((KNode) rootNode, rootPart);
+            GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
+            KNode topNode = buildLayoutGraphRecursively((KNode) rootNode, rootPart, layoutConfig);
             // transform all connections in the selected area
-            processConnections(rootPart);
+            processConnections(rootPart, layoutConfig);
     
             topNode = cleanupAncestryPath(topNode);
             hyperedgeMap = HypernodesEditPolicy.createHyperedgeMap(topNode);
@@ -160,10 +162,11 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
      * 
      * @param graphNode a node from the original graph
      * @param editPart the corresponding edit part
+     * @param layoutConfig layout configuration handler
      * @return a layout node that is linked with the given graph node
      */
     private KNode buildLayoutGraphRecursively(final KNode graphNode,
-            final IGraphicalEditPart editPart) {
+            final IGraphicalEditPart editPart, final GmfLayoutConfig layoutConfig) {
         Map<?, ?> editPartRegistry = editPart.getViewer().getEditPartRegistry();
         KNode layoutNode = KimlUtil.createInitializedNode();
         // store the connection to process them later
@@ -213,7 +216,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 layoutPort.getLabel().setText(((Port) port).getPortLabel());
                 
                 // set user defined layout options for the port
-                GmfLayoutInspector.setLayoutOptions(portEP, portLayout, true);
+                layoutConfig.setOptions(portEP, portLayout);
             }
         }
         
@@ -223,7 +226,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
             Object obj = editPartRegistry.get(graphElem2ViewMap.get(child));
             if (obj instanceof IGraphicalEditPart) {
                 IGraphicalEditPart childEP = (IGraphicalEditPart) obj;
-                KNode layoutChild = buildLayoutGraphRecursively(child, childEP);
+                KNode layoutChild = buildLayoutGraphRecursively(child, childEP, layoutConfig);
                 layoutChild.setParent(layoutNode);
                 if (kinsets == null) {
                     kinsets = nodeLayout.getProperty(LayoutOptions.INSETS);
@@ -248,7 +251,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         if (((Node) graphNode).isIsHypernode()) {
             nodeLayout.setProperty(LayoutOptions.HYPERNODE, true);
         }
-        GmfLayoutInspector.setLayoutOptions(editPart, nodeLayout, true);
+        layoutConfig.setOptions(editPart, nodeLayout);
         return layoutNode;
     }
     
@@ -256,8 +259,10 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
      * Process all the connections in the graph.
      * 
      * @param rootPart the root edit part for layout
+     * @param layoutConfig layout configuration handler
      */
-    private void processConnections(final IGraphicalEditPart rootPart) {
+    private void processConnections(final IGraphicalEditPart rootPart,
+            final GmfLayoutConfig layoutConfig) {
         Map<?, ?> editPartRegistry = rootPart.getViewer().getEditPartRegistry();
         for (KEdge graphEdge : edges) {
             Object obj = editPartRegistry.get(graphElem2ViewMap.get(graphEdge));
@@ -302,7 +307,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                         offsetx, offsety);
     
                 // set user defined layout options for the edge
-                GmfLayoutInspector.setLayoutOptions(connection, edgeLayout, true);
+                layoutConfig.setOptions(connection, edgeLayout);
             }
         }
     }

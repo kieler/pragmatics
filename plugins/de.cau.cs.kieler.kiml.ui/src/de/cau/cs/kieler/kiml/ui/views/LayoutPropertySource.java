@@ -24,6 +24,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
@@ -48,19 +49,21 @@ public class LayoutPropertySource implements IPropertySource {
     /** map of layout hint identifiers to their respective indices in the above arrays. */
     private static Map<String, Integer> layoutHintIndexMap;
     
-    /** the layout inspector for this property source. */
+    /** the layout configuration for this property source. */
+    private ILayoutConfig layoutConfig;
+    /** the layout inspector that is used for model changes. */
     private ILayoutInspector layoutInspector;
     /** array of property descriptors for the option data. */
     private IPropertyDescriptor[] propertyDescriptors;
 
     /**
-     * Creates a layout property source for the given layout manager and edit part.
-     * The layout options of the given inspector are initialized in this constructor.
+     * Creates a layout property source for the given layout configuration.
      * 
+     * @param config a layout configuration
      * @param inspector a layout inspector
      */
-    public LayoutPropertySource(final ILayoutInspector inspector) {
-        inspector.initOptions();
+    public LayoutPropertySource(final ILayoutConfig config, final ILayoutInspector inspector) {
+        this.layoutConfig = config;
         this.layoutInspector = inspector;
     }
 
@@ -72,7 +75,7 @@ public class LayoutPropertySource implements IPropertySource {
             if (layoutHintChoices == null) {
                 createLayoutHintChoices();
             }
-            List<LayoutOptionData<?>> optionData = layoutInspector.getOptionData();
+            List<LayoutOptionData<?>> optionData = layoutConfig.getOptionData();
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
             for (int i = 0; i < propertyDescriptors.length; i++) {
                 propertyDescriptors[i] = new LayoutPropertyDescriptor(optionData.get(i),
@@ -88,28 +91,13 @@ public class LayoutPropertySource implements IPropertySource {
     public Object getPropertyValue(final Object id) {
         EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
         LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData((String) id);
-        Object value = translateValue(layoutInspector.getOption(optionData), optionData);
-        if (value == null) {
-            if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
-                value = layoutInspector.getFocusLayouterData().getId();
-            } else {
-                if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
-                    value = layoutServices.getDefault(optionData,
-                            layoutInspector.getFocusLayouterData(),
-                            layoutInspector.getFocusPart(),
-                            layoutInspector.getFocusPart(),
-                            layoutInspector.hasChildren());
-                } else {
-                    value = layoutServices.getDefault(optionData,
-                            layoutInspector.getContainerLayouterData(),
-                            layoutInspector.getFocusPart(),
-                            layoutInspector.getContainerPart(),
-                            layoutInspector.hasChildren());
-                }
-            }
-            value = translateValue(value, optionData);
+        Object value;
+        if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
+            value = layoutConfig.getContentLayouterData().getId();
+        } else {
+            value = layoutConfig.getProperty(optionData);
         }
-        return value;
+        return translateValue(value, optionData);
     }
     
     private static Object translateValue(final Object value, final LayoutOptionData<?> optionData) {
@@ -155,7 +143,7 @@ public class LayoutPropertySource implements IPropertySource {
                 LayoutOptionData<?> optionData = LayoutServices.getInstance()
                         .getLayoutOptionData((String) id);
                 if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
-                    layoutInspector.setOption(optionData,
+                    layoutConfig.setProperty(optionData,
                             layoutHintValues[((Integer) value).intValue()]);
                     LayoutViewPart layoutView = LayoutViewPart.findView();
                     if (layoutView != null) {
@@ -176,7 +164,7 @@ public class LayoutPropertySource implements IPropertySource {
                         value = optionData.getEnumValue((Integer) value);
                         break;
                     }
-                    layoutInspector.setOption(optionData, value);
+                    layoutConfig.setProperty(optionData, value);
                 }
             }
         };
@@ -196,8 +184,7 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public boolean isPropertySet(final Object id) {
         LayoutOptionData<?> optionData = LayoutServices.getInstance().getLayoutOptionData((String) id);
-        Object value = layoutInspector.getOption(optionData);
-        return value != null;
+        return !layoutConfig.isDefault(optionData);
     }
 
     /**
@@ -208,7 +195,7 @@ public class LayoutPropertySource implements IPropertySource {
                 .getLayoutOptionData((String) id);
         Runnable modelChange = new Runnable() {
             public void run() {
-                layoutInspector.removeOption(optionData);
+                layoutConfig.setProperty(optionData, null);
             }
         };
         KimlUiUtil.runModelChange(modelChange, layoutInspector.getEditingDomain(),

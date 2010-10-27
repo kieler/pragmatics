@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.ogdf;
 
 import net.ogdf.lib.Ogdf;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -27,12 +28,6 @@ public class RadialTreeLayouter extends OgdfLayouter {
 
     /** default value for the minimum level and connected components distance. */
     private static final float DEF_MIN_DIST = 50.0f;
-    /** default value for border spacing. */
-    private static final float DEF_BORDER_SPACING = 15;
-    /** default value for label edge distance. */
-    private static final float DEF_LABEL_SPACING = 15.0f;
-    /** default value for label margin distance. */
-    private static final float DEF_LABEL_MARGIN_DISTANCE = 15.0f;
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();
@@ -65,17 +60,9 @@ public class RadialTreeLayouter extends OgdfLayouter {
     /**
      * {@inheritDoc}
      */
-    public Object getDefault(final String optionId) {
-        if (optionId.equals(LayoutOptions.OBJ_SPACING_ID)) {
-            return DEF_MIN_DIST;
-        } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
-            return DEF_BORDER_SPACING;
-        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
-            return DEF_LABEL_SPACING;
-        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
-            return DEF_LABEL_MARGIN_DISTANCE;
-        } else {
-            return null;
-        }
+    @Override
+    public void initDefaults(final IPropertyHolder defaultsHolder) {
+        super.initDefaults(defaultsHolder);
+        defaultsHolder.setProperty(LayoutOptions.OBJ_SPACING, DEF_MIN_DIST);
     }
 }

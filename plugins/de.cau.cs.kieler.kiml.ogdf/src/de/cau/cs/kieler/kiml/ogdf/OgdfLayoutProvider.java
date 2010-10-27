@@ -18,6 +18,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * The OGDF layout provider, that is the entry class used by KIML to call
@@ -27,7 +28,7 @@ import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
  * @author mri
  */
 public class OgdfLayoutProvider extends AbstractLayoutProvider {
-
+    
     /** the selected layouter. */
     private OgdfLayouter layoutAlgorithm;
 
@@ -86,6 +87,10 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         default:
             layoutAlgorithm = null;
         }
+        // initialize default values for layout options
+        if (layoutAlgorithm != null) {
+            layoutAlgorithm.initDefaults(this);
+        }
     }
 
     /**
@@ -103,16 +108,5 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
 
         // layout the graph with the selected algorithm
         layoutAlgorithm.doLayout(layoutNode, progressMonitor);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getDefault(final String optionId) {
-        if (layoutAlgorithm == null) {
-            return null;
-        } else {
-            return layoutAlgorithm.getDefault(optionId);
-        }
     }
 }

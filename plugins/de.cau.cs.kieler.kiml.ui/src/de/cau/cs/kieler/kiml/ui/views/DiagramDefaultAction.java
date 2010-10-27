@@ -20,6 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -68,8 +69,9 @@ public class DiagramDefaultAction extends Action {
             DiagramLayoutManager manager = layoutView.getCurrentManager();
             if (manager != null) {
                 ILayoutInspector inspector = manager.getInspector(diagram);
+                ILayoutConfig config = manager.getLayoutConfig(diagram);
                 for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                    applyOption(inspector, entry);
+                    applyOption(inspector, config, entry);
                 }
             }
         }
@@ -79,9 +81,12 @@ public class DiagramDefaultAction extends Action {
      * Sets the layout option of the given property sheet entry as default for the whole
      * diagram.
      * 
+     * @param inspector a layout inspector
+     * @param config a layout configuration
      * @param entry a property sheet entry
      */
-    private void applyOption(final ILayoutInspector inspector, final IPropertySheetEntry entry) {
+    private void applyOption(final ILayoutInspector inspector,
+            final ILayoutConfig config, final IPropertySheetEntry entry) {
         final LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(
                 layoutView.getCurrentProviderData(), entry.getDisplayName());
         if (optionData == null) {
@@ -92,7 +97,7 @@ public class DiagramDefaultAction extends Action {
         if (value != null) {
             Runnable modelChange = new Runnable() {
                 public void run() {
-                    inspector.setDefault(optionData, value);
+                    config.setDiagramDefault(optionData, value);
                 }
             };
             KimlUiUtil.runModelChange(modelChange, inspector.getEditingDomain(),

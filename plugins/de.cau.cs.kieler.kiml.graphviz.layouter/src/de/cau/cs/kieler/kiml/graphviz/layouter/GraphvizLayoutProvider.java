@@ -41,6 +41,20 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     private String command = null;
 
     /**
+     * Initialize default options for the layout provider.
+     */
+    public GraphvizLayoutProvider() {
+        setProperty(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.RIGHT);
+        setProperty(LayoutOptions.BORDER_SPACING, GraphvizLayouter.DEF_MIN_SPACING / 2);
+        setProperty(LayoutOptions.OBJ_SPACING, GraphvizLayouter.DEF_MIN_SPACING);
+        setProperty(LayoutOptions.FIXED_SIZE, false);
+        setProperty(LayoutOptions.RANDOM_SEED, 1);
+        setProperty(LayoutOptions.LABEL_SPACING, 1.0f);
+        setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+        setProperty(GraphvizLayouter.LABEL_DISTANCE, 1.0f);
+    }
+    
+    /**
      * Initializes the Graphviz layout provider with the given parameter string
      * as command.
      * 
@@ -60,32 +74,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             command = GraphvizLayouter.DOT_COMMAND;
         }
         graphvizLayouter.layout(layoutNode, progressMonitor, command);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getDefault(final String optionId) {
-        if (LayoutOptions.LAYOUT_DIRECTION_ID.equals(optionId)) {
-            return LayoutDirection.RIGHT;
-        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
-            return GraphvizLayouter.DEF_MIN_SPACING / 2;
-        } else if (LayoutOptions.OBJ_SPACING_ID.equals(optionId)) {
-            return GraphvizLayouter.DEF_MIN_SPACING;
-        } else if (LayoutOptions.FIXED_SIZE_ID.equals(optionId)) {
-            return false;
-        } else if (LayoutOptions.RANDOM_SEED_ID.equals(optionId)) {
-            return 1;
-        } else if (LayoutOptions.LABEL_SPACING_ID.equals(optionId)) {
-            return 1.0f;
-        } else if (LayoutOptions.EDGE_ROUTING_ID.equals(optionId)) {
-            return EdgeRouting.SPLINES;
-        } else if (GraphvizLayouter.LABEL_DISTANCE_ID.equals(optionId)) {
-            return 1.0f;
-        } else {
-            return null;
-        }
     }
     
     /**

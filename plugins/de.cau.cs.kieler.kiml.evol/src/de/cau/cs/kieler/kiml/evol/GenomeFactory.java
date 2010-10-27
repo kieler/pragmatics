@@ -24,9 +24,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.gef.EditPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
@@ -44,6 +46,7 @@ import de.cau.cs.kieler.kiml.evol.genetic.MutationInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.TypeInfo;
 import de.cau.cs.kieler.kiml.evol.genetic.UniversalNumberGene;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
@@ -526,63 +529,36 @@ final class GenomeFactory {
     }
 
     /**
-     * Collects the property values from the given layout property sources. If a
+     * Collects the property values from the given layout configurations. If a
      * property is present in more than one of the sources, the value defined in
      * its first occurrence prevails. Property values that contain layout hints
      * are ignored.
      *
-     * @param inspectors
-     *            a list of layout inspectors
-     *
+     * @param configs list of layout configurations
      * @return a map storing the property values
      */
     private static Map<String, Object> collectPropertyValues(
-            final List<ILayoutInspector> inspectors) {
-
+            final List<ILayoutConfig> configs) {
         final int expectedNumberOfPropsPerInspector = 10;
         HashMap<String, Object> propertyId2ValueMap =
-                new HashMap<String, Object>(inspectors.size() * expectedNumberOfPropsPerInspector);
-
-        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
+                new HashMap<String, Object>(configs.size() * expectedNumberOfPropsPerInspector);
 
         // Iterate the layout inspectors.
-        for (final ILayoutInspector inspector : inspectors) {
+        for (final ILayoutConfig config : configs) {
             // Iterate the available layout options.
-            inspector.initOptions();
-
-            List<LayoutOptionData<?>> optionDescriptors = inspector.getOptionData();
-
+            List<LayoutOptionData<?>> optionDescriptors = config.getOptionData();
             for (final LayoutOptionData<?> data : optionDescriptors) {
 
                 String id = data.getId();
 
                 if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                     // Property is a layout hint --> skip
-                    Object value = inspector.getContainerLayouterData().getId();
+                    Object value = config.getContainerLayouterData().getId();
                     assert value != null : "layout hint value is null";
                     continue;
 
                 } else if (!propertyId2ValueMap.containsKey(id)) {
-                    Object value = inspector.getOption(data);
-                    if (value == null) {
-
-                        if (data.hasTarget(LayoutOptionData.Target.PARENTS)) {
-                            value =
-                                    layoutServices.getDefault(data,
-                                            inspector.getFocusLayouterData(),
-                                            inspector.getFocusPart(), inspector.getFocusPart(),
-                                            inspector.hasChildren());
-                        } else {
-                            value =
-                                    layoutServices
-                                            .getDefault(data,
-                                                    inspector.getContainerLayouterData(),
-                                                    inspector.getFocusPart(),
-                                                    inspector.getContainerPart(),
-                                                    inspector.hasChildren());
-                        }
-
-                    }
+                    Object value = config.getProperty(data);
                     propertyId2ValueMap.put(id, value);
                 } else {
                     // already added this option
@@ -647,28 +623,28 @@ final class GenomeFactory {
     /**
      * Collects the property descriptors from the given layout inspectors.
      *
-     * @param theInspectors
-     *            a list of {@link ILayoutInspector} instances; must not be
-     *            {@code null}
+     * @param configs list of layout configurations; must not be {@code null}
      * @return a map containing property descriptor IDs and the respective
      *         property descriptors.
      */
     private static Map<String, IPropertyDescriptor> getPropertyDescriptors(
-            final List<ILayoutInspector> theInspectors) {
+            final List<ILayoutConfig> configs) {
         Map<String, IPropertyDescriptor> allPropertyDescriptors =
                 new HashMap<String, IPropertyDescriptor>();
+        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
 
         // presuming theInspectors != null
 
-        for (final ILayoutInspector inspector : theInspectors) {
-            LayoutPropertySource source = new LayoutPropertySource(inspector);
-            IPropertyDescriptor[] propertyDescriptorsArray = source.getPropertyDescriptors();
-
-            List<IPropertyDescriptor> propertyDescriptorsList =
-                    Arrays.asList(propertyDescriptorsArray);
-
-            for (final IPropertyDescriptor pd : propertyDescriptorsList) {
-                allPropertyDescriptors.put((String) pd.getId(), pd);
+        for (final ILayoutConfig config : configs) {
+            if (config instanceof EclipseLayoutConfig) {
+                EditPart editPart = ((EclipseLayoutConfig) config).getContainmentEditPart();
+                ILayoutInspector inspector = layoutServices.getInspector(editPart);
+                LayoutPropertySource source = new LayoutPropertySource(config, inspector);
+                IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();
+    
+                for (final IPropertyDescriptor pd : propertyDescriptors) {
+                    allPropertyDescriptors.put((String) pd.getId(), pd);
+                }
             }
         }
         return allPropertyDescriptors;
@@ -720,19 +696,14 @@ final class GenomeFactory {
     /**
      * Create a {@link Genome} from the given layout inspectors.
      *
-     * @param inspectors
-     *            a list of {@link ILayoutInspector} instances
-     * @param layoutHintIds
-     *            a set of layout hint IDs; must not be {@code null}
+     * @param configs list of layout configurations
+     * @param layoutHintIds set of layout hint IDs; must not be {@code null}
      * @return a genome, or {@code null}.
-     * @throws KielerException
-     *             in case of an error
+     * @throws KielerException in case of an error
      */
-    public Genome createGenome(
-            final List<ILayoutInspector> inspectors, final Set<Object> layoutHintIds)
-            throws KielerException {
-
-        if ((inspectors == null) || (layoutHintIds == null) || layoutHintIds.isEmpty()) {
+    public Genome createGenome(final List<ILayoutConfig> configs,
+            final Set<Object> layoutHintIds) throws KielerException {
+        if ((configs == null) || (layoutHintIds == null) || layoutHintIds.isEmpty()) {
             return null;
         }
 
@@ -749,8 +720,7 @@ final class GenomeFactory {
         Genome result = new Genome();
 
         // Get property descriptors for the layout inspectors.
-        Map<String, IPropertyDescriptor> allPropertyDescriptors =
-                getPropertyDescriptors(inspectors);
+        Map<String, IPropertyDescriptor> allPropertyDescriptors = getPropertyDescriptors(configs);
 
         // Collect the learnable properties from the property descriptors.
         Set<IPropertyDescriptor> presentLearnables =
@@ -764,7 +734,7 @@ final class GenomeFactory {
 
         // Collect the property values from the layout inspectors.
         // XXX This should be done once by the GenomeFactory constructor.
-        Map<String, Object> propertyId2ValueMap = collectPropertyValues(inspectors);
+        Map<String, Object> propertyId2ValueMap = collectPropertyValues(configs);
 
         // Create genes for the property values.
         for (final Entry<String, Object> entry : propertyId2ValueMap.entrySet()) {

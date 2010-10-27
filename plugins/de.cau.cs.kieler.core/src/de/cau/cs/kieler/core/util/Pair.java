@@ -34,6 +34,12 @@ public class Pair<F, S> {
     private F first;
     /** the second element. */
     private S second;
+    
+    /**
+     * Constructs a pair with {@code null} elements.
+     */
+    public Pair() {
+    }
 
     /**
      * Constructs a pair given both elements.

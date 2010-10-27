@@ -36,14 +36,12 @@ import org.osgi.framework.Bundle;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
-import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
  * This class is responsible for reading all extension point elements for layout
@@ -180,97 +178,30 @@ public class EclipseLayoutServices extends LayoutServices {
      * layout manager.
      * 
      * @param editPart the edit part for which the inspector should be fetched
-     * @return an inspector for the edit part
+     * @return an inspector for the edit part, or {@code null}
      */
     public ILayoutInspector getInspector(final EditPart editPart) {
-        return getManager(null, editPart).getInspector(editPart);
+        DiagramLayoutManager manager = getManager(null, editPart);
+        if (manager != null) {
+            return manager.getInspector(editPart);
+        }
+        return null;
     }
     
     /**
-     * Retrieves the default value for the given layout option.
+     * Retrieve a layout configuration for the given editor using the most suitable
+     * layout manager
      * 
-     * @param optionData a layout option data
-     * @param providerData the active layout provider data
-     * @param editPart the current edit part
-     * @param containerEditPart the container edit part that is valid for the option
-     * @param hasChildren indicates whether the given edit part has children
-     *     in the layout graph
-     * @return an object with the default value
+     * @param editorPart the editor part for which the config should be fetched
+     * @return a layout configuration for the editor, or {@code null}
      */
-    public Object getDefault(final LayoutOptionData<?> optionData,
-            final LayoutProviderData providerData, final EditPart editPart,
-            final EditPart containerEditPart, final boolean hasChildren) {
-        Object result = null;
-        
-        if (editPart != null) {
-            // check default option of diagram edit part
-            ILayoutInspector inspector = getInspector(editPart);
-            result = inspector.getDefault(optionData);
-            if (result != null) {
-                return result;
-            }
-            
-            // check default value set for the actual edit part or its model element
-            result = KimlUiUtil.getOption(editPart, optionData.getId());
-            if (result != null) {
-                return result;
-            }
+    public ILayoutConfig getLayoutConfig(final IEditorPart editorPart) {
+        DiagramLayoutManager manager = getManager(editorPart, null);
+        if (manager != null) {
+            ILayoutInspector inspector = manager.getInspector(editorPart);
+            return manager.getLayoutConfig(inspector.getFocusPart());
         }
-
-        if (containerEditPart != null) {
-            // check default option of the diagram type
-            String diagramType = (String) KimlUiUtil.getOption(containerEditPart,
-                    LayoutOptions.DIAGRAM_TYPE_ID);
-            result = getOption(diagramType, optionData.getId());
-            if (result != null) {
-                return result;
-            }
-    
-            // check default value for the container edit part
-            result = KimlUiUtil.getOption(containerEditPart, optionData.getId());
-            if (result != null) {
-                return result;
-            }
-        }
-        
-        // fall back to default value of specific options
-        if (LayoutOptions.FIXED_SIZE_ID.equals(optionData.getId())) {
-            return Boolean.valueOf(!hasChildren);
-        } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
-            if (hasChildren) {
-                return PortConstraints.FREE.ordinal();
-            } else {
-                return PortConstraints.FIXED_POS.ordinal();
-            }
-        }
-
-        // fall back to default value of layout provider
-        result = providerData != null ? providerData.getInstance().getDefault(
-                optionData.getId()) : null;
-        if (result != null) {
-            return result;
-        }
-        
-        // fall back to default value of the option itself
-        result = optionData.getDefault();
-        if (result != null) {
-            return result;
-        }
-        
-        // fall back to default-default value
-        switch (optionData.getType()) {
-        case STRING:
-            return "";
-        case BOOLEAN:
-            return Boolean.FALSE;
-        case ENUM:
-        case INT:
-            return Integer.valueOf(0);
-        case FLOAT:
-            return Float.valueOf(0.0f);
-        default:
-            throw new IllegalArgumentException("optionData");
-        }
+        return null;
     }
     
     /**
@@ -438,16 +369,18 @@ public class EclipseLayoutServices extends LayoutServices {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
             ILayoutInspector inspector = getInspector(editPart);
-            String clazzName;
-            if (storeDomainModel) {
-                clazzName = inspector.getFocusModel().eClass().getInstanceTypeName();
-            } else {
-                clazzName = inspector.getFocusPart().getClass().getName();
+            if (inspector != null) {
+                String clazzName;
+                if (storeDomainModel) {
+                    clazzName = inspector.getFocusModel().eClass().getInstanceTypeName();
+                } else {
+                    clazzName = inspector.getFocusPart().getClass().getName();
+                }
+                registry().addOption(clazzName, optionData.getId(), value);
+                registeredElements.add(clazzName);
+                IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+                preferenceStore.setValue(getPreferenceName(clazzName, optionData.getId()), valueString);
             }
-            registry().addOption(clazzName, optionData.getId(), value);
-            registeredElements.add(clazzName);
-            IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
-            preferenceStore.setValue(getPreferenceName(clazzName, optionData.getId()), valueString);
         }
     }
     

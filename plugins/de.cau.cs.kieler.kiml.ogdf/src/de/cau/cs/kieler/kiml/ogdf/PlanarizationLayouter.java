@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.ogdf;
 
 import net.ogdf.lib.Ogdf;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -30,12 +31,6 @@ public class PlanarizationLayouter extends OgdfLayouter {
     public static final float DEF_PAGE_RATIO = 1.3f;
     /** default value for minimal spacing. */
     public static final float DEF_MINSPACING = 30.0f;
-    /** default value for border spacing. */
-    public static final float DEF_BORDER_SPACING = 15.0f;
-    /** default value for label edge distance. */
-    public static final float DEF_LABEL_SPACING = 15.0f;
-    /** default value for label margin distance. */
-    public static final float DEF_LABEL_MARGIN_DISTANCE = 15.0f;
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();
@@ -89,27 +84,11 @@ public class PlanarizationLayouter extends OgdfLayouter {
     /**
      * {@inheritDoc}
      */
-    public Object getDefault(final String optionId) {
-        if (optionId.equals(LayoutOptions.LAYOUT_DIRECTION_ID)) {
-            return LayoutDirection.UP;
-        } else if (optionId.equals(LayoutOptions.OBJ_SPACING_ID)) {
-            return DEF_MINSPACING;
-        } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
-            return DEF_BORDER_SPACING;
-        } else if (optionId.equals(LayoutOptions.ASPECT_RATIO_ID)) {
-            return DEF_PAGE_RATIO;
-        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
-            return DEF_LABEL_SPACING;
-        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
-            return DEF_LABEL_MARGIN_DISTANCE;
-        } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
-            return DEF_BORDER_SPACING;
-        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
-            return DEF_LABEL_SPACING;
-        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
-            return DEF_LABEL_MARGIN_DISTANCE;
-        } else {
-            return null;
-        }
+    @Override
+    public void initDefaults(final IPropertyHolder defaultsHolder) {
+        super.initDefaults(defaultsHolder);
+        defaultsHolder.setProperty(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.UP);
+        defaultsHolder.setProperty(LayoutOptions.OBJ_SPACING, DEF_MINSPACING);
+        defaultsHolder.setProperty(LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
     }
 }

@@ -18,7 +18,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * The Spring Embedder algorithm by Fruchterman and Reingold.
@@ -34,19 +33,11 @@ public class SpringEmbedderFRLayouter extends OgdfLayouter {
     /** number of iterations property. */
     private static final IProperty<Integer> ITERATIONS = new Property<Integer>(
             ITERATIONS_ID, DEF_ITERATIONS);
-    
-    /** default value for border spacing. */
-    private static final float DEF_BORDER_SPACING = 15;
-    /** default value for label edge distance. */
-    private static final float DEF_LABEL_SPACING = 15.0f;
-    /** default value for label margin distance. */
-    private static final float DEF_LABEL_MARGIN_DISTANCE = 15.0f;
 
     /**
      * {@inheritDoc}
      */
     protected void prepareLayouter(final KNode layoutNode) {
-
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         
         // get the number of iterations
@@ -56,23 +47,6 @@ public class SpringEmbedderFRLayouter extends OgdfLayouter {
         }
         
         Ogdf.createSpringEmbedderFRLayouter(iter);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getDefault(final String optionId) {
-        if (optionId.equals(ITERATIONS_ID)) {
-            return DEF_ITERATIONS;
-        } else if (optionId.equals(LayoutOptions.BORDER_SPACING_ID)) {
-            return DEF_BORDER_SPACING;
-        } else if (optionId.equals(LABEL_EDGE_DIST_ID)) {
-            return DEF_LABEL_SPACING;
-        } else if (optionId.equals(LABEL_MARGIN_DIST_ID)) {
-            return DEF_LABEL_MARGIN_DISTANCE;
-        } else {
-            return null;
-        }
     }
 
 }

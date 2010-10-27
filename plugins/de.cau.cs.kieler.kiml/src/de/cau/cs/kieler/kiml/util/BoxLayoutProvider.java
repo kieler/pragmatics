@@ -42,6 +42,17 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     private BoxPlacer boxPlacer = new BoxPlacer();
 
     /**
+     * Initialize default options of the layout provider.
+     */
+    public BoxLayoutProvider() {
+        setProperty(LayoutOptions.OBJ_SPACING, DEFAULT_SPACING);
+        setProperty(LayoutOptions.BORDER_SPACING, DEFAULT_SPACING);
+        setProperty(LayoutOptions.PRIORITY, 0);
+        setProperty(LayoutOptions.EXPAND_NODES, false);
+        setProperty(LayoutOptions.ASPECT_RATIO, BoxPlacer.DEF_ASPECT_RATIO);
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -70,26 +81,6 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         boxPlacer.placeBoxes(sortedBoxes, layoutNode, objSpacing, borderSpacing, expandNodes);
 
         progressMonitor.done();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getDefault(final String optionId) {
-        if (LayoutOptions.OBJ_SPACING_ID.equals(optionId)) {
-            return DEFAULT_SPACING;
-        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
-            return DEFAULT_SPACING;
-        } else if (LayoutOptions.PRIORITY_ID.equals(optionId)) {
-            return 0;
-        } else if (LayoutOptions.EXPAND_NODES_ID.equals(optionId)) {
-            return false;
-        } else if (LayoutOptions.ASPECT_RATIO_ID.equals(optionId)) {
-            return BoxPlacer.DEF_ASPECT_RATIO;
-        } else {
-            return null;
-        }
     }
 
 }

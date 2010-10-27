@@ -158,7 +158,10 @@ public final class KimlUiUtil {
      */
     public static Object getOption(final EditPart editPart, final String optionId) {
         ILayoutInspector inspector = EclipseLayoutServices.getInstance().getInspector(editPart);
-        return getOption(inspector, optionId);
+        if (inspector != null) {
+            return getOption(inspector, optionId);
+        }
+        return null;
     }
 
     /**

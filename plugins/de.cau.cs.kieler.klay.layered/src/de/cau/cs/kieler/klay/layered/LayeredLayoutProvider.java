@@ -64,6 +64,15 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     private INodePlacer nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
     private IEdgeRouter edgeRouter;
+    
+    /**
+     * Initialize default options of the layout provider.
+     */
+    public LayeredLayoutProvider() {
+        setProperty(LayoutOptions.OBJ_SPACING, Properties.DEF_SPACING);
+        setProperty(LayoutOptions.BORDER_SPACING, Properties.DEF_SPACING);
+        setProperty(LayoutOptions.RANDOM_SEED, 1);
+    }
 
     /**
      * {@inheritDoc}
@@ -259,21 +268,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         edgeRouter.routeEdges(layeredGraph);
 
         monitor.done();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getDefault(final String optionId) {
-        if (LayoutOptions.OBJ_SPACING_ID.equals(optionId)) {
-            return Properties.DEF_SPACING;
-        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
-            return Properties.DEF_SPACING;
-        } else if (LayoutOptions.RANDOM_SEED_ID.equals(optionId)) {
-            return 1;
-        }
-        return null;
     }
 
 }

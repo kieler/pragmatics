@@ -13,12 +13,12 @@
  */
 package de.cau.cs.kieler.kiml;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -320,16 +320,16 @@ public class LayoutServices {
      * layout options and at the target must be active for each option.
      * 
      * @param providerData layout provider data
-     * @param target layout option target
+     * @param targetType type of layout option target
      * @return list of suitable layout options
      */
     public final List<LayoutOptionData<?>> getLayoutOptions(final LayoutProviderData providerData,
-            final LayoutOptionData.Target target) {
-        List<LayoutOptionData<?>> optionDataList = new ArrayList<LayoutOptionData<?>>();
+            final LayoutOptionData.Target targetType) {
+        List<LayoutOptionData<?>> optionDataList = new LinkedList<LayoutOptionData<?>>();
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
             if (providerData.knowsOption(optionData.getId())
                     || LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
-                if (optionData.hasTarget(target)) {
+                if (optionData.hasTarget(targetType)) {
                     optionDataList.add(optionData);
                 }
             }

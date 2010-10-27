@@ -16,28 +16,29 @@ package de.cau.cs.kieler.kiml;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
- * A layout provider executes a layout algorithm to layout the child elements of
- * a node.
- * <p>
- * When used in Eclipse, layout providers must register through the {@code
- * layoutProviders} extension point. All layout providers published to Eclipse
- * this way are collected in the {@link LayoutServices} singleton, provided the
- * UI plugin is loaded.
+ * A layout provider executes a layout algorithm to layout the child elements of a node.
+ * <p>When used in Eclipse, layout providers must register through the {@code layoutProviders}
+ * extension point. All layout providers published to Eclipse this way are collected in the
+ * {@link LayoutServices} singleton, provided the UI plugin is loaded.</p>
+ * <p>Layout providers can hold properties, which represent the default layout option values
+ * of the layout provider. Subclasses can register their default layout option values in
+ * their constructor.</p>
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author ars
+ * @author msp
  */
-public abstract class AbstractLayoutProvider {
+public abstract class AbstractLayoutProvider extends MapPropertyHolder {
 
     /** the debug canvas to use. */
     private IDebugCanvas debugCanvas;
     
     /**
-     * Initialize the layout provider with the given parameter. The default
-     * implementation does nothing.
+     * Initialize the layout provider with the given parameter.
      * 
      * @param parameter a string used to parameterize the layout provider instance
      * @throws KielerException if the provider has received a wrong parameter
@@ -55,23 +56,11 @@ public abstract class AbstractLayoutProvider {
      */
     public abstract void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor)
             throws KielerException;
-
-    /**
-     * Returns the default value for the given layout option. The default
-     * implementation always returns {@code null}.
-     * 
-     * @param optionId identifier of a layout option
-     * @return the default value for the given option, or {@code null} if this
-     *         layout provider does not know that option
-     */
-    public Object getDefault(final String optionId) {
-        return null;
-    }
     
     /**
-     * Determines whether this layout provider supports hierarchy. If it does, it is
-     * expected to layout not only the first hierarchy level of the input graph, but
-     * also all children. The default implementation returns {@code false}.
+     * Determines whether this layout provider would handle the complete hierarchy of the
+     * given layout node. If it does, it is expected to layout not only the first hierarchy
+     * level of the input graph, but also all its children.
      * 
      * @param layoutNode the parent node for which layout is requested
      * @return true if the layout provider supports hierarchy

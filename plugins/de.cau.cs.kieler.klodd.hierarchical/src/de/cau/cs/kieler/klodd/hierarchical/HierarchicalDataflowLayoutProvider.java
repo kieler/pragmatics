@@ -133,6 +133,16 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
     private static final int SMALL_TASK = 5;
     /** amount of work for a large task. */
     private static final int LARGE_TASK = 15;
+
+    /**
+     * Initialize default options of the layout provider.
+     */
+    public HierarchicalDataflowLayoutProvider() {
+        setProperty(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.RIGHT);
+        setProperty(LayoutOptions.OBJ_SPACING, DEF_MIN_DIST);
+        setProperty(LayoutOptions.BORDER_SPACING, DEF_MIN_DIST);
+        setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.UNDEFINED);
+    }
     
     /**
      * {@inheritDoc}
@@ -188,26 +198,6 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         restoreCycles();
 
         progressMonitor.done();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getDefault(final String optionId) {
-        if (LayoutOptions.FIXED_SIZE_ID.equals(optionId)) {
-            return false;
-        } else if (LayoutOptions.LAYOUT_DIRECTION_ID.equals(optionId)) {
-            return LayoutDirection.RIGHT;
-        } else if (LayoutOptions.OBJ_SPACING_ID.equals(optionId)) {
-            return DEF_MIN_DIST;
-        } else if (LayoutOptions.BORDER_SPACING_ID.equals(optionId)) {
-            return DEF_MIN_DIST;
-        } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionId)) {
-            return PortConstraints.UNDEFINED;
-        } else {
-            return null;
-        }
     }
 
     /**
