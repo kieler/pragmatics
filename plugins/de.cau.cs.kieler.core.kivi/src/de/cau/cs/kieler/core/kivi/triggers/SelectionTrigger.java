@@ -33,6 +33,7 @@ import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.core.util.Maybe;
 
 /**
  * Listens for selection and deselection of graphical elements.
@@ -153,9 +154,14 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
             if (editor != null) {
                 return editor;
             } else {
-                IEditorPart editorPart = EditorUtils.getLastActiveEditor();
-                if (editorPart instanceof DiagramEditor) {
-                    return (DiagramEditor) editorPart;
+                final Maybe<IEditorPart> maybe = new Maybe<IEditorPart>();
+                MonitoredOperation.runInUI(new Runnable() {
+                    public void run() {
+                        maybe.set(EditorUtils.getLastActiveEditor());
+                    }
+                }, true);
+                if (maybe.get() instanceof DiagramEditor) {
+                    return (DiagramEditor) maybe.get();
                 } else {
                     return null;
                 }
