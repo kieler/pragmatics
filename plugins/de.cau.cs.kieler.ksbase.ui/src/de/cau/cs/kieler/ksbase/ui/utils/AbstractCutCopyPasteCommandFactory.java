@@ -29,9 +29,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
@@ -58,17 +55,13 @@ import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommand;
  * @author soh
  * @kieler.rating 2010-06-15 yellow msp, cmot
  */
-public abstract class AbstractCutCopyPasteCommandFactory implements
-        ICutCopyPasteCommandFactory {
+public abstract class AbstractCutCopyPasteCommandFactory implements ICutCopyPasteCommandFactory {
 
     /** The transformation FRAMEWORK. */
     private static final ITransformationFramework FRAMEWORK = new XtendTransformationFramework();
 
     /** The last selection. */
     private List<EObject> lastSelection;
-
-    /** The instance of the job. */
-    private static WorkerJob jobInstance = null;
 
     /**
      * Build a new copy command.
@@ -79,8 +72,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
      *            the selection
      * @return the command
      */
-    public ICommand buildCopyCommand(final IDiagramWorkbenchPart part,
-            final List<EObject> selection) {
+    public ICommand buildCopyCommand(final IDiagramWorkbenchPart part, final List<EObject> selection) {
         return buildCommand(part, selection, "Copy");
     }
 
@@ -93,8 +85,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
      *            the selection
      * @return the command
      */
-    public ICommand buildCutCommand(final IDiagramWorkbenchPart part,
-            final List<EObject> selection) {
+    public ICommand buildCutCommand(final IDiagramWorkbenchPart part, final List<EObject> selection) {
         return buildCommand(part, selection, "Cut");
     }
 
@@ -137,8 +128,8 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
      *            the label and name of the transformation
      * @return the command
      */
-    private ICommand buildCommand(final IDiagramWorkbenchPart part,
-            final List<EObject> selection, final String label) {
+    private ICommand buildCommand(final IDiagramWorkbenchPart part, final List<EObject> selection,
+            final String label) {
         lastSelection = selection;
 
         /* The path of the transformation file. */
@@ -146,14 +137,10 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
 
         TransformationCommandWithAutoLayout result = null;
         if (part instanceof DiagramEditor && filePath != null) {
-            if (jobInstance != null) {
-                jobInstance.cancel();
-            }
             DiagramEditor editor = (DiagramEditor) part;
             TransactionalEditingDomain transDomain = editor.getEditingDomain();
 
-            result = new TransformationCommandWithAutoLayout(transDomain,
-                    label, editor);
+            result = new TransformationCommandWithAutoLayout(transDomain, label, editor);
 
             mapParameters(selection, label, filePath, result, editor);
         }
@@ -167,9 +154,8 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
      * @param result
      * @param editor
      */
-    private void mapParameters(final List<EObject> selection,
-            final String label, final String filePath,
-            final TransformationCommandWithAutoLayout result,
+    private void mapParameters(final List<EObject> selection, final String label,
+            final String filePath, final TransformationCommandWithAutoLayout result,
             final DiagramEditor editor) {
         if (selection.size() > 1) {
 
@@ -199,28 +185,24 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
             }
 
             if (label.equals("Paste")) {
-                possibleMappings.add(pureMapping.toArray(new String[pureMapping
-                        .size()]));
+                possibleMappings.add(pureMapping.toArray(new String[pureMapping.size()]));
             } else {
                 String[] array = { "List[Object]" };
                 possibleMappings.add(array);
             }
 
             for (String[] s : possibleMappings) {
-                List<Object> mappedSelection = FRAMEWORK
-                        .createParameterMapping(selection, s);
+                List<Object> mappedSelection = FRAMEWORK.createParameterMapping(selection, s);
                 if (mappedSelection != null
-                        && result.initialize(editor, mappedSelection,
-                                label.toLowerCase(), filePath, getModel(),
-                                FRAMEWORK)) {
+                        && result.initialize(editor, mappedSelection, label.toLowerCase(),
+                                filePath, getModel(), FRAMEWORK)) {
                     break;
                 }
             }
         } else {
             List<Object> list = new LinkedList<Object>();
             list.add(selection.get(0));
-            result.initialize(editor, list, label.toLowerCase(), filePath,
-                    getModel(), FRAMEWORK);
+            result.initialize(editor, list, label.toLowerCase(), filePath, getModel(), FRAMEWORK);
         }
     }
 
@@ -298,8 +280,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
     protected abstract Class<?>[] getTypes();
 
     /**
-     * Get the path to the model package. e.g.:
-     * de.cau.cs.kieler.synccharts.SyncchartsPackage
+     * Get the path to the model package. e.g.: de.cau.cs.kieler.synccharts.SyncchartsPackage
      * 
      * @return the model package
      */
@@ -326,19 +307,14 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
     }
 
     /**
-     * This transformation command performs an auto layout some time after the
-     * last transformation.
+     * This transformation command performs an auto layout some time after the last transformation.
      * 
      * @author soh
      */
-    private class TransformationCommandWithAutoLayout extends
-            TransformationCommand {
+    private class TransformationCommandWithAutoLayout extends TransformationCommand {
 
         /** The label. */
         private final String label;
-
-        /** The delay. */
-        private static final int DELAY = 500;
 
         private DiagramEditor editor;
 
@@ -349,8 +325,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
          * @param labelParam
          * @param editorParam
          */
-        public TransformationCommandWithAutoLayout(
-                final TransactionalEditingDomain domain,
+        public TransformationCommandWithAutoLayout(final TransactionalEditingDomain domain,
                 final String labelParam, final DiagramEditor editorParam) {
             super(domain, labelParam, null);
             this.label = labelParam;
@@ -358,9 +333,8 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
         }
 
         @Override
-        protected CommandResult doExecuteWithResult(
-                final IProgressMonitor monitor, final IAdaptable info)
-                throws ExecutionException {
+        protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
+                final IAdaptable info) throws ExecutionException {
             performPreOperationActions(monitor);
 
             // Notify event listeners: (no longer needed, triggerlistener takes
@@ -373,92 +347,31 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
 
             CommandResult res = super.doExecuteWithResult(monitor, info);
             if (label.equalsIgnoreCase("paste")) {
-                WorkerJob job = new WorkerJob(editor);
-                job.schedule(DELAY);
+                final EObject obj = ((View) editor.getDiagramEditPart().getModel()).getElement();
+                PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+                    public void run() {
+                        List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(obj);
+                        for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
+                            CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
+                            nextEditPolicy.refresh();
+                        }
+                    }
+                });
+
+                // haf: this has to be done in UI thread, because the Trigger Listener might
+                // call UI methods. This would yield an invalid thread access
+                // mmu: is this required? Does nothing for me...
+                // PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+                // public void run() {
+                // IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) editor)
+                // .getDiagramGraphicalViewer();
+                // graphViewer.flush();
+                //
+                // }
+                // });
 
             }
             return res;
-        }
-    }
-
-    /**
-     * Thread for triggering an autolayout after some time.
-     * 
-     * @author soh
-     */
-    private class WorkerJob extends Job {
-
-        private DiagramEditor editor;
-
-        /**
-         * Creates a new AbstractCutCopyPasteCommandFactory.java.
-         * 
-         * @param editorParam
-         * @param name
-         */
-        public WorkerJob(final DiagramEditor editorParam) {
-            super("Applying post-'paste' viewmanagement effects.");
-            jobInstance = this;
-            this.editor = editorParam;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected IStatus run(final IProgressMonitor monitor) {
-            Throwable myException = null;
-            EObject obj = ((View) editor.getDiagramEditPart().getModel())
-                    .getElement();
-            // haf: small try-catch blocks to avoid that the control flow gets
-            // interrupted
-            try {
-                List<?> editPolicies = CanonicalEditPolicy
-                        .getRegisteredEditPolicies(obj);
-                for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
-
-                    CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-                            .next();
-
-                    nextEditPolicy.refresh();
-                }
-            } catch (Exception e) {
-                myException = e;
-            }
-
-            try {
-                // haf: this has to be done in UI thread, because the Trigger
-                // Listener might
-                // call UI methods. This would yield an invalid thread access
-                PlatformUI.getWorkbench().getDisplay()
-                        .asyncExec(new Runnable() {
-                            public void run() {
-                                IDiagramGraphicalViewer graphViewer = ((IDiagramWorkbenchPart) editor)
-                                        .getDiagramGraphicalViewer();
-                                graphViewer.flush();
-
-                            }
-                        });
-            } catch (Exception e) {
-                myException = e;
-            }
-
-            // Notify event listeners: (no longer needed)
-            // for (ITransformationEventListener te :
-            // TransformationUIManager.INSTANCE
-            // .getTransformationEventListeners()) {
-            // te.transformationExecuted(new Object[] { obj, editor });
-            // }
-
-            performPostOperationActions(monitor);
-
-            if (myException == null) {
-                return new Status(IStatus.OK, "de.cau.cs.kieler.ksbase",
-                        "Layout done");
-            }
-            String message = "Error during paste. " + myException.getMessage();
-            return new Status(IStatus.ERROR, "de.cau.cs.kieler.ksbase",
-                    message, myException);
         }
     }
 
@@ -476,8 +389,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                     refreshPolicy(sel);
                 }
                 // commit changes to view
-                IDiagramGraphicalViewer graphViewer = part
-                        .getDiagramGraphicalViewer();
+                IDiagramGraphicalViewer graphViewer = part.getDiagramGraphicalViewer();
                 graphViewer.flush();
             }
         }
@@ -493,8 +405,7 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
     private void refreshPolicy(final EObject sel) {
         EditPart editPart = ModelingUtil.getEditPart(sel);
         // get all registered edit parts in order to get transitions as well
-        Collection<?> parts = editPart.getViewer().getEditPartRegistry()
-                .values();
+        Collection<?> parts = editPart.getViewer().getEditPartRegistry().values();
 
         // results list
         List<CanonicalEditPolicy> policies = new LinkedList<CanonicalEditPolicy>();
@@ -507,11 +418,9 @@ public abstract class AbstractCutCopyPasteCommandFactory implements
                     EObject eObject = ((View) model).getElement();
 
                     // get policy for the semantic element
-                    List<?> editPolicies = CanonicalEditPolicy
-                            .getRegisteredEditPolicies(eObject);
+                    List<?> editPolicies = CanonicalEditPolicy.getRegisteredEditPolicies(eObject);
                     for (Iterator<?> it = editPolicies.iterator(); it.hasNext();) {
-                        CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it
-                                .next();
+                        CanonicalEditPolicy nextEditPolicy = (CanonicalEditPolicy) it.next();
                         policies.add(nextEditPolicy);
 
                     }
