@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 
+import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.util.Pair;
@@ -117,6 +118,13 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * @generated
      */
     private EClass pairEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass persistentEntryEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -419,6 +427,15 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EReference getEMapPropertyHolder_PersistentEntries() {
+        return (EReference)eMapPropertyHolderEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getIPropertyToObjectMap() {
         return iPropertyToObjectMapEClass;
     }
@@ -491,6 +508,33 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getPersistentEntry() {
+        return persistentEntryEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getPersistentEntry_Key() {
+        return (EAttribute)persistentEntryEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getPersistentEntry_Value() {
+        return (EAttribute)persistentEntryEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public KGraphFactory getKGraphFactory() {
         return (KGraphFactory)getEFactoryInstance();
     }
@@ -545,6 +589,7 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
 
         eMapPropertyHolderEClass = createEClass(EMAP_PROPERTY_HOLDER);
         createEReference(eMapPropertyHolderEClass, EMAP_PROPERTY_HOLDER__PROPERTIES);
+        createEReference(eMapPropertyHolderEClass, EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES);
 
         iPropertyToObjectMapEClass = createEClass(IPROPERTY_TO_OBJECT_MAP);
         createEAttribute(iPropertyToObjectMapEClass, IPROPERTY_TO_OBJECT_MAP__KEY);
@@ -555,6 +600,10 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         pairEClass = createEClass(PAIR);
         createEReference(pairEClass, PAIR__FIRST);
         createEReference(pairEClass, PAIR__SECOND);
+
+        persistentEntryEClass = createEClass(PERSISTENT_ENTRY);
+        createEAttribute(persistentEntryEClass, PERSISTENT_ENTRY__KEY);
+        createEAttribute(persistentEntryEClass, PERSISTENT_ENTRY__VALUE);
 
         // Create data types
         iPropertyEDataType = createEDataType(IPROPERTY);
@@ -644,6 +693,9 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
 
         initEClass(eMapPropertyHolderEClass, EMapPropertyHolder.class, "EMapPropertyHolder", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getEMapPropertyHolder_Properties(), this.getIPropertyToObjectMap(), null, "properties", null, 0, -1, EMapPropertyHolder.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getEMapPropertyHolder_PersistentEntries(), this.getPersistentEntry(), null, "persistentEntries", null, 0, -1, EMapPropertyHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        addEOperation(eMapPropertyHolderEClass, null, "makePersistent", 0, 1, IS_UNIQUE, IS_ORDERED);
 
         initEClass(iPropertyToObjectMapEClass, Map.Entry.class, "IPropertyToObjectMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
         g1 = createEGenericType(this.getIProperty());
@@ -690,6 +742,10 @@ public class KGraphPackageImpl extends EPackageImpl implements KGraphPackage {
         initEReference(getPair_First(), g1, null, "first", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         g1 = createEGenericType(pairEClass_S);
         initEReference(getPair_Second(), g1, null, "second", null, 0, 1, Pair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(persistentEntryEClass, PersistentEntry.class, "PersistentEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEAttribute(getPersistentEntry_Key(), ecorePackage.getEString(), "key", null, 1, 1, PersistentEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getPersistentEntry_Value(), ecorePackage.getEString(), "value", null, 0, 1, PersistentEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Initialize data types
         initEDataType(iPropertyEDataType, IProperty.class, "IProperty", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

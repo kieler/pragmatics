@@ -85,6 +85,7 @@ public class KGraphFactoryImpl extends EFactoryImpl implements KGraphFactory {
             case KGraphPackage.KPORT: return createKPort();
             case KGraphPackage.KLABEL: return createKLabel();
             case KGraphPackage.IPROPERTY_TO_OBJECT_MAP: return (EObject)createIPropertyToObjectMap();
+            case KGraphPackage.PERSISTENT_ENTRY: return createPersistentEntry();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -178,6 +179,16 @@ public class KGraphFactoryImpl extends EFactoryImpl implements KGraphFactory {
     public Map.Entry<IProperty<?>, Object> createIPropertyToObjectMap() {
         IPropertyToObjectMapImpl iPropertyToObjectMap = new IPropertyToObjectMapImpl();
         return iPropertyToObjectMap;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public PersistentEntry createPersistentEntry() {
+        PersistentEntryImpl persistentEntry = new PersistentEntryImpl();
+        return persistentEntry;
     }
 
     /**

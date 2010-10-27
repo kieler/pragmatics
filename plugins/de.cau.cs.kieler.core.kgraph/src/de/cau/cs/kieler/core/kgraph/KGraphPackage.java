@@ -136,13 +136,22 @@ public interface KGraphPackage extends EPackage {
     int EMAP_PROPERTY_HOLDER__PROPERTIES = IPROPERTY_HOLDER_FEATURE_COUNT + 0;
 
     /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES = IPROPERTY_HOLDER_FEATURE_COUNT + 1;
+
+    /**
      * The number of structural features of the '<em>EMap Property Holder</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EMAP_PROPERTY_HOLDER_FEATURE_COUNT = IPROPERTY_HOLDER_FEATURE_COUNT + 1;
+    int EMAP_PROPERTY_HOLDER_FEATURE_COUNT = IPROPERTY_HOLDER_FEATURE_COUNT + 2;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl <em>Data</em>}' class.
@@ -162,6 +171,15 @@ public interface KGraphPackage extends EPackage {
      * @ordered
      */
     int KGRAPH_DATA__PROPERTIES = EMAP_PROPERTY_HOLDER__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KGRAPH_DATA__PERSISTENT_ENTRIES = EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES;
 
     /**
      * The number of structural features of the '<em>Data</em>' class.
@@ -473,7 +491,7 @@ public interface KGraphPackage extends EPackage {
      * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getIProperty()
      * @generated
      */
-    int IPROPERTY = 10;
+    int IPROPERTY = 11;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.core.util.Pair <em>Pair</em>}' class.
@@ -511,6 +529,43 @@ public interface KGraphPackage extends EPackage {
      * @ordered
      */
     int PAIR_FEATURE_COUNT = 2;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.core.kgraph.impl.PersistentEntryImpl <em>Persistent Entry</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.core.kgraph.impl.PersistentEntryImpl
+     * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getPersistentEntry()
+     * @generated
+     */
+    int PERSISTENT_ENTRY = 10;
+
+    /**
+     * The feature id for the '<em><b>Key</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int PERSISTENT_ENTRY__KEY = 0;
+
+    /**
+     * The feature id for the '<em><b>Value</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int PERSISTENT_ENTRY__VALUE = 1;
+
+    /**
+     * The number of structural features of the '<em>Persistent Entry</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int PERSISTENT_ENTRY_FEATURE_COUNT = 2;
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.KGraphElement <em>Element</em>}'.
@@ -781,6 +836,17 @@ public interface KGraphPackage extends EPackage {
     EReference getEMapPropertyHolder_Properties();
 
     /**
+     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.core.kgraph.EMapPropertyHolder#getPersistentEntries <em>Persistent Entries</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Persistent Entries</em>'.
+     * @see de.cau.cs.kieler.core.kgraph.EMapPropertyHolder#getPersistentEntries()
+     * @see #getEMapPropertyHolder()
+     * @generated
+     */
+    EReference getEMapPropertyHolder_PersistentEntries();
+
+    /**
      * Returns the meta object for class '{@link java.util.Map.Entry <em>IProperty To Object Map</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -868,6 +934,38 @@ public interface KGraphPackage extends EPackage {
      * @generated
      */
     EReference getPair_Second();
+
+    /**
+     * Returns the meta object for class '{@link de.cau.cs.kieler.core.kgraph.PersistentEntry <em>Persistent Entry</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Persistent Entry</em>'.
+     * @see de.cau.cs.kieler.core.kgraph.PersistentEntry
+     * @generated
+     */
+    EClass getPersistentEntry();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.kgraph.PersistentEntry#getKey <em>Key</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Key</em>'.
+     * @see de.cau.cs.kieler.core.kgraph.PersistentEntry#getKey()
+     * @see #getPersistentEntry()
+     * @generated
+     */
+    EAttribute getPersistentEntry_Key();
+
+    /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.core.kgraph.PersistentEntry#getValue <em>Value</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Value</em>'.
+     * @see de.cau.cs.kieler.core.kgraph.PersistentEntry#getValue()
+     * @see #getPersistentEntry()
+     * @generated
+     */
+    EAttribute getPersistentEntry_Value();
 
     /**
      * Returns the factory that creates the instances of the model.
@@ -1106,6 +1204,14 @@ public interface KGraphPackage extends EPackage {
         EReference EMAP_PROPERTY_HOLDER__PROPERTIES = eINSTANCE.getEMapPropertyHolder_Properties();
 
         /**
+         * The meta object literal for the '<em><b>Persistent Entries</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES = eINSTANCE.getEMapPropertyHolder_PersistentEntries();
+
+        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.IPropertyToObjectMapImpl <em>IProperty To Object Map</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1176,6 +1282,32 @@ public interface KGraphPackage extends EPackage {
          * @generated
          */
         EReference PAIR__SECOND = eINSTANCE.getPair_Second();
+
+        /**
+         * The meta object literal for the '{@link de.cau.cs.kieler.core.kgraph.impl.PersistentEntryImpl <em>Persistent Entry</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see de.cau.cs.kieler.core.kgraph.impl.PersistentEntryImpl
+         * @see de.cau.cs.kieler.core.kgraph.impl.KGraphPackageImpl#getPersistentEntry()
+         * @generated
+         */
+        EClass PERSISTENT_ENTRY = eINSTANCE.getPersistentEntry();
+
+        /**
+         * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute PERSISTENT_ENTRY__KEY = eINSTANCE.getPersistentEntry_Key();
+
+        /**
+         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute PERSISTENT_ENTRY__VALUE = eINSTANCE.getPersistentEntry_Value();
 
     }
 

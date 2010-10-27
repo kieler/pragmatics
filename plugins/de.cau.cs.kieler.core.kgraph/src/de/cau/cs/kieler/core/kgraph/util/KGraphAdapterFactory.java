@@ -133,6 +133,10 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
                 return createPairAdapter();
             }
             @Override
+            public Adapter casePersistentEntry(PersistentEntry object) {
+                return createPersistentEntryAdapter();
+            }
+            @Override
             public Adapter defaultCase(EObject object) {
                 return createEObjectAdapter();
             }
@@ -289,6 +293,20 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createPairAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.core.kgraph.PersistentEntry <em>Persistent Entry</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see de.cau.cs.kieler.core.kgraph.PersistentEntry
+     * @generated
+     */
+    public Adapter createPersistentEntryAdapter() {
         return null;
     }
 

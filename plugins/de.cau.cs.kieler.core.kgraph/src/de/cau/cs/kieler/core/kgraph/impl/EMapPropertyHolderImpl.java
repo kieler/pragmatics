@@ -13,16 +13,20 @@
  */
 package de.cau.cs.kieler.core.kgraph.impl;
 
+import java.util.List;
 import java.util.Map.Entry;
 
 import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
+import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 
+import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 
 import de.cau.cs.kieler.core.util.Pair;
 
+import java.util.Collection;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.BasicEList;
@@ -35,6 +39,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -46,6 +51,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.EMapPropertyHolderImpl#getProperties <em>Properties</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.core.kgraph.impl.EMapPropertyHolderImpl#getPersistentEntries <em>Persistent Entries</em>}</li>
  * </ul>
  * </p>
  *
@@ -61,6 +67,16 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
      * @ordered
      */
     protected EMap<IProperty<?>, Object> properties;
+
+    /**
+     * The cached value of the '{@link #getPersistentEntries() <em>Persistent Entries</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPersistentEntries()
+     * @generated
+     * @ordered
+     */
+    protected EList<PersistentEntry> persistentEntries;
 
     /**
      * <!-- begin-user-doc -->
@@ -93,6 +109,43 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
         return properties;
     }
     
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EList<PersistentEntry> getPersistentEntries() {
+        if (persistentEntries == null) {
+            persistentEntries = new EObjectContainmentEList<PersistentEntry>(PersistentEntry.class, this, KGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES);
+        }
+        return persistentEntries;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * {@inheritDoc}
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public void makePersistent() {
+        List<PersistentEntry> persisEntries = getPersistentEntries();
+        int i = 0;
+        for (Entry<IProperty<?>, Object> entry : getProperties()) {
+            PersistentEntry persisEntry;
+            if (i >= persisEntries.size()) {
+                persisEntry = KGraphFactory.eINSTANCE.createPersistentEntry();
+                persisEntries.add(persisEntry);
+            } else {
+                persisEntry = persisEntries.get(i);
+            }
+            IProperty<?> key = entry.getKey();
+            persisEntry.setKey(key == null ? null : key.getIdentifier().toString());
+            Object value = entry.getValue();
+            persisEntry.setValue(value == null ? null : value.toString());
+            i++;
+        }
+    }
+
     /**
      * <!-- begin-user-doc -->
      * {@inheritDoc}
@@ -164,6 +217,8 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
         switch (featureID) {
             case KGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES:
                 return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
+            case KGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES:
+                return ((InternalEList<?>)getPersistentEntries()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -179,6 +234,8 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
             case KGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES:
                 if (coreType) return getProperties();
                 else return getProperties().map();
+            case KGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES:
+                return getPersistentEntries();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -188,11 +245,16 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
      * <!-- end-user-doc -->
      * @generated
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
             case KGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES:
                 ((EStructuralFeature.Setting)getProperties()).set(newValue);
+                return;
+            case KGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES:
+                getPersistentEntries().clear();
+                getPersistentEntries().addAll((Collection<? extends PersistentEntry>)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -209,6 +271,9 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
             case KGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES:
                 getProperties().clear();
                 return;
+            case KGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES:
+                getPersistentEntries().clear();
+                return;
         }
         super.eUnset(featureID);
     }
@@ -223,6 +288,8 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
         switch (featureID) {
             case KGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES:
                 return properties != null && !properties.isEmpty();
+            case KGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES:
+                return persistentEntries != null && !persistentEntries.isEmpty();
         }
         return super.eIsSet(featureID);
     }

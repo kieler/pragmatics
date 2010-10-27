@@ -16,6 +16,7 @@ package de.cau.cs.kieler.core.kgraph;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EObject;
@@ -33,6 +34,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.core.kgraph.EMapPropertyHolder#getProperties <em>Properties</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.core.kgraph.EMapPropertyHolder#getPersistentEntries <em>Persistent Entries</em>}</li>
  * </ul>
  * </p>
  *
@@ -57,5 +59,31 @@ public interface EMapPropertyHolder extends EObject, IPropertyHolder {
      * @generated
      */
     EMap<IProperty<?>, Object> getProperties();
+
+    /**
+     * Returns the value of the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.PersistentEntry}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Persistent Entries</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Persistent Entries</em>' containment reference list.
+     * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getEMapPropertyHolder_PersistentEntries()
+     * @model containment="true"
+     * @generated
+     */
+    EList<PersistentEntry> getPersistentEntries();
+
+    /**
+     * <!-- begin-user-doc -->
+     * Serialize all entries of the properties map and write them into the list of persistent
+     * entries. The previous content is cleared.
+     * <!-- end-user-doc -->
+     * @model
+     * @generated
+     */
+    void makePersistent();
 
 } // EMapPropertyHolder

@@ -223,6 +223,29 @@ public class KGraphItemProviderAdapterFactory extends KGraphAdapterFactory imple
     }
 
     /**
+     * This keeps track of the one adapter used for all {@link de.cau.cs.kieler.core.kgraph.PersistentEntry} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected PersistentEntryItemProvider persistentEntryItemProvider;
+
+    /**
+     * This creates an adapter for a {@link de.cau.cs.kieler.core.kgraph.PersistentEntry}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createPersistentEntryAdapter() {
+        if (persistentEntryItemProvider == null) {
+            persistentEntryItemProvider = new PersistentEntryItemProvider(this);
+        }
+
+        return persistentEntryItemProvider;
+    }
+
+    /**
      * This returns the root adapter factory that contains this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -327,6 +350,7 @@ public class KGraphItemProviderAdapterFactory extends KGraphAdapterFactory imple
         if (kPortItemProvider != null) kPortItemProvider.dispose();
         if (kLabelItemProvider != null) kLabelItemProvider.dispose();
         if (iPropertyToObjectMapItemProvider != null) iPropertyToObjectMapItemProvider.dispose();
+        if (persistentEntryItemProvider != null) persistentEntryItemProvider.dispose();
     }
 
 }

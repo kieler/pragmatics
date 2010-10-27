@@ -163,6 +163,12 @@ public class KGraphSwitch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
+            case KGraphPackage.PERSISTENT_ENTRY: {
+                PersistentEntry persistentEntry = (PersistentEntry)theEObject;
+                T result = casePersistentEntry(persistentEntry);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
             default: return defaultCase(theEObject);
         }
     }
@@ -314,6 +320,21 @@ public class KGraphSwitch<T> {
      * @generated
      */
     public <F, S> T casePair(Pair<F, S> object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Persistent Entry</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Persistent Entry</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T casePersistentEntry(PersistentEntry object) {
         return null;
     }
 
