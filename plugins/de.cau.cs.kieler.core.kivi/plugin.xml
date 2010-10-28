@@ -20,7 +20,7 @@
       <page
             class="de.cau.cs.kieler.core.kivi.preferences.KiViPreferencePage"
             id="de.cau.cs.kieler.core.kivi"
-            name="KiVi"
+            name="View Management"
             category="de.cau.cs.kieler">
       </page>
    </extension>

@@ -74,7 +74,7 @@ public class KiViPreferencePage extends PreferencePage implements IWorkbenchPref
      * Default constructor.
      */
     public KiViPreferencePage() {
-        super("View management preference page");
+        super("View Management preference page");
     }
 
     /**
