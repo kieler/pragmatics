@@ -29,7 +29,15 @@ import de.cau.cs.kieler.kex.model.ExampleCollector;
 import de.cau.cs.kieler.kex.model.ExampleResource;
 import de.cau.cs.kieler.kex.model.SourceType;
 
+/**
+ * Contains all methods to collect example of plugin projects.
+ * 
+ * @author pkl
+ * 
+ */
 public class PluginExampleCollector extends ExampleCollector {
+
+    private static final int CATEGORY_MIN_LENGTH = 4;
 
     // leichter HashMap, da wir eine Pruefung auf enthalten sein machen.
     // und wir dann bei einer liste komplett ueber alle elemente iterieren
@@ -40,15 +48,19 @@ public class PluginExampleCollector extends ExampleCollector {
 
     private List<String> categoryPool;
 
+    /**
+     * Constructor for {@link PluginExampleCollector}.
+     */
     public PluginExampleCollector() {
         examplePool = new HashMap<String, Example>();
 
     }
 
     /**
-     * loads examples of extenders.
+     * Loads examples of extenders.
      * 
      * @throws KielerException
+     *             , if toExample(...) throws it.
      */
     @Override
     public void load() throws KielerException {
@@ -96,15 +108,21 @@ public class PluginExampleCollector extends ExampleCollector {
         }
     }
 
+    /**
+     * Collects all categories of plugin-projects.
+     * 
+     * @param categoryElement
+     *            , {@link IConfigurationElement}
+     */
     public void collectCategory(final IConfigurationElement categoryElement) {
         String categoryId = categoryElement.getAttribute(PluginConstants.ID);
-        if (categoryId == null || categoryId.length() < 4) {
+        if (categoryId == null || categoryId.length() < CATEGORY_MIN_LENGTH) {
             // TODO undefined state, think about it.
         } else {
             if (!getCategories().contains(categoryId)) {
                 getCategories().add(categoryId);
-            } else {
-                // TODO that should not happen
+                // } else {
+                // // TODO that should not happen
             }
         }
     }
@@ -114,6 +132,11 @@ public class PluginExampleCollector extends ExampleCollector {
         return this.examplePool;
     }
 
+    /**
+     * Returns the categorypool if it is not empty, otherwise loads categories.
+     * 
+     * @return {@link List} of {@link String}
+     */
     public List<String> getCategories() {
         if (this.categoryPool == null) {
             this.categoryPool = new ArrayList<String>();
@@ -137,8 +160,14 @@ public class PluginExampleCollector extends ExampleCollector {
         return SourceType.KIELER;
     }
 
-    public static Example toExample(final IConfigurationElement exampleElement)
-            throws InvalidRegistryObjectException, IllegalArgumentException, KielerException {
+    /**
+     * filters out of a {@link IConfigurationElement} a {@link Example}.
+     * 
+     * @param exampleElement
+     *            , {@link IConfigurationElement}
+     * @return {@link Example}
+     */
+    public static Example toExample(final IConfigurationElement exampleElement) {
 
         String titleAttr = exampleElement.getAttribute(PluginConstants.TITLE);
         // ein freier string, min. default besser noch regex.
@@ -180,9 +209,9 @@ public class PluginExampleCollector extends ExampleCollector {
             if (resourceType != null && localPath != null) {
                 ExampleResource exRe = new ExampleResource(localPath,
                         ExampleResource.Type.valueOf(resourceType.toUpperCase()));
-                String direct_open = configurationElement.getAttribute(PluginConstants.DIRECT_OPEN);
-                if (direct_open != null) {
-                    exRe.setDirectOpen(Boolean.parseBoolean(direct_open));
+                String directOpen = configurationElement.getAttribute(PluginConstants.DIRECT_OPEN);
+                if (directOpen != null) {
+                    exRe.setDirectOpen(Boolean.parseBoolean(directOpen));
                 }
                 result.add(exRe);
             }
@@ -190,6 +219,15 @@ public class PluginExampleCollector extends ExampleCollector {
         return result;
     }
 
+    /**
+     * 
+     * @param exampleTitle
+     *            , {@link String}
+     * @return {@link Example}
+     * @throws KielerException
+     *             , if a {@link InvalidRegistryObjectException} or a
+     *             {@link IllegalArgumentException} has been thrown.
+     */
     public static Example getExample(final String exampleTitle) throws KielerException {
         IConfigurationElement[] configElements = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(PluginConstants.KEX_EXT_POINT);
@@ -207,11 +245,6 @@ public class PluginExampleCollector extends ExampleCollector {
                         throw new KielerException(ErrorMessage.LOAD_ERROR
                                 + element.getAttribute(PluginConstants.ID) + "\". "
                                 + e1.getLocalizedMessage());
-                    } catch (KielerException e2) {
-                        throw new KielerException(ErrorMessage.LOAD_ERROR
-                                + element.getAttribute(PluginConstants.ID) + "\". "
-                                + e2.getLocalizedMessage());
-
                     }
                 }
             }

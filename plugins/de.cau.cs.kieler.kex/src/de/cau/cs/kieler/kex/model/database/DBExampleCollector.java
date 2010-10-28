@@ -37,6 +37,9 @@ public class DBExampleCollector extends ExampleCollector {
 
     // private final DatabaseHandler dbHandler;
 
+    /**
+     * Creates a new DBExampleCollector.
+     */
     public DBExampleCollector() {
         examplePool = new HashMap<String, Example>();
         categories = new ArrayList<String>();
@@ -54,11 +57,25 @@ public class DBExampleCollector extends ExampleCollector {
         // database.loadExample();
     }
 
+    /**
+     * searches an example for a examle title.
+     * 
+     * @param exampleTitle
+     *            , String
+     * @return {@link Example}
+     * @throws KielerException
+     *             , if an error occurs.
+     */
     public static Example getExample(final String exampleTitle) throws KielerException {
         // to implement
         return null;
     }
 
+    /**
+     * Getter for categories.
+     * 
+     * @return {@link List} of {@link String}
+     */
     public List<String> getCategories() {
         return categories;
     }

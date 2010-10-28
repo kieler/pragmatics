@@ -29,7 +29,14 @@ import de.cau.cs.kieler.kex.model.database.DBExampleCollector;
 import de.cau.cs.kieler.kex.model.plugin.PluginExampleCollector;
 import de.cau.cs.kieler.kex.model.plugin.PluginExampleCreator;
 
-public class ExampleManager {
+/**
+ * This class manages the import and export in kex. It represents the bridge from kex.ui to kex
+ * code.
+ * 
+ * @author pkl
+ * 
+ */
+public final class ExampleManager {
 
     private static ExampleManager instance;
 
@@ -58,7 +65,12 @@ public class ExampleManager {
         this.databaseCollector = new DBExampleCollector();
     }
 
-    public synchronized static ExampleManager get() {
+    /**
+     * Singleton call of {@link ExampleManager}.
+     * 
+     * @return {@link ExampleManager}
+     */
+    public static synchronized ExampleManager get() {
         if (instance == null) {
             instance = new ExampleManager();
         }
@@ -71,6 +83,7 @@ public class ExampleManager {
      * @param forceLoad
      *            , set this parameter to force loading of examples
      * @throws KielerException
+     *             , can be thrown by <code> load() </code>.
      */
     public void load(final boolean forceLoad) throws KielerException {
         if (!this.isLoaded || forceLoad) {
@@ -80,6 +93,18 @@ public class ExampleManager {
         }
     }
 
+    /**
+     * searches the examplepool of a source for a special example.
+     * 
+     * @param type
+     *            , {@link SourceType}
+     * @param exampleTitle
+     *            , {@link String}
+     * @return {@link Example}
+     * @throws KielerException
+     *             , can be thrown by <code> {@link PluginExampleCollector}.getExample(...) </code>
+     *             and if the example found example is null.
+     */
     public Example getExample(final SourceType type, final String exampleTitle)
             throws KielerException {
         if (type == SourceType.KIELER) {
@@ -108,12 +133,22 @@ public class ExampleManager {
         this.databaseCollector.load();
     }
 
+    /**
+     * Adds all examples of a the collectors to the result map.
+     * 
+     * @return {@link Map} with {@link String} as key and {@link Example} as value.
+     */
     public Map<String, Example> getExamples() {
         Map<String, Example> result = this.extensionCollector.getExamplePool();
         result.putAll(databaseCollector.getExamplePool());
         return result;
     }
 
+    /**
+     * Creates a resultlist with categories of collectors.
+     * 
+     * @return {@link List} of {@link String}.
+     */
     public List<String> getCategories() {
         List<String> result = new ArrayList<String>();
         result.addAll(databaseCollector.getCategories());
@@ -121,6 +156,19 @@ public class ExampleManager {
         return result;
     }
 
+    /**
+     * This method calls an validate and uses the {@link ExampleImport} to import examples.
+     * 
+     * @param selectedResource
+     *            , {@link IPath}
+     * @param selectedExamples
+     *            , {@link List} of {@link Example}
+     * @param checkDuplicate
+     *            , boolean
+     * @return {@link List} of {@link String}
+     * @throws KielerException
+     *             , if ExampleImport.validate(...) or ExampleImport.importExamples(...) throws it.
+     */
     public List<String> importExamples(final IPath selectedResource,
             final List<Example> selectedExamples, final boolean checkDuplicate)
             throws KielerException {
@@ -132,7 +180,9 @@ public class ExampleManager {
      * Exports a given example. Created and deleted categories will managed, too.
      * 
      * @param properties
+     *            , {@link Map} with {@link ExampleElement} as key and {@link Object} as value.
      * @throws KielerException
+     *             , can be thrown at several places.
      */
     public void export(final Map<ExampleElement, Object> properties) throws KielerException {
 
@@ -140,21 +190,44 @@ public class ExampleManager {
 
         if (SourceType.KIELER.equals(properties.get(ExampleElement.SOURCETYPE))) {
             ExampleExport.exportInPlugin(properties, this.extensionCreator);
-        } else if (SourceType.PUBLIC.equals(properties.get(ExampleElement.SOURCETYPE))) {
-            // TODO build online interface
+            // } else if (SourceType.PUBLIC.equals(properties.get(ExampleElement.SOURCETYPE))) {
+            // // TODO build online interface
         } else {
             throw new KielerException(ErrorMessage.NO_SOURCETYPE);
         }
     }
 
+    /**
+     * Loads the preview picture.
+     * 
+     * @param example
+     *            , {@link Example}
+     * @return {@link InputStream}
+     * @throws KielerException
+     *             , if ExampleImport.loadOverviewPic(...) throws it.
+     */
     public InputStream loadOverviewPic(final Example example) throws KielerException {
         return ExampleImport.loadOverviewPic(example);
     }
 
+    /**
+     * Loads the standard picture.
+     * 
+     * @return {@link InputStream}
+     */
     public InputStream loadStandardPic() {
         return ExampleImport.loadStandardPic();
     }
 
+    /**
+     * Import a quickstart example.
+     * 
+     * @param quickStarter
+     *            , {@link Example}
+     * @return files which can be open directly, List<String>
+     * @throws KielerException
+     *             , if anything goes wrong at ExampleImport.importExamples(...).
+     */
     public List<String> quickStartImport(final Example quickStarter) throws KielerException {
         List<Example> quickStarts = new ArrayList<Example>();
         quickStarts.add(quickStarter);

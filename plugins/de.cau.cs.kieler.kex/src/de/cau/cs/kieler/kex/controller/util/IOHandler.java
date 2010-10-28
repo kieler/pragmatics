@@ -35,13 +35,39 @@ import de.cau.cs.kieler.kex.controller.ErrorMessage;
  * @author pkl
  * 
  */
-public class IOHandler {
+public final class IOHandler {
 
+    /**
+     * The variable holds project filename.
+     */
     public static final String PROJECT_FILE = ".project";
-    public static final String MANIFEST_MF = "MANIFEST.MF";
-    public static final String PLUGIN_XML = "plugin.xml";
-    public static final int BUFFER_SIZE = 1024;
 
+    /**
+     * The variable holds manifest_mf filename.
+     */
+    public static final String MANIFEST_MF = "MANIFEST.MF";
+
+    /**
+     * The variable holds plugin.xml filename.
+     */
+    public static final String PLUGIN_XML = "plugin.xml";
+
+    private static final int BUFFER_SIZE = 1024;
+
+    private IOHandler() {
+        // should not called.
+    }
+
+    /**
+     * writes the resource from sourceFile to destFile.
+     * 
+     * @param sourceFile
+     *            , {@link File}
+     * @param destFile
+     *            , {@link File}
+     * @throws IOException
+     *             , if sourcefile not exists.
+     */
     public static void writeResource(final File sourceFile, final File destFile) throws IOException {
         if (!sourceFile.exists()) {
             // FIXME Problem, if user imports a project from another locations
@@ -99,11 +125,12 @@ public class IOHandler {
      *            , folder in an plugin project.
      * @return plugin.xml if found otherwise parent java project directory
      * @throws KielerException
+     *             , throws when null checks fail.
      */
     public static File filterPluginXML(final File location) throws KielerException {
 
         // TODO hier ansetzen project rausholen lokale rootresource filtern und
-        // bei example einsetzen sowie beim plugin schreiben berücksichtigen,
+        // bei example einsetzen sowie beim plugin schreiben berï¿½cksichtigen,
         // bei resources und bei example attribute rootresource
         File childDir = searchUP(location, IOHandler.PROJECT_FILE);
         if (childDir == null) {
@@ -116,10 +143,11 @@ public class IOHandler {
         }
         if (getFile(project, IOHandler.MANIFEST_MF) != null) {
             File result = getFile(project, IOHandler.PLUGIN_XML);
-            if (result != null)
+            if (result != null) {
                 return result;
-            else
+            } else {
                 return project;
+            }
         } else {
             throw new KielerException("The choosen destination contains no manifest.mf.");
         }
@@ -169,6 +197,7 @@ public class IOHandler {
      *            , String
      * @return File, if exactly one file is found otherwise null;
      * @throws KielerException
+     *             , when <code> filterFoundFile(...) </code> throws it.
      */
     public static File searchUP(final File sourceDir, final String fileName) throws KielerException {
         File parent = sourceDir;
@@ -204,7 +233,7 @@ public class IOHandler {
     }
 
     private static File filterFoundFile(final File[] foundFiles, final String searchName,
-            File source) throws KielerException {
+            final File source) throws KielerException {
         int fileCount = foundFiles.length;
         if (fileCount == 0) {
             return null;
@@ -224,9 +253,13 @@ public class IOHandler {
      *            , source URL
      * @param destPath
      *            , destination path as String
+     * @param checkDuplicate
+     *            , boolean
      * @throws KielerException
      * @throws IOException
+     *             , can occur while io writing.
      * @throws KielerModelException
+     *             , if target exists already.
      */
     public static void writeFile(final URL sourceUrl, final String destPath,
             final boolean checkDuplicate) throws IOException, KielerModelException {
@@ -236,7 +269,7 @@ public class IOHandler {
         }
         InputStream is = sourceUrl.openStream();
         OutputStream os = new FileOutputStream(target, false);
-        byte[] buf = new byte[1024];
+        byte[] buf = new byte[BUFFER_SIZE];
         int len;
         while ((len = is.read(buf)) > 0) {
             os.write(buf, 0, len);

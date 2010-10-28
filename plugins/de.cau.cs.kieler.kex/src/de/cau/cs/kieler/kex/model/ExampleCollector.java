@@ -19,25 +19,47 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.KielerException;
 
+/**
+ * Main class for an example collector.
+ * 
+ * @author pkl
+ * 
+ */
 public abstract class ExampleCollector {
 
-	public abstract void load() throws KielerException;
+    /**
+     * Loads the examples.
+     * 
+     * @throws KielerException
+     *             , should help to avoid problems.
+     */
+    public abstract void load() throws KielerException;
 
-	/**
-	 * returns the loaded examplePool
-	 * 
-	 * @return a Map with exampleId as key and example as value.
-	 */
-	public abstract Map<String, Example> getExamplePool();
+    /**
+     * Returns the loaded examplePool.
+     * 
+     * @return a Map with exampleId as key and example as value.
+     */
+    public abstract Map<String, Example> getExamplePool();
 
-	public abstract SourceType getSourceType();
+    /**
+     * Getter for {@link SourceType}. Every collector should have one.
+     * 
+     * @return {@link SourceType}
+     */
+    public abstract SourceType getSourceType();
 
-	public List<String> getExamplesAsStrings() {
-		List<String> examplesAsString = new ArrayList<String>();
-		for (Example example : getExamplePool().values()) {
-			examplesAsString.add(example.toString());
-		}
-		return examplesAsString;
-	}
+    /**
+     * Makes a {@link String} representation of examples.
+     * 
+     * @return {@link List} of {@link String}
+     */
+    public List<String> getExamplesAsStrings() {
+        List<String> examplesAsString = new ArrayList<String>();
+        for (Example example : getExamplePool().values()) {
+            examplesAsString.add(example.toString());
+        }
+        return examplesAsString;
+    }
 
 }

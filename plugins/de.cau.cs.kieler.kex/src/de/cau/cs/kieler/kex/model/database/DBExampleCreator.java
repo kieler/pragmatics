@@ -13,6 +13,12 @@
  */
 package de.cau.cs.kieler.kex.model.database;
 
+/**
+ * This class contains methods to create a new example in a database.
+ * 
+ * @author pkl
+ * 
+ */
 public class DBExampleCreator {
 
 }

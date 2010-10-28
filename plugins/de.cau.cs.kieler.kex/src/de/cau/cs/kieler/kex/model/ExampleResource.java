@@ -13,6 +13,12 @@
  */
 package de.cau.cs.kieler.kex.model;
 
+/**
+ * The main model for representing a example resource.
+ * 
+ * @author pkl
+ * 
+ */
 public class ExampleResource {
 
     private final String localPath;
@@ -21,30 +27,74 @@ public class ExampleResource {
 
     private boolean directOpen = false;
 
-    public ExampleResource(final String localPath, final Type resourceType) {
-        this.localPath = localPath;
-        this.resourceType = resourceType;
+    /**
+     * Creates a new {@link ExampleResource}.
+     * 
+     * @param localPathParam
+     *            , {@link String}
+     * @param resourceTypeParam
+     *            , {@link Type}
+     */
+    public ExampleResource(final String localPathParam, final Type resourceTypeParam) {
+        this.localPath = localPathParam;
+        this.resourceType = resourceTypeParam;
     }
 
-    public void setDirectOpen(final boolean directOpen) {
-        this.directOpen = directOpen;
+    /**
+     * Setter for the attribute directopen. Set if the resource should open directly after importing
+     * in editor.
+     * 
+     * @param directOpenParam
+     *            , boolean.
+     */
+    public void setDirectOpen(final boolean directOpenParam) {
+        this.directOpen = directOpenParam;
     }
 
+    /**
+     * Getter for local path.
+     * 
+     * @return {@link String}
+     */
     public String getLocalPath() {
         return this.localPath;
     }
 
+    /**
+     * Getter for resourcetype.
+     * 
+     * @return {@link Type}
+     */
     public Type getResourceType() {
         return this.resourceType;
     }
 
+    /**
+     * Getter for directopen.
+     * 
+     * @return boolean
+     */
     public boolean isDirectOpen() {
         return this.directOpen;
     }
 
+    /**
+     * Used to distinguish the resources.
+     * 
+     * @author pkl
+     * 
+     */
     public enum Type {
+
         FILE, FOLDER, PROJECT;
 
+        /**
+         * Gets the name of an Type.
+         * 
+         * @param type
+         *            , {@link Type}
+         * @return {@link String}
+         */
         public static String map(final Type type) {
             switch (type) {
             case FILE:

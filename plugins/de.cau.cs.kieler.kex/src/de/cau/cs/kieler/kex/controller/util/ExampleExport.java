@@ -38,16 +38,30 @@ import de.cau.cs.kieler.kex.model.plugin.PluginExampleCreator;
  * @author pkl
  * 
  */
-public class ExampleExport {
+public final class ExampleExport {
 
     private static final String PROJECT_CLASS = "org.eclipse.core.internal.resources.Project";
     private static final String FOLDER_CLASS = "org.eclipse.core.internal.resources.Folder";
     private static final String FILE_CLASS = "org.eclipse.core.internal.resources.File";
+    private static final int EXAMPLE_TITLE_MIN = 4;
+    private static final int AUTHOR_MIN = 3;
+    private static final int DESCRIPTION_MIN = 10;
+    private static final int CONTACT_MIN = 5;
 
     private ExampleExport() {
-        // should not be called
+        // should not called
     }
 
+    /**
+     * Method for validating given map elements. This contains minimumlengths- and duplicate-checks.
+     * 
+     * @param map
+     *            , Map of {@link ExampleElement} and an arbitrary {@link Object}.
+     * @param collectors
+     *            , {@link ExampleCollector}s
+     * @throws KielerException
+     *             , if any check fail a {@link KielerException} will throw.
+     */
     @SuppressWarnings("unchecked")
     public static void validate(final Map<ExampleElement, Object> map,
             final ExampleCollector... collectors) throws KielerException {
@@ -76,18 +90,18 @@ public class ExampleExport {
     private static void checkAttributes(final Map<ExampleElement, Object> map)
             throws KielerException {
         String exampleTitle = (String) map.get(ExampleElement.TITLE);
-        validateField(exampleTitle, 4, "Example Title");
+        validateField(exampleTitle, EXAMPLE_TITLE_MIN, "Example Title");
 
         String author = (String) map.get(ExampleElement.AUTHOR);
         // min. uni abbreviations like pkl
-        validateField(author, 3, "Author");
+        validateField(author, AUTHOR_MIN, "Author");
 
         String exampleDescription = (String) map.get(ExampleElement.DESCRIPTION);
-        validateField(exampleDescription, 10, "Example Description");
+        validateField(exampleDescription, DESCRIPTION_MIN, "Example Description");
 
         String exampleContact = (String) map.get(ExampleElement.CONTACT);
         // min 5 chars a@b.c
-        validateField(exampleContact, 5, "Example Contact");
+        validateField(exampleContact, CONTACT_MIN, "Example Contact");
     }
 
     private static void validateElement(final List<?> list, final int minLength,

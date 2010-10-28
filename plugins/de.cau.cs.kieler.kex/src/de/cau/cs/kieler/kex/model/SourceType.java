@@ -13,10 +13,25 @@
  */
 package de.cau.cs.kieler.kex.model;
 
+/**
+ * Sourcetype describes the backend of kex. KIELER means examples by kieler developers that will be
+ * saved in plugin projects and PUBLIC means examples by every user of kieler which will be saved by
+ * the online interface, here database.
+ * 
+ * @author pkl
+ * 
+ */
 public enum SourceType {
 
     KIELER, PUBLIC;
 
+    /**
+     * Gets the name of a source type.
+     * 
+     * @param type
+     *            , {@link SourceType}
+     * @return {@link String}
+     */
     public static String map(final SourceType type) {
         switch (type) {
         case KIELER:

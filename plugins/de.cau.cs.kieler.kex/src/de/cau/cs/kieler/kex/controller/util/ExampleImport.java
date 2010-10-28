@@ -38,26 +38,44 @@ import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleResource;
 
-public class ExampleImport {
+/**
+ * Contains all Elements for an import of examples.
+ * 
+ * @author pkl
+ * 
+ */
+public final class ExampleImport {
 
-    private final static String workspaceLocation = Platform.getLocation().toString();
+    private static final String WORKSPACE_LOCATION = Platform.getLocation().toString();
 
-    private final static String standardPicPath = "files/noPreview.png";
-    private final static String kexNamespaceId = "de.cau.cs.kieler.kex";
+    private static final String STANDARD_PIC_PATH = "files/noPreview.png";
+    private static final String KEX_NAMESPACE_ID = "de.cau.cs.kieler.kex";
+
+    private ExampleImport() {
+        // should not called
+    }
 
     /**
+     * This method contains all functions to import an example.
+     * 
      * @param selectedResource
+     *            , destination resource of type {@link IPath}.
      * @param selectedExamples
+     *            , {@link List} of {@link Example}s.
+     * @param, checkDuplicate , flag for checking example duplication in project.
      * @throws KielerException
+     *             , will throw if any error occurs.
+     * @return directopens, {@link List} of {@link String}.
      */
     public static List<String> importExamples(final IPath selectedResource,
-            final List<Example> selectedExamples, boolean checkDuplicate) throws KielerException {
+            final List<Example> selectedExamples, final boolean checkDuplicate)
+            throws KielerException {
 
         List<String> directOpens = new ArrayList<String>();
         List<String> finishedResources = new ArrayList<String>();
 
         StringBuilder destFolder = new StringBuilder();
-        destFolder.append(workspaceLocation)
+        destFolder.append(WORKSPACE_LOCATION)
                 .append((selectedResource != null ? selectedResource.toString() : "")).append("/");
         try {
 
@@ -144,8 +162,8 @@ public class ExampleImport {
 
     private static String solveDuplicate(final IWorkspaceRoot root, final String destPath)
             throws KielerException {
-        // FIXME it´s not enough, cause other resources of example would import
-        // to wrong project. But that´s the way to solve that problem.
+        // FIXME itï¿½s not enough, cause other resources of example would import
+        // to wrong project. But thatï¿½s the way to solve that problem.
         // IProject project = root.getProject(destPath);
         // if (project != null && project.exists()) {
         // int i = 2;
@@ -163,6 +181,15 @@ public class ExampleImport {
         return destPath;
     }
 
+    /**
+     * Loads the preview pic of an example.
+     * 
+     * @param example
+     *            , {@link Example}
+     * @return {@link InputStream}
+     * @throws KielerException
+     *             , if anything goes wrong.
+     */
     public static InputStream loadOverviewPic(final Example example) throws KielerException {
         Bundle bundle = Platform.getBundle(example.getNamespaceId());
         URL entry = bundle.getEntry(example.getOverviewPic());
@@ -173,9 +200,14 @@ public class ExampleImport {
         }
     }
 
+    /**
+     * loads the standard picture of an example.
+     * 
+     * @return {@link InputStream}
+     */
     public static InputStream loadStandardPic() {
-        Bundle bundle = Platform.getBundle(ExampleImport.kexNamespaceId);
-        URL entry = bundle.getEntry(ExampleImport.standardPicPath);
+        Bundle bundle = Platform.getBundle(ExampleImport.KEX_NAMESPACE_ID);
+        URL entry = bundle.getEntry(ExampleImport.STANDARD_PIC_PATH);
         try {
             return entry.openStream();
         } catch (IOException e) {
@@ -185,6 +217,18 @@ public class ExampleImport {
         return null;
     }
 
+    /**
+     * validates the selected examples.
+     * 
+     * @param selectedResource
+     *            , {@link IPath}
+     * @param selectedExamples
+     *            , {@link List} of {@link Example}
+     * @param checkDuplicate
+     *            , boolean
+     * @throws KielerException
+     *             , if any error occurs.
+     */
     public static void validate(final IPath selectedResource, final List<Example> selectedExamples,
             final boolean checkDuplicate) throws KielerException {
         if (selectedExamples == null || selectedExamples.size() == 0) {
@@ -203,7 +247,7 @@ public class ExampleImport {
         }
         // FIXME it is possible to choose a project and additional files at
         // export.
-        // that would cause a BANG! :-), that shouldn´t be possible
+        // that would cause a BANG! :-), that shouldnï¿½t be possible
 
         // projects do not need a destinatin resource
         if (!allProjects) {

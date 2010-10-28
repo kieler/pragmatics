@@ -16,6 +16,13 @@ package de.cau.cs.kieler.kex.controller;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * Export resources are resources with a {@link IResource}, a localPath {@link IPath} and a flag
+ * directOpen.
+ * 
+ * @author pkl
+ * 
+ */
 public class ExportResource {
 
     private final IResource resource;
@@ -24,23 +31,52 @@ public class ExportResource {
 
     private boolean directOpen;
 
-    public ExportResource(final IResource resource, final IPath localPath) {
-        this.resource = resource;
-        this.localPath = localPath;
+    /**
+     * Creates a new export resource with a {@link IResource} and a {@link IPath}.
+     * 
+     * @param resourceParam
+     *            , {@link IResource}
+     * @param localPathParam
+     *            , {@link IPath}
+     */
+    public ExportResource(final IResource resourceParam, final IPath localPathParam) {
+        this.resource = resourceParam;
+        this.localPath = localPathParam;
     }
 
+    /**
+     * Getter for resource.
+     * 
+     * @return {@link IResource}
+     */
     public IResource getResource() {
         return resource;
     }
 
+    /**
+     * Getter for local path.
+     * 
+     * @return {@link IPath}
+     */
     public IPath getLocalPath() {
         return localPath;
     }
 
+    /**
+     * Setter for direct open attribute.
+     * 
+     * @param directOpenParam
+     *            , boolean
+     */
     public void setDirectOpen(final boolean directOpenParam) {
         this.directOpen = directOpenParam;
     }
 
+    /**
+     * Getter for direct open attribute.
+     * 
+     * @return boolean
+     */
     public boolean isDirectOpen() {
         return directOpen;
     }

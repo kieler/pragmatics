@@ -88,11 +88,15 @@ public class PluginExampleCreator {
      * representation.
      * 
      * @param location
+     *            , {@link File}
      * @param parseElement
-     * @param destResources
-     * @param deletableCategories
+     *            , {@link Example}
      * @param creatableCategories
+     *            , {@link List} of {@link String}s
+     * @param absOverviewPic
+     *            , {@link String}
      * @throws KielerException
+     *             , if duplicatechecks fails or can be thrown by getPluginNode(...).
      */
     public void addExtension(final File location, final Example parseElement,
             final List<String> creatableCategories, final String absOverviewPic)
@@ -238,10 +242,15 @@ public class PluginExampleCreator {
      * creates example files to given location.
      * 
      * @param finishedResources
+     *            , {@link List} of {@link IPath}
      * 
-     * @param exampleId
+     * @param resources
+     *            , {@link List} of {@link ExportResource}
      * 
-     * @param sourceProject
+     * @param destFile
+     *            , {@link File}
+     * @throws KielerException
+     *             , if copyResource(...) throws it.
      */
     public void copyResources(final File destFile, final List<ExportResource> resources,
             final List<IPath> finishedResources) throws KielerException {
@@ -269,6 +278,12 @@ public class PluginExampleCreator {
         }
     }
 
+    /**
+     * Deletes resources.
+     * 
+     * @param resources
+     *            , {@link List} of {@link IPath}.
+     */
     public void deleteExampleResources(final List<IPath> resources) {
         for (IPath path : resources) {
             IOHandler.deleteFile(path.toFile());
@@ -370,6 +385,19 @@ public class PluginExampleCreator {
 
     }
 
+    /**
+     * Copies the preview picture of an example.
+     * 
+     * @param destPath
+     *            {@link String}
+     * @param sourcePath
+     *            , {@link String}
+     * @param finishedResources
+     *            , {@link List} of {@link IPath}
+     * @return {@link String}
+     * @throws KielerException
+     *             , if an IOHandler.writeResource throws an exception.
+     */
     public String copyOverviewPic(final String destPath, final String sourcePath,
             final List<IPath> finishedResources) throws KielerException {
         File file = new File(sourcePath);
@@ -389,10 +417,13 @@ public class PluginExampleCreator {
     }
 
     /**
-     * makes a absolute path, relative to export project of workspace.
+     * Makes a absolute path, relative to export project of workspace.
      * 
+     * @param projectPath
+     *            {@link String}
      * @param absolutePath
-     * @return
+     *            {@link String}
+     * @return {@link String}
      */
     public String makeRelativePath(final String projectPath, final String absolutePath) {
         // TODO der projekt pfad wird bei filerPluginProjekt ermittelt,
