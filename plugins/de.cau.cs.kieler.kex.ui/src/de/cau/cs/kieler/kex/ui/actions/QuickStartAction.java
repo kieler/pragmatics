@@ -47,123 +47,110 @@ import de.cau.cs.kieler.kex.model.SourceType;
  */
 public class QuickStartAction implements IIntroAction {
 
-	/**
-	 * executes a quick start. Filters from the given parameters the sourcetype
-	 * and prompt depending on that a import. The welcomepage will closed
-	 * automatically.
-	 * 
-	 * @param site
-	 *            , {@link IIntroSite}
-	 * @param params
-	 *            , {@link Properties}
-	 */
-	public final void run(final IIntroSite site, final Properties params) {
+    /**
+     * executes a quick start. Filters from the given parameters the sourcetype and prompt depending
+     * on that a import. The welcomepage will closed automatically.
+     * 
+     * @param site
+     *            , {@link IIntroSite}
+     * @param params
+     *            , {@link Properties}
+     */
+    @SuppressWarnings("restriction")
+    public final void run(final IIntroSite site, final Properties params) {
 
-		String sourceType = params.getProperty("sourceType");
-		SourceType sourcetype = null;
-		try {
-			sourcetype = SourceType.valueOf(sourceType);
-		} catch (IllegalArgumentException i) {
-			showError("Could not identify sourcetype", i.getMessage());
-			return;
-		}
-		if (sourceType == null) {
-			showError("Introtag Error", "Missing property sourceType");
-			return;
-		}
+        String sourceType = params.getProperty("sourceType");
+        SourceType sourcetype = null;
+        try {
+            sourcetype = SourceType.valueOf(sourceType);
+        } catch (IllegalArgumentException i) {
+            showError("Could not identify sourcetype", i.getMessage());
+            return;
+        }
+        if (sourceType == null) {
+            showError("Introtag Error", "Missing property sourceType");
+            return;
+        }
 
-		String exampleTitle = params.getProperty("exampleTitle");
-		if (exampleTitle == null) {
-			showError("Introtag Error", "Missing property exampleTitle");
-			return;
-		}
-		Example quickStarter = null;
-		try {
-			quickStarter = ExampleManager.get().getExample(sourcetype,
-					exampleTitle);
-		} catch (KielerException e) {
-			showError("Example loading error", e.getMessage());
-			return;
-		}
-		if (quickStarter == null) {
-			showError("Example loading error",
-					"Could not find example with title " + exampleTitle);
-			return;
-		}
+        String exampleTitle = params.getProperty("exampleTitle");
+        if (exampleTitle == null) {
+            showError("Introtag Error", "Missing property exampleTitle");
+            return;
+        }
+        Example quickStarter = null;
+        try {
+            quickStarter = ExampleManager.get().getExample(sourcetype, exampleTitle);
+        } catch (KielerException e) {
+            showError("Example loading error", e.getMessage());
+            return;
+        }
+        if (quickStarter == null) {
+            showError("Example loading error", "Could not find example with title " + exampleTitle);
+            return;
+        }
 
-		IntroPlugin.closeIntro();
-		try {
-			List<String> directOpens = ExampleManager.get().quickStartImport(
-					quickStarter);
-			postfix(directOpens);
-		} catch (KielerException e) {
-			showError("Could not import example", e.getMessage());
-			return;
-		}
-	}
+        IntroPlugin.closeIntro();
+        try {
+            List<String> directOpens = ExampleManager.get().quickStartImport(quickStarter);
+            postfix(directOpens);
+        } catch (KielerException e) {
+            showError("Could not import example", e.getMessage());
+            return;
+        }
+    }
 
-	/**
-	 * opens up a error dialog with given title and message.
-	 * 
-	 * @param title
-	 *            , String
-	 * @param message
-	 *            , String
-	 */
-	private void showError(final String title, final String message) {
-		IWorkbench wb = PlatformUI.getWorkbench();
-		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-		MessageDialog.openError(win.getShell(), title, message);
-	}
+    /**
+     * opens up a error dialog with given title and message.
+     * 
+     * @param title
+     *            , String
+     * @param message
+     *            , String
+     */
+    private void showError(final String title, final String message) {
+        IWorkbench wb = PlatformUI.getWorkbench();
+        IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+        MessageDialog.openError(win.getShell(), title, message);
+    }
 
-	/**
-	 * refreshes the workspace and opens up the direct open files with an
-	 * editor.
-	 * 
-	 * @param directOpens
-	 */
-	private void postfix(final List<String> directOpens) {
-		// refresh workspace
-		IContainer element = ResourcesPlugin.getWorkspace().getRoot();
-		try {
-			if (element != null) {
-				element.refreshLocal(IContainer.DEPTH_INFINITE, null);
-			}
-		} catch (CoreException e1) {
-			// do nothing
-		}
+    /**
+     * refreshes the workspace and opens up the direct open files with an editor.
+     * 
+     * @param directOpens
+     */
+    private void postfix(final List<String> directOpens) {
+        // refresh workspace
+        IContainer element = ResourcesPlugin.getWorkspace().getRoot();
+        try {
+            if (element != null) {
+                element.refreshLocal(IContainer.DEPTH_INFINITE, null);
+            }
+        } catch (CoreException e1) {
+            // do nothing
+        }
 
-		// open directopen files in editor.
-		if (directOpens != null) {
-			IWorkbenchWindow win = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow();
-			IWorkbenchPage page = win.getActivePage();
-			for (String path : directOpens) {
-				IFile[] files = ResourcesPlugin
-						.getWorkspace()
-						.getRoot()
-						.findFilesForLocationURI(URIUtil.toURI(path),
-								IResource.FILE);
-				if (files.length == 1) {
-					IEditorDescriptor defaultEditor = PlatformUI.getWorkbench()
-							.getEditorRegistry()
-							.getDefaultEditor(files[0].getName());
-					if (defaultEditor == null) {
-						defaultEditor = PlatformUI
-								.getWorkbench()
-								.getEditorRegistry()
-								.findEditor(
-										IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-					}
-					try {
-						page.openEditor(new FileEditorInput(files[0]),
-								defaultEditor.getId());
-					} catch (PartInitException e) {
-						showError("Opening Editor", e.getLocalizedMessage());
-					}
-				}
-			}
-		}
+        // open directopen files in editor.
+        if (directOpens != null) {
+            IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            IWorkbenchPage page = win.getActivePage();
+            for (String path : directOpens) {
+                IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
+                        .findFilesForLocationURI(URIUtil.toURI(path), IResource.FILE);
+                if (files.length == 1) {
+                    IEditorDescriptor defaultEditor = PlatformUI.getWorkbench().getEditorRegistry()
+                            .getDefaultEditor(files[0].getName());
+                    if (defaultEditor == null) {
+                        defaultEditor = PlatformUI.getWorkbench().getEditorRegistry()
+                                .findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+                    }
+                    try {
+                        page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
+                    } catch (PartInitException e) {
+                        showError("Opening Editor", e.getLocalizedMessage());
+                    }
+                }
+            }
+        }
 
-	}
+    }
 }

@@ -51,363 +51,350 @@ import de.cau.cs.kieler.kex.controller.ExportResource;
  */
 public class ExampleResourcesPage extends WizardPage {
 
-	private Tree directOpenTree;
+    private Tree directOpenTree;
 
-	@SuppressWarnings("restriction")
-	private ResourceTreeAndListGroup resourceGroup;
+    @SuppressWarnings("restriction")
+    private ResourceTreeAndListGroup resourceGroup;
 
-	private final List<IProject> exportedProjects;
-	private final List<IFolder> exportedFolders;
+    private final List<IProject> exportedProjects;
+    private final List<IFolder> exportedFolders;
 
-	private final List<ExportResource> exportResources;
+    private final List<ExportResource> exportResources;
 
-	/**
-	 * Constructor of {@link ExampleResourcesPage}.
-	 * 
-	 * @param pageName
-	 *            , {@link String}
-	 * @param selection
-	 *            , {@link IStructuredSelection}
-	 */
-	protected ExampleResourcesPage(final String pageName,
-			final IStructuredSelection selection) {
-		super(pageName);
-		this.setTitle(pageName);
-		this.setDescription("Choose resources to export and set direct opens.");
-		this.exportResources = new ArrayList<ExportResource>();
-		exportedFolders = new ArrayList<IFolder>();
-		exportedProjects = new ArrayList<IProject>();
-	}
+    /**
+     * Constructor of {@link ExampleResourcesPage}.
+     * 
+     * @param pageName
+     *            , {@link String}
+     * @param selection
+     *            , {@link IStructuredSelection}
+     */
+    protected ExampleResourcesPage(final String pageName, final IStructuredSelection selection) {
+        super(pageName);
+        this.setTitle(pageName);
+        this.setDescription("Choose resources to export and set direct opens.");
+        this.exportResources = new ArrayList<ExportResource>();
+        exportedFolders = new ArrayList<IFolder>();
+        exportedProjects = new ArrayList<IProject>();
+    }
 
-	/**
-	 * Creates a new composite and adds it to parent composite. Besides to that
-	 * a group with resources and and composite with directopens will create.
-	 * 
-	 * @param parent
-	 *            , {@link Composite}
-	 */
-	public void createControl(final Composite parent) {
-		Composite composite = new Composite(parent, SWT.BORDER);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
-		createResourcesGroup(composite);
-		createDirectOpenComposite(composite);
-		setControl(composite);
-	}
+    /**
+     * Creates a new composite and adds it to parent composite. Besides to that a group with
+     * resources and and composite with directopens will create.
+     * 
+     * @param parent
+     *            , {@link Composite}
+     */
+    public void createControl(final Composite parent) {
+        Composite composite = new Composite(parent, SWT.BORDER);
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setFont(parent.getFont());
+        createResourcesGroup(composite);
+        createDirectOpenComposite(composite);
+        setControl(composite);
+    }
 
-	private void createDirectOpenComposite(final Composite composite) {
-		Composite childComp = new Composite(composite, SWT.BORDER);
-		childComp.setLayout(new GridLayout());
-		childComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Label directOpenDesc = new Label(childComp, SWT.NONE);
-		directOpenDesc.setText("Select files, that should "
-				+ "open directly after importing that example.");
-		this.directOpenTree = new Tree(childComp, SWT.CHECK | SWT.BORDER);
-		directOpenTree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fillDirectOpenTree();
-	}
+    private void createDirectOpenComposite(final Composite composite) {
+        Composite childComp = new Composite(composite, SWT.BORDER);
+        childComp.setLayout(new GridLayout());
+        childComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        Label directOpenDesc = new Label(childComp, SWT.NONE);
+        directOpenDesc.setText("Select files, that should "
+                + "open directly after importing that example.");
+        this.directOpenTree = new Tree(childComp, SWT.CHECK | SWT.BORDER);
+        directOpenTree.setLayoutData(new GridData(GridData.FILL_BOTH));
+        fillDirectOpenTree();
+    }
 
-	/**
-	 * Converts the projects of workspace to input elements for
-	 * {@link ResourceTreeAndListGroup} and initializes that.
-	 * 
-	 * @param parent
-	 *            , Composite
-	 */
-	@SuppressWarnings("restriction")
-	protected final void createResourcesGroup(final Composite parent) {
+    /**
+     * Converts the projects of workspace to input elements for {@link ResourceTreeAndListGroup} and
+     * initializes that.
+     * 
+     * @param parent
+     *            , Composite
+     */
+    @SuppressWarnings("restriction")
+    protected final void createResourcesGroup(final Composite parent) {
 
-		List<Object> input = new ArrayList<Object>();
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
-				.getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].isOpen()) {
-				input.add(projects[i]);
-			}
-		}
-		Label resourceDesc = new Label(parent, SWT.NONE);
-		resourceDesc.setText("Choose resources to export:");
-		initResourceGroup(parent, input);
-	}
+        List<Object> input = new ArrayList<Object>();
+        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+        for (int i = 0; i < projects.length; i++) {
+            if (projects[i].isOpen()) {
+                input.add(projects[i]);
+            }
+        }
+        Label resourceDesc = new Label(parent, SWT.NONE);
+        resourceDesc.setText("Choose resources to export:");
+        initResourceGroup(parent, input);
+    }
 
-	/**
-	 * Initializes {@link ResourceTreeAndListGroup}, that means creating two
-	 * tree one for projects and folders and another one for the containing
-	 * files.
-	 * 
-	 * @param parent
-	 *            , Composite
-	 * @param input
-	 *            , input elements for {@link ResourceTreeAndListGroup}
-	 */
-	@SuppressWarnings("restriction")
-	private void initResourceGroup(final Composite parent,
-			final List<Object> input) {
-		this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
-				getResourceProvider(IResource.FOLDER),
-				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-				getResourceProvider(IResource.FILE),
-				WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-				SWT.BORDER, DialogUtil.inRegularFontMode(parent));
-		this.resourceGroup.addCheckStateListener(new ICheckStateListener() {
+    /**
+     * Initializes {@link ResourceTreeAndListGroup}, that means creating two tree one for projects
+     * and folders and another one for the containing files.
+     * 
+     * @param parent
+     *            , Composite
+     * @param input
+     *            , input elements for {@link ResourceTreeAndListGroup}
+     */
+    @SuppressWarnings("restriction")
+    private void initResourceGroup(final Composite parent, final List<Object> input) {
+        this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
+                getResourceProvider(IResource.FOLDER),
+                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
+                getResourceProvider(IResource.FILE),
+                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.BORDER,
+                DialogUtil.inRegularFontMode(parent));
+        this.resourceGroup.addCheckStateListener(new ICheckStateListener() {
 
-			public void checkStateChanged(final CheckStateChangedEvent event) {
-				Object element = event.getElement();
-				if (element instanceof IFolder) {
-					if (event.getChecked()) {
-						getExportedFolders().add((IFolder) element);
-					} else {
-						getExportedFolders().remove(element);
-					}
-				}
-				if (element instanceof IProject) {
-					if (event.getChecked()) {
-						getExportedProjects().add((IProject) element);
-					} else {
-						getExportedProjects().remove(element);
-					}
-				}
-				// TODO update tree muss implementiert werden, nicht immer alles
-				// neu machen...
-				fillDirectOpenTree();
-			}
+            public void checkStateChanged(final CheckStateChangedEvent event) {
+                Object element = event.getElement();
+                if (element instanceof IFolder) {
+                    if (event.getChecked()) {
+                        getExportedFolders().add((IFolder) element);
+                    } else {
+                        getExportedFolders().remove(element);
+                    }
+                }
+                if (element instanceof IProject) {
+                    if (event.getChecked()) {
+                        getExportedProjects().add((IProject) element);
+                    } else {
+                        getExportedProjects().remove(element);
+                    }
+                }
+                // TODO update tree muss implementiert werden, nicht immer alles
+                // neu machen...
+                fillDirectOpenTree();
+            }
 
-		});
+        });
 
-	}
+    }
 
-	private void fillDirectOpenTree() {
+    private void fillDirectOpenTree() {
 
-		this.directOpenTree.removeAll();
+        this.directOpenTree.removeAll();
 
-		@SuppressWarnings({ "unchecked", "restriction" })
-		List<IFile> allCheckedListItems = this.resourceGroup
-				.getAllCheckedListItems();
-		int size = allCheckedListItems.size();
-		for (int i = 0; i < size; i++) {
-			Object object = allCheckedListItems.get(i);
-			if (object instanceof IFile) {
-				TreeItem item = new TreeItem(this.directOpenTree, SWT.CHECK);
-				item.setText(((IFile) object).getFullPath().toString());
-			}
-		}
+        @SuppressWarnings({ "unchecked", "restriction" })
+        List<IFile> allCheckedListItems = this.resourceGroup.getAllCheckedListItems();
+        int size = allCheckedListItems.size();
+        for (int i = 0; i < size; i++) {
+            Object object = allCheckedListItems.get(i);
+            if (object instanceof IFile) {
+                TreeItem item = new TreeItem(this.directOpenTree, SWT.CHECK);
+                item.setText(((IFile) object).getFullPath().toString());
+            }
+        }
 
-	}
+    }
 
-	/**
-	 * Returns a content provider for {@link IResource}s that returns only
-	 * children of the given resource type.
-	 */
-	private ITreeContentProvider getResourceProvider(final int resourceType) {
-		return new WorkbenchContentProvider() {
-			@Override
-			public Object[] getChildren(final Object param) {
-				if (param instanceof IContainer) {
-					IResource[] members = null;
-					try {
-						members = ((IContainer) param).members();
-					} catch (CoreException e) {
-						return new Object[0];
-					}
+    /**
+     * Returns a content provider for {@link IResource}s that returns only children of the given
+     * resource type.
+     */
+    private ITreeContentProvider getResourceProvider(final int resourceType) {
+        return new WorkbenchContentProvider() {
+            @Override
+            public Object[] getChildren(final Object param) {
+                if (param instanceof IContainer) {
+                    IResource[] members = null;
+                    try {
+                        members = ((IContainer) param).members();
+                    } catch (CoreException e) {
+                        return new Object[0];
+                    }
 
-					ArrayList<IResource> results = new ArrayList<IResource>();
-					for (int i = 0; i < members.length; i++) {
-						if ((members[i].getType() & resourceType) > 0
-								&& !members[i].getName().startsWith(".")) {
-							results.add(members[i]);
-						}
-					}
-					return results.toArray();
-				}
-				if (param instanceof ArrayList<?>) {
-					return ((ArrayList<?>) param).toArray();
-				}
-				return new Object[0];
-			}
-		};
-	}
+                    ArrayList<IResource> results = new ArrayList<IResource>();
+                    for (int i = 0; i < members.length; i++) {
+                        if ((members[i].getType() & resourceType) > 0
+                                && !members[i].getName().startsWith(".")) {
+                            results.add(members[i]);
+                        }
+                    }
+                    return results.toArray();
+                }
+                if (param instanceof ArrayList<?>) {
+                    return ((ArrayList<?>) param).toArray();
+                }
+                return new Object[0];
+            }
+        };
+    }
 
-	/**
-	 * Gives all files which are selected in the tree.
-	 * 
-	 * @return {@link List} of {@link IFile}s
-	 */
-	@SuppressWarnings({ "restriction", "unchecked" })
-	public List<IFile> getExportedFiles() {
-		return resourceGroup.getAllCheckedListItems();
-	}
+    /**
+     * Gives all files which are selected in the tree.
+     * 
+     * @return {@link List} of {@link IFile}s
+     */
+    @SuppressWarnings({ "restriction", "unchecked" })
+    public List<IFile> getExportedFiles() {
+        return resourceGroup.getAllCheckedListItems();
+    }
 
-	/**
-	 * Gives all projects which are selected in the tree.
-	 * 
-	 * @return
-	 */
-	List<IProject> getExportedProjects() {
-		return this.exportedProjects;
-	}
+    /**
+     * Gives all projects which are selected in the tree.
+     * 
+     * @return
+     */
+    List<IProject> getExportedProjects() {
+        return this.exportedProjects;
+    }
 
-	/**
-	 * Gives all folders which are selected in the tree.
-	 * 
-	 * @return {@link List} of {@link IFolder}s
-	 */
-	public List<IFolder> getExportedFolders() {
-		return this.exportedFolders;
-	}
+    /**
+     * Gives all folders which are selected in the tree.
+     * 
+     * @return {@link List} of {@link IFolder}s
+     */
+    public List<IFolder> getExportedFolders() {
+        return this.exportedFolders;
+    }
 
-	/**
-	 * getter for head file.
-	 * 
-	 * @return {@link IPath}
-	 */
-	public IPath getHeadFile() {
-		return null;
-	}
+    /**
+     * getter for head file.
+     * 
+     * @return {@link IPath}
+     */
+    public IPath getHeadFile() {
+        return null;
+    }
 
-	@Override
-	public boolean isPageComplete() {
-		return true;
-	}
+    @Override
+    public boolean isPageComplete() {
+        return true;
+    }
 
-	/**
-	 * builds the resource structure out of the choosen komponents of the
-	 * resource tree. The exportResources will be generated from the exported
-	 * projects, exported directories and export files.
-	 */
-	public void buildResourceStructure() {
-		List<IResource> duplicateChecker = new ArrayList<IResource>();
-		for (IProject iProject : getExportedProjects()) {
-			try {
-				this.exportResources.add(new ExportResource(iProject,
-						makeRelativePath(iProject, iProject)));
-				for (IResource resource : iProject.members()) {
-					if (checkHiddenResource(resource)) {
-						continue;
-					}
-					if (resource instanceof IFolder) {
-						addFolderWithElements((IContainer) resource,
-								(IContainer) iProject, duplicateChecker);
-					}
-					if (resource instanceof IFile) {
-						if (!duplicateChecker.contains(resource)) {
-							IPath fileRootPath = makeRelativePath(iProject,
-									resource);
-							this.exportResources.add(new ExportResource(
-									resource, fileRootPath));
-							duplicateChecker.add(resource);
-						}
-					}
-				}
+    /**
+     * builds the resource structure out of the choosen komponents of the resource tree. The
+     * exportResources will be generated from the exported projects, exported directories and export
+     * files.
+     */
+    public void buildResourceStructure() {
+        List<IResource> duplicateChecker = new ArrayList<IResource>();
+        for (IProject iProject : getExportedProjects()) {
+            try {
+                this.exportResources.add(new ExportResource(iProject, makeRelativePath(iProject,
+                        iProject)));
+                for (IResource resource : iProject.members()) {
+                    if (checkHiddenResource(resource)) {
+                        continue;
+                    }
+                    if (resource instanceof IFolder) {
+                        addFolderWithElements((IContainer) resource, (IContainer) iProject,
+                                duplicateChecker);
+                    }
+                    if (resource instanceof IFile) {
+                        if (!duplicateChecker.contains(resource)) {
+                            IPath fileRootPath = makeRelativePath(iProject, resource);
+                            this.exportResources.add(new ExportResource(resource, fileRootPath));
+                            duplicateChecker.add(resource);
+                        }
+                    }
+                }
 
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-		}
-		for (IContainer folder : getExportedFolders()) {
-			if (checkHiddenResource(folder)) {
-				continue;
-			}
-			if (!duplicateChecker.contains(folder)) {
-				addFolderWithElements(folder, folder, duplicateChecker);
-			}
-		}
-		for (IFile file : getExportedFiles()) {
-			if (checkHiddenResource(file)) {
-				continue;
-			}
-			if (!duplicateChecker.contains(file)) {
+            } catch (CoreException e) {
+                e.printStackTrace();
+            }
+        }
+        for (IContainer folder : getExportedFolders()) {
+            if (checkHiddenResource(folder)) {
+                continue;
+            }
+            if (!duplicateChecker.contains(folder)) {
+                addFolderWithElements(folder, folder, duplicateChecker);
+            }
+        }
+        for (IFile file : getExportedFiles()) {
+            if (checkHiddenResource(file)) {
+                continue;
+            }
+            if (!duplicateChecker.contains(file)) {
 
-				IPath fileRootPath = filterResourceName(file);
-				this.exportResources
-						.add(new ExportResource(file, fileRootPath));
-				duplicateChecker.add(file);
-			}
-		}
-		setDirectOpens();
-	}
+                IPath fileRootPath = filterResourceName(file);
+                this.exportResources.add(new ExportResource(file, fileRootPath));
+                duplicateChecker.add(file);
+            }
+        }
+        setDirectOpens();
+    }
 
-	/**
-	 * getter for exported resources.
-	 * 
-	 * @return {@link List} of {@link ExportResource}s
-	 */
-	public List<ExportResource> getExportedResources() {
-		return this.exportResources;
-	}
+    /**
+     * getter for exported resources.
+     * 
+     * @return {@link List} of {@link ExportResource}s
+     */
+    public List<ExportResource> getExportedResources() {
+        return this.exportResources;
+    }
 
-	private boolean checkHiddenResource(final IResource resource) {
-		return resource.getName().startsWith(".");
-	}
+    private boolean checkHiddenResource(final IResource resource) {
+        return resource.getName().startsWith(".");
+    }
 
-	/**
-	 * Adds the path of given folder resource to a given list of {@link IPath}.<br>
-	 * Filters than all member resources of that folder and uses
-	 * {@code makeRelativePath()}<br>
-	 * to create paths which will be added to result.<br>
-	 * All resource will be add to duplicateChecker list.
-	 * 
-	 * @param resource
-	 * @param resourcePath
-	 * @param duplicateChecker
-	 */
-	private void addFolderWithElements(final IContainer resource,
-			final IContainer root, final List<IResource> duplicateChecker) {
-		IPath rootPath = makeRelativePath(root, resource);
-		this.exportResources.add(new ExportResource(resource, rootPath));
-		duplicateChecker.add(resource);
-		try {
-			for (IResource element : resource.members()) {
-				if (checkHiddenResource(element)) {
-					continue;
-				}
-				if (element instanceof IFolder) {
-					addFolderWithElements((IContainer) element, root,
-							duplicateChecker);
-				} else {
-					IPath fileRootPath = makeRelativePath(root, element);
-					this.exportResources.add(new ExportResource(element,
-							fileRootPath));
-					duplicateChecker.add(element);
-				}
-			}
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Adds the path of given folder resource to a given list of {@link IPath}.<br>
+     * Filters than all member resources of that folder and uses {@code makeRelativePath()}<br>
+     * to create paths which will be added to result.<br>
+     * All resource will be add to duplicateChecker list.
+     * 
+     * @param resource
+     * @param resourcePath
+     * @param duplicateChecker
+     */
+    private void addFolderWithElements(final IContainer resource, final IContainer root,
+            final List<IResource> duplicateChecker) {
+        IPath rootPath = makeRelativePath(root, resource);
+        this.exportResources.add(new ExportResource(resource, rootPath));
+        duplicateChecker.add(resource);
+        try {
+            for (IResource element : resource.members()) {
+                if (checkHiddenResource(element)) {
+                    continue;
+                }
+                if (element instanceof IFolder) {
+                    addFolderWithElements((IContainer) element, root, duplicateChecker);
+                } else {
+                    IPath fileRootPath = makeRelativePath(root, element);
+                    this.exportResources.add(new ExportResource(element, fileRootPath));
+                    duplicateChecker.add(element);
+                }
+            }
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Uses path child resource to create a relative path to parent resource
-	 * (including parent resource name).
-	 * 
-	 * @param parent
-	 * @param child
-	 * @return
-	 */
-	private IPath makeRelativePath(final IResource parent, final IResource child) {
-		IPath relativePath = child.getFullPath().makeRelativeTo(
-				parent.getFullPath().removeLastSegments(1));
-		return relativePath;
-	}
+    /**
+     * Uses path child resource to create a relative path to parent resource (including parent
+     * resource name).
+     * 
+     * @param parent
+     * @param child
+     * @return
+     */
+    private IPath makeRelativePath(final IResource parent, final IResource child) {
+        IPath relativePath = child.getFullPath().makeRelativeTo(
+                parent.getFullPath().removeLastSegments(1));
+        return relativePath;
+    }
 
-	private IPath filterResourceName(final IResource resource) {
-		IPath resourcePath = resource.getFullPath();
-		return resourcePath
-				.removeFirstSegments(resourcePath.segmentCount() - 1);
-	}
+    private IPath filterResourceName(final IResource resource) {
+        IPath resourcePath = resource.getFullPath();
+        return resourcePath.removeFirstSegments(resourcePath.segmentCount() - 1);
+    }
 
-	private void setDirectOpens() {
-		for (TreeItem item : this.directOpenTree.getItems()) {
-			if (item.getChecked()) {
-				String localPath = item.getText();
-				for (ExportResource resource : exportResources) {
-					if (localPath.equals(resource.getResource().getFullPath()
-							.toString())) {
-						resource.setDirectOpen(true);
-						break;
-					}
-				}
-			}
-		}
-	}
+    private void setDirectOpens() {
+        for (TreeItem item : this.directOpenTree.getItems()) {
+            if (item.getChecked()) {
+                String localPath = item.getText();
+                for (ExportResource resource : exportResources) {
+                    if (localPath.equals(resource.getResource().getFullPath().toString())) {
+                        resource.setDirectOpen(true);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }

@@ -27,30 +27,30 @@ import org.eclipse.ui.intro.config.IIntroAction;
 import de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard;
 
 /**
- * This class extends the {@code IIntroAction}. That class can headless execute
- * the importwizard of kex.
+ * This class extends the {@code IIntroAction}. That class can headless execute the importwizard of
+ * kex.
  * 
  * @author pkl
  */
 public class ImportWizardAction implements IIntroAction {
 
-	/**
-	 * closes the Introscreen and starts the ExampleImportWizard.
-	 * 
-	 * @param params
-	 *            , Properties
-	 * @param site
-	 *            , IIntrosite
-	 */
-	@SuppressWarnings("restriction")
-	public final void run(final IIntroSite site, final Properties params) {
-		IntroPlugin.closeIntro();
-		IWorkbench wb = PlatformUI.getWorkbench();
-		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-		ExampleImportWizard wizard = new ExampleImportWizard();
-		wizard.init(wb, StructuredSelection.EMPTY);
-		WizardDialog dialog = new WizardDialog(win.getShell(), wizard);
-		dialog.create();
-		dialog.open();
-	}
+    /**
+     * closes the Introscreen and starts the ExampleImportWizard.
+     * 
+     * @param params
+     *            , Properties
+     * @param site
+     *            , IIntrosite
+     */
+    @SuppressWarnings("restriction")
+    public final void run(final IIntroSite site, final Properties params) {
+        IntroPlugin.closeIntro();
+        IWorkbench wb = PlatformUI.getWorkbench();
+        IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+        ExampleImportWizard wizard = new ExampleImportWizard();
+        wizard.init(wb, StructuredSelection.EMPTY);
+        WizardDialog dialog = new WizardDialog(win.getShell(), wizard);
+        dialog.create();
+        dialog.open();
+    }
 }

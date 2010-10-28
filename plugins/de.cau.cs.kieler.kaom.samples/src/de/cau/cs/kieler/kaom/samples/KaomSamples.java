@@ -18,47 +18,60 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle.
+ * 
  * @author pkl
  */
 public class KaomSamples extends AbstractUIPlugin {
 
-	// The plug-in ID
-	public static final String PLUGIN_ID = "de.cau.cs.kieler.kaom.samples"; //$NON-NLS-1$
+    /**
+     * The plug-in ID.
+     */
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.kaom.samples"; //$NON-NLS-1$
 
-	// The shared instance
-	private static KaomSamples plugin;
-	
-	/**
-	 * The constructor
-	 */
-	public KaomSamples() {
-	}
+    // The shared instance
+    private static KaomSamples plugin;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-	}
+    /**
+     * The constructor of {@link KaomSamples}.
+     */
+    public KaomSamples() {
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
+    /**
+     * starts the bundle.
+     * 
+     * @param context
+     *            , {@link BundleContext}
+     * @throws Exception
+     *             , if any exception occurs.
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+     */
+    public void start(final BundleContext context) throws Exception {
+        super.start(context);
+        plugin = this;
+    }
 
-	/**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static KaomSamples getDefault() {
-		return plugin;
-	}
+    /**
+     * stops the bundle.
+     * 
+     * @param context
+     *            , {@link BundleContext}
+     * @throws Exception
+     *             , if any exception occurs.
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+     */
+    public void stop(final BundleContext context) throws Exception {
+        plugin = null;
+        super.stop(context);
+    }
+
+    /**
+     * Returns the shared instance.
+     * 
+     * @return the shared instance
+     */
+    public static KaomSamples getDefault() {
+        return plugin;
+    }
 
 }
