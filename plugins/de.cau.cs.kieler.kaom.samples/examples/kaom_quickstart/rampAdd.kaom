@@ -1,1 +1,105 @@
-Unexpected error.  File contents could not be restored from local history during undo/redo.
+<?xml version="1.0" encoding="UTF-8"?>
+<kaom:Entity xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ann="http://kieler.cs.cau.de/annotations" xmlns:kaom="http://kieler.cs.cau.de/KAOM">
+  <childEntities name="rampAdd">
+    <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.actor.TypedCompositeActor"/>
+    <annotations xsi:type="ann:StringAnnotation" name="_createdBy" value="8.0.beta_20100226">
+      <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.kernel.attributes.VersionAttribute"/>
+    </annotations>
+    <annotations xsi:type="ann:StringAnnotation" name="_windowProperties" value="{bounds={227, 205, 816, 520}, maximized=false}">
+      <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.actor.gui.WindowPropertiesAttribute"/>
+    </annotations>
+    <annotations xsi:type="ann:StringAnnotation" name="_vergilSize" value="[600, 400]">
+      <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.actor.gui.SizeAttribute"/>
+    </annotations>
+    <annotations xsi:type="ann:StringAnnotation" name="_vergilZoomFactor" value="1.0">
+      <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.data.expr.ExpertParameter"/>
+    </annotations>
+    <annotations xsi:type="ann:StringAnnotation" name="_vergilCenter" value="{300.0, 200.0}">
+      <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.data.expr.ExpertParameter"/>
+    </annotations>
+    <childEntities name="Ramp">
+      <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.actor.lib.Ramp"/>
+      <annotations xsi:type="ann:StringAnnotation" name="_location" value="{55, 175}">
+        <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.kernel.util.Location"/>
+      </annotations>
+      <childPorts name="output" outgoingLinks="//@childEntities.0/@childLinks.0">
+        <annotations name="output"/>
+      </childPorts>
+      <childPorts name="trigger">
+        <annotations name="input"/>
+      </childPorts>
+      <childPorts name="step">
+        <annotations name="input"/>
+        <annotations xsi:type="ann:StringAnnotation" name="tokenConsumptionRate">
+          <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.data.expr.Parameter"/>
+        </annotations>
+      </childPorts>
+    </childEntities>
+    <childEntities name="Ramp2">
+      <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.actor.lib.Ramp"/>
+      <annotations xsi:type="ann:StringAnnotation" name="_location" value="{60, 280}">
+        <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.kernel.util.Location"/>
+      </annotations>
+      <childPorts name="output" outgoingLinks="//@childEntities.0/@childLinks.1">
+        <annotations name="output"/>
+      </childPorts>
+      <childPorts name="trigger">
+        <annotations name="input"/>
+      </childPorts>
+      <childPorts name="step">
+        <annotations name="input"/>
+        <annotations xsi:type="ann:StringAnnotation" name="tokenConsumptionRate">
+          <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.data.expr.Parameter"/>
+        </annotations>
+      </childPorts>
+    </childEntities>
+    <childEntities name="MonitorValue">
+      <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.actor.lib.MonitorValue"/>
+      <annotations xsi:type="ann:StringAnnotation" name="displayWidth" value="20">
+        <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.data.expr.Parameter"/>
+      </annotations>
+      <annotations xsi:type="ann:StringAnnotation" name="_icon">
+        <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.vergil.icon.UpdatedValueIcon"/>
+        <annotations xsi:type="ann:StringAnnotation" name="attributeName" value="value">
+          <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.kernel.util.StringAttribute"/>
+        </annotations>
+        <annotations xsi:type="ann:StringAnnotation" name="displayWidth" value="displayWidth">
+          <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.data.expr.Parameter"/>
+        </annotations>
+      </annotations>
+      <annotations xsi:type="ann:StringAnnotation" name="_location" value="[460.0, 145.0]">
+        <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.kernel.util.Location"/>
+      </annotations>
+      <childPorts name="input" incomingLinks="//@childEntities.0/@childLinks.2">
+        <annotations name="input"/>
+      </childPorts>
+    </childEntities>
+    <childEntities name="SR Director">
+      <annotations name="annotationNode"/>
+      <annotations xsi:type="ann:StringAnnotation" name="SR Director">
+        <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.domains.sr.kernel.SRDirector"/>
+        <annotations xsi:type="ann:StringAnnotation" name="_location" value="{390, 270}">
+          <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.kernel.util.Location"/>
+        </annotations>
+      </annotations>
+    </childEntities>
+    <childEntities name="AddSubtract">
+      <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.actor.lib.AddSubtract"/>
+      <annotations xsi:type="ann:StringAnnotation" name="_location" value="{205, 215}">
+        <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.kernel.util.Location"/>
+      </annotations>
+      <childPorts name="plus" incomingLinks="//@childEntities.0/@childLinks.1 //@childEntities.0/@childLinks.0">
+        <annotations name="input"/>
+      </childPorts>
+      <childPorts name="minus">
+        <annotations name="input"/>
+      </childPorts>
+      <childPorts name="output" outgoingLinks="//@childEntities.0/@childLinks.2">
+        <annotations name="output"/>
+      </childPorts>
+    </childEntities>
+    <childLinks source="//@childEntities.0/@childEntities.0/@childPorts.0" target="//@childEntities.0/@childEntities.4/@childPorts.0"/>
+    <childLinks source="//@childEntities.0/@childEntities.1/@childPorts.0" target="//@childEntities.0/@childEntities.4/@childPorts.0"/>
+    <childLinks source="//@childEntities.0/@childEntities.4/@childPorts.2" target="//@childEntities.0/@childEntities.2/@childPorts.0"/>
+  </childEntities>
+</kaom:Entity>

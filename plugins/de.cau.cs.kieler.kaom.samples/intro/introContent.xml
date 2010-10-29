@@ -1,7 +1,7 @@
 <introContent>
 	  <extensionContent
-        id="de.cau.cs.kieler.intro.dataflow"
-        name="Dataflow Quick Start"
+        id="de.cau.cs.kieler.intro.kaom"
+        name="Kaom Quick Start"
         path="samples/@de.cau.cs.kieler.intro.samples/group/quickstarts/quickstarts.anchor">
 
         <link
@@ -9,7 +9,7 @@
             url="http://org.eclipse.ui.intro/runAction?pluginId=de.cau.cs.kieler.kex.ui&amp;class=de.cau.cs.kieler.kex.ui.actions.QuickStartAction&amp;id=de.cau.cs.kieler.kex.ui&amp;exampleTitle=Kaom Quick Start&amp;sourceType=KIELER"
             id="kaom-quick-start"
             style-id="content-link">
-			<text>Kaom Description</text>
+			<text>Creates a project with the kaom standard example "rampAdd"</text>
         </link>
       </extensionContent>
 </introContent>
