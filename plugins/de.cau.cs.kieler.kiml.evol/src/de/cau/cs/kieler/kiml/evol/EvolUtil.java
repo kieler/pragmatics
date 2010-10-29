@@ -975,14 +975,16 @@ public final class EvolUtil {
         MonitoredOperation
                 .runInUI(new IndividualApplierRunnable(individual, providerId), true /* synch */);
     }
-
+    
     /**
      * Creates a population of default size, taking initial values from the
-     * given list of {@link ILayoutInspector} instances.
-     *
-     * @param configs list of layout configurations
+     * given list of {@link ILayoutConfig} instances.
+     * 
+     * @param configs
+     *            list of layout configurations
      * @return the new population
      * @throws KielerException
+     *             in case of an error
      */
     private static Population createPopulation(final List<ILayoutConfig> configs)
             throws KielerException {
@@ -994,12 +996,15 @@ public final class EvolUtil {
 
     /**
      * Creates a population of the given size, taking initial values from the
-     * given list of {@link ILayoutInspector} instances.
+     * given list of {@link ILayoutConfig} instances.
      *
-     * @param configs list of layout configurations
-     * @param size desired population size
+     * @param configs
+     *            list of layout configurations
+     * @param size
+     *            desired population size
      * @return the new population
      * @throws KielerException
+     *             in case of an error
      */
     private static Population createPopulation(final List<ILayoutConfig> configs,
             final int size) throws KielerException {
@@ -1150,12 +1155,17 @@ public final class EvolUtil {
      * @param canOverWrite
      *            indicates whether the output file may be overwritten if it
      *            exists
+     * @throws IOException
+     *             If an I/O error occurs
      */
-    public void saveOptionsToFile(final EvolModel model, final boolean canOverWrite) {
+    public void saveOptionsToFile(final EvolModel model, final boolean canOverWrite)
+            throws IOException {
         File file = new File("evol");
         if (!file.exists() || canOverWrite) {
+
+            FileWriter writer = null;
             try {
-                FileWriter writer = new FileWriter(file);
+                writer = new FileWriter(file);
 
                 Genome genome = model.getCurrentIndividual();
 
@@ -1165,9 +1175,14 @@ public final class EvolUtil {
                     writer.append(gene.getId() + ";" + gene.getValue() + newLine);
                 }
 
+
             } catch (final IOException exception) {
                 // TODO Auto-generated catch block
                 exception.printStackTrace();
+            } finally {
+                if (writer != null) {
+                    writer.close();
+                }
             }
         }
     }

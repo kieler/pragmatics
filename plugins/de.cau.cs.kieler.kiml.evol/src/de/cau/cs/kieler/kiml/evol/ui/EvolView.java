@@ -394,14 +394,14 @@ public class EvolView extends ViewPart {
 
         TableColumn column = new TableColumn(table, SWT.NONE);
         column.setWidth(WIDE_COLUMN_WIDTH);
-        TableColumn column2 = new TableColumn(table, SWT.NONE);
+        TableColumn column2 = new TableColumn(table, SWT.CENTER);
         column2.setWidth(NARROW_COLUMN_WIDTH);
         TableColumn column3 = new TableColumn(table, SWT.NONE);
         column3.setWidth(WIDE_COLUMN_WIDTH);
 
         column.setText("Genome");
         column2.setText("Rating");
-        column3.setText("Layout provider");
+        column3.setText("Layout Provider");
 
         table.setHeaderVisible(true);
         table.setLinesVisible(true);

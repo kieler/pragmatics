@@ -370,7 +370,7 @@ public class UniversalNumberGene extends AbstractGene<Float> {
                     break;
                 default:
                     // execution should never reach this line.
-                    throw new AssertionError(distr);
+                    throw new AssertionError("Unknown distribution in switch: " + distr);
                 }
             }
             return new UniversalNumberGene(template.getId(), newInt.floatValue(),
@@ -429,7 +429,7 @@ public class UniversalNumberGene extends AbstractGene<Float> {
                 return false;
             }
             final float diff = Math.abs(other.getValue() - this.getValue());
-            return (diff < EPSILON);
+            return diff < EPSILON;
         }
 
         return (other.getId().equals(this.getId())) && other.getValue().equals(this.getValue());

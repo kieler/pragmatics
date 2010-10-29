@@ -18,15 +18,17 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.Collection;
 
+import de.cau.cs.kieler.core.util.ICondition;
+
 /**
  * An interface for collections that can filter their content.
- * 
+ *
  * @param <CollectionType>
  *            a collection type
  * @param <T>
  *            the type of elements in the collection
  * @author bdu
- * 
+ *
  */
 public interface IFilterable<CollectionType extends Collection<T>, T> {
     /**
@@ -37,5 +39,5 @@ public interface IFilterable<CollectionType extends Collection<T>, T> {
      * @return a copy of the collection that contains only the items that pass
      *         the given filter.
      */
-    CollectionType select(final IItemFilter<T> filter);
+    CollectionType select(final ICondition<T> filter);
 }

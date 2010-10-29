@@ -13,15 +13,20 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import de.cau.cs.kieler.core.util.ICondition;
+
 /**
  * This interface can be used to implement a custom filter for a list that
  * implements {@link IFilterable}.
- *
+ * 
+ * @deprecated use {@link ICondition}
+ * 
  * @author bdu
- *
+ * 
  * @param <T>
  *            specifies the type of the list items
  */
+@Deprecated
 public interface IItemFilter<T> {
     /**
      * Checks whether the given item satisfies the filter criteria. Implement

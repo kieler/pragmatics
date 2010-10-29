@@ -41,11 +41,16 @@ public class Genome extends ArrayList<IGene<?>> {
      * Descending rating comparator.
      */
     public static final Comparator<Genome> DESCENDING_RATING_COMPARATOR = new Comparator<Genome>() {
-        public int compare(final Genome ind0, final Genome ind1) {
-                    double v0 = (ind0.getUserRating() == null ? 0.0 : ind0.getUserRating());
-                    double v1 = (ind1.getUserRating() == null ? 0.0 : ind1.getUserRating());
+                /**
+                 * Small value for floating-point comparison.
+                 */
+                private static final double EPSILON = 1.0E-6;
 
-                    if (v0 == v1) {
+                public int compare(final Genome ind0, final Genome ind1) {
+                    double v0 = ind0.hasUserRating() ? ind0.getUserRating() : 0.0;
+                    double v1 = ind1.hasUserRating() ? ind1.getUserRating() : 0.0;
+
+                    if (Math.abs(v0 - v1) < EPSILON) {
                         return 0;
                     } else if (v0 < v1) {
                         return 1;
@@ -101,8 +106,8 @@ public class Genome extends ArrayList<IGene<?>> {
                     // Distance of float genes is analogous to the absolute
                     // difference, related to the variance in order to make it
                     // more comparable.
-                    UniversalNumberGene g0 = ((UniversalNumberGene) gene0);
-                    UniversalNumberGene g1 = ((UniversalNumberGene) gene1);
+                    UniversalNumberGene g0 = (UniversalNumberGene) gene0;
+                    UniversalNumberGene g1 = (UniversalNumberGene) gene1;
                     double var0 = g0.getMutationInfo().getVariance();
                     double var1 = g1.getMutationInfo().getVariance();
                     double var = (var0 + var1) * .5;
@@ -117,6 +122,47 @@ public class Genome extends ArrayList<IGene<?>> {
         }
         System.out.println(dist + " differences.");
         return dist;
+    }
+
+    /**
+     * @param genomes
+     *            the genomes to recombine
+     * @return a recombination of the given genomes.
+     */
+    private static Genome newRecombination(final Genome... genomes) {
+        Genome result = new Genome();
+        Genome oldGenome = genomes[0];
+        if (genomes.length == 1) {
+            result = new Genome(oldGenome);
+            result.setUserRating(oldGenome.getUserRating());
+        } else {
+            int size = genomes[0].size();
+            // iterate genes
+            for (int g = 0; g < size; g++) {
+                LinkedList<IGene<?>> geneList = new LinkedList<IGene<?>>();
+                int gm = 0;
+                for (final Genome genome : genomes) {
+                    if (gm++ > 0) {
+                        assert genome.size() == size;
+                        geneList.add(genome.get(g));
+                    }
+                }
+                @SuppressWarnings("rawtypes" /* otherGenes is a mixture */)
+                final IGene[] otherGenes = geneList.toArray(new IGene[geneList.size()]);
+                final IGene<?> oldGene = oldGenome.get(g);
+                @SuppressWarnings("unchecked")
+                final IGene<?> newGene = oldGene.recombineWith(otherGenes);
+                result.add(newGene);
+            }
+            // determine the rating
+            double ratingSum = 0;
+            for (final Genome genome : genomes) {
+                ratingSum += genome.hasUserRating() ? genome.getUserRating() : 0.0;
+            }
+            double average = ratingSum / genomes.length;
+            result.setUserRating(Double.valueOf(average));
+        }
+        return result;
     }
 
     /**
@@ -175,6 +221,44 @@ public class Genome extends ArrayList<IGene<?>> {
         this.generation = theGeneration;
     }
 
+    // private fields
+    /**
+     * Indicates the generation in which the individual was created.
+     */
+    private final int generation;
+
+    /**
+     * The user-defined rating.
+     */
+    private Double userRating = null;
+
+    /**
+     * A map of features associated to this genome.
+     */
+    private Map<String, Object> features = Collections.emptyMap();
+
+    /**
+     * Adds a feature to the map of features.
+     *
+     * @param key
+     *            the key; must not be {@code null}
+     * @param value
+     *            the value of the feature
+     * @return the previous value associated with key, or {@code null} if there
+     *         was no mapping for key.
+     */
+    public Object addFeature(final String key, final Object value) {
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+
+        assert this.features != null;
+
+        this.features = new HashMap<String, Object>(this.features);
+
+        return this.features.put(key, value);
+    }
+
     /**
      * Downscales the rating. This makes the rating less relevant without
      * discarding it completely. This can be used for outdated ratings.
@@ -188,6 +272,22 @@ public class Genome extends ArrayList<IGene<?>> {
     }
 
     /**
+     * Find a gene with the given ID.
+     *
+     * @param theId
+     *            an ID
+     * @return a gene with the given ID; or {@code null} if none can be found
+     */
+    public IGene<?> find(final String theId) {
+        for (final IGene<?> gene : this) {
+            if (gene.getId().equals(theId)) {
+                return gene;
+            }
+        }
+        return null;
+    }
+
+    /**
      * The features are a collection of measurable properties that the
      * individual sports in its phenotype. Automatic rating of the individual is
      * based on these features.
@@ -196,16 +296,6 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public Map<String, Object> getFeatures() {
         return Collections.unmodifiableMap(this.features);
-    }
-
-    /**
-     * Sets the features.
-     *
-     * @param theFeatures
-     *            the features to set.
-     */
-    public void setFeatures(final Map<String, Object> theFeatures) {
-        this.features = theFeatures;
     }
 
     /**
@@ -227,12 +317,23 @@ public class Genome extends ArrayList<IGene<?>> {
     }
 
     /**
+     * @return a list of the IDs occurring in this genome.
+     */
+    public List<String> getIds() {
+        List<String> result = new LinkedList<String>();
+        for (final IGene<?> gene : this) {
+            result.add((String) gene.getId());
+        }
+        return result;
+    }
+
+    /**
      *
      * @return the user-defined rating. A higher value means a better rating.
      *         The value may be negative.
      * @see #hasUserRating()
      */
-    public Double getUserRating() {
+    public synchronized Double getUserRating() {
         return this.userRating;
     }
 
@@ -242,7 +343,7 @@ public class Genome extends ArrayList<IGene<?>> {
      * @see #getUserRating()
      */
     public boolean hasUserRating() {
-        return (this.userRating != null);
+        return this.userRating != null;
     }
 
     /**
@@ -274,6 +375,16 @@ public class Genome extends ArrayList<IGene<?>> {
      */
     public Genome newRecombination(final Genome otherGenome) {
         return newRecombination(this, otherGenome);
+    }
+
+    /**
+     * Sets the features.
+     *
+     * @param theFeatures
+     *            the features to set.
+     */
+    public void setFeatures(final Map<String, Object> theFeatures) {
+        this.features = theFeatures;
     }
 
     /**
@@ -319,6 +430,8 @@ public class Genome extends ArrayList<IGene<?>> {
     /**
      * Mutate the genes of the individual. Every gene is asked to provide a
      * mutated version of itself.
+     *
+     * @return mutated copy of this genome
      */
     private Genome newMutation() {
         Genome newGenome = new Genome(this.generation);
@@ -331,106 +444,5 @@ public class Genome extends ArrayList<IGene<?>> {
         newGenome.setUserRating(this.userRating);
 
         return newGenome;
-    }
-
-    // return a recombination of the given genomes.
-    private static Genome newRecombination(final Genome... genomes) {
-        Genome result = new Genome();
-        Genome oldGenome = genomes[0];
-        if (genomes.length == 1) {
-            result = new Genome(oldGenome);
-            result.setUserRating(oldGenome.getUserRating());
-        } else {
-            int size = genomes[0].size();
-            // iterate genes
-            for (int g = 0; g < size; g++) {
-                LinkedList<IGene<?>> geneList = new LinkedList<IGene<?>>();
-                int gm = 0;
-                for (final Genome genome : genomes) {
-                    if (gm++ > 0) {
-                        assert genome.size() == size;
-                        geneList.add(genome.get(g));
-                    }
-                }
-                @SuppressWarnings("rawtypes" /* otherGenes is a mixture */)
-                final IGene[] otherGenes = geneList.toArray(new IGene[geneList.size()]);
-                final IGene<?> oldGene = oldGenome.get(g);
-                @SuppressWarnings("unchecked")
-                final IGene<?> newGene = oldGene.recombineWith(otherGenes);
-                result.add(newGene);
-            }
-            // determine the rating
-            double ratingSum = 0;
-            for (final Genome genome : genomes) {
-                ratingSum += genome.hasUserRating() ? genome.getUserRating() : 0.0;
-            }
-            double average = ratingSum / genomes.length;
-            result.setUserRating(Double.valueOf(average));
-        }
-        return result;
-    }
-
-    // private fields
-    /**
-     * Indicates the generation in which the individual was created.
-     */
-    private final int generation;
-    /**
-     * The user-defined rating.
-     */
-    private Double userRating = null;
-
-    /**
-     * A map of features associated to this genome.
-     */
-    private Map<String, Object> features = Collections.emptyMap();
-
-    /**
-     * Find a gene with the given ID.
-     *
-     * @param theId
-     *            an ID
-     * @return a gene with the given ID; or {@code null} if none can be found
-     */
-    public IGene<?> find(final String theId) {
-        for (final IGene<?> gene : this) {
-            if (gene.getId().equals(theId)) {
-                return gene;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @return a list of the IDs occurring in this genome.
-     */
-    public List<String> getIds() {
-        List<String> result = new LinkedList<String>();
-        for (final IGene<?> gene : this) {
-            result.add((String) gene.getId());
-        }
-        return result;
-    }
-
-    /**
-     * Adds a feature to the map of features.
-     *
-     * @param key
-     *            the key; must not be {@code null}
-     * @param value
-     *            the value of the feature
-     * @return the previous value associated with key, or {@code null} if there
-     *         was no mapping for key.
-     */
-    public Object addFeature(final String key, final Object value) {
-        if (key == null) {
-            throw new IllegalArgumentException();
-        }
-
-        assert this.features != null;
-
-        this.features = new HashMap<String, Object>(this.features);
-
-        return this.features.put(key, value);
     }
 }

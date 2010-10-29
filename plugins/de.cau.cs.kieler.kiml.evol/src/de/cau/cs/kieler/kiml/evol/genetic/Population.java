@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.evol.IFilterable;
 import de.cau.cs.kieler.kiml.evol.IItemFilter;
 
@@ -36,18 +37,18 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
     /**
      * Filter for rated individuals.
      */
-    public static final IItemFilter<Genome> RATED_FILTER = new IItemFilter<Genome>() {
-        public boolean isMatch(final Genome item) {
-            return (item.hasUserRating());
+    public static final ICondition<Genome> RATED_FILTER = new ICondition<Genome>() {
+        public boolean evaluate(final Genome item) {
+            return item.hasUserRating();
         }
     };
 
     /**
      * Filter for unrated individuals.
      */
-    public static final IItemFilter<Genome> UNRATED_FILTER = new IItemFilter<Genome>() {
-        public boolean isMatch(final Genome item) {
-            return (!item.hasUserRating());
+    public static final ICondition<Genome> UNRATED_FILTER = new ICondition<Genome>() {
+        public boolean evaluate(final Genome item) {
+            return !item.hasUserRating();
         }
     };
 
@@ -107,11 +108,11 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
      * @return a new {@link Population} containing the {@link Genome} objects
      *         that pass the filter.
      */
-    public Population select(final IItemFilter<Genome> filter) {
+    public Population select(final ICondition<Genome> filter) {
         Population result = new Population();
         for (final Genome g : this) {
             // TODO: use FilteredIterator from kieler.core(.util)
-            if (filter.isMatch(g)) {
+            if (filter.evaluate(g)) {
                 result.add(g);
             }
         }

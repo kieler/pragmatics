@@ -276,11 +276,11 @@ final class GenomeFactory {
             IGene<?> result;
             Float value = Float.valueOf((String) theRawValue);
             Float lowerBound =
-                    Float.valueOf((lowerBoundAttr == null ? Float.NEGATIVE_INFINITY : Float
-                            .parseFloat(lowerBoundAttr)));
+                    Float.valueOf(lowerBoundAttr == null ? Float.NEGATIVE_INFINITY : Float
+                            .parseFloat(lowerBoundAttr));
             Float upperBound =
-                    Float.valueOf(((upperBoundAttr == null) ? Float.POSITIVE_INFINITY : Float
-                            .parseFloat(upperBoundAttr)));
+                    Float.valueOf((upperBoundAttr == null) ? Float.POSITIVE_INFINITY : Float
+                            .parseFloat(upperBoundAttr));
 
             double variance;
             if (varianceAttr != null) {
@@ -292,7 +292,7 @@ final class GenomeFactory {
                 final float verySmall = 1e-3f;
 
                 // estimate desired variance from the absolute value
-                if ((Math.abs(value.floatValue()) < verySmall)) {
+                if (Math.abs(value.floatValue()) < verySmall) {
                     variance = MutationInfo.DEFAULT_VARIANCE;
                 } else {
                     variance = Math.abs(value.floatValue()) * VARIANCE_SCALING_FACTOR;
@@ -358,19 +358,19 @@ final class GenomeFactory {
             }
 
             Integer lowerBound =
-                    Integer.valueOf(((lowerBoundAttr == null) ? Integer.MIN_VALUE : (Integer
-                            .parseInt(lowerBoundAttr))));
+                    Integer.valueOf((lowerBoundAttr == null) ? Integer.MIN_VALUE : (Integer
+                            .parseInt(lowerBoundAttr)));
 
             Integer upperBound =
-                    Integer.valueOf(((upperBoundAttr == null) ? Integer.MAX_VALUE : (Integer
-                            .parseInt(upperBoundAttr))));
+                    Integer.valueOf((upperBoundAttr == null) ? Integer.MAX_VALUE : (Integer
+                            .parseInt(upperBoundAttr)));
 
             IValueFormatter formatter = UniversalNumberGene.INTEGER_FORMATTER;
 
             // enforce that the value is within the legal bounds
             value =
-                    Integer.valueOf((sanitize(value.floatValue(), lowerBound.floatValue(),
-                            upperBound.floatValue(), (String) theId).intValue()));
+                    Integer.valueOf(sanitize(value.floatValue(), lowerBound.floatValue(),
+                            upperBound.floatValue(), (String) theId).intValue());
 
             TypeInfo<Float> typeInfo =
                     new FloatTypeInfo(value.floatValue(), lowerBound.floatValue(),
@@ -386,11 +386,11 @@ final class GenomeFactory {
         /**
          * Enforces that the value is within the specified legal bounds.
          *
-         * @param theValue
+         * @param value
          *            the value
-         * @param theLowerBound
+         * @param lowerBound
          *            the lower bound
-         * @param theUpperBound
+         * @param upperBound
          *            the upper bound
          * @param id
          *            identifier of the value
@@ -432,7 +432,7 @@ final class GenomeFactory {
         }
 
         IGeneFactory factory = new IGeneFactory() {
-            private final Float UPPER_BOUND = 10.0f;
+            private final float UPPER_BOUND = 10.0f;
             private final double VARIANCE = .2;
 
             public IGene<?> newGene(
@@ -462,8 +462,9 @@ final class GenomeFactory {
 
         Genome result = new Genome();
         float value = 1.0f;
+        double mutationProb = 0.02;
         for (final String id : metricIds) {
-            IGene<?> gene = factory.newGene(id, value, 0.02);
+            IGene<?> gene = factory.newGene(id, value, mutationProb);
             assert gene != null : "Failed to create gene for " + id;
             result.add(gene);
         }
@@ -554,8 +555,10 @@ final class GenomeFactory {
 
                 if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                     // Property is a layout hint --> skip
-                    Object value = config.getContainerLayouterData().getId();
-                    assert value != null : "layout hint value is null";
+                    // LayoutProviderData layouterData =
+                    // config.getContainerLayouterData();
+                    // Object value = layouterData.getId();
+                    // assert value != null : "layout hint value is null";
                     continue;
 
                 } else if (!propertyId2ValueMap.containsKey(id)) {
@@ -642,7 +645,7 @@ final class GenomeFactory {
                 ILayoutInspector inspector = layoutServices.getInspector(editPart);
                 LayoutPropertySource source = new LayoutPropertySource(config, inspector);
                 IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();
-    
+
                 for (final IPropertyDescriptor pd : propertyDescriptors) {
                     allPropertyDescriptors.put((String) pd.getId(), pd);
                 }
@@ -695,15 +698,20 @@ final class GenomeFactory {
     private static final double DEFAULT_LAYOUT_HINT_GENE_PROB = 0.05;
 
     /**
-     * Create a {@link Genome} from the given layout inspectors.
+     * Create a {@link Genome} from the given layout configurations.
      *
-     * @param configs list of layout configurations
-     * @param layoutHintIds set of layout hint IDs; must not be {@code null}
+     * @param configs
+     *            list of layout configurations
+     * @param layoutHintIds
+     *            set of layout hint IDs; must not be {@code null}
      * @return a genome, or {@code null}.
-     * @throws KielerException in case of an error
+     * @throws KielerException
+     *             in case of an error
      */
-    public Genome createGenome(final List<ILayoutConfig> configs,
-            final Set<Object> layoutHintIds) throws KielerException {
+    public Genome createGenome(
+final List<ILayoutConfig> configs, final Set<Object> layoutHintIds)
+            throws KielerException {
+        // TODO: split this method
         if ((configs == null) || (layoutHintIds == null) || layoutHintIds.isEmpty()) {
             return null;
         }

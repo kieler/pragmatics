@@ -41,7 +41,7 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
 
     /**
      * Creates a new {@link PopulationTableLabelProvider}.
-     * 
+     *
      * @param theEvolModel
      *            the associated evolution model
      */
@@ -94,15 +94,20 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
         // Note: this may be improved by using CellLabelProviders
 
         final Genome individual = ((PopulationTableEntry) element).getIndividual();
+        final String result;
         switch (columnIndex) {
         case 0:
-            return ((PopulationTableEntry) element).getId();
+            result = ((PopulationTableEntry) element).getId();
+            break;
+
         case 1:
             final int ratingFactor = 100;
             int scaledRating =
-                    (int) Math.round(individual.hasUserRating() ? individual.getUserRating()
-                            * ratingFactor : 0);
-            return (scaledRating + "");
+                    (int) (individual.hasUserRating() ? Math.round(individual.getUserRating()
+                            * ratingFactor) : 0);
+            result = scaledRating + "";
+            break;
+
         case 2:
             IGene<?> hintGene = individual.find(LayoutOptions.LAYOUTER_HINT_ID);
             String providerName = null;
@@ -115,11 +120,14 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
                     providerName = provider.getName();
                 }
             }
-            return (providerName);
+            result = providerName;
+            break;
 
-        default: // do nothing
-            return null;
+        default:
+            // do nothing
+            result = null;
         }
+        return result;
     }
 
     @Override

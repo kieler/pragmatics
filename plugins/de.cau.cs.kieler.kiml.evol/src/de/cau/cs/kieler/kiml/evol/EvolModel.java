@@ -136,7 +136,7 @@ public final class EvolModel {
             double compensation = -theDelta / ((pop.size() - 1));
 
             for (final Genome g : pop) {
-                rating = (g.hasUserRating() ? g.getUserRating() : 0);
+                rating = g.hasUserRating() ? g.getUserRating() : 0;
                 if (g == current) {
                     g.setUserRating(Double.valueOf(rating + theDelta));
                 } else {
@@ -147,14 +147,14 @@ public final class EvolModel {
 
             // Punish predictors
             String key = "proposedRating:" + current.getId();
-            double newRating = (current.hasUserRating() ? current.getUserRating() : 0.0);
+            double newRating = current.hasUserRating() ? current.getUserRating() : 0.0;
             for (final Genome predictor : this.getRatingPredictors()) {
                 Map<String, Object> features = predictor.getFeatures();
                 if ((features != null) && features.containsKey(key)) {
                     Double prediction = (Double) features.get(key);
                     double diff = newRating - prediction;
                     double predictorRating =
-                            (predictor.hasUserRating() ? predictor.getUserRating() : 0.0);
+                            predictor.hasUserRating() ? predictor.getUserRating() : 0.0;
                     predictor.setUserRating(predictorRating - Math.abs(diff));
                 }
             }
@@ -175,7 +175,7 @@ public final class EvolModel {
 
         final IProgressMonitor monitor;
         // Ensure there is a monitor of some sort.
-        monitor = ((theMonitor != null) ? theMonitor : new NullProgressMonitor());
+        monitor = (theMonitor != null) ? theMonitor : new NullProgressMonitor();
 
         int stepWork = 1;
         int afterStepWork = 1;
@@ -219,7 +219,7 @@ public final class EvolModel {
             final double reward = 0.01;
             for (final Genome predictor : predictors) {
                 // presuming predictor != null
-                double oldRating = (predictor.hasUserRating() ? predictor.getUserRating() : 0.0);
+                double oldRating = predictor.hasUserRating() ? predictor.getUserRating() : 0.0;
                 predictor.setUserRating(oldRating + reward);
             }
 
@@ -303,13 +303,7 @@ public final class EvolModel {
             return false;
         }
 
-        if (this.predictorsEvolAlg == null) {
-            EvolPlugin.logStatus("Weights algorithm is not set.");
-            return false;
-        }
-
-        if (this.predictorsEvolAlg.getPopulation() == null) {
-            EvolPlugin.logStatus("Predictor population is not set.");
+        if (!isPredictorsAlgValid()) {
             return false;
         }
 
@@ -332,6 +326,24 @@ public final class EvolModel {
     }
 
     /**
+     * Checks whether the predictors model is valid.
+     *
+     * @return {@code true} iff predictors model is valid
+     */
+    private boolean isPredictorsAlgValid() {
+        if (this.predictorsEvolAlg == null) {
+            EvolPlugin.logStatus("Weights algorithm is not set.");
+            return false;
+        }
+
+        if (this.predictorsEvolAlg.getPopulation().isEmpty()) {
+            EvolPlugin.logStatus("Predictor population is empty.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Reset the population and restart the algorithm.
      */
     public void reset() {
@@ -344,11 +356,7 @@ public final class EvolModel {
         EditPart part = EvolUtil.getCurrentEditPart(editor);
         LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, part);
 
-        if (providerData != null) {
-            this.layoutProviderId = providerData.getId();
-        } else {
-            this.layoutProviderId = null;
-        }
+        this.layoutProviderId = providerData != null ? providerData.getId() : null;
 
         // Create an initial population of layout option genomes.
         Set<IEditorPart> editors = EvolUtil.getEditors();
@@ -401,7 +409,7 @@ public final class EvolModel {
 
         int oldPosition = this.position;
 
-        if ((oldPosition != thePosition)) {
+        if (oldPosition != thePosition) {
             this.position = thePosition;
             afterChange(ModelChangeType.SET_POSITION);
         }
@@ -411,6 +419,7 @@ public final class EvolModel {
      * Notify listeners about a performed model change.
      *
      * @param cause
+     *            indicates the cause of the model change
      */
     private void afterChange(final ModelChangeType cause) {
         for (final IEvolModelListener listener : this.listeners) {
@@ -450,7 +459,7 @@ public final class EvolModel {
         }
 
         updatePosition();
-        assert (getPosition() >= 0);
+        assert getPosition() >= 0;
     }
 
     /**

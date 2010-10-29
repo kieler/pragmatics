@@ -91,7 +91,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         // Make sure there is a monitor of some kind.
         IKielerProgressMonitor monitor =
-                (progressMonitor != null ? progressMonitor : new BasicProgressMonitor());
+                progressMonitor != null ? progressMonitor : new BasicProgressMonitor();
         try {
             layout(adopted, monitor, false);
         } catch (final KielerException exception) {
@@ -114,6 +114,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
      * @return a copy of the graph with the adopted layout options
      */
     private static KNode adoptIndividual(final Genome individual, final KNode originalGraph) {
+        // TODO: split this method
         if ((individual == null) || (originalGraph == null)) {
             throw new IllegalArgumentException("Argument must not be null.");
         }
@@ -241,5 +242,4 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         } // for (IGene<?> gene : individual)
         return copy;
     }
-
 }
