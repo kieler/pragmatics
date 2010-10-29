@@ -59,10 +59,10 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
     public DiagramLayoutManager getManager() {
         return this.manager;
     }
-
+    
     /**
      * Calculates a layout for the given individual in the given editor.
-     *
+     * 
      * @param individual
      *            the {@link Genome} from which layout options shall be adopted;
      *            may not be {@code null}
@@ -72,11 +72,14 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
      * @param progressMonitor
      *            monitor to which progress of the layout algorithms is
      *            reported; may be {@code null}
+     * @param shouldCopyGraph
+     *            indicates whether the layout shall be calculated for a copy of
+     *            the layout graph or on the original layout graph.
      * @return the resulting layout graph
      */
     KNode calculateLayout(
             final Genome individual, final DiagramEditor editor,
-            final IKielerProgressMonitor progressMonitor) {
+            final IKielerProgressMonitor progressMonitor, final boolean shouldCopyGraph) {
 
         if (this.manager == null) {
             this.manager =
@@ -87,13 +90,19 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         // TODO: discuss: can we have manager.getEditor() ?
 
         // Transfer layout options from the individual to the KGraph.
-        KNode adopted = adoptIndividual(individual, layoutGraph);
+        KNode adopted;
+        if (shouldCopyGraph) {
+            adopted = adoptIndividual(individual, layoutGraph);
+        } else {
+            adopted = adoptIndividualInPlace(individual, layoutGraph);
+        }
 
         // Make sure there is a monitor of some kind.
         IKielerProgressMonitor monitor =
                 progressMonitor != null ? progressMonitor : new BasicProgressMonitor();
         try {
-            layout(adopted, monitor, false);
+            layout(adopted, monitor, false /* layoutAncestors */);
+
         } catch (final KielerException exception) {
             // layout failed
             exception.printStackTrace();
@@ -103,26 +112,45 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
     }
 
     /**
-     * Transfers layout options from the given individual to the specified
-     * graph.
+     * Transfers layout options from the given individual to a copy of the
+     * specified graph. The given graph instance is left unmodified.
      *
      * @param individual
      *            the {@link Genome} that is encoding the layout options to be
      *            transferred
      * @param originalGraph
-     *            the original graph
-     * @return a copy of the graph with the adopted layout options
+     *            the graph
+     * @return a copy of the given graph with the adopted layout options
+     * @see {@link #adoptIndividualInPlace(Genome, KNode)}
      */
     private static KNode adoptIndividual(final Genome individual, final KNode originalGraph) {
+
+        KNode copy = EcoreUtil.copy(originalGraph);
+
+        return adoptIndividualInPlace(individual, copy);
+    }
+
+    /**
+     * Transfers layout options from the given individual to the specified
+     * graph. <strong>NOTE</strong>: This alters the given graph instance.
+     *
+     * @param individual
+     *            the {@link Genome} that is encoding the layout options to be
+     *            transferred
+     * @param graph
+     *            the target graph
+     * @return the given graph with the adopted layout options
+     * @see {@link #adoptIndividual(Genome, KNode)}
+     */
+    private static KNode adoptIndividualInPlace(final Genome individual, final KNode graph) {
         // TODO: split this method
-        if ((individual == null) || (originalGraph == null)) {
+        if ((individual == null) || (graph == null)) {
             throw new IllegalArgumentException("Argument must not be null.");
         }
 
         EvolPlugin.logStatus("Adopting " + individual.toString());
 
-        KNode copy = EcoreUtil.copy(originalGraph);
-        KShapeLayout shapeLayout = copy.getData(KShapeLayout.class);
+        KShapeLayout shapeLayout = graph.getData(KShapeLayout.class);
 
         LayoutServices layoutServices = LayoutServices.getInstance();
 
@@ -240,6 +268,6 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
                 break;
             }
         } // for (IGene<?> gene : individual)
-        return copy;
+        return graph;
     }
 }

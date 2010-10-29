@@ -90,15 +90,6 @@ public final class EvolUtil {
          */
         private static DiagramLayoutManager adoptAndApplyLayout(
                 final Genome individual, final IEditorPart editor) {
-            // Adopt the layout options that are encoded in the individual.
-            // try {
-            // // EvolUtil.adoptIndividual(individual, editor);
-            // } catch (KielerException exception) {
-            // exception.printStackTrace();
-            // EvolPlugin.showError("Could not adopt the individual.",
-            // exception);
-            // return null;
-            // }
 
             AdoptingRecursiveLayouterEngine engine = new AdoptingRecursiveLayouterEngine();
 
@@ -106,14 +97,11 @@ public final class EvolUtil {
 
             // TODO: layout might fail
             KNode layoutResult =
-                    engine.calculateLayout(individual, (DiagramEditor) editor, monitor);
+                    engine.calculateLayout(individual, (DiagramEditor) editor, monitor, false /* shouldCopyGraph */);
 
             DiagramLayoutManager manager = engine.getManager();
 
-            // We don't specify the edit part because we want a manager for
-            // the whole diagram.
-            // DiagramLayoutManager manager =
-            // EclipseLayoutServices.getInstance().getManager(editor, null);
+
             assert manager != null : "Could not get a layout manager for " + editor.getTitle();
 
             // IKielerProgressMonitor monitor =
@@ -121,7 +109,9 @@ public final class EvolUtil {
 
             // if (monitor != null) {
                 // Apply the layout to the diagram in the editor.
-            manager.applyAnimatedLayout(true /* animate */, false /* cacheLayout */, 0);
+            // manager.applyAnimatedLayout(true /* animate */, false /*
+            // cacheLayout */, 0);
+            manager.applyAndZoom(0, true, false);
             // }
 
             return manager;
@@ -396,7 +386,8 @@ public final class EvolUtil {
             IKielerProgressMonitor monitor = new BasicProgressMonitor();
 
             // calculate layout (might throw an exception)
-            KNode layoutResult = engine.calculateLayout(ind, (DiagramEditor) editor, monitor);
+            KNode layoutResult =
+                    engine.calculateLayout(ind, (DiagramEditor) editor, monitor, true /* shouldCopyGraph */);
 
             Map<String, Object> measurements = measure(layoutResult, weightsMap);
             // Attention: The measurements may contain additional intermediate
@@ -975,11 +966,11 @@ public final class EvolUtil {
         MonitoredOperation
                 .runInUI(new IndividualApplierRunnable(individual, providerId), true /* synch */);
     }
-    
+
     /**
      * Creates a population of default size, taking initial values from the
      * given list of {@link ILayoutConfig} instances.
-     * 
+     *
      * @param configs
      *            list of layout configurations
      * @return the new population
