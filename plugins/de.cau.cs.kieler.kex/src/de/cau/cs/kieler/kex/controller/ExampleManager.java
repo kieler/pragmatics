@@ -50,15 +50,6 @@ public final class ExampleManager {
 
     private final PluginExampleCreator extensionCreator;
 
-    // TODO wenn in ui ein editor offen ist, dann macht er den wizard nicht auf.
-
-    // TODO Thesis, begr�nden weshalb hier instance genommen wurde.
-    // da wir den Examplepool nicht jedes mal erneut laden wollen, wenn
-    // wir darauf zugreifen wollen, k�nnen unter anderem viele werden.
-
-    // TODO category refactoring, das wird so alles nicht mehr gebraucht...
-    // da wir die kategorien aus den examples filtern.
-
     private ExampleManager() {
         this.extensionCollector = new PluginExampleCollector();
         this.extensionCreator = new PluginExampleCreator();

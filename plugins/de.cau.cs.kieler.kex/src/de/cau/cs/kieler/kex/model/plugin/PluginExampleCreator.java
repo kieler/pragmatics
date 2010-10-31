@@ -183,8 +183,7 @@ public class PluginExampleCreator {
         if (plugins.getLength() == 1) {
             return plugins.item(0);
         }
-        // TODO
-        throw new KielerException("");
+        throw new KielerException("Could not filter plugin node. " + locationFile.getPath());
     }
 
     private Node filterExtensionKEX(final Node pluginNode) {
