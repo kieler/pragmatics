@@ -211,7 +211,7 @@ public final class ExampleManager {
     }
 
     /**
-     * Import a quickstart example.
+     * Imports a quickstart example.
      * 
      * @param quickStarter
      *            , {@link Example}
