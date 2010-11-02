@@ -72,10 +72,21 @@ final class GenomeFactory {
          * variance.
          */
         private static final double VARIANCE_SCALING_FACTOR = .20;
-
+        /**
+         * Identifier of the attribute "lower bound".
+         */
         private static final String ATTRIBUTE_LOWER_BOUND = "lowerBound";
+        /**
+         * Identifier of the attribute "upper bound".
+         */
         private static final String ATTRIBUTE_UPPER_BOUND = "upperBound";
+        /**
+         * Identifier of the attribute "distribution".
+         */
         private static final String ATTRIBUTE_DISTRIBUTION = "distribution";
+        /**
+         * Identifier of the attribute "variance".
+         */
         private static final String ATTRIBUTE_VARIANCE = "variance";
 
         /**
@@ -86,11 +97,12 @@ final class GenomeFactory {
         }
 
         /**
-         * Creates a gene with the specified value.
+         * Creates a gene with the specified value for the given layout option.
+         * The layout option must be registered as evolution data.
          *
          * @param theId
-         *            a valid layout option ID that is registered as evolution
-         *            data
+         *            a valid ID of a layout option that is registered as
+         *            evolution data
          * @param theValue
          *            a value
          * @param theMutationProbability
@@ -163,8 +175,18 @@ final class GenomeFactory {
         }
 
         /**
-         * Not implemented here. Throws an {@link UnsupportedOperationException}
-         * .
+         * <strong>Not implemented here.</strong> Throws an
+         * {@link UnsupportedOperationException}.
+         *
+         * @param theId
+         *            the id
+         * @param theValue
+         *            the value
+         * @param theTypeInfo
+         *            the type info
+         * @param theMutationInfo
+         *            the mutation info
+         * @return nothing
          */
         public IGene<?> newGene(
                 final Object theId, final Object theValue, final TypeInfo<?> theTypeInfo,
@@ -176,6 +198,7 @@ final class GenomeFactory {
          * Creates a gene for a boolean value.
          *
          * @param theId
+         *            the id
          * @param theValue
          *            a string that can be parsed into a Boolean
          * @param theMutationProbability
@@ -190,7 +213,7 @@ final class GenomeFactory {
             IGene<?> result;
             boolean booleanValue = Boolean.parseBoolean(theValue.toString());
 
-            Float floatValue = (booleanValue ? 1.0f : 0.0f);
+            Float floatValue = booleanValue ? 1.0f : 0.0f;
             MutationInfo mutationInfo = new MutationInfo(theMutationProbability, distr);
             result =
                     new UniversalNumberGene(theId, floatValue, UniversalNumberGene.BOOLEAN_TYPE_INFO,
@@ -223,7 +246,7 @@ final class GenomeFactory {
                     (Class<? extends Enum<?>>) layoutOptionData.getOptionClass();
             assert enumClass != null;
             final Enum<?>[] constants = enumClass.getEnumConstants();
-            assert (constants.length == choicesCount);
+            assert constants.length == choicesCount;
             Integer value = null;
             if (theRawValue instanceof Integer) {
                 value = Integer.valueOf(theRawValue.toString());
@@ -369,8 +392,8 @@ final class GenomeFactory {
 
             // enforce that the value is within the legal bounds
             value =
-                    Integer.valueOf(sanitize(value.floatValue(), lowerBound.floatValue(),
-                            upperBound.floatValue(), (String) theId).intValue());
+                    sanitize(value.floatValue(), lowerBound.floatValue(),
+                            upperBound.floatValue(), (String) theId).intValue();
 
             TypeInfo<Float> typeInfo =
                     new FloatTypeInfo(value.floatValue(), lowerBound.floatValue(),
@@ -432,17 +455,19 @@ final class GenomeFactory {
         }
 
         IGeneFactory factory = new IGeneFactory() {
-            private final float UPPER_BOUND = 10.0f;
-            private final double VARIANCE = .2;
-
             public IGene<?> newGene(
                     final Object theId, final Object theValue, final double theMutationProb) {
 
+                final float defaultValue = 1.0f;
+                final float lowerBound = 0.0f;
+                final float upperBound = 10.0f;
+                final double variance = .2;
+
                 TypeInfo<Float> typeInfo =
-                        new FloatTypeInfo(1.0f, 0.0f, this.UPPER_BOUND,
+                        new FloatTypeInfo(defaultValue, lowerBound, upperBound,
                                 UniversalNumberGene.STRICTLY_POSITIVE_FLOAT_FORMATTER, Float.class);
                 MutationInfo mutationInfo =
-                        new MutationInfo(theMutationProb, this.VARIANCE, Distribution.GAUSSIAN);
+                        new MutationInfo(theMutationProb, variance, Distribution.GAUSSIAN);
 
                 return this.newGene(theId, theValue, typeInfo, mutationInfo);
             }
@@ -462,7 +487,7 @@ final class GenomeFactory {
 
         Genome result = new Genome();
         float value = 1.0f;
-        double mutationProb = 0.02;
+        final double mutationProb = 0.02;
         for (final String id : metricIds) {
             IGene<?> gene = factory.newGene(id, value, mutationProb);
             assert gene != null : "Failed to create gene for " + id;
@@ -555,10 +580,6 @@ final class GenomeFactory {
 
                 if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                     // Property is a layout hint --> skip
-                    // LayoutProviderData layouterData =
-                    // config.getContainerLayouterData();
-                    // Object value = layouterData.getId();
-                    // assert value != null : "layout hint value is null";
                     continue;
 
                 } else if (!propertyId2ValueMap.containsKey(id)) {
@@ -590,11 +611,11 @@ final class GenomeFactory {
         }
 
         if ((defaultEntry < 0) || (defaultEntry >= providerIds.size())) {
-            throw new IllegalArgumentException("Index out of range.");
+            throw new IllegalArgumentException("Index out of range: " + defaultEntry);
         }
 
         ListItemTypeInfo typeInfo = new ListItemTypeInfo(defaultEntry, providerIds);
-        double prob = DEFAULT_LAYOUT_HINT_GENE_PROB;
+        double prob = DEFAULT_LAYOUT_HINT_GENE_MUTATION_PROBABILITY;
         MutationInfo mutationInfo = new MutationInfo(prob);
 
         ListItemGene hintGene =
@@ -621,13 +642,16 @@ final class GenomeFactory {
 
         int indexOfProviderId = providerIds.indexOf(defaultProviderId);
         assert indexOfProviderId >= 0;
-        return createLayoutHintGene(providerIds, indexOfProviderId);
+
+        ListItemGene result = createLayoutHintGene(providerIds, indexOfProviderId);
+        return result;
     }
 
     /**
-     * Collects the property descriptors from the given layout inspectors.
+     * Collects the property descriptors from the given layout configurations.
      *
-     * @param configs list of layout configurations; must not be {@code null}
+     * @param configs
+     *            list of layout configurations; must not be {@code null}
      * @return a map containing property descriptor IDs and the respective
      *         property descriptors.
      */
@@ -636,8 +660,6 @@ final class GenomeFactory {
         Map<String, IPropertyDescriptor> allPropertyDescriptors =
                 new HashMap<String, IPropertyDescriptor>();
         EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
-
-        // presuming theInspectors != null
 
         for (final ILayoutConfig config : configs) {
             if (config instanceof EclipseLayoutConfig) {
@@ -658,6 +680,7 @@ final class GenomeFactory {
      * Returns uniform probability for the given number of choices.
      *
      * @param choicesCount
+     *            number of choices
      * @return the multiplicative inverse of the given number, or 0.0 if it is
      *         not > 0.
      */
@@ -675,6 +698,10 @@ final class GenomeFactory {
     /**
      * Creates a new {@link GenomeFactory} instance.
      *
+     * @param theLearnableOptions
+     *            the set of learnable options. If this is {@code null}, all
+     *            options registered as evolution data are used instead.
+     *
      */
     public GenomeFactory(final Set<String> theLearnableOptions) {
         if (theLearnableOptions != null) {
@@ -691,11 +718,11 @@ final class GenomeFactory {
 
     /** The gene factory used to produce layout option genes. */
     private final IGeneFactory layoutOptionGeneFactory = new LayoutOptionGeneFactory();
-
+    
     /**
-     * Default probability for layout hint genes.
+     * Default mutation probability for layout hint genes.
      */
-    private static final double DEFAULT_LAYOUT_HINT_GENE_PROB = 0.05;
+    private static final double DEFAULT_LAYOUT_HINT_GENE_MUTATION_PROBABILITY = 0.05;
 
     /**
      * Create a {@link Genome} from the given layout configurations.
@@ -708,8 +735,7 @@ final class GenomeFactory {
      * @throws KielerException
      *             in case of an error
      */
-    public Genome createGenome(
-final List<ILayoutConfig> configs, final Set<Object> layoutHintIds)
+    public Genome createGenome(final List<ILayoutConfig> configs, final Set<Object> layoutHintIds)
             throws KielerException {
         // TODO: split this method
         if ((configs == null) || (layoutHintIds == null) || layoutHintIds.isEmpty()) {
