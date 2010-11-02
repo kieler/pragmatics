@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Graphs
-Bundle-SymbolicName: de.cau.cs.kieler.graphs;singleton:=true
+Bundle-Name: KIELER Graphs Editor
+Bundle-SymbolicName: de.cau.cs.kieler.keg;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
@@ -21,8 +21,8 @@ Require-Bundle: org.eclipse.core.runtime,
  de.cau.cs.kieler.core;bundle-version="0.3.0",
  org.eclipse.xtend.util.stdlib;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
-Export-Package: de.cau.cs.kieler.graphs,
- de.cau.cs.kieler.graphs.custom,
- de.cau.cs.kieler.graphs.impl,
- de.cau.cs.kieler.graphs.util
-Bundle-Activator: de.cau.cs.kieler.graphs.GraphsPlugin
+Export-Package: de.cau.cs.kieler.keg,
+ de.cau.cs.kieler.keg.custom,
+ de.cau.cs.kieler.keg.impl,
+ de.cau.cs.kieler.keg.util
+Bundle-Activator: de.cau.cs.kieler.keg.GraphsPlugin

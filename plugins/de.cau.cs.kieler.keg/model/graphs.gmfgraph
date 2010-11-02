@@ -14,7 +14,7 @@
           cornerHeight="16">
         <layout
             xsi:type="gmfgraph:CustomLayout"
-            qualifiedClassName="de.cau.cs.kieler.graphs.custom.NodeLayout"/>
+            qualifiedClassName="de.cau.cs.kieler.keg.custom.NodeLayout"/>
         <foregroundColor
             xsi:type="gmfgraph:RGBColor"
             green="20"/>
@@ -40,7 +40,7 @@
       <actualFigure
           xsi:type="gmfgraph:CustomFigure"
           name="DirectedEdgeFigure"
-          qualifiedClassName="de.cau.cs.kieler.graphs.custom.DirectedConnection">
+          qualifiedClassName="de.cau.cs.kieler.keg.custom.DirectedConnection">
         <foregroundColor
             xsi:type="gmfgraph:ConstantColor"
             value="black"/>

@@ -18,11 +18,11 @@ String getFileNameOfActiveEditor():
 
 // copy methods
 Void copyObjectToClipboard(Object object):
- JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.objectToClipboard(java.lang.Object)
+ JAVA de.cau.cs.kieler.keg.ksbase.copypaste.Utils.objectToClipboard(java.lang.Object)
 ;
 
 Void cutObject(Object object):
- JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.cutObject(java.lang.Object)
+ JAVA de.cau.cs.kieler.keg.ksbase.copypaste.Utils.cutObject(java.lang.Object)
 ;
 
 // Cut
@@ -39,19 +39,19 @@ Void copy(Object obj):
 
 // paste methods
 Node getNodeFromClipboard():
- JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.getNodeFromClipboard()
+ JAVA de.cau.cs.kieler.keg.ksbase.copypaste.Utils.getNodeFromClipboard()
 ;
 
 Edge getEdgeFromClipboard():
- JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.getEdgeFromClipboard()
+ JAVA de.cau.cs.kieler.keg.ksbase.copypaste.Utils.getEdgeFromClipboard()
 ;
 
 List[Edge] getEdgesFromClipboard():
- JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.getEdgesFromClipboard()
+ JAVA de.cau.cs.kieler.keg.ksbase.copypaste.Utils.getEdgesFromClipboard()
 ;
 
 List[Node] getNodesFromClipboard():
- JAVA de.cau.cs.kieler.graphs.ksbase.copypaste.Utils.getNodesFromClipboard()
+ JAVA de.cau.cs.kieler.keg.ksbase.copypaste.Utils.getNodesFromClipboard()
 ;
 
 // delegator to the different list pastes

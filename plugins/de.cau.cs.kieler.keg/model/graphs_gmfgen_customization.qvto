@@ -6,7 +6,7 @@ main() {
 	var model := gmfgen.rootObjects()![GenEditorGenerator];
 
 	model.dynamicTemplates :=true;
-	model.templateDirectory := "de.cau.cs.kieler.graphs/gmf-templates";
+	model.templateDirectory := "de.cau.cs.kieler.keg/gmf-templates";
 	model.sameFileForDiagramAndModel := false;
 	
 	model.domainFileExtension := "graph";

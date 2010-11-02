@@ -6,7 +6,7 @@
       <commonWizard
             menuGroupId="de.cau.cs.kieler"
             type="new"
-            wizardId="de.cau.cs.kieler.graphs.diagram.part.GraphsCreationWizardID">
+            wizardId="de.cau.cs.kieler.keg.diagram.part.GraphsCreationWizardID">
          <enablement>
             <or>
                <adapt
@@ -21,7 +21,7 @@
       <commonWizard
             menuGroupId="de.cau.cs.kieler"
             type="new"
-            wizardId="de.cau.cs.kieler.graphs.wizards.randomGraph">
+            wizardId="de.cau.cs.kieler.keg.wizards.randomGraph">
          <enablement>
             <or>
                <adapt
@@ -37,14 +37,14 @@
    <extension
          point="de.cau.cs.kieler.kiml.ui.layoutManagers">
       <manager
-            class="de.cau.cs.kieler.graphs.diagram.custom.GraphsDiagramLayoutManager"
+            class="de.cau.cs.kieler.keg.diagram.custom.GraphsDiagramLayoutManager"
             priority="1">
       </manager>
    </extension>
    <extension
          point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
       <editpolicyProvider
-            class="de.cau.cs.kieler.graphs.diagram.custom.HypernodesEditPolicyProvider">
+            class="de.cau.cs.kieler.keg.diagram.custom.HypernodesEditPolicyProvider">
          <Priority
                name="Lowest">
          </Priority>

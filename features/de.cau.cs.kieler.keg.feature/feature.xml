@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.graphs"
+      id="de.cau.cs.kieler.keg"
       label="Graphs Editor"
       version="0.1.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
@@ -239,14 +239,14 @@ litigation.
    </requires>
 
    <plugin
-         id="de.cau.cs.kieler.graphs"
+         id="de.cau.cs.kieler.keg"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.graphs.diagram"
+         id="de.cau.cs.kieler.keg.diagram"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -260,14 +260,14 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.graphs.edit"
+         id="de.cau.cs.kieler.keg.edit"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.graphs.ksbase"
+         id="de.cau.cs.kieler.keg.ksbase"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -281,7 +281,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.graphs.diagram.custom"
+         id="de.cau.cs.kieler.keg.diagram.custom"
          download-size="0"
          install-size="0"
          version="0.0.0"

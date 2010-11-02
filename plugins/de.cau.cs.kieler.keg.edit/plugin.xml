@@ -22,7 +22,7 @@
    <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
       <factory
             uri="http://kieler.cs.cau.de/graphs"
-            class="de.cau.cs.kieler.graphs.provider.GraphsItemProviderAdapterFactory"
+            class="de.cau.cs.kieler.keg.provider.GraphsItemProviderAdapterFactory"
             supportedTypes=
               "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
                org.eclipse.emf.edit.provider.IStructuredItemContentProvider

@@ -60,8 +60,8 @@ public class «getClassName()»«EXPAND extendsList»«EXPAND implementsList» {
                     org.eclipse.ui.IEditorReference[] ers = wbp.getEditorReferences();
                     for (org.eclipse.ui.IEditorReference er : ers) {
                         org.eclipse.ui.IEditorPart editor = er.getEditor(true);
-                        if (editor instanceof de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditor) {
-                            de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditor gde = (de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditor) editor;
+                        if (editor instanceof de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor) {
+                            de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor gde = (de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor) editor;
                             applySplineMode(gde.getDiagramEditPart());
                         }
                     }

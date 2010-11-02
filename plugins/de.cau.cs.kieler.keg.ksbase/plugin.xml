@@ -3,15 +3,15 @@
 <plugin>
 	<extension point="de.cau.cs.kieler.ksbase.configurations">
 		<configuration TransformationFile="transformations/feature.ext"
-			checkVisibility="true" contextId="de.cau.cs.kieler.graphs.diagram.ui.diagramContext"
-			editorId="de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorID">
+			checkVisibility="true" contextId="de.cau.cs.kieler.keg.diagram.ui.diagramContext"
+			editorId="de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorID">
 			<transformations>
 				<transformation
           icon="icons/obj16/addSuc.gif"
           keyboardShortcut="M1+R S"
           name="Add Successor"
           transformation="addSuccessor"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.addSuc"
+          transformationId="de.cau.cs.kieler.keg.ksbase.addSuc"
           validation="isNoRootNode">
 				</transformation>
 				<transformation
@@ -19,7 +19,7 @@
           keyboardShortcut="M1+R P"
           name="Add Predecessor"
           transformation="addPredecessor"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.addPred"
+          transformationId="de.cau.cs.kieler.keg.ksbase.addPred"
           validation="isNoRootNode">
 				</transformation>
 				<transformation
@@ -27,7 +27,7 @@
           keyboardShortcut="M1+R N"
           name="Add Neighbour"
           transformation="addNeighbour"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.addNeigh"
+          transformationId="de.cau.cs.kieler.keg.ksbase.addNeigh"
           validation="isNoRootNode">
 				</transformation>
 				<transformation
@@ -35,21 +35,21 @@
           keyboardShortcut="M1+R D"
           name="Connect (Directed)"
           transformation="connectDirected"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.connectDir">
+          transformationId="de.cau.cs.kieler.keg.ksbase.connectDir">
 				</transformation>
 				<transformation
           icon="icons/obj16/connectUndir.gif"
           keyboardShortcut="M1+R U"
           name="Connect (Undirected)"
           transformation="connectUndirected"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.connectUndir">
+          transformationId="de.cau.cs.kieler.keg.ksbase.connectUndir">
 				</transformation>
 				<transformation
           icon="icons/obj16/connectHyper.gif"
           keyboardShortcut="M1+R H"
           name="Connect (Hyperedge)"
           transformation="connectHyper"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.connectHyper"
+          transformationId="de.cau.cs.kieler.keg.ksbase.connectHyper"
           validation="isNotEmptySelection">
 				</transformation>
 				<transformation
@@ -57,21 +57,21 @@
           keyboardShortcut="M1+R F"
           name="Flip"
           transformation="flip"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.flip">
+          transformationId="de.cau.cs.kieler.keg.ksbase.flip">
 				</transformation>
 				<transformation
           icon="icons/obj16/toggleDirUndir.gif"
           keyboardShortcut="M1+R T"
           name="Toggle Directed/Undirected"
           transformation="toggleDirectedUndirected"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.toggleDirUndir">
+          transformationId="de.cau.cs.kieler.keg.ksbase.toggleDirUndir">
 				</transformation>
 				<transformation
           icon="icons/obj16/toggleHyper.gif"
           keyboardShortcut="M1+R Q"
           name="Toggle Node/Hypernode"
           transformation="toggleNodeHyper"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.toggleNodeHyper"
+          transformationId="de.cau.cs.kieler.keg.ksbase.toggleNodeHyper"
           validation="isNoRootNode">
 				</transformation>
 				<transformation
@@ -79,7 +79,7 @@
           keyboardShortcut="M1+R E"
           name="Encapsulate"
           transformation="encapsulate"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.encapsulate"
+          transformationId="de.cau.cs.kieler.keg.ksbase.encapsulate"
           validation="isNotEmptySelection">
 				</transformation>
     <transformation
@@ -87,210 +87,210 @@
           keyboardShortcut="M1+R C"
           name="Add Clique"
           transformation="addClique"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.addClique">
+          transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
     </transformation>
     <transformation
           icon="icons/obj16/tree.gif"
           keyboardShortcut="M1+R V"
           name="Add Tree"
           transformation="addTree"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.addTree">
+          transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
     </transformation>
     <transformation
           icon="icons/obj16/circle.gif"
           keyboardShortcut="M1+R X"
           name="Add Circle"
           transformation="addCircle"
-          transformationId="de.cau.cs.kieler.graphs.ksbase.addCircle">
+          transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
     </transformation>
 			</transformations>
 			<menus>
 				<menuContribution locationURI="menu:de.cau.cs.kieler">
 					<transformationCommand
-						transformationId="de.cau.cs.kieler.graphs.ksbase.addSuc">
+						transformationId="de.cau.cs.kieler.keg.ksbase.addSuc">
 					</transformationCommand>
 					<transformationCommand
-						transformationId="de.cau.cs.kieler.graphs.ksbase.addPred">
+						transformationId="de.cau.cs.kieler.keg.ksbase.addPred">
 					</transformationCommand>
 					<transformationCommand
-						transformationId="de.cau.cs.kieler.graphs.ksbase.addNeigh">
+						transformationId="de.cau.cs.kieler.keg.ksbase.addNeigh">
 					</transformationCommand>
 					<transformationCommand
-						transformationId="de.cau.cs.kieler.graphs.ksbase.connectDir">
+						transformationId="de.cau.cs.kieler.keg.ksbase.connectDir">
 					</transformationCommand>
 					<transformationCommand
-						transformationId="de.cau.cs.kieler.graphs.ksbase.connectUndir">
+						transformationId="de.cau.cs.kieler.keg.ksbase.connectUndir">
 					</transformationCommand>
 					<transformationCommand
-						transformationId="de.cau.cs.kieler.graphs.ksbase.connectHyper">
+						transformationId="de.cau.cs.kieler.keg.ksbase.connectHyper">
 					</transformationCommand>		
 					<transformationCommand
-						transformationId="de.cau.cs.kieler.graphs.ksbase.flip">
+						transformationId="de.cau.cs.kieler.keg.ksbase.flip">
 					</transformationCommand>
 					<transformationCommand
-						transformationId="de.cau.cs.kieler.graphs.ksbase.toggleDirUndir">
+						transformationId="de.cau.cs.kieler.keg.ksbase.toggleDirUndir">
 					</transformationCommand>
 					<transformationCommand
-						transformationId="de.cau.cs.kieler.graphs.ksbase.toggleNodeHyper">
+						transformationId="de.cau.cs.kieler.keg.ksbase.toggleNodeHyper">
 					</transformationCommand>
      <transformationCommand
-           transformationId="de.cau.cs.kieler.graphs.ksbase.encapsulate">
+           transformationId="de.cau.cs.kieler.keg.ksbase.encapsulate">
      </transformationCommand>
      <separator
-           id="de.cau.cs.kieler.graphs.ksbase.separator2">
+           id="de.cau.cs.kieler.keg.ksbase.separator2">
      </separator>
      <transformationCommand
-           transformationId="de.cau.cs.kieler.graphs.ksbase.addClique">
+           transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
      </transformationCommand>
      <transformationCommand
-           transformationId="de.cau.cs.kieler.graphs.ksbase.addTree">
+           transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
      </transformationCommand>
      <transformationCommand
-           transformationId="de.cau.cs.kieler.graphs.ksbase.addCircle">
+           transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
      </transformationCommand>
 				</menuContribution>
     <menuContribution
           locationURI="toolbar:de.cau.cs.kieler">
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addSuc">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addSuc">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addPred">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addPred">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addNeigh">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addNeigh">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.connectDir">
+             transformationId="de.cau.cs.kieler.keg.ksbase.connectDir">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.connectUndir"></transformationCommand>
+             transformationId="de.cau.cs.kieler.keg.ksbase.connectUndir"></transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.connectHyper">
+             transformationId="de.cau.cs.kieler.keg.ksbase.connectHyper">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.flip">
+             transformationId="de.cau.cs.kieler.keg.ksbase.flip">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.toggleDirUndir"></transformationCommand>
+             transformationId="de.cau.cs.kieler.keg.ksbase.toggleDirUndir"></transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.toggleNodeHyper">
+             transformationId="de.cau.cs.kieler.keg.ksbase.toggleNodeHyper">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.encapsulate">
+             transformationId="de.cau.cs.kieler.keg.ksbase.encapsulate">
        </transformationCommand>
        <separator
-             id="de.cau.cs.kieler.graphs.ksbase.separator1">
+             id="de.cau.cs.kieler.keg.ksbase.separator1">
        </separator>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addCircle">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addClique">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addTree">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
        </transformationCommand>
     </menuContribution>
     <menuContribution
           locationURI="popup:org.eclipse.gmf.runtime.diagram.ui.DiagramEditorContextMenu?after=addGroup">
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addSuc">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addSuc">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addPred">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addPred">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addNeigh">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addNeigh">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.connectDir">
+             transformationId="de.cau.cs.kieler.keg.ksbase.connectDir">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.connectUndir">
+             transformationId="de.cau.cs.kieler.keg.ksbase.connectUndir">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.connectHyper">
+             transformationId="de.cau.cs.kieler.keg.ksbase.connectHyper">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.flip">
+             transformationId="de.cau.cs.kieler.keg.ksbase.flip">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.toggleDirUndir">
+             transformationId="de.cau.cs.kieler.keg.ksbase.toggleDirUndir">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.toggleNodeHyper">
+             transformationId="de.cau.cs.kieler.keg.ksbase.toggleNodeHyper">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.encapsulate">
+             transformationId="de.cau.cs.kieler.keg.ksbase.encapsulate">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addCircle">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addClique">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addTree">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
        </transformationCommand>
     </menuContribution>
     <menuContribution
           locationURI="popupBar:any">
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addSuc">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addSuc">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addPred">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addPred">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addNeigh">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addNeigh">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.connectDir">
+             transformationId="de.cau.cs.kieler.keg.ksbase.connectDir">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.connectUndir">
+             transformationId="de.cau.cs.kieler.keg.ksbase.connectUndir">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.connectHyper">
+             transformationId="de.cau.cs.kieler.keg.ksbase.connectHyper">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.flip">
+             transformationId="de.cau.cs.kieler.keg.ksbase.flip">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.toggleDirUndir">
+             transformationId="de.cau.cs.kieler.keg.ksbase.toggleDirUndir">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.toggleNodeHyper">
+             transformationId="de.cau.cs.kieler.keg.ksbase.toggleNodeHyper">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.encapsulate">
+             transformationId="de.cau.cs.kieler.keg.ksbase.encapsulate">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addCircle">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addCircle">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addClique">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addClique">
        </transformationCommand>
        <transformationCommand
-             transformationId="de.cau.cs.kieler.graphs.ksbase.addTree">
+             transformationId="de.cau.cs.kieler.keg.ksbase.addTree">
        </transformationCommand>
     </menuContribution>
 			</menus>
-			<package class="de.cau.cs.kieler.graphs.GraphsPackage">
+			<package class="de.cau.cs.kieler.keg.GraphsPackage">
 			</package>
 		</configuration>
 	</extension>
  <extension
        point="org.eclipse.gmf.runtime.common.ui.services.action.globalActionHandlerProviders">
     <GlobalActionHandlerProvider
-          class="de.cau.cs.kieler.graphs.ksbase.copypaste.GraphsCutCopyPasteHandlerProvider"
-          id="de.cau.cs.kieler.graphs.ksbase.CutCopyPasteHandler">
+          class="de.cau.cs.kieler.keg.ksbase.copypaste.GraphsCutCopyPasteHandlerProvider"
+          id="de.cau.cs.kieler.keg.ksbase.CutCopyPasteHandler">
        <Priority
              name="Lowest">
        </Priority>
        <ViewId
-             id="de.cau.cs.kieler.graphs.diagram.part.GraphsDiagramEditorID">
+             id="de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorID">
           <ElementType
                 class="org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart">
              <GlobalActionId

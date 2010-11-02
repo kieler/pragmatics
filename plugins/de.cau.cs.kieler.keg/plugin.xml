@@ -13,7 +13,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
             uri="http://kieler.cs.cau.de/graphs"
-            class="de.cau.cs.kieler.graphs.GraphsPackage"
+            class="de.cau.cs.kieler.keg.GraphsPackage"
             genModel="model/graphs.genmodel"/>
    </extension>
 
@@ -22,10 +22,10 @@
       <wizard
             canFinishEarly="false"
             category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.graphs.wizards.CreateRandomModelWizard"
+            class="de.cau.cs.kieler.keg.wizards.CreateRandomModelWizard"
             hasPages="true"
             icon="icons/obj16/random.gif"
-            id="de.cau.cs.kieler.graphs.wizards.randomGraph"
+            id="de.cau.cs.kieler.keg.wizards.randomGraph"
             name="Create Random Graph"
             project="false">
       </wizard>
@@ -33,7 +33,7 @@
    <extension
          point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
       <editpolicyProvider
-            class="de.cau.cs.kieler.graphs.custom.GraphsDeletionPolicyProvider">
+            class="de.cau.cs.kieler.keg.custom.GraphsDeletionPolicyProvider">
          <Priority
                name="Lowest">
          </Priority>
@@ -43,9 +43,9 @@
          point="org.eclipse.ui.importWizards">
       <wizard
             category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.graphs.wizards.ImportGraphWizard"
+            class="de.cau.cs.kieler.keg.wizards.ImportGraphWizard"
             icon="icons/importdiagram.gif"
-            id="de.cau.cs.kieler.graphs.importWizard"
+            id="de.cau.cs.kieler.keg.importWizard"
             name="Import Graph">
          <description>
             Import a graph from the local filesystem.
