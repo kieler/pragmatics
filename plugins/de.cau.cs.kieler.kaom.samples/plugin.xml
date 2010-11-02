@@ -6,6 +6,9 @@
       </configExtension>
  </extension>
  <extension point="de.cau.cs.kieler.kex">
+    <category
+          id="de.cau.cs.kieler.kaom">
+    </category>
 	<example
 	      author="pkl"
 	      contact="rvh@informatik.uni-kiel.de"
