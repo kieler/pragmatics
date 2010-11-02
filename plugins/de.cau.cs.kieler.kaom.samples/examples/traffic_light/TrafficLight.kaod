@@ -1,0 +1,2059 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:kaom="http://kieler.cs.cau.de/KAOM" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_WJTesG2KEd-G24CFUvkEpw" type="Kaom" measurementUnit="Pixel">
+  <children xmi:type="notation:Node" xmi:id="_WNdl8G2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNeNAG2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNeNAW2KEd-G24CFUvkEpw" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_WNroYG2KEd-G24CFUvkEpw" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WNroZG2KEd-G24CFUvkEpw" type="5003"/>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_WNroZW2KEd-G24CFUvkEpw" type="7002">
+          <children xmi:type="notation:Node" xmi:id="_WN5DwG2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN5DxG2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WN5DxW2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WOAYgG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOAYhG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOAYhW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOAYgW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOAYgm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOAYg22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN5DwW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN5Dwm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN5Dw22KEd-G24CFUvkEpw" x="75" y="15"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN5Dxm2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN5q0W2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WN5q0m2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WOCNsG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOC0w22KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOC0xG2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOC0wG2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOC0wW2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOC0wm2KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN5Dx22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN5DyG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN5q0G2KEd-G24CFUvkEpw" x="76" y="90"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN5q022KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN5q122KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WN5q2G2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WOPCAG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOPCBG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOPCBW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOPCAW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOPCAm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.2/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOPCA22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_WOPCBm2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOPCCm2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOPpEG2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOPCB22KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOPCCG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.2/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOPCCW2KEd-G24CFUvkEpw" x="-5" y="34"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN5q1G2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN5q1W2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN5q1m2KEd-G24CFUvkEpw" x="50" y="166"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN5q2W2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN6R4G2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WN6R4W2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WOSFUG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOSFVG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOSFVW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOSFUW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOSFUm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.3/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOSFU22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN5q2m2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN5q222KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.3"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN5q3G2KEd-G24CFUvkEpw" x="76" y="437"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN6R4m2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN6R5m2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WN6R522KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WOUhkG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOUhlG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOUhlW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOUhkW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOUhkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.4/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOUhk22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_WOUhlm2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOVIoG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOVIoW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOUhl22KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOUhmG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.4/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOUhmW2KEd-G24CFUvkEpw" x="-5" y="34"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN6R422KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN6R5G2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.4"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN6R5W2KEd-G24CFUvkEpw" x="59" y="347"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN6R6G2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN6R7G2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WN6R7W2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WOXk4G2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOYL8G2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOYL8W2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOXk4W2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOXk4m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.5/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOXk422KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_WOYL8m2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOYL9m2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOYL922KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOYL822KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOYL9G2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.5/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOYL9W2KEd-G24CFUvkEpw" x="-5" y="34"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN6R6W2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN6R6m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.5"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN6R622KEd-G24CFUvkEpw" x="54" y="256"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN648G2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN649G2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WN649W2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WObPQG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WObPRG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WObPRW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WObPQW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WObPQm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.6/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WObPQ22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_WObPRm2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WObPSm2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WObPS22KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WObPR22KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WObPSG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.6/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WObPSW2KEd-G24CFUvkEpw" x="-5" y="34"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN648W2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN648m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.6"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN64822KEd-G24CFUvkEpw" x="65" y="513"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN649m2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN64-m2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WN64-22KEd-G24CFUvkEpw" type="7002"/>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN64922KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN64-G2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childEntities.7"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN64-W2KEd-G24CFUvkEpw" x="276" y="396"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN64_G2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN7gAm2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WN7gA22KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN64_W2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN7gAG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childRelations.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN7gAW2KEd-G24CFUvkEpw" x="276" y="231"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN7gBG2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN7gCG2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WN7gCW2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN7gBW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN7gBm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childRelations.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN7gB22KEd-G24CFUvkEpw" x="276" y="268"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN7gCm2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN8HEG2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WN8HEW2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN7gC22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN7gDG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childRelations.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN7gDW2KEd-G24CFUvkEpw" x="276" y="140"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN8HEm2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN8HFm2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WN8HF22KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN8HE22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN8HFG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childRelations.3"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN8HFW2KEd-G24CFUvkEpw" x="276" y="305"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN8HGG2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN8HHG2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WN8HHW2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN8HGW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN8HGm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childRelations.4"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN8HG22KEd-G24CFUvkEpw" x="276" y="487"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN8uIG2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN8uJG2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WN8uJW2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN8uIW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN8uIm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childRelations.5"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN8uI22KEd-G24CFUvkEpw" x="276" y="335"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN8uJm2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN8uKm2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WN8uK22KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN8uJ22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN8uKG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childRelations.6"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN8uKW2KEd-G24CFUvkEpw" x="276" y="366"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN8uLG2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN9VMG2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WN9VMW2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN8uLW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN8uLm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childRelations.7"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN8uL22KEd-G24CFUvkEpw" x="276" y="185"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WN9VMm2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WN9VNm2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WN9VN22KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WN9VM22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WN9VNG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childRelations.8"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WN9VNW2KEd-G24CFUvkEpw" x="276" y="457"/>
+          </children>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WNxvAG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WNxvBG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WNxvBW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNxvAW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WNxvAm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNxvA22KEd-G24CFUvkEpw" x="381" y="42"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WNxvBm2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WNyWEG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WNyWEW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNxvB22KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WNxvCG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNxvCW2KEd-G24CFUvkEpw" x="381" y="68"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WNyWEm2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WNyWFm2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WNyWF22KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNyWE22KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WNyWFG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childPorts.2"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNyWFW2KEd-G24CFUvkEpw" x="381" y="95"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WNyWGG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WNy9IG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WNy9IW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNyWGW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WNyWGm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childPorts.3"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNyWG22KEd-G24CFUvkEpw" x="381" y="121"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WNy9Im2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WNy9Jm2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WNy9J22KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNy9I22KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WNy9JG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childPorts.4"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNy9JW2KEd-G24CFUvkEpw" x="381" y="148"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WNy9KG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WNy9LG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WNy9LW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNy9KW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WNy9Km2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childPorts.5"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNy9K22KEd-G24CFUvkEpw" x="381" y="174"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WNzkMG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WNzkNG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WNzkNW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNzkMW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WNzkMm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childPorts.6"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNzkM22KEd-G24CFUvkEpw" x="381" y="201"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNroYW2KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WNroYm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNroY22KEd-G24CFUvkEpw" x="91" y="15" width="381" height="635"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_WNsPcG2KEd-G24CFUvkEpw" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WNsPdG2KEd-G24CFUvkEpw" type="5003"/>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_WNsPdW2KEd-G24CFUvkEpw" type="7002">
+          <children xmi:type="notation:Node" xmi:id="_WOtjIG2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOtjJG2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WOtjJW2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WOzCsG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOzCtG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOzpwG2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOzCsW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOzCsm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOzCs22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_WOzpwW2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WOzpxW2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WOzpxm2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOzpwm2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WOzpw22KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOzpxG2KEd-G24CFUvkEpw" x="-5" y="34"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOtjIW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOtjIm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOtjI22KEd-G24CFUvkEpw" x="53" y="90"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOtjJm2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOuKMG2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WOuKMW2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WO2tEG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WO2tFG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WO2tFW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WO2tEW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WO2tEm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WO2tE22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_WO2tFm2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WO2tGm2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WO2tG22KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WO2tF22KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WO2tGG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WO2tGW2KEd-G24CFUvkEpw" x="-5" y="34"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOtjJ22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOtjKG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOtjKW2KEd-G24CFUvkEpw" x="51" y="332"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOuKMm2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOuKNm2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WOuKN22KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WO5JUG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WO5JVG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WO5JVW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WO5JUW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WO5JUm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.2/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WO5JU22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_WO5wYG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WO5wZG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WO5wZW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WO5wYW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WO5wYm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.2/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WO5wY22KEd-G24CFUvkEpw" x="-5" y="34"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOuKM22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOuKNG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOuKNW2KEd-G24CFUvkEpw" x="49" y="181"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOuKOG2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOuKPG2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WOuKPW2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WO7lkG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WO8MoG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WO8MoW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WO7lkW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WO7lkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.3/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WO7lk22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOuKOW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOuKOm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.3"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOuKO22KEd-G24CFUvkEpw" x="53" y="15"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOuxQG2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOuxRG2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WOuxRW2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WO9awG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WO-B0W2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WO-B0m2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WO9awW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WO9awm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.4/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WO-B0G2KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOuxQW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOuxQm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.4"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOuxQ22KEd-G24CFUvkEpw" x="53" y="422"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOuxRm2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOuxSm2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WOuxS22KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WO_3AG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WO_3BG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WO_3BW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WO_3AW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WO_3Am2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.5/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WO_3A22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOuxR22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOuxSG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.5"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOuxSW2KEd-G24CFUvkEpw" x="53" y="256"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOuxTG2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOvYUG2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WOvYUW2KEd-G24CFUvkEpw" type="7002"/>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOuxTW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOuxTm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childEntities.6"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOuxT22KEd-G24CFUvkEpw" x="193" y="458"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOvYUm2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOvYVm2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WOvYV22KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOvYU22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOvYVG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childRelations.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOvYVW2KEd-G24CFUvkEpw" x="193" y="193"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOvYWG2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOvYXG2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WOvYXW2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOvYWW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOvYWm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childRelations.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOvYW22KEd-G24CFUvkEpw" x="193" y="306"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOv_YG2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOv_ZG2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WOv_ZW2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOv_YW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOv_Ym2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childRelations.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOv_Y22KEd-G24CFUvkEpw" x="193" y="79"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOv_Zm2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOv_am2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WOv_a22KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOv_Z22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOv_aG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childRelations.3"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOv_aW2KEd-G24CFUvkEpw" x="193" y="110"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOv_bG2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOwmcG2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WOwmcW2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOv_bW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOv_bm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childRelations.4"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOv_b22KEd-G24CFUvkEpw" x="193" y="223"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WOwmcm2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WOwmdm2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WOwmd22KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOwmc22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WOwmdG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childRelations.5"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOwmdW2KEd-G24CFUvkEpw" x="193" y="427"/>
+          </children>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WOkZMG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WOlnUG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WOlnUW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOkZMW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WOkZMm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOkZM22KEd-G24CFUvkEpw" x="298" y="42"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WOlnUm2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WOmOYm2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WOmOY22KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOlnU22KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WOmOYG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOmOYW2KEd-G24CFUvkEpw" x="298" y="68"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WOmOZG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WOmOaG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WOmOaW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOmOZW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WOmOZm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childPorts.2"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOmOZ22KEd-G24CFUvkEpw" x="298" y="95"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WOmOam2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WOm1cG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WOm1cW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOmOa22KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WOmObG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childPorts.3"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOmObW2KEd-G24CFUvkEpw" x="298" y="121"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WOm1cm2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WOm1dm2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WOm1d22KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOm1c22KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WOm1dG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childPorts.4"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOm1dW2KEd-G24CFUvkEpw" x="298" y="148"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WOncgG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WOnchG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WOnchW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOncgW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WOncgm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childPorts.5"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOncg22KEd-G24CFUvkEpw" x="298" y="174"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WOnchm2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WOncim2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WOnci22KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WOnch22KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WOnciG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childPorts.6"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WOnciW2KEd-G24CFUvkEpw" x="298" y="201"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNsPcW2KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WNsPcm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNsPc22KEd-G24CFUvkEpw" x="132" y="685" width="298" height="550"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_WNsPdm2KEd-G24CFUvkEpw" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WNsPem2KEd-G24CFUvkEpw" type="5003"/>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_WNsPe22KEd-G24CFUvkEpw" type="7002">
+          <children xmi:type="notation:Node" xmi:id="_WPbU0G2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WPb74G2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WPb74W2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WPfmQG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WPgNUG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WPgNUW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPfmQW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WPfmQm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childEntities.0/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPfmQ22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_WPgNUm2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WPgNVm2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WPgNV22KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPgNU22KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WPgNVG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childEntities.0/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPgNVW2KEd-G24CFUvkEpw" x="-5" y="34"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPbU0W2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WPbU0m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childEntities.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPbU022KEd-G24CFUvkEpw" x="50" y="15"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WPb74m2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WPb75m2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WPb7522KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WPjQoG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WPjQpG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WPjQpW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPjQoW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WPjQom2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childEntities.1/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPjQo22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPb7422KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WPb75G2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childEntities.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPb75W2KEd-G24CFUvkEpw" x="90" y="105"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WPb76G2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WPci8m2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WPdKAG2KEd-G24CFUvkEpw" type="7002"/>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPb76W2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WPci8G2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childEntities.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPci8W2KEd-G24CFUvkEpw" x="170" y="45"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WPdKAW2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WPdKBW2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WPdKBm2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPdKAm2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WPdKA22KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childRelations.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPdKBG2KEd-G24CFUvkEpw" x="170" y="106"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WPdKB22KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WPdxEG2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WPdxEW2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPdKCG2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WPdKCW2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childRelations.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPdKCm2KEd-G24CFUvkEpw" x="170" y="15"/>
+          </children>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WPFWkG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WPFWlG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WPFWlW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPFWkW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WPFWkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPFWk22KEd-G24CFUvkEpw" x="275" y="42"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WPFWlm2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WPFWmm2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WPF9oG2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPFWl22KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WPFWmG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPFWmW2KEd-G24CFUvkEpw" x="275" y="68"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WPF9oW2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WPF9pW2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WPF9pm2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPF9om2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WPF9o22KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childPorts.2"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPF9pG2KEd-G24CFUvkEpw" x="275" y="95"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WPF9p22KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WPF9q22KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WPF9rG2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPF9qG2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WPF9qW2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childPorts.3"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPF9qm2KEd-G24CFUvkEpw" x="275" y="121"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WPGksG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WPGktG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WPGktW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPGksW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WPGksm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childPorts.4"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPGks22KEd-G24CFUvkEpw" x="275" y="148"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WPGktm2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WPGkum2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WPGku22KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPGkt22KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WPGkuG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childPorts.5"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPGkuW2KEd-G24CFUvkEpw" x="275" y="174"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WPGkvG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WPHLwG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WPHLwW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPGkvW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WPGkvm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childPorts.6"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPGkv22KEd-G24CFUvkEpw" x="275" y="201"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNsPd22KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WNsPeG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNsPeW2KEd-G24CFUvkEpw" x="144" y="1271" width="275" height="232"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_WNsPfG2KEd-G24CFUvkEpw" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WNs2gG2KEd-G24CFUvkEpw" type="5002">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_WNs2gW2KEd-G24CFUvkEpw" y="5"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNsPfW2KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WNsPfm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childRelations.0"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNsPf22KEd-G24CFUvkEpw" x="583" y="697"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_WNtdkG2KEd-G24CFUvkEpw" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WNtdlG2KEd-G24CFUvkEpw" type="5002">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_WNtdlW2KEd-G24CFUvkEpw" y="5"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNtdkW2KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WNtdkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childRelations.1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNtdk22KEd-G24CFUvkEpw" x="583" y="666"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_WNtdlm2KEd-G24CFUvkEpw" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WNtdmm2KEd-G24CFUvkEpw" type="5002">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_WNuEoG2KEd-G24CFUvkEpw" y="5"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNtdl22KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WNtdmG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childRelations.2"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNtdmW2KEd-G24CFUvkEpw" x="583" y="636"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_WNuEoW2KEd-G24CFUvkEpw" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WNuEpW2KEd-G24CFUvkEpw" type="5002">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_WNuEpm2KEd-G24CFUvkEpw" y="5"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNuEom2KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WNuEo22KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childRelations.3"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNuEpG2KEd-G24CFUvkEpw" x="583" y="605"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_WNuEp22KEd-G24CFUvkEpw" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WNuEq22KEd-G24CFUvkEpw" type="5002">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_WNuErG2KEd-G24CFUvkEpw" y="5"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNuEqG2KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WNuEqW2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childRelations.4"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNuEqm2KEd-G24CFUvkEpw" x="583" y="575"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_WNuErW2KEd-G24CFUvkEpw" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WNursG2KEd-G24CFUvkEpw" type="5002">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_WNursW2KEd-G24CFUvkEpw" y="5"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNuErm2KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WNuEr22KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childRelations.5"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNuEsG2KEd-G24CFUvkEpw" x="36" y="1139"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_WNursm2KEd-G24CFUvkEpw" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WNurtm2KEd-G24CFUvkEpw" type="5002">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_WNurt22KEd-G24CFUvkEpw" y="5"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNurs22KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WNurtG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.0/@childRelations.6"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNurtW2KEd-G24CFUvkEpw" x="36" y="1109"/>
+      </children>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WNlhwG2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WNlhxG2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WNlhxW2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNlhwW2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WNlhwm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childPorts.0"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNlhw22KEd-G24CFUvkEpw" x="664" y="726"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WNlhxm2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WNlhym2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WNmI0G2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNlhx22KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WNlhyG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childPorts.1"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNlhyW2KEd-G24CFUvkEpw" x="664" y="695"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WNmI0W2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WNmI1W2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WNmI1m2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNmI0m2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WNmI022KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childPorts.2"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNmI1G2KEd-G24CFUvkEpw" x="664" y="665"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WNmI122KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WNmI222KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WNmI3G2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNmI2G2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WNmI2W2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childPorts.3"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNmI2m2KEd-G24CFUvkEpw" x="664" y="634"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WNmI3W2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WNmv4G2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WNmv4W2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNmI3m2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WNmI322KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childPorts.4"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNmI4G2KEd-G24CFUvkEpw" x="664" y="604"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WNmv4m2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WNmv5m2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WNmv522KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNmv422KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WNmv5G2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childPorts.5"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNmv5W2KEd-G24CFUvkEpw" x="-6" y="1168"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WNmv6G2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WNmv7G2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WNmv7W2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNmv6W2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WNmv6m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.0/@childPorts.6"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNmv622KEd-G24CFUvkEpw" x="-6" y="1138"/>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNdl8W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNdl8m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.0"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNdl822KEd-G24CFUvkEpw" x="429" y="15" width="664" height="1570"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNeNAm2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNeNBm2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNeNB22KEd-G24CFUvkEpw" type="7001"/>
+    <children xmi:type="notation:Node" xmi:id="_WPtosG2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WPtotG2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WPtotW2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPtosW2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WPtosm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.1/@childPorts.0"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPtos22KEd-G24CFUvkEpw" x="-5" y="20"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WPtotm2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WPuPw22KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WPuPxG2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPuPwG2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WPuPwW2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.1/@childPorts.1"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPuPwm2KEd-G24CFUvkEpw" x="-5" y="34"/>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNeNA22KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNeNBG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.1"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNeNBW2KEd-G24CFUvkEpw" x="1173" y="75"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNe0EG2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNe0FG2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNe0FW2KEd-G24CFUvkEpw" type="7001"/>
+    <children xmi:type="notation:Node" xmi:id="_WPxTEG2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WPxTFG2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WPxTFW2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPxTEW2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WPxTEm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.2/@childPorts.0"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPxTE22KEd-G24CFUvkEpw" x="-5" y="20"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WPx6IG2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WPx6JG2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WPx6JW2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WPx6IW2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WPx6Im2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.2/@childPorts.1"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WPx6I22KEd-G24CFUvkEpw" x="-5" y="34"/>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNe0EW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNe0Em2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.2"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNe0E22KEd-G24CFUvkEpw" x="1173" y="15"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNe0Fm2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNe0Gm2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNe0G22KEd-G24CFUvkEpw" type="7001"/>
+    <children xmi:type="notation:Node" xmi:id="_WP0WYG2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WP0WZG2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WP0WZW2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WP0WYW2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WP0WYm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.3/@childPorts.0"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WP0WY22KEd-G24CFUvkEpw" x="-5" y="20"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WP0WZm2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WP09cG2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WP09cW2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WP0WZ22KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WP0WaG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.3/@childPorts.1"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WP0WaW2KEd-G24CFUvkEpw" x="-5" y="34"/>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNe0F22KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNe0GG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.3"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNe0GW2KEd-G24CFUvkEpw" x="1173" y="741"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNfbIG2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNfbJG2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNfbJW2KEd-G24CFUvkEpw" type="7001"/>
+    <children xmi:type="notation:Node" xmi:id="_WP3ZsG2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WP4AwG2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WP4AwW2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WP3ZsW2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WP3Zsm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.4/@childPorts.0"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WP3Zs22KEd-G24CFUvkEpw" x="-5" y="20"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WP4Awm2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WP4Axm2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WP4Ax22KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WP4Aw22KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WP4AxG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.4/@childPorts.1"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WP4AxW2KEd-G24CFUvkEpw" x="-5" y="34"/>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNfbIW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNfbIm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.4"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNfbI22KEd-G24CFUvkEpw" x="1173" y="136"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNfbJm2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNfbKm2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNfbK22KEd-G24CFUvkEpw" type="7001"/>
+    <children xmi:type="notation:Node" xmi:id="_WP7rIG2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WP7rJG2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WP7rJW2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WP7rIW2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WP7rIm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.5/@childPorts.0"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WP7rI22KEd-G24CFUvkEpw" x="-5" y="20"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WP7rJm2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WP7rKm2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WP7rK22KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WP7rJ22KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WP7rKG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.5/@childPorts.1"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WP7rKW2KEd-G24CFUvkEpw" x="-5" y="34"/>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNfbJ22KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNfbKG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.5"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNfbKW2KEd-G24CFUvkEpw" x="1173" y="196"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNfbLG2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNgCMG2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNgCMW2KEd-G24CFUvkEpw" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_WQBxwG2KEd-G24CFUvkEpw" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_WQBxxG2KEd-G24CFUvkEpw" type="5003"/>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_WQCY0G2KEd-G24CFUvkEpw" type="7002">
+          <children xmi:type="notation:Node" xmi:id="_WQHRUG2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WQHRVG2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WQH4YG2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WQXwAG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WQXwBG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WQXwBW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQXwAW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WQXwAm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childEntities.0/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQXwA22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQHRUW2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WQHRUm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childEntities.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQHRU22KEd-G24CFUvkEpw" x="50" y="15"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WQH4YW2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WQH4ZW2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WQH4Zm2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WQaMQG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WQaMRG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WQaMRW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQaMQW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WQaMQm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childEntities.1/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQaMQ22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_WQaMRm2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WQaMSm2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WQaMS22KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQaMR22KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WQaMSG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childEntities.1/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQaMSW2KEd-G24CFUvkEpw" x="-5" y="34"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQH4Ym2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WQH4Y22KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childEntities.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQH4ZG2KEd-G24CFUvkEpw" x="50" y="90"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WQH4Z22KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WQIfcG2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WQIfcW2KEd-G24CFUvkEpw" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_WQcogG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WQcohG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WQcohW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQcogW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WQcogm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childEntities.2/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQcog22KEd-G24CFUvkEpw" x="-5" y="20"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_WQdPkG2KEd-G24CFUvkEpw" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_WQdPlG2KEd-G24CFUvkEpw" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_WQdPlW2KEd-G24CFUvkEpw" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQdPkW2KEd-G24CFUvkEpw"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_WQdPkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+              <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childEntities.2/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQdPk22KEd-G24CFUvkEpw" x="-5" y="34"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQH4aG2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WQH4aW2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childEntities.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQH4am2KEd-G24CFUvkEpw" x="50" y="181"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WQIfcm2KEd-G24CFUvkEpw" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WQTekG2KEd-G24CFUvkEpw" type="5003"/>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_WQTekW2KEd-G24CFUvkEpw" type="7002"/>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQIfc22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WQS3gG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childEntities.3"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQS3gW2KEd-G24CFUvkEpw" x="160" y="223"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WQTekm2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WQTelm2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WQUFoG2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQTek22KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WQTelG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childRelations.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQTelW2KEd-G24CFUvkEpw" x="160" y="110"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WQUFoW2KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WQUFpW2KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WQUFpm2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQUFom2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WQUFo22KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childRelations.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQUFpG2KEd-G24CFUvkEpw" x="160" y="162"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_WQUFp22KEd-G24CFUvkEpw" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_WQUFq22KEd-G24CFUvkEpw" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_WQUssG2KEd-G24CFUvkEpw" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQUFqG2KEd-G24CFUvkEpw"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_WQUFqW2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+            <element xmi:type="kaom:Relation" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childRelations.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQUFqm2KEd-G24CFUvkEpw" x="160" y="193"/>
+          </children>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WQDm8G2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WQDm9G2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WQDm9W2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQDm8W2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WQDm8m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQDm822KEd-G24CFUvkEpw" x="265" y="42"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_WQEOAG2KEd-G24CFUvkEpw" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_WQEOBG2KEd-G24CFUvkEpw" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_WQEOBW2KEd-G24CFUvkEpw" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQEOAW2KEd-G24CFUvkEpw"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_WQEOAm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+          <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQEOA22KEd-G24CFUvkEpw" x="265" y="68"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_WQBxwW2KEd-G24CFUvkEpw"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_WQBxwm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+        <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WQBxw22KEd-G24CFUvkEpw" x="15" y="15" width="265" height="315"/>
+      </children>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WP_VgG2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WP_8kG2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WP_8kW2KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WP_VgW2KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WP_Vgm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.6/@childPorts.0"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WP_Vg22KEd-G24CFUvkEpw" x="372" y="84"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_WP_8km2KEd-G24CFUvkEpw" type="3001">
+      <children xmi:type="notation:DecorationNode" xmi:id="_WP_8lm2KEd-G24CFUvkEpw" type="5001">
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_WP_8l22KEd-G24CFUvkEpw" y="5"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_WP_8k22KEd-G24CFUvkEpw"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_WP_8lG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+      <element xmi:type="kaom:Port" href="TrafficLight.kaom#//@childEntities.6/@childPorts.1"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WP_8lW2KEd-G24CFUvkEpw" x="372" y="57"/>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNfbLW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNfbLm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.6"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNfbL22KEd-G24CFUvkEpw" x="15" y="1097" width="372" height="382"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNgCMm2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNgCNm2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNgCN22KEd-G24CFUvkEpw" type="7001"/>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNgCM22KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNgCNG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.7"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNgCNW2KEd-G24CFUvkEpw" x="2066" y="257"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNgCOG2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNgCPG2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNgpQG2KEd-G24CFUvkEpw" type="7001"/>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNgCOW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNgCOm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.8"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNgCO22KEd-G24CFUvkEpw" x="2068" y="317"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNgpQW2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNgpRW2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNgpRm2KEd-G24CFUvkEpw" type="7001"/>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNgpQm2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNgpQ22KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.9"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNgpRG2KEd-G24CFUvkEpw" x="2075" y="378"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNgpR22KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNgpS22KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNgpTG2KEd-G24CFUvkEpw" type="7001"/>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNgpSG2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNgpSW2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.10"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNgpSm2KEd-G24CFUvkEpw" x="2066" y="438"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNhQUG2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNhQVG2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNhQVW2KEd-G24CFUvkEpw" type="7001"/>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNhQUW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNhQUm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.11"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNhQU22KEd-G24CFUvkEpw" x="1168" y="499"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNhQVm2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNhQWm2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNhQW22KEd-G24CFUvkEpw" type="7001"/>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNhQV22KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNhQWG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.12"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNhQWW2KEd-G24CFUvkEpw" x="1827" y="559"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNhQXG2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNh3YG2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNh3YW2KEd-G24CFUvkEpw" type="7001"/>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNhQXW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNhQXm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.13"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNhQX22KEd-G24CFUvkEpw" x="2025" y="620"/>
+  </children>
+  <children xmi:type="notation:Node" xmi:id="_WNh3Ym2KEd-G24CFUvkEpw" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WNh3Zm2KEd-G24CFUvkEpw" type="5004"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_WNh3Z22KEd-G24CFUvkEpw" type="7001"/>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_WNh3Y22KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WNh3ZG2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Entity" href="TrafficLight.kaom#//@childEntities.14"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WNh3ZW2KEd-G24CFUvkEpw" x="1972" y="681"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_WJTesW2KEd-G24CFUvkEpw"/>
+  <element xmi:type="kaom:Entity" href="TrafficLight.kaom#/"/>
+  <edges xmi:type="notation:Edge" xmi:id="_WQ57gG2KEd-G24CFUvkEpw" type="4001" source="_WNlhwG2KEd-G24CFUvkEpw" target="_WP0WYG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WQ57hG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WQ57hW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WQ57gW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WQ57gm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WQ57g22KEd-G24CFUvkEpw" points="[0, 0, -69, -20]$[9, 0, -60, -20]$[9, 20, -60, 0]$[69, 20, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws57Am2KEd-G24CFUvkEpw" id="(1.0,0.5708414713541666)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws57A22KEd-G24CFUvkEpw" id="(0.0,0.5999857584635416)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WQ7wsG2KEd-G24CFUvkEpw" type="4001" source="_WNlhxm2KEd-G24CFUvkEpw" target="_WP7rIG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WQ7wtG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WQ7wtW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WQ7wsW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WQ7wsm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WQ7ws22KEd-G24CFUvkEpw" points="[0, 0, -69, 494]$[54, 0, -15, 494]$[54, -494, -15, 0]$[69, -494, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws57Bm2KEd-G24CFUvkEpw" id="(1.0,0.6458333333333334)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws57B22KEd-G24CFUvkEpw" id="(0.0,0.6083348592122396)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WQ9l4G2KEd-G24CFUvkEpw" type="4001" source="_WNmI0W2KEd-G24CFUvkEpw" target="_WP3ZsG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WQ9l5G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WQ9l5W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WQ9l4W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WQ9l4m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WQ9l422KEd-G24CFUvkEpw" points="[0, 0, -69, 524]$[39, 0, -30, 524]$[39, -524, -30, 0]$[69, -524, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws57BG2KEd-G24CFUvkEpw" id="(1.0,0.554168701171875)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws57BW2KEd-G24CFUvkEpw" id="(0.0,0.5166676839192709)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WQ-0AG2KEd-G24CFUvkEpw" type="4001" source="_WNmI122KEd-G24CFUvkEpw" target="_WPtosG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WQ_bE22KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WQ_bFG2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WQ_bEG2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WQ_bEW2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WQ_bEm2KEd-G24CFUvkEpw" points="[0, 0, -69, 554]$[24, 0, -45, 554]$[24, -554, -45, 0]$[69, -554, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws5T9W2KEd-G24CFUvkEpw" id="(1.0,0.6291707356770834)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws5T9m2KEd-G24CFUvkEpw" id="(0.0,0.5916671752929688)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WRApMG2KEd-G24CFUvkEpw" type="4001" source="_WNmI3W2KEd-G24CFUvkEpw" target="_WPxTEG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WRApNG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WRApNW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WRApMW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WRApMm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WRApM22KEd-G24CFUvkEpw" points="[0, 0, -69, 584]$[9, 0, -60, 584]$[9, -584, -60, 0]$[69, -584, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws57AG2KEd-G24CFUvkEpw" id="(1.0,0.537506103515625)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws57AW2KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WRCeYG2KEd-G24CFUvkEpw" type="4001" source="_WP_VgG2KEd-G24CFUvkEpw" target="_WNmv4m2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WRCeZG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WRCeZW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WRCeYW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WRCeYm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WRCeY22KEd-G24CFUvkEpw" points="[0, 0, -30, -2]$[15, 0, -15, -2]$[15, 2, -15, 0]$[30, 2, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws5T8W2KEd-G24CFUvkEpw" id="(1.0,0.6611124674479166)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws5T8m2KEd-G24CFUvkEpw" id="(0.0,0.6611124674479166)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WRETkG2KEd-G24CFUvkEpw" type="4001" source="_WP_8km2KEd-G24CFUvkEpw" target="_WNmv6G2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WRETlG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WRETlW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WRETkW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WRETkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childLinks.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WRETk22KEd-G24CFUvkEpw" points="[0, 0, -30, 2]$[15, 0, -15, 2]$[15, -2, -15, 0]$[30, -2, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws5T822KEd-G24CFUvkEpw" id="(1.0,0.5694376627604166)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws5T9G2KEd-G24CFUvkEpw" id="(0.0,0.5694376627604166)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WRGIwG2KEd-G24CFUvkEpw" type="4001" source="_WNsPfG2KEd-G24CFUvkEpw" target="_WNlhwG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WRGIxG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WRGv0G2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WRGIwW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WRGIwm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WRGIw22KEd-G24CFUvkEpw" points="[0, 0, -61, 0]$[61, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4F122KEd-G24CFUvkEpw" id="(1.0,0.5425048828125)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4F2G2KEd-G24CFUvkEpw" id="(0.0,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WRH98G2KEd-G24CFUvkEpw" type="4001" source="_WNtdkG2KEd-G24CFUvkEpw" target="_WNlhxm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WRqJcG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WRqJcW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WRH98W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WRH98m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WRH9822KEd-G24CFUvkEpw" points="[0, 0, -61, 0]$[61, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4s4G2KEd-G24CFUvkEpw" id="(1.0,0.5875)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4s4W2KEd-G24CFUvkEpw" id="(0.0,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WRslsG2KEd-G24CFUvkEpw" type="4001" source="_WNtdlm2KEd-G24CFUvkEpw" target="_WNmI0W2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WRsltG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WRsltW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WRslsW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WRslsm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WRsls22KEd-G24CFUvkEpw" points="[0, 0, -61, 0]$[61, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4s4m2KEd-G24CFUvkEpw" id="(1.0,0.532501220703125)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4s422KEd-G24CFUvkEpw" id="(0.0,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WRua4G2KEd-G24CFUvkEpw" type="4001" source="_WNuEoW2KEd-G24CFUvkEpw" target="_WNmI122KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WRua5G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WRua5W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WRua4W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WRua4m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WRua422KEd-G24CFUvkEpw" points="[0, 0, -61, 0]$[61, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4s5G2KEd-G24CFUvkEpw" id="(1.0,0.57750244140625)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4s5W2KEd-G24CFUvkEpw" id="(0.0,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSFnQG2KEd-G24CFUvkEpw" type="4001" source="_WNuEp22KEd-G24CFUvkEpw" target="_WNmI3W2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSGOUG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSGOUW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSFnQW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSFnQm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSFnQ22KEd-G24CFUvkEpw" points="[0, 0, -61, 0]$[61, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4s5m2KEd-G24CFUvkEpw" id="(1.0,0.522503662109375)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws5T8G2KEd-G24CFUvkEpw" id="(0.0,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSIDgG2KEd-G24CFUvkEpw" type="4001" source="_WNmv4m2KEd-G24CFUvkEpw" target="_WNuErW2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSIDhG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSIDhW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSIDgW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSIDgm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSIDg22KEd-G24CFUvkEpw" points="[0, 0, -46, 0]$[46, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4F022KEd-G24CFUvkEpw" id="(0.0,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4F1G2KEd-G24CFUvkEpw" id="(0.0,0.59666748046875)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSKfwG2KEd-G24CFUvkEpw" type="4001" source="_WNmv6G2KEd-G24CFUvkEpw" target="_WNursm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSKfxG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSKfxW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSKfwW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSKfwm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSKfw22KEd-G24CFUvkEpw" points="[0, 0, -46, 0]$[46, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4F1W2KEd-G24CFUvkEpw" id="(0.0,0.0)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4F1m2KEd-G24CFUvkEpw" id="(0.0,0.54166259765625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSMU8G2KEd-G24CFUvkEpw" type="4001" source="_WNxvAG2KEd-G24CFUvkEpw" target="_WNsPfG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSMU9G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSMU9W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSMU8W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSMU8m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSMU822KEd-G24CFUvkEpw" points="[0, 0, -105, -642]$[30, 0, -75, -642]$[30, 642, -75, 0]$[105, 642, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws2QoG2KEd-G24CFUvkEpw" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws2QoW2KEd-G24CFUvkEpw" id="(0.0,0.5425048828125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSOxMG2KEd-G24CFUvkEpw" type="4001" source="_WNxvBm2KEd-G24CFUvkEpw" target="_WNtdkG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSOxNG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSOxNW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSOxMW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSOxMm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSOxM22KEd-G24CFUvkEpw" points="[0, 0, -105, -585]$[45, 0, -60, -585]$[45, 585, -60, 0]$[105, 585, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws2Qpm2KEd-G24CFUvkEpw" id="(1.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws2Qp22KEd-G24CFUvkEpw" id="(0.0,0.5875)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSQmYG2KEd-G24CFUvkEpw" type="4001" source="_WNyWEm2KEd-G24CFUvkEpw" target="_WNtdlm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSRNcG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSRNcW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSQmYW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSQmYm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.9"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSQmY22KEd-G24CFUvkEpw" points="[0, 0, -105, -528]$[60, 0, -45, -528]$[60, 528, -45, 0]$[105, 528, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws23sm2KEd-G24CFUvkEpw" id="(1.0,0.5166664123535156)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws23s22KEd-G24CFUvkEpw" id="(0.0,0.532501220703125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSUQwG2KEd-G24CFUvkEpw" type="4001" source="_WNyWGG2KEd-G24CFUvkEpw" target="_WNuEoW2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSUQxG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSUQxW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSUQwW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSUQwm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.10"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSUQw22KEd-G24CFUvkEpw" points="[0, 0, -105, -471]$[75, 0, -30, -471]$[75, 471, -30, 0]$[105, 471, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws3ewG2KEd-G24CFUvkEpw" id="(1.0,0.6083323160807291)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws3ewW2KEd-G24CFUvkEpw" id="(0.0,0.57750244140625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSWF8G2KEd-G24CFUvkEpw" type="4001" source="_WNy9Im2KEd-G24CFUvkEpw" target="_WNuEp22KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSWF9G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSWF9W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSWF8W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSWF8m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.11"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSWF822KEd-G24CFUvkEpw" points="[0, 0, -105, -414]$[90, 0, -15, -414]$[90, 414, -15, 0]$[105, 414, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws3exm2KEd-G24CFUvkEpw" id="(1.0,0.5333328247070312)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws3ex22KEd-G24CFUvkEpw" id="(0.0,0.522503662109375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSYiMG2KEd-G24CFUvkEpw" type="4001" source="_WNuErW2KEd-G24CFUvkEpw" target="_WNy9KG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSYiNG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSYiNW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSYiMW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSYiMm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.12"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSYiM22KEd-G24CFUvkEpw" points="[0, 0, -432, 952]$[30, 0, -402, 952]$[30, -479, -402, 473]$[447, -479, 15, 473]$[447, -952, 15, 0]$[432, -952, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WszNUm2KEd-G24CFUvkEpw" id="(1.0,0.59666748046875)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WszNU22KEd-G24CFUvkEpw" id="(1.0,0.625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSczoG2KEd-G24CFUvkEpw" type="4001" source="_WNursm2KEd-G24CFUvkEpw" target="_WNzkMG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSczpG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSczpW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSczoW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSczom2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.13"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSczo22KEd-G24CFUvkEpw" points="[0, 0, -432, 895]$[15, 0, -417, 895]$[15, -449, -417, 446]$[447, -449, 15, 446]$[447, -895, 15, 0]$[432, -895, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WszNVG2KEd-G24CFUvkEpw" id="(1.0,0.54166259765625)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WszNVW2KEd-G24CFUvkEpw" id="(1.0,0.5500005086263021)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSfP4G2KEd-G24CFUvkEpw" type="4001" source="_WOkZMG2KEd-G24CFUvkEpw" target="_WNsPfG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSf28G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSf28W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSfP4W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSfP4m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.14"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSfP422KEd-G24CFUvkEpw" points="[0, 0, -147, 28]$[72, 0, -75, 28]$[72, -28, -75, 0]$[147, -28, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws2Qom2KEd-G24CFUvkEpw" id="(1.0833333333333333,0.64166259765625)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws2Qo22KEd-G24CFUvkEpw" id="(0.0,0.5425048828125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WShFEG2KEd-G24CFUvkEpw" type="4001" source="_WOlnUm2KEd-G24CFUvkEpw" target="_WNtdkG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WShsIG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WShsIW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WShFEW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WShFEm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.15"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WShFE22KEd-G24CFUvkEpw" points="[0, 0, -147, 86]$[87, 0, -60, 86]$[87, -86, -60, 0]$[147, -86, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws2QqG2KEd-G24CFUvkEpw" id="(1.0833333333333333,0.5666605631510416)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws2QqW2KEd-G24CFUvkEpw" id="(0.0,0.5875)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSi6QG2KEd-G24CFUvkEpw" type="4001" source="_WOmOZG2KEd-G24CFUvkEpw" target="_WNtdlm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSjhUG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSjhUW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSi6QW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSi6Qm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.16"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSi6Q22KEd-G24CFUvkEpw" points="[0, 0, -147, 142]$[102, 0, -45, 142]$[102, -142, -45, 0]$[147, -142, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws23tG2KEd-G24CFUvkEpw" id="(1.0833333333333333,0.6583251953125)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws23tW2KEd-G24CFUvkEpw" id="(0.0,0.532501220703125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSkvcG2KEd-G24CFUvkEpw" type="4001" source="_WOmOam2KEd-G24CFUvkEpw" target="_WNuEoW2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSlWgG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSlWgW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSkvcW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSkvcm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.17"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSkvc22KEd-G24CFUvkEpw" points="[0, 0, -147, 200]$[117, 0, -30, 200]$[117, -200, -30, 0]$[147, -200, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws3ewm2KEd-G24CFUvkEpw" id="(1.0833333333333333,0.5833333333333334)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws3ew22KEd-G24CFUvkEpw" id="(0.0,0.57750244140625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSmkoG2KEd-G24CFUvkEpw" type="4001" source="_WOm1cm2KEd-G24CFUvkEpw" target="_WNuEp22KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSnLsG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSnLsW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSmkoW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSmkom2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.18"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSmko22KEd-G24CFUvkEpw" points="[0, 0, -147, 257]$[132, 0, -15, 257]$[132, -257, -15, 0]$[147, -257, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws3eyG2KEd-G24CFUvkEpw" id="(1.0833333333333333,0.508331298828125)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4F0G2KEd-G24CFUvkEpw" id="(0.0,0.522503662109375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSoZ0G2KEd-G24CFUvkEpw" type="4001" source="_WNuErW2KEd-G24CFUvkEpw" target="_WOncgG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSpA4G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSpA4W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSoZ0W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSoZ0m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.19"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSoZ022KEd-G24CFUvkEpw" points="[0, 0, -390, 281]$[30, 0, -360, 281]$[30, 106, -360, 387]$[405, 106, 15, 387]$[405, -281, 15, 0]$[390, -281, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1Cg22KEd-G24CFUvkEpw" id="(1.0,0.59666748046875)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1ChG2KEd-G24CFUvkEpw" id="(1.0833333333333333,0.5999959309895834)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSqPAG2KEd-G24CFUvkEpw" type="4001" source="_WNursm2KEd-G24CFUvkEpw" target="_WOnchm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSq2EG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSq2EW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSqPAW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSqPAm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.20"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSqPA22KEd-G24CFUvkEpw" points="[0, 0, -390, 224]$[15, 0, -375, 224]$[15, 136, -375, 360]$[405, 136, 15, 360]$[405, -224, 15, 0]$[390, -224, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1ChW2KEd-G24CFUvkEpw" id="(1.0,0.54166259765625)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1Chm2KEd-G24CFUvkEpw" id="(1.0833333333333333,0.524993896484375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSsEMG2KEd-G24CFUvkEpw" type="4001" source="_WPFWkG2KEd-G24CFUvkEpw" target="_WNsPfG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSsrQG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSsrQW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSsEMW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSsEMm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.21"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSsEM22KEd-G24CFUvkEpw" points="[0, 0, -158, 614]$[83, 0, -75, 614]$[83, -614, -75, 0]$[158, -614, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws2QpG2KEd-G24CFUvkEpw" id="(1.0,0.5708414713541666)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws2QpW2KEd-G24CFUvkEpw" id="(0.0,0.5425048828125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSt5YG2KEd-G24CFUvkEpw" type="4001" source="_WPFWlm2KEd-G24CFUvkEpw" target="_WNtdkG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSt5ZG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSt5ZW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSt5YW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSt5Ym2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.22"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSt5Y22KEd-G24CFUvkEpw" points="[0, 0, -158, 671]$[98, 0, -60, 671]$[98, -671, -60, 0]$[158, -671, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws23sG2KEd-G24CFUvkEpw" id="(1.0,0.6625162760416666)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws23sW2KEd-G24CFUvkEpw" id="(0.0,0.5875)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSvukG2KEd-G24CFUvkEpw" type="4001" source="_WPF9oW2KEd-G24CFUvkEpw" target="_WNtdlm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSvulG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSvulW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSvukW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSvukm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.23"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSvuk22KEd-G24CFUvkEpw" points="[0, 0, -158, 728]$[113, 0, -45, 728]$[113, -728, -45, 0]$[158, -728, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws23tm2KEd-G24CFUvkEpw" id="(1.0,0.5875040690104166)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws23t22KEd-G24CFUvkEpw" id="(0.0,0.532501220703125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSw8sG2KEd-G24CFUvkEpw" type="4001" source="_WPF9p22KEd-G24CFUvkEpw" target="_WNuEoW2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSxjwG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSxjwW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSw8sW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSw8sm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.24"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSw8s22KEd-G24CFUvkEpw" points="[0, 0, -158, 786]$[128, 0, -30, 786]$[128, -786, -30, 0]$[158, -786, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws3exG2KEd-G24CFUvkEpw" id="(1.0,0.51251220703125)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws3exW2KEd-G24CFUvkEpw" id="(0.0,0.57750244140625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WSyx4G2KEd-G24CFUvkEpw" type="4001" source="_WPGksG2KEd-G24CFUvkEpw" target="_WNuEp22KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WSzY8G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WSzY8W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WSyx4W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WSyx4m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.25"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WSyx422KEd-G24CFUvkEpw" points="[0, 0, -158, 842]$[143, 0, -15, 842]$[143, -842, -15, 0]$[158, -842, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4F0W2KEd-G24CFUvkEpw" id="(1.0,0.6041666666666666)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws4F0m2KEd-G24CFUvkEpw" id="(0.0,0.522503662109375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WS0nEG2KEd-G24CFUvkEpw" type="4001" source="_WNuErW2KEd-G24CFUvkEpw" target="_WPGktm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WS1OIG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WS1OIW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WS0nEW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WS0nEm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.26"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WS0nE22KEd-G24CFUvkEpw" points="[0, 0, -379, -305]$[30, 0, -349, -305]$[30, 374, -349, 69]$[394, 374, 15, 69]$[394, 305, 15, 0]$[379, 305, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1plW2KEd-G24CFUvkEpw" id="(1.0,0.59666748046875)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1plm2KEd-G24CFUvkEpw" id="(1.0,0.5291748046875)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WS2cQG2KEd-G24CFUvkEpw" type="4001" source="_WNursm2KEd-G24CFUvkEpw" target="_WPGkvG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WS2cRG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WS2cRW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WS2cQW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WS2cQm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childLinks.27"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WS2cQ22KEd-G24CFUvkEpw" points="[0, 0, -379, -361]$[15, 0, -364, -361]$[15, 404, -364, 43]$[394, 404, 15, 43]$[394, 361, 15, 0]$[379, 361, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1pl22KEd-G24CFUvkEpw" id="(1.0,0.54166259765625)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1pmG2KEd-G24CFUvkEpw" id="(1.0,0.620849609375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WS4RcG2KEd-G24CFUvkEpw" type="4001" source="_WOAYgG2KEd-G24CFUvkEpw" target="_WN7gCm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WS4RdG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WS4RdW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WS4RcW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WS4Rcm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WS4Rc22KEd-G24CFUvkEpw" points="[0, 0, -206, -107]$[-15, 0, -221, -107]$[-15, 32, -221, -75]$[116, 32, -90, -75]$[116, 107, -90, 0]$[206, 107, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsxYIW2KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsxYIm2KEd-G24CFUvkEpw" id="(0.0,0.5550003051757812)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WS5fkG2KEd-G24CFUvkEpw" type="4001" source="_WOAYgG2KEd-G24CFUvkEpw" target="_WN8uLG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WS6GoG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WS6GoW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WS5fkW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WS5fkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WS5fk22KEd-G24CFUvkEpw" points="[0, 0, -206, -152]$[-15, 0, -221, -152]$[-15, 32, -221, -120]$[116, 32, -90, -120]$[116, 152, -90, 0]$[206, 152, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsymQm2KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsymQ22KEd-G24CFUvkEpw" id="(0.0,0.582501220703125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WS7UwG2KEd-G24CFUvkEpw" type="4001" source="_WOCNsG2KEd-G24CFUvkEpw" target="_WN64_G2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WS770G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WS770W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WS7UwW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WS7Uwm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WS7Uw22KEd-G24CFUvkEpw" points="[0, 0, -205, -123]$[-15, 0, -220, -123]$[-15, 32, -220, -91]$[70, 32, -135, -91]$[70, 123, -135, 0]$[205, 123, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WswKAG2KEd-G24CFUvkEpw" id="(0.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WswKAW2KEd-G24CFUvkEpw" id="(0.0,0.5100006103515625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WS9xAG2KEd-G24CFUvkEpw" type="4001" source="_WOPCAG2KEd-G24CFUvkEpw" target="_WN7gBG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WS9xBG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WS9xBW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WS9xAW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WS9xAm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WS9xA22KEd-G24CFUvkEpw" points="[0, 0, -231, -84]$[-30, 0, -261, -84]$[-30, 47, -261, -37]$[81, 47, -150, -37]$[81, 84, -150, 0]$[231, 84, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WswKBG2KEd-G24CFUvkEpw" id="(0.0,0.5166676839192709)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WswKBW2KEd-G24CFUvkEpw" id="(0.0,0.5875)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTJXMG2KEd-G24CFUvkEpw" type="4001" source="_WOPCBm2KEd-G24CFUvkEpw" target="_WN7gCm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTJXNG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTJXNW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTJXMW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTJXMm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTJXM22KEd-G24CFUvkEpw" points="[0, 0, -231, 58]$[-15, 0, -246, 58]$[-15, 18, -246, 76]$[126, 18, -105, 76]$[126, -58, -105, 0]$[231, -58, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsxYI22KEd-G24CFUvkEpw" id="(0.0,0.5166676839192709)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsxYJG2KEd-G24CFUvkEpw" id="(0.0,0.5550003051757812)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTLMYG2KEd-G24CFUvkEpw" type="4001" source="_WOPCBm2KEd-G24CFUvkEpw" target="_WN8HEm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTLMZG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTLMZW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTLMYW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTLMYm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTLMY22KEd-G24CFUvkEpw" points="[0, 0, -231, -107]$[-15, 0, -246, -107]$[-15, 18, -246, -89]$[126, 18, -105, -89]$[126, 107, -105, 0]$[231, 107, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsxYJW2KEd-G24CFUvkEpw" id="(0.0,0.5166676839192709)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsxYJm2KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTNooG2KEd-G24CFUvkEpw" type="4001" source="_WOSFUG2KEd-G24CFUvkEpw" target="_WN8uJm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTNopG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTNopW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTNooW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTNoom2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTNoo22KEd-G24CFUvkEpw" points="[0, 0, -205, 89]$[-15, 0, -220, 89]$[-15, 32, -220, 121]$[160, 32, -45, 121]$[160, -89, -45, 0]$[205, -89, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsx_OG2KEd-G24CFUvkEpw" id="(0.0,0.6249949137369791)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsx_OW2KEd-G24CFUvkEpw" id="(0.0,0.5100006103515625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTPd0G2KEd-G24CFUvkEpw" type="4001" source="_WOSFUG2KEd-G24CFUvkEpw" target="_WN9VMm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTQE4G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTQE4W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTPd0W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTPd0m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTPd022KEd-G24CFUvkEpw" points="[0, 0, -205, -2]$[-15, 0, -220, -2]$[-15, 32, -220, 30]$[160, 32, -45, 30]$[160, 2, -45, 0]$[205, 2, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsymRm2KEd-G24CFUvkEpw" id="(0.0,0.6249949137369791)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsymR22KEd-G24CFUvkEpw" id="(0.0,0.520001220703125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTR6EG2KEd-G24CFUvkEpw" type="4001" source="_WOUhkG2KEd-G24CFUvkEpw" target="_WN8HGG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTR6FG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTR6FW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTR6EW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTR6Em2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTR6E22KEd-G24CFUvkEpw" points="[0, 0, -222, -122]$[-30, 0, -252, -122]$[-30, 47, -252, -75]$[192, 47, -30, -75]$[192, 122, -30, 0]$[222, 122, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsx_MG2KEd-G24CFUvkEpw" id="(0.0,0.5333302815755209)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsx_MW2KEd-G24CFUvkEpw" id="(0.0,0.575)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTTvQG2KEd-G24CFUvkEpw" type="4001" source="_WOUhlm2KEd-G24CFUvkEpw" target="_WN8uIG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTTvRG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTTvRW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTTvQW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTTvQm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.9"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTTvQ22KEd-G24CFUvkEpw" points="[0, 0, -222, 44]$[-15, 0, -237, 44]$[-15, 18, -237, 62]$[162, 18, -60, 62]$[162, -44, -60, 0]$[222, -44, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsx_NG2KEd-G24CFUvkEpw" id="(0.0,0.5333302815755209)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsx_NW2KEd-G24CFUvkEpw" id="(0.0,0.554998779296875)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTWLgG2KEd-G24CFUvkEpw" type="4001" source="_WOUhlm2KEd-G24CFUvkEpw" target="_WN8uJm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTWLhG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTWLhW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTWLgW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTWLgm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.10"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTWLg22KEd-G24CFUvkEpw" points="[0, 0, -222, 13]$[-15, 0, -237, 13]$[-15, 18, -237, 31]$[162, 18, -60, 31]$[162, -13, -60, 0]$[222, -13, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsymQG2KEd-G24CFUvkEpw" id="(0.0,0.5333302815755209)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsymQW2KEd-G24CFUvkEpw" id="(0.0,0.5100006103515625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTYAsG2KEd-G24CFUvkEpw" type="4001" source="_WOXk4G2KEd-G24CFUvkEpw" target="_WN8uIG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTYAtG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTYAtW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTYAsW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTYAsm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.11"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTYAs22KEd-G24CFUvkEpw" points="[0, 0, -227, -61]$[-30, 0, -257, -61]$[-30, 47, -257, -14]$[137, 47, -90, -14]$[137, 61, -90, 0]$[227, 61, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsx_Nm2KEd-G24CFUvkEpw" id="(0.0,0.6083323160807291)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsx_N22KEd-G24CFUvkEpw" id="(0.0,0.554998779296875)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTac8G2KEd-G24CFUvkEpw" type="4001" source="_WOXk4G2KEd-G24CFUvkEpw" target="_WN64_G2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTbEAG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTbEAW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTac8W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTac8m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.12"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTac822KEd-G24CFUvkEpw" points="[0, 0, -227, 43]$[-30, 0, -257, 43]$[-30, 47, -257, 90]$[137, 47, -90, 90]$[137, -43, -90, 0]$[227, -43, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WswKAm2KEd-G24CFUvkEpw" id="(0.0,0.6083323160807291)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WswKA22KEd-G24CFUvkEpw" id="(0.0,0.5100006103515625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTdgQG2KEd-G24CFUvkEpw" type="4001" source="_WOYL8m2KEd-G24CFUvkEpw" target="_WN7gBG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTdgRG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTeHUG2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTdgQW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTdgQm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.13"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTdgQ22KEd-G24CFUvkEpw" points="[0, 0, -227, 20]$[-15, 0, -242, 20]$[-15, 18, -242, 38]$[107, 18, -120, 38]$[107, -20, -120, 0]$[227, -20, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WswxEG2KEd-G24CFUvkEpw" id="(0.0,0.6083323160807291)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsxYIG2KEd-G24CFUvkEpw" id="(0.0,0.5875)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTgjkG2KEd-G24CFUvkEpw" type="4001" source="_WOYL8m2KEd-G24CFUvkEpw" target="_WN8uLG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTgjlG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTgjlW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTgjkW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTgjkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.14"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTgjk22KEd-G24CFUvkEpw" points="[0, 0, -227, 103]$[-15, 0, -242, 103]$[-15, 18, -242, 121]$[107, 18, -120, 121]$[107, -103, -120, 0]$[227, -103, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsymRG2KEd-G24CFUvkEpw" id="(0.0,0.6083323160807291)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsymRW2KEd-G24CFUvkEpw" id="(0.0,0.582501220703125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTi_0G2KEd-G24CFUvkEpw" type="4001" source="_WObPQG2KEd-G24CFUvkEpw" target="_WN8HEm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTi_1G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTi_1W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTi_0W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTi_0m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.15"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTi_022KEd-G24CFUvkEpw" points="[0, 0, -216, 226]$[-30, 0, -246, 226]$[-30, 47, -246, 273]$[141, 47, -75, 273]$[141, -226, -75, 0]$[216, -226, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsxYJ22KEd-G24CFUvkEpw" id="(0.0,0.5499979654947916)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WsxYKG2KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTlcEG2KEd-G24CFUvkEpw" type="4001" source="_WObPRm2KEd-G24CFUvkEpw" target="_WN8HGG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTmDIG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTmDIW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTlcEW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTlcEm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.16"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTlcE22KEd-G24CFUvkEpw" points="[0, 0, -216, 58]$[-15, 0, -231, 58]$[-15, 18, -231, 76]$[201, 18, -15, 76]$[201, -58, -15, 0]$[216, -58, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsx_Mm2KEd-G24CFUvkEpw" id="(0.0,0.5499979654947916)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsx_M22KEd-G24CFUvkEpw" id="(0.0,0.575)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTn4UG2KEd-G24CFUvkEpw" type="4001" source="_WObPRm2KEd-G24CFUvkEpw" target="_WN9VMm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTofYG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTofYW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTn4UW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTn4Um2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.0/@childLinks.17"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTn4U22KEd-G24CFUvkEpw" points="[0, 0, -216, 88]$[-15, 0, -231, 88]$[-15, 18, -231, 106]$[201, 18, -15, 106]$[201, -88, -15, 0]$[216, -88, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WszNUG2KEd-G24CFUvkEpw" id="(0.0,0.5499979654947916)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WszNUW2KEd-G24CFUvkEpw" id="(0.0,0.520001220703125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTqUkG2KEd-G24CFUvkEpw" type="4001" source="_WOzCsG2KEd-G24CFUvkEpw" target="_WOv_YG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTqUlG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTqUlW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTqUkW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTqUkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTqUk22KEd-G24CFUvkEpw" points="[0, 0, -145, 29]$[-30, 0, -175, 29]$[-30, 47, -175, 76]$[85, 47, -60, 76]$[85, -29, -60, 0]$[145, -29, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsz0Zm2KEd-G24CFUvkEpw" id="(0.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsz0Z22KEd-G24CFUvkEpw" id="(0.0,0.5724998474121094)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTsJwG2KEd-G24CFUvkEpw" type="4001" source="_WOzCsG2KEd-G24CFUvkEpw" target="_WOv_Zm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTsJxG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTsJxW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTsJwW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTsJwm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTsJw22KEd-G24CFUvkEpw" points="[0, 0, -145, -2]$[-30, 0, -175, -2]$[-30, 47, -175, 45]$[85, 47, -60, 45]$[85, 2, -60, 0]$[145, 2, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws0bcG2KEd-G24CFUvkEpw" id="(0.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws0bcW2KEd-G24CFUvkEpw" id="(0.0,0.5274993896484375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTt-8G2KEd-G24CFUvkEpw" type="4001" source="_WOzpwW2KEd-G24CFUvkEpw" target="_WOvYUm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTt-9G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTumAG2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTt-8W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTt-8m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTt-822KEd-G24CFUvkEpw" points="[0, 0, -145, -71]$[-15, 0, -160, -71]$[-15, 18, -160, -53]$[115, 18, -30, -53]$[115, 71, -30, 0]$[145, 71, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WszNVm2KEd-G24CFUvkEpw" id="(0.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_WszNV22KEd-G24CFUvkEpw" id="(0.0,0.5050003051757812)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTv0IG2KEd-G24CFUvkEpw" type="4001" source="_WOzpwW2KEd-G24CFUvkEpw" target="_WOv_bG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTwbMG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTwbMW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTv0IW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTv0Im2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTv0I22KEd-G24CFUvkEpw" points="[0, 0, -145, -101]$[-15, 0, -160, -101]$[-15, 18, -160, -83]$[115, 18, -30, -83]$[115, 101, -30, 0]$[145, 101, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws0bdG2KEd-G24CFUvkEpw" id="(0.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws0bdW2KEd-G24CFUvkEpw" id="(0.0,0.5600006103515625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WTy3cG2KEd-G24CFUvkEpw" type="4001" source="_WO2tEG2KEd-G24CFUvkEpw" target="_WOvYUm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WTy3dG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WTy3dW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WTy3cW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WTy3cm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WTy3c22KEd-G24CFUvkEpw" points="[0, 0, -147, 157]$[-30, 0, -177, 157]$[-30, 47, -177, 204]$[102, 47, -45, 204]$[102, -157, -45, 0]$[147, -157, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsz0YG2KEd-G24CFUvkEpw" id="(0.0,0.5333302815755209)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsz0YW2KEd-G24CFUvkEpw" id="(0.0,0.5050003051757812)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WT0soG2KEd-G24CFUvkEpw" type="4001" source="_WO2tFm2KEd-G24CFUvkEpw" target="_WOvYWG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WT0spG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WT0spW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WT0soW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WT0som2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WT0so22KEd-G24CFUvkEpw" points="[0, 0, -147, 58]$[-15, 0, -162, 58]$[-15, 18, -162, 76]$[132, 18, -15, 76]$[132, -58, -15, 0]$[147, -58, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsz0Ym2KEd-G24CFUvkEpw" id="(0.0,0.5333302815755209)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsz0Y22KEd-G24CFUvkEpw" id="(0.0,0.5649993896484375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WT2h0G2KEd-G24CFUvkEpw" type="4001" source="_WO2tFm2KEd-G24CFUvkEpw" target="_WOwmcm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WT2h1G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WT2h1W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WT2h0W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WT2h0m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WT2h022KEd-G24CFUvkEpw" points="[0, 0, -147, -63]$[-15, 0, -162, -63]$[-15, 18, -162, -45]$[132, 18, -15, -45]$[132, 63, -15, 0]$[147, 63, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws0beG2KEd-G24CFUvkEpw" id="(0.0,0.5333302815755209)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1CgG2KEd-G24CFUvkEpw" id="(0.0,0.54749755859375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WT4XAG2KEd-G24CFUvkEpw" type="4001" source="_WO5JUG2KEd-G24CFUvkEpw" target="_WOvYWG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WT4-EG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WT4-EW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WT4XAW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WT4XAm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WT4XA22KEd-G24CFUvkEpw" points="[0, 0, -149, -107]$[-15, 0, -164, -107]$[-15, 32, -164, -75]$[119, 32, -30, -75]$[119, 107, -30, 0]$[149, 107, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsz0ZG2KEd-G24CFUvkEpw" id="(0.0,0.5166676839192709)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsz0ZW2KEd-G24CFUvkEpw" id="(0.0,0.5649993896484375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WT6MMG2KEd-G24CFUvkEpw" type="4001" source="_WO5wYG2KEd-G24CFUvkEpw" target="_WOv_YG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WT6zQG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WT6zQW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WT6MMW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WT6MMm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WT6MM22KEd-G24CFUvkEpw" points="[0, 0, -149, 134]$[-15, 0, -164, 134]$[-15, 18, -164, 152]$[74, 18, -75, 152]$[74, -134, -75, 0]$[149, -134, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsz0aG2KEd-G24CFUvkEpw" id="(0.0,0.5166676839192709)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Wsz0aW2KEd-G24CFUvkEpw" id="(0.0,0.5724998474121094)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WT8BYG2KEd-G24CFUvkEpw" type="4001" source="_WO7lkG2KEd-G24CFUvkEpw" target="_WOv_Zm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WT8ocG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WT8ocW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WT8BYW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WT8BYm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.9"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WT8BY22KEd-G24CFUvkEpw" points="[0, 0, -145, -77]$[-15, 0, -160, -77]$[-15, 32, -160, -45]$[55, 32, -90, -45]$[55, 77, -90, 0]$[145, 77, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws0bcm2KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws0bc22KEd-G24CFUvkEpw" id="(0.0,0.5274993896484375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WT-doG2KEd-G24CFUvkEpw" type="4001" source="_WO9awG2KEd-G24CFUvkEpw" target="_WOwmcm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WT-dpG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WT-dpW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WT-doW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WT-dom2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.10"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WT-do22KEd-G24CFUvkEpw" points="[0, 0, -145, 13]$[-15, 0, -160, 13]$[-15, 32, -160, 45]$[55, 32, -90, 45]$[55, -13, -90, 0]$[145, -13, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1CgW2KEd-G24CFUvkEpw" id="(0.0,0.6249949137369791)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1Cgm2KEd-G24CFUvkEpw" id="(0.0,0.54749755859375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUAS0G2KEd-G24CFUvkEpw" type="4001" source="_WO_3AG2KEd-G24CFUvkEpw" target="_WOv_bG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUAS1G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUAS1W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUAS0W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUAS0m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.1/@childLinks.11"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUAS022KEd-G24CFUvkEpw" points="[0, 0, -145, 51]$[-15, 0, -160, 51]$[-15, 32, -160, 83]$[85, 32, -60, 83]$[85, -51, -60, 0]$[145, -51, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws0bdm2KEd-G24CFUvkEpw" id="(0.0,0.6083323160807291)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws0bd22KEd-G24CFUvkEpw" id="(0.0,0.5600006103515625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUCIAG2KEd-G24CFUvkEpw" type="4001" source="_WPfmQG2KEd-G24CFUvkEpw" target="_WPdKAW2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUCIBG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUCIBW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUCIAW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUCIAm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUCIA22KEd-G24CFUvkEpw" points="[0, 0, -125, -73]$[-30, 0, -155, -73]$[-30, 47, -155, -26]$[110, 47, -15, -26]$[110, 73, -15, 0]$[125, 73, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1Ch22KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1CiG2KEd-G24CFUvkEpw" id="(0.0,0.5100006103515625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUD9MG2KEd-G24CFUvkEpw" type="4001" source="_WPfmQG2KEd-G24CFUvkEpw" target="_WPdKB22KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUEkQG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUEkQW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUD9MW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUD9Mm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUD9M22KEd-G24CFUvkEpw" points="[0, 0, -125, 18]$[-30, 0, -155, 18]$[-30, 47, -155, 65]$[110, 47, -15, 65]$[110, -18, -15, 0]$[125, -18, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1pkW2KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1pkm2KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUFyYG2KEd-G24CFUvkEpw" type="4001" source="_WPgNUm2KEd-G24CFUvkEpw" target="_WPdKB22KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUGZcG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUGZcW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUFyYW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUFyYm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUFyY22KEd-G24CFUvkEpw" points="[0, 0, -125, 32]$[-15, 0, -140, 32]$[-15, 18, -140, 50]$[95, 18, -30, 50]$[95, -32, -30, 0]$[125, -32, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1pk22KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1plG2KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUMgEG2KEd-G24CFUvkEpw" type="4001" source="_WPjQoG2KEd-G24CFUvkEpw" target="_WPdKAW2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUNuMG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUNuMW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUMgEW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUMgEm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.0/@childEntities.2/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUMgE22KEd-G24CFUvkEpw" points="[0, 0, -85, 17]$[-15, 0, -100, 17]$[-15, 32, -100, 49]$[55, 32, -30, 49]$[55, -17, -30, 0]$[85, -17, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1CiW2KEd-G24CFUvkEpw" id="(0.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws1pkG2KEd-G24CFUvkEpw" id="(0.0,0.5100006103515625)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUPjYG2KEd-G24CFUvkEpw" type="4001" source="_WQDm8G2KEd-G24CFUvkEpw" target="_WP_VgG2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUPjZG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUPjZW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUPjYW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUPjYm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.6/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUPjY22KEd-G24CFUvkEpw" points="[0, 0, -76, 0]$[76, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws7JIm2KEd-G24CFUvkEpw" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws7JI22KEd-G24CFUvkEpw" id="(0.0,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WURYkG2KEd-G24CFUvkEpw" type="4001" source="_WQEOAG2KEd-G24CFUvkEpw" target="_WP_8km2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WURYlG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WURYlW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WURYkW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WURYkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.6/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WURYk22KEd-G24CFUvkEpw" points="[0, 0, -76, 53]$[30, 0, -46, 53]$[30, -53, -46, 0]$[76, -53, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws7JJG2KEd-G24CFUvkEpw" id="(1.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws7JJW2KEd-G24CFUvkEpw" id="(0.0,0.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUTNwG2KEd-G24CFUvkEpw" type="4001" source="_WQXwAG2KEd-G24CFUvkEpw" target="_WQTekm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUTNxG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUTNxW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUTNwW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUTNwm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUTNw22KEd-G24CFUvkEpw" points="[0, 0, -115, -77]$[-15, 0, -130, -77]$[-15, 32, -130, -45]$[55, 32, -60, -45]$[55, 77, -60, 0]$[115, 77, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws57CG2KEd-G24CFUvkEpw" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws6iEG2KEd-G24CFUvkEpw" id="(0.0,0.5275001525878906)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUVC8G2KEd-G24CFUvkEpw" type="4001" source="_WQaMQG2KEd-G24CFUvkEpw" target="_WQTekm2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUVC9G2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUVC9W2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUVC8W2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUVC8m2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUVC822KEd-G24CFUvkEpw" points="[0, 0, -115, -2]$[-30, 0, -145, -2]$[-30, 47, -145, 45]$[70, 47, -45, 45]$[70, 2, -45, 0]$[115, 2, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws6iEW2KEd-G24CFUvkEpw" id="(0.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws6iEm2KEd-G24CFUvkEpw" id="(0.0,0.5275001525878906)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUW4IG2KEd-G24CFUvkEpw" type="4001" source="_WQaMQG2KEd-G24CFUvkEpw" target="_WQUFp22KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUXfMG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUXfMW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUW4IW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUW4Im2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUW4I22KEd-G24CFUvkEpw" points="[0, 0, -115, -85]$[-30, 0, -145, -85]$[-30, 47, -145, -38]$[70, 47, -45, -38]$[70, 85, -45, 0]$[115, 85, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws6iF22KEd-G24CFUvkEpw" id="(0.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws6iGG2KEd-G24CFUvkEpw" id="(0.0,0.532501220703125)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUZUYG2KEd-G24CFUvkEpw" type="4001" source="_WQaMRm2KEd-G24CFUvkEpw" target="_WQUFoW2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUZUZG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUZUZW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUZUYW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUZUYm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUZUY22KEd-G24CFUvkEpw" points="[0, 0, -115, -40]$[-15, 0, -130, -40]$[-15, 18, -130, -22]$[85, 18, -30, -22]$[85, 40, -30, 0]$[115, 40, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws6iE22KEd-G24CFUvkEpw" id="(0.0,0.5916671752929688)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws6iFG2KEd-G24CFUvkEpw" id="(0.0,0.5775009155273437)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUbJkG2KEd-G24CFUvkEpw" type="4001" source="_WQcogG2KEd-G24CFUvkEpw" target="_WQUFoW2KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUbJlG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUbJlW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUbJkW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUbJkm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUbJk22KEd-G24CFUvkEpw" points="[0, 0, -115, 37]$[-15, 0, -130, 37]$[-15, 32, -130, 69]$[85, 32, -30, 69]$[85, -37, -30, 0]$[115, -37, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws6iFW2KEd-G24CFUvkEpw" id="(0.0,0.5166676839192709)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws6iFm2KEd-G24CFUvkEpw" id="(0.0,0.5775009155273437)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_WUc-wG2KEd-G24CFUvkEpw" type="4001" source="_WQdPkG2KEd-G24CFUvkEpw" target="_WQUFp22KEd-G24CFUvkEpw">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WUc-xG2KEd-G24CFUvkEpw" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_WUc-xW2KEd-G24CFUvkEpw" y="40"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_WUc-wW2KEd-G24CFUvkEpw"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_WUc-wm2KEd-G24CFUvkEpw" fontName="Lucida Grande"/>
+    <element xmi:type="kaom:Link" href="TrafficLight.kaom#//@childEntities.6/@childEntities.0/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_WUc-w22KEd-G24CFUvkEpw" points="[0, 0, -115, 20]$[-15, 0, -130, 20]$[-15, 18, -130, 38]$[100, 18, -15, 38]$[100, -20, -15, 0]$[115, -20, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws7JIG2KEd-G24CFUvkEpw" id="(0.0,0.5166676839192709)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_Ws7JIW2KEd-G24CFUvkEpw" id="(0.0,0.532501220703125)"/>
+  </edges>
+</notation:Diagram>
