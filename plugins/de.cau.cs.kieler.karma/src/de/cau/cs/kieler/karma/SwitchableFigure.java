@@ -27,9 +27,9 @@ import org.eclipse.swt.graphics.Color;
 
 /**
  * 
- * @author ckru
- * Class for encapsulating the actual drawn figure to avoid inheritance problems.
- * Also has some additional methods for example changing resizeability. 
+ * @author ckru Class for encapsulating the actual drawn figure to avoid
+ *         inheritance problems. Also has some additional methods for example
+ *         changing resizeability.
  * 
  */
 public class SwitchableFigure extends Shape {
@@ -62,7 +62,6 @@ public class SwitchableFigure extends Shape {
 
     @Override
     public void paint(final Graphics graphics) {
-        super.paint(graphics);
         if (currentFigure != null) {
             Rectangle newBounds = new Rectangle();
             newBounds.x = this.getBounds().x + 1;
@@ -72,6 +71,7 @@ public class SwitchableFigure extends Shape {
             currentFigure.setBounds(newBounds);
             currentFigure.paint(graphics);
         }
+        super.paint(graphics);
     }
 
     /**
@@ -96,9 +96,11 @@ public class SwitchableFigure extends Shape {
 
         if (this.getParent() instanceof DefaultSizeNodeFigure
                 && figure instanceof ScalableImageFigure) {
-            ((DefaultSizeNodeFigure) this.getParent()).setDefaultSize(
-                    ((ScalableImageFigure) figure).getImage().getBounds().width + 2,
-                    ((ScalableImageFigure) figure).getImage().getBounds().height + 2);
+            ((DefaultSizeNodeFigure) this.getParent())
+                    .setDefaultSize(((ScalableImageFigure) figure).getImage()
+                            .getBounds().width + 2,
+                            ((ScalableImageFigure) figure).getImage()
+                                    .getBounds().height + 2);
         }
         // this.repaint();
     }
@@ -236,14 +238,14 @@ public class SwitchableFigure extends Shape {
             return -1;
         }
     }
-    
+
     @Override
     public void setLineDash(final float[] dash) {
         if (currentFigure instanceof Shape) {
             ((Shape) currentFigure).setLineDash(dash);
         }
     }
-    
+
     @Override
     public float[] getLineDash() {
         if (currentFigure instanceof Shape) {
@@ -265,17 +267,17 @@ public class SwitchableFigure extends Shape {
     /**
      * set the figure to be resizeable or not.
      * 
-     * @param b false for not resizeable
+     * @param b
+     *            false for not resizeable
      */
     public void setResizeable(final Boolean b) {
         resizeable = b;
     }
-    
+
     @Override
     public void setFill(final boolean fill) {
         if (currentFigure instanceof Shape) {
             ((Shape) currentFigure).setFill(fill);
         }
     }
-
 }
