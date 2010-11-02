@@ -106,9 +106,9 @@ public class PluginExampleCreator {
         Node extensionKEX = filterExtensionKEX(pluginNode);
 
         checkDuplicate(extensionKEX, parseElement.getTitle(), creatableCategories);
-
-        parseElement.setOverviewPic(createLocalPluginPath(absOverviewPic));
-
+        if (absOverviewPic != null) {
+            parseElement.setOverviewPic(createLocalPluginPath(absOverviewPic));
+        }
         addExampleCategories(extensionKEX, creatableCategories);
 
         extensionKEX.appendChild(toNode(parseElement, location));

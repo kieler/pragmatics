@@ -417,7 +417,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
         String htmlDesc = example.getDescription().replaceAll("\n", "<br>");
         sb.append("<font face=\"Tahoma, sans-serif\" size=\"-1\">");
-        sb.append("Title: ").append(example.getTitle()).append("<br>").append("Author:")
+        sb.append("Title: ").append(example.getTitle()).append("<br>").append("Author: ")
                 .append(example.getAuthor()).append("<br>").append("Contact: ")
                 .append(example.getContact()).append("<br>").append("<br>").append(htmlDesc);
         sb.append("</font>");
