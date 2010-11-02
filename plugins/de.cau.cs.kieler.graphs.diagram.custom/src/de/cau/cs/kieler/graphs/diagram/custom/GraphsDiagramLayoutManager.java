@@ -216,7 +216,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 layoutPort.getLabel().setText(((Port) port).getPortLabel());
                 
                 // set user defined layout options for the port
-                layoutConfig.setOptions(portEP, portLayout);
+                layoutConfig.setOptions(new GmfLayoutInspector(portEP), portLayout);
             }
         }
         
@@ -251,7 +251,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         if (((Node) graphNode).isIsHypernode()) {
             nodeLayout.setProperty(LayoutOptions.HYPERNODE, true);
         }
-        layoutConfig.setOptions(editPart, nodeLayout);
+        layoutConfig.setOptions(new GmfLayoutInspector(editPart), nodeLayout);
         return layoutNode;
     }
     
@@ -307,7 +307,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                         offsetx, offsety);
     
                 // set user defined layout options for the edge
-                layoutConfig.setOptions(connection, edgeLayout);
+                layoutConfig.setOptions(new GmfLayoutInspector(connection), edgeLayout);
             }
         }
     }
