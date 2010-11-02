@@ -81,6 +81,9 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
     /** preference identifier for enabling categories. */
     public static final String PREF_CATEGORIES = "view.categories";
     
+    /** default layout provider array, which is empty. */
+    private static final LayoutProviderData[] DEFAULT_PROVIDER_DATA = new LayoutProviderData[0];
+    
     /** the form container for the property sheet page. */
     private ScrolledForm form;
     /** the page that is displayed in this view part. */
@@ -94,7 +97,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
     /** the last created layout inspector. */
     private ILayoutInspector lastInspector;
     /** the layout provider data for the currently displayed options. */
-    private LayoutProviderData[] currentProviderData;
+    private LayoutProviderData[] currentProviderData = DEFAULT_PROVIDER_DATA;
     
     /**
      * Finds the active layout view, if it exists.
@@ -132,6 +135,36 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
         return null;
     }
     
+    /**
+     * Property source provider for the layout view part.
+     */
+    private class PropertySourceProvider implements IPropertySourceProvider {
+        /** {@inheritDoc} */
+        public IPropertySource getPropertySource(final Object object) {
+            if (object instanceof EditPart) {
+                ILayoutInspector inspector = currentManager.getInspector((EditPart) object);
+                ILayoutConfig layoutConfig = currentManager.getLayoutConfig((EditPart) object);
+                if (inspector != null && layoutConfig != null) {
+                    lastInspector = inspector;
+                    LayoutProviderData contentProvider = layoutConfig.getContentLayouterData();
+                    LayoutProviderData containerProvider = layoutConfig.getContainerLayouterData();
+                    if (contentProvider == null && containerProvider == null) {
+                        currentProviderData = DEFAULT_PROVIDER_DATA;
+                    } else if (contentProvider == null) {
+                        currentProviderData = new LayoutProviderData[] { containerProvider };
+                    } else if (containerProvider == null) {
+                        currentProviderData = new LayoutProviderData[] { contentProvider };
+                    } else {
+                        currentProviderData = new LayoutProviderData[] {
+                                contentProvider, containerProvider };
+                    }
+                    return new LayoutPropertySource(layoutConfig, inspector);
+                }
+            }
+            return null;
+        }
+    }
+    
     /** margin width for the form layout. */
     private static final int MARGIN_WIDTH = 4;
     /** position for left attachment. */
@@ -165,19 +198,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
         formData.top = new FormAttachment(FORM_TOP, 0);
         formData.bottom = new FormAttachment(FORM_BOTTOM, 0);
         page.getControl().setLayoutData(formData);
-        page.setPropertySourceProvider(new IPropertySourceProvider() {
-            public IPropertySource getPropertySource(final Object object) {
-                if (object instanceof EditPart) {
-                    ILayoutInspector inspector = currentManager.getInspector((EditPart) object);
-                    ILayoutConfig layoutConfig = currentManager.getLayoutConfig((EditPart) object);
-                    if (inspector != null && layoutConfig != null) {
-                        lastInspector = inspector;
-                        return new LayoutPropertySource(layoutConfig, inspector);
-                    }
-                }
-                return null;
-            }
-        });
+        page.setPropertySourceProvider(new PropertySourceProvider());
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
         
         // add actions to the toolbar, view menu, and context menu
@@ -223,6 +244,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                         currentManager = null;
                     }
                     currentEditor = null;
+                    lastInspector = null;
+                    currentProviderData = DEFAULT_PROVIDER_DATA;
                 }
             }
             public void partOpened(final IWorkbenchPart part) {
@@ -393,8 +416,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                     contributionItem.setId(DiagramDefaultAction.ACTION_ID);
                     contributionItem.fill(menu, -1);
                 }
-                EditPart editPart = getCurrentEditPart();
-                if (editPart == null) {
+                if (lastInspector == null) {
                     if (editPartDefaultItem != null) {
                         editPartDefaultItem.setEnabled(false);
                     }
@@ -431,7 +453,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                 }
                 // add the "set as default for diagram type" action
                 LayoutServices layoutServices = LayoutServices.getInstance();
-                String diagramType = (String) EclipseLayoutConfig.getOption(editPart,
+                String diagramType = (String) EclipseLayoutConfig.getOption(lastInspector,
                         LayoutOptions.DIAGRAM_TYPE_ID);
                 if (diagramType == null) {
                     if (diagramTypeDefaultItem != null) {
@@ -532,15 +554,6 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
     public IEditorPart getCurrentEditor() {
         // FIXME what about nested editors?
         return currentEditor;
-    }
-    
-    /**
-     * Sets the current layout provider data.
-     * 
-     * @param thecurrentProviderData the current layout provider data
-     */
-    public void setCurrentProviderData(final LayoutProviderData[] thecurrentProviderData) {
-        this.currentProviderData = thecurrentProviderData;
     }
 
     /**

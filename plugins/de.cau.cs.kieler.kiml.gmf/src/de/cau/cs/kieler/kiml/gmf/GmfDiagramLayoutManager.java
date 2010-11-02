@@ -70,7 +70,6 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -438,7 +437,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
         buildLayoutGraphRecursively(rootPart, topNode, rootPart, layoutConfig);
         // set user defined layout options for the diagram
-        layoutConfig.setOptions(rootPart, shapeLayout);
+        layoutConfig.setOptions(new GmfLayoutInspector(rootPart), shapeLayout);
         // transform all connections in the selected area
         processConnections(layoutConfig);
 
@@ -495,7 +494,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 portLayout.setHeight(portBounds.height);
                 hasPorts = true;
                 // set user defined layout options for the port
-                layoutConfig.setOptions(borderItem, portLayout);
+                layoutConfig.setOptions(new GmfLayoutInspector(borderItem), portLayout);
 
                 // store all the connections to process them later
                 addConnections(borderItem);
@@ -528,7 +527,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             } else if (obj instanceof ShapeCompartmentEditPart
                 && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
-                if (!EclipseLayoutConfig.isNoLayout(compartment)) {
+                if (!GmfLayoutConfig.isNoLayout(compartment)) {
                     IFigure compartmentFigure = compartment.getFigure();
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
                         ResizableCompartmentFigure resizCompFigure
@@ -548,7 +547,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 // process nodes, which may be parents of compartments
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
-                if (!EclipseLayoutConfig.isNoLayout(childNodeEditPart)) {
+                if (!GmfLayoutConfig.isNoLayout(childNodeEditPart)) {
                     IFigure nodeFigure = childNodeEditPart.getFigure();
                     KNode childLayoutNode = KimlUtil.createInitializedNode();
 
@@ -588,7 +587,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                             childNodeEditPart, layoutConfig);
 
                     // set user defined layout options for the node
-                    layoutConfig.setOptions(childNodeEditPart, nodeLayout);
+                    layoutConfig.setOptions(new GmfLayoutInspector(childNodeEditPart), nodeLayout);
                 }
 
                 // process labels of nodes
@@ -765,7 +764,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 setEdgeLayout(edgeLayout, connection, offsetx, offsety);
 
                 // set user defined layout options for the edge
-                layoutConfig.setOptions(connection, edgeLayout);
+                layoutConfig.setOptions(new GmfLayoutInspector(connection), edgeLayout);
             }
 
             // process edge labels

@@ -19,6 +19,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -32,9 +33,6 @@ import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
  * @author msp
  */
 public class GmfLayoutInspector implements ILayoutInspector {
-
-    /** the edit part for which options are shown. */
-    private IGraphicalEditPart focusEditPart;
     
     /**
      * Finds the diagram edit part of an edit part.
@@ -59,6 +57,9 @@ public class GmfLayoutInspector implements ILayoutInspector {
         }
         return (DiagramEditPart) ep;
     }
+
+    /** the edit part for which options are shown. */
+    private IGraphicalEditPart focusEditPart;
     
     /**
      * Creates a layout inspector for a GMF graphical edit part.
@@ -66,10 +67,11 @@ public class GmfLayoutInspector implements ILayoutInspector {
      * @param editPart a graphical edit part
      */
     public GmfLayoutInspector(final IGraphicalEditPart editPart) {
-        if (editPart == null) {
-            throw new NullPointerException("editPart");
+        if (editPart instanceof CompartmentEditPart) {
+            focusEditPart = (IGraphicalEditPart) editPart.getParent();
+        } else {
+            focusEditPart = editPart;
         }
-        focusEditPart = editPart;
     }
     
     /**

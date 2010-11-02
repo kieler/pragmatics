@@ -39,40 +39,24 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     
     /**
      * Initialize the configuration with a layout hint and diagram type for the
-     * <i>content</i> of the selected element.
+     * content or the container of the selected element.
      * 
-     * @param contentLayoutHint layout hint for the content
-     * @param contentDiagramType diagram type for the content
-     */
-    public final void initialize(final String contentLayoutHint, final String contentDiagramType) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
-        contentLayouterData = getLayouterData(contentLayoutHint, contentDiagramType);
-        if (contentLayouterData != null) {
-            List<LayoutOptionData<?>> options = layoutServices.getLayoutOptions(
-                    contentLayouterData, LayoutOptionData.Target.PARENTS);
-            if (optionDataList == null) {
-                optionDataList = options;
-            } else {
-                optionDataList.addAll(options);
-            }
-        }
-    }
-    
-    /**
-     * Initialize the configuration with a layout hint and diagram type for the
-     * <i>container</i> of the selected element.
-     * 
-     * @param targetType type of the selected element (node, edge, port, etc.)
-     * @param containerLayoutHint layout hint for the container
-     * @param containerDiagramType diagram type for the container
+     * @param targetType type of the selected element (parent, node, edge, port, etc.)
+     * @param layoutHint a layout hint, or {@code null}
+     * @param diagramType a diagram type, or {@code null}
      */
     public final void initialize(final LayoutOptionData.Target targetType,
-            final String containerLayoutHint, final String containerDiagramType) {
+            final String layoutHint, final String diagramType) {
         LayoutServices layoutServices = LayoutServices.getInstance();
-        containerLayouterData = getLayouterData(containerLayoutHint, containerDiagramType);
-        if (containerLayouterData != null) {
+        LayoutProviderData layouterData = getLayouterData(layoutHint, diagramType);
+        if (targetType == LayoutOptionData.Target.PARENTS) {
+            contentLayouterData = layouterData;
+        } else {
+            containerLayouterData = layouterData;
+        }
+        if (layouterData != null) {
             List<LayoutOptionData<?>> options = layoutServices.getLayoutOptions(
-                    containerLayouterData, targetType);
+                    layouterData, targetType);
             if (optionDataList == null) {
                 optionDataList = options;
             } else {

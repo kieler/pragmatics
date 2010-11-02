@@ -190,7 +190,7 @@ public class EclipseLayoutServices extends LayoutServices {
     
     /**
      * Retrieve a layout configuration for the given editor using the most suitable
-     * layout manager
+     * layout manager.
      * 
      * @param editorPart the editor part for which the config should be fetched
      * @return a layout configuration for the editor, or {@code null}

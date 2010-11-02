@@ -24,7 +24,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class LayoutOptionData<T> implements IProperty<T> {
+public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?>> {
 
     /** literal value constant for booleans. */
     public static final String BOOLEAN_LITERAL = "boolean";
@@ -155,6 +155,18 @@ public class LayoutOptionData<T> implements IProperty<T> {
      */
     public int hashCode() {
         return id.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(final IProperty<?> other) {
+        Object otherId = other.getIdentifier();
+        if (otherId instanceof String) {
+            return id.compareTo((String) otherId);
+        } else {
+            throw new UnsupportedOperationException("Not comparable with given property.");
+        }
     }
 
      /**

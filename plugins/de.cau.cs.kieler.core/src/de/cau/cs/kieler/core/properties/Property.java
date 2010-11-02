@@ -19,7 +19,7 @@ package de.cau.cs.kieler.core.properties;
  * @param <T> type of the property
  * @author msp
  */
-public class Property<T> implements IProperty<T> {
+public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
     
     /** identifier of this property. */
     private String id;
@@ -100,6 +100,18 @@ public class Property<T> implements IProperty<T> {
      */
     public Object getIdentifier() {
         return id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(final IProperty<?> other) {
+        Object otherId = other.getIdentifier();
+        if (otherId instanceof String) {
+            return id.compareTo((String) otherId);
+        } else {
+            throw new UnsupportedOperationException("Not comparable with given property.");
+        }
     }
 
 }

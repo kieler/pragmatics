@@ -641,7 +641,7 @@ final class GenomeFactory {
 
         for (final ILayoutConfig config : configs) {
             if (config instanceof EclipseLayoutConfig) {
-                EditPart editPart = ((EclipseLayoutConfig) config).getContainmentEditPart();
+                EditPart editPart = ((EclipseLayoutConfig) config).getEditPart();
                 ILayoutInspector inspector = layoutServices.getInspector(editPart);
                 LayoutPropertySource source = new LayoutPropertySource(config, inspector);
                 IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();

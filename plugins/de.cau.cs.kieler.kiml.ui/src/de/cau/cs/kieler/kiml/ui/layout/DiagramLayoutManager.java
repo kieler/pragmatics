@@ -404,7 +404,8 @@ public abstract class DiagramLayoutManager {
      * Returns a layout inspector for the given edit part.
      * 
      * @param editPart an edit part
-     * @return a layout inspector for the edit part
+     * @return a layout inspector for the edit part, or {@code null} if the edit part
+     *     is not supported
      */
     public abstract ILayoutInspector getInspector(EditPart editPart);
     
@@ -412,15 +413,17 @@ public abstract class DiagramLayoutManager {
      * Returns a layout inspector for the given editor part.
      * 
      * @param editorPart an editor part
-     * @return a layout inspector for the editor part
+     * @return a layout inspector for the editor part, or {@code null} if the editor part
+     *     is not supported
      */
     public abstract ILayoutInspector getInspector(IEditorPart editorPart);
     
     /**
-     * Returns a layout configuration for the given edit part.
+     * Returns a layout configuration for the given edit part. If {@code editPart} is
+     * {@code null}, a generic layout configuration is created.
      * 
      * @param editPart an edit part
-     * @return a layout configuration for the edit part
+     * @return a layout configuration for the edit part, or a generic configuration
      */
     public abstract ILayoutConfig getLayoutConfig(EditPart editPart);
 
