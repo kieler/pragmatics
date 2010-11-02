@@ -62,22 +62,22 @@ public class NarrownessMetric implements IAnalysis {
                 xdim = 0.0f;
                 ydim = 0.0f;
             }
-            boolean isXdimZero = (xdim == 0.0f);
-            boolean isYdimZero = (ydim == 0.0f);
+            boolean isXdimZero = xdim == 0.0f;
+            boolean isYdimZero = ydim == 0.0f;
             if (isXdimZero && isYdimZero) {
                 throw new KielerException("Narrowness metric analysis failed.");
             }
-            float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
-            float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
-            final float half = .5f;
+            float heightToWidthRatio = isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim;
+            float widthToHeightRatio = isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim;
+            final float half = 0.5f;
             if (heightToWidthRatio < 1.0) {
                 // wide
-                result = (heightToWidthRatio * half);
+                result = heightToWidthRatio * half;
             } else {
                 // narrow
-                result = (1.0f - (widthToHeightRatio * half));
+                result = 1.0f - (widthToHeightRatio * half);
             }
-            assert ((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f)):
+            assert (0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f) :
                     "Metric result out of bounds: " + result;
 
         } finally {

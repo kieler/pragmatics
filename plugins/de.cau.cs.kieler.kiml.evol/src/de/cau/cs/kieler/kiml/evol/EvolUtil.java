@@ -825,15 +825,11 @@ public final class EvolUtil {
     public static EditPart getCurrentEditPart(final IEditorPart editor) {
         EditPart result = null;
         if (editor != null) {
-            ISelection selection =
-                    editor.getEditorSite().getSelectionProvider().getSelection();
-            Object element = null;
-            if (selection != null) {
-                if (selection instanceof StructuredSelection) {
-                    element = ((StructuredSelection) selection).getFirstElement();
-                    if (element instanceof IGraphicalEditPart) {
-                        result = (IGraphicalEditPart) element;
-                    }
+            ISelection selection = editor.getEditorSite().getSelectionProvider().getSelection();
+            if (selection instanceof StructuredSelection) {
+                Object element = ((StructuredSelection) selection).getFirstElement();
+                if (element instanceof IGraphicalEditPart) {
+                    result = (IGraphicalEditPart) element;
                 }
             }
         }

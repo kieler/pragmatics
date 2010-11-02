@@ -24,12 +24,12 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 /**
  * A layout metric that computes the vertical compactness (flatness) of the
  * given graph layout.
- * 
+ *
  * Does not care for hierarchy. The returned object is a float value within the
  * range of 0.0 to 1.0, where a higher value means more vertical compactness.
- * 
+ *
  * @author bdu
- * 
+ *
  */
 public class FlatnessMetric implements IAnalysis {
 
@@ -70,7 +70,7 @@ public class FlatnessMetric implements IAnalysis {
 
             float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
             float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
-            final float half = .5f;
+            final float half = 0.5f;
             if (widthToHeightRatio < 1.0f) {
                 // narrow
                 result = (widthToHeightRatio * half);

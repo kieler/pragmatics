@@ -71,7 +71,7 @@ final class GenomeFactory {
          * The absolute value is scaled by this factor to get the default
          * variance.
          */
-        private static final double VARIANCE_SCALING_FACTOR = .20;
+        private static final double VARIANCE_SCALING_FACTOR = 0.20;
         /**
          * Identifier of the attribute "lower bound".
          */
@@ -461,7 +461,7 @@ final class GenomeFactory {
                 final float defaultValue = 1.0f;
                 final float lowerBound = 0.0f;
                 final float upperBound = 10.0f;
-                final double variance = .2;
+                final double variance = 0.2;
 
                 TypeInfo<Float> typeInfo =
                         new FloatTypeInfo(defaultValue, lowerBound, upperBound,
@@ -718,7 +718,7 @@ final class GenomeFactory {
 
     /** The gene factory used to produce layout option genes. */
     private final IGeneFactory layoutOptionGeneFactory = new LayoutOptionGeneFactory();
-    
+
     /**
      * Default mutation probability for layout hint genes.
      */

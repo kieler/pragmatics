@@ -62,7 +62,7 @@ public class EdgeUniformityMetric implements IAnalysis {
 
                 float rangeToAverageRatio = range / avg;
 
-                final float half = .5f;
+                final float half = 0.5f;
                 // FIXME this correlates with the layout size?
                 if (rangeToAverageRatio < 1.0f) {
                     // relatively small range

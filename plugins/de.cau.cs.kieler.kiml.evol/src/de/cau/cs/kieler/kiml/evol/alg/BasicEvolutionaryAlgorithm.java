@@ -197,9 +197,9 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         // only some survive
         int min = MIN_SURVIVORS;
         int max = MAX_SURVIVORS;
-        int proposal = (int) Math.round((count * SURVIVAL_RATIO));
-        int keep = ((proposal < min) ? min : (proposal > max ? max : proposal));
-        double minDist = individuals[0].size() * .2;
+        int proposal = (int) Math.round(count * SURVIVAL_RATIO);
+        int keep = (proposal < min) ? min : (proposal > max ? max : proposal);
+        double minDist = individuals[0].size() * 0.2;
         Population survivors = new Population();
         Population victims = new Population(population);
 
@@ -243,7 +243,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
      * The selection ratio. Indicates the ratio of the population that shall be
      * selected for recombination.
      */
-    private static final double SELECTION_RATIO = .70;
+    private static final double SELECTION_RATIO = 0.70;
 
     /**
      * The cross over ratio. Indicates how many offspring individuals shall be
@@ -255,10 +255,10 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
      * The mutation application probability. This is the probability for each
      * individual to be subject to mutation.
      */
-    private static final double MUTATION_APPLICATION_PROBABILITY = .6;
+    private static final double MUTATION_APPLICATION_PROBABILITY = 0.6;
 
     /** The survival ratio. This indicates the ratio of surviving individuals. */
-    private static final double SURVIVAL_RATIO = .54;
+    private static final double SURVIVAL_RATIO = 0.54;
 
     // To obtain a constant population size, the following condition must hold:
     // ((POP_SIZE * SURV_R + (POP_SIZE * SEL_R * CRO_R)) * SURV_R) == POP_SIZE

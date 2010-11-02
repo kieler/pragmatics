@@ -110,7 +110,7 @@ public class Genome extends ArrayList<IGene<?>> {
                     UniversalNumberGene g1 = (UniversalNumberGene) gene1;
                     double var0 = g0.getMutationInfo().getVariance();
                     double var1 = g1.getMutationInfo().getVariance();
-                    double var = (var0 + var1) * .5;
+                    double var = (var0 + var1) * 0.5;
                     float absDiff =
                             Math.abs(g0.getValue().floatValue() - g1.getValue().floatValue());
                     dist += absDiff * FLOAT_GENE_SCALE / var;

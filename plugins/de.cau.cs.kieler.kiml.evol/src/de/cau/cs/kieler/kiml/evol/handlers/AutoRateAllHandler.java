@@ -45,16 +45,21 @@ public class AutoRateAllHandler extends AbstractHandler {
     private static final class AutoRateAllJob extends Job {
         /**
          * Creates a new {@link AutoRateAllJob} instance. It rates all
-         * individuals of the specified model in the specified editor.
-         *
+         * individuals of the specified model in the appropriate editors.
+         * 
          * @param name
+         *            name of the job
          * @param theModel
+         *            the model
          */
         AutoRateAllJob(final String name, final EvolModel theModel) {
             super(name);
             this.model = theModel;
         }
 
+        /**
+         * The associated model.
+         */
         private final EvolModel model;
 
         @Override
@@ -112,7 +117,7 @@ public class AutoRateAllHandler extends AbstractHandler {
         EvolView view =
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
-        if ((view == null)) {
+        if (view == null) {
             throw new ExecutionException("The Evolution View could not be found.");
         }
 
