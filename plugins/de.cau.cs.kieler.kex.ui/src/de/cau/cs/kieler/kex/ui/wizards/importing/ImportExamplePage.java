@@ -346,6 +346,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
         }
 
         TreeItem selected = (TreeItem) e.item;
+        // parent is != null if selected is a example
         if (selected.getParentItem() != null) {
             Object data = selected.getData();
             Image previewPic = null;

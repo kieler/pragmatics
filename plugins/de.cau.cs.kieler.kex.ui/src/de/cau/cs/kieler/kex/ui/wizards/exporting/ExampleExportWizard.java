@@ -58,6 +58,7 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
     public void init(final IWorkbench workbench, final IStructuredSelection selection) {
         setWindowTitle("Kieler Example Export");
         setNeedsProgressMonitor(true);
+
         examplePage = new ExampleAttributesPage("Example Export", selection);
         resourcePage = new ExampleResourcesPage("Example Resources", selection);
         exportPage = new ExampleExportPage("Destination Choice", selection);
