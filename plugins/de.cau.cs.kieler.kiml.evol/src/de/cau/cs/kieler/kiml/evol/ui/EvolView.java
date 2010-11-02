@@ -195,7 +195,7 @@ public class EvolView extends ViewPart {
 
         // Reset the model.
         // presuming this.evolModel != null
-        this.evolModel.reset();
+        this.evolModel.reset(null);
     }
 
     /**

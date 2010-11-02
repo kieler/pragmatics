@@ -26,6 +26,7 @@ import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
@@ -215,7 +216,7 @@ public final class EvolModel {
 
             // reward predictors
             // XXX: this should be refactored. The predictors' fitness should
-            // be calculated an a more sophisticated way.
+            // be calculated in a more sophisticated way.
             final double reward = 0.01;
             for (final Genome predictor : predictors) {
                 // presuming predictor != null
@@ -345,53 +346,94 @@ public final class EvolModel {
 
     /**
      * Reset the population and restart the algorithm.
+     *
+     * @param theMonitor
+     *            a progress monitor; may be {@code null}
      */
-    public void reset() {
+    public void reset(final IProgressMonitor theMonitor) {
 
         this.position = 0;
         this.evolAlg = null;
         this.predictorsEvolAlg = null;
 
-        IEditorPart editor = EvolUtil.getCurrentEditor();
-        EditPart part = EvolUtil.getCurrentEditPart(editor);
-        LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, part);
+        final IProgressMonitor monitor;
+        // Ensure there is a monitor of some sort.
+        monitor = (theMonitor != null) ? theMonitor : new NullProgressMonitor();
 
-        this.layoutProviderId = providerData != null ? providerData.getId() : null;
+        int layoutOptionsWork = 1;
+        int ratingPredictorsWork = 1;
 
-        // Create an initial population of layout option genomes.
-        Set<IEditorPart> editors = EvolUtil.getEditors();
-        Population sourcePopulation = null;
+        int totalWork = layoutOptionsWork + ratingPredictorsWork;
+        final int scale = 100;
+
         try {
-            sourcePopulation = EvolUtil.createPopulation(editors);
-        } catch (final KielerException exception) {
-            exception.printStackTrace();
-            EvolPlugin.showError("A new population could not be created.", exception);
-        }
+            monitor.beginTask("Resetting the model.", totalWork * scale);
 
-        if ((sourcePopulation != null) && !sourcePopulation.isEmpty()) {
+            // Get the ID of the current layout provider.
+            final Maybe<LayoutProviderData> maybe = new Maybe<LayoutProviderData>();
 
-            // Create initial population of rating predictors.
-            EvolPlugin.logStatus("Creating metric weights ...");
-            Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+               MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    IEditorPart editor = EvolUtil.getCurrentEditor();
+                    EditPart part = EvolUtil.getCurrentEditPart(editor);
+                    LayoutProviderData providerData =
+                            EvolUtil.getLayoutProviderData(editor, part);
+                    maybe.set(providerData);
+                }
+            }, true /* synch */);
 
-            Population predictors = new Population();
-            for (int i = 0; i < NUM_RATING_PREDICTORS; i++) {
-                Genome weightGenes = GenomeFactory.createWeightGenes(metricIds);
-                assert weightGenes != null;
-                predictors.add(weightGenes);
+            LayoutProviderData providerData = maybe.get();
+            this.layoutProviderId = providerData != null ? providerData.getId() : null;
+
+            // Create an initial population of layout option genomes.
+            final Maybe<Set<IEditorPart>> maybeEditors = new Maybe<Set<IEditorPart>>();
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    maybeEditors.set(EvolUtil.getEditors());
+                }
+            }, true /* synch */);
+
+            Set<IEditorPart> editors = maybeEditors.get();
+
+            Population sourcePopulation = null;
+            try {
+                sourcePopulation = EvolUtil.createPopulation(editors);
+            } catch (final KielerException exception) {
+                exception.printStackTrace();
+                EvolPlugin.showError("A new population could not be created.", exception);
+            }
+            monitor.worked(layoutOptionsWork * scale);
+
+            if ((sourcePopulation != null) && !sourcePopulation.isEmpty()) {
+
+                // Create initial population of rating predictors.
+                EvolPlugin.logStatus("Creating metric weights ...");
+                Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
+
+                Population predictors = new Population();
+                for (int i = 0; i < NUM_RATING_PREDICTORS; i++) {
+                    Genome weightGenes = GenomeFactory.createWeightGenes(metricIds);
+                    assert weightGenes != null;
+                    predictors.add(weightGenes);
+                }
+
+                // Start evolution of rating predictors.
+                this.predictorsEvolAlg = new BasicEvolutionaryAlgorithm(predictors);
+                this.predictorsEvolAlg.step();
+
+                // Start evolution of layout option genomes.
+                this.evolAlg = new BasicEvolutionaryAlgorithm(sourcePopulation);
+                this.evolAlg.step();
             }
 
-            // Start evolution of rating predictors.
-            this.predictorsEvolAlg = new BasicEvolutionaryAlgorithm(predictors);
-            this.predictorsEvolAlg.step();
+            monitor.worked(ratingPredictorsWork * scale);
 
-            // Start evolution of layout option genomes.
-            this.evolAlg = new BasicEvolutionaryAlgorithm(sourcePopulation);
-            this.evolAlg.step();
+            // Notify listeners.
+            afterChange(ModelChangeType.RESET);
+
+        } finally {
+            monitor.done();
         }
-
-        // Notify listeners.
-        afterChange(ModelChangeType.RESET);
     }
 
     /**
