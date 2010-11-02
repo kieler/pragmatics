@@ -84,8 +84,11 @@ public class DiagramTypeDefaultAction extends Action {
                 layoutView.getCurrentProviderData(), entry.getDisplayName());
         
         if (optionData != null) {
-            EclipseLayoutServices.getInstance().storeOption(diagramType,
-                    optionData, entry.getValueAsString());
+            String valueString = entry.getValueAsString();
+            if (optionData.getId().equals(LayoutOptions.LAYOUTER_HINT_ID)) {
+                valueString = LayoutPropertySource.getLayoutHint(valueString);
+            }
+            EclipseLayoutServices.getInstance().storeOption(diagramType, optionData, valueString);
         }
     }
     

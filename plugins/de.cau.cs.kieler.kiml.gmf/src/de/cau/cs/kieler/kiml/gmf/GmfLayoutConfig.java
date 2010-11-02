@@ -43,7 +43,6 @@ import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
-import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
  * A layout configuration that stores layout options in the notation model of GMF diagrams.
@@ -462,11 +461,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
                 }
                 
                 // set the new option value
-                if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
-                    koption.setValue(LayoutPropertySource.getLayoutHint((String) value));
-                } else {
-                    koption.setValue(value.toString());
-                }
+                koption.setValue(value.toString());
                 koption.setDefault(true);
                 
                 // remove the option from all children

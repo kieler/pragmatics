@@ -19,6 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -86,8 +87,12 @@ public class EditPartDefaultAction extends Action {
                 layoutView.getCurrentProviderData(), entry.getDisplayName());
 
         if (optionData != null) {
-            EclipseLayoutServices.getInstance().storeOption(editPart,
-                    optionData, entry.getValueAsString(), forDomainModel);
+            String valueString = entry.getValueAsString();
+            if (optionData.getId().equals(LayoutOptions.LAYOUTER_HINT_ID)) {
+                valueString = LayoutPropertySource.getLayoutHint(valueString);
+            }
+            EclipseLayoutServices.getInstance().storeOption(editPart, optionData,
+                    valueString, forDomainModel);
         }
     }
     

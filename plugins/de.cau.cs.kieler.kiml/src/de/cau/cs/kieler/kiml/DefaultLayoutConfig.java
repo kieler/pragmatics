@@ -21,6 +21,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Default implementation of the layout configuration interface. This configuration handles the
@@ -172,8 +173,15 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public LayoutProviderData getLayouterData(final String layoutHint, final String diagramType) {
+    public LayoutProviderData getLayouterData(final String theLayoutHint, final String diagramType) {
         LayoutServices layoutServices = LayoutServices.getInstance();
+        String layoutHint = theLayoutHint;
+        // check whether a specific provider is registered for the diagram type
+        if (layoutHint == null && diagramType != null) {
+            layoutHint = (String) layoutServices.getOption(diagramType,
+                    LayoutOptions.LAYOUTER_HINT_ID);
+        }
+        
         // try to get a specific provider for the given hint
         LayoutProviderData directHitData = layoutServices.getLayoutProviderData(layoutHint);
         if (directHitData != null) {

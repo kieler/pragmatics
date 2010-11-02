@@ -22,6 +22,7 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
@@ -93,7 +94,12 @@ public class DiagramDefaultAction extends Action {
             return;
         }
 
-        final Object value = optionData.parseValue(entry.getValueAsString());
+        final Object value;
+        if (optionData.getId().equals(LayoutOptions.LAYOUTER_HINT_ID)) {
+            value = LayoutPropertySource.getLayoutHint((String) entry.getValueAsString());
+        } else {
+            value = optionData.parseValue(entry.getValueAsString());
+        }
         if (value != null) {
             Runnable modelChange = new Runnable() {
                 public void run() {
