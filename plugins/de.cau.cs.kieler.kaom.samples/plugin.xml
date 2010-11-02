@@ -10,9 +10,9 @@
           id="de.cau.cs.kieler.kaom">
     </category>
 	<example
-	      author="pkl"
-	      contact="rvh@informatik.uni-kiel.de"
-	      description="This is the quickstart example for kaom."
+	      author="kieler workgroup"
+	      contact="http://www.informatik.uni-kiel.de/rtsys/kieler/"
+	      description="This quickstart example introduces in kaom."
 	      generation_date="Tue Sep 28 13:42:39 CEST 2010"
 	      overview_pic="examples/kaom_quickstart/rampAdd.png"
 	      root_directory="examples/"
