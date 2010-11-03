@@ -2,29 +2,18 @@ package de.cau.cs.kieler.keg.diagram.edit.policies;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.transaction.Transaction;
-import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gmf.runtime.common.core.util.StringStatics;
 import org.eclipse.gmf.runtime.diagram.core.util.ViewUtil;
 import org.eclipse.gmf.runtime.diagram.ui.commands.DeferredLayoutCommand;
 import org.eclipse.gmf.runtime.diagram.ui.commands.ICommandProxy;
@@ -38,14 +27,12 @@ import org.eclipse.gmf.runtime.emf.core.util.EObjectAdapter;
 import org.eclipse.gmf.runtime.notation.Bounds;
 import org.eclipse.gmf.runtime.notation.Location;
 import org.eclipse.gmf.runtime.notation.Node;
-import org.eclipse.gmf.runtime.notation.Ratio;
 import org.eclipse.gmf.runtime.notation.Size;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Node4EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Node5EditPart;
-import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramUpdater;
 import de.cau.cs.kieler.keg.diagram.part.GraphsNodeDescriptor;
 import de.cau.cs.kieler.keg.diagram.part.GraphsVisualIDRegistry;
@@ -69,8 +56,9 @@ public class NodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy 
     protected List getSemanticChildrenList() {
         View viewObject = (View) getHost().getModel();
         LinkedList<EObject> result = new LinkedList<EObject>();
-        List<GraphsNodeDescriptor> childDescriptors = GraphsDiagramUpdater
-                .getNodeNodeCompartment_7001SemanticChildren(viewObject);
+        List<GraphsNodeDescriptor> childDescriptors =
+                GraphsDiagramUpdater
+                        .getNodeNodeCompartment_7001SemanticChildren(viewObject);
         for (GraphsNodeDescriptor d : childDescriptors) {
             result.add(d.getModelElement());
         }
@@ -80,8 +68,10 @@ public class NodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy 
     /**
      * @generated
      */
-    protected boolean isOrphaned(Collection<EObject> semanticChildren, final View view) {
-        return isMyDiagramElement(view) && !semanticChildren.contains(view.getElement());
+    protected boolean isOrphaned(Collection<EObject> semanticChildren,
+            final View view) {
+        return isMyDiagramElement(view)
+                && !semanticChildren.contains(view.getElement());
     }
 
     /**
@@ -89,7 +79,8 @@ public class NodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy 
      */
     private boolean isMyDiagramElement(View view) {
         int visualID = GraphsVisualIDRegistry.getVisualID(view);
-        return visualID == Node4EditPart.VISUAL_ID || visualID == Node5EditPart.VISUAL_ID;
+        return visualID == Node4EditPart.VISUAL_ID
+                || visualID == Node5EditPart.VISUAL_ID;
     }
 
     /**
@@ -100,8 +91,10 @@ public class NodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy 
             return;
         }
         LinkedList<IAdaptable> createdViews = new LinkedList<IAdaptable>();
-        List<GraphsNodeDescriptor> childDescriptors = GraphsDiagramUpdater
-                .getNodeNodeCompartment_7001SemanticChildren((View) getHost().getModel());
+        List<GraphsNodeDescriptor> childDescriptors =
+                GraphsDiagramUpdater
+                        .getNodeNodeCompartment_7001SemanticChildren((View) getHost()
+                                .getModel());
         LinkedList<View> orphaned = new LinkedList<View>();
         // we care to check only views we recognize as ours
         LinkedList<View> knownViewChildren = new LinkedList<View>();
@@ -111,13 +104,14 @@ public class NodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy 
             }
         }
         // alternative to #cleanCanonicalSemanticChildren(getViewChildren(), semanticChildren)
-        HashMap<GraphsNodeDescriptor, LinkedList<View>> potentialViews = new HashMap<GraphsNodeDescriptor, LinkedList<View>>();
+        HashMap<GraphsNodeDescriptor, LinkedList<View>> potentialViews =
+                new HashMap<GraphsNodeDescriptor, LinkedList<View>>();
         //
         // iteration happens over list of desired semantic elements, trying to find best matching View, while original CEP
         // iterates views, potentially losing view (size/bounds) information - i.e. if there are few views to reference same EObject, only last one 
         // to answer isOrphaned == true will be used for the domain element representation, see #cleanCanonicalSemanticChildren()
-        for (Iterator<GraphsNodeDescriptor> descriptorsIterator = childDescriptors.iterator(); descriptorsIterator
-                .hasNext();) {
+        for (Iterator<GraphsNodeDescriptor> descriptorsIterator =
+                childDescriptors.iterator(); descriptorsIterator.hasNext();) {
             GraphsNodeDescriptor next = descriptorsIterator.next();
             String hint = GraphsVisualIDRegistry.getType(next.getVisualID());
             LinkedList<View> perfectMatch = new LinkedList<View>(); // both semanticElement and hint match that of NodeDescriptor
@@ -147,16 +141,20 @@ public class NodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy 
         // or those we have potential matches to, and thus need to be recreated, preserving size/location information.
         orphaned.addAll(knownViewChildren);
         //
-        CompositeTransactionalCommand boundsCommand = new CompositeTransactionalCommand(host()
-                .getEditingDomain(), DiagramUIMessages.SetLocationCommand_Label_Resize);
-        ArrayList<CreateViewRequest.ViewDescriptor> viewDescriptors = new ArrayList<CreateViewRequest.ViewDescriptor>(
-                childDescriptors.size());
+        CompositeTransactionalCommand boundsCommand =
+                new CompositeTransactionalCommand(host().getEditingDomain(),
+                        DiagramUIMessages.SetLocationCommand_Label_Resize);
+        ArrayList<CreateViewRequest.ViewDescriptor> viewDescriptors =
+                new ArrayList<CreateViewRequest.ViewDescriptor>(
+                        childDescriptors.size());
         for (GraphsNodeDescriptor next : childDescriptors) {
             String hint = GraphsVisualIDRegistry.getType(next.getVisualID());
-            IAdaptable elementAdapter = new CanonicalElementAdapter(next.getModelElement(), hint);
-            CreateViewRequest.ViewDescriptor descriptor = new CreateViewRequest.ViewDescriptor(
-                    elementAdapter, Node.class, hint, ViewUtil.APPEND, false, host()
-                            .getDiagramPreferencesHint());
+            IAdaptable elementAdapter =
+                    new CanonicalElementAdapter(next.getModelElement(), hint);
+            CreateViewRequest.ViewDescriptor descriptor =
+                    new CreateViewRequest.ViewDescriptor(elementAdapter,
+                            Node.class, hint, ViewUtil.APPEND, false, host()
+                                    .getDiagramPreferencesHint());
             viewDescriptors.add(descriptor);
 
             LinkedList<View> possibleMatches = potentialViews.get(next);
@@ -170,18 +168,27 @@ public class NodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy 
                 // add command to copy properties
                 if (originalView instanceof Node) {
                     if (((Node) originalView).getLayoutConstraint() instanceof Bounds) {
-                        Bounds b = (Bounds) ((Node) originalView).getLayoutConstraint();
-                        boundsCommand.add(new SetBoundsCommand(boundsCommand.getEditingDomain(),
-                                boundsCommand.getLabel(), descriptor, new Rectangle(b.getX(), b.getY(),
-                                        b.getWidth(), b.getHeight())));
+                        Bounds b =
+                                (Bounds) ((Node) originalView)
+                                        .getLayoutConstraint();
+                        boundsCommand.add(new SetBoundsCommand(boundsCommand
+                                .getEditingDomain(), boundsCommand.getLabel(),
+                                descriptor, new Rectangle(b.getX(), b.getY(), b
+                                        .getWidth(), b.getHeight())));
                     } else if (((Node) originalView).getLayoutConstraint() instanceof Location) {
-                        Location l = (Location) ((Node) originalView).getLayoutConstraint();
-                        boundsCommand.add(new SetBoundsCommand(boundsCommand.getEditingDomain(),
-                                boundsCommand.getLabel(), descriptor, new Point(l.getX(), l.getY())));
+                        Location l =
+                                (Location) ((Node) originalView)
+                                        .getLayoutConstraint();
+                        boundsCommand.add(new SetBoundsCommand(boundsCommand
+                                .getEditingDomain(), boundsCommand.getLabel(),
+                                descriptor, new Point(l.getX(), l.getY())));
                     } else if (((Node) originalView).getLayoutConstraint() instanceof Size) {
-                        Size s = (Size) ((Node) originalView).getLayoutConstraint();
-                        boundsCommand.add(new SetBoundsCommand(boundsCommand.getEditingDomain(),
-                                boundsCommand.getLabel(), descriptor, new Dimension(s.getWidth(), s
+                        Size s =
+                                (Size) ((Node) originalView)
+                                        .getLayoutConstraint();
+                        boundsCommand.add(new SetBoundsCommand(boundsCommand
+                                .getEditingDomain(), boundsCommand.getLabel(),
+                                descriptor, new Dimension(s.getWidth(), s
                                         .getHeight())));
                     }
                 }
@@ -193,7 +200,8 @@ public class NodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy 
         CreateViewRequest request = getCreateViewRequest(viewDescriptors);
         Command cmd = getCreateViewCommand(request);
         if (cmd != null && cmd.canExecute()) {
-            SetViewMutabilityCommand.makeMutable(new EObjectAdapter(host().getNotationView())).execute();
+            SetViewMutabilityCommand.makeMutable(
+                    new EObjectAdapter(host().getNotationView())).execute();
             executeCommand(cmd);
             if (boundsCommand.canExecute()) {
                 executeCommand(new ICommandProxy(boundsCommand.reduce()));
@@ -207,8 +215,9 @@ public class NodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy 
         }
         if (createdViews.size() > 1) {
             // perform a layout of the container
-            DeferredLayoutCommand layoutCmd = new DeferredLayoutCommand(host().getEditingDomain(),
-                    createdViews, host());
+            DeferredLayoutCommand layoutCmd =
+                    new DeferredLayoutCommand(host().getEditingDomain(),
+                            createdViews, host());
             executeCommand(new ICommandProxy(layoutCmd));
         }
 
@@ -216,5 +225,4 @@ public class NodeNodeCompartmentCanonicalEditPolicy extends CanonicalEditPolicy 
 
         SetViewMutabilityCommand.makeImmutable(createdViews).execute();
     }
-
 }

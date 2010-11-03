@@ -21,7 +21,8 @@ public class GraphsCreationWizardPage extends WizardNewFileCreationPage {
     /**
      * @generated
      */
-    public GraphsCreationWizardPage(String pageName, IStructuredSelection selection, String fileExtension) {
+    public GraphsCreationWizardPage(String pageName,
+            IStructuredSelection selection, String fileExtension) {
         super(pageName, selection);
         this.fileExtension = fileExtension;
     }
@@ -62,8 +63,8 @@ public class GraphsCreationWizardPage extends WizardNewFileCreationPage {
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        setFileName(GraphsDiagramEditorUtil.getUniqueFileName(getContainerFullPath(), getFileName(),
-                getExtension()));
+        setFileName(GraphsDiagramEditorUtil.getUniqueFileName(
+                getContainerFullPath(), getFileName(), getExtension()));
         setPageComplete(validatePage());
     }
 
@@ -75,8 +76,10 @@ public class GraphsCreationWizardPage extends WizardNewFileCreationPage {
             return false;
         }
         String extension = getExtension();
-        if (extension != null && !getFilePath().toString().endsWith("." + extension)) {
-            setErrorMessage(NLS.bind(Messages.GraphsCreationWizardPageExtensionError, extension));
+        if (extension != null
+                && !getFilePath().toString().endsWith("." + extension)) {
+            setErrorMessage(NLS.bind(
+                    Messages.GraphsCreationWizardPageExtensionError, extension));
             return false;
         }
         return true;

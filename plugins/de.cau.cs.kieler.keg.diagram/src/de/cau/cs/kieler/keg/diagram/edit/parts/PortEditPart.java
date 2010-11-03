@@ -33,8 +33,7 @@ import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
-import de.cau.cs.kieler.keg.custom.GraphsNode;
-import de.cau.cs.kieler.keg.custom.GraphsPort;
+import de.cau.cs.kieler.keg.custom.KEGPort;
 import de.cau.cs.kieler.keg.diagram.edit.policies.PortItemSemanticEditPolicy;
 import de.cau.cs.kieler.keg.diagram.part.GraphsVisualIDRegistry;
 import de.cau.cs.kieler.keg.diagram.providers.GraphsElementTypes;
@@ -42,7 +41,9 @@ import de.cau.cs.kieler.keg.diagram.providers.GraphsElementTypes;
 /**
  * @generated
  */
-public class PortEditPart extends BorderedBorderItemEditPart implements GraphsPort {
+public class PortEditPart extends BorderedBorderItemEditPart implements KEGPort
+
+{
 
     /**
      * @generated
@@ -71,8 +72,10 @@ public class PortEditPart extends BorderedBorderItemEditPart implements GraphsPo
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, getPrimaryDragEditPolicy());
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new PortItemSemanticEditPolicy());
+        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
+                getPrimaryDragEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+                new PortItemSemanticEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
         // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
         // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -82,36 +85,40 @@ public class PortEditPart extends BorderedBorderItemEditPart implements GraphsPo
      * @generated
      */
     protected LayoutEditPolicy createLayoutEditPolicy() {
-        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep = new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
+        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep =
+                new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
 
-            protected EditPolicy createChildEditPolicy(EditPart child) {
-                View childView = (View) child.getModel();
-                switch (GraphsVisualIDRegistry.getVisualID(childView)) {
-                case PortPortLabelEditPart.VISUAL_ID:
-                    return new BorderItemSelectionEditPolicy() {
+                    protected EditPolicy createChildEditPolicy(EditPart child) {
+                        View childView = (View) child.getModel();
+                        switch (GraphsVisualIDRegistry.getVisualID(childView)) {
+                        case PortPortLabelEditPart.VISUAL_ID:
+                            return new BorderItemSelectionEditPolicy() {
 
-                        protected List createSelectionHandles() {
-                            MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
-                            mh.setBorder(null);
-                            return Collections.singletonList(mh);
+                                protected List createSelectionHandles() {
+                                    MoveHandle mh =
+                                            new MoveHandle(
+                                                    (GraphicalEditPart) getHost());
+                                    mh.setBorder(null);
+                                    return Collections.singletonList(mh);
+                                }
+                            };
                         }
-                    };
-                }
-                EditPolicy result = child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
-                if (result == null) {
-                    result = new NonResizableEditPolicy();
-                }
-                return result;
-            }
+                        EditPolicy result =
+                                child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                        if (result == null) {
+                            result = new NonResizableEditPolicy();
+                        }
+                        return result;
+                    }
 
-            protected Command getMoveChildrenCommand(Request request) {
-                return null;
-            }
+                    protected Command getMoveChildrenCommand(Request request) {
+                        return null;
+                    }
 
-            protected Command getCreateCommand(CreateRequest request) {
-                return null;
-            }
-        };
+                    protected Command getCreateCommand(CreateRequest request) {
+                        return null;
+                    }
+                };
         return lep;
     }
 
@@ -132,9 +139,12 @@ public class PortEditPart extends BorderedBorderItemEditPart implements GraphsPo
     /**
      * @generated
      */
-    protected void addBorderItem(IFigure borderItemContainer, IBorderItemEditPart borderItemEditPart) {
+    protected void addBorderItem(IFigure borderItemContainer,
+            IBorderItemEditPart borderItemEditPart) {
         if (borderItemEditPart instanceof PortPortLabelEditPart) {
-            BorderItemLocator locator = new BorderItemLocator(getMainFigure(), PositionConstants.SOUTH);
+            BorderItemLocator locator =
+                    new BorderItemLocator(getMainFigure(),
+                            PositionConstants.SOUTH);
             locator.setBorderItemOffset(new Dimension(-20, -20));
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
         } else {
@@ -242,7 +252,8 @@ public class PortEditPart extends BorderedBorderItemEditPart implements GraphsPo
      * @generated
      */
     public EditPart getPrimaryChildEditPart() {
-        return getChildBySemanticHint(GraphsVisualIDRegistry.getType(PortPortLabelEditPart.VISUAL_ID));
+        return getChildBySemanticHint(GraphsVisualIDRegistry
+                .getType(PortPortLabelEditPart.VISUAL_ID));
     }
 
     /**
@@ -260,7 +271,8 @@ public class PortEditPart extends BorderedBorderItemEditPart implements GraphsPo
     /**
      * @generated
      */
-    public List<IElementType> getMARelTypesOnSourceAndTarget(IGraphicalEditPart targetEditPart) {
+    public List<IElementType> getMARelTypesOnSourceAndTarget(
+            IGraphicalEditPart targetEditPart) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (targetEditPart instanceof de.cau.cs.kieler.keg.diagram.edit.parts.PortEditPart) {
             types.add(GraphsElementTypes.Edge_4003);
@@ -364,7 +376,8 @@ public class PortEditPart extends BorderedBorderItemEditPart implements GraphsPo
         public PortFigure() {
             this.setForegroundColor(THIS_FORE);
             this.setBackgroundColor(THIS_BACK);
-            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(8), getMapMode().DPtoLP(8)));
+            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(8),
+                    getMapMode().DPtoLP(8)));
         }
 
     }

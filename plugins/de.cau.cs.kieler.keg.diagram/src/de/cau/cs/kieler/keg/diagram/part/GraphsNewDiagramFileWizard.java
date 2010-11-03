@@ -2,7 +2,6 @@ package de.cau.cs.kieler.keg.diagram.part;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
@@ -60,27 +59,36 @@ public class GraphsNewDiagramFileWizard extends Wizard {
         assert diagramRoot != null : "Doagram root element must be specified"; //$NON-NLS-1$
         assert editingDomain != null : "Editing domain must be specified"; //$NON-NLS-1$
 
-        myFileCreationPage = new WizardNewFileCreationPage(
-                Messages.GraphsNewDiagramFileWizard_CreationPageName, StructuredSelection.EMPTY);
-        myFileCreationPage.setTitle(Messages.GraphsNewDiagramFileWizard_CreationPageTitle);
+        myFileCreationPage =
+                new WizardNewFileCreationPage(
+                        Messages.GraphsNewDiagramFileWizard_CreationPageName,
+                        StructuredSelection.EMPTY);
+        myFileCreationPage
+                .setTitle(Messages.GraphsNewDiagramFileWizard_CreationPageTitle);
         myFileCreationPage.setDescription(NLS.bind(
-                Messages.GraphsNewDiagramFileWizard_CreationPageDescription, NodeEditPart.MODEL_ID));
+                Messages.GraphsNewDiagramFileWizard_CreationPageDescription,
+                NodeEditPart.MODEL_ID));
         IPath filePath;
-        String fileName = URI.decode(domainModelURI.trimFileExtension().lastSegment());
+        String fileName =
+                URI.decode(domainModelURI.trimFileExtension().lastSegment());
         if (domainModelURI.isPlatformResource()) {
-            filePath = new Path(domainModelURI.trimSegments(1).toPlatformString(true));
+            filePath =
+                    new Path(domainModelURI.trimSegments(1).toPlatformString(
+                            true));
         } else if (domainModelURI.isFile()) {
             filePath = new Path(domainModelURI.trimSegments(1).toFileString());
         } else {
             // TODO : use some default path
-            throw new IllegalArgumentException("Unsupported URI: " + domainModelURI); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "Unsupported URI: " + domainModelURI); //$NON-NLS-1$
         }
         myFileCreationPage.setContainerFullPath(filePath);
-        myFileCreationPage.setFileName(GraphsDiagramEditorUtil.getUniqueFileName(filePath, fileName,
-                "graphdiag")); //$NON-NLS-1$
+        myFileCreationPage.setFileName(GraphsDiagramEditorUtil
+                .getUniqueFileName(filePath, fileName, "kegdi")); //$NON-NLS-1$
 
-        diagramRootElementSelectionPage = new DiagramRootElementSelectionPage(
-                Messages.GraphsNewDiagramFileWizard_RootSelectionPageName);
+        diagramRootElementSelectionPage =
+                new DiagramRootElementSelectionPage(
+                        Messages.GraphsNewDiagramFileWizard_RootSelectionPageName);
         diagramRootElementSelectionPage
                 .setTitle(Messages.GraphsNewDiagramFileWizard_RootSelectionPageTitle);
         diagramRootElementSelectionPage
@@ -106,39 +114,53 @@ public class GraphsNewDiagramFileWizard extends Wizard {
         IFile diagramFile = myFileCreationPage.createNewFile();
         GraphsDiagramEditorUtil.setCharset(diagramFile);
         affectedFiles.add(diagramFile);
-        URI diagramModelURI = URI.createPlatformResourceURI(diagramFile.getFullPath().toString(), true);
+        URI diagramModelURI =
+                URI.createPlatformResourceURI(diagramFile.getFullPath()
+                        .toString(), true);
         ResourceSet resourceSet = myEditingDomain.getResourceSet();
-        final Resource diagramResource = resourceSet.createResource(diagramModelURI);
-        AbstractTransactionalCommand command = new AbstractTransactionalCommand(myEditingDomain,
-                Messages.GraphsNewDiagramFileWizard_InitDiagramCommand, affectedFiles) {
+        final Resource diagramResource =
+                resourceSet.createResource(diagramModelURI);
+        AbstractTransactionalCommand command =
+                new AbstractTransactionalCommand(myEditingDomain,
+                        Messages.GraphsNewDiagramFileWizard_InitDiagramCommand,
+                        affectedFiles) {
 
-            protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-                    throws ExecutionException {
-                int diagramVID = GraphsVisualIDRegistry
-                        .getDiagramVisualID(diagramRootElementSelectionPage.getModelElement());
-                if (diagramVID != NodeEditPart.VISUAL_ID) {
-                    return CommandResult
-                            .newErrorCommandResult(Messages.GraphsNewDiagramFileWizard_IncorrectRootError);
-                }
-                Diagram diagram = ViewService.createDiagram(
-                        diagramRootElementSelectionPage.getModelElement(), NodeEditPart.MODEL_ID,
-                        GraphsDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
-                diagramResource.getContents().add(diagram);
-                return CommandResult.newOKCommandResult();
-            }
-        };
+                    protected CommandResult doExecuteWithResult(
+                            IProgressMonitor monitor, IAdaptable info)
+                            throws ExecutionException {
+                        int diagramVID =
+                                GraphsVisualIDRegistry
+                                        .getDiagramVisualID(diagramRootElementSelectionPage
+                                                .getModelElement());
+                        if (diagramVID != NodeEditPart.VISUAL_ID) {
+                            return CommandResult
+                                    .newErrorCommandResult(Messages.GraphsNewDiagramFileWizard_IncorrectRootError);
+                        }
+                        Diagram diagram =
+                                ViewService
+                                        .createDiagram(
+                                                diagramRootElementSelectionPage
+                                                        .getModelElement(),
+                                                NodeEditPart.MODEL_ID,
+                                                GraphsDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
+                        diagramResource.getContents().add(diagram);
+                        return CommandResult.newOKCommandResult();
+                    }
+                };
         try {
-            OperationHistoryFactory.getOperationHistory().execute(command, new NullProgressMonitor(),
-                    null);
+            OperationHistoryFactory.getOperationHistory().execute(command,
+                    new NullProgressMonitor(), null);
             diagramResource.save(GraphsDiagramEditorUtil.getSaveOptions());
             GraphsDiagramEditorUtil.openDiagram(diagramResource);
         } catch (ExecutionException e) {
-            GraphsDiagramEditorPlugin.getInstance().logError("Unable to create model and diagram", e); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError(
+                    "Unable to create model and diagram", e); //$NON-NLS-1$
         } catch (IOException ex) {
             GraphsDiagramEditorPlugin.getInstance().logError(
                     "Save operation failed for: " + diagramModelURI, ex); //$NON-NLS-1$
         } catch (PartInitException ex) {
-            GraphsDiagramEditorPlugin.getInstance().logError("Unable to open editor", ex); //$NON-NLS-1$
+            GraphsDiagramEditorPlugin.getInstance().logError(
+                    "Unable to open editor", ex); //$NON-NLS-1$
         }
         return true;
     }
@@ -146,7 +168,8 @@ public class GraphsNewDiagramFileWizard extends Wizard {
     /**
      * @generated
      */
-    private static class DiagramRootElementSelectionPage extends ModelElementSelectionPage {
+    private static class DiagramRootElementSelectionPage extends
+            ModelElementSelectionPage {
 
         /**
          * @generated
@@ -170,9 +193,15 @@ public class GraphsNewDiagramFileWizard extends Wizard {
                 setErrorMessage(Messages.GraphsNewDiagramFileWizard_RootSelectionPageNoSelectionMessage);
                 return false;
             }
-            boolean result = ViewService.getInstance().provides(
-                    new CreateDiagramViewOperation(new EObjectAdapter(selectedModelElement),
-                            NodeEditPart.MODEL_ID, GraphsDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT));
+            boolean result =
+                    ViewService
+                            .getInstance()
+                            .provides(
+                                    new CreateDiagramViewOperation(
+                                            new EObjectAdapter(
+                                                    selectedModelElement),
+                                            NodeEditPart.MODEL_ID,
+                                            GraphsDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT));
             setErrorMessage(result ? null
                     : Messages.GraphsNewDiagramFileWizard_RootSelectionPageInvalidSelectionMessage);
             return result;

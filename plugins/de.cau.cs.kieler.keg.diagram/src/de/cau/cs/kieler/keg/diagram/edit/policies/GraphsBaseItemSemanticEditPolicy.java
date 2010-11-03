@@ -73,9 +73,13 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      */
     public Command getCommand(Request request) {
         if (request instanceof ReconnectRequest) {
-            Object view = ((ReconnectRequest) request).getConnectionEditPart().getModel();
+            Object view =
+                    ((ReconnectRequest) request).getConnectionEditPart()
+                            .getModel();
             if (view instanceof View) {
-                Integer id = new Integer(GraphsVisualIDRegistry.getVisualID((View) view));
+                Integer id =
+                        new Integer(
+                                GraphsVisualIDRegistry.getVisualID((View) view));
                 request.getExtendedData().put(VISUAL_ID_KEY, id);
             }
         }
@@ -97,11 +101,12 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     protected Command getSemanticCommand(IEditCommandRequest request) {
         IEditCommandRequest completedRequest = completeRequest(request);
         Command semanticCommand = getSemanticCommandSwitch(completedRequest);
-        semanticCommand = getEditHelperCommand(completedRequest, semanticCommand);
+        semanticCommand =
+                getEditHelperCommand(completedRequest, semanticCommand);
         if (completedRequest instanceof DestroyRequest) {
             DestroyRequest destroyRequest = (DestroyRequest) completedRequest;
-            return shouldProceed(destroyRequest) ? addDeleteViewCommand(semanticCommand, destroyRequest)
-                    : null;
+            return shouldProceed(destroyRequest) ? addDeleteViewCommand(
+                    semanticCommand, destroyRequest) : null;
         }
         return semanticCommand;
     }
@@ -109,30 +114,39 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     /**
      * @generated
      */
-    protected Command addDeleteViewCommand(Command mainCommand, DestroyRequest completedRequest) {
-        Command deleteViewCommand = getGEFWrapper(new DeleteCommand(getEditingDomain(), (View) getHost()
-                .getModel()));
-        return mainCommand == null ? deleteViewCommand : mainCommand.chain(deleteViewCommand);
+    protected Command addDeleteViewCommand(Command mainCommand,
+            DestroyRequest completedRequest) {
+        Command deleteViewCommand =
+                getGEFWrapper(new DeleteCommand(getEditingDomain(),
+                        (View) getHost().getModel()));
+        return mainCommand == null ? deleteViewCommand : mainCommand
+                .chain(deleteViewCommand);
     }
 
     /**
      * @generated
      */
-    private Command getEditHelperCommand(IEditCommandRequest request, Command editPolicyCommand) {
+    private Command getEditHelperCommand(IEditCommandRequest request,
+            Command editPolicyCommand) {
         if (editPolicyCommand != null) {
-            ICommand command = editPolicyCommand instanceof ICommandProxy ? ((ICommandProxy) editPolicyCommand)
-                    .getICommand() : new CommandProxy(editPolicyCommand);
-            request.setParameter(GraphsBaseEditHelper.EDIT_POLICY_COMMAND, command);
+            ICommand command =
+                    editPolicyCommand instanceof ICommandProxy ? ((ICommandProxy) editPolicyCommand)
+                            .getICommand()
+                            : new CommandProxy(editPolicyCommand);
+            request.setParameter(GraphsBaseEditHelper.EDIT_POLICY_COMMAND,
+                    command);
         }
         IElementType requestContextElementType = getContextElementType(request);
-        request.setParameter(GraphsBaseEditHelper.CONTEXT_ELEMENT_TYPE, requestContextElementType);
+        request.setParameter(GraphsBaseEditHelper.CONTEXT_ELEMENT_TYPE,
+                requestContextElementType);
         ICommand command = requestContextElementType.getEditCommand(request);
         request.setParameter(GraphsBaseEditHelper.EDIT_POLICY_COMMAND, null);
         request.setParameter(GraphsBaseEditHelper.CONTEXT_ELEMENT_TYPE, null);
         if (command != null) {
             if (!(command instanceof CompositeTransactionalCommand)) {
-                command = new CompositeTransactionalCommand(getEditingDomain(), command.getLabel())
-                        .compose(command);
+                command =
+                        new CompositeTransactionalCommand(getEditingDomain(),
+                                command.getLabel()).compose(command);
             }
             return new ICommandProxy(command);
         }
@@ -143,8 +157,10 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      * @generated
      */
     private IElementType getContextElementType(IEditCommandRequest request) {
-        IElementType requestContextElementType = GraphsElementTypes.getElementType(getVisualID(request));
-        return requestContextElementType != null ? requestContextElementType : myElementType;
+        IElementType requestContextElementType =
+                GraphsElementTypes.getElementType(getVisualID(request));
+        return requestContextElementType != null ? requestContextElementType
+                : myElementType;
     }
 
     /**
@@ -243,14 +259,16 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     /**
      * @generated
      */
-    protected Command getReorientReferenceRelationshipCommand(ReorientReferenceRelationshipRequest req) {
+    protected Command getReorientReferenceRelationshipCommand(
+            ReorientReferenceRelationshipRequest req) {
         return UnexecutableCommand.INSTANCE;
     }
 
     /**
      * @generated
      */
-    protected Command getReorientRelationshipCommand(ReorientRelationshipRequest req) {
+    protected Command getReorientRelationshipCommand(
+            ReorientRelationshipRequest req) {
         return UnexecutableCommand.INSTANCE;
     }
 
@@ -275,7 +293,8 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      */
     protected void addDestroyShortcutsCommand(ICompositeCommand cmd, View view) {
         assert view.getEAnnotation("Shortcut") == null; //$NON-NLS-1$
-        for (Iterator it = view.getDiagram().getChildren().iterator(); it.hasNext();) {
+        for (Iterator it = view.getDiagram().getChildren().iterator(); it
+                .hasNext();) {
             View nextView = (View) it.next();
             if (nextView.getEAnnotation("Shortcut") == null || !nextView.isSetElement() || nextView.getElement() != view.getElement()) { //$NON-NLS-1$
                 continue;
@@ -288,9 +307,11 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      * @generated
      */
     public static LinkConstraints getLinkConstraints() {
-        LinkConstraints cached = GraphsDiagramEditorPlugin.getInstance().getLinkConstraints();
+        LinkConstraints cached =
+                GraphsDiagramEditorPlugin.getInstance().getLinkConstraints();
         if (cached == null) {
-            GraphsDiagramEditorPlugin.getInstance().setLinkConstraints(cached = new LinkConstraints());
+            GraphsDiagramEditorPlugin.getInstance().setLinkConstraints(
+                    cached = new LinkConstraints());
         }
         return cached;
     }
@@ -310,112 +331,128 @@ public class GraphsBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         /**
          * @generated
          */
-        public boolean canCreateEdge_4001(KNode container, KNode source, KNode target) {
+        public boolean canCreateEdge_4001(KNode container, KNode source,
+                KNode target) {
             return canExistEdge_4001(container, null, source, target);
         }
 
         /**
          * @generated
          */
-        public boolean canCreateEdge_4002(KNode container, KNode source, KNode target) {
+        public boolean canCreateEdge_4002(KNode container, KNode source,
+                KNode target) {
             return canExistEdge_4002(container, null, source, target);
         }
 
         /**
          * @generated
          */
-        public boolean canCreateEdge_4003(KNode container, KPort source, KPort target) {
+        public boolean canCreateEdge_4003(KNode container, KPort source,
+                KPort target) {
             return canExistEdge_4003(container, null, source, target);
         }
 
         /**
          * @generated
          */
-        public boolean canCreateEdge_4004(KNode container, KPort source, KPort target) {
+        public boolean canCreateEdge_4004(KNode container, KPort source,
+                KPort target) {
             return canExistEdge_4004(container, null, source, target);
         }
 
         /**
          * @generated
          */
-        public boolean canCreateEdge_4005(KNode container, KPort source, KNode target) {
+        public boolean canCreateEdge_4005(KNode container, KPort source,
+                KNode target) {
             return canExistEdge_4005(container, null, source, target);
         }
 
         /**
          * @generated
          */
-        public boolean canCreateEdge_4006(KNode container, KPort source, KNode target) {
+        public boolean canCreateEdge_4006(KNode container, KPort source,
+                KNode target) {
             return canExistEdge_4006(container, null, source, target);
         }
 
         /**
          * @generated
          */
-        public boolean canCreateEdge_4007(KNode container, KNode source, KPort target) {
+        public boolean canCreateEdge_4007(KNode container, KNode source,
+                KPort target) {
             return canExistEdge_4007(container, null, source, target);
         }
 
         /**
          * @generated
          */
-        public boolean canCreateEdge_4008(KNode container, KNode source, KPort target) {
+        public boolean canCreateEdge_4008(KNode container, KNode source,
+                KPort target) {
             return canExistEdge_4008(container, null, source, target);
         }
 
         /**
          * @generated
          */
-        public boolean canExistEdge_4001(KNode container, Edge linkInstance, KNode source, KNode target) {
+        public boolean canExistEdge_4001(KNode container, Edge linkInstance,
+                KNode source, KNode target) {
             return true;
         }
 
         /**
          * @generated
          */
-        public boolean canExistEdge_4002(KNode container, Edge linkInstance, KNode source, KNode target) {
+        public boolean canExistEdge_4002(KNode container, Edge linkInstance,
+                KNode source, KNode target) {
             return true;
         }
 
         /**
          * @generated
          */
-        public boolean canExistEdge_4003(KNode container, Edge linkInstance, KPort source, KPort target) {
+        public boolean canExistEdge_4003(KNode container, Edge linkInstance,
+                KPort source, KPort target) {
             return true;
         }
 
         /**
          * @generated
          */
-        public boolean canExistEdge_4004(KNode container, Edge linkInstance, KPort source, KPort target) {
+        public boolean canExistEdge_4004(KNode container, Edge linkInstance,
+                KPort source, KPort target) {
             return true;
         }
 
         /**
          * @generated
          */
-        public boolean canExistEdge_4005(KNode container, Edge linkInstance, KPort source, KNode target) {
+        public boolean canExistEdge_4005(KNode container, Edge linkInstance,
+                KPort source, KNode target) {
             return true;
         }
 
         /**
          * @generated
          */
-        public boolean canExistEdge_4006(KNode container, Edge linkInstance, KPort source, KNode target) {
+        public boolean canExistEdge_4006(KNode container, Edge linkInstance,
+                KPort source, KNode target) {
             return true;
         }
 
         /**
          * @generated
          */
-        public boolean canExistEdge_4007(KNode container, Edge linkInstance, KNode source, KPort target) {
+        public boolean canExistEdge_4007(KNode container, Edge linkInstance,
+                KNode source, KPort target) {
             return true;
         }
 
         /**
          * @generated
          */
-        public boolean canExistEdge_4008(KNode container, Edge linkInstance, KNode source, KPort target) {
+        public boolean canExistEdge_4008(KNode container, Edge linkInstance,
+                KNode source, KPort target) {
             return true;
         }
     }

@@ -13,7 +13,8 @@ public class DiagramRulersAndGridPreferencePage extends RulerGridPreferencePage 
      * @generated
      */
     public DiagramRulersAndGridPreferencePage() {
-        setPreferenceStore(GraphsDiagramEditorPlugin.getInstance().getPreferenceStore());
+        setPreferenceStore(GraphsDiagramEditorPlugin.getInstance()
+                .getPreferenceStore());
     }
 
 }

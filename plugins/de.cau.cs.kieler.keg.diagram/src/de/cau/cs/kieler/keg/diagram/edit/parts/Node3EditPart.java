@@ -27,14 +27,18 @@ import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
-import de.cau.cs.kieler.keg.custom.GraphsNode;
+import de.cau.cs.kieler.keg.custom.KEGNode;
 import de.cau.cs.kieler.keg.diagram.edit.policies.Node3ItemSemanticEditPolicy;
 import de.cau.cs.kieler.keg.diagram.providers.GraphsElementTypes;
 
 /**
  * @generated
  */
-public class Node3EditPart extends ShapeNodeEditPart implements GraphsNode {
+public class Node3EditPart extends ShapeNodeEditPart
+
+implements KEGNode
+
+{
 
     /**
      * @generated
@@ -63,7 +67,8 @@ public class Node3EditPart extends ShapeNodeEditPart implements GraphsNode {
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new Node3ItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+                new Node3ItemSemanticEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
         // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
         // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -73,24 +78,26 @@ public class Node3EditPart extends ShapeNodeEditPart implements GraphsNode {
      * @generated
      */
     protected LayoutEditPolicy createLayoutEditPolicy() {
-        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep = new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
+        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep =
+                new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
 
-            protected EditPolicy createChildEditPolicy(EditPart child) {
-                EditPolicy result = child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
-                if (result == null) {
-                    result = new NonResizableEditPolicy();
-                }
-                return result;
-            }
+                    protected EditPolicy createChildEditPolicy(EditPart child) {
+                        EditPolicy result =
+                                child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                        if (result == null) {
+                            result = new NonResizableEditPolicy();
+                        }
+                        return result;
+                    }
 
-            protected Command getMoveChildrenCommand(Request request) {
-                return null;
-            }
+                    protected Command getMoveChildrenCommand(Request request) {
+                        return null;
+                    }
 
-            protected Command getCreateCommand(CreateRequest request) {
-                return null;
-            }
-        };
+                    protected Command getCreateCommand(CreateRequest request) {
+                        return null;
+                    }
+                };
         return lep;
     }
 
@@ -216,7 +223,8 @@ public class Node3EditPart extends ShapeNodeEditPart implements GraphsNode {
     /**
      * @generated
      */
-    public List<IElementType> getMARelTypesOnSourceAndTarget(IGraphicalEditPart targetEditPart) {
+    public List<IElementType> getMARelTypesOnSourceAndTarget(
+            IGraphicalEditPart targetEditPart) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (targetEditPart instanceof Node2EditPart) {
             types.add(GraphsElementTypes.Edge_4001);
@@ -319,7 +327,8 @@ public class Node3EditPart extends ShapeNodeEditPart implements GraphsNode {
          */
         public HypernodeFigure() {
             this.setBackgroundColor(THIS_BACK);
-            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(20), getMapMode().DPtoLP(20)));
+            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(20),
+                    getMapMode().DPtoLP(20)));
         }
 
     }

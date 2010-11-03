@@ -13,7 +13,7 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.CreateElementRequest;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.keg.GraphsFactory;
+import de.cau.cs.kieler.keg.KEGFactory;
 import de.cau.cs.kieler.keg.Port;
 
 /**
@@ -33,7 +33,8 @@ public class PortCreateCommand extends EditElementCommand {
      * @generated
      */
     protected EObject getElementToEdit() {
-        EObject container = ((CreateElementRequest) getRequest()).getContainer();
+        EObject container =
+                ((CreateElementRequest) getRequest()).getContainer();
         if (container instanceof View) {
             container = ((View) container).getElement();
         }
@@ -51,9 +52,9 @@ public class PortCreateCommand extends EditElementCommand {
     /**
      * @generated
      */
-    protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-            throws ExecutionException {
-        Port newElement = GraphsFactory.eINSTANCE.createPort();
+    protected CommandResult doExecuteWithResult(IProgressMonitor monitor,
+            IAdaptable info) throws ExecutionException {
+        Port newElement = KEGFactory.eINSTANCE.createPort();
 
         KNode owner = (KNode) getElementToEdit();
         owner.getPorts().add(newElement);
@@ -67,14 +68,18 @@ public class PortCreateCommand extends EditElementCommand {
     /**
      * @generated
      */
-    protected void doConfigure(Port newElement, IProgressMonitor monitor, IAdaptable info)
-            throws ExecutionException {
-        IElementType elementType = ((CreateElementRequest) getRequest()).getElementType();
-        ConfigureRequest configureRequest = new ConfigureRequest(getEditingDomain(), newElement,
-                elementType);
-        configureRequest.setClientContext(((CreateElementRequest) getRequest()).getClientContext());
+    protected void doConfigure(Port newElement, IProgressMonitor monitor,
+            IAdaptable info) throws ExecutionException {
+        IElementType elementType =
+                ((CreateElementRequest) getRequest()).getElementType();
+        ConfigureRequest configureRequest =
+                new ConfigureRequest(getEditingDomain(), newElement,
+                        elementType);
+        configureRequest.setClientContext(((CreateElementRequest) getRequest())
+                .getClientContext());
         configureRequest.addParameters(getRequest().getParameters());
-        ICommand configureCommand = elementType.getEditCommand(configureRequest);
+        ICommand configureCommand =
+                elementType.getEditCommand(configureRequest);
         if (configureCommand != null && configureCommand.canExecute()) {
             configureCommand.execute(monitor, info);
         }

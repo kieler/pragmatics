@@ -122,7 +122,8 @@ public class GraphsEditPartProvider extends AbstractEditPartProvider {
     public synchronized boolean provides(IOperation operation) {
         if (operation instanceof CreateGraphicEditPartOperation) {
             View view = ((IEditPartOperation) operation).getView();
-            if (!NodeEditPart.MODEL_ID.equals(GraphsVisualIDRegistry.getModelID(view))) {
+            if (!NodeEditPart.MODEL_ID.equals(GraphsVisualIDRegistry
+                    .getModelID(view))) {
                 return false;
             }
             if (isAllowCaching() && getCachedPart(view) != null) {

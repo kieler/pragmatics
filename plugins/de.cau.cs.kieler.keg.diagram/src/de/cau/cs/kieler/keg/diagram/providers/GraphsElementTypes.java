@@ -16,7 +16,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
-import de.cau.cs.kieler.keg.GraphsPackage;
+import de.cau.cs.kieler.keg.KEGPackage;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Edge2EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Edge3EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Edge4EditPart;
@@ -62,59 +62,73 @@ public class GraphsElementTypes {
     /**
      * @generated
      */
-    public static final IElementType Node_1000 = getElementType("de.cau.cs.kieler.keg.diagram.Node_1000"); //$NON-NLS-1$
+    public static final IElementType Node_1000 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Node_1000"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Node_2001 = getElementType("de.cau.cs.kieler.keg.diagram.Node_2001"); //$NON-NLS-1$
+    public static final IElementType Node_2001 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Node_2001"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Node_2002 = getElementType("de.cau.cs.kieler.keg.diagram.Node_2002"); //$NON-NLS-1$
+    public static final IElementType Node_2002 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Node_2002"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Node_3001 = getElementType("de.cau.cs.kieler.keg.diagram.Node_3001"); //$NON-NLS-1$
+    public static final IElementType Node_3001 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Node_3001"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Port_3002 = getElementType("de.cau.cs.kieler.keg.diagram.Port_3002"); //$NON-NLS-1$
+    public static final IElementType Port_3002 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Port_3002"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Node_3003 = getElementType("de.cau.cs.kieler.keg.diagram.Node_3003"); //$NON-NLS-1$
+    public static final IElementType Node_3003 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Node_3003"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4001 = getElementType("de.cau.cs.kieler.keg.diagram.Edge_4001"); //$NON-NLS-1$
+    public static final IElementType Edge_4001 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Edge_4001"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4002 = getElementType("de.cau.cs.kieler.keg.diagram.Edge_4002"); //$NON-NLS-1$
+    public static final IElementType Edge_4002 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Edge_4002"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4003 = getElementType("de.cau.cs.kieler.keg.diagram.Edge_4003"); //$NON-NLS-1$
+    public static final IElementType Edge_4003 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Edge_4003"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4004 = getElementType("de.cau.cs.kieler.keg.diagram.Edge_4004"); //$NON-NLS-1$
+    public static final IElementType Edge_4004 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Edge_4004"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4005 = getElementType("de.cau.cs.kieler.keg.diagram.Edge_4005"); //$NON-NLS-1$
+    public static final IElementType Edge_4005 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Edge_4005"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4006 = getElementType("de.cau.cs.kieler.keg.diagram.Edge_4006"); //$NON-NLS-1$
+    public static final IElementType Edge_4006 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Edge_4006"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4007 = getElementType("de.cau.cs.kieler.keg.diagram.Edge_4007"); //$NON-NLS-1$
+    public static final IElementType Edge_4007 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Edge_4007"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Edge_4008 = getElementType("de.cau.cs.kieler.keg.diagram.Edge_4008"); //$NON-NLS-1$
+    public static final IElementType Edge_4008 =
+            getElementType("de.cau.cs.kieler.keg.diagram.Edge_4008"); //$NON-NLS-1$
 
     /**
      * @generated
@@ -136,22 +150,26 @@ public class GraphsElementTypes {
     /**
      * @generated
      */
-    private static ImageDescriptor getProvidedImageDescriptor(ENamedElement element) {
+    private static ImageDescriptor getProvidedImageDescriptor(
+            ENamedElement element) {
         if (element instanceof EStructuralFeature) {
             EStructuralFeature feature = ((EStructuralFeature) element);
             EClass eContainingClass = feature.getEContainingClass();
             EClassifier eType = feature.getEType();
             if (eContainingClass != null && !eContainingClass.isAbstract()) {
                 element = eContainingClass;
-            } else if (eType instanceof EClass && !((EClass) eType).isAbstract()) {
+            } else if (eType instanceof EClass
+                    && !((EClass) eType).isAbstract()) {
                 element = eType;
             }
         }
         if (element instanceof EClass) {
             EClass eClass = (EClass) element;
             if (!eClass.isAbstract()) {
-                return GraphsDiagramEditorPlugin.getInstance().getItemImageDescriptor(
-                        eClass.getEPackage().getEFactoryInstance().create(eClass));
+                return GraphsDiagramEditorPlugin.getInstance()
+                        .getItemImageDescriptor(
+                                eClass.getEPackage().getEFactoryInstance()
+                                        .create(eClass));
             }
         }
         // TODO : support structural features
@@ -181,7 +199,8 @@ public class GraphsElementTypes {
         String key = getImageRegistryKey(element);
         Image image = getImageRegistry().get(key);
         if (image == null) {
-            ImageDescriptor imageDescriptor = getProvidedImageDescriptor(element);
+            ImageDescriptor imageDescriptor =
+                    getProvidedImageDescriptor(element);
             if (imageDescriptor == null) {
                 imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
             }
@@ -223,33 +242,33 @@ public class GraphsElementTypes {
         if (elements == null) {
             elements = new IdentityHashMap<IElementType, ENamedElement>();
 
-            elements.put(Node_1000, GraphsPackage.eINSTANCE.getNode());
+            elements.put(Node_1000, KEGPackage.eINSTANCE.getNode());
 
-            elements.put(Node_2001, GraphsPackage.eINSTANCE.getNode());
+            elements.put(Node_2001, KEGPackage.eINSTANCE.getNode());
 
-            elements.put(Node_2002, GraphsPackage.eINSTANCE.getNode());
+            elements.put(Node_2002, KEGPackage.eINSTANCE.getNode());
 
-            elements.put(Node_3001, GraphsPackage.eINSTANCE.getNode());
+            elements.put(Node_3001, KEGPackage.eINSTANCE.getNode());
 
-            elements.put(Port_3002, GraphsPackage.eINSTANCE.getPort());
+            elements.put(Port_3002, KEGPackage.eINSTANCE.getPort());
 
-            elements.put(Node_3003, GraphsPackage.eINSTANCE.getNode());
+            elements.put(Node_3003, KEGPackage.eINSTANCE.getNode());
 
-            elements.put(Edge_4001, GraphsPackage.eINSTANCE.getEdge());
+            elements.put(Edge_4001, KEGPackage.eINSTANCE.getEdge());
 
-            elements.put(Edge_4002, GraphsPackage.eINSTANCE.getEdge());
+            elements.put(Edge_4002, KEGPackage.eINSTANCE.getEdge());
 
-            elements.put(Edge_4003, GraphsPackage.eINSTANCE.getEdge());
+            elements.put(Edge_4003, KEGPackage.eINSTANCE.getEdge());
 
-            elements.put(Edge_4004, GraphsPackage.eINSTANCE.getEdge());
+            elements.put(Edge_4004, KEGPackage.eINSTANCE.getEdge());
 
-            elements.put(Edge_4005, GraphsPackage.eINSTANCE.getEdge());
+            elements.put(Edge_4005, KEGPackage.eINSTANCE.getEdge());
 
-            elements.put(Edge_4006, GraphsPackage.eINSTANCE.getEdge());
+            elements.put(Edge_4006, KEGPackage.eINSTANCE.getEdge());
 
-            elements.put(Edge_4007, GraphsPackage.eINSTANCE.getEdge());
+            elements.put(Edge_4007, KEGPackage.eINSTANCE.getEdge());
 
-            elements.put(Edge_4008, GraphsPackage.eINSTANCE.getEdge());
+            elements.put(Edge_4008, KEGPackage.eINSTANCE.getEdge());
         }
         return (ENamedElement) elements.get(type);
     }

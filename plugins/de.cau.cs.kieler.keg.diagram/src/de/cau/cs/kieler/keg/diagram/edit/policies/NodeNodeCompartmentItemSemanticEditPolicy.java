@@ -10,7 +10,8 @@ import de.cau.cs.kieler.keg.diagram.providers.GraphsElementTypes;
 /**
  * @generated
  */
-public class NodeNodeCompartmentItemSemanticEditPolicy extends GraphsBaseItemSemanticEditPolicy {
+public class NodeNodeCompartmentItemSemanticEditPolicy extends
+        GraphsBaseItemSemanticEditPolicy {
 
     /**
      * @generated

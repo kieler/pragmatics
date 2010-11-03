@@ -79,7 +79,8 @@ public class GraphsNavigatorGroup extends GraphsAbstractNavigatorItem {
      */
     public boolean equals(Object obj) {
         if (obj instanceof de.cau.cs.kieler.keg.diagram.navigator.GraphsNavigatorGroup) {
-            de.cau.cs.kieler.keg.diagram.navigator.GraphsNavigatorGroup anotherGroup = (de.cau.cs.kieler.keg.diagram.navigator.GraphsNavigatorGroup) obj;
+            de.cau.cs.kieler.keg.diagram.navigator.GraphsNavigatorGroup anotherGroup =
+                    (de.cau.cs.kieler.keg.diagram.navigator.GraphsNavigatorGroup) obj;
             if (getGroupName().equals(anotherGroup.getGroupName())) {
                 return getParent().equals(anotherGroup.getParent());
             }

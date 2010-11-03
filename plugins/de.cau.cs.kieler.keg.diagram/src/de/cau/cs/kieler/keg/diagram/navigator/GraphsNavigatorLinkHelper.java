@@ -1,7 +1,5 @@
 package de.cau.cs.kieler.keg.diagram.navigator;
 
-import java.util.Iterator;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.ui.URIEditorInput;
 import org.eclipse.emf.common.util.URI;
@@ -38,14 +36,17 @@ public class GraphsNavigatorLinkHelper implements ILinkHelper {
         Resource diagramResource = diagram.eResource();
         for (EObject nextEObject : diagramResource.getContents()) {
             if (nextEObject == diagram) {
-                return new FileEditorInput(WorkspaceSynchronizer.getFile(diagramResource));
+                return new FileEditorInput(
+                        WorkspaceSynchronizer.getFile(diagramResource));
             }
             if (nextEObject instanceof Diagram) {
                 break;
             }
         }
         URI uri = EcoreUtil.getURI(diagram);
-        String editorName = uri.lastSegment() + '#' + diagram.eResource().getContents().indexOf(diagram);
+        String editorName =
+                uri.lastSegment() + '#'
+                        + diagram.eResource().getContents().indexOf(diagram);
         IEditorInput editorInput = new URIEditorInput(uri, editorName);
         return editorInput;
     }
@@ -54,15 +55,17 @@ public class GraphsNavigatorLinkHelper implements ILinkHelper {
      * @generated
      */
     public IStructuredSelection findSelection(IEditorInput anInput) {
-        IDiagramDocument document = GraphsDiagramEditorPlugin.getInstance().getDocumentProvider()
-                .getDiagramDocument(anInput);
+        IDiagramDocument document =
+                GraphsDiagramEditorPlugin.getInstance().getDocumentProvider()
+                        .getDiagramDocument(anInput);
         if (document == null) {
             return StructuredSelection.EMPTY;
         }
         Diagram diagram = document.getDiagram();
         IFile file = WorkspaceSynchronizer.getFile(diagram.eResource());
         if (file != null) {
-            GraphsNavigatorItem item = new GraphsNavigatorItem(diagram, file, false);
+            GraphsNavigatorItem item =
+                    new GraphsNavigatorItem(diagram, file, false);
             return new StructuredSelection(item);
         }
         return StructuredSelection.EMPTY;
@@ -71,7 +74,8 @@ public class GraphsNavigatorLinkHelper implements ILinkHelper {
     /**
      * @generated
      */
-    public void activateEditor(IWorkbenchPage aPage, IStructuredSelection aSelection) {
+    public void activateEditor(IWorkbenchPage aPage,
+            IStructuredSelection aSelection) {
         if (aSelection == null || aSelection.isEmpty()) {
             return;
         }
@@ -79,15 +83,19 @@ public class GraphsNavigatorLinkHelper implements ILinkHelper {
             return;
         }
 
-        GraphsAbstractNavigatorItem abstractNavigatorItem = (GraphsAbstractNavigatorItem) aSelection
-                .getFirstElement();
+        GraphsAbstractNavigatorItem abstractNavigatorItem =
+                (GraphsAbstractNavigatorItem) aSelection.getFirstElement();
         View navigatorView = null;
         if (abstractNavigatorItem instanceof GraphsNavigatorItem) {
-            navigatorView = ((GraphsNavigatorItem) abstractNavigatorItem).getView();
+            navigatorView =
+                    ((GraphsNavigatorItem) abstractNavigatorItem).getView();
         } else if (abstractNavigatorItem instanceof GraphsNavigatorGroup) {
-            GraphsNavigatorGroup navigatorGroup = (GraphsNavigatorGroup) abstractNavigatorItem;
+            GraphsNavigatorGroup navigatorGroup =
+                    (GraphsNavigatorGroup) abstractNavigatorItem;
             if (navigatorGroup.getParent() instanceof GraphsNavigatorItem) {
-                navigatorView = ((GraphsNavigatorItem) navigatorGroup.getParent()).getView();
+                navigatorView =
+                        ((GraphsNavigatorItem) navigatorGroup.getParent())
+                                .getView();
             }
         }
         if (navigatorView == null) {
@@ -101,16 +109,20 @@ public class GraphsNavigatorLinkHelper implements ILinkHelper {
         aPage.bringToTop(editor);
         if (editor instanceof DiagramEditor) {
             DiagramEditor diagramEditor = (DiagramEditor) editor;
-            ResourceSet diagramEditorResourceSet = diagramEditor.getEditingDomain().getResourceSet();
-            EObject selectedView = diagramEditorResourceSet.getEObject(EcoreUtil.getURI(navigatorView),
-                    true);
+            ResourceSet diagramEditorResourceSet =
+                    diagramEditor.getEditingDomain().getResourceSet();
+            EObject selectedView =
+                    diagramEditorResourceSet.getEObject(
+                            EcoreUtil.getURI(navigatorView), true);
             if (selectedView == null) {
                 return;
             }
-            GraphicalViewer graphicalViewer = (GraphicalViewer) diagramEditor
-                    .getAdapter(GraphicalViewer.class);
-            EditPart selectedEditPart = (EditPart) graphicalViewer.getEditPartRegistry().get(
-                    selectedView);
+            GraphicalViewer graphicalViewer =
+                    (GraphicalViewer) diagramEditor
+                            .getAdapter(GraphicalViewer.class);
+            EditPart selectedEditPart =
+                    (EditPart) graphicalViewer.getEditPartRegistry().get(
+                            selectedView);
             if (selectedEditPart != null) {
                 graphicalViewer.select(selectedEditPart);
             }

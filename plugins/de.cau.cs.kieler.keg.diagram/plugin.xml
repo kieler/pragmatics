@@ -4,13 +4,13 @@
 
    <extension point="org.eclipse.team.core.fileTypes" id="repo-ftype">
       <?gmfgen generated="true"?>
-      <fileTypes type="text" extension="graphdiag"/>
+      <fileTypes type="text" extension="kegdi"/>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.extension_parser" id="resource-factory">
       <?gmfgen generated="true"?>
       <parser
-         type="graphdiag"
+         type="kegdi"
          class="org.eclipse.gmf.runtime.emf.core.resources.GMFResourceFactory">
       </parser>
    </extension>
@@ -20,8 +20,8 @@
       <editor
          id="de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorID"
          name="%editorName"
-         icon="icons/obj16/GraphsDiagramFile.gif"
-         extensions="graphdiag"
+         icon="icons/obj16/KEGDiagramFile.gif"
+         extensions="kegdi"
          default="true"
          class="de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor"
          matchingStrategy="de.cau.cs.kieler.keg.diagram.part.GraphsMatchingStrategy"
@@ -43,7 +43,7 @@
       <?gmfgen generated="true"?>
   	  <wizard
   	     name="%newWizardName"
-  	     icon="icons/obj16/GraphsDiagramFile.gif"
+  	     icon="icons/obj16/KEGDiagramFile.gif"
   	     category="de.cau.cs.kieler"
   	     class="de.cau.cs.kieler.keg.diagram.part.GraphsCreationWizard"
   	     id="de.cau.cs.kieler.keg.diagram.part.GraphsCreationWizardID">
@@ -55,7 +55,7 @@
       <?gmfgen generated="true"?>
       <objectContribution
             id="de.cau.cs.kieler.keg.diagram.InitDiagram"
-            nameFilter="*.graph"
+            nameFilter="*.keg"
             objectClass="org.eclipse.core.resources.IFile">
          <action
                label="%initDiagramActionLabel"
@@ -265,7 +265,7 @@
 
    <extension point="org.eclipse.gmf.runtime.emf.type.core.elementTypes" id="element-types">
       <?gmfgen generated="true"?>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <metamodelType
                id="de.cau.cs.kieler.keg.diagram.Node_1000"
                name="%metatype.name.Node_1000"
@@ -275,7 +275,7 @@
             <param name="semanticHint" value="1000"/>
          </metamodelType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Node_2001"
                name="%metatype.name.Node_2001"
@@ -284,7 +284,7 @@
             <param name="semanticHint" value="2001"/>
          </specializationType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Node_2002"
                name="%metatype.name.Node_2002"
@@ -293,7 +293,7 @@
             <param name="semanticHint" value="2002"/>
          </specializationType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Node_3001"
                name="%metatype.name.Node_3001"
@@ -302,7 +302,7 @@
             <param name="semanticHint" value="3001"/>
          </specializationType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <metamodelType
                id="de.cau.cs.kieler.keg.diagram.Port_3002"
                name="%metatype.name.Port_3002"
@@ -312,7 +312,7 @@
             <param name="semanticHint" value="3002"/>
          </metamodelType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Node_3003"
                name="%metatype.name.Node_3003"
@@ -321,7 +321,7 @@
             <param name="semanticHint" value="3003"/>
          </specializationType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <metamodelType
                id="de.cau.cs.kieler.keg.diagram.Edge_4001"
                name="%metatype.name.Edge_4001"
@@ -331,7 +331,7 @@
             <param name="semanticHint" value="4001"/>
          </metamodelType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Edge_4002"
                name="%metatype.name.Edge_4002"
@@ -340,7 +340,7 @@
             <param name="semanticHint" value="4002"/>
          </specializationType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Edge_4003"
                name="%metatype.name.Edge_4003"
@@ -349,7 +349,7 @@
             <param name="semanticHint" value="4003"/>
          </specializationType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Edge_4004"
                name="%metatype.name.Edge_4004"
@@ -358,7 +358,7 @@
             <param name="semanticHint" value="4004"/>
          </specializationType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Edge_4005"
                name="%metatype.name.Edge_4005"
@@ -367,7 +367,7 @@
             <param name="semanticHint" value="4005"/>
          </specializationType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Edge_4006"
                name="%metatype.name.Edge_4006"
@@ -376,7 +376,7 @@
             <param name="semanticHint" value="4006"/>
          </specializationType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Edge_4007"
                name="%metatype.name.Edge_4007"
@@ -385,7 +385,7 @@
             <param name="semanticHint" value="4007"/>
          </specializationType>
       </metamodel>
-      <metamodel nsURI="http://kieler.cs.cau.de/graphs">
+      <metamodel nsURI="http://kieler.cs.cau.de/KEG">
          <specializationType
                id="de.cau.cs.kieler.keg.diagram.Edge_4008"
                name="%metatype.name.Edge_4008"
@@ -458,13 +458,13 @@
             priority="normal" 
             contentProvider="de.cau.cs.kieler.keg.diagram.navigator.GraphsNavigatorContentProvider" 
             labelProvider="de.cau.cs.kieler.keg.diagram.navigator.GraphsNavigatorLabelProvider"
-            icon="icons/obj16/GraphsDiagramFile.gif"
+            icon="icons/obj16/KEGDiagramFile.gif"
             activeByDefault="true">
          <triggerPoints>
             <or>
 	           <and>
     	          <instanceof value="org.eclipse.core.resources.IFile"/>
-        	      <test property="org.eclipse.core.resources.extension" value="graphdiag"/>
+        	      <test property="org.eclipse.core.resources.extension" value="kegdi"/>
                </and>
                <instanceof value="de.cau.cs.kieler.keg.diagram.navigator.GraphsAbstractNavigatorItem"/>
             </or>
@@ -481,7 +481,7 @@
                <or>
 	              <and>
     	             <instanceof value="org.eclipse.core.resources.IFile"/>
-        	         <test property="org.eclipse.core.resources.extension" value="graphdiag"/>
+        	         <test property="org.eclipse.core.resources.extension" value="kegdi"/>
                   </and>
                   <instanceof value="de.cau.cs.kieler.keg.diagram.navigator.GraphsAbstractNavigatorItem"/>
                </or>
@@ -494,13 +494,13 @@
             priority="normal" 
             contentProvider="de.cau.cs.kieler.keg.diagram.navigator.GraphsDomainNavigatorContentProvider" 
             labelProvider="de.cau.cs.kieler.keg.diagram.navigator.GraphsDomainNavigatorLabelProvider"
-            icon="icons/obj16/GraphsDiagramFile.gif"
+            icon="icons/obj16/KEGDiagramFile.gif"
             activeByDefault="true">
          <triggerPoints>
             <or>
 	           <and>
     	          <instanceof value="org.eclipse.core.resources.IFile"/>
-        	      <test property="org.eclipse.core.resources.extension" value="graph"/>
+        	      <test property="org.eclipse.core.resources.extension" value="keg"/>
                </and>
                <instanceof value="de.cau.cs.kieler.keg.diagram.navigator.GraphsDomainNavigatorItem"/>
             </or>

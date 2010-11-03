@@ -8,15 +8,15 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.ui.figures.SplineConnection;
-import de.cau.cs.kieler.keg.custom.GraphsConnection;
+import de.cau.cs.kieler.keg.custom.KEGConnection;
 import de.cau.cs.kieler.keg.diagram.edit.policies.Edge4ItemSemanticEditPolicy;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
 
 /**
  * @generated
  */
-public class Edge4EditPart extends ConnectionNodeEditPart implements GraphsConnection,
-        ITreeBranchEditPart {
+public class Edge4EditPart extends ConnectionNodeEditPart implements
+        KEGConnection, ITreeBranchEditPart {
 
     /**
      * @generated
@@ -35,7 +35,8 @@ public class Edge4EditPart extends ConnectionNodeEditPart implements GraphsConne
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new Edge4ItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
+                new Edge4ItemSemanticEditPolicy());
     }
 
     /**
@@ -51,8 +52,9 @@ public class Edge4EditPart extends ConnectionNodeEditPart implements GraphsConne
         Connection figure = new UndirectedEdgeFigure();
 
         if (figure instanceof SplineConnection) {
-            ((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin.getInstance()
-                    .getPreferenceStore().getInt(SplineConnection.PREF_SPLINE_MODE));
+            ((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin
+                    .getInstance().getPreferenceStore()
+                    .getInt(SplineConnection.PREF_SPLINE_MODE));
         }
         return figure;
     }

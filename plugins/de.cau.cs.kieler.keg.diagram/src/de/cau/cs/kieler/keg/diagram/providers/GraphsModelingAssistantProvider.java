@@ -41,7 +41,8 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
      * @generated
      */
     public List getTypesForPopupBar(IAdaptable host) {
-        IGraphicalEditPart editPart = (IGraphicalEditPart) host.getAdapter(IGraphicalEditPart.class);
+        IGraphicalEditPart editPart =
+                (IGraphicalEditPart) host.getAdapter(IGraphicalEditPart.class);
         if (editPart instanceof NodeEditPart) {
             ArrayList<IElementType> types = new ArrayList<IElementType>(2);
             types.add(GraphsElementTypes.Node_2001);
@@ -77,8 +78,9 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
      * @generated
      */
     public List getRelTypesOnSource(IAdaptable source) {
-        IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
-                .getAdapter(IGraphicalEditPart.class);
+        IGraphicalEditPart sourceEditPart =
+                (IGraphicalEditPart) source
+                        .getAdapter(IGraphicalEditPart.class);
         if (sourceEditPart instanceof Node2EditPart) {
             return ((Node2EditPart) sourceEditPart).getMARelTypesOnSource();
         }
@@ -101,8 +103,9 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
      * @generated
      */
     public List getRelTypesOnTarget(IAdaptable target) {
-        IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
-                .getAdapter(IGraphicalEditPart.class);
+        IGraphicalEditPart targetEditPart =
+                (IGraphicalEditPart) target
+                        .getAdapter(IGraphicalEditPart.class);
         if (targetEditPart instanceof Node2EditPart) {
             return ((Node2EditPart) targetEditPart).getMARelTypesOnTarget();
         }
@@ -124,25 +127,33 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
-    public List getRelTypesOnSourceAndTarget(IAdaptable source, IAdaptable target) {
-        IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
-                .getAdapter(IGraphicalEditPart.class);
-        IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
-                .getAdapter(IGraphicalEditPart.class);
+    public List getRelTypesOnSourceAndTarget(IAdaptable source,
+            IAdaptable target) {
+        IGraphicalEditPart sourceEditPart =
+                (IGraphicalEditPart) source
+                        .getAdapter(IGraphicalEditPart.class);
+        IGraphicalEditPart targetEditPart =
+                (IGraphicalEditPart) target
+                        .getAdapter(IGraphicalEditPart.class);
         if (sourceEditPart instanceof Node2EditPart) {
-            return ((Node2EditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+            return ((Node2EditPart) sourceEditPart)
+                    .getMARelTypesOnSourceAndTarget(targetEditPart);
         }
         if (sourceEditPart instanceof Node3EditPart) {
-            return ((Node3EditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+            return ((Node3EditPart) sourceEditPart)
+                    .getMARelTypesOnSourceAndTarget(targetEditPart);
         }
         if (sourceEditPart instanceof Node4EditPart) {
-            return ((Node4EditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+            return ((Node4EditPart) sourceEditPart)
+                    .getMARelTypesOnSourceAndTarget(targetEditPart);
         }
         if (sourceEditPart instanceof PortEditPart) {
-            return ((PortEditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+            return ((PortEditPart) sourceEditPart)
+                    .getMARelTypesOnSourceAndTarget(targetEditPart);
         }
         if (sourceEditPart instanceof Node5EditPart) {
-            return ((Node5EditPart) sourceEditPart).getMARelTypesOnSourceAndTarget(targetEditPart);
+            return ((Node5EditPart) sourceEditPart)
+                    .getMARelTypesOnSourceAndTarget(targetEditPart);
         }
         return Collections.EMPTY_LIST;
     }
@@ -150,23 +161,30 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
-    public List getTypesForSource(IAdaptable target, IElementType relationshipType) {
-        IGraphicalEditPart targetEditPart = (IGraphicalEditPart) target
-                .getAdapter(IGraphicalEditPart.class);
+    public List getTypesForSource(IAdaptable target,
+            IElementType relationshipType) {
+        IGraphicalEditPart targetEditPart =
+                (IGraphicalEditPart) target
+                        .getAdapter(IGraphicalEditPart.class);
         if (targetEditPart instanceof Node2EditPart) {
-            return ((Node2EditPart) targetEditPart).getMATypesForSource(relationshipType);
+            return ((Node2EditPart) targetEditPart)
+                    .getMATypesForSource(relationshipType);
         }
         if (targetEditPart instanceof Node3EditPart) {
-            return ((Node3EditPart) targetEditPart).getMATypesForSource(relationshipType);
+            return ((Node3EditPart) targetEditPart)
+                    .getMATypesForSource(relationshipType);
         }
         if (targetEditPart instanceof Node4EditPart) {
-            return ((Node4EditPart) targetEditPart).getMATypesForSource(relationshipType);
+            return ((Node4EditPart) targetEditPart)
+                    .getMATypesForSource(relationshipType);
         }
         if (targetEditPart instanceof PortEditPart) {
-            return ((PortEditPart) targetEditPart).getMATypesForSource(relationshipType);
+            return ((PortEditPart) targetEditPart)
+                    .getMATypesForSource(relationshipType);
         }
         if (targetEditPart instanceof Node5EditPart) {
-            return ((Node5EditPart) targetEditPart).getMATypesForSource(relationshipType);
+            return ((Node5EditPart) targetEditPart)
+                    .getMATypesForSource(relationshipType);
         }
         return Collections.EMPTY_LIST;
     }
@@ -174,23 +192,30 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
-    public List getTypesForTarget(IAdaptable source, IElementType relationshipType) {
-        IGraphicalEditPart sourceEditPart = (IGraphicalEditPart) source
-                .getAdapter(IGraphicalEditPart.class);
+    public List getTypesForTarget(IAdaptable source,
+            IElementType relationshipType) {
+        IGraphicalEditPart sourceEditPart =
+                (IGraphicalEditPart) source
+                        .getAdapter(IGraphicalEditPart.class);
         if (sourceEditPart instanceof Node2EditPart) {
-            return ((Node2EditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+            return ((Node2EditPart) sourceEditPart)
+                    .getMATypesForTarget(relationshipType);
         }
         if (sourceEditPart instanceof Node3EditPart) {
-            return ((Node3EditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+            return ((Node3EditPart) sourceEditPart)
+                    .getMATypesForTarget(relationshipType);
         }
         if (sourceEditPart instanceof Node4EditPart) {
-            return ((Node4EditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+            return ((Node4EditPart) sourceEditPart)
+                    .getMATypesForTarget(relationshipType);
         }
         if (sourceEditPart instanceof PortEditPart) {
-            return ((PortEditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+            return ((PortEditPart) sourceEditPart)
+                    .getMATypesForTarget(relationshipType);
         }
         if (sourceEditPart instanceof Node5EditPart) {
-            return ((Node5EditPart) sourceEditPart).getMATypesForTarget(relationshipType);
+            return ((Node5EditPart) sourceEditPart)
+                    .getMATypesForTarget(relationshipType);
         }
         return Collections.EMPTY_LIST;
     }
@@ -198,15 +223,19 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
     /**
      * @generated
      */
-    public EObject selectExistingElementForSource(IAdaptable target, IElementType relationshipType) {
-        return selectExistingElement(target, getTypesForSource(target, relationshipType));
+    public EObject selectExistingElementForSource(IAdaptable target,
+            IElementType relationshipType) {
+        return selectExistingElement(target,
+                getTypesForSource(target, relationshipType));
     }
 
     /**
      * @generated
      */
-    public EObject selectExistingElementForTarget(IAdaptable source, IElementType relationshipType) {
-        return selectExistingElement(source, getTypesForTarget(source, relationshipType));
+    public EObject selectExistingElementForTarget(IAdaptable source,
+            IElementType relationshipType) {
+        return selectExistingElement(source,
+                getTypesForTarget(source, relationshipType));
     }
 
     /**
@@ -216,13 +245,15 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
         if (types.isEmpty()) {
             return null;
         }
-        IGraphicalEditPart editPart = (IGraphicalEditPart) host.getAdapter(IGraphicalEditPart.class);
+        IGraphicalEditPart editPart =
+                (IGraphicalEditPart) host.getAdapter(IGraphicalEditPart.class);
         if (editPart == null) {
             return null;
         }
         Diagram diagram = (Diagram) editPart.getRoot().getContents().getModel();
         HashSet<EObject> elements = new HashSet<EObject>();
-        for (Iterator<EObject> it = diagram.getElement().eAllContents(); it.hasNext();) {
+        for (Iterator<EObject> it = diagram.getElement().eAllContents(); it
+                .hasNext();) {
             EObject element = it.next();
             if (isApplicableElement(element, types)) {
                 elements.add(element);
@@ -231,14 +262,16 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
         if (elements.isEmpty()) {
             return null;
         }
-        return selectElement((EObject[]) elements.toArray(new EObject[elements.size()]));
+        return selectElement((EObject[]) elements.toArray(new EObject[elements
+                .size()]));
     }
 
     /**
      * @generated
      */
     protected boolean isApplicableElement(EObject element, Collection types) {
-        IElementType type = ElementTypeRegistry.getInstance().getElementType(element);
+        IElementType type =
+                ElementTypeRegistry.getInstance().getElementType(element);
         return types.contains(type);
     }
 
@@ -247,9 +280,11 @@ public class GraphsModelingAssistantProvider extends ModelingAssistantProvider {
      */
     protected EObject selectElement(EObject[] elements) {
         Shell shell = Display.getCurrent().getActiveShell();
-        ILabelProvider labelProvider = new AdapterFactoryLabelProvider(GraphsDiagramEditorPlugin
-                .getInstance().getItemProvidersAdapterFactory());
-        ElementListSelectionDialog dialog = new ElementListSelectionDialog(shell, labelProvider);
+        ILabelProvider labelProvider =
+                new AdapterFactoryLabelProvider(GraphsDiagramEditorPlugin
+                        .getInstance().getItemProvidersAdapterFactory());
+        ElementListSelectionDialog dialog =
+                new ElementListSelectionDialog(shell, labelProvider);
         dialog.setMessage(Messages.GraphsModelingAssistantProviderMessage);
         dialog.setTitle(Messages.GraphsModelingAssistantProviderTitle);
         dialog.setMultipleSelection(false);
