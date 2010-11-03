@@ -25,4 +25,4 @@ Export-Package: de.cau.cs.kieler.keg,
  de.cau.cs.kieler.keg.custom,
  de.cau.cs.kieler.keg.impl,
  de.cau.cs.kieler.keg.util
-Bundle-Activator: de.cau.cs.kieler.keg.GraphsPlugin
+Bundle-Activator: de.cau.cs.kieler.keg.KEGPlugin

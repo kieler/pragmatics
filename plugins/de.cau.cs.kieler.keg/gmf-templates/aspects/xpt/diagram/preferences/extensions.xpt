@@ -35,7 +35,7 @@
             name="%prefpage.«iD»"
 «IF null <> parent-»
             category="«parent.iD»"
-«REM»Moved preference page of graphs editor from root to KIELER«ENDREM»
+«REM»Moved preference page of keg editor from root to KIELER«ENDREM»
 «ELSE-»		
             category="de.cau.cs.kieler"
 «REM»End of customization«ENDREM»

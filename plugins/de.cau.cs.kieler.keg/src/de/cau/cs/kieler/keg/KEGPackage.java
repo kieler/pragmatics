@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg;
 
@@ -33,18 +31,18 @@ import org.eclipse.emf.ecore.EPackage;
  *   <li>and each data type</li>
  * </ul>
  * <!-- end-user-doc -->
- * @see de.cau.cs.kieler.keg.GraphsFactory
+ * @see de.cau.cs.kieler.keg.KEGFactory
  * @model kind="package"
  * @generated
  */
-public interface GraphsPackage extends EPackage {
+public interface KEGPackage extends EPackage {
     /**
      * The package name.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    String eNAME = "graphs";
+    String eNAME = "keg";
 
     /**
      * The package namespace URI.
@@ -52,7 +50,7 @@ public interface GraphsPackage extends EPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    String eNS_URI = "http://kieler.cs.cau.de/graphs";
+    String eNS_URI = "http://kieler.cs.cau.de/KEG";
 
     /**
      * The package namespace name.
@@ -60,7 +58,7 @@ public interface GraphsPackage extends EPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    String eNS_PREFIX = "graphs";
+    String eNS_PREFIX = "keg";
 
     /**
      * The singleton instance of the package.
@@ -68,14 +66,14 @@ public interface GraphsPackage extends EPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    GraphsPackage eINSTANCE = de.cau.cs.kieler.keg.impl.GraphsPackageImpl.init();
+    KEGPackage eINSTANCE = de.cau.cs.kieler.keg.impl.KEGPackageImpl.init();
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.keg.impl.NodeImpl <em>Node</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see de.cau.cs.kieler.keg.impl.NodeImpl
-     * @see de.cau.cs.kieler.keg.impl.GraphsPackageImpl#getNode()
+     * @see de.cau.cs.kieler.keg.impl.KEGPackageImpl#getNode()
      * @generated
      */
     int NODE = 0;
@@ -175,7 +173,7 @@ public interface GraphsPackage extends EPackage {
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see de.cau.cs.kieler.keg.impl.EdgeImpl
-     * @see de.cau.cs.kieler.keg.impl.GraphsPackageImpl#getEdge()
+     * @see de.cau.cs.kieler.keg.impl.KEGPackageImpl#getEdge()
      * @generated
      */
     int EDGE = 1;
@@ -311,7 +309,7 @@ public interface GraphsPackage extends EPackage {
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see de.cau.cs.kieler.keg.impl.PortImpl
-     * @see de.cau.cs.kieler.keg.impl.GraphsPackageImpl#getPort()
+     * @see de.cau.cs.kieler.keg.impl.KEGPackageImpl#getPort()
      * @generated
      */
     int PORT = 2;
@@ -375,7 +373,7 @@ public interface GraphsPackage extends EPackage {
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see de.cau.cs.kieler.keg.EdgeType
-     * @see de.cau.cs.kieler.keg.impl.GraphsPackageImpl#getEdgeType()
+     * @see de.cau.cs.kieler.keg.impl.KEGPackageImpl#getEdgeType()
      * @generated
      */
     int EDGE_TYPE = 3;
@@ -538,7 +536,7 @@ public interface GraphsPackage extends EPackage {
      * @return the factory that creates the instances of the model.
      * @generated
      */
-    GraphsFactory getGraphsFactory();
+    KEGFactory getKEGFactory();
 
     /**
      * <!-- begin-user-doc -->
@@ -558,7 +556,7 @@ public interface GraphsPackage extends EPackage {
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @see de.cau.cs.kieler.keg.impl.NodeImpl
-         * @see de.cau.cs.kieler.keg.impl.GraphsPackageImpl#getNode()
+         * @see de.cau.cs.kieler.keg.impl.KEGPackageImpl#getNode()
          * @generated
          */
         EClass NODE = eINSTANCE.getNode();
@@ -584,7 +582,7 @@ public interface GraphsPackage extends EPackage {
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @see de.cau.cs.kieler.keg.impl.EdgeImpl
-         * @see de.cau.cs.kieler.keg.impl.GraphsPackageImpl#getEdge()
+         * @see de.cau.cs.kieler.keg.impl.KEGPackageImpl#getEdge()
          * @generated
          */
         EClass EDGE = eINSTANCE.getEdge();
@@ -650,7 +648,7 @@ public interface GraphsPackage extends EPackage {
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @see de.cau.cs.kieler.keg.impl.PortImpl
-         * @see de.cau.cs.kieler.keg.impl.GraphsPackageImpl#getPort()
+         * @see de.cau.cs.kieler.keg.impl.KEGPackageImpl#getPort()
          * @generated
          */
         EClass PORT = eINSTANCE.getPort();
@@ -668,11 +666,11 @@ public interface GraphsPackage extends EPackage {
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @see de.cau.cs.kieler.keg.EdgeType
-         * @see de.cau.cs.kieler.keg.impl.GraphsPackageImpl#getEdgeType()
+         * @see de.cau.cs.kieler.keg.impl.KEGPackageImpl#getEdgeType()
          * @generated
          */
         EEnum EDGE_TYPE = eINSTANCE.getEdgeType();
 
     }
 
-} //GraphsPackage
+} //KEGPackage

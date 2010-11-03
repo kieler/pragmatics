@@ -14,10 +14,10 @@
 package de.cau.cs.kieler.keg.custom;
 
 /**
- * A marker interface for graphs ports.
+ * A marker interface for graphs nodes.
  * 
  * @author mri
  */
-public interface GraphsPort {
+public interface KEGNode {
 
 }

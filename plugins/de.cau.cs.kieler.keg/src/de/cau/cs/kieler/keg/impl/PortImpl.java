@@ -10,14 +10,12 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.impl;
 
 import de.cau.cs.kieler.core.kgraph.impl.KPortImpl;
 
-import de.cau.cs.kieler.keg.GraphsPackage;
+import de.cau.cs.kieler.keg.KEGPackage;
 import de.cau.cs.kieler.keg.Port;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -76,7 +74,7 @@ public class PortImpl extends KPortImpl implements Port {
      */
     @Override
     protected EClass eStaticClass() {
-        return GraphsPackage.Literals.PORT;
+        return KEGPackage.Literals.PORT;
     }
 
     /**
@@ -97,7 +95,7 @@ public class PortImpl extends KPortImpl implements Port {
         String oldPortLabel = portLabel;
         portLabel = newPortLabel;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.PORT__PORT_LABEL, oldPortLabel, portLabel));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.PORT__PORT_LABEL, oldPortLabel, portLabel));
     }
 
     /**
@@ -108,7 +106,7 @@ public class PortImpl extends KPortImpl implements Port {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case GraphsPackage.PORT__PORT_LABEL:
+            case KEGPackage.PORT__PORT_LABEL:
                 return getPortLabel();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -122,7 +120,7 @@ public class PortImpl extends KPortImpl implements Port {
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case GraphsPackage.PORT__PORT_LABEL:
+            case KEGPackage.PORT__PORT_LABEL:
                 setPortLabel((String)newValue);
                 return;
         }
@@ -137,7 +135,7 @@ public class PortImpl extends KPortImpl implements Port {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case GraphsPackage.PORT__PORT_LABEL:
+            case KEGPackage.PORT__PORT_LABEL:
                 setPortLabel(PORT_LABEL_EDEFAULT);
                 return;
         }
@@ -152,7 +150,7 @@ public class PortImpl extends KPortImpl implements Port {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case GraphsPackage.PORT__PORT_LABEL:
+            case KEGPackage.PORT__PORT_LABEL:
                 return PORT_LABEL_EDEFAULT == null ? portLabel != null : !PORT_LABEL_EDEFAULT.equals(portLabel);
         }
         return super.eIsSet(featureID);

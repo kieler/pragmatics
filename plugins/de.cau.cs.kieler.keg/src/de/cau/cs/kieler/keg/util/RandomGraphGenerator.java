@@ -6,7 +6,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.keg.Edge;
 import de.cau.cs.kieler.keg.EdgeType;
-import de.cau.cs.kieler.keg.GraphsFactory;
+import de.cau.cs.kieler.keg.KEGFactory;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.Port;
 
@@ -19,7 +19,7 @@ import de.cau.cs.kieler.keg.Port;
  */
 public class RandomGraphGenerator {
 
-    private static GraphsFactory factory = GraphsFactory.eINSTANCE;
+    private static KEGFactory factory = KEGFactory.eINSTANCE;
 
     /**
      * probability that a new hierarchy level will be created upon the creation

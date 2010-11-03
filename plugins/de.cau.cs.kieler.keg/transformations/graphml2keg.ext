@@ -1,4 +1,4 @@
-import graphs;
+import keg;
 import graphml;
 
 Node transform(graphml::DocumentRoot doc):
@@ -57,11 +57,11 @@ Void transformEdge(graphml::EdgeType edge, boolean directed):
 	(if edge.targetport != null then newEdge.setTargetPort(getPort(edge.targetport, target))) ->
 	(if edge.sourceport != null
 			 	then (if edge.targetport != null
-			 			then newEdge.setType(graphs::EdgeType::Port2Port)
-			 			else newEdge.setType(graphs::EdgeType::Port2Node))
+			 			then newEdge.setType(keg::EdgeType::Port2Port)
+			 			else newEdge.setType(keg::EdgeType::Port2Node))
 			 	else (if edge.targetport != null
-			 			then newEdge.setType(graphs::EdgeType::Node2Port)
-			 			else newEdge.setType(graphs::EdgeType::Node2Node)))
+			 			then newEdge.setType(keg::EdgeType::Node2Port)
+			 			else newEdge.setType(keg::EdgeType::Node2Node)))
 ;
 
 Void transformGraphHyperedges(graphml::GraphType graph, Node parent):
@@ -89,8 +89,8 @@ Void connectEndpointToHypernode(graphml::EndpointType endpoint, Node hypernode):
 	newEdge.setTarget(target) ->
 	(if endpoint.port != null then newEdge.setTargetPort(getPort(endpoint.port, target))) ->
 	(if endpoint.port != null
-		then newEdge.setType(graphs::EdgeType::Node2Port)
-		else newEdge.setType(graphs::EdgeType::Node2Node))
+		then newEdge.setType(keg::EdgeType::Node2Port)
+		else newEdge.setType(keg::EdgeType::Node2Node))
 ;
 
 Void transformNode(graphml::NodeType node, Node parent):

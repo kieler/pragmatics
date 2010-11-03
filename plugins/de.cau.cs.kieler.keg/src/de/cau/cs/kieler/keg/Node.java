@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg;
 
@@ -30,7 +28,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * </ul>
  * </p>
  *
- * @see de.cau.cs.kieler.keg.GraphsPackage#getNode()
+ * @see de.cau.cs.kieler.keg.KEGPackage#getNode()
  * @model
  * @generated
  */
@@ -45,7 +43,7 @@ public interface Node extends KNode {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Node Label</em>' attribute.
      * @see #setNodeLabel(String)
-     * @see de.cau.cs.kieler.keg.GraphsPackage#getNode_NodeLabel()
+     * @see de.cau.cs.kieler.keg.KEGPackage#getNode_NodeLabel()
      * @model required="true"
      * @generated
      */
@@ -72,7 +70,7 @@ public interface Node extends KNode {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Is Hypernode</em>' attribute.
      * @see #setIsHypernode(boolean)
-     * @see de.cau.cs.kieler.keg.GraphsPackage#getNode_IsHypernode()
+     * @see de.cau.cs.kieler.keg.KEGPackage#getNode_IsHypernode()
      * @model default="false" required="true"
      * @generated
      */

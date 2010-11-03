@@ -10,14 +10,12 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.impl;
 
 import de.cau.cs.kieler.core.kgraph.impl.KNodeImpl;
 
-import de.cau.cs.kieler.keg.GraphsPackage;
+import de.cau.cs.kieler.keg.KEGPackage;
 import de.cau.cs.kieler.keg.Node;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -97,7 +95,7 @@ public class NodeImpl extends KNodeImpl implements Node {
      */
     @Override
     protected EClass eStaticClass() {
-        return GraphsPackage.Literals.NODE;
+        return KEGPackage.Literals.NODE;
     }
 
     /**
@@ -118,7 +116,7 @@ public class NodeImpl extends KNodeImpl implements Node {
         String oldNodeLabel = nodeLabel;
         nodeLabel = newNodeLabel;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.NODE__NODE_LABEL, oldNodeLabel, nodeLabel));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.NODE__NODE_LABEL, oldNodeLabel, nodeLabel));
     }
 
     /**
@@ -139,7 +137,7 @@ public class NodeImpl extends KNodeImpl implements Node {
         boolean oldIsHypernode = isHypernode;
         isHypernode = newIsHypernode;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.NODE__IS_HYPERNODE, oldIsHypernode, isHypernode));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.NODE__IS_HYPERNODE, oldIsHypernode, isHypernode));
     }
 
     /**
@@ -150,9 +148,9 @@ public class NodeImpl extends KNodeImpl implements Node {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case GraphsPackage.NODE__NODE_LABEL:
+            case KEGPackage.NODE__NODE_LABEL:
                 return getNodeLabel();
-            case GraphsPackage.NODE__IS_HYPERNODE:
+            case KEGPackage.NODE__IS_HYPERNODE:
                 return isIsHypernode();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -166,10 +164,10 @@ public class NodeImpl extends KNodeImpl implements Node {
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case GraphsPackage.NODE__NODE_LABEL:
+            case KEGPackage.NODE__NODE_LABEL:
                 setNodeLabel((String)newValue);
                 return;
-            case GraphsPackage.NODE__IS_HYPERNODE:
+            case KEGPackage.NODE__IS_HYPERNODE:
                 setIsHypernode((Boolean)newValue);
                 return;
         }
@@ -184,10 +182,10 @@ public class NodeImpl extends KNodeImpl implements Node {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case GraphsPackage.NODE__NODE_LABEL:
+            case KEGPackage.NODE__NODE_LABEL:
                 setNodeLabel(NODE_LABEL_EDEFAULT);
                 return;
-            case GraphsPackage.NODE__IS_HYPERNODE:
+            case KEGPackage.NODE__IS_HYPERNODE:
                 setIsHypernode(IS_HYPERNODE_EDEFAULT);
                 return;
         }
@@ -202,9 +200,9 @@ public class NodeImpl extends KNodeImpl implements Node {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case GraphsPackage.NODE__NODE_LABEL:
+            case KEGPackage.NODE__NODE_LABEL:
                 return NODE_LABEL_EDEFAULT == null ? nodeLabel != null : !NODE_LABEL_EDEFAULT.equals(nodeLabel);
-            case GraphsPackage.NODE__IS_HYPERNODE:
+            case KEGPackage.NODE__IS_HYPERNODE:
                 return isHypernode != IS_HYPERNODE_EDEFAULT;
         }
         return super.eIsSet(featureID);

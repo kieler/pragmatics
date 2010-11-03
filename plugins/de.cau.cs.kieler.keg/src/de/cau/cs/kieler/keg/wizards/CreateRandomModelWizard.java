@@ -39,7 +39,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.keg.GraphsPlugin;
+import de.cau.cs.kieler.keg.KEGPlugin;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.util.RandomGraphGenerator;
 
@@ -105,7 +105,7 @@ public class CreateRandomModelWizard extends Wizard implements INewWizard {
             return false;
         } catch (InvocationTargetException exception) {
             Throwable realException = exception.getTargetException();
-            Status status = new Status(IStatus.ERROR, GraphsPlugin.PLUGIN_ID,
+            Status status = new Status(IStatus.ERROR, KEGPlugin.PLUGIN_ID,
                     0, "Error while creating file.", realException);
             StatusManager.getManager().handle(status, StatusManager.SHOW);
             return false;
@@ -135,7 +135,7 @@ public class CreateRandomModelWizard extends Wizard implements INewWizard {
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IResource resource = root.findMember(new Path(containerName));
         if (!resource.exists() || !(resource instanceof IContainer)) {
-            IStatus status = new Status(IStatus.ERROR, GraphsPlugin.PLUGIN_ID,
+            IStatus status = new Status(IStatus.ERROR, KEGPlugin.PLUGIN_ID,
                     0, "Container \"" + containerName + "\" does not exist.",
                     null);
             throw new CoreException(status);

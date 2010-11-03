@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg;
 
@@ -29,7 +27,7 @@ import de.cau.cs.kieler.core.kgraph.KPort;
  * </ul>
  * </p>
  *
- * @see de.cau.cs.kieler.keg.GraphsPackage#getPort()
+ * @see de.cau.cs.kieler.keg.KEGPackage#getPort()
  * @model
  * @generated
  */
@@ -44,7 +42,7 @@ public interface Port extends KPort {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Port Label</em>' attribute.
      * @see #setPortLabel(String)
-     * @see de.cau.cs.kieler.keg.GraphsPackage#getPort_PortLabel()
+     * @see de.cau.cs.kieler.keg.KEGPackage#getPort_PortLabel()
      * @model
      * @generated
      */

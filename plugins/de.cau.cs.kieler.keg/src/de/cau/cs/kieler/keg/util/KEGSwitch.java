@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.util;
 
@@ -37,17 +35,17 @@ import org.eclipse.emf.ecore.EObject;
  * until a non-null result is returned,
  * which is the result of the switch.
  * <!-- end-user-doc -->
- * @see de.cau.cs.kieler.keg.GraphsPackage
+ * @see de.cau.cs.kieler.keg.KEGPackage
  * @generated
  */
-public class GraphsSwitch<T> {
+public class KEGSwitch<T> {
     /**
      * The cached model package
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected static GraphsPackage modelPackage;
+    protected static KEGPackage modelPackage;
 
     /**
      * Creates an instance of the switch.
@@ -55,9 +53,9 @@ public class GraphsSwitch<T> {
      * <!-- end-user-doc -->
      * @generated
      */
-    public GraphsSwitch() {
+    public KEGSwitch() {
         if (modelPackage == null) {
-            modelPackage = GraphsPackage.eINSTANCE;
+            modelPackage = KEGPackage.eINSTANCE;
         }
     }
 
@@ -101,7 +99,7 @@ public class GraphsSwitch<T> {
      */
     protected T doSwitch(int classifierID, EObject theEObject) {
         switch (classifierID) {
-            case GraphsPackage.NODE: {
+            case KEGPackage.NODE: {
                 Node node = (Node)theEObject;
                 T result = caseNode(node);
                 if (result == null) result = caseKNode(node);
@@ -109,7 +107,7 @@ public class GraphsSwitch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case GraphsPackage.EDGE: {
+            case KEGPackage.EDGE: {
                 Edge edge = (Edge)theEObject;
                 T result = caseEdge(edge);
                 if (result == null) result = caseKEdge(edge);
@@ -117,7 +115,7 @@ public class GraphsSwitch<T> {
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
-            case GraphsPackage.PORT: {
+            case KEGPackage.PORT: {
                 Port port = (Port)theEObject;
                 T result = casePort(port);
                 if (result == null) result = caseKPort(port);
@@ -249,4 +247,4 @@ public class GraphsSwitch<T> {
         return null;
     }
 
-} //GraphsSwitch
+} //KEGSwitch

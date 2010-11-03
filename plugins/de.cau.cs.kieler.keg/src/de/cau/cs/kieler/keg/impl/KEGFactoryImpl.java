@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.impl;
 
@@ -32,24 +30,24 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  * <!-- end-user-doc -->
  * @generated
  */
-public class GraphsFactoryImpl extends EFactoryImpl implements GraphsFactory {
+public class KEGFactoryImpl extends EFactoryImpl implements KEGFactory {
     /**
      * Creates the default factory implementation.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public static GraphsFactory init() {
+    public static KEGFactory init() {
         try {
-            GraphsFactory theGraphsFactory = (GraphsFactory)EPackage.Registry.INSTANCE.getEFactory("http://kieler.cs.cau.de/graphs"); 
-            if (theGraphsFactory != null) {
-                return theGraphsFactory;
+            KEGFactory theKEGFactory = (KEGFactory)EPackage.Registry.INSTANCE.getEFactory("http://kieler.cs.cau.de/KEG"); 
+            if (theKEGFactory != null) {
+                return theKEGFactory;
             }
         }
         catch (Exception exception) {
             EcorePlugin.INSTANCE.log(exception);
         }
-        return new GraphsFactoryImpl();
+        return new KEGFactoryImpl();
     }
 
     /**
@@ -58,7 +56,7 @@ public class GraphsFactoryImpl extends EFactoryImpl implements GraphsFactory {
      * <!-- end-user-doc -->
      * @generated
      */
-    public GraphsFactoryImpl() {
+    public KEGFactoryImpl() {
         super();
     }
 
@@ -70,9 +68,9 @@ public class GraphsFactoryImpl extends EFactoryImpl implements GraphsFactory {
     @Override
     public EObject create(EClass eClass) {
         switch (eClass.getClassifierID()) {
-            case GraphsPackage.NODE: return createNode();
-            case GraphsPackage.EDGE: return createEdge();
-            case GraphsPackage.PORT: return createPort();
+            case KEGPackage.NODE: return createNode();
+            case KEGPackage.EDGE: return createEdge();
+            case KEGPackage.PORT: return createPort();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -86,7 +84,7 @@ public class GraphsFactoryImpl extends EFactoryImpl implements GraphsFactory {
     @Override
     public Object createFromString(EDataType eDataType, String initialValue) {
         switch (eDataType.getClassifierID()) {
-            case GraphsPackage.EDGE_TYPE:
+            case KEGPackage.EDGE_TYPE:
                 return createEdgeTypeFromString(eDataType, initialValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
@@ -101,7 +99,7 @@ public class GraphsFactoryImpl extends EFactoryImpl implements GraphsFactory {
     @Override
     public String convertToString(EDataType eDataType, Object instanceValue) {
         switch (eDataType.getClassifierID()) {
-            case GraphsPackage.EDGE_TYPE:
+            case KEGPackage.EDGE_TYPE:
                 return convertEdgeTypeToString(eDataType, instanceValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
@@ -163,8 +161,8 @@ public class GraphsFactoryImpl extends EFactoryImpl implements GraphsFactory {
      * <!-- end-user-doc -->
      * @generated
      */
-    public GraphsPackage getGraphsPackage() {
-        return (GraphsPackage)getEPackage();
+    public KEGPackage getKEGPackage() {
+        return (KEGPackage)getEPackage();
     }
 
     /**
@@ -174,8 +172,8 @@ public class GraphsFactoryImpl extends EFactoryImpl implements GraphsFactory {
      * @generated
      */
     @Deprecated
-    public static GraphsPackage getPackage() {
-        return GraphsPackage.eINSTANCE;
+    public static KEGPackage getPackage() {
+        return KEGPackage.eINSTANCE;
     }
 
-} //GraphsFactoryImpl
+} //KEGFactoryImpl

@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.impl;
 
@@ -19,7 +17,7 @@ import de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl;
 
 import de.cau.cs.kieler.keg.Edge;
 import de.cau.cs.kieler.keg.EdgeType;
-import de.cau.cs.kieler.keg.GraphsPackage;
+import de.cau.cs.kieler.keg.KEGPackage;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -203,7 +201,7 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
      */
     @Override
     protected EClass eStaticClass() {
-        return GraphsPackage.Literals.EDGE;
+        return KEGPackage.Literals.EDGE;
     }
 
     /**
@@ -224,7 +222,7 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
         String oldHeadLabel1 = headLabel1;
         headLabel1 = newHeadLabel1;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.EDGE__HEAD_LABEL1, oldHeadLabel1, headLabel1));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__HEAD_LABEL1, oldHeadLabel1, headLabel1));
     }
 
     /**
@@ -245,7 +243,7 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
         String oldHeadLabel2 = headLabel2;
         headLabel2 = newHeadLabel2;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.EDGE__HEAD_LABEL2, oldHeadLabel2, headLabel2));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__HEAD_LABEL2, oldHeadLabel2, headLabel2));
     }
 
     /**
@@ -266,7 +264,7 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
         String oldMidLabel = midLabel;
         midLabel = newMidLabel;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.EDGE__MID_LABEL, oldMidLabel, midLabel));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__MID_LABEL, oldMidLabel, midLabel));
     }
 
     /**
@@ -287,7 +285,7 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
         String oldTailLabel1 = tailLabel1;
         tailLabel1 = newTailLabel1;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.EDGE__TAIL_LABEL1, oldTailLabel1, tailLabel1));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__TAIL_LABEL1, oldTailLabel1, tailLabel1));
     }
 
     /**
@@ -308,7 +306,7 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
         String oldTailLabel2 = tailLabel2;
         tailLabel2 = newTailLabel2;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.EDGE__TAIL_LABEL2, oldTailLabel2, tailLabel2));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__TAIL_LABEL2, oldTailLabel2, tailLabel2));
     }
 
     /**
@@ -329,7 +327,7 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
         boolean oldIsDirected = isDirected;
         isDirected = newIsDirected;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.EDGE__IS_DIRECTED, oldIsDirected, isDirected));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__IS_DIRECTED, oldIsDirected, isDirected));
     }
 
     /**
@@ -350,7 +348,7 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
         EdgeType oldType = type;
         type = newType == null ? TYPE_EDEFAULT : newType;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, GraphsPackage.EDGE__TYPE, oldType, type));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__TYPE, oldType, type));
     }
 
     /**
@@ -361,19 +359,19 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case GraphsPackage.EDGE__HEAD_LABEL1:
+            case KEGPackage.EDGE__HEAD_LABEL1:
                 return getHeadLabel1();
-            case GraphsPackage.EDGE__HEAD_LABEL2:
+            case KEGPackage.EDGE__HEAD_LABEL2:
                 return getHeadLabel2();
-            case GraphsPackage.EDGE__MID_LABEL:
+            case KEGPackage.EDGE__MID_LABEL:
                 return getMidLabel();
-            case GraphsPackage.EDGE__TAIL_LABEL1:
+            case KEGPackage.EDGE__TAIL_LABEL1:
                 return getTailLabel1();
-            case GraphsPackage.EDGE__TAIL_LABEL2:
+            case KEGPackage.EDGE__TAIL_LABEL2:
                 return getTailLabel2();
-            case GraphsPackage.EDGE__IS_DIRECTED:
+            case KEGPackage.EDGE__IS_DIRECTED:
                 return isIsDirected();
-            case GraphsPackage.EDGE__TYPE:
+            case KEGPackage.EDGE__TYPE:
                 return getType();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -387,25 +385,25 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case GraphsPackage.EDGE__HEAD_LABEL1:
+            case KEGPackage.EDGE__HEAD_LABEL1:
                 setHeadLabel1((String)newValue);
                 return;
-            case GraphsPackage.EDGE__HEAD_LABEL2:
+            case KEGPackage.EDGE__HEAD_LABEL2:
                 setHeadLabel2((String)newValue);
                 return;
-            case GraphsPackage.EDGE__MID_LABEL:
+            case KEGPackage.EDGE__MID_LABEL:
                 setMidLabel((String)newValue);
                 return;
-            case GraphsPackage.EDGE__TAIL_LABEL1:
+            case KEGPackage.EDGE__TAIL_LABEL1:
                 setTailLabel1((String)newValue);
                 return;
-            case GraphsPackage.EDGE__TAIL_LABEL2:
+            case KEGPackage.EDGE__TAIL_LABEL2:
                 setTailLabel2((String)newValue);
                 return;
-            case GraphsPackage.EDGE__IS_DIRECTED:
+            case KEGPackage.EDGE__IS_DIRECTED:
                 setIsDirected((Boolean)newValue);
                 return;
-            case GraphsPackage.EDGE__TYPE:
+            case KEGPackage.EDGE__TYPE:
                 setType((EdgeType)newValue);
                 return;
         }
@@ -420,25 +418,25 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case GraphsPackage.EDGE__HEAD_LABEL1:
+            case KEGPackage.EDGE__HEAD_LABEL1:
                 setHeadLabel1(HEAD_LABEL1_EDEFAULT);
                 return;
-            case GraphsPackage.EDGE__HEAD_LABEL2:
+            case KEGPackage.EDGE__HEAD_LABEL2:
                 setHeadLabel2(HEAD_LABEL2_EDEFAULT);
                 return;
-            case GraphsPackage.EDGE__MID_LABEL:
+            case KEGPackage.EDGE__MID_LABEL:
                 setMidLabel(MID_LABEL_EDEFAULT);
                 return;
-            case GraphsPackage.EDGE__TAIL_LABEL1:
+            case KEGPackage.EDGE__TAIL_LABEL1:
                 setTailLabel1(TAIL_LABEL1_EDEFAULT);
                 return;
-            case GraphsPackage.EDGE__TAIL_LABEL2:
+            case KEGPackage.EDGE__TAIL_LABEL2:
                 setTailLabel2(TAIL_LABEL2_EDEFAULT);
                 return;
-            case GraphsPackage.EDGE__IS_DIRECTED:
+            case KEGPackage.EDGE__IS_DIRECTED:
                 setIsDirected(IS_DIRECTED_EDEFAULT);
                 return;
-            case GraphsPackage.EDGE__TYPE:
+            case KEGPackage.EDGE__TYPE:
                 setType(TYPE_EDEFAULT);
                 return;
         }
@@ -453,19 +451,19 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case GraphsPackage.EDGE__HEAD_LABEL1:
+            case KEGPackage.EDGE__HEAD_LABEL1:
                 return HEAD_LABEL1_EDEFAULT == null ? headLabel1 != null : !HEAD_LABEL1_EDEFAULT.equals(headLabel1);
-            case GraphsPackage.EDGE__HEAD_LABEL2:
+            case KEGPackage.EDGE__HEAD_LABEL2:
                 return HEAD_LABEL2_EDEFAULT == null ? headLabel2 != null : !HEAD_LABEL2_EDEFAULT.equals(headLabel2);
-            case GraphsPackage.EDGE__MID_LABEL:
+            case KEGPackage.EDGE__MID_LABEL:
                 return MID_LABEL_EDEFAULT == null ? midLabel != null : !MID_LABEL_EDEFAULT.equals(midLabel);
-            case GraphsPackage.EDGE__TAIL_LABEL1:
+            case KEGPackage.EDGE__TAIL_LABEL1:
                 return TAIL_LABEL1_EDEFAULT == null ? tailLabel1 != null : !TAIL_LABEL1_EDEFAULT.equals(tailLabel1);
-            case GraphsPackage.EDGE__TAIL_LABEL2:
+            case KEGPackage.EDGE__TAIL_LABEL2:
                 return TAIL_LABEL2_EDEFAULT == null ? tailLabel2 != null : !TAIL_LABEL2_EDEFAULT.equals(tailLabel2);
-            case GraphsPackage.EDGE__IS_DIRECTED:
+            case KEGPackage.EDGE__IS_DIRECTED:
                 return isDirected != IS_DIRECTED_EDEFAULT;
-            case GraphsPackage.EDGE__TYPE:
+            case KEGPackage.EDGE__TYPE:
                 return type != TYPE_EDEFAULT;
         }
         return super.eIsSet(featureID);

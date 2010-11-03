@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.util;
 
@@ -34,17 +32,17 @@ import org.eclipse.emf.ecore.EObject;
  * The <b>Adapter Factory</b> for the model.
  * It provides an adapter <code>createXXX</code> method for each class of the model.
  * <!-- end-user-doc -->
- * @see de.cau.cs.kieler.keg.GraphsPackage
+ * @see de.cau.cs.kieler.keg.KEGPackage
  * @generated
  */
-public class GraphsAdapterFactory extends AdapterFactoryImpl {
+public class KEGAdapterFactory extends AdapterFactoryImpl {
     /**
      * The cached model package.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected static GraphsPackage modelPackage;
+    protected static KEGPackage modelPackage;
 
     /**
      * Creates an instance of the adapter factory.
@@ -52,9 +50,9 @@ public class GraphsAdapterFactory extends AdapterFactoryImpl {
      * <!-- end-user-doc -->
      * @generated
      */
-    public GraphsAdapterFactory() {
+    public KEGAdapterFactory() {
         if (modelPackage == null) {
-            modelPackage = GraphsPackage.eINSTANCE;
+            modelPackage = KEGPackage.eINSTANCE;
         }
     }
 
@@ -83,8 +81,8 @@ public class GraphsAdapterFactory extends AdapterFactoryImpl {
      * <!-- end-user-doc -->
      * @generated
      */
-    protected GraphsSwitch<Adapter> modelSwitch =
-        new GraphsSwitch<Adapter>() {
+    protected KEGSwitch<Adapter> modelSwitch =
+        new KEGSwitch<Adapter>() {
             @Override
             public Adapter caseNode(Node object) {
                 return createNodeAdapter();
@@ -243,4 +241,4 @@ public class GraphsAdapterFactory extends AdapterFactoryImpl {
         return null;
     }
 
-} //GraphsAdapterFactory
+} //KEGAdapterFactory

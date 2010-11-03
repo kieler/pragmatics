@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
-import de.cau.cs.kieler.keg.GraphsPlugin;
+import de.cau.cs.kieler.keg.KEGPlugin;
 
 /**
  * The "New" wizard page allows setting the container for the new file as well
@@ -104,7 +104,7 @@ public class CreateRandomModelWizardPage extends WizardPage {
      * {@inheritDoc}
      */
     public void createControl(final Composite parent) {
-        IPreferenceStore preferenceStore = GraphsPlugin.getDefault()
+        IPreferenceStore preferenceStore = KEGPlugin.getDefault()
                 .getPreferenceStore();
         Composite container = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
@@ -511,7 +511,7 @@ public class CreateRandomModelWizardPage extends WizardPage {
      * Store the current value into the preference store.
      */
     public void storeDefaults() {
-        IPreferenceStore preferenceStore = GraphsPlugin.getDefault()
+        IPreferenceStore preferenceStore = KEGPlugin.getDefault()
                 .getPreferenceStore();
         preferenceStore.setValue(PREF_NODES, nodes);
         preferenceStore.setValue(PREF_MIN_CONNECTIONS, minConnections);

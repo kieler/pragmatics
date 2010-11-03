@@ -7,18 +7,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class GraphsPlugin extends AbstractUIPlugin {
+public class KEGPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "de.cau.cs.kieler.keg";
 
 	// The shared instance
-	private static GraphsPlugin plugin;
+	private static KEGPlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public GraphsPlugin() {
+	public KEGPlugin() {
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class GraphsPlugin extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static GraphsPlugin getDefault() {
+	public static KEGPlugin getDefault() {
 		return plugin;
 	}
 

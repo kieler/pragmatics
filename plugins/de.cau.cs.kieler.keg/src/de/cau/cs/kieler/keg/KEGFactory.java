@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg;
 
@@ -22,17 +20,17 @@ import org.eclipse.emf.ecore.EFactory;
  * The <b>Factory</b> for the model.
  * It provides a create method for each non-abstract class of the model.
  * <!-- end-user-doc -->
- * @see de.cau.cs.kieler.keg.GraphsPackage
+ * @see de.cau.cs.kieler.keg.KEGPackage
  * @generated
  */
-public interface GraphsFactory extends EFactory {
+public interface KEGFactory extends EFactory {
     /**
      * The singleton instance of the factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    GraphsFactory eINSTANCE = de.cau.cs.kieler.keg.impl.GraphsFactoryImpl.init();
+    KEGFactory eINSTANCE = de.cau.cs.kieler.keg.impl.KEGFactoryImpl.init();
 
     /**
      * Returns a new object of class '<em>Node</em>'.
@@ -68,6 +66,6 @@ public interface GraphsFactory extends EFactory {
      * @return the package supported by this factory.
      * @generated
      */
-    GraphsPackage getGraphsPackage();
+    KEGPackage getKEGPackage();
 
-} //GraphsFactory
+} //KEGFactory

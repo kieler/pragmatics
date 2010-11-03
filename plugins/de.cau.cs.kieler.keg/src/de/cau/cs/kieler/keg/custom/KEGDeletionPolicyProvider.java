@@ -16,7 +16,7 @@ package de.cau.cs.kieler.keg.custom;
 import org.eclipse.emf.ecore.EPackage;
 
 import de.cau.cs.kieler.core.ui.policies.AbstractDeletionPolicyProvider;
-import de.cau.cs.kieler.keg.impl.GraphsPackageImpl;
+import de.cau.cs.kieler.keg.impl.KEGPackageImpl;
 
 /**
  * This policy prevents deletion of edit parts that should not be deleted from a
@@ -24,7 +24,7 @@ import de.cau.cs.kieler.keg.impl.GraphsPackageImpl;
  * 
  * @author mri
  */
-public class GraphsDeletionPolicyProvider extends
+public class KEGDeletionPolicyProvider extends
         AbstractDeletionPolicyProvider {
 
     /**
@@ -32,7 +32,7 @@ public class GraphsDeletionPolicyProvider extends
      */
     @Override
     protected EPackage getEPackage() {
-        return GraphsPackageImpl.eINSTANCE;
+        return KEGPackageImpl.eINSTANCE;
     }
 
 }

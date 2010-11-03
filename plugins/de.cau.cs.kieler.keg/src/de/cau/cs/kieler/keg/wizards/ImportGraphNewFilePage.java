@@ -26,10 +26,10 @@ public class ImportGraphNewFilePage extends WizardNewFileCreationPage {
     
     /** the message that is displayed while the input is correct. */
     private static final String MESSAGE_OK =
-        "Create a new Graphs file to import into.";
+        "Create a new KEG file to import into.";
     
     /** the extension for the file to create. */
-    private static final String NEW_FILE_EXTENSION = "graph";
+    private static final String NEW_FILE_EXTENSION = "keg";
     
     /**
      * Constructs the new file wizard page.
@@ -39,7 +39,7 @@ public class ImportGraphNewFilePage extends WizardNewFileCreationPage {
      */
     public ImportGraphNewFilePage(IStructuredSelection selection) {
         super("importGraphNewFileWizardPage", selection);
-        setTitle("Graphs File");
+        setTitle("KEG File");
         setDescription(MESSAGE_OK);
         setFileExtension(NEW_FILE_EXTENSION);
     }

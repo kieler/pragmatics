@@ -12,8 +12,8 @@
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="http://kieler.cs.cau.de/graphs"
-            class="de.cau.cs.kieler.keg.GraphsPackage"
+            uri="http://kieler.cs.cau.de/keg"
+            class="de.cau.cs.kieler.keg.KEGPackage"
             genModel="model/graphs.genmodel"/>
    </extension>
 
@@ -33,7 +33,7 @@
    <extension
          point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
       <editpolicyProvider
-            class="de.cau.cs.kieler.keg.custom.GraphsDeletionPolicyProvider">
+            class="de.cau.cs.kieler.keg.custom.KEGDeletionPolicyProvider">
          <Priority
                name="Lowest">
          </Priority>

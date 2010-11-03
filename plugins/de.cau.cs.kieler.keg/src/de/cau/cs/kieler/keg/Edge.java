@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg;
 
@@ -35,7 +33,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
  * </ul>
  * </p>
  *
- * @see de.cau.cs.kieler.keg.GraphsPackage#getEdge()
+ * @see de.cau.cs.kieler.keg.KEGPackage#getEdge()
  * @model
  * @generated
  */
@@ -50,7 +48,7 @@ public interface Edge extends KEdge {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Head Label1</em>' attribute.
      * @see #setHeadLabel1(String)
-     * @see de.cau.cs.kieler.keg.GraphsPackage#getEdge_HeadLabel1()
+     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_HeadLabel1()
      * @model
      * @generated
      */
@@ -76,7 +74,7 @@ public interface Edge extends KEdge {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Head Label2</em>' attribute.
      * @see #setHeadLabel2(String)
-     * @see de.cau.cs.kieler.keg.GraphsPackage#getEdge_HeadLabel2()
+     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_HeadLabel2()
      * @model
      * @generated
      */
@@ -102,7 +100,7 @@ public interface Edge extends KEdge {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Mid Label</em>' attribute.
      * @see #setMidLabel(String)
-     * @see de.cau.cs.kieler.keg.GraphsPackage#getEdge_MidLabel()
+     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_MidLabel()
      * @model
      * @generated
      */
@@ -128,7 +126,7 @@ public interface Edge extends KEdge {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Tail Label1</em>' attribute.
      * @see #setTailLabel1(String)
-     * @see de.cau.cs.kieler.keg.GraphsPackage#getEdge_TailLabel1()
+     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_TailLabel1()
      * @model
      * @generated
      */
@@ -154,7 +152,7 @@ public interface Edge extends KEdge {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Tail Label2</em>' attribute.
      * @see #setTailLabel2(String)
-     * @see de.cau.cs.kieler.keg.GraphsPackage#getEdge_TailLabel2()
+     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_TailLabel2()
      * @model
      * @generated
      */
@@ -181,7 +179,7 @@ public interface Edge extends KEdge {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Is Directed</em>' attribute.
      * @see #setIsDirected(boolean)
-     * @see de.cau.cs.kieler.keg.GraphsPackage#getEdge_IsDirected()
+     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_IsDirected()
      * @model default="false" required="true"
      * @generated
      */
@@ -209,7 +207,7 @@ public interface Edge extends KEdge {
      * @return the value of the '<em>Type</em>' attribute.
      * @see de.cau.cs.kieler.keg.EdgeType
      * @see #setType(EdgeType)
-     * @see de.cau.cs.kieler.keg.GraphsPackage#getEdge_Type()
+     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_Type()
      * @model required="true"
      * @generated
      */

@@ -109,7 +109,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node"/>
+        body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
@@ -174,7 +174,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node"/>
+        body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
@@ -228,7 +228,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port"/>
+        body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
@@ -245,7 +245,7 @@
             xsi:type="ecore:EAttribute"
             href="graphs.ecore#//Edge/type"/>
         <value
-            body="graphs::EdgeType::Port2Port"/>
+            body="keg::EdgeType::Port2Port"/>
       </initializers>
     </domainInitializer>
     <labelMappings
@@ -301,7 +301,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port"/>
+        body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
@@ -310,7 +310,7 @@
             xsi:type="ecore:EAttribute"
             href="graphs.ecore#//Edge/type"/>
         <value
-            body="graphs::EdgeType::Port2Port"/>
+            body="keg::EdgeType::Port2Port"/>
       </initializers>
     </domainInitializer>
     <labelMappings
@@ -366,7 +366,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node"/>
+        body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
@@ -383,7 +383,7 @@
             xsi:type="ecore:EAttribute"
             href="graphs.ecore#//Edge/type"/>
         <value
-            body="graphs::EdgeType::Port2Node"/>
+            body="keg::EdgeType::Port2Node"/>
       </initializers>
     </domainInitializer>
     <labelMappings
@@ -439,7 +439,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node"/>
+        body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
@@ -448,7 +448,7 @@
             xsi:type="ecore:EAttribute"
             href="graphs.ecore#//Edge/type"/>
         <value
-            body="graphs::EdgeType::Port2Node"/>
+            body="keg::EdgeType::Port2Node"/>
       </initializers>
     </domainInitializer>
     <labelMappings
@@ -504,7 +504,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port"/>
+        body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
@@ -521,7 +521,7 @@
             xsi:type="ecore:EAttribute"
             href="graphs.ecore#//Edge/type"/>
         <value
-            body="graphs::EdgeType::Node2Port"/>
+            body="keg::EdgeType::Node2Port"/>
       </initializers>
     </domainInitializer>
     <labelMappings
@@ -577,7 +577,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port"/>
+        body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
@@ -586,7 +586,7 @@
             xsi:type="ecore:EAttribute"
             href="graphs.ecore#//Edge/type"/>
         <value
-            body="graphs::EdgeType::Node2Port"/>
+            body="keg::EdgeType::Node2Port"/>
       </initializers>
     </domainInitializer>
     <labelMappings
@@ -640,7 +640,7 @@
   </links>
   <diagram>
     <diagramCanvas
-        href="graphs.gmfgraph#graphs"/>
+        href="graphs.gmfgraph#keg"/>
     <domainModel
         href="graphs.ecore#/"/>
     <domainMetaElement

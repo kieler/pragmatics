@@ -37,8 +37,8 @@ import org.graphdrawing.graphml.GraphMLPackage;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
-import de.cau.cs.kieler.keg.GraphsPackage;
-import de.cau.cs.kieler.keg.GraphsPlugin;
+import de.cau.cs.kieler.keg.KEGPackage;
+import de.cau.cs.kieler.keg.KEGPlugin;
 
 /**
  * A wizard for importing graphs from various file formats into a graphs file.
@@ -110,7 +110,7 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         } catch (InvocationTargetException exception) {
             Throwable realException = exception.getTargetException();
             Status status =
-                    new Status(IStatus.ERROR, GraphsPlugin.PLUGIN_ID, 0,
+                    new Status(IStatus.ERROR, KEGPlugin.PLUGIN_ID, 0,
                             "Error while creating file.", realException);
             StatusManager.getManager().handle(status, StatusManager.SHOW);
             return false;
@@ -145,19 +145,19 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         IResource resource = root.findMember(new Path(containerName));
         if (!resource.exists() || !(resource instanceof IContainer)) {
             IStatus status =
-                    new Status(IStatus.ERROR, GraphsPlugin.PLUGIN_ID, 0,
+                    new Status(IStatus.ERROR, KEGPlugin.PLUGIN_ID, 0,
                             "Container \"" + containerName
                                     + "\" does not exist.", null);
             throw new CoreException(status);
         }
         IContainer container = (IContainer) resource;
 
-        final String transformation = "transformations/graphml2graphs";
+        final String transformation = "transformations/graphml2keg";
         final String fun = "transform";
         URI input = URI.createURI("");
         URI output = URI.createURI("");
 
-        EPackage p1 = GraphsPackage.eINSTANCE;
+        EPackage p1 = KEGPackage.eINSTANCE;
         EPackage p2 = GraphMLPackage.eINSTANCE;
 
         Status myStatus = null;
@@ -174,22 +174,22 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             myStatus =
                     new Status(
                             IStatus.ERROR,
-                            GraphsPlugin.PLUGIN_ID,
-                            "Failed to transform GraphML model into Graphs model.",
+                            KEGPlugin.PLUGIN_ID,
+                            "Failed to transform GraphML model into KEG model.",
                             e);
         } catch (NullPointerException npe) {
             myStatus =
                     new Status(
                             IStatus.ERROR,
-                            GraphsPlugin.PLUGIN_ID,
-                            "Failed to transform GraphML model into Graphs model. Could not determine input file.",
+                            KEGPlugin.PLUGIN_ID,
+                            "Failed to transform GraphML model into KEG model. Could not determine input file.",
                             npe);
         } catch (ClassCastException cce) {
             myStatus =
                     new Status(
                             IStatus.WARNING,
-                            GraphsPlugin.PLUGIN_ID,
-                            "Failed to transform GraphML model into Graphs model. Could not determine input file.");
+                            KEGPlugin.PLUGIN_ID,
+                            "Failed to transform GraphML model into KEG model. Could not determine input file.");
         } finally {
             if (myStatus != null) {
                 StatusManager.getManager().handle(myStatus, StatusManager.SHOW);

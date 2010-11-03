@@ -2,8 +2,8 @@
 <gmfgen:GenEditorGenerator xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:gmfgen="http://www.eclipse.org/gmf/2009/GenModel" diagramFileExtension="graphdiag"
-    domainFileExtension="graph"
+    xmlns:gmfgen="http://www.eclipse.org/gmf/2009/GenModel" diagramFileExtension="kegdi"
+    domainFileExtension="keg"
     dynamicTemplates="true"
     templateDirectory="de.cau.cs.kieler.keg/gmf-templates">
   <diagram
@@ -23,7 +23,7 @@
         xsi:type="gmfgen:FigureViewmap"
         figureQualifiedClassName="org.eclipse.draw2d.FreeformLayer"/>
     <domainDiagramElement
-        href="graphs.genmodel#//graphs/Node"/>
+        href="graphs.genmodel#//keg/Node"/>
     <childNodes
         visualID="3001"
         editPartClassName="Node4EditPart"
@@ -43,7 +43,7 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="NodeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class NodeFigure extends org.eclipse.draw2d.RoundedRectangle {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureNodeLabelFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public NodeFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;de.cau.cs.kieler.keg.custom.NodeLayout layoutThis = new de.cau.cs.kieler.keg.custom.NodeLayout();&#xA;&#xA;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;this.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(16)&#xA;, getMapMode().DPtoLP(16)&#xA;));&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#x9;this.setBackgroundColor(THIS_BACK&#xA;);&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureNodeLabelFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;fFigureNodeLabelFigure.setText(&quot;&quot;);&#xA;&#xA;this.add(fFigureNodeLabelFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureNodeLabelFigure() {&#xA;&#x9;&#x9;return fFigureNodeLabelFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 20, 0);&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_BACK = new org.eclipse.swt.graphics.Color(null, 80, 230, 154);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class NodeFigure extends org.eclipse.draw2d.RoundedRectangle {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureNodeLabelFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public NodeFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;de.cau.cs.kieler.keg.custom.NodeLayout layoutThis = new de.cau.cs.kieler.keg.custom.NodeLayout();&#xA;&#xA;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;this.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(40)&#xA;, getMapMode().DPtoLP(40)&#xA;));&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#x9;this.setBackgroundColor(THIS_BACK&#xA;);&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureNodeLabelFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;fFigureNodeLabelFigure.setText(&quot;&quot;);&#xA;&#xA;this.add(fFigureNodeLabelFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureNodeLabelFigure() {&#xA;&#x9;&#x9;return fFigureNodeLabelFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 20, 0);&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_BACK = new org.eclipse.swt.graphics.Color(null, 80, 230, 154);&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"
@@ -52,7 +52,7 @@
       <modelFacet
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.0">
         <metaClass
-            href="graphs.genmodel#//graphs/Node"/>
+            href="graphs.genmodel#//keg/Node"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/children"/>
         <childMetaFeature
@@ -73,7 +73,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Node/nodeLabel"/>
+              href="graphs.genmodel#//keg/Node/nodeLabel"/>
         </modelFacet>
       </labels>
     </childNodes>
@@ -111,7 +111,7 @@
       <modelFacet
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.1">
         <metaClass
-            href="graphs.genmodel#//graphs/Port"/>
+            href="graphs.genmodel#//keg/Port"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/ports"/>
         <childMetaFeature
@@ -133,7 +133,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Port/portLabel"/>
+              href="graphs.genmodel#//keg/Port/portLabel"/>
         </modelFacet>
       </labels>
     </childNodes>
@@ -168,7 +168,7 @@
       <modelFacet
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.2">
         <metaClass
-            href="graphs.genmodel#//graphs/Node"/>
+            href="graphs.genmodel#//keg/Node"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/children"/>
         <childMetaFeature
@@ -179,13 +179,13 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.3">
             <feature
-                href="graphs.genmodel#//graphs/Node/isHypernode"/>
+                href="graphs.genmodel#//keg/Node/isHypernode"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.4">
             <feature
-                href="graphs.genmodel#//graphs/Node/nodeLabel"/>
+                href="graphs.genmodel#//keg/Node/nodeLabel"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -208,7 +208,7 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="NodeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class NodeFigure extends org.eclipse.draw2d.RoundedRectangle {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureNodeLabelFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public NodeFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;de.cau.cs.kieler.keg.custom.NodeLayout layoutThis = new de.cau.cs.kieler.keg.custom.NodeLayout();&#xA;&#xA;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;this.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(16)&#xA;, getMapMode().DPtoLP(16)&#xA;));&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#x9;this.setBackgroundColor(THIS_BACK&#xA;);&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureNodeLabelFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;fFigureNodeLabelFigure.setText(&quot;&quot;);&#xA;&#xA;this.add(fFigureNodeLabelFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureNodeLabelFigure() {&#xA;&#x9;&#x9;return fFigureNodeLabelFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 20, 0);&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_BACK = new org.eclipse.swt.graphics.Color(null, 80, 230, 154);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class NodeFigure extends org.eclipse.draw2d.RoundedRectangle {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureNodeLabelFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public NodeFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;de.cau.cs.kieler.keg.custom.NodeLayout layoutThis = new de.cau.cs.kieler.keg.custom.NodeLayout();&#xA;&#xA;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;this.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(40)&#xA;, getMapMode().DPtoLP(40)&#xA;));&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#x9;this.setBackgroundColor(THIS_BACK&#xA;);&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureNodeLabelFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;fFigureNodeLabelFigure.setText(&quot;&quot;);&#xA;&#xA;this.add(fFigureNodeLabelFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureNodeLabelFigure() {&#xA;&#x9;&#x9;return fFigureNodeLabelFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 20, 0);&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_BACK = new org.eclipse.swt.graphics.Color(null, 80, 230, 154);&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"
@@ -217,7 +217,7 @@
       <modelFacet
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.0">
         <metaClass
-            href="graphs.genmodel#//graphs/Node"/>
+            href="graphs.genmodel#//keg/Node"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/children"/>
         <childMetaFeature
@@ -238,7 +238,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Node/nodeLabel"/>
+              href="graphs.genmodel#//keg/Node/nodeLabel"/>
         </modelFacet>
       </labels>
     </topLevelNodes>
@@ -272,7 +272,7 @@
       <modelFacet
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.2">
         <metaClass
-            href="graphs.genmodel#//graphs/Node"/>
+            href="graphs.genmodel#//keg/Node"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/children"/>
         <childMetaFeature
@@ -283,13 +283,13 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.3">
             <feature
-                href="graphs.genmodel#//graphs/Node/isHypernode"/>
+                href="graphs.genmodel#//keg/Node/isHypernode"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.4">
             <feature
-                href="graphs.genmodel#//graphs/Node/nodeLabel"/>
+                href="graphs.genmodel#//keg/Node/nodeLabel"/>
           </initializers>
         </modelElementInitializer>
       </modelFacet>
@@ -318,7 +318,7 @@
           xsi:type="gmfgen:TypeLinkModelFacet"
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.5">
         <metaClass
-            href="graphs.genmodel#//graphs/Edge"/>
+            href="graphs.genmodel#//keg/Edge"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/outgoingEdges"/>
         <childMetaFeature
@@ -329,7 +329,7 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.6">
             <feature
-                href="graphs.genmodel#//graphs/Edge/isDirected"/>
+                href="graphs.genmodel#//keg/Edge/isDirected"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -355,7 +355,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/midLabel"/>
+              href="graphs.genmodel#//keg/Edge/midLabel"/>
         </modelFacet>
       </labels>
       <labels
@@ -377,7 +377,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -399,7 +399,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel2"/>
+              href="graphs.genmodel#//keg/Edge/headLabel2"/>
         </modelFacet>
       </labels>
       <labels
@@ -421,7 +421,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel1"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -443,7 +443,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
         </modelFacet>
       </labels>
     </links>
@@ -471,7 +471,7 @@
           xsi:type="gmfgen:TypeLinkModelFacet"
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.7">
         <metaClass
-            href="graphs.genmodel#//graphs/Edge"/>
+            href="graphs.genmodel#//keg/Edge"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/outgoingEdges"/>
         <childMetaFeature
@@ -499,7 +499,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/midLabel"/>
+              href="graphs.genmodel#//keg/Edge/midLabel"/>
         </modelFacet>
       </labels>
       <labels
@@ -521,7 +521,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -543,7 +543,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel2"/>
+              href="graphs.genmodel#//keg/Edge/headLabel2"/>
         </modelFacet>
       </labels>
       <labels
@@ -565,7 +565,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel1"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -587,7 +587,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
         </modelFacet>
       </labels>
     </links>
@@ -615,7 +615,7 @@
           xsi:type="gmfgen:TypeLinkModelFacet"
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.8">
         <metaClass
-            href="graphs.genmodel#//graphs/Edge"/>
+            href="graphs.genmodel#//keg/Edge"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/outgoingEdges"/>
         <childMetaFeature
@@ -626,13 +626,13 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.9">
             <feature
-                href="graphs.genmodel#//graphs/Edge/isDirected"/>
+                href="graphs.genmodel#//keg/Edge/isDirected"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.10">
             <feature
-                href="graphs.genmodel#//graphs/Edge/type"/>
+                href="graphs.genmodel#//keg/Edge/type"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -658,7 +658,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/midLabel"/>
+              href="graphs.genmodel#//keg/Edge/midLabel"/>
         </modelFacet>
       </labels>
       <labels
@@ -680,7 +680,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -702,7 +702,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel2"/>
+              href="graphs.genmodel#//keg/Edge/headLabel2"/>
         </modelFacet>
       </labels>
       <labels
@@ -724,7 +724,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel1"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -746,7 +746,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
         </modelFacet>
       </labels>
     </links>
@@ -774,7 +774,7 @@
           xsi:type="gmfgen:TypeLinkModelFacet"
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.11">
         <metaClass
-            href="graphs.genmodel#//graphs/Edge"/>
+            href="graphs.genmodel#//keg/Edge"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/outgoingEdges"/>
         <childMetaFeature
@@ -785,7 +785,7 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.12">
             <feature
-                href="graphs.genmodel#//graphs/Edge/type"/>
+                href="graphs.genmodel#//keg/Edge/type"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -811,7 +811,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/midLabel"/>
+              href="graphs.genmodel#//keg/Edge/midLabel"/>
         </modelFacet>
       </labels>
       <labels
@@ -833,7 +833,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -855,7 +855,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel2"/>
+              href="graphs.genmodel#//keg/Edge/headLabel2"/>
         </modelFacet>
       </labels>
       <labels
@@ -877,7 +877,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel1"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -899,7 +899,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
         </modelFacet>
       </labels>
     </links>
@@ -927,7 +927,7 @@
           xsi:type="gmfgen:TypeLinkModelFacet"
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.13">
         <metaClass
-            href="graphs.genmodel#//graphs/Edge"/>
+            href="graphs.genmodel#//keg/Edge"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/outgoingEdges"/>
         <childMetaFeature
@@ -938,13 +938,13 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.14">
             <feature
-                href="graphs.genmodel#//graphs/Edge/isDirected"/>
+                href="graphs.genmodel#//keg/Edge/isDirected"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.15">
             <feature
-                href="graphs.genmodel#//graphs/Edge/type"/>
+                href="graphs.genmodel#//keg/Edge/type"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -970,7 +970,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/midLabel"/>
+              href="graphs.genmodel#//keg/Edge/midLabel"/>
         </modelFacet>
       </labels>
       <labels
@@ -992,7 +992,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -1014,7 +1014,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel2"/>
+              href="graphs.genmodel#//keg/Edge/headLabel2"/>
         </modelFacet>
       </labels>
       <labels
@@ -1036,7 +1036,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel1"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -1058,7 +1058,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
         </modelFacet>
       </labels>
     </links>
@@ -1086,7 +1086,7 @@
           xsi:type="gmfgen:TypeLinkModelFacet"
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.16">
         <metaClass
-            href="graphs.genmodel#//graphs/Edge"/>
+            href="graphs.genmodel#//keg/Edge"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/outgoingEdges"/>
         <childMetaFeature
@@ -1097,7 +1097,7 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.17">
             <feature
-                href="graphs.genmodel#//graphs/Edge/type"/>
+                href="graphs.genmodel#//keg/Edge/type"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -1123,7 +1123,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/midLabel"/>
+              href="graphs.genmodel#//keg/Edge/midLabel"/>
         </modelFacet>
       </labels>
       <labels
@@ -1145,7 +1145,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -1167,7 +1167,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel2"/>
+              href="graphs.genmodel#//keg/Edge/headLabel2"/>
         </modelFacet>
       </labels>
       <labels
@@ -1189,7 +1189,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel1"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -1211,7 +1211,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
         </modelFacet>
       </labels>
     </links>
@@ -1239,7 +1239,7 @@
           xsi:type="gmfgen:TypeLinkModelFacet"
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.18">
         <metaClass
-            href="graphs.genmodel#//graphs/Edge"/>
+            href="graphs.genmodel#//keg/Edge"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/outgoingEdges"/>
         <childMetaFeature
@@ -1250,13 +1250,13 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.19">
             <feature
-                href="graphs.genmodel#//graphs/Edge/isDirected"/>
+                href="graphs.genmodel#//keg/Edge/isDirected"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.20">
             <feature
-                href="graphs.genmodel#//graphs/Edge/type"/>
+                href="graphs.genmodel#//keg/Edge/type"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -1282,7 +1282,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/midLabel"/>
+              href="graphs.genmodel#//keg/Edge/midLabel"/>
         </modelFacet>
       </labels>
       <labels
@@ -1304,7 +1304,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -1326,7 +1326,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel2"/>
+              href="graphs.genmodel#//keg/Edge/headLabel2"/>
         </modelFacet>
       </labels>
       <labels
@@ -1348,7 +1348,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel1"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -1370,7 +1370,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
         </modelFacet>
       </labels>
     </links>
@@ -1398,7 +1398,7 @@
           xsi:type="gmfgen:TypeLinkModelFacet"
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.21">
         <metaClass
-            href="graphs.genmodel#//graphs/Edge"/>
+            href="graphs.genmodel#//keg/Edge"/>
         <containmentMetaFeature
             href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph/KNode/outgoingEdges"/>
         <childMetaFeature
@@ -1409,7 +1409,7 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.22">
             <feature
-                href="graphs.genmodel#//graphs/Edge/type"/>
+                href="graphs.genmodel#//keg/Edge/type"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -1435,7 +1435,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/midLabel"/>
+              href="graphs.genmodel#//keg/Edge/midLabel"/>
         </modelFacet>
       </labels>
       <labels
@@ -1457,7 +1457,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -1479,7 +1479,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/headLabel2"/>
+              href="graphs.genmodel#//keg/Edge/headLabel2"/>
         </modelFacet>
       </labels>
       <labels
@@ -1501,7 +1501,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel1"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
         </modelFacet>
       </labels>
       <labels
@@ -1523,7 +1523,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//graphs/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
         </modelFacet>
       </labels>
     </links>
@@ -1567,7 +1567,7 @@
     </compartments>
     <palette>
       <groups
-          title="graphs">
+          title="keg">
         <entries
             xsi:type="gmfgen:ToolEntry"
             title="Node"
@@ -1624,7 +1624,7 @@
     </preferencePages>
   </diagram>
   <plugin
-      name="Graphs Editor"
+      name="KEG"
       provider="Christian-Albrechts-Universität zu Kiel"
       version="0.1.0.qualifier">
     <requiredPlugins>org.eclipse.draw2d</requiredPlugins>
@@ -2220,48 +2220,48 @@
           body="'Hypernode'"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node"/>
+          body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
       <expressions
           body="true"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Node"/>
+          body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port"/>
+          body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
       <expressions
           body="true"/>
       <expressions
-          body="graphs::EdgeType::Port2Port"/>
+          body="keg::EdgeType::Port2Port"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Port"/>
+          body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
       <expressions
-          body="graphs::EdgeType::Port2Port"/>
+          body="keg::EdgeType::Port2Port"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node"/>
+          body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
       <expressions
           body="true"/>
       <expressions
-          body="graphs::EdgeType::Port2Node"/>
+          body="keg::EdgeType::Port2Node"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Port2Node"/>
+          body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
       <expressions
-          body="graphs::EdgeType::Port2Node"/>
+          body="keg::EdgeType::Port2Node"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(graphs::Edge).isDirected = true and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port"/>
+          body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
       <expressions
           body="true"/>
       <expressions
-          body="graphs::EdgeType::Node2Port"/>
+          body="keg::EdgeType::Node2Port"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(graphs::Edge).isDirected = false and self.oclAsType(graphs::Edge).type = graphs::EdgeType::Node2Port"/>
+          body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
       <expressions
-          body="graphs::EdgeType::Node2Port"/>
+          body="keg::EdgeType::Node2Port"/>
     </providers>
   </expressionProviders>
   <labelParsers

@@ -22,9 +22,9 @@ package «getDiagram().editPartsPackageName»;
 «EXPAND xpt::Common::generatedClassComment»
 public class «editPartClassName» «EXPAND extendsList»
 	«IF editPartClassName.startsWith('Port')-»
-		implements de.cau.cs.kieler.keg.custom.GraphsPort
+		implements de.cau.cs.kieler.keg.custom.KEGPort
 	«ELSE»
-		implements de.cau.cs.kieler.keg.custom.GraphsNode
+		implements de.cau.cs.kieler.keg.custom.KEGNode
 	«ENDIF»
 	
 	«EXPAND implementsList» {

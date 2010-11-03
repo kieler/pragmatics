@@ -2,7 +2,7 @@
 <gmfgraph:Canvas xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:gmfgraph="http://www.eclipse.org/gmf/2006/GraphicalDefinition" name="graphs">
+    xmlns:gmfgraph="http://www.eclipse.org/gmf/2006/GraphicalDefinition" name="keg">
   <figures
       name="Default">
     <descriptors
@@ -10,8 +10,8 @@
       <actualFigure
           xsi:type="gmfgraph:RoundedRectangle"
           name="NodeFigure"
-          cornerWidth="16"
-          cornerHeight="16">
+          cornerWidth="40"
+          cornerHeight="40">
         <layout
             xsi:type="gmfgraph:CustomLayout"
             qualifiedClassName="de.cau.cs.kieler.keg.custom.NodeLayout"/>

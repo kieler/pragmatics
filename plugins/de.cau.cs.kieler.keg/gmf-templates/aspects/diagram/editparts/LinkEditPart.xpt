@@ -43,7 +43,7 @@ public class «editPartClassName» «EXPAND extendsList» «EXPAND implementsLis
 «DEFINE extendsList FOR gmfgen::GenLink»extends org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart«ENDDEFINE»
 
 «DEFINE implementsList FOR gmfgen::GenLink-»
-	implements de.cau.cs.kieler.keg.custom.GraphsConnection
+	implements de.cau.cs.kieler.keg.custom.KEGConnection
 	«IF treeBranch», org.eclipse.gmf.runtime.diagram.ui.editparts.ITreeBranchEditPart«ENDIF-»
 «ENDDEFINE»
 

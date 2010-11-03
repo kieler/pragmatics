@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.impl;
 
@@ -19,8 +17,8 @@ import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 
 import de.cau.cs.kieler.keg.Edge;
 import de.cau.cs.kieler.keg.EdgeType;
-import de.cau.cs.kieler.keg.GraphsFactory;
-import de.cau.cs.kieler.keg.GraphsPackage;
+import de.cau.cs.kieler.keg.KEGFactory;
+import de.cau.cs.kieler.keg.KEGPackage;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.Port;
 
@@ -38,7 +36,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * <!-- end-user-doc -->
  * @generated
  */
-public class GraphsPackageImpl extends EPackageImpl implements GraphsPackage {
+public class KEGPackageImpl extends EPackageImpl implements KEGPackage {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -78,12 +76,12 @@ public class GraphsPackageImpl extends EPackageImpl implements GraphsPackage {
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @see org.eclipse.emf.ecore.EPackage.Registry
-     * @see de.cau.cs.kieler.keg.GraphsPackage#eNS_URI
+     * @see de.cau.cs.kieler.keg.KEGPackage#eNS_URI
      * @see #init()
      * @generated
      */
-    private GraphsPackageImpl() {
-        super(eNS_URI, GraphsFactory.eINSTANCE);
+    private KEGPackageImpl() {
+        super(eNS_URI, KEGFactory.eINSTANCE);
     }
 
     /**
@@ -96,7 +94,7 @@ public class GraphsPackageImpl extends EPackageImpl implements GraphsPackage {
     /**
      * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
      * 
-     * <p>This method is used to initialize {@link GraphsPackage#eINSTANCE} when that field is accessed.
+     * <p>This method is used to initialize {@link KEGPackage#eINSTANCE} when that field is accessed.
      * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -105,11 +103,11 @@ public class GraphsPackageImpl extends EPackageImpl implements GraphsPackage {
      * @see #initializePackageContents()
      * @generated
      */
-    public static GraphsPackage init() {
-        if (isInited) return (GraphsPackage)EPackage.Registry.INSTANCE.getEPackage(GraphsPackage.eNS_URI);
+    public static KEGPackage init() {
+        if (isInited) return (KEGPackage)EPackage.Registry.INSTANCE.getEPackage(KEGPackage.eNS_URI);
 
         // Obtain or create and register package
-        GraphsPackageImpl theGraphsPackage = (GraphsPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof GraphsPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new GraphsPackageImpl());
+        KEGPackageImpl theKEGPackage = (KEGPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof KEGPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new KEGPackageImpl());
 
         isInited = true;
 
@@ -117,18 +115,18 @@ public class GraphsPackageImpl extends EPackageImpl implements GraphsPackage {
         KGraphPackage.eINSTANCE.eClass();
 
         // Create package meta-data objects
-        theGraphsPackage.createPackageContents();
+        theKEGPackage.createPackageContents();
 
         // Initialize created meta-data
-        theGraphsPackage.initializePackageContents();
+        theKEGPackage.initializePackageContents();
 
         // Mark meta-data to indicate it can't be changed
-        theGraphsPackage.freeze();
+        theKEGPackage.freeze();
 
   
         // Update the registry and return the package
-        EPackage.Registry.INSTANCE.put(GraphsPackage.eNS_URI, theGraphsPackage);
-        return theGraphsPackage;
+        EPackage.Registry.INSTANCE.put(KEGPackage.eNS_URI, theKEGPackage);
+        return theKEGPackage;
     }
 
     /**
@@ -262,8 +260,8 @@ public class GraphsPackageImpl extends EPackageImpl implements GraphsPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public GraphsFactory getGraphsFactory() {
-        return (GraphsFactory)getEFactoryInstance();
+    public KEGFactory getKEGFactory() {
+        return (KEGFactory)getEFactoryInstance();
     }
 
     /**
@@ -369,4 +367,4 @@ public class GraphsPackageImpl extends EPackageImpl implements GraphsPackage {
         createResource(eNS_URI);
     }
 
-} //GraphsPackageImpl
+} //KEGPackageImpl
