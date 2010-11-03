@@ -45,7 +45,9 @@ public class EntityEntityCompartmentEditPart extends ShapeCompartmentEditPart {
     public IFigure createFigure() {
         ResizableCompartmentFigure result = (ResizableCompartmentFigure) super.createFigure();
         result.setTitleVisibility(false);
+
         result.setBorder(null);
+
         return result;
     }
 

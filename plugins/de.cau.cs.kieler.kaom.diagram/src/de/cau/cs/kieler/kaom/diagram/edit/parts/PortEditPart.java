@@ -24,6 +24,7 @@ import org.eclipse.gef.handles.MoveHandle;
 import org.eclipse.gef.requests.CreateRequest;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.BorderItemSelectionEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
@@ -142,6 +143,18 @@ public class PortEditPart extends AdvancedRenderingBorderedBorderItemEditPart {
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
         } else {
             super.addBorderItem(borderItemContainer, borderItemEditPart);
+        }
+    }
+
+    /**
+     * @generated
+     */
+    protected IFigure getContentPaneFor(IGraphicalEditPart editPart) {
+
+        if (editPart instanceof ShapeCompartmentEditPart) {
+            return (IFigure) getMainFigure().getChildren().get(0);
+        } else {
+            return super.getContentPaneFor(editPart);
         }
     }
 

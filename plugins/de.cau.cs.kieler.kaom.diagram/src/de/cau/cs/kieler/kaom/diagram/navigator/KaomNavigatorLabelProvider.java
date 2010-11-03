@@ -89,27 +89,27 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements ICommon
      */
     public Image getImage(View view) {
         switch (KaomVisualIDRegistry.getVisualID(view)) {
-        case LinkEditPart.VISUAL_ID:
-            return getImage(
-                    "Navigator?Link?http://kieler.cs.cau.de/KAOM?Link", KaomElementTypes.Link_4001); //$NON-NLS-1$
         case RelationEditPart.VISUAL_ID:
             return getImage(
                     "Navigator?TopLevelNode?http://kieler.cs.cau.de/KAOM?Relation", KaomElementTypes.Relation_2002); //$NON-NLS-1$
+        case PortEditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Node?http://kieler.cs.cau.de/KAOM?Port", KaomElementTypes.Port_3001); //$NON-NLS-1$
+        case EntityEditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Diagram?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_1000); //$NON-NLS-1$
         case Relation2EditPart.VISUAL_ID:
             return getImage(
                     "Navigator?Node?http://kieler.cs.cau.de/KAOM?Relation", KaomElementTypes.Relation_3003); //$NON-NLS-1$
+        case LinkEditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Link?http://kieler.cs.cau.de/KAOM?Link", KaomElementTypes.Link_4001); //$NON-NLS-1$
         case Entity3EditPart.VISUAL_ID:
             return getImage(
                     "Navigator?Node?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_3002); //$NON-NLS-1$
         case Entity2EditPart.VISUAL_ID:
             return getImage(
                     "Navigator?TopLevelNode?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_2001); //$NON-NLS-1$
-        case EntityEditPart.VISUAL_ID:
-            return getImage(
-                    "Navigator?Diagram?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_1000); //$NON-NLS-1$
-        case PortEditPart.VISUAL_ID:
-            return getImage(
-                    "Navigator?Node?http://kieler.cs.cau.de/KAOM?Port", KaomElementTypes.Port_3001); //$NON-NLS-1$
         }
         return getImage("Navigator?UnknownElement", null); //$NON-NLS-1$
     }
@@ -161,20 +161,20 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements ICommon
             return getUnresolvedDomainElementProxyText(view);
         }
         switch (KaomVisualIDRegistry.getVisualID(view)) {
-        case LinkEditPart.VISUAL_ID:
-            return getLink_4001Text(view);
         case RelationEditPart.VISUAL_ID:
             return getRelation_2002Text(view);
+        case PortEditPart.VISUAL_ID:
+            return getPort_3001Text(view);
+        case EntityEditPart.VISUAL_ID:
+            return getEntity_1000Text(view);
         case Relation2EditPart.VISUAL_ID:
             return getRelation_3003Text(view);
+        case LinkEditPart.VISUAL_ID:
+            return getLink_4001Text(view);
         case Entity3EditPart.VISUAL_ID:
             return getEntity_3002Text(view);
         case Entity2EditPart.VISUAL_ID:
             return getEntity_2001Text(view);
-        case EntityEditPart.VISUAL_ID:
-            return getEntity_1000Text(view);
-        case PortEditPart.VISUAL_ID:
-            return getPort_3001Text(view);
         }
         return getUnknownElementText(view);
     }

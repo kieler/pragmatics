@@ -65,4 +65,19 @@
             }
         }
     «ENDIF-»
+    
+    «REM» added expansion of the getContentPaneFor method; TODO add static check so this is only done for entities «ENDREM»
+    «EXPAND getContentPaneFor FOR self-»
+«ENDDEFINE»
+
+«DEFINE getContentPaneFor FOR gmfgen::GenNode-»
+    «EXPAND xpt::Common::generatedMemberComment»
+    protected org.eclipse.draw2d.IFigure getContentPaneFor(org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart editPart) {
+        «REM» replaced default method by code to manipulate the container of the entity's children «ENDREM»
+        if (editPart instanceof org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeCompartmentEditPart) {
+            return (IFigure) getMainFigure().getChildren().get(0);
+        } else {
+            return super.getContentPaneFor(editPart);
+        }
+    }
 «ENDDEFINE»
