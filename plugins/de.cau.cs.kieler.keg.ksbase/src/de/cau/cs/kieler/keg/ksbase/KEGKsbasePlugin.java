@@ -7,18 +7,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class GraphsKsbasePlugin extends AbstractUIPlugin {
+public class KEGKsbasePlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "de.cau.cs.kieler.keg.ksbase";
 
 	// The shared instance
-	private static GraphsKsbasePlugin plugin;
+	private static KEGKsbasePlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public GraphsKsbasePlugin() {
+	public KEGKsbasePlugin() {
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class GraphsKsbasePlugin extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static GraphsKsbasePlugin getDefault() {
+	public static KEGKsbasePlugin getDefault() {
 		return plugin;
 	}
 

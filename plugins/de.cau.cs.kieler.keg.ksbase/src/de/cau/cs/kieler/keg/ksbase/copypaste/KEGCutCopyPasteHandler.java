@@ -20,20 +20,20 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import de.cau.cs.kieler.core.ui.handler.AbstractCutCopyPasteHandler;
 import de.cau.cs.kieler.core.ui.handler.ICutCopyPasteCommandFactory;
-import de.cau.cs.kieler.keg.custom.GraphsConnection;
-import de.cau.cs.kieler.keg.custom.GraphsNode;
+import de.cau.cs.kieler.keg.custom.KEGConnection;
+import de.cau.cs.kieler.keg.custom.KEGNode;
 
 /**
  * Graphs specific handler for cut, copy and paste operations.
  * 
  * @author mri
  */
-public class GraphsCutCopyPasteHandler extends AbstractCutCopyPasteHandler {
+public class KEGCutCopyPasteHandler extends AbstractCutCopyPasteHandler {
 
     /**
      * Constructs a new GraphsCutCopyPasteHandler.
      */
-    public GraphsCutCopyPasteHandler() {
+    public KEGCutCopyPasteHandler() {
         super();
     }
 	
@@ -48,9 +48,9 @@ public class GraphsCutCopyPasteHandler extends AbstractCutCopyPasteHandler {
             Object object = iter.next();
             if (object instanceof EditPart) {
                 EditPart editPart = (EditPart) object;
-                if (editPart instanceof GraphsConnection) {
+                if (editPart instanceof KEGConnection) {
                     continue;
-                } else if (editPart instanceof GraphsNode) {
+                } else if (editPart instanceof KEGNode) {
                     continue;
                 }
             }
@@ -66,7 +66,7 @@ public class GraphsCutCopyPasteHandler extends AbstractCutCopyPasteHandler {
 	 */
 	@Override
 	protected ICutCopyPasteCommandFactory getCommandFactory() {
-		return new GraphsCutCopyPasteCommandFactory();
+		return new KEGCutCopyPasteCommandFactory();
 	}
 
 }

@@ -1,4 +1,4 @@
-import graphs;
+import keg;
 
 Integer getIntFromUser(String userMessage, Integer defaultValue):
 	JAVA de.cau.cs.kieler.ksbase.util.UserDialogUtil.getUserInt(java.lang.String, java.lang.Integer)

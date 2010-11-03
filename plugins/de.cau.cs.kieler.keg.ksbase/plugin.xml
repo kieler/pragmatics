@@ -277,14 +277,14 @@
        </transformationCommand>
     </menuContribution>
 			</menus>
-			<package class="de.cau.cs.kieler.keg.GraphsPackage">
+			<package class="de.cau.cs.kieler.keg.KEGPackage">
 			</package>
 		</configuration>
 	</extension>
  <extension
        point="org.eclipse.gmf.runtime.common.ui.services.action.globalActionHandlerProviders">
     <GlobalActionHandlerProvider
-          class="de.cau.cs.kieler.keg.ksbase.copypaste.GraphsCutCopyPasteHandlerProvider"
+          class="de.cau.cs.kieler.keg.ksbase.copypaste.KEGCutCopyPasteHandlerProvider"
           id="de.cau.cs.kieler.keg.ksbase.CutCopyPasteHandler">
        <Priority
              name="Lowest">

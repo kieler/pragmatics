@@ -1,4 +1,4 @@
-import graphs;
+import keg;
 import kgraph;
 
 //Sets the object that should be selected after the transformation is executed

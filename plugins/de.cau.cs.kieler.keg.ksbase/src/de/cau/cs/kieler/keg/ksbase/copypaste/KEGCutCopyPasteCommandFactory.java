@@ -23,7 +23,7 @@ import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.keg.Edge;
 import de.cau.cs.kieler.keg.Node;
-import de.cau.cs.kieler.keg.ksbase.GraphsKsbasePlugin;
+import de.cau.cs.kieler.keg.ksbase.KEGKsbasePlugin;
 import de.cau.cs.kieler.ksbase.ui.utils.AbstractCutCopyPasteCommandFactory;
 
 /**
@@ -31,7 +31,7 @@ import de.cau.cs.kieler.ksbase.ui.utils.AbstractCutCopyPasteCommandFactory;
  * 
  * @author mri
  */
-public class GraphsCutCopyPasteCommandFactory extends
+public class KEGCutCopyPasteCommandFactory extends
         AbstractCutCopyPasteCommandFactory {
 
     /** the transformation file. */
@@ -40,7 +40,7 @@ public class GraphsCutCopyPasteCommandFactory extends
 
     /** the base packages of the underlying meta model. */
     private static final String[] MODEL = {
-            "de.cau.cs.kieler.keg.GraphsPackage",
+            "de.cau.cs.kieler.keg.KEGPackage",
             "de.cau.cs.kieler.core.kgraph.KGraphPackage" };
 
     /** the supported types. */
@@ -59,7 +59,7 @@ public class GraphsCutCopyPasteCommandFactory extends
      */
     @Override
     protected Bundle getBundle() {
-        return GraphsKsbasePlugin.getDefault().getBundle();
+        return KEGKsbasePlugin.getDefault().getBundle();
     }
 
     /**

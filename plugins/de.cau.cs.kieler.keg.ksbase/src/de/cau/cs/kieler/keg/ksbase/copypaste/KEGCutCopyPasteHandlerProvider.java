@@ -23,7 +23,7 @@ import de.cau.cs.kieler.core.ui.handler.AbstractCutCopyPasteHandlerProvider;
  * 
  * @author mri
  */
-public class GraphsCutCopyPasteHandlerProvider extends
+public class KEGCutCopyPasteHandlerProvider extends
 		AbstractCutCopyPasteHandlerProvider {
 
 	/**
@@ -31,7 +31,7 @@ public class GraphsCutCopyPasteHandlerProvider extends
 	 */
 	@Override
 	protected DiagramGlobalActionHandler getHandler() {
-		return new GraphsCutCopyPasteHandler();
+		return new KEGCutCopyPasteHandler();
 	}
 
 }
