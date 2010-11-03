@@ -12,16 +12,4 @@
 		   <text>Opens a wizard to import examples</text>
 		</link>
       </extensionContent>
-	  <extensionContent
-        id="de.cau.cs.kieler.intro.syncchart"
-        name="Syncchart Quick Start"
-        path="samples/@de.cau.cs.kieler.intro.samples/group/quickstarts/quickstarts.anchor">
-      	<link
-            label="Syncchart Quick Start"
-            url="http://www.informatik.uni-kiel.de/rtsys/kieler"
-            id="syncchart-quick-start"
-            style-id="content-link">
-			<text>Syncchart Description</text>
-        </link>
-      </extensionContent>
 </introContent>
