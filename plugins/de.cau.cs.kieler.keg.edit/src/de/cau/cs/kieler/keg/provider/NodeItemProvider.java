@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.provider;
 
@@ -20,8 +18,8 @@ import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 
 import de.cau.cs.kieler.core.kgraph.provider.KNodeItemProvider;
 
-import de.cau.cs.kieler.keg.GraphsFactory;
-import de.cau.cs.kieler.keg.GraphsPackage;
+import de.cau.cs.kieler.keg.KEGFactory;
+import de.cau.cs.kieler.keg.KEGPackage;
 import de.cau.cs.kieler.keg.Node;
 
 import java.util.Collection;
@@ -95,7 +93,7 @@ public class NodeItemProvider
                  getResourceLocator(),
                  getString("_UI_Node_nodeLabel_feature"),
                  getString("_UI_PropertyDescriptor_description", "_UI_Node_nodeLabel_feature", "_UI_Node_type"),
-                 GraphsPackage.Literals.NODE__NODE_LABEL,
+                 KEGPackage.Literals.NODE__NODE_LABEL,
                  true,
                  false,
                  false,
@@ -141,8 +139,8 @@ public class NodeItemProvider
         updateChildren(notification);
 
         switch (notification.getFeatureID(Node.class)) {
-            case GraphsPackage.NODE__NODE_LABEL:
-            case GraphsPackage.NODE__IS_HYPERNODE:
+            case KEGPackage.NODE__NODE_LABEL:
+            case KEGPackage.NODE__IS_HYPERNODE:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;
         }
@@ -163,17 +161,17 @@ public class NodeItemProvider
         newChildDescriptors.add
             (createChildParameter
                 (KGraphPackage.Literals.KNODE__CHILDREN,
-                 GraphsFactory.eINSTANCE.createNode()));
+                 KEGFactory.eINSTANCE.createNode()));
 
         newChildDescriptors.add
             (createChildParameter
                 (KGraphPackage.Literals.KNODE__PORTS,
-                 GraphsFactory.eINSTANCE.createPort()));
+                 KEGFactory.eINSTANCE.createPort()));
 
         newChildDescriptors.add
             (createChildParameter
                 (KGraphPackage.Literals.KNODE__OUTGOING_EDGES,
-                 GraphsFactory.eINSTANCE.createEdge()));
+                 KEGFactory.eINSTANCE.createEdge()));
     }
 
     /**

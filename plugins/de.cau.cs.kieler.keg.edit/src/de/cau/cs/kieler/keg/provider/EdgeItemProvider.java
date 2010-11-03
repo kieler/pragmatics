@@ -10,8 +10,6 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.provider;
 
@@ -19,7 +17,7 @@ package de.cau.cs.kieler.keg.provider;
 import de.cau.cs.kieler.core.kgraph.provider.KEdgeItemProvider;
 
 import de.cau.cs.kieler.keg.Edge;
-import de.cau.cs.kieler.keg.GraphsPackage;
+import de.cau.cs.kieler.keg.KEGPackage;
 
 import java.util.Collection;
 import java.util.List;
@@ -96,7 +94,7 @@ public class EdgeItemProvider
                  getResourceLocator(),
                  getString("_UI_Edge_headLabel1_feature"),
                  getString("_UI_PropertyDescriptor_description", "_UI_Edge_headLabel1_feature", "_UI_Edge_type"),
-                 GraphsPackage.Literals.EDGE__HEAD_LABEL1,
+                 KEGPackage.Literals.EDGE__HEAD_LABEL1,
                  true,
                  false,
                  false,
@@ -118,7 +116,7 @@ public class EdgeItemProvider
                  getResourceLocator(),
                  getString("_UI_Edge_headLabel2_feature"),
                  getString("_UI_PropertyDescriptor_description", "_UI_Edge_headLabel2_feature", "_UI_Edge_type"),
-                 GraphsPackage.Literals.EDGE__HEAD_LABEL2,
+                 KEGPackage.Literals.EDGE__HEAD_LABEL2,
                  true,
                  false,
                  false,
@@ -140,7 +138,7 @@ public class EdgeItemProvider
                  getResourceLocator(),
                  getString("_UI_Edge_midLabel_feature"),
                  getString("_UI_PropertyDescriptor_description", "_UI_Edge_midLabel_feature", "_UI_Edge_type"),
-                 GraphsPackage.Literals.EDGE__MID_LABEL,
+                 KEGPackage.Literals.EDGE__MID_LABEL,
                  true,
                  false,
                  false,
@@ -162,7 +160,7 @@ public class EdgeItemProvider
                  getResourceLocator(),
                  getString("_UI_Edge_tailLabel1_feature"),
                  getString("_UI_PropertyDescriptor_description", "_UI_Edge_tailLabel1_feature", "_UI_Edge_type"),
-                 GraphsPackage.Literals.EDGE__TAIL_LABEL1,
+                 KEGPackage.Literals.EDGE__TAIL_LABEL1,
                  true,
                  false,
                  false,
@@ -184,7 +182,7 @@ public class EdgeItemProvider
                  getResourceLocator(),
                  getString("_UI_Edge_tailLabel2_feature"),
                  getString("_UI_PropertyDescriptor_description", "_UI_Edge_tailLabel2_feature", "_UI_Edge_type"),
-                 GraphsPackage.Literals.EDGE__TAIL_LABEL2,
+                 KEGPackage.Literals.EDGE__TAIL_LABEL2,
                  true,
                  false,
                  false,
@@ -230,13 +228,13 @@ public class EdgeItemProvider
         updateChildren(notification);
 
         switch (notification.getFeatureID(Edge.class)) {
-            case GraphsPackage.EDGE__HEAD_LABEL1:
-            case GraphsPackage.EDGE__HEAD_LABEL2:
-            case GraphsPackage.EDGE__MID_LABEL:
-            case GraphsPackage.EDGE__TAIL_LABEL1:
-            case GraphsPackage.EDGE__TAIL_LABEL2:
-            case GraphsPackage.EDGE__IS_DIRECTED:
-            case GraphsPackage.EDGE__TYPE:
+            case KEGPackage.EDGE__HEAD_LABEL1:
+            case KEGPackage.EDGE__HEAD_LABEL2:
+            case KEGPackage.EDGE__MID_LABEL:
+            case KEGPackage.EDGE__TAIL_LABEL1:
+            case KEGPackage.EDGE__TAIL_LABEL2:
+            case KEGPackage.EDGE__IS_DIRECTED:
+            case KEGPackage.EDGE__TYPE:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;
         }

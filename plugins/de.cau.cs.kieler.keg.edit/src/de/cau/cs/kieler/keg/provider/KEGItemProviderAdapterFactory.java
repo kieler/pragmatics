@@ -10,12 +10,10 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.provider;
 
-import de.cau.cs.kieler.keg.util.GraphsAdapterFactory;
+import de.cau.cs.kieler.keg.util.KEGAdapterFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +43,7 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
  * <!-- end-user-doc -->
  * @generated
  */
-public class GraphsItemProviderAdapterFactory extends GraphsAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
+public class KEGItemProviderAdapterFactory extends KEGAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
     /**
      * This keeps track of the root adapter factory that delegates to this adapter factory.
      * <!-- begin-user-doc -->
@@ -76,7 +74,7 @@ public class GraphsItemProviderAdapterFactory extends GraphsAdapterFactory imple
      * <!-- end-user-doc -->
      * @generated
      */
-    public GraphsItemProviderAdapterFactory() {
+    public KEGItemProviderAdapterFactory() {
         supportedTypes.add(IEditingDomainItemProvider.class);
         supportedTypes.add(IStructuredItemContentProvider.class);
         supportedTypes.add(ITreeItemContentProvider.class);

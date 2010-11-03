@@ -10,15 +10,13 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
- *
- * $Id$
  */
 package de.cau.cs.kieler.keg.provider;
 
 
 import de.cau.cs.kieler.core.kgraph.provider.KPortItemProvider;
 
-import de.cau.cs.kieler.keg.GraphsPackage;
+import de.cau.cs.kieler.keg.KEGPackage;
 import de.cau.cs.kieler.keg.Port;
 
 import java.util.Collection;
@@ -92,7 +90,7 @@ public class PortItemProvider
                  getResourceLocator(),
                  getString("_UI_Port_portLabel_feature"),
                  getString("_UI_PropertyDescriptor_description", "_UI_Port_portLabel_feature", "_UI_Port_type"),
-                 GraphsPackage.Literals.PORT__PORT_LABEL,
+                 KEGPackage.Literals.PORT__PORT_LABEL,
                  true,
                  false,
                  false,
@@ -138,7 +136,7 @@ public class PortItemProvider
         updateChildren(notification);
 
         switch (notification.getFeatureID(Port.class)) {
-            case GraphsPackage.PORT__PORT_LABEL:
+            case KEGPackage.PORT__PORT_LABEL:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;
         }
