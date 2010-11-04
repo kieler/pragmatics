@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.export.ExportUtil;
 import de.cau.cs.kieler.kiml.export.ExporterConfiguration;
@@ -110,7 +111,9 @@ public class GMLExporter extends AbstractExporter {
     }
 
     /**
-     * Serializes the given KGraph using GML.
+     * Serializes the given KGraph using GML.<br>
+     * This method will attach additional KGraphData to the graph and it's
+     * children.
      * 
      * @param monitor
      *            the progress monitor
@@ -134,9 +137,11 @@ public class GMLExporter extends AbstractExporter {
         int currentNodeId = 0;
         Map<KNode, Integer> nodeIds = new HashMap<KNode, Integer>();
         writer.write("graph [\n");
+        writer.write(INDENTATION + "hierarchic 1\n");
         // process nodes
         Stack<KNode> nodes = new Stack<KNode>();
         nodes.addAll(graph.getChildren());
+        graph.getData().add(new Offset());
         while (!nodes.isEmpty()) {
             writer.write(INDENTATION + "node [\n");
             KNode node = nodes.pop();
@@ -149,18 +154,37 @@ public class GMLExporter extends AbstractExporter {
             }
             // layout information
             if (layoutInformation) {
+                Offset offset = node.getParent().getData(Offset.class);
                 KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
                 writer.write(INDENTATION2 + "graphics [\n");
-                writer.write(INDENTATION3 + "x "
-                        + (nodeLayout.getXpos() + nodeLayout.getWidth() / 2)
-                        + "\n");
-                writer.write(INDENTATION3 + "y "
-                        + (nodeLayout.getYpos() + nodeLayout.getHeight() / 2)
-                        + "\n");
+                writer.write(INDENTATION3
+                        + "x "
+                        + (offset.getX() + nodeLayout.getXpos() + nodeLayout
+                                .getWidth() / 2) + "\n");
+                writer.write(INDENTATION3
+                        + "y "
+                        + (offset.getY() + nodeLayout.getYpos() + nodeLayout
+                                .getHeight() / 2) + "\n");
                 writer.write(INDENTATION3 + "w " + nodeLayout.getWidth() + "\n");
                 writer.write(INDENTATION3 + "h " + nodeLayout.getHeight()
                         + "\n");
                 writer.write(INDENTATION2 + "]\n");
+                // attach offset information if the node is a compound node
+                if (node.getChildren().size() > 0) {
+                    Offset newOffset = new Offset(offset);
+                    newOffset.addX(nodeLayout.getXpos());
+                    newOffset.addY(nodeLayout.getYpos());
+                    node.getData().add(newOffset);
+                }
+            }
+            // is the node located inside a compound node?
+            if (!node.getParent().equals(graph)) {
+                writer.write(INDENTATION2 + "gid "
+                        + nodeIds.get(node.getParent()) + "\n");
+            }
+            // is the node a compound node?
+            if (node.getChildren().size() > 0) {
+                writer.write(INDENTATION2 + "isGroup 1\n");
             }
             writer.write(INDENTATION + "]\n");
             nodes.addAll(node.getChildren());
@@ -178,30 +202,41 @@ public class GMLExporter extends AbstractExporter {
                 writer.write(INDENTATION2 + "target " + targetId + "\n");
                 // layout information
                 if (layoutInformation) {
+                    Offset offset = node.getParent().getData(Offset.class);
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                     writer.write(INDENTATION2 + "graphics [\n");
                     writer.write(INDENTATION3 + "type \"line\"\n");
                     writer.write(INDENTATION3 + "Line [\n");
                     // source point
                     writer.write(INDENTATION4 + "point [\n");
-                    writer.write(INDENTATION5 + "x "
-                            + edgeLayout.getSourcePoint().getX() + "\n");
-                    writer.write(INDENTATION5 + "y "
-                            + edgeLayout.getSourcePoint().getY() + "\n");
+                    writer.write(INDENTATION5
+                            + "x "
+                            + (offset.getX() + edgeLayout.getSourcePoint()
+                                    .getX()) + "\n");
+                    writer.write(INDENTATION5
+                            + "y "
+                            + (offset.getY() + edgeLayout.getSourcePoint()
+                                    .getY()) + "\n");
                     writer.write(INDENTATION4 + "]\n");
                     // bend points
                     for (KPoint point : edgeLayout.getBendPoints()) {
                         writer.write(INDENTATION4 + "point [\n");
-                        writer.write(INDENTATION5 + "x " + point.getX() + "\n");
-                        writer.write(INDENTATION5 + "y " + point.getY() + "\n");
+                        writer.write(INDENTATION5 + "x "
+                                + (offset.getX() + point.getX()) + "\n");
+                        writer.write(INDENTATION5 + "y "
+                                + (offset.getY() + point.getY()) + "\n");
                         writer.write(INDENTATION4 + "]\n");
                     }
                     // target point
                     writer.write(INDENTATION4 + "point [\n");
-                    writer.write(INDENTATION5 + "x "
-                            + edgeLayout.getTargetPoint().getX() + "\n");
-                    writer.write(INDENTATION5 + "y "
-                            + edgeLayout.getTargetPoint().getY() + "\n");
+                    writer.write(INDENTATION5
+                            + "x "
+                            + (offset.getX() + edgeLayout.getTargetPoint()
+                                    .getX()) + "\n");
+                    writer.write(INDENTATION5
+                            + "y "
+                            + (offset.getY() + edgeLayout.getTargetPoint()
+                                    .getY()) + "\n");
                     writer.write(INDENTATION4 + "]\n");
                     writer.write(INDENTATION3 + "]\n");
                     writer.write(INDENTATION2 + "]\n");
@@ -213,5 +248,38 @@ public class GMLExporter extends AbstractExporter {
         writer.write("]\n");
         writer.close();
         monitor.done();
+    }
+
+    /**
+     * A helper class for remembering node offsets.
+     */
+    private static class Offset extends KGraphDataImpl {
+        private float x = 0;
+        private float y = 0;
+
+        public Offset() {
+            // do nothing
+        }
+
+        public Offset(final Offset offset) {
+            x = offset.x;
+            y = offset.y;
+        }
+
+        public float getX() {
+            return x;
+        }
+
+        public float getY() {
+            return y;
+        }
+
+        public void addX(final float dX) {
+            x += dX;
+        }
+
+        public void addY(final float dY) {
+            y += dY;
+        }
     }
 }
