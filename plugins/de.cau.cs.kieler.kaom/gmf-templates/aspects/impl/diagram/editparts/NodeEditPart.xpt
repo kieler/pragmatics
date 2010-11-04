@@ -50,14 +50,14 @@
         «EXPAND xpt::Common::generatedMemberComment»
         protected void addBorderItem(org.eclipse.draw2d.IFigure borderItemContainer, org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart borderItemEditPart) {
             if («FOREACH getExternalLabels(self) AS label SEPARATOR ' || '»borderItemEditPart instanceof «label.getEditPartQualifiedClassName()»«ENDFOREACH») {
-«REM» exchanged default label locator and set smaller default offset; TODO eliminate dynamic check «ENDREM»
+«REM» exchanged default label locator and set smaller default offset «ENDREM»
                 de.cau.cs.kieler.core.ui.figures.layout.LabelLocator locator = new de.cau.cs.kieler.core.ui.figures.layout.LabelLocator(getMainFigure(), org.eclipse.draw2d.PositionConstants.SOUTH);
-                if (getNotationView().getElement() instanceof de.cau.cs.kieler.kaom.Port) {
+                «IF self.getDomainMetaClass().ecoreClass.name = 'Port'-»
                     locator.setPortBehavior(true);
                     locator.setBorderItemOffset(new org.eclipse.draw2d.geometry.Dimension(-2, -2));
-                } else {
+                «ELSE-»
                     locator.setBorderItemOffset(new org.eclipse.draw2d.geometry.Dimension(-4, -4));
-                }
+                «ENDIF-»
 «REM» end of changes «ENDREM»
                 borderItemContainer.add(borderItemEditPart.getFigure(), locator);
             } else {
@@ -66,8 +66,10 @@
         }
     «ENDIF-»
     
-    «REM» added expansion of the getContentPaneFor method; TODO add static check so this is only done for entities «ENDREM»
-    «EXPAND getContentPaneFor FOR self-»
+    «REM» added expansion of the getContentPaneFor method «ENDREM»
+    «IF self.getDomainMetaClass().ecoreClass.name = 'Entity'-»
+    	«EXPAND getContentPaneFor FOR self-»
+    «ENDIF-»
 «ENDDEFINE»
 
 «DEFINE getContentPaneFor FOR gmfgen::GenNode-»

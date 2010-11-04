@@ -26,202 +26,205 @@ import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 /**
  * @generated
  */
-public class KaomParserProvider extends AbstractProvider implements IParserProvider {
+public class KaomParserProvider extends AbstractProvider implements
+		IParserProvider {
 
-    /**
-     * @generated
-     */
-    private IParser entityName_5004Parser;
+	/**
+	 * @generated
+	 */
+	private IParser entityName_5004Parser;
 
-    /**
-     * @generated
-     */
-    private IParser getEntityName_5004Parser() {
-        if (entityName_5004Parser == null) {
-            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
-                    .getNamedObject_Name() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            entityName_5004Parser = parser;
-        }
-        return entityName_5004Parser;
-    }
+	/**
+	 * @generated
+	 */
+	private IParser getEntityName_5004Parser() {
+		if (entityName_5004Parser == null) {
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+					.getNamedObject_Name() };
+			MessageFormatParser parser = new MessageFormatParser(features);
+			entityName_5004Parser = parser;
+		}
+		return entityName_5004Parser;
+	}
 
-    /**
-     * @generated
-     */
-    private IParser relationName_5005Parser;
+	/**
+	 * @generated
+	 */
+	private IParser relationName_5005Parser;
 
-    /**
-     * @generated
-     */
-    private IParser getRelationName_5005Parser() {
-        if (relationName_5005Parser == null) {
-            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
-                    .getNamedObject_Name() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            relationName_5005Parser = parser;
-        }
-        return relationName_5005Parser;
-    }
+	/**
+	 * @generated
+	 */
+	private IParser getRelationName_5005Parser() {
+		if (relationName_5005Parser == null) {
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+					.getNamedObject_Name() };
+			MessageFormatParser parser = new MessageFormatParser(features);
+			relationName_5005Parser = parser;
+		}
+		return relationName_5005Parser;
+	}
 
-    /**
-     * @generated
-     */
-    private IParser portName_5001Parser;
+	/**
+	 * @generated
+	 */
+	private IParser portName_5001Parser;
 
-    /**
-     * @generated
-     */
-    private IParser getPortName_5001Parser() {
-        if (portName_5001Parser == null) {
-            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
-                    .getNamedObject_Name() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            portName_5001Parser = parser;
-        }
-        return portName_5001Parser;
-    }
+	/**
+	 * @generated
+	 */
+	private IParser getPortName_5001Parser() {
+		if (portName_5001Parser == null) {
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+					.getNamedObject_Name() };
+			MessageFormatParser parser = new MessageFormatParser(features);
+			portName_5001Parser = parser;
+		}
+		return portName_5001Parser;
+	}
 
-    /**
-     * @generated
-     */
-    private IParser entityName_5003Parser;
+	/**
+	 * @generated
+	 */
+	private IParser entityName_5003Parser;
 
-    /**
-     * @generated
-     */
-    private IParser getEntityName_5003Parser() {
-        if (entityName_5003Parser == null) {
-            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
-                    .getNamedObject_Name() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            entityName_5003Parser = parser;
-        }
-        return entityName_5003Parser;
-    }
+	/**
+	 * @generated
+	 */
+	private IParser getEntityName_5003Parser() {
+		if (entityName_5003Parser == null) {
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+					.getNamedObject_Name() };
+			MessageFormatParser parser = new MessageFormatParser(features);
+			entityName_5003Parser = parser;
+		}
+		return entityName_5003Parser;
+	}
 
-    /**
-     * @generated
-     */
-    private IParser relationName_5002Parser;
+	/**
+	 * @generated
+	 */
+	private IParser relationName_5002Parser;
 
-    /**
-     * @generated
-     */
-    private IParser getRelationName_5002Parser() {
-        if (relationName_5002Parser == null) {
-            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
-                    .getNamedObject_Name() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            relationName_5002Parser = parser;
-        }
-        return relationName_5002Parser;
-    }
+	/**
+	 * @generated
+	 */
+	private IParser getRelationName_5002Parser() {
+		if (relationName_5002Parser == null) {
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+					.getNamedObject_Name() };
+			MessageFormatParser parser = new MessageFormatParser(features);
+			relationName_5002Parser = parser;
+		}
+		return relationName_5002Parser;
+	}
 
-    /**
-     * @generated
-     */
-    private IParser linkName_6001Parser;
+	/**
+	 * @generated
+	 */
+	private IParser linkName_6001Parser;
 
-    /**
-     * @generated
-     */
-    private IParser getLinkName_6001Parser() {
-        if (linkName_6001Parser == null) {
-            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
-                    .getNamedObject_Name() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            linkName_6001Parser = parser;
-        }
-        return linkName_6001Parser;
-    }
+	/**
+	 * @generated
+	 */
+	private IParser getLinkName_6001Parser() {
+		if (linkName_6001Parser == null) {
+			EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+					.getNamedObject_Name() };
+			MessageFormatParser parser = new MessageFormatParser(features);
+			linkName_6001Parser = parser;
+		}
+		return linkName_6001Parser;
+	}
 
-    /**
-     * @generated
-     */
-    protected IParser getParser(int visualID) {
-        switch (visualID) {
-        case EntityNameEditPart.VISUAL_ID:
-            return getEntityName_5004Parser();
-        case RelationNameEditPart.VISUAL_ID:
-            return getRelationName_5005Parser();
-        case PortNameEditPart.VISUAL_ID:
-            return getPortName_5001Parser();
-        case EntityName2EditPart.VISUAL_ID:
-            return getEntityName_5003Parser();
-        case RelationName2EditPart.VISUAL_ID:
-            return getRelationName_5002Parser();
-        case LinkNameEditPart.VISUAL_ID:
-            return getLinkName_6001Parser();
-        }
-        return null;
-    }
+	/**
+	 * @generated
+	 */
+	protected IParser getParser(int visualID) {
+		switch (visualID) {
+		case EntityNameEditPart.VISUAL_ID:
+			return getEntityName_5004Parser();
+		case RelationNameEditPart.VISUAL_ID:
+			return getRelationName_5005Parser();
+		case PortNameEditPart.VISUAL_ID:
+			return getPortName_5001Parser();
+		case EntityName2EditPart.VISUAL_ID:
+			return getEntityName_5003Parser();
+		case RelationName2EditPart.VISUAL_ID:
+			return getRelationName_5002Parser();
+		case LinkNameEditPart.VISUAL_ID:
+			return getLinkName_6001Parser();
+		}
+		return null;
+	}
 
-    /**
-     * Utility method that consults ParserService
-     * @generated
-     */
-    public static IParser getParser(IElementType type, EObject object, String parserHint) {
-        return ParserService.getInstance().getParser(new HintAdapter(type, object, parserHint));
-    }
+	/**
+	 * Utility method that consults ParserService
+	 * @generated
+	 */
+	public static IParser getParser(IElementType type, EObject object,
+			String parserHint) {
+		return ParserService.getInstance().getParser(
+				new HintAdapter(type, object, parserHint));
+	}
 
-    /**
-     * @generated
-     */
-    public IParser getParser(IAdaptable hint) {
-        String vid = (String) hint.getAdapter(String.class);
-        if (vid != null) {
-            return getParser(KaomVisualIDRegistry.getVisualID(vid));
-        }
-        View view = (View) hint.getAdapter(View.class);
-        if (view != null) {
-            return getParser(KaomVisualIDRegistry.getVisualID(view));
-        }
-        return null;
-    }
+	/**
+	 * @generated
+	 */
+	public IParser getParser(IAdaptable hint) {
+		String vid = (String) hint.getAdapter(String.class);
+		if (vid != null) {
+			return getParser(KaomVisualIDRegistry.getVisualID(vid));
+		}
+		View view = (View) hint.getAdapter(View.class);
+		if (view != null) {
+			return getParser(KaomVisualIDRegistry.getVisualID(view));
+		}
+		return null;
+	}
 
-    /**
-     * @generated
-     */
-    public boolean provides(IOperation operation) {
-        if (operation instanceof GetParserOperation) {
-            IAdaptable hint = ((GetParserOperation) operation).getHint();
-            if (KaomElementTypes.getElement(hint) == null) {
-                return false;
-            }
-            return getParser(hint) != null;
-        }
-        return false;
-    }
+	/**
+	 * @generated
+	 */
+	public boolean provides(IOperation operation) {
+		if (operation instanceof GetParserOperation) {
+			IAdaptable hint = ((GetParserOperation) operation).getHint();
+			if (KaomElementTypes.getElement(hint) == null) {
+				return false;
+			}
+			return getParser(hint) != null;
+		}
+		return false;
+	}
 
-    /**
-     * @generated
-     */
-    private static class HintAdapter extends ParserHintAdapter {
+	/**
+	 * @generated
+	 */
+	private static class HintAdapter extends ParserHintAdapter {
 
-        /**
-         * @generated
-         */
-        private final IElementType elementType;
+		/**
+		 * @generated
+		 */
+		private final IElementType elementType;
 
-        /**
-         * @generated
-         */
-        public HintAdapter(IElementType type, EObject object, String parserHint) {
-            super(object, parserHint);
-            assert type != null;
-            elementType = type;
-        }
+		/**
+		 * @generated
+		 */
+		public HintAdapter(IElementType type, EObject object, String parserHint) {
+			super(object, parserHint);
+			assert type != null;
+			elementType = type;
+		}
 
-        /**
-         * @generated
-         */
-        public Object getAdapter(Class adapter) {
-            if (IElementType.class.equals(adapter)) {
-                return elementType;
-            }
-            return super.getAdapter(adapter);
-        }
-    }
+		/**
+		 * @generated
+		 */
+		public Object getAdapter(Class adapter) {
+			if (IElementType.class.equals(adapter)) {
+				return elementType;
+			}
+			return super.getAdapter(adapter);
+		}
+	}
 
 }
