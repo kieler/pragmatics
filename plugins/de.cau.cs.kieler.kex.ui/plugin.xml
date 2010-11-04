@@ -2,31 +2,28 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.ui.importWizards">
+         point="org.eclipse.ui.exportWizards">
       <category
-            id="de.cau.cs.kieler.kex.ui.import"
-            name="KIELER Examples">
+            id="de.cau.cs.kieler.ui.export"
+            name="KIELER">
       </category>
       <wizard
-            category="de.cau.cs.kieler.kex.ui.import"
-            class="de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard"
+            category="de.cau.cs.kieler.ui.export"
+            class="de.cau.cs.kieler.kex.ui.wizards.exporting.ExampleExportWizard"
             icon="icons/keksIcon.jpg"
-            id="de.cau.cs.kieler.kex.ui.importWizard"
-            name="Import">
+            id="de.cau.cs.kieler.kex.ui.exportWizard"
+            name="Example">
       </wizard>
    </extension>
    <extension
-         point="org.eclipse.ui.exportWizards">
-      <category
-            id="de.cau.cs.kieler.kex.ui.export"
-            name="KIELER Examples">
-      </category>
+         point="org.eclipse.ui.importWizards">
+         
       <wizard
-            category="de.cau.cs.kieler.kex.ui.export"
-            class="de.cau.cs.kieler.kex.ui.wizards.exporting.ExampleExportWizard"
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard"
             icon="icons/keksIcon.jpg"
-            id="de.cau.cs.kieler.kex.ui.export"
-            name="Export">
+            id="de.cau.cs.kieler.kex.ui.importWizard"
+            name="Example">
       </wizard>
    </extension>
    <extension

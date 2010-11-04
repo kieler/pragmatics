@@ -51,6 +51,7 @@ public class ImportWizardAction implements IIntroAction {
         wizard.init(wb, StructuredSelection.EMPTY);
         WizardDialog dialog = new WizardDialog(win.getShell(), wizard);
         dialog.create();
+        dialog.getShell().pack();
         dialog.open();
     }
 }

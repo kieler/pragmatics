@@ -22,7 +22,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
@@ -45,6 +44,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
@@ -81,7 +81,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
     private static final int IMG_PADDINGS_WIDTH = 40;
     private static final int IMG_PADDINGS_HEIGHT = 120;
 
-    private Browser exampleDescription;
+    private Text exampleDescription;
 
     private Tree exampleTree;
 
@@ -179,7 +179,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
         Label descriptionLabel = new Label(parent, SWT.NONE);
         descriptionLabel.setText("Example Description");
 
-        this.exampleDescription = new Browser(parent, SWT.NONE | SWT.BORDER);
+        this.exampleDescription = new Text(parent, SWT.NONE | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         GridData descData = new GridData(GridData.FILL_HORIZONTAL);
         descData.heightHint = DESC_HEIGHT_HINT;
         descData.minimumHeight = DESC_MIN_HEIGHT;
@@ -414,13 +414,10 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
     private void updateDescriptionLabel(final Example example) {
         StringBuilder sb = new StringBuilder();
-
-        String htmlDesc = example.getDescription().replaceAll("\n", "<br>");
-        sb.append("<font face=\"Tahoma, sans-serif\" size=\"-1\">");
-        sb.append("Title: ").append(example.getTitle()).append("<br>").append("Author: ")
-                .append(example.getAuthor()).append("<br>").append("Contact: ")
-                .append(example.getContact()).append("<br>").append("<br>").append(htmlDesc);
-        sb.append("</font>");
+        sb.append("Title: ").append(example.getTitle()).append("\n").append("Author: ")
+                .append(example.getAuthor()).append("\n").append("Contact: ")
+                .append(example.getContact()).append("\n").append("\n")
+                .append(example.getDescription());
         getExampleDescription().setText(sb.toString());
     }
 
@@ -471,9 +468,9 @@ public class ImportExamplePage extends WizardResourceImportPage {
     /**
      * getter for example description field. It is a browser.
      * 
-     * @return Browser
+     * @return Text
      */
-    public Browser getExampleDescription() {
+    public Text getExampleDescription() {
         return exampleDescription;
     }
 
