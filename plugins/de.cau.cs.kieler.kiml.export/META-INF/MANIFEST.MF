@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIML Export
+Bundle-SymbolicName: de.cau.cs.kieler.kiml.export;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: de.cau.cs.kieler.kiml.export.ExportActivator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ de.cau.cs.kieler.core.kgraph;bundle-version="0.2.0",
+ de.cau.cs.kieler.core;bundle-version="0.4.0",
+ de.cau.cs.kieler.kiml.ui;bundle-version="0.3.0",
+ org.eclipse.gef;bundle-version="3.6.0",
+ de.cau.cs.kieler.core.model;bundle-version="0.3.0",
+ de.cau.cs.kieler.core.ui;bundle-version="0.3.0",
+ org.graphdrawing.graphml;bundle-version="1.0.0",
+ net.ogdf.ogml;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Import-Package: org.eclipse.core.resources,
+ org.eclipse.ui.dialogs

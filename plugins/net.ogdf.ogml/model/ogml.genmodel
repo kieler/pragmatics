@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/net.ogdf.ogml/src"
+    modelPluginID="net.ogdf.ogml" modelName="Ogml" importerID="org.eclipse.xsd.ecore.importer"
+    complianceLevel="6.0" copyrightFields="false">
+  <foreignModel>ogml.xsd</foreignModel>
+  <genPackages prefix="Ogml" basePackage="net.ogdf" resource="XML" disposableProviderFactory="true"
+      ecorePackage="Ogml.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//AlignmentType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//AlignmentType/left"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//AlignmentType/center"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//AlignmentType/right"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//AlignmentType/justify"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//BoolIntType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//BoolIntType/_1"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//BoolIntType/_0"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//BoolTFType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//BoolTFType/true"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//BoolTFType/false"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//DecorationType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//DecorationType/underline"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//DecorationType/overline"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//DecorationType/blink"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//DecorationType/lineThrough"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//DecorationType/none"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//EndpointStylesType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/arrow"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/circle"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/halfCircle"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/filledCircle"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/filledHalfCircle"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/box"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/halfBox"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/filledBox"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/filledHalfBox"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/rhomb"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/halfRhomb"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/filledRhomb"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/filledHalfRhomb"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/diamond"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/halfDiamond"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/filledDiamond"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/filledHalfDiamond"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/slash"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/doubleSlash"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/solid"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/line"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/none"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/smurf"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//EndpointStylesType/image"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//FontStretchType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/normal"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/wider"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/narrower"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/ultraCondensed"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/extraCondensed"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/condensed"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/semiCondensed"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/semiExpanded"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/expanded"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/extraExpanded"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStretchType/ultraExpanded"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//FontStyleType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStyleType/normal"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStyleType/italic"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontStyleType/oblique"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//FontVariantType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontVariantType/normal"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontVariantType/smallCpaps"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//FontWeightType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/normal"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/bold"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/bolder"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/_100"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/_200"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/_300"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/_400"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/_500"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/_600"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/_700"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/_800"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//FontWeightType/_900"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//LineStyleTypeType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//LineStyleTypeType/solid"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//LineStyleTypeType/dotted"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//LineStyleTypeType/dashed"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//LineStyleTypeType/double"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//LineStyleTypeType/triple"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//LineStyleTypeType/groove"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//LineStyleTypeType/ridge"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//LineStyleTypeType/inset"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//LineStyleTypeType/outset"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//LineStyleTypeType/none"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//PatternType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//PatternType/solid"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//PatternType/striped"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//PatternType/checked"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//PatternType/dotted"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//PatternType/none"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//ShapeType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/rect"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/triangle"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/circle"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/ellipse"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/hexagon"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/rhomb"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/trapeze"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/upTrapeze"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/lParallelogram"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/rParallelogram"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/pentagon"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/octagon"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/umlClass"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//ShapeType/image"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Ogml.ecore#//TransformType">
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//TransformType/capitalize"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//TransformType/uppercase"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//TransformType/lowercase"/>
+      <genEnumLiterals ecoreEnumLiteral="Ogml.ecore#//TransformType/none"/>
+    </genEnums>
+    <genDataTypes ecoreDataType="Ogml.ecore#//AlignmentTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//BoolIntTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//BoolTFTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//DecorationTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//EndpointStylesTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//FontStretchTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//FontStyleTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//FontVariantTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//FontWeightTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//LineStyleTypeTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//PatternTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//ShapeTypeObject"/>
+    <genDataTypes ecoreDataType="Ogml.ecore#//TransformTypeObject"/>
+    <genClasses ecoreClass="Ogml.ecore#//BooleanType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//BooleanType/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//BooleanType/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//BoolType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//BoolType/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//BoolType/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//ComposedType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute Ogml.ecore#//ComposedType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ComposedType/number"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ComposedType/int"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ComposedType/boolean"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ComposedType/node"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ComposedType/edge"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ComposedType/label"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ComposedType/composed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//ComposedType/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//ConstraintsType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute Ogml.ecore#//ConstraintsType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ConstraintsType/number"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ConstraintsType/int"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ConstraintsType/boolean"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ConstraintsType/nodeRef"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ConstraintsType/edgeRef"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ConstraintsType/labelRef"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//ConstraintsType/composed"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//DataType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//DataType/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//DataType/idRef"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//DocumentRoot">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//DocumentRoot/mixed"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/xMLNSPrefixMap"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/xSISchemaLocation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/bool"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/boolean"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/composed"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/constraints"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/edge"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/edgeConstraint"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/edgeLayout"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/edgeStyleTemplate"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/endpoint"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/fill"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/font"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//DocumentRoot/fontStretch"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//DocumentRoot/fontStyle"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//DocumentRoot/fontVariant"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//DocumentRoot/fontWeight"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/graph"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/graphStyle"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/int"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/keys"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/keyValue"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/label"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/labelConstraint"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/labelLayout"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/labelStyleTemplate"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/layout"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/line"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/lineStyle"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//DocumentRoot/lineStyleType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/location"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/node"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/nodeConstraint"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/nodeLayout"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/nodeStyleTemplate"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/number"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/ogml"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//DocumentRoot/pattern"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/point"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/segment"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/shape"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/sourceStyle"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/sourceTarget"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/structure"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/styles"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/styleTemplates"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/targetStyle"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/template"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/text"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//DocumentRoot/uri"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//EdgeConstraintType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//EdgeConstraintType/idRef"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//EdgeConstraintType/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//EdgeLayoutType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeLayoutType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeLayoutType/template"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeLayoutType/line"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeLayoutType/sourceStyle"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeLayoutType/targetStyle"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeLayoutType/point"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeLayoutType/segment"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//EdgeLayoutType/idRef"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//EdgeStyleTemplateType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeStyleTemplateType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeStyleTemplateType/template"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeStyleTemplateType/line"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeStyleTemplateType/sourceStyle"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeStyleTemplateType/targetStyle"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//EdgeStyleTemplateType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//EdgeType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeType/label"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute Ogml.ecore#//EdgeType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeType/source"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeType/target"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//EdgeType/label1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//EdgeType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//EndpointType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//EndpointType/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//EndpointType/idRef"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//EndpointType/port"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//EndpointType/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//EndpointType/style"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//FillType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//FillType/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//FillType/pattern"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//FillType/patternColor"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//FontType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//FontType/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//FontType/family"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//FontType/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//FontType/stretch"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//FontType/style"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//FontType/variant"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//FontType/weight"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//GraphStyleType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//GraphStyleType/data"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//GraphStyleType/defaultEdgeTemplate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//GraphStyleType/defaultLabelTemplate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//GraphStyleType/defaultNodeTemplate"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//GraphType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//GraphType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//GraphType/structure"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//GraphType/layout"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//IntType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//IntType/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//IntType/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//KeysType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//KeysType/key"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//KeyType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//KeyType/keyValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//KeyType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//KeyValueType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//KeyValueType/dafault"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//KeyValueType/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//KeyValueType/type"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//LabelConstraintType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LabelConstraintType/idRef"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LabelConstraintType/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//LabelLayoutType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LabelLayoutType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LabelLayoutType/template"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LabelLayoutType/location"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LabelLayoutType/text"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LabelLayoutType/font"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LabelLayoutType/idRef"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//LabelStyleTemplateType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LabelStyleTemplateType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LabelStyleTemplateType/template"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LabelStyleTemplateType/text"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LabelStyleTemplateType/font"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LabelStyleTemplateType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//LabelType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LabelType/data"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LabelType/content"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LabelType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//LayoutType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LayoutType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LayoutType/styleTemplates"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LayoutType/styles"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//LayoutType/constraints"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//LineStyleType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LineStyleType/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LineStyleType/style"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LineStyleType/width"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//LineType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LineType/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LineType/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LineType/width"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//LocationType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LocationType/x"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LocationType/y"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//LocationType/z"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//NodeConstraintType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//NodeConstraintType/idRef"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//NodeConstraintType/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//NodeLayoutType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeLayoutType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeLayoutType/template"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeLayoutType/location"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeLayoutType/shape"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeLayoutType/fill"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeLayoutType/line"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//NodeLayoutType/idRef"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//NodeStyleTemplateType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeStyleTemplateType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeStyleTemplateType/template"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeStyleTemplateType/shape"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeStyleTemplateType/fill"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeStyleTemplateType/line"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//NodeStyleTemplateType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//NodeType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//NodeType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute Ogml.ecore#//NodeType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//NodeType/label"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//NodeType/node"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//NodeType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//NumberType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//NumberType/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//NumberType/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//OgmlType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//OgmlType/keys"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//OgmlType/graph"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//PointType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//PointType/data"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//PointType/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//PointType/x"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//PointType/y"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//PointType/z"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//SegmentType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//SegmentType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//SegmentType/line"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//SegmentType/endpoint"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//ShapeType1">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//ShapeType1/height"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//ShapeType1/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//ShapeType1/uri"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//ShapeType1/width"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//SourceStyleType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//SourceStyleType/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//SourceStyleType/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//SourceStyleType/uri"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//SourceStyleType/width"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//SourceTargetType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//SourceTargetType/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//SourceTargetType/label"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//SourceTargetType/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//SourceTargetType/idRef"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//StructureType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute Ogml.ecore#//StructureType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StructureType/data"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StructureType/node"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StructureType/edge"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StructureType/label"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//StylesType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Ogml.ecore#//StylesType/graphStyle"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute Ogml.ecore#//StylesType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StylesType/data"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StylesType/nodeStyle"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StylesType/edgeStyle"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StylesType/labelStyle"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//StyleTemplatesType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute Ogml.ecore#//StyleTemplatesType/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StyleTemplatesType/data"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StyleTemplatesType/nodeStyleTemplate"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StyleTemplatesType/edgeStyleTemplate"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Ogml.ecore#//StyleTemplatesType/labelStyleTemplate"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//TargetStyleType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//TargetStyleType/color"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//TargetStyleType/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//TargetStyleType/uri"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//TargetStyleType/width"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//TemplateType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//TemplateType/idRef"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//TextType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//TextType/alignment"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//TextType/decoration"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//TextType/rotation"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//TextType/transform"/>
+    </genClasses>
+    <genClasses ecoreClass="Ogml.ecore#//UriType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Ogml.ecore#//UriType/uri"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
