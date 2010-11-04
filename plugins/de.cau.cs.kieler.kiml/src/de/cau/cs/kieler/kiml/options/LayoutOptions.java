@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.options;
 
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -107,6 +109,12 @@ public final class LayoutOptions {
     /** aspect ratio property. */
     public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(ASPECT_RATIO_ID, 0.0f);
     
+    /** layout option key: fixed bend points for edges (object). */
+    public static final String BEND_POINTS_ID = "de.cau.cs.kieler.layout.options.bendPoints";
+    /** bend points property. */
+    public static final IProperty<KVectorChain> BEND_POINTS = new Property<KVectorChain>(
+            BEND_POINTS_ID);
+    
     /** layout option key: distance to border of the drawing (float). */
     public static final String BORDER_SPACING_ID = "de.cau.cs.kieler.layout.options.borderSpacing";
     /** border spacing property. */
@@ -173,6 +181,11 @@ public final class LayoutOptions {
     /** port constraints property. */
     public static final IProperty<PortConstraints> PORT_CONSTRAINTS = new Property<PortConstraints>(
             PORT_CONSTRAINTS_ID, PortConstraints.UNDEFINED);
+    
+    /** layout option key: pre-defined position (object). */
+    public static final String POSITION_ID = "de.cau.cs.kieler.layout.options.position";
+    /** position property. */
+    public static final IProperty<KVector> POSITION = new Property<KVector>(POSITION_ID);
     
     /** layout option key: priority of elements (integer). */
     public static final String PRIORITY_ID = "de.cau.cs.kieler.layout.options.priority";

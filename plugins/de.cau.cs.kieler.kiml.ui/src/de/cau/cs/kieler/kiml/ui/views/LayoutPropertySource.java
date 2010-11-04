@@ -100,9 +100,17 @@ public class LayoutPropertySource implements IPropertySource {
         return translateValue(value, optionData);
     }
     
+    /**
+     * Translate a layout option value into an object that can be handled by the cell
+     * editors of the layout view.
+     * 
+     * @param value a layout option value
+     * @param optionData the corresponding layout option data
+     * @return a cell editor value
+     */
     private static Object translateValue(final Object value, final LayoutOptionData<?> optionData) {
         if (value == null) {
-            return null;
+            return "";
         }
         switch (optionData.getType()) {
         case STRING:
@@ -128,6 +136,8 @@ public class LayoutPropertySource implements IPropertySource {
             } else {
                 return value;
             }
+        case OBJECT:
+            return value.toString();
         default:
             return value;
         }
@@ -151,18 +161,14 @@ public class LayoutPropertySource implements IPropertySource {
                     }
                 } else {
                     switch (optionData.getType()) {
-                    case INT:
-                        value = Integer.valueOf((String) value);
-                        break;
-                    case FLOAT:
-                        value = Float.valueOf((String) value);
-                        break;
                     case BOOLEAN:
                         value = Boolean.valueOf((Integer) value == 1);
                         break;
                     case ENUM:
                         value = optionData.getEnumValue((Integer) value);
                         break;
+                    default:
+                        value = optionData.parseValue((String) value);
                     }
                     layoutConfig.setProperty(optionData, value);
                 }

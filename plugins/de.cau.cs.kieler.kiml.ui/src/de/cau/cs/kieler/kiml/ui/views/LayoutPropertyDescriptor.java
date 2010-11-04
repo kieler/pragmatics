@@ -49,6 +49,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         public Image getImage(final Object element) {
             KimlUiPlugin.Images images = KimlUiPlugin.getDefault().getImages();
             switch (optionData.getType()) {
+            case OBJECT:
             case STRING:
                 return images.getPropText();
             case BOOLEAN:
@@ -168,6 +169,8 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         case BOOLEAN:
         case ENUM:
             return new ComboBoxCellEditor(parent, optionData.getChoices(), SWT.READ_ONLY);
+        case OBJECT:
+            return new TextCellEditor(parent);
         default:
             return null;
         }

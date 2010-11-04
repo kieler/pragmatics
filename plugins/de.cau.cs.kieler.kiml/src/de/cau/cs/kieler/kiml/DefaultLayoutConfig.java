@@ -98,7 +98,6 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      * @param property a layout option
      * @return the default value for the layout option
      */
-    @SuppressWarnings("unchecked")
     public <T> T getProperty(final IProperty<T> property) {
         LayoutOptionData<T> optionData = property instanceof LayoutOptionData<?>
                 ? (LayoutOptionData<T>) property : null;
@@ -129,19 +128,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
             }
             
             // fall back to default-default value
-            Object value = null;
-            switch (optionData.getType()) {
-            case STRING:
-                value = "";
-            case BOOLEAN:
-                value = Boolean.FALSE;
-            case ENUM:
-            case INT:
-                value = Integer.valueOf(0);
-            case FLOAT:
-                value = Float.valueOf(0.0f);
-            }
-            return (T) value;
+            return optionData.getDefaultDefault();
         }
         return null;
     }

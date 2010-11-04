@@ -66,6 +66,12 @@ public class LayoutOptionValidator implements IInputValidator {
             } catch (NumberFormatException exception) {
                 return Messages.getString("kiml.ui.27");
             }
+        case OBJECT:
+            if (optionData.parseValue(trimmedText) == null) {
+                return Messages.getString("kiml.ui.39");
+            } else {
+                return null;
+            }
         default:
             return null;
         }

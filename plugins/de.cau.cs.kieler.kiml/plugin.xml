@@ -18,9 +18,16 @@
             name="KIELER">
       </category>
       <layoutProvider
-            class="de.cau.cs.kieler.kiml.util.NullLayoutProvider"
-            id="de.cau.cs.kieler.kiml.layouter.null"
-            name="No Layout">
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.util.FixedLayoutProvider"
+            id="de.cau.cs.kieler.kiml.layouter.fixed"
+            name="Fixed Layout">
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.position">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.bendPoints">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             class="de.cau.cs.kieler.kiml.util.BoxLayoutProvider"
@@ -99,6 +106,14 @@
             id="de.cau.cs.kieler.layout.options.aspectRatio"
             name="Aspect Ratio"
             type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="edges"
+            class="de.cau.cs.kieler.core.math.KVectorChain"
+            description="The fixed list of bend points for the edge"
+            id="de.cau.cs.kieler.layout.options.bendPoints"
+            name="Bend Points"
+            type="object">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
@@ -228,6 +243,14 @@
             id="de.cau.cs.kieler.layout.options.portConstraints"
             name="Port Constraints"
             type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="nodes,ports,labels"
+            class="de.cau.cs.kieler.core.math.KVector"
+            description="The fixed position of the element"
+            id="de.cau.cs.kieler.layout.options.position"
+            name="Position"
+            type="object">
       </layoutOption>
       <layoutOption
             appliesTo="nodes,edges"

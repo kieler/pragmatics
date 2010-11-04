@@ -293,11 +293,10 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * @return the stored or default value for the layout option
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getProperty(final IProperty<T> property) {
         if (property instanceof LayoutOptionData<?>) {
             LayoutOptionData<T> optionData = (LayoutOptionData<T>) property;
-            Object result = null;
+            T result = null;
             
             // check option value from notation model
             if (koptionMap != null) {
@@ -305,7 +304,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
                 if (koption != null) {
                     result = optionData.parseValue(koption.getValue());
                     if (result != null) {
-                        return (T) result;
+                        return result;
                     }
                 }
             }
@@ -313,7 +312,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             // check default option of diagram edit part
             result = getDiagramDefault(optionData);
             if (result != null) {
-                return (T) result;
+                return result;
             }
         }
         return super.getProperty(property);
@@ -402,10 +401,11 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
     /**
      * Returns the default value for the selected diagram.
      * 
+     * @param <T> type of option
      * @param optionData a layout option
      * @return the current diagram-default value
      */
-    public Object getDiagramDefault(final LayoutOptionData<?> optionData) {
+    public <T> T getDiagramDefault(final LayoutOptionData<T> optionData) {
         IGraphicalEditPart diagramEditPart = GmfLayoutInspector.getDiagramEditPart(getEditPart());
         if (diagramEditPart != null) {
             LayoutOptionStyle style = (LayoutOptionStyle) diagramEditPart.getNotationView()

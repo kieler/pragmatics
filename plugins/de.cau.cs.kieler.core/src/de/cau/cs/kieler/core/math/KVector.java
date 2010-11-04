@@ -13,13 +13,18 @@
  */
 package de.cau.cs.kieler.core.math;
 
+import java.util.StringTokenizer;
+
+import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.util.IDataObject;
+
 /**
  * A simple 2D vector class which supports translation, scaling, normalization etc.
  * 
  * @author uru
  * @author owo
  */
-public class KVector {
+public class KVector implements IDataObject {
 
     // CHECKSTYLEOFF VisibilityModifier
     /** x coordinate. */
@@ -380,4 +385,25 @@ public class KVector {
     public static double productDot(final KVector v1, final KVector v2) {
         return ((v1.x * v2.x) + (v1.y * v2.y));
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void parse(final String string) throws KielerException {
+        StringTokenizer tokenizer = new StringTokenizer(string, ",;()[]{} \t\n");
+        x = 0;
+        y = 0;
+        try {
+            if (tokenizer.hasMoreTokens()) {
+                x = Double.parseDouble(tokenizer.nextToken());
+            }
+            if (tokenizer.hasMoreTokens()) {
+                y = Double.parseDouble(tokenizer.nextToken());
+            }
+        } catch (NumberFormatException exception) {
+            throw new KielerException(
+                    "The given string does not match the expected format for vectors." + exception);
+        }
+    }
+    
 }

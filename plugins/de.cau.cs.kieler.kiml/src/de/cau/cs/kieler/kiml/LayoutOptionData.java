@@ -15,7 +15,10 @@ package de.cau.cs.kieler.kiml;
 
 import java.util.StringTokenizer;
 
+import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.util.IDataObject;
 
 /**
  * Data type used to store information for a layout option.
@@ -36,6 +39,8 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
     public static final String FLOAT_LITERAL = "float";
     /** literal value constant for enumerations. */
     public static final String ENUM_LITERAL = "enum";
+    /** literal value constant for data objects. */
+    public static final String OBJECT_LITERAL = "object";
 
     /** data type enumeration. */
     public enum Type {
@@ -50,7 +55,9 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
         /** float type. */
         FLOAT,
         /** enumeration type. */
-        ENUM;
+        ENUM,
+        /** {@link IDataObject} type. */
+        OBJECT;
         
         /**
          * Returns a user-friendly literal for the enumeration value.
@@ -69,6 +76,8 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
                 return FLOAT_LITERAL;
             case ENUM:
                 return ENUM_LITERAL;
+            case OBJECT:
+                return OBJECT_LITERAL;
             default:
                 return toString();
             }
@@ -129,11 +138,32 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
 
     /**
      * Checks whether the enumeration class is set correctly. This method must
-     * not be called for options other than enumerations.
+     * not be called for options other than of type 'enum'.
      */
     private void checkEnumClass() {
         if (clazz == null || !clazz.isEnum()) {
-            throw new IllegalStateException("Unknown enumeration type set for this layout option.");
+            throw new IllegalStateException("Enumeration class expected for layout option " + id);
+        }
+    }
+
+    /**
+     * Checks whether the {@link IDataType} class is set correctly and creates an instance.
+     * This method must not be called for options other than of type 'object'.
+     * 
+     * @return an instance of the data object
+     */
+    private IDataObject createDataInstance() {
+        if (!IDataObject.class.isAssignableFrom(clazz)) {
+            throw new IllegalStateException("IDataType class expected for layout option " + id);
+        }
+        try {
+            return (IDataObject) clazz.newInstance();
+        } catch (InstantiationException exception) {
+            throw new KielerRuntimeException("The data object for layout option " + id
+                    + " cannot be instantiated.", exception);
+        } catch (IllegalAccessException exception) {
+            throw new KielerRuntimeException("The data object for layout option " + id
+                    + " cannot be accessed.", exception);
         }
     }
     
@@ -198,6 +228,8 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
             type = Type.FLOAT;
         } else if (ENUM_LITERAL.equalsIgnoreCase(typeLiteral)) {
             type = Type.ENUM;
+        } else if (OBJECT_LITERAL.equalsIgnoreCase(typeLiteral)) {
+            type = Type.OBJECT;
         } else {
             throw new IllegalArgumentException("The given type literal is invalid.");
         }
@@ -210,37 +242,75 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
      * @return an instance of the corresponding correctly typed value, or
      *         {@code null} if the given value string is invalid
      */
-    public Object parseValue(final String valueString) {
-        if (valueString == null || valueString.equals("null")) {
+    @SuppressWarnings("unchecked")
+    public T parseValue(final String valueString) {
+        if (valueString == null || valueString.length() == 0 || valueString.equals("null")) {
             return null;
         }
 
         switch (type) {
         case BOOLEAN:
-            return Boolean.valueOf(valueString);
+            return (T) Boolean.valueOf(valueString);
         case INT:
             try {
-                return Integer.valueOf(valueString);
+                return (T) Integer.valueOf(valueString);
             } catch (NumberFormatException exception) {
                 return null;
             }
         case STRING:
-            return valueString;
+            return (T) valueString;
         case FLOAT:
             try {
-                return Float.valueOf(valueString);
+                return (T) Float.valueOf(valueString);
             } catch (NumberFormatException exception) {
                 return null;
             }
         case ENUM:
             try {
                 checkEnumClass();
-                @SuppressWarnings({ "unchecked", "rawtypes" })
+                @SuppressWarnings({ "rawtypes" })
                 Enum<?> value = Enum.valueOf((Class<? extends Enum>) clazz, valueString);
-                return value;
+                return (T) value;
             } catch (IllegalArgumentException exception) {
                 return null;
             }
+        case OBJECT:
+            try {
+                IDataObject value = createDataInstance();
+                value.parse(valueString);
+                return (T) value;
+            } catch (KielerException exception) {
+                return null;
+            }
+        default:
+            throw new IllegalStateException("Invalid type set for this layout option.");
+        }
+    }
+    
+    /**
+     * Creates a default-default value for this layout option. In contrast to {@link #getDefault()},
+     * this never returns {@code null} for options with type other than 'object'.
+     * 
+     * @return a default-default value, depending on the option type
+     */
+    @SuppressWarnings("unchecked")
+    public T getDefaultDefault() {
+        switch (type) {
+        case STRING:
+            return (T) "";
+        case BOOLEAN:
+            return (T) Boolean.FALSE;
+        case INT:
+            return (T) Integer.valueOf(0);
+        case FLOAT:
+            return (T) Float.valueOf(0.0f);
+        case ENUM:
+            checkEnumClass();
+            @SuppressWarnings({ "rawtypes" })
+            Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
+            return (T) enums[0];
+        case OBJECT:
+            return null;
         default:
             throw new IllegalStateException("Invalid type set for this layout option.");
         }
