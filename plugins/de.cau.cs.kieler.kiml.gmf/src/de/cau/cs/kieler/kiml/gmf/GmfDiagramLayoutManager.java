@@ -627,6 +627,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
         }
 
+        // FIXME extract this to layout configurations
         KShapeLayout nodeLayout = parentLayoutNode.getData(KShapeLayout.class);
         // set default fixed size option
         nodeLayout.setProperty(LayoutOptions.FIXED_SIZE, !hasChildNodes && !hasChildCompartments
@@ -718,12 +719,15 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
 
             // calculate offset for edge and label coordinates
+            float offsetx = 0, offsety = 0;
             IGraphicalEditPart sourceParent = graphElem2EditPartMap.get(sourceNode.getParent());
-            Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParent.getFigure());
-            KInsets insets = sourceNode.getParent().getData(KShapeLayout.class)
-                .getProperty(LayoutOptions.INSETS);
-            float offsetx = sourceParentBounds.x + insets.getLeft();
-            float offsety = sourceParentBounds.y + insets.getTop();
+            if (sourceParent != null) {
+                Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParent.getFigure());
+                KInsets insets = sourceNode.getParent().getData(KShapeLayout.class)
+                    .getProperty(LayoutOptions.INSETS);
+                offsetx = sourceParentBounds.x + insets.getLeft();
+                offsety = sourceParentBounds.y + insets.getTop();
+            }
 
             if (!isOppositeEdge) {
                 // find a proper target node and target port

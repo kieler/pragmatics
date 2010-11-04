@@ -119,7 +119,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
             EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
             Object result = null;
             
-            if (focusEditPart != null) {
+            if (layoutInspector != null) {
                 // check default value set for the actual edit part or its model element
                 result = getOption(layoutInspector, optionData.getId());
                 if (result != null) {
@@ -159,9 +159,9 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      */
     private Object getDynamicValue(final LayoutOptionData<?> optionData) {
         if (LayoutOptions.FIXED_SIZE_ID.equals(optionData.getId())) {
-            return Boolean.valueOf(focusEditPart == null);
+            return Boolean.valueOf(contentDiagramType == null);
         } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
-            if (focusEditPart != null) {
+            if (contentDiagramType != null) {
                 return PortConstraints.FREE.ordinal();
             } else {
                 return PortConstraints.FIXED_POS.ordinal();

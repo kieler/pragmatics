@@ -495,19 +495,37 @@ public final class KimlUtil {
      */
     public static void resizeNode(final KNode node) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        float oldWidth = nodeLayout.getWidth();
-        float oldHeight = nodeLayout.getHeight();
-        float newWidth = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
-        float newHeight = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
-        if (newWidth < MIN_NODE_SIZE || newHeight < MIN_NODE_SIZE) {
-            newWidth = newWidth < MIN_NODE_SIZE ? MIN_NODE_SIZE : newWidth;
-            newHeight = newHeight < MIN_NODE_SIZE ? MIN_NODE_SIZE : newHeight;
-            KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
-            newWidth = Math.max(newWidth, labelLayout.getWidth());
-            newHeight = Math.max(newHeight, labelLayout.getHeight());
-    
-            float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
-                    minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
+
+        PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
+                minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
+        if (portConstraints == PortConstraints.FIXED_POS) {
+            for (KPort port : node.getPorts()) {
+                KShapeLayout portLayout = port.getData(KShapeLayout.class);
+                switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
+                case NORTH:
+                    minNorth = Math.max(minNorth, portLayout.getXpos()
+                            + portLayout.getWidth());
+                    break;
+                case EAST:
+                    minEast = Math.max(minEast, portLayout.getYpos()
+                            + portLayout.getHeight());
+                    break;
+                case SOUTH:
+                    minSouth = Math.max(minSouth, portLayout.getXpos()
+                            + portLayout.getWidth());
+                    break;
+                case WEST:
+                    minWest = Math.max(minWest, portLayout.getYpos()
+                            + portLayout.getHeight());
+                    break;
+                }
+            }
+            minNorth += MIN_PORT_DISTANCE;
+            minEast += MIN_PORT_DISTANCE;
+            minSouth += MIN_PORT_DISTANCE;
+            minWest += MIN_PORT_DISTANCE;
+        } else {
             for (KPort port : node.getPorts()) {
                 switch (port.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE)) {
                 case NORTH:
@@ -524,15 +542,19 @@ public final class KimlUtil {
                     break;
                 }
             }
-    
-            newWidth = KielerMath.maxf(newWidth, minNorth, minSouth);
-            newHeight = KielerMath.maxf(newHeight, minEast, minWest);
-            if (newHeight < newWidth / MAX_SIZE_RATIO) {
-                newHeight = newWidth / MAX_SIZE_RATIO;
-            } else if (newWidth < newHeight / MAX_SIZE_RATIO) {
-                newWidth = newHeight / MAX_SIZE_RATIO;
-            }
         }
+
+        float newWidth = KielerMath.maxf(nodeLayout.getProperty(LayoutOptions.MIN_WIDTH),
+                MIN_NODE_SIZE, minNorth, minSouth);
+        float newHeight = KielerMath.maxf(nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT),
+                MIN_NODE_SIZE, minEast, minWest);
+        if (newHeight < newWidth / MAX_SIZE_RATIO) {
+            newHeight = newWidth / MAX_SIZE_RATIO;
+        } else if (newWidth < newHeight / MAX_SIZE_RATIO) {
+            newWidth = newHeight / MAX_SIZE_RATIO;
+        }
+        float oldWidth = nodeLayout.getWidth();
+        float oldHeight = nodeLayout.getHeight();
         nodeLayout.setWidth(newWidth);
         nodeLayout.setHeight(newHeight);
 
@@ -545,6 +567,7 @@ public final class KimlUtil {
                 break;
             case SOUTH:
                 portLayout.setYpos(portLayout.getYpos() + newHeight - oldHeight);
+                break;
             }
         }
     }
