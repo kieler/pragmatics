@@ -192,7 +192,7 @@ public class EclipseLayoutServices extends LayoutServices {
      * Retrieve a layout configuration for the given editor using the most suitable
      * layout manager.
      * 
-     * @param editorPart the editor part for which the config should be fetched
+     * @param editorPart the editor part for which the configuration should be fetched
      * @return a layout configuration for the editor, or {@code null}
      */
     public ILayoutConfig getLayoutConfig(final IEditorPart editorPart) {
@@ -200,6 +200,21 @@ public class EclipseLayoutServices extends LayoutServices {
         if (manager != null) {
             ILayoutInspector inspector = manager.getInspector(editorPart);
             return manager.getLayoutConfig(inspector.getFocusPart());
+        }
+        return null;
+    }
+
+    /**
+     * Retrieve a layout configuration for the given edit part using the most suitable
+     * layout manager.
+     * 
+     * @param editPart the edit part for which the configuration should be fetched
+     * @return a layout configuration for the edit part, or {@code null}
+     */
+    public ILayoutConfig getLayoutConfig(final EditPart editPart) {
+        DiagramLayoutManager manager = getManager(null, editPart);
+        if (manager != null) {
+            return manager.getLayoutConfig(editPart);
         }
         return null;
     }
