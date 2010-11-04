@@ -9,6 +9,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
+import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
+
 public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAdvancedRenderingEditPart {
 
     /**

@@ -75,12 +75,10 @@ public class RecursiveAnnotationCondition extends ICustomCondition<EObject> {
                         result = eObject.eClass().getName().equals(value);
                     } else if (annotation instanceof StringAnnotation) {
                         StringAnnotation stringAnnotation = (StringAnnotation) annotation;
-                        // return stringAnnotation.getValue().equals(value);
                         result = stringAnnotation.getValue().equals(value);
                     }
                 }
             }
-
         }
         return result;
     }

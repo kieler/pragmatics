@@ -13,7 +13,7 @@
  * 
  *****************************************************************************/
 
-package de.cau.cs.kieler.karma;
+package de.cau.cs.kieler.karma.util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +33,9 @@ import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
+import de.cau.cs.kieler.karma.IRenderingProvider;
+import de.cau.cs.kieler.karma.SwitchableFigure;
 
 /**
  * Class containing generic method to update the figure and handle the notification. Used to
@@ -184,9 +187,12 @@ public class AdvancedRenderingEditPartUtil {
                                                     .getConstraint(borderedNodeFigure);
                                             IBorderItemLocator newLocator = renderingProvider
                                                     .getBorderItemLocatorByString(borderItemParam,
-                                                            mainFigure, oldLocator, modelElement);
-                                            parent.setLayoutConstraint(editPart,
+                                                            mainFigure , oldLocator, modelElement);
+                                            if (oldLocator != newLocator) {
+                                                parent.setLayoutConstraint(editPart,
                                                     borderedNodeFigure, newLocator);
+                                            }
+                                            //int i = 5;
                                         } 
                                     }
                                 }

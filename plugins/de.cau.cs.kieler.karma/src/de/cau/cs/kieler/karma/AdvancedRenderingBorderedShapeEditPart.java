@@ -22,7 +22,12 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.notation.View;
+
+import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
+import de.cau.cs.kieler.karma.util.CustomPortLocator;
 
 /**
  * @author ckru
@@ -90,5 +95,12 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
             updateFigure(primaryShape);
         }
     }
+    
+    @Override
+    protected void addBorderItem(IFigure borderItemContainer,
+            IBorderItemEditPart borderItemEditPart) {
+    borderItemContainer.add(borderItemEditPart.getFigure(),
+            new CustomPortLocator(getMainFigure()));
+}
     
 }

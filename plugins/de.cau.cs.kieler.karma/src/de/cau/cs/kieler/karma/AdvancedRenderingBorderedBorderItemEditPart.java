@@ -26,6 +26,8 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
+import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
+
 /**
  * @author ckru
  * 

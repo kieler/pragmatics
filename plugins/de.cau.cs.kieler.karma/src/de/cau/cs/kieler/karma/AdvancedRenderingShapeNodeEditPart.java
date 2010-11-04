@@ -24,6 +24,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
+import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
+
 /**
  * @author ckru
  */

@@ -24,6 +24,8 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
+import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
+
 /**
  * 
  * @author ckru
