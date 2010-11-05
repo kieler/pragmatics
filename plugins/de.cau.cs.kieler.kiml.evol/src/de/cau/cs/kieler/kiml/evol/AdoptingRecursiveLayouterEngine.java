@@ -13,13 +13,21 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
@@ -29,6 +37,7 @@ import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
+import de.cau.cs.kieler.kiml.evol.genetic.UniversalNumberGene;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
@@ -59,10 +68,10 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
     public DiagramLayoutManager getManager() {
         return this.manager;
     }
-    
+
     /**
      * Calculates a layout for the given individual in the given editor.
-     * 
+     *
      * @param individual
      *            the {@link Genome} from which layout options shall be adopted;
      *            may not be {@code null}
@@ -143,7 +152,6 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
      * @see {@link #adoptIndividual(Genome, KNode)}
      */
     private static KNode adoptIndividualInPlace(final Genome individual, final KNode graph) {
-        // TODO: split this method
         if ((individual == null) || (graph == null)) {
             throw new IllegalArgumentException("Argument must not be null.");
         }
@@ -151,6 +159,8 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         EvolPlugin.logStatus("Adopting " + individual.toString());
 
         KShapeLayout shapeLayout = graph.getData(KShapeLayout.class);
+
+        Set<String> usedOptions = new HashSet<String>(individual.size());
 
         LayoutServices layoutServices = LayoutServices.getInstance();
 
@@ -170,104 +180,216 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             // switch case statement
             switch (layoutOptionType) {
             case BOOLEAN:
-                if (value instanceof Boolean) {
-                    shapeLayout.setProperty(data, value);
-                } else {
-                    // XXX legacy handling of boolean values
-                    shapeLayout
-                            .setProperty(data, Math.round(((Float) value).floatValue()) == 1.0);
-                }
+                handleBooleanOption(data, gene, shapeLayout);
                 break;
 
             case ENUM:
-                try {
-                    if (gene instanceof EnumGene) {
-                        Class<? extends Enum<?>> enumClass =
-                                ((EnumGene) gene).getTypeInfo().getTypeClass();
-                        Enum<?> enumConst = enumClass.getEnumConstants()[(Integer) value];
-                        shapeLayout.setProperty(data, enumConst);
-                    } else {
-                        shapeLayout.setProperty(data, value);
-                    }
-
-                } catch (final NullPointerException e) {
-                    EvolPlugin.showError("Enum property could not be set: " + id, e);
-                    throw new AssertionError(value);
-                }
+                handleEnumOption(data, gene, shapeLayout);
                 break;
 
             case FLOAT:
-                if (value instanceof Float) {
-                    shapeLayout.setProperty(data, value);
-                } else {
-                    shapeLayout.setProperty(data, gene.toString());
-                }
+                handleFloatOption(data, gene, shapeLayout);
                 break;
 
             case INT:
-                if (value instanceof Integer) {
-                    shapeLayout.setProperty(data, value);
-                } else {
-                    shapeLayout.setProperty(data, gene.toString());
-                }
+                handleIntegerOption(data, gene, shapeLayout);
                 break;
 
             case STRING:
-                if (LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id)) {
-                    // Cannot use the int value of the gene because it
-                    // is the index for the internal list in the gene.
-
-                    // Are we allowed to set the layout hint?
-                    boolean canSetLayoutHint =
-                            EvolPlugin.getDefault().getPreferenceStore()
-                                    .getBoolean(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
-
-                    if (!canSetLayoutHint) {
-                        // We have nothing to do, for we are not allowed
-                        // to set the layout hint at all.
-                        break;
-                    }
-
-                    // Are we allowed to set the layout hint for different
-                    // types?
-                    boolean canSetForDifferentType =
-                            EvolPlugin.getDefault().getPreferenceStore()
-                                    .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
-
-                    String newLayoutHintId = gene.toString();
-
-                    String oldLayoutHintId = (String) shapeLayout.getProperty(data);
-                    assert oldLayoutHintId != null;
-
-                    LayoutProviderData providerData = new DefaultLayoutConfig().getLayouterData(
-                            newLayoutHintId, null);
-
-                    String newType = providerData.getType();
-
-                    if (!canSetForDifferentType
-                            && !EvolUtil.isCompatibleLayoutProvider(oldLayoutHintId, newType)) {
-                        // we are not allowed do this
-                        System.err
-                                .println("Attempt to set the layout hint to incompatible type: "
-                                        + newLayoutHintId);
-                        break;
-                    }
-
-                    shapeLayout.setProperty(data, newLayoutHintId);
-
-                } else {
-                    // a normal string option
-                    shapeLayout.setProperty(data, value.toString());
-                }
-
+                handleStringOption(data, gene, shapeLayout);
                 break;
 
             default:
                 shapeLayout.setProperty(data, value.toString());
-                // TODO: make sure the omitted properties are removed
                 break;
             }
-        } // for (IGene<?> gene : individual)
+
+            // memorize used options
+            usedOptions.add(data.getId());
+        }
+
+        // Make sure the omitted properties are removed.
+        retainOptions(shapeLayout, usedOptions);
+
         return graph;
+    }
+
+    /**
+     * Removes the unused layout options from the given graph data object.
+     *
+     * @param targetGraphData
+     *            the graph data from which options shall be removed
+     * @param usedProperties
+     *            options that shall be retained (not removed)
+     */
+    private static void retainOptions(
+            final KGraphData targetGraphData, final Set<String> usedProperties) {
+
+        List<Pair<IProperty<?>, Object>> allProperties = targetGraphData.getAllProperties();
+        System.out.println(allProperties);
+
+        Iterator<Pair<IProperty<?>, Object>> iterator = allProperties.iterator();
+        while (iterator.hasNext()) {
+            Pair<IProperty<?>, Object> next = iterator.next();
+            IProperty<?> property = next.getFirst();
+
+            if (property instanceof LayoutOptionData<?>) {
+                Object id = property.getIdentifier();
+                if (!usedProperties.contains(id)) {
+                    System.out.println("remove: " + property);
+                    targetGraphData.setProperty(property, null);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param data
+     *            specifies the option to set
+     * @param gene
+     *            the gene that encodes the value to set
+     * @param targetGraphData
+     *            the graph data for which the option shall be set
+     */
+    private static void handleStringOption(
+            final LayoutOptionData<?> data, final IGene<?> gene, final KGraphData targetGraphData) {
+
+        Object value = gene.getValue();
+        Object id = gene.getId();
+
+        if (LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id)) {
+            // Cannot use the int value of the gene because it
+            // is the index for the internal list in the gene.
+
+            // Are we allowed to set the layout hint?
+            boolean canSetLayoutHint =
+                    EvolPlugin.getDefault().getPreferenceStore()
+                            .getBoolean(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
+
+            if (!canSetLayoutHint) {
+                // We have nothing to do, for we are not allowed
+                // to set the layout hint at all.
+                return;
+            }
+
+            // Are we allowed to set the layout hint for different
+            // types?
+            boolean canSetForDifferentType =
+                    EvolPlugin.getDefault().getPreferenceStore()
+                            .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
+
+            String newLayoutHintId = gene.toString();
+
+            String oldLayoutHintId = (String) targetGraphData.getProperty(data);
+            assert oldLayoutHintId != null;
+
+            LayoutProviderData providerData =
+                    new DefaultLayoutConfig().getLayouterData(newLayoutHintId, null);
+
+            String newType = providerData.getType();
+
+            if (!canSetForDifferentType
+                    && !EvolUtil.isCompatibleLayoutProvider(oldLayoutHintId, newType)) {
+                // we are not allowed do this
+                System.err.println("Attempt to set the layout hint to incompatible type: "
+                        + newLayoutHintId);
+                return;
+            }
+
+            targetGraphData.setProperty(data, newLayoutHintId);
+
+        } else {
+            // a normal string option
+            targetGraphData.setProperty(data, value.toString());
+        }
+    }
+
+    /**
+     * @param data
+     *            specifies the option to set
+     * @param gene
+     *            the gene that encodes the value to set
+     * @param targetGraphData
+     *            the graph data for which the option shall be set
+     */
+    private static void handleIntegerOption(
+            final LayoutOptionData<?> data, final IGene<?> gene, final KGraphData targetGraphData) {
+        Object value = gene.getValue();
+        if (value instanceof Integer) {
+            targetGraphData.setProperty(data, value);
+        } else {
+            int intValue = ((UniversalNumberGene) gene).getIntValue();
+            targetGraphData.setProperty(data, intValue);
+        }
+    }
+
+    /**
+     * @param data
+     *            specifies the option to set
+     * @param gene
+     *            the gene that encodes the value to set
+     * @param targetGraphData
+     *            the graph data for which the option shall be set
+     */
+    private static void handleEnumOption(
+            final LayoutOptionData<?> data, final IGene<?> gene, final KGraphData targetGraphData) {
+
+        Object value = gene.getValue();
+        try {
+            if (gene instanceof EnumGene) {
+                Class<? extends Enum<?>> enumClass =
+                        ((EnumGene) gene).getTypeInfo().getTypeClass();
+                Enum<?> enumConst = enumClass.getEnumConstants()[(Integer) value];
+                targetGraphData.setProperty(data, enumConst);
+            } else {
+                // XXX legacy handling of enums
+                targetGraphData.setProperty(data, value);
+            }
+
+        } catch (final NullPointerException e) {
+            EvolPlugin.showError("Enum property could not be set: " + gene.getId(), e);
+            throw new AssertionError(value);
+        }
+    }
+
+    /**
+     * @param data
+     *            specifies the option to set
+     * @param gene
+     *            the gene that encodes the value to set
+     * @param targetGraphData
+     *            the graph data for which the option shall be set
+     */
+    private static void handleBooleanOption(
+            final LayoutOptionData<?> data, final IGene<?> gene, final KGraphData targetGraphData) {
+        Object value = gene.getValue();
+
+        if (value instanceof Boolean) {
+            targetGraphData.setProperty(data, value);
+        } else {
+            // XXX legacy handling of boolean values
+            boolean boolValue = ((UniversalNumberGene) gene).getBoolValue();
+
+            targetGraphData.setProperty(data, boolValue);
+        }
+    }
+
+    /**
+     * @param data
+     *            specifies the option to set
+     * @param gene
+     *            the gene that encodes the value to set
+     * @param targetGraphData
+     *            the graph data for which the option shall be set
+     */
+    private static void handleFloatOption(
+            final LayoutOptionData<?> data, final IGene<?> gene, final KGraphData targetGraphData) {
+        Object value = gene.getValue();
+        if (value instanceof Float) {
+            targetGraphData.setProperty(data, value);
+        } else {
+            // XXX legacy handling of floats
+            targetGraphData.setProperty(data, gene.toString());
+        }
     }
 }
