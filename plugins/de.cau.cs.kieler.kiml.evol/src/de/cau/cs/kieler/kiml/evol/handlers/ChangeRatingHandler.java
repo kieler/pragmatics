@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.evol.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.kiml.evol.EvolModel;
@@ -35,18 +34,19 @@ public class ChangeRatingHandler extends AbstractHandler {
     public Object execute(final ExecutionEvent event) throws ExecutionException {
         String amount = event.getParameter("de.cau.cs.kieler.kiml.evol.amount");
         double delta = Double.parseDouble(amount);
-        IViewPart view =
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+
+        EvolView view =
+                (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
-        if (view instanceof EvolView) {
-            EvolView evolView = (EvolView) view;
-            // presuming evolView != null
-
-            EvolModel model = evolView.getEvolModel();
-            // presuming model != null
-
-            model.changeCurrentRating(delta);
+        if (view == null) {
+            throw new ExecutionException("The Evolution View could not be found.");
         }
+
+        EvolModel model = view.getEvolModel();
+        // presuming model != null
+
+        model.changeCurrentRating(delta);
+
         return null;
     }
 }

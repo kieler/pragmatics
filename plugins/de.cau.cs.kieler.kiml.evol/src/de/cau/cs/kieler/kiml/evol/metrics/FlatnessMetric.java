@@ -50,26 +50,25 @@ public class FlatnessMetric implements IAnalysis {
         Float result;
         try {
             Object dimsResult = results.get(GRANA_DIMENSIONS);
-            Pair<Float, Float> dims;
-            float xdim;
-            float ydim;
-            if (dimsResult instanceof Pair<?, ?>) {
-                dims = (Pair<Float, Float>) dimsResult;
-                xdim = dims.getFirst();
-                ydim = dims.getSecond();
-            } else {
+
+            if (!(dimsResult instanceof Pair<?, ?>)) {
                 // This should happen only when the dims analysis failed.
-                xdim = 0.0f;
-                ydim = 0.0f;
+                throw new KielerException("Flatness metric analysis failed.");
             }
-            boolean isXdimZero = (xdim == 0.0f);
-            boolean isYdimZero = (ydim == 0.0f);
+
+            Pair<Float, Float> dims = (Pair<Float, Float>) dimsResult;
+            float xdim = dims.getFirst();
+            float ydim = dims.getSecond();
+
+            boolean isXdimZero = xdim == 0.0f;
+            boolean isYdimZero = ydim == 0.0f;
+
             if (isXdimZero && isYdimZero) {
                 throw new KielerException("Flatness metric analysis failed.");
             }
 
-            float heightToWidthRatio = (isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim);
-            float widthToHeightRatio = (isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim);
+            float heightToWidthRatio = isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim;
+            float widthToHeightRatio = isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim;
             final float half = 0.5f;
             if (widthToHeightRatio < 1.0f) {
                 // narrow

@@ -27,8 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -189,15 +187,6 @@ public class EvolView extends ViewPart {
         }
     };
 
-    @Override
-    public void init(final IViewSite theSite) throws PartInitException {
-        super.init(theSite);
-
-        // Reset the model.
-        // presuming this.evolModel != null
-        this.evolModel.reset(null);
-    }
-
     /**
      * Action for toggling between "multiple editors" and "single editor" mode.
      *
@@ -226,8 +215,7 @@ public class EvolView extends ViewPart {
         public void run() {
             IPreferenceStore store = EvolPlugin.getDefault().getPreferenceStore();
 
-            String newValue =
-                    ((isChecked()) ? EvolPlugin.ALL_EDITORS : EvolPlugin.CURRENT_EDITOR);
+            String newValue = (isChecked()) ? EvolPlugin.ALL_EDITORS : EvolPlugin.CURRENT_EDITOR;
 
             store.setValue(EvolPlugin.PREF_EDITORS, newValue);
         }
@@ -255,12 +243,14 @@ public class EvolView extends ViewPart {
         private final SelectorTableViewer tv;
         private Object oldElement;
 
+        /**
+         * {@inheritDoc}
+         */
         public synchronized void selectionChanged(final SelectionChangedEvent event) {
             ISelection selection = event.getSelection();
             System.out.println("selectionChanged");
 
-            if ((selection == null) || (selection.isEmpty())
-                    || !(selection instanceof IStructuredSelection)) {
+            if (!(selection instanceof IStructuredSelection) || (selection.isEmpty())) {
                 System.err.println("empty or null selection");
                 return;
             }
@@ -278,7 +268,7 @@ public class EvolView extends ViewPart {
                 if (oldPos != newPos) {
                     // Update the table viewer.
                     Object elementAtOldPos = this.tv.getElementAt(oldPos);
-                    if ((elementAtOldPos != element)) {
+                    if (elementAtOldPos != element) {
                         this.tv.update(elementAtOldPos, null);
                     }
                 } else if ((this.oldElement != null) && (this.oldElement != element)) {

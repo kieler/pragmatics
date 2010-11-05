@@ -51,32 +51,31 @@ public class EdgeUniformityMetric implements IAnalysis {
         try {
             Object edgeLengthResult = results.get(GRANA_EDGE_LENGTH);
 
-            if (edgeLengthResult instanceof MinAvgMaxResult<?, ?>) {
-
-                MinAvgMaxResult<?, ?> mmr = ((MinAvgMaxResult<?, ?>) edgeLengthResult);
-                Float min = (Float) mmr.getMin();
-                Float max = (Float) mmr.getMax();
-                Float avg = (Float) mmr.getAvg();
-
-                float range = max - min;
-
-                float rangeToAverageRatio = range / avg;
-
-                final float half = 0.5f;
-                // FIXME this correlates with the layout size?
-                if (rangeToAverageRatio < 1.0f) {
-                    // relatively small range
-                    result = 1.0f - rangeToAverageRatio * half;
-                } else {
-                    // relatively big range
-                    result = (1.0f / rangeToAverageRatio) * half;
-                }
-
-                assert ((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f)) : "Metric result out of bounds: "
-                        + result;
-            } else {
+            if (!(edgeLengthResult instanceof MinAvgMaxResult<?, ?>)) {
                 throw new KielerException("Edge length uniformity analysis failed.");
             }
+
+            MinAvgMaxResult<?, ?> mmr = (MinAvgMaxResult<?, ?>) edgeLengthResult;
+            Float min = (Float) mmr.getMin();
+            Float max = (Float) mmr.getMax();
+            Float avg = (Float) mmr.getAvg();
+
+            float range = max - min;
+
+            float rangeToAverageRatio = range / avg;
+
+            final float half = 0.5f;
+            // FIXME this correlates with the layout size?
+            if (rangeToAverageRatio < 1.0f) {
+                // relatively small range
+                result = 1.0f - rangeToAverageRatio * half;
+            } else {
+                // relatively big range
+                result = (1.0f / rangeToAverageRatio) * half;
+            }
+
+            assert (0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f) : "Metric result out of bounds: "
+                    + result;
 
         } finally {
             // We must close the monitor.

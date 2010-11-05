@@ -392,7 +392,7 @@ public class UniversalNumberGene extends AbstractGene<Float> {
      */
     public boolean getBoolValue() {
         double diff = 1.0 - Math.abs(getValue().floatValue());
-        return (Math.pow(diff, 2) < EPSILON);
+        return diff < EPSILON;
     }
 
     /** A very small value. */

@@ -50,23 +50,23 @@ public class NarrownessMetric implements IAnalysis {
 
         try {
             Object dimsResult = results.get(GRANA_DIMENSIONS);
-            Pair<Float, Float> dims;
-            float xdim;
-            float ydim;
-            if (dimsResult instanceof Pair) {
-                dims = (Pair<Float, Float>) dimsResult;
-                xdim = dims.getFirst();
-                ydim = dims.getSecond();
-            } else {
+
+            if (!(dimsResult instanceof Pair)) {
                 // This should happen only when the dims analysis failed.
-                xdim = 0.0f;
-                ydim = 0.0f;
+                throw new KielerException("Narrowness metric analysis failed.");
             }
+
+            Pair<Float, Float> dims = (Pair<Float, Float>) dimsResult;
+            float xdim = dims.getFirst();
+            float ydim = dims.getSecond();
+
             boolean isXdimZero = xdim == 0.0f;
             boolean isYdimZero = ydim == 0.0f;
+
             if (isXdimZero && isYdimZero) {
                 throw new KielerException("Narrowness metric analysis failed.");
             }
+
             float heightToWidthRatio = isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim;
             float widthToHeightRatio = isYdimZero ? Float.POSITIVE_INFINITY : xdim / ydim;
             final float half = 0.5f;
@@ -77,8 +77,8 @@ public class NarrownessMetric implements IAnalysis {
                 // narrow
                 result = 1.0f - (widthToHeightRatio * half);
             }
-            assert (0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f) :
-                    "Metric result out of bounds: " + result;
+            assert (0.0f <= result) && (result <= 1.0f) : "Metric result out of bounds: "
+                    + result;
 
         } finally {
             // We must close the monitor.

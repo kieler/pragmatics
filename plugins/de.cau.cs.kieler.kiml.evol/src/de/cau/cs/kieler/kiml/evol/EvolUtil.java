@@ -36,7 +36,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
@@ -101,14 +101,13 @@ public final class EvolUtil {
 
             DiagramLayoutManager manager = engine.getManager();
 
-
             assert manager != null : "Could not get a layout manager for " + editor.getTitle();
 
             // IKielerProgressMonitor monitor =
             // EvolUtil.calculateLayout(manager, editor);
 
             // if (monitor != null) {
-                // Apply the layout to the diagram in the editor.
+            // Apply the layout to the diagram in the editor.
             // manager.applyAnimatedLayout(true /* animate */, false /*
             // cacheLayout */, 0);
             manager.applyAndZoom(0, true, false);
@@ -426,7 +425,7 @@ public final class EvolUtil {
                 return Collections.emptyMap();
             }
 
-            // Get the metric IDs.
+            // Get the layout metric IDs.
             Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
 
             // Get the metrics.
@@ -467,19 +466,22 @@ public final class EvolUtil {
                     DiagramAnalyzer.analyse(parentNode, wantedMetricsList, analyserOptionsMap,
                             false /* progressBar */);
 
+            // Check the results.
             for (final String metricId : metricIds) {
                 Object analysisResult = analysisResults.get(metricId);
-                if (analysisResult instanceof Float) {
-                    Float value = (Float) analysisResult;
-                    System.out.println("Result: " + metricId + ": " + value);
 
-                    assert ((value >= 0.0) && (value <= 1.0)) : "Analysis result out of range for "
-                            + metricId + ": " + value;
-                } else {
+                if (!(analysisResult instanceof Float)) {
                     System.err.println("Result: " + metricId + ": " + analysisResult.toString());
                     EvolPlugin.showError("Cannot handle analysis result for " + metricId + ": "
                             + analysisResult.toString(), null);
                 }
+
+                Float value = (Float) analysisResult;
+                System.out.println("Result: " + metricId + ": " + value);
+
+                assert (value >= 0.0) && (value <= 1.0) : "Analysis result out of range for "
+                        + metricId + ": " + value;
+
             }
 
             return analysisResults;
@@ -736,8 +738,7 @@ public final class EvolUtil {
                     throw new OperationCanceledException();
                 }
 
-                Runnable runnable =
-                        new IndividualAutoRaterRunnable(ind, theWeightsGenomes);
+                Runnable runnable = new IndividualAutoRaterRunnable(ind, theWeightsGenomes);
 
                 // Synchronously auto-rate the individual.
                 MonitoredOperation.runInUI(runnable, true /* synch */);
@@ -826,8 +827,8 @@ public final class EvolUtil {
         EditPart result = null;
         if (editor != null) {
             ISelection selection = editor.getEditorSite().getSelectionProvider().getSelection();
-            if (selection instanceof StructuredSelection) {
-                Object element = ((StructuredSelection) selection).getFirstElement();
+            if (selection instanceof IStructuredSelection) {
+                Object element = ((IStructuredSelection) selection).getFirstElement();
                 if (element instanceof IGraphicalEditPart) {
                     result = (IGraphicalEditPart) element;
                 }
@@ -883,8 +884,8 @@ public final class EvolUtil {
      */
     public static LayoutProviderData getLayoutProviderData(
             final IEditorPart editor, final EditPart editPart) {
-        final DiagramLayoutManager manager = EclipseLayoutServices.getInstance()
-                .getManager(editor, editPart);
+        final DiagramLayoutManager manager =
+                EclipseLayoutServices.getInstance().getManager(editor, editPart);
         if (manager != null) {
             ILayoutConfig config = manager.getLayoutConfig(editPart);
             return config.getContentLayouterData();
@@ -918,7 +919,6 @@ public final class EvolUtil {
 
         return result;
     }
-
 
     /**
      * Checks if the given layout provider is of the given type.
@@ -975,7 +975,8 @@ public final class EvolUtil {
      */
     private static Population createPopulation(final List<ILayoutConfig> configs)
             throws KielerException {
-        int size = EvolPlugin.getDefault().getPreferenceStore()
+        int size =
+                EvolPlugin.getDefault().getPreferenceStore()
                         .getInt(EvolPlugin.PREF_POPULATION_SIZE);
 
         return createPopulation(configs, size);
@@ -993,15 +994,16 @@ public final class EvolUtil {
      * @throws KielerException
      *             in case of an error
      */
-    private static Population createPopulation(final List<ILayoutConfig> configs,
-            final int size) throws KielerException {
+    private static Population createPopulation(final List<ILayoutConfig> configs, final int size)
+            throws KielerException {
         if ((configs == null) || (size < 0)) {
             throw new IllegalArgumentException();
         }
 
         Population result = new Population();
 
-        Set<Object> presentLayoutHintIds = getPropertyValues(configs, LayoutOptions.LAYOUTER_HINT_ID);
+        Set<Object> presentLayoutHintIds =
+                getPropertyValues(configs, LayoutOptions.LAYOUTER_HINT_ID);
 
         assert !presentLayoutHintIds.isEmpty() : "Layout hint missing.";
 
@@ -1017,10 +1019,11 @@ public final class EvolUtil {
     }
 
     /**
-     * Collect the layout configuration handlers of the given editors. The current editor is
-     * treated first, if there is any.
+     * Collect the layout configuration handlers of the given editors. The
+     * current editor is treated first, if there is any.
      *
-     * @param editors set of diagram editors
+     * @param editors
+     *            set of diagram editors
      * @return a list of layout configurations
      */
     private static List<ILayoutConfig> getLayoutConfigs(final Set<IEditorPart> editors) {
@@ -1056,20 +1059,21 @@ public final class EvolUtil {
      * Retrieve the values of the given IDs in from the given layout inspectors.
      * For layout hint, the (non-null) layout hint identifiers are returned.
      *
-     * @param configs list of layout configurations
-     * @param id an identifier
+     * @param configs
+     *            list of layout configurations
+     * @param id
+     *            an identifier
      * @return the set of values having the specified ID
      */
-    private static Set<Object> getPropertyValues(final List<ILayoutConfig> configs,
-            final String id) {
+    private static Set<Object> getPropertyValues(
+            final List<ILayoutConfig> configs, final String id) {
         Set<Object> result = new LinkedHashSet<Object>();
         LayoutServices layoutServices = LayoutServices.getInstance();
         LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(id);
 
         for (final ILayoutConfig config : configs) {
-            Object
-                value = config.getProperty(optionData);
-                // value = source.getPropertyValue(id);
+            Object value = config.getProperty(optionData);
+            // value = source.getPropertyValue(id);
 
             if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                 if (value == null) {
@@ -1082,6 +1086,8 @@ public final class EvolUtil {
                     result.add(value);
                     continue;
                 }
+
+                System.out.println("layouter hint: " + value.toString());
 
                 // Legacy "Layout hint" options have an index as value.
                 // But we want the layout hint identifier instead of its
@@ -1128,7 +1134,6 @@ public final class EvolUtil {
         return editors;
     }
 
-
     /** Hidden constructor to avoid instantiation. **/
     private EvolUtil() {
         // nothing
@@ -1161,7 +1166,6 @@ public final class EvolUtil {
                 for (final IGene<?> gene : genome) {
                     writer.append(gene.getId() + ";" + gene.getValue() + newLine);
                 }
-
 
             } catch (final IOException exception) {
                 // TODO Auto-generated catch block

@@ -97,7 +97,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
     public final void step() {
         if (!this.isInitialized) {
             throw new UnsupportedOperationException(
-                    "The algorithm must be initialized before steps can be performed.");
+                    "The algorithm must be initialized before single steps can be performed.");
         }
 
         if (isDone()) {
@@ -133,7 +133,6 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
      **/
     protected void initialize() {
         if (this.isInitialized) {
-            System.err.println("Warning: Algorithm already initialized.");
             throw new UnsupportedOperationException(
                     "Algorithm already initialized: initialize() must be called only once.");
         }
@@ -176,7 +175,6 @@ public abstract class AbstractEvolutionaryAlgorithm implements Runnable {
         for (final IEvolutionListener listener : this.listeners) {
             listener.beforeStep();
         }
-
     }
 
     /**

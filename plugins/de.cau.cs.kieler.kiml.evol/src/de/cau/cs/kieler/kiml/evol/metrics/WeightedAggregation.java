@@ -62,8 +62,8 @@ public class WeightedAggregation implements IAnalysis {
                 return Float.valueOf(Float.NaN);
             }
 
-            double result = (sum / count);
-            assert ((0.0f <= result) && (result <= 1.0f)) : "Metric result out of bounds: "
+            double result = sum / count;
+            assert (0.0f <= result) && (result <= 1.0f) : "Metric result out of bounds: "
                     + result;
             return result;
 

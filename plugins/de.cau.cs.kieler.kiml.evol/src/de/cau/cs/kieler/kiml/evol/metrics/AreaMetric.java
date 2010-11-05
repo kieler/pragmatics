@@ -29,6 +29,10 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
  *
  */
 public class AreaMetric implements IAnalysis {
+
+    /** Identifier for "dimensions". */
+    private static final String GRANA_DIMENSIONS = "de.cau.cs.kieler.kiml.grana.dimensions";
+
     /**
      * {@inheritDoc}
      */
@@ -41,29 +45,27 @@ public class AreaMetric implements IAnalysis {
         Float result;
 
         try {
-            Object dimsResult = results.get("de.cau.cs.kieler.kiml.grana.dimensions");
-            Pair<Float, Float> dims;
-            float xdim;
-            float ydim;
-            if (dimsResult instanceof Pair) {
-                dims = (Pair<Float, Float>) dimsResult;
-                xdim = dims.getFirst().floatValue();
-                ydim = dims.getSecond().floatValue();
-            } else {
-                xdim = 0.0f;
-                ydim = 0.0f;
+            Object dimsResult = results.get(GRANA_DIMENSIONS);
+
+            if (!(dimsResult instanceof Pair<?, ?>)) {
+                // This should only happen when the dimensions analysis fails.
+                throw new KielerException("Area metric analysis failed.");
             }
+
+            Pair<Float, Float> dims = (Pair<Float, Float>) dimsResult;
+            float xdim = dims.getFirst();
+            float ydim = dims.getSecond();
 
             double area = xdim * ydim;
 
             // normalize
             if (area < 1.0) {
-                result = Float.valueOf(0.0f);
+                result = 0.0f;
             } else {
                 final double exponent = 0.08;
-                result = Float.valueOf((float) (1.0f - (1.0f / Math.pow(area, exponent))));
+                result = (float) (1.0f - (1.0f / Math.pow(area, exponent)));
             }
-            assert ((0.0f <= result) && (result <= 1.0f)) : "Metric result out of bounds: "
+            assert (0.0f <= result) && (result <= 1.0f) : "Metric result out of bounds: "
                     + result;
 
         } finally {
