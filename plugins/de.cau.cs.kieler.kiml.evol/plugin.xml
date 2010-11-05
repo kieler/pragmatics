@@ -25,6 +25,20 @@
       </data>
       <data
             distribution="GAUSSIAN"
+            lowerBound="0"
+            option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.desiredEdgeLength"
+            upperBound="1.0e7">
+      </data>
+      <data
+            distribution="UNIFORM"
+            option="de.cau.cs.kieler.klay.layered.distributeNodes">
+      </data>
+      <data
+            distribution="UNIFORM"
+            option="de.cau.cs.kieler.klay.layered.enhanceLayering">
+      </data>
+      <data
+            distribution="GAUSSIAN"
             lowerBound="0.0"
             option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
             upperBound="1.0e7">
@@ -46,6 +60,12 @@
             lowerBound="0"
             option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.maxIterFactor"
             upperBound="20000">
+      </data>
+      <data
+            distribution="GAUSSIAN"
+            lowerBound="0"
+            option="de.cau.cs.kieler.klay.layered.minimalAngle"
+            upperBound="360">
       </data>
       <data
             distribution="GAUSSIAN"
@@ -223,8 +243,8 @@
       <data
             distribution="GAUSSIAN"
             lowerBound="0"
-            option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.desiredEdgeLength"
-            upperBound="1.0e7">
+            option="de.cau.cs.kieler.klay.layered.thoroughness"
+            upperBound="1000">
       </data>
    </extension>
    <extension
