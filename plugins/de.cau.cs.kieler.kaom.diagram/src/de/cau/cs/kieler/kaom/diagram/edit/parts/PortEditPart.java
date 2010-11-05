@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kaom.diagram.edit.policies.PortItemSemanticEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
 import de.cau.cs.kieler.karma.AdvancedRenderingBorderedBorderItemEditPart;
+import de.cau.cs.kieler.karma.SwitchableFigure;
 
 /**
  * @generated
@@ -327,7 +328,7 @@ public class PortEditPart extends AdvancedRenderingBorderedBorderItemEditPart {
 	/**
 	 * @generated
 	 */
-	public class PortFigure extends RectangleFigure {
+	public class PortFigure extends SwitchableFigure {
 
 		/**
 		 * @generated
