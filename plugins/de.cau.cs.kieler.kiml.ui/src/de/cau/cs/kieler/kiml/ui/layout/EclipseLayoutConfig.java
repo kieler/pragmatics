@@ -22,6 +22,7 @@ import org.eclipse.gef.EditPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -59,27 +60,56 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * @return the current value for the given option, or {@code null}
      */
     public static Object getOption(final ILayoutInspector inspector, final String optionId) {
+        return getOption(inspector.getFocusPart(), inspector.getFocusModel(), optionId);
+    }
+    
+    /**
+     * Retrieves a layout option for the given edit part and model element by querying the option
+     * for the edit part's class name and its domain model name. 
+     * 
+     * @param editPart an edit part
+     * @param modelElement the corresponding model element
+     * @param optionId layout option identifier
+     * @return the current value for the given option, or {@code null}
+     */
+    public static Object getOption(final EditPart editPart, final EObject modelElement,
+            final String optionId) {
         LayoutServices layoutServices = LayoutServices.getInstance();
-        EditPart editPart = inspector.getFocusPart();
         String clazzName = editPart == null ? null : editPart.getClass().getName();
         Object value = layoutServices.getOption(clazzName, optionId);
         if (value != null) {
             return value;
         } else {
-            EObject model = inspector.getFocusModel();
-            clazzName = model == null ? null : model.eClass().getInstanceTypeName();
+            clazzName = modelElement == null ? null : modelElement.eClass().getInstanceTypeName();
             return layoutServices.getOption(clazzName, optionId);
-        }        
+        }    
     }
 
     /** the edit part for the selected element. */
     private EditPart focusEditPart;
-    /** layout inspector for the selected element. */
-    private ILayoutInspector layoutInspector;
+    /** the selected model element. */
+    private EObject modelElement;
     /** diagram type for the content of the selected element. */ 
     private String contentDiagramType;
     /** diagram type for the container of the selected element. */
     private String containerDiagramType;
+    /** external layout configuration embedded in this one. */
+    private ILayoutConfig externalConfig;
+    
+    /**
+     * Create a stand-alone Eclipse layout configuration.
+     */
+    public EclipseLayoutConfig() {
+    }
+    
+    /**
+     * Create an Eclipse layout configuration embedding an external configuration.
+     * 
+     * @param theexternalConfig an external layout configuration
+     */
+    public EclipseLayoutConfig(final ILayoutConfig theexternalConfig) {
+        this.externalConfig = theexternalConfig;
+    }
     
     /**
      * Initialize the configuration with a layout hint and an edit part for the
@@ -112,43 +142,64 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * @return the default value for the layout option
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> T getProperty(final IProperty<T> property) {
-        if (property instanceof LayoutOptionData<?>) {
-            LayoutOptionData<T> optionData = (LayoutOptionData<T>) property;
-            EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
-            Object result = null;
-            
-            if (layoutInspector != null) {
-                // check default value set for the actual edit part or its model element
-                result = getOption(layoutInspector, optionData.getId());
-                if (result != null) {
-                    return (T) result;
-                }
-            }
-            
-            if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
-                // check default value for the diagram type of the selection's content
-                result = layoutServices.getOption(contentDiagramType, optionData.getId());
-                if (result != null) {
-                    return (T) result;
-                }
-            } else {
-                // check default value for the diagram type of the selection's container
-                result = layoutServices.getOption(containerDiagramType, optionData.getId());
-                if (result != null) {
-                    return (T) result;
-                }
-            }
-            
-            // fall back to dynamic default value of specific options
-            result = getDynamicValue(optionData);
+    public final <T> T getProperty(final IProperty<T> property) {
+        T result;
+        if (externalConfig != null) {
+            result = externalConfig.getProperty(property);
             if (result != null) {
-                return (T) result;
+                return result;
+            }
+        }
+        
+        if (property instanceof LayoutOptionData<?>) {
+            result = doGetProperty((LayoutOptionData<T>) property);
+            if (result != null) {
+                return result;
             }
         }
         // fall back to the default value for the property
         return super.getProperty(property);
+    }
+    
+    /**
+     * Retrieve the pre-configured or user defined default value for a layout option.
+     * 
+     * @param <T> type of option
+     * @param optionData a layout option
+     * @return the default value for the layout option
+     */
+    @SuppressWarnings("unchecked")
+    protected <T> T doGetProperty(final LayoutOptionData<T> optionData) {
+        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
+        Object result = null;
+        
+        // check default value set for the actual edit part or its model element
+        result = getOption(focusEditPart, modelElement, optionData.getId());
+        if (result != null) {
+            return (T) result;
+        }
+        
+        if (optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
+            // check default value for the diagram type of the selection's content
+            result = layoutServices.getOption(contentDiagramType, optionData.getId());
+            if (result != null) {
+                return (T) result;
+            }
+        } else {
+            // check default value for the diagram type of the selection's container
+            result = layoutServices.getOption(containerDiagramType, optionData.getId());
+            if (result != null) {
+                return (T) result;
+            }
+        }
+        
+        // fall back to dynamic default value of specific options
+        result = getDynamicValue(optionData);
+        if (result != null) {
+            return (T) result;
+        }
+        
+        return null;
     }
     
     /**
@@ -171,38 +222,72 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     }
     
     /**
-     * Compute a map with all pre-configured or user-defined layout options. This does
-     * not include the default values of the layout providers or layout options.
+     * Returns a map of all options that have pre-configured or user defined default values.
      * 
-     * @param inspector a layout inspector for an edit part
-     * @return a map of layout option identifiers to their values
+     * @return a map of layout option values
      */
-    public Map<String, Object> getDefaultOptions(final ILayoutInspector inspector) {
+    @Override
+    public final Map<IProperty<?>, Object> getAllProperties() {
+        Map<IProperty<?>, Object> options = new LinkedHashMap<IProperty<?>, Object>();
+        addProperties(options);
+        if (externalConfig != null) {
+            options.putAll(externalConfig.getAllProperties());
+        }
+        return options;
+    }
+    
+    /**
+     * Add all options that have pre-configured or user defined default values to the given map.
+     * 
+     * @param options a map of layout option values
+     */
+    protected void addProperties(final Map<IProperty<?>, Object> options) {
         LayoutServices layoutServices = LayoutServices.getInstance();
 
         // get default layout options for the diagram type
-        String diagramType = (String) getOption(inspector,
+        String diagramType = (String) getOption(focusEditPart, modelElement,
                 LayoutOptions.DIAGRAM_TYPE_ID);
-        Map<String, Object> options = new LinkedHashMap<String, Object>(
-                layoutServices.getOptions(diagramType));
+        if (diagramType != null) {
+            for (Entry<String, Object> entry : layoutServices.getOptions(diagramType).entrySet()) {
+                if (entry.getValue() != null) {
+                    LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(entry.getKey());
+                    options.put(optionData, entry.getValue());
+                }
+            }
+        }
         
         // get default layout options for the domain model element
-        String clazzName = inspector.getFocusModel().eClass().getInstanceTypeName();
-        for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
-            if (entry.getValue() != null) {
-                options.put(entry.getKey(), entry.getValue());
+        if (modelElement != null) {
+            String clazzName = modelElement.eClass().getInstanceTypeName();
+            for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
+                if (entry.getValue() != null) {
+                    LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(entry.getKey());
+                    options.put(optionData, entry.getValue());
+                }
             }
         }
         
         // get default layout options for the edit part
-        clazzName = inspector.getFocusPart().getClass().getName();
-        for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
-            if (entry.getValue() != null) {
-                options.put(entry.getKey(), entry.getValue());
+        if (focusEditPart != null) {
+            String clazzName = focusEditPart.getClass().getName();
+            for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
+                if (entry.getValue() != null) {
+                    LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(entry.getKey());
+                    options.put(optionData, entry.getValue());
+                }
             }
         }
-        
-        return options;
+    }
+    
+    /**
+     * Sets the focus of this layout configuration onto the given edit part and model element.
+     * 
+     * @param editPart the edit part of the selected element
+     * @param themodelElement the selected model element
+     */
+    public final void setFocusElement(final EditPart editPart, final EObject themodelElement) {
+        this.focusEditPart = editPart;
+        this.modelElement = themodelElement;
     }
 
     /**
@@ -210,18 +295,17 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * 
      * @return the edit part, or {@code null} if none is selected
      */
-    public EditPart getEditPart() {
+    public final EditPart getEditPart() {
         return focusEditPart;
     }
     
     /**
-     * Sets the edit part for the selected element.
+     * Returns the external layout configuration embedded in this configuration, if present.
      * 
-     * @param editPart the edit part
+     * @return an external layout configuration, or {@code null}
      */
-    public void setEditPart(final EditPart editPart) {
-        this.focusEditPart = editPart;
-        this.layoutInspector = EclipseLayoutServices.getInstance().getInspector(editPart);
+    public final ILayoutConfig getExternalConfig() {
+        return externalConfig;
     }
     
 }

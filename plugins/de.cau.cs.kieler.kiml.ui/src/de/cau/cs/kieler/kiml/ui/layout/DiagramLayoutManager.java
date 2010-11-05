@@ -53,8 +53,11 @@ public abstract class DiagramLayoutManager {
     /** the layouter engine used to layout diagrams. */
     private static final RecursiveLayouterEngine LAYOUTER_ENGINE = new RecursiveLayouterEngine(
             DEBUG_CANVAS);
+    
     /** the configured priority of the layout manager. */
     private int priority;
+    /** a layout configuration that is injected externally. */
+    private ILayoutConfig externalLayoutConfig;
 
 
     /**
@@ -73,6 +76,25 @@ public abstract class DiagramLayoutManager {
      */
     public final void setPriority(final int thepriority) {
         this.priority = thepriority;
+    }
+    
+    /**
+     * Set an external layout configuration to use with this layout manager.
+     * Giving {@code null} as parameter resets the configuration to the standard.
+     * 
+     * @param layoutConfig a layout configuration, or {@code null}
+     */
+    public final void setLayoutConfig(final ILayoutConfig layoutConfig) {
+        this.externalLayoutConfig = layoutConfig;
+    }
+    
+    /**
+     * Returns the layout configuration that was set externally for this layout manager.
+     * 
+     * @return the external layout configuration, or {@code null}
+     */
+    protected final ILayoutConfig getExternalConfig() {
+        return externalLayoutConfig;
     }
     
     /**

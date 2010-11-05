@@ -433,11 +433,19 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         editPart2GraphElemMap.put(rootPart, topNode);
         graphElem2EditPartMap.put(topNode, rootPart);
 
+        // create a layout configuration
+        GmfLayoutConfig layoutConfig;
+        if (getExternalConfig() == null) {
+            layoutConfig = new GmfLayoutConfig();
+        } else {
+            layoutConfig = new GmfLayoutConfig(getExternalConfig());
+        }
+        
         // traverse the children of the layout root part
-        GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
         buildLayoutGraphRecursively(rootPart, topNode, rootPart, layoutConfig);
         // set user defined layout options for the diagram
-        layoutConfig.setOptions(new GmfLayoutInspector(rootPart), shapeLayout);
+        layoutConfig.setFocusElement(rootPart);
+        shapeLayout.copyProperties(layoutConfig);
         // transform all connections in the selected area
         processConnections(layoutConfig);
 
@@ -494,7 +502,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 portLayout.setHeight(portBounds.height);
                 hasPorts = true;
                 // set user defined layout options for the port
-                layoutConfig.setOptions(new GmfLayoutInspector(borderItem), portLayout);
+                layoutConfig.setFocusElement(borderItem);
+                portLayout.copyProperties(layoutConfig);
 
                 // store all the connections to process them later
                 addConnections(borderItem);
@@ -587,7 +596,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                             childNodeEditPart, layoutConfig);
 
                     // set user defined layout options for the node
-                    layoutConfig.setOptions(new GmfLayoutInspector(childNodeEditPart), nodeLayout);
+                    layoutConfig.setFocusElement(childNodeEditPart);
+                    nodeLayout.copyProperties(layoutConfig);
                 }
 
                 // process labels of nodes
@@ -768,7 +778,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 setEdgeLayout(edgeLayout, connection, offsetx, offsety);
 
                 // set user defined layout options for the edge
-                layoutConfig.setOptions(new GmfLayoutInspector(connection), edgeLayout);
+                layoutConfig.setFocusElement(connection);
+                edgeLayout.copyProperties(layoutConfig);
             }
 
             // process edge labels
@@ -853,7 +864,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 }
                 if (labelText != null) {
                     if (labelText.length() == 0) {
-                        labelText = ".";
+                        labelText = "";
                     }
                     KLabel label = KimlUtil.createInitializedLabel(edge);
                     KShapeLayout labelLayout = label.getData(KShapeLayout.class);

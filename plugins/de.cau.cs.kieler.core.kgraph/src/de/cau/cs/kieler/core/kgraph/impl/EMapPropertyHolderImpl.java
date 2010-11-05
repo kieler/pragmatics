@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.core.kgraph.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
@@ -24,12 +25,9 @@ import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 
-import de.cau.cs.kieler.core.util.Pair;
-
 import java.util.Collection;
 import org.eclipse.emf.common.notify.NotificationChain;
 
-import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 
@@ -185,9 +183,7 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
         if (holder instanceof EMapPropertyHolder) {
             this.getProperties().putAll(((EMapPropertyHolder) holder).getProperties());
         } else {
-            for (Pair<IProperty<?>, Object> prop : holder.getAllProperties()) {
-                setProperty(prop.getFirst(), prop.getSecond());
-            }
+            this.getProperties().putAll(holder.getAllProperties());
         }
     }
 
@@ -197,14 +193,8 @@ public abstract class EMapPropertyHolderImpl extends EObjectImpl implements EMap
      * <!-- end-user-doc -->
      * @generated NOT
      */
-    public EList<Pair<IProperty<?>, Object>> getAllProperties() {
-        EMap<IProperty<?>, Object> propMap = getProperties();
-        EList<Pair<IProperty<?>, Object>> list =
-            new BasicEList<Pair<IProperty<?>, Object>>(propMap.size());
-        for (Entry<IProperty<?>, Object> entry : propMap.entrySet()) {
-            list.add(new Pair<IProperty<?>, Object>(entry.getKey(), entry.getValue()));
-        }
-        return list;
+    public Map<IProperty<?>, Object> getAllProperties() {
+        return getProperties().map();
     }
 
     /**

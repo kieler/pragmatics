@@ -13,11 +13,9 @@
  */
 package de.cau.cs.kieler.core.properties;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * An abstract holder class for properties that uses a hash map.
@@ -71,17 +69,19 @@ public abstract class MapPropertyHolder implements IPropertyHolder {
                 }
             }
         } else {
-            for (Pair<IProperty<?>, Object> prop : holder.getAllProperties()) {
-                setProperty(prop.getFirst(), prop.getSecond());
-            }
+            this.propertyMap.putAll(holder.getAllProperties());
         }
     }
     
     /**
      * {@inheritDoc}
      */
-    public List<Pair<IProperty<?>, Object>> getAllProperties() {
-        return Pair.toList(propertyMap);
+    public Map<IProperty<?>, Object> getAllProperties() {
+        if (propertyMap == null) {
+            return Collections.emptyMap();
+        } else {
+            return propertyMap;
+        }
     }
     
 }

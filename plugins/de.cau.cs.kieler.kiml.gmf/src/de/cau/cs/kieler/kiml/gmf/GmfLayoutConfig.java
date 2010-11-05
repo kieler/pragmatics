@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.gmf;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.gef.EditPart;
@@ -31,9 +30,9 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.Style;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.KOption;
@@ -42,7 +41,6 @@ import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsFactory;
 import de.cau.cs.kieler.kiml.gmf.layoutoptions.LayoutOptionsPackage;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 
 /**
  * A layout configuration that stores layout options in the notation model of GMF diagrams.
@@ -129,17 +127,35 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
     private Map<LayoutOptionData<?>, KOption> koptionMap;
     
     /**
+     * Create a stand-alone layout configuration for GMF.
+     */
+    public GmfLayoutConfig() {
+        super();
+    }
+    
+    /**
+     * Create a layout configuration for GMF with embedded external configuration.
+     * 
+     * @param externalConfig an external configuration
+     */
+    public GmfLayoutConfig(final ILayoutConfig externalConfig) {
+        super(externalConfig);
+    }
+    
+    /**
      * Initialize the configuration for a graphical edit part.
      * 
      * @param editPart an edit part
      */
     public final void initialize(final IGraphicalEditPart editPart) {
+        optionStyle = null;
+        koptionMap = null;
         // find an appropriate property source and set the layout option targets
         IGraphicalEditPart focusEditPart = editPart;
         if (focusEditPart instanceof CompartmentEditPart) {
             focusEditPart = (IGraphicalEditPart) focusEditPart.getParent();
         }
-        setEditPart(focusEditPart);
+        setFocusElement(focusEditPart, focusEditPart.getNotationView().getElement());
         if (isNoLayout(focusEditPart)) {
             return;
         }
@@ -289,33 +305,31 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * value for a layout option.
      * 
      * @param <T> type of option
-     * @param property a layout option
+     * @param optionData a layout option
      * @return the stored or default value for the layout option
      */
     @Override
-    public <T> T getProperty(final IProperty<T> property) {
-        if (property instanceof LayoutOptionData<?>) {
-            LayoutOptionData<T> optionData = (LayoutOptionData<T>) property;
-            T result = null;
-            
-            // check option value from notation model
-            if (koptionMap != null) {
-                KOption koption = koptionMap.get(optionData);
-                if (koption != null) {
-                    result = optionData.parseValue(koption.getValue());
-                    if (result != null) {
-                        return result;
-                    }
+    protected <T> T doGetProperty(final LayoutOptionData<T> optionData) {
+        T result;
+        // check option value from notation model
+        if (koptionMap != null) {
+            KOption koption = koptionMap.get(optionData);
+            if (koption != null) {
+                result = optionData.parseValue(koption.getValue());
+                if (result != null) {
+                    return result;
                 }
             }
-            
-            // check default option of diagram edit part
-            result = getDiagramDefault(optionData);
-            if (result != null) {
-                return result;
-            }
         }
-        return super.getProperty(property);
+        
+        // check default option of diagram edit part
+        result = getDiagramDefault(optionData);
+        if (result != null) {
+            return result;
+        }
+        
+        // fall back to the user-stored or preconfigured configuration
+        return super.doGetProperty(optionData);
     }
     
     /**
@@ -510,19 +524,16 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
     }
     
     /**
-     * Compute a map with all stored, pre-configured, or user-defined layout options.
-     * This does not include the default values of the layout providers or layout options.
+     * Add all notation model values to the given map of layout options.
      * 
-     * @param inspector a layout inspector for an edit part
-     * @return a map of layout option identifiers to their values
+     * @param options a map of layout option values
      */
-    public Map<String, Object> getOptions(final ILayoutInspector inspector) {
-        // get default layout options for the edit part
-        Map<String, Object> options = getDefaultOptions(inspector);
+    protected void addProperties(final Map<IProperty<?>, Object> options) {
+        super.addProperties(options);
         
-        // add user defined global layout options
-        if (inspector.getFocusPart() instanceof IGraphicalEditPart) {
-            IGraphicalEditPart editPart = (IGraphicalEditPart) inspector.getFocusPart();
+        if (super.getEditPart() instanceof IGraphicalEditPart) {
+            // add user defined global layout options
+            IGraphicalEditPart editPart = (IGraphicalEditPart) super.getEditPart();
             DiagramEditPart diagramEditPart = GmfLayoutInspector.getDiagramEditPart(editPart);
             if (diagramEditPart != editPart && diagramEditPart != null) {
                 LayoutOptionStyle style = (LayoutOptionStyle) diagramEditPart.getNotationView()
@@ -535,8 +546,6 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
                     LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
             addOptions(options, style, false);
         }
-        
-        return options;
     }
     
     /**
@@ -547,7 +556,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * @param optionStyle a layout options style
      * @param onlyDefault if true, only default options are taken
      */
-    private static void addOptions(final Map<String, Object> options,
+    private static void addOptions(final Map<IProperty<?>, Object> options,
             final LayoutOptionStyle optionStyle, final boolean onlyDefault) {
         LayoutServices layoutServices = LayoutServices.getInstance();
         if (optionStyle != null) {
@@ -558,7 +567,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
                     if (optionData != null) {
                         Object value = optionData.parseValue(option.getValue());
                         if (value != null) {
-                            options.put(option.getKey(), value);
+                            options.put(optionData, value);
                         }
                     }
                 }
@@ -567,23 +576,12 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
     }
     
     /**
-     * Set all stored, pre-configured, or user-defined layout options for the given
-     * graph data object.
+     * Sets the focus of this layout configuration onto the given edit part.
      * 
-     * @param inspector a layout inspector for an edit part
-     * @param layoutData a graph data object that holds layout data
+     * @param editPart the edit part of the selected element
      */
-    public void setOptions(final ILayoutInspector inspector, final KGraphData layoutData) {
-        LayoutServices layoutServices = LayoutServices.getInstance();
-        Map<String, Object> options = getOptions(inspector);
-        
-        // add all options to the layout data instance
-        for (Entry<String, Object> option : options.entrySet()) {
-            LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(option.getKey());
-            if (option.getValue() != null) {
-                layoutData.setProperty(optionData, option.getValue());
-            }
-        }
+    public void setFocusElement(final IGraphicalEditPart editPart) {
+        setFocusElement(editPart, editPart.getNotationView().getElement());
     }
     
 }

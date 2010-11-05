@@ -13,14 +13,14 @@
  */
 package de.cau.cs.kieler.kiml;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -77,18 +77,20 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns a map of all layout options that are available for the selected element
+     * to their default values.
+     * 
+     * @return a map of all layout options to their default values 
      */
-    public List<Pair<IProperty<?>, Object>> getAllProperties() {
+    public Map<IProperty<?>, Object> getAllProperties() {
         if (optionDataList == null) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
-        List<Pair<IProperty<?>, Object>> list = new ArrayList<Pair<IProperty<?>, Object>>(
-                optionDataList.size());
+        Map<IProperty<?>, Object> optionMap = new HashMap<IProperty<?>, Object>();
         for (LayoutOptionData<?> optionData : optionDataList) {
-            list.add(new Pair<IProperty<?>, Object>(optionData, getProperty(optionData)));
+            optionMap.put(optionData, getPropertyInternal(optionData));
         }
-        return list;
+        return optionMap;
     }
 
     /**
@@ -99,14 +101,26 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      * @return the default value for the layout option
      */
     public <T> T getProperty(final IProperty<T> property) {
-        LayoutOptionData<T> optionData = property instanceof LayoutOptionData<?>
-                ? (LayoutOptionData<T>) property : null;
+        if (property instanceof LayoutOptionData<?>) {
+            return getPropertyInternal((LayoutOptionData<T>) property);
+        }
+        return null;
+    }
+    
+    /**
+     * Retrieve the default value for a layout option.
+     * 
+     * @param <T> type of option
+     * @param property a layout option
+     * @return the default value for the layout option
+     */
+    private <T> T getPropertyInternal(final LayoutOptionData<T> optionData) {
         T result = null;
         
         // check default value of the content layout provider
         if (contentLayouterData != null && optionData != null
                 && optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
-            result = contentLayouterData.getInstance().getProperty(property);
+            result = contentLayouterData.getInstance().getProperty(optionData);
             if (result != null) {
                 return result;
             }
@@ -114,23 +128,20 @@ public class DefaultLayoutConfig implements ILayoutConfig {
 
         // check default value of the container layout provider
         if (containerLayouterData != null) {
-            result = containerLayouterData.getInstance().getProperty(property);
+            result = containerLayouterData.getInstance().getProperty(optionData);
             if (result != null) {
                 return result;
             }
         }
         
-        if (optionData != null) {
-            // fall back to default value of the option itself
-            result = optionData.getDefault();
-            if (result != null) {
-                return result;
-            }
-            
-            // fall back to default-default value
-            return optionData.getDefaultDefault();
+        // fall back to default value of the option itself
+        result = optionData.getDefault();
+        if (result != null) {
+            return result;
         }
-        return null;
+        
+        // fall back to default-default value
+        return optionData.getDefaultDefault();
     }
 
     /**

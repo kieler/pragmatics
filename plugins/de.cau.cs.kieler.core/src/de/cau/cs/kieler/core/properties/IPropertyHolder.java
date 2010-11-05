@@ -13,9 +13,7 @@
  */
 package de.cau.cs.kieler.core.properties;
 
-import java.util.List;
-
-import de.cau.cs.kieler.core.util.Pair;
+import java.util.Map;
 
 /**
  * Interface for holders of property values.
@@ -50,10 +48,10 @@ public interface IPropertyHolder {
     void copyProperties(IPropertyHolder holder);
     
     /**
-     * Returns a list of all assigned properties with associated values.
+     * Returns a map of all assigned properties with associated values.
      * 
-     * @return a list of all properties
+     * @return a map of all properties
      */
-    List<Pair<IProperty<?>, Object>> getAllProperties();
+    Map<IProperty<?>, Object> getAllProperties();
 
 }
