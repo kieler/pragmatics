@@ -30,6 +30,13 @@ import de.cau.cs.kieler.core.properties.IPropertyHolder;
 public interface ILayoutConfig extends IPropertyHolder {
     
     /**
+     * Set the focus of this layout configuration on the given element.
+     * 
+     * @param element a diagram element for which layout options shall be analyzed
+     */
+    void setFocus(Object element);
+    
+    /**
      * Returns true if the given option has its default value.
      * 
      * @param optionData a layout option data

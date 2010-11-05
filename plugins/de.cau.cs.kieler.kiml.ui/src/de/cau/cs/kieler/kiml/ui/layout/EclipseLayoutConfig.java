@@ -46,21 +46,9 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     public static Object getOption(final EditPart editPart, final String optionId) {
         ILayoutInspector inspector = EclipseLayoutServices.getInstance().getInspector(editPart);
         if (inspector != null) {
-            return getOption(inspector, optionId);
+            return getOption(inspector.getFocusPart(), inspector.getFocusModel(), optionId);
         }
         return null;
-    }
-    
-    /**
-     * Retrieves a layout option from the given layout inspector by querying the option
-     * for the edit part's class name and its domain model name. 
-     * 
-     * @param inspector a layout inspector for an edit part
-     * @param optionId layout option identifier
-     * @return the current value for the given option, or {@code null}
-     */
-    public static Object getOption(final ILayoutInspector inspector, final String optionId) {
-        return getOption(inspector.getFocusPart(), inspector.getFocusModel(), optionId);
     }
     
     /**
@@ -112,6 +100,27 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     }
     
     /**
+     * Set the edit part or domain model element as focus for this layout configuration.
+     * This can be done without initializing the layout configuration in order to use
+     * {@link #getAllProperties()} efficiently, since the same configuration instance can
+     * be reused multiple times.
+     * 
+     * @param element an {@link EditPart} or {@link EObject}
+     */
+    @Override
+    public void setFocus(final Object element) {
+        if (element instanceof EditPart) {
+            this.focusEditPart = (EditPart) element;
+        } else if (element instanceof EObject) {
+            this.modelElement = (EObject) element;
+        }
+        // pass the new focus element on to the external configuration
+        if (externalConfig != null) {
+            externalConfig.setFocus(element);
+        }
+    }
+    
+    /**
      * Initialize the configuration with a layout hint and an edit part for the
      * content or the container of the selected element.
      * 
@@ -136,6 +145,9 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     
     /**
      * Retrieve the pre-configured or user defined default value for a layout option.
+     * This implementation requires
+     * {@link #initialize(de.cau.cs.kieler.kiml.LayoutOptionData.Target, EditPart, String) initialize}
+     * and {@link #setFocus(Object) setFocus} to be called first in order to give correct results.
      * 
      * @param <T> type of option
      * @param property a layout option
@@ -277,17 +289,6 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
                 }
             }
         }
-    }
-    
-    /**
-     * Sets the focus of this layout configuration onto the given edit part and model element.
-     * 
-     * @param editPart the edit part of the selected element
-     * @param themodelElement the selected model element
-     */
-    public final void setFocusElement(final EditPart editPart, final EObject themodelElement) {
-        this.focusEditPart = editPart;
-        this.modelElement = themodelElement;
     }
 
     /**

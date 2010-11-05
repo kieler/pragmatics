@@ -112,7 +112,8 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      */
     public static boolean isNoLayout(final EditPart editPart) {
         if (editPart instanceof IGraphicalEditPart) {
-            Boolean result = (Boolean) getOption(new GmfLayoutInspector((IGraphicalEditPart) editPart),
+            Boolean result = (Boolean) getOption(editPart,
+                    ((IGraphicalEditPart) editPart).getNotationView().getElement(),
                     LayoutOptions.NO_LAYOUT_ID);
             if (result != null) {
                 return result;
@@ -143,6 +144,23 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
     }
     
     /**
+     * Set the focus of the layout configuration on a specific edit part. The domain model element
+     * of the edit part is passed to the super-class as well.
+     * This can be done without initializing the layout configuration in order to use
+     * {@link #getAllProperties()} efficiently, since the same configuration instance can
+     * be reused multiple times.
+     * 
+     * @param element an instance of {@link IGraphicalEditPart}
+     */
+    @Override
+    public void setFocus(final Object element) {
+        super.setFocus(element);
+        if (element instanceof IGraphicalEditPart) {
+            super.setFocus(((IGraphicalEditPart) element).getNotationView().getElement());
+        }
+    }
+    
+    /**
      * Initialize the configuration for a graphical edit part.
      * 
      * @param editPart an edit part
@@ -155,7 +173,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         if (focusEditPart instanceof CompartmentEditPart) {
             focusEditPart = (IGraphicalEditPart) focusEditPart.getParent();
         }
-        setFocusElement(focusEditPart, focusEditPart.getNotationView().getElement());
+        setFocus(focusEditPart);
         if (isNoLayout(focusEditPart)) {
             return;
         }
@@ -333,7 +351,9 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
     }
     
     /**
-     * Stores the given value in the notation view of the selected element.
+     * Stores the given value in the notation view of the selected element. This requires
+     * {@link #initialize(IGraphicalEditPart) initialize} to be called first in order to
+     * work properly.
      * 
      * @param property a layout option
      * @param value an option value
@@ -375,7 +395,9 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
     
     /**
      * Determines whether the given layout option is already stored in the notation view
-     * of the selected element.
+     * of the selected element. This requires
+     * {@link #initialize(IGraphicalEditPart) initialize} to be called first in order to
+     * work properly.
      * 
      * @param optionData a layout option
      * @return whether the option has its default value or not
@@ -573,15 +595,6 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
                 }
             }
         }
-    }
-    
-    /**
-     * Sets the focus of this layout configuration onto the given edit part.
-     * 
-     * @param editPart the edit part of the selected element
-     */
-    public void setFocusElement(final IGraphicalEditPart editPart) {
-        setFocusElement(editPart, editPart.getNotationView().getElement());
     }
     
 }

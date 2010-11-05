@@ -444,7 +444,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // traverse the children of the layout root part
         buildLayoutGraphRecursively(rootPart, topNode, rootPart, layoutConfig);
         // set user defined layout options for the diagram
-        layoutConfig.setFocusElement(rootPart);
+        layoutConfig.setFocus(rootPart);
         shapeLayout.copyProperties(layoutConfig);
         // transform all connections in the selected area
         processConnections(layoutConfig);
@@ -462,7 +462,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      */
     private void buildLayoutGraphRecursively(final IGraphicalEditPart parentEditPart,
             final KNode parentLayoutNode, final IGraphicalEditPart currentEditPart,
-            final GmfLayoutConfig layoutConfig) {
+            final ILayoutConfig layoutConfig) {
         boolean hasChildNodes = false, hasChildCompartments = false,
                 hasPorts = false, isCollapsed = false;
         KInsets kinsets = null;
@@ -502,7 +502,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 portLayout.setHeight(portBounds.height);
                 hasPorts = true;
                 // set user defined layout options for the port
-                layoutConfig.setFocusElement(borderItem);
+                layoutConfig.setFocus(borderItem);
                 portLayout.copyProperties(layoutConfig);
 
                 // store all the connections to process them later
@@ -596,7 +596,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                             childNodeEditPart, layoutConfig);
 
                     // set user defined layout options for the node
-                    layoutConfig.setFocusElement(childNodeEditPart);
+                    layoutConfig.setFocus(childNodeEditPart);
                     nodeLayout.copyProperties(layoutConfig);
                 }
 
@@ -674,7 +674,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * 
      * @param layoutConfig layout configuration handler
      */
-    private void processConnections(final GmfLayoutConfig layoutConfig) {
+    private void processConnections(final ILayoutConfig layoutConfig) {
         Map<EReference, KEdge> reference2EdgeMap = new HashMap<EReference, KEdge>();
         for (ConnectionEditPart connection : connections) {
             boolean isOppositeEdge = false;
@@ -778,7 +778,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 setEdgeLayout(edgeLayout, connection, offsetx, offsety);
 
                 // set user defined layout options for the edge
-                layoutConfig.setFocusElement(connection);
+                layoutConfig.setFocus(connection);
                 edgeLayout.copyProperties(layoutConfig);
             }
 

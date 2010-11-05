@@ -453,7 +453,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                 }
                 // add the "set as default for diagram type" action
                 LayoutServices layoutServices = LayoutServices.getInstance();
-                String diagramType = (String) EclipseLayoutConfig.getOption(lastInspector,
+                String diagramType = (String) EclipseLayoutConfig.getOption(
+                        lastInspector.getFocusPart(), lastInspector.getFocusModel(),
                         LayoutOptions.DIAGRAM_TYPE_ID);
                 if (diagramType == null) {
                     if (diagramTypeDefaultItem != null) {

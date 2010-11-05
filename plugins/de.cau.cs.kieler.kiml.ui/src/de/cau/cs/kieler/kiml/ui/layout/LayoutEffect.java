@@ -127,11 +127,10 @@ public class LayoutEffect extends AbstractEffect {
      */
     public void execute() {
         manager = EclipseLayoutServices.getInstance().getManager(diagramEditor, editPart);
-        if (manager == null) {
-            return;
+        if (manager != null) {
+            manager.layout(diagramEditor, editPart, doAnimate, useProgMonitor, layoutAncestors,
+                    false, doZoom);
         }
-        manager.layout(diagramEditor, editPart, doAnimate, useProgMonitor, layoutAncestors,
-                false, doZoom);
     }
     
     /**

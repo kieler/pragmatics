@@ -39,6 +39,18 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     private LayoutProviderData containerLayouterData;
     
     /**
+     * Initialize the configuration with a layout hint. This is only done if the given
+     * object is a string.
+     * 
+     * @param element a layout hint of type {@link String}
+     */
+    public void setFocus(final Object element) {
+        if (element instanceof String) {
+            initialize(LayoutOptionData.Target.PARENTS, (String) element, null);
+        }
+    }
+    
+    /**
      * Initialize the configuration with a layout hint and diagram type for the
      * content or the container of the selected element.
      * 
@@ -94,7 +106,9 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     }
 
     /**
-     * Retrieve the default value for a layout option.
+     * Retrieve the default value for a layout option. This implementation requires
+     * {@link #initialize(de.cau.cs.kieler.kiml.LayoutOptionData.Target, String, String) initialize}
+     * to be called first in order to work properly.
      * 
      * @param <T> type of option
      * @param property a layout option

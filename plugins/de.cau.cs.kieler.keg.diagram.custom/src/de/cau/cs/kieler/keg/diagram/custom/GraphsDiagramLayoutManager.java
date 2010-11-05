@@ -40,6 +40,7 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.Port;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.gmf.GmfLayoutConfig;
 import de.cau.cs.kieler.kiml.gmf.GmfLayoutInspector;
@@ -166,7 +167,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
      * @return a layout node that is linked with the given graph node
      */
     private KNode buildLayoutGraphRecursively(final KNode graphNode,
-            final IGraphicalEditPart editPart, final GmfLayoutConfig layoutConfig) {
+            final IGraphicalEditPart editPart, final ILayoutConfig layoutConfig) {
         Map<?, ?> editPartRegistry = editPart.getViewer().getEditPartRegistry();
         KNode layoutNode = KimlUtil.createInitializedNode();
         // store the connection to process them later
@@ -216,7 +217,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 layoutPort.getLabel().setText(((Port) port).getPortLabel());
                 
                 // set user defined layout options for the port
-                layoutConfig.setFocusElement(portEP);
+                layoutConfig.setFocus(portEP);
                 portLayout.copyProperties(layoutConfig);
             }
         }
@@ -252,7 +253,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
         if (((Node) graphNode).isIsHypernode()) {
             nodeLayout.setProperty(LayoutOptions.HYPERNODE, true);
         }
-        layoutConfig.setFocusElement(editPart);
+        layoutConfig.setFocus(editPart);
         nodeLayout.copyProperties(layoutConfig);
         return layoutNode;
     }
@@ -264,7 +265,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
      * @param layoutConfig layout configuration handler
      */
     private void processConnections(final IGraphicalEditPart rootPart,
-            final GmfLayoutConfig layoutConfig) {
+            final ILayoutConfig layoutConfig) {
         Map<?, ?> editPartRegistry = rootPart.getViewer().getEditPartRegistry();
         for (KEdge graphEdge : edges) {
             Object obj = editPartRegistry.get(graphElem2ViewMap.get(graphEdge));
@@ -309,7 +310,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                         offsetx, offsety);
     
                 // set user defined layout options for the edge
-                layoutConfig.setFocusElement(connection);
+                layoutConfig.setFocus(connection);
                 edgeLayout.copyProperties(layoutConfig);
             }
         }
