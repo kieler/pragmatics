@@ -2,6 +2,7 @@
 
 import kgraph;
 import ogml;
+import klayoutdata;
 
 // workaround
 Void callStringMethod(Object instance, String methodName, String param):
@@ -24,6 +25,18 @@ String generateName(String generatorName, String prefix):
 	JAVA de.cau.cs.kieler.kiml.export.util.XtendUtil.generateName(java.lang.String, java.lang.String)
 ;
 
+KShapeLayout getShapeLayout(KNode node):
+	JAVA de.cau.cs.kieler.kiml.export.util.XtendUtil.getShapeLayout(de.cau.cs.kieler.core.kgraph.KNode)
+;
+
+KEdgeLayout getEdgeLayout(KEdge node):
+	JAVA de.cau.cs.kieler.kiml.export.util.XtendUtil.getEdgeLayout(de.cau.cs.kieler.core.kgraph.KEdge)
+;
+
+Void setShapeBounds(ogml::ShapeType1 shapeType, KShapeLayout shapeLayout):
+	JAVA de.cau.cs.kieler.kiml.export.util.XtendUtil.ogmlSetShapeBounds(net.ogdf.ogml.ShapeType1, de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout)
+;
+
 // generates an id for a node
 String generateNodeId():
 	generateName("node", "n")
@@ -35,13 +48,16 @@ String generateEdgeId():
 ;
 
 // the entry point for the transformation
-create ogml::DocumentRoot transform(KNode node):
+create ogml::DocumentRoot transform(KNode node, Boolean layoutInformation):
 	let ogmlRoot = new ogml::OgmlType:
 	let graph = new ogml::GraphType:
 	let structure = transformGraph(node):
 	this.setOgml(ogmlRoot) ->
 	ogmlRoot.setGraph(graph) ->
-	graph.setStructure(structure)
+	graph.setStructure(structure) ->
+	(if layoutInformation then
+		(let layout = transformLayout(node):
+		graph.setLayout(layout)))
 ;
 
 // transforms the structure of the graph
@@ -65,11 +81,11 @@ Void transformNode(KNode node, ogml::NodeType parent):
 ;
 
 // returns the ogml counterpart for the given kgraph node
-//TODO is node.label != null required?
 create ogml::NodeType getNode(KNode node): 
-	let label = new LabelType:
-	label.setContent(node.label.text) ->
-	this.label.add(label) ->
+	(if node.label.text.length > 0 then
+		(let label = new LabelType:
+		label.setContent(node.label.text) ->
+		this.label.add(label))) ->
 	this.setId(getId(node))
 ;
 
@@ -90,8 +106,59 @@ Void transformEdge(KEdge edge, ogml::StructureType structure):
 	target.setIdRef(targetId) ->
 	ogmlEdge.source.add(source) ->
 	ogmlEdge.target.add(target) ->
+	edge.labels.transformEdgeLabel(ogmlEdge) ->
 	structure.edge.add(ogmlEdge)
 ;
+
+// transforms an edge label
+Void transformEdgeLabel(KLabel label, ogml::EdgeType edge):
+	(if label.text.length > 0 then
+		(let ogmlLabel = new ogml::LabelType:
+		ogmlLabel.setContent(label.text) ->
+		edge.label.add(ogmlLabel)))
+;
+
+// transforms the layout information
+create ogml::LayoutType transformLayout(KNode graph):
+	let styles = new ogml::StylesType:
+	this.setStyles(styles) ->
+	graph.children.transformNodeLayout(styles)
+;
+
+// transforms the node layout information and also the layout information
+// of outgoing edges
+Void transformNodeLayout(KNode node, ogml::StylesType styles):
+	let shapeLayout = node.getShapeLayout():
+	let nodeStyle = new ogml::NodeLayoutType:
+	let location = new ogml::LocationType:
+	let shapeType = new ogml::ShapeType1:
+	nodeStyle.setIdRef(getId(node)) ->
+	location.setX(shapeLayout.xpos + shapeLayout.width / 2) ->
+	location.setY(shapeLayout.ypos + shapeLayout.height / 2) ->
+	shapeType.setShapeBounds(shapeLayout) ->
+	nodeStyle.setLocation(location) ->
+	nodeStyle.setShape(shapeType) ->
+	styles.nodeStyle.add(nodeStyle) ->
+	node.children.transformNodeLayout(styles) ->
+	node.outgoingEdges.transformEdgeLayout(styles)
+;
+
+// transforms the edge layout information
+Void transformEdgeLayout(KEdge edge, ogml::StylesType styles):
+	let edgeLayout = edge.getEdgeLayout():
+	let edgeStyle = new ogml::EdgeLayoutType:
+	edgeStyle.setIdRef(getId(edge)) ->
+	edgeLayout.bendPoints.transformBendPoint(edgeStyle) ->
+	styles.edgeStyle.add(edgeStyle)
+;
+
+// transforms a bend point
+Void transformBendPoint(KPoint point, ogml::EdgeLayoutType edgeStyle):
+	let ogmlPoint = new ogml::PointType:
+	ogmlPoint.setX(point.x) ->
+	ogmlPoint.setY(point.y) ->
+	edgeStyle.point.add(ogmlPoint)
+; 
 
 // returns the ogml counterpart for the given kgraph edge
 create ogml::EdgeType getEdge(KEdge edge):

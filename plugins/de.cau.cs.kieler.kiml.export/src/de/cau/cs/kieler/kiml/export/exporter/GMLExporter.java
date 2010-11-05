@@ -24,7 +24,8 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.export.ExportUtil;
 import de.cau.cs.kieler.kiml.export.ExporterConfiguration;
@@ -51,7 +52,7 @@ public class GMLExporter extends AbstractExporter {
 
     /** the option for the include of layout information. */
     private static final ExporterOption<Boolean> OPTION_LAYOUT_INFORMATION =
-            new ExporterOption<Boolean>("layoutInformation",
+            new ExporterOption<Boolean>("gml.layoutInformation",
                     "Include layout information?", true);
 
     /**
@@ -110,10 +111,12 @@ public class GMLExporter extends AbstractExporter {
         monitor.done();
     }
 
+    private static final IProperty<Offset> OFFSET_PROPERTY =
+            new Property<Offset>("de.cau.cs.kieler.kiml.export.offsetProperty",
+                    new Offset());
+
     /**
-     * Serializes the given KGraph using GML.<br>
-     * This method will attach additional KGraphData to the graph and it's
-     * children.
+     * Serializes the given KGraph using GML.
      * 
      * @param monitor
      *            the progress monitor
@@ -141,7 +144,6 @@ public class GMLExporter extends AbstractExporter {
         // process nodes
         Stack<KNode> nodes = new Stack<KNode>();
         nodes.addAll(graph.getChildren());
-        graph.getData().add(new Offset());
         while (!nodes.isEmpty()) {
             writer.write(INDENTATION + "node [\n");
             KNode node = nodes.pop();
@@ -154,8 +156,10 @@ public class GMLExporter extends AbstractExporter {
             }
             // layout information
             if (layoutInformation) {
-                Offset offset = node.getParent().getData(Offset.class);
+                KShapeLayout parentLayout =
+                        node.getParent().getData(KShapeLayout.class);
                 KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+                Offset offset = parentLayout.getProperty(OFFSET_PROPERTY);
                 writer.write(INDENTATION2 + "graphics [\n");
                 writer.write(INDENTATION3
                         + "x "
@@ -174,7 +178,7 @@ public class GMLExporter extends AbstractExporter {
                     Offset newOffset = new Offset(offset);
                     newOffset.addX(nodeLayout.getXpos());
                     newOffset.addY(nodeLayout.getYpos());
-                    node.getData().add(newOffset);
+                    nodeLayout.setProperty(OFFSET_PROPERTY, newOffset);
                 }
             }
             // is the node located inside a compound node?
@@ -202,8 +206,10 @@ public class GMLExporter extends AbstractExporter {
                 writer.write(INDENTATION2 + "target " + targetId + "\n");
                 // layout information
                 if (layoutInformation) {
-                    Offset offset = node.getParent().getData(Offset.class);
+                    KShapeLayout parentLayout =
+                            node.getParent().getData(KShapeLayout.class);
                     KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                    Offset offset = parentLayout.getProperty(OFFSET_PROPERTY);
                     writer.write(INDENTATION2 + "graphics [\n");
                     writer.write(INDENTATION3 + "type \"line\"\n");
                     writer.write(INDENTATION3 + "Line [\n");
@@ -253,7 +259,7 @@ public class GMLExporter extends AbstractExporter {
     /**
      * A helper class for remembering node offsets.
      */
-    private static class Offset extends KGraphDataImpl {
+    private static class Offset {
         private float x = 0;
         private float y = 0;
 

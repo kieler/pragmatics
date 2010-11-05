@@ -15,8 +15,16 @@ package de.cau.cs.kieler.kiml.export.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.ogdf.ogml.ShapeType1;
+
+import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
  * A utility class that provides functionality that can be accessed by xtend
@@ -75,7 +83,7 @@ public final class XtendUtil {
 
     /**
      * This is a workaround method for xtend to solve the issue of missing
-     * methods, which are not really missing, but xtend thinks so. It calls a
+     * methods, which are not really missing, but unknown to xtend. It calls a
      * method of a class instance with a number of parameters.
      * 
      * @param instance
@@ -124,5 +132,47 @@ public final class XtendUtil {
     public static void callStringMethod(final Object instance,
             final String methodName, final String param) {
         callMethod(instance, methodName, param);
+    }
+
+    /**
+     * Returns the shape layout for the given node.
+     * 
+     * @param node
+     *            the node
+     * @return the shape layout
+     */
+    public static KShapeLayout getShapeLayout(final KNode node) {
+        KShapeLayout shapeLayout = node.getData(KShapeLayout.class);
+        return shapeLayout;
+    }
+
+    /**
+     * Returns the edge layout for the given edge.
+     * 
+     * @param edge
+     *            the edge
+     * @return the edge layout
+     */
+    public static KEdgeLayout getEdgeLayout(final KEdge edge) {
+        KEdgeLayout shapeLayout = edge.getData(KEdgeLayout.class);
+        return shapeLayout;
+    }
+
+    /**
+     * Applies the bounds defined by a shape layout to an ogml shape.
+     * 
+     * @param shape
+     *            the shape
+     * @param shapeLayout
+     *            the shape layout
+     */
+    public static void ogmlSetShapeBounds(final ShapeType1 shape,
+            final KShapeLayout shapeLayout) {
+        int widthInt = Math.round(shapeLayout.getWidth());
+        int heightInt = Math.round(shapeLayout.getHeight());
+        BigInteger widthBigInt = BigInteger.valueOf(widthInt);
+        BigInteger heightBigInt = BigInteger.valueOf(heightInt);
+        shape.setWidth(widthBigInt);
+        shape.setHeight(heightBigInt);
     }
 }
