@@ -34,6 +34,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * @author msp
  */
 public class RandomLayoutProvider extends AbstractLayoutProvider {
+    
+    /** the layout provider id. */
+    public static final String ID = "de.cau.cs.kieler.kiml.layouter.random";
 
     /** default value for aspect ratio. */
     private static final float DEF_ASPECT_RATIO = 1.6f;

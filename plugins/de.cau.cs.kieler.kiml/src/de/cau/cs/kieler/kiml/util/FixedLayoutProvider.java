@@ -38,6 +38,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class FixedLayoutProvider extends AbstractLayoutProvider {
 
+    /** the layout provider id. */
+    public static final String ID = "de.cau.cs.kieler.kiml.layouter.fixed";
+    
     /**
      * {@inheritDoc}
      */
