@@ -97,12 +97,14 @@ public class KaomFigureProvider implements IRenderingProvider {
             final EObject object) {
         if (input.equals("_IconDescription")) {
             return createFigureFromIconDescription(object);
-        } else if (input.equals("ptolemy.actor.lib.MonitorValue")) {
+        } else if (input.equals("MonitorValue")) {
             return createMonitorValue(object);
         } else if (input.equals("valueDisplay")) {
             return createConstFigure(object);
         } else if (input.equals("Director")) {
             return createDirector();
+        } else if (input.equals("accumulator")) {
+            return createAccumulator();
         } else if (input.equals("connection")) {
             if (oldFigure instanceof PolylineConnectionEx) {
                 ((PolylineConnectionEx) oldFigure).setTargetDecoration(null);
@@ -399,6 +401,14 @@ public class KaomFigureProvider implements IRenderingProvider {
                 + " height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
         return createSvg(directorsvg);
     }
+    
+    private IFigure createAccumulator() {
+        String accsvg = "<svg height=\"41\" width=\"41\" >"
+                        + "<rect height=\"40\" style=\"fill:white;stroke:black;stroke-width:1\" width=\"40\" x=\"0.0\" y=\"0.0\" />"
+                        + "<path d=\"m 29.126953,6.2304687 0,3.0410157 -13.833984,0 8.789062,9.3515626 -8.789062,10.335937 14.554687,0 0,3.041016 -18.246093,0 0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
+                        + "</svg>";
+        return createSvg(accsvg);
+    }
 
     /**
      * method for creating a custom monitorvalue figure.
@@ -543,29 +553,12 @@ public class KaomFigureProvider implements IRenderingProvider {
                             EditorIcon icon = icons.get(0);
                             Icon ic = icon.createIcon();
                             Figure shape = icon.createBackgroundFigure();
-                            /*
-                             shape.getBounds().setRect(0, 0, shape.getBounds().getWidth(),
-                                     shape.getBounds().getHeight());
-                                     */
                             Image img;
-                            /*
-                            if (shape instanceof ImageFigure) {
-                                img = ((ImageFigure) shape).getImage();
-                            } else {
-                            // Figure shape2 = icon.createFigure();
-                            // int testint = ((FigureIcon)ic).getIconHeight();
-                            //shape.getOrigin().setLocation(0, 0);
-                            FigureIcon fIcon = new FigureIcon(shape, true);// new FigureIcon(shape,
-                                                                           // true);
-                            img = fIcon.getImage(); // ((FigureIcon)ic).getImage();
-                            }
-                            */
                             img = getImageFromFigure(shape);
                             BufferedImage resizedImage = new BufferedImage(img.getWidth(null),
                                     img.getHeight(null), BufferedImage.TYPE_INT_RGB);
                             Graphics2D g = resizedImage.createGraphics();
                             g.drawImage(img, 0, 0, null);
-                            // g.drawImage(img, 0, 0, 60, 45, null);
                             g.dispose();
                             g.setComposite(AlphaComposite.Src);
                             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
@@ -574,12 +567,9 @@ public class KaomFigureProvider implements IRenderingProvider {
                                     RenderingHints.VALUE_RENDER_QUALITY);
                             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                     RenderingHints.VALUE_ANTIALIAS_ON);
-                            // ((BufferedImage)img).
-                            ScalableImageFigure fig = new ScalableImageFigure(
-                                    /* makeSWTImage(Display.getCurrent(), resizedImage) */new org.eclipse.swt.graphics.Image(
+                            ScalableImageFigure fig = new ScalableImageFigure(new org.eclipse.swt.graphics.Image(
                                             Display.getCurrent(), CoreUiUtil
                                                     .convertAWTImageToSWT(resizedImage)));
-                            // int g = 7;
                             return fig;
                         }
                         svg = repairSvg(svg);

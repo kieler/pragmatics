@@ -4,12 +4,12 @@
    <extension
          point="de.cau.cs.kieler.karma">
       <configuration
-            Priority="5"
+            Priority="2"
             RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomFigureProvider">
          <conditions>
             <customCondition
                   condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  figureParam="ptolemy.actor.lib.MonitorValue"
+                  figureParam="MonitorValue"
                   figureSize="160,30"
                   key="ptolemyClass"
                   layoutParam="ptolemy.actor.lib.MonitorValue"
@@ -28,6 +28,12 @@
                   key="value"
                   layoutParam="valueDisplay"
                   value="value">
+            </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="accumulator"
+                  key="ptolemyClass"
+                  value="ptolemy.actor.lib.Accumulator">
             </customCondition>
             <compoundCondition
                   figureParam="icon">
@@ -59,7 +65,7 @@
          </package>
       </configuration>
       <configuration
-            Priority="6"
+            Priority="3"
             RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomFigureProvider">
          <conditions>
             <customCondition
