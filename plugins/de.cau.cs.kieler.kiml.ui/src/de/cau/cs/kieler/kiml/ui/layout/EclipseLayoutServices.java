@@ -291,6 +291,7 @@ public class EclipseLayoutServices extends LayoutServices {
             final boolean progressBar, final boolean layoutAncestors) {
         DiagramLayoutManager manager = getManager(editorPart, editPart);
         if (manager != null) {
+            manager.setLayoutConfig(null);
             manager.layout(editorPart, editPart, animate, progressBar,
                     layoutAncestors, false);
             return manager;

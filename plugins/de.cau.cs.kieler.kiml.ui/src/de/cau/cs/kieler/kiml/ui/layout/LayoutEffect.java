@@ -24,6 +24,8 @@ import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
+import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
 
 /**
  * Performs automatic layout on a diagram editor for a given selection.
@@ -47,6 +49,8 @@ public class LayoutEffect extends AbstractEffect {
     private boolean layoutAncestors = false;
     /** the diagram layout manager that has been used for layout. */
     private DiagramLayoutManager manager;
+    /** additional layout options configuration. */
+    private VolatileLayoutConfig layoutConfig;
 
     /**
      * Create a new layout effect for the given diagram editor and EObject.
@@ -107,7 +111,7 @@ public class LayoutEffect extends AbstractEffect {
      * Create a new layout effect for the given diagram editor and EObject.
      * 
      * @param editor the diagram editor containing the diagram to layout
-     * @param object the domain model object to layout
+     * @param object the domain model element to layout
      * @param zoomToFit whether zoom to fit shall be performed
      * @param progressBar whether a progress bar shall be displayed
      * @param ancestors whether to include the ancestors in the layout process
@@ -121,6 +125,23 @@ public class LayoutEffect extends AbstractEffect {
         this.layoutAncestors = ancestors;
         this.doAnimate = animation;
     }
+    
+    /**
+     * Set a layout option value for this layout effect. The value is only applied for this layout
+     * run and is thrown away afterwards.
+     * 
+     * @param object the domain model element for which the option shall be set
+     * @param option the layout option to set
+     *     (see {@link de.cau.cs.kieler.kiml.options.LayoutOptions LayoutOptions})
+     * @param value the value for the layout option
+     */
+    public void setOption(final EObject object, final IProperty<?> option, final Object value) {
+        if (layoutConfig == null) {
+            layoutConfig = new VolatileLayoutConfig();
+        }
+        layoutConfig.setFocus(object);
+        layoutConfig.setProperty(option, value);
+    }
 
     /**
      * {@inheritDoc}
@@ -128,6 +149,7 @@ public class LayoutEffect extends AbstractEffect {
     public void execute() {
         manager = EclipseLayoutServices.getInstance().getManager(diagramEditor, editPart);
         if (manager != null) {
+            manager.setLayoutConfig(layoutConfig);
             manager.layout(diagramEditor, editPart, doAnimate, useProgMonitor, layoutAncestors,
                     false, doZoom);
         }
