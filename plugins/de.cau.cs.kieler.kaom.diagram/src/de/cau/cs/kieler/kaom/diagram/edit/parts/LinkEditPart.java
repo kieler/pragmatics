@@ -77,8 +77,8 @@ public class LinkEditPart extends AdvancedRenderingConnectionEditPart implements
 			this.setForegroundColor(ColorConstants.black);
 			this.setBackgroundColor(ColorConstants.black);
 
-			//setTargetDecoration(createTargetDecoration());
-			setTargetDecoration(null);
+			setTargetDecoration(createTargetDecoration());
+			
 		}
 
 		/**
