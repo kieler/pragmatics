@@ -22,7 +22,6 @@ import org.eclipse.gmf.runtime.common.ui.services.parser.ParserOptions;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ITextAwareEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.LabelDirectEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.figures.IBorderItemLocator;
 import org.eclipse.gmf.runtime.diagram.ui.l10n.DiagramColorRegistry;
@@ -42,17 +41,18 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.swt.widgets.Display;
+
 import de.cau.cs.kieler.kaom.diagram.edit.policies.KaomTextSelectionEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
 import de.cau.cs.kieler.kaom.diagram.providers.KaomParserProvider;
+import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
 
 /**
  * @generated
  */
-public class EntityName2EditPart extends LabelEditPart implements
+public class EntityName2EditPart extends AdvancedRenderingLabelEditPart implements
 		ITextAwareEditPart, IBorderItemEditPart {
 
 	/**
@@ -548,7 +548,7 @@ public class EntityName2EditPart extends LabelEditPart implements
 	/**
 	 * @generated
 	 */
-	protected void handleNotificationEvent(Notification event) {
+	public void handleNotificationEvent(Notification event) {
 		Object feature = event.getFeature();
 		if (NotationPackage.eINSTANCE.getFontStyle_FontColor().equals(feature)) {
 			Integer c = (Integer) event.getNewValue();
