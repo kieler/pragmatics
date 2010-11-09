@@ -266,6 +266,31 @@ public class LayoutPropertySource implements IPropertySource {
     }
     
     /**
+     * Return an array of choices for the layout hint option.
+     * 
+     * @return the layout hint choices
+     */
+    public static String[] getLayoutHintChoices() {
+        if (layoutHintChoices == null) {
+            createLayoutHintChoices();
+        }
+        return layoutHintChoices;
+    }
+    
+    /**
+     * Return the layout hint at the given index of the layout hint choices array.
+     * 
+     * @param choiceIndex an index for {@link #getLayoutHintChoices()}
+     * @return the corresponding layout hint
+     */
+    public static String getLayoutHint(final int choiceIndex) {
+        if (layoutHintValues == null) {
+            createLayoutHintChoices();
+        }
+        return layoutHintValues[choiceIndex];
+    }
+    
+    /**
      * Returns an identifier for a displayed layout hint name.
      * 
      * @param displayedName a displayed name of a layout provider or a layout type

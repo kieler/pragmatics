@@ -41,6 +41,8 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
         private String associatedTypeName;
         /** identifier of the associated diagram type or element type. */
         private String associatedTypeId;
+        /** description of the type of element (diagram type / model element / edit part). */
+        private String typeDesc;
         /** layout option data. */
         private LayoutOptionData<?> optionData;
         /** the current value. */
@@ -51,13 +53,16 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
          * 
          * @param thetypeName name of the associated diagram type or element type
          * @param thetypeId identifier of the associated diagram type or element type
+         * @param thetypeDesc description of the type of element
+         *         (diagram type / model element / edit part)
          * @param theoptionData layout option data
          * @param thevalue the current value
          */
-        public DataEntry(final String thetypeName, final String thetypeId,
+        public DataEntry(final String thetypeName, final String thetypeId, final String thetypeDesc,
                 final LayoutOptionData<?> theoptionData, final Object thevalue) {
             this.associatedTypeName = thetypeName;
             this.associatedTypeId = thetypeId;
+            this.typeDesc = thetypeDesc;
             this.optionData = theoptionData;
             this.value = thevalue;
         }
@@ -106,13 +111,44 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
         public void setValue(final Object thevalue) {
             this.value = thevalue;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object instanceof DataEntry) {
+                DataEntry other = (DataEntry) object;
+                return this.associatedTypeId.equals(other.associatedTypeId)
+                        && this.optionData.equals(other.optionData);
+            } else {
+                return false;
+            }
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return associatedTypeId.hashCode() + optionData.hashCode();
+        }
     }
+    
+    /** the "Element" column. */
+    private static final int COL_ELEMENT = 0;
+    /** the "Type" column. */
+    private static final int COL_TYPE = 1;
+    /** the "Option" column. */
+    private static final int COL_OPTION = 2;
+    /** the "Value" column. */
+    private static final int COL_VALUE = 3;
     
     /**
      * {@inheritDoc}
      */
     public Image getColumnImage(final Object element, final int columnIndex) {
-        if (element instanceof DataEntry && columnIndex == 2) {
+        if (element instanceof DataEntry && columnIndex == COL_VALUE) {
             DataEntry entry = (DataEntry) element;
             KimlUiPlugin.Images images = KimlUiPlugin.getDefault().getImages();
             switch (entry.optionData.getType()) {
@@ -142,11 +178,13 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
         if (element instanceof DataEntry) {
             DataEntry entry = (DataEntry) element;
             switch (columnIndex) {
-            case 0:
+            case COL_ELEMENT:
                 return entry.associatedTypeName;
-            case 1:
+            case COL_TYPE:
+                return entry.typeDesc;
+            case COL_OPTION:
                 return entry.optionData.getName();
-            case 2:
+            case COL_VALUE:
                 if (entry.optionData.getType() == LayoutOptionData.Type.ENUM
                         && entry.value instanceof Integer) {
                     return entry.optionData.getEnumValue((Integer) entry.value).toString();
