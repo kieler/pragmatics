@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.cau.cs.kieler.keg"
-      label="Graphs Editor"
-      version="0.1.0.qualifier"
+      label="KIELER Editor for Graphs"
+      version="0.2.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description>

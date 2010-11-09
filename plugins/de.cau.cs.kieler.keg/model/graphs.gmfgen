@@ -1626,7 +1626,7 @@
   <plugin
       name="KEG"
       provider="Christian-Albrechts-Universität zu Kiel"
-      version="0.1.0.qualifier">
+      version="0.2.0.qualifier">
     <requiredPlugins>org.eclipse.draw2d</requiredPlugins>
     <requiredPlugins>org.eclipse.gmf.runtime.draw2d.ui</requiredPlugins>
     <requiredPlugins>de.cau.cs.kieler.core.ui</requiredPlugins>
