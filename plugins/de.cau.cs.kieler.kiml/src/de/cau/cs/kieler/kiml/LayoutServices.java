@@ -22,10 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.options.Shape;
 
 /**
  * Singleton class for access to the KIML layout services. This class is used
@@ -62,18 +59,12 @@ public class LayoutServices {
     /** mapping of object identifiers to associated options. */
     private Map<String, Map<String, Object>> id2OptionsMap
             = new HashMap<String, Map<String, Object>>();
-    /** map of enumeration classes to layout option identifiers. */
-    private static Map<Class<? extends Enum<?>>, String> enum2idMap =
-            new HashMap<Class<? extends Enum<?>>, String>();
 
     /**
      * The default constructor is hidden to prevent others from instantiating
      * this singleton class.
      */
     protected LayoutServices() {
-        enum2idMap.put(EdgeLabelPlacement.class, LayoutOptions.EDGE_LABEL_PLACEMENT_ID);
-        enum2idMap.put(PortSide.class, LayoutOptions.PORT_SIDE_ID);
-        enum2idMap.put(Shape.class, LayoutOptions.SHAPE_ID);
     }
 
     /**
@@ -149,13 +140,8 @@ public class LayoutServices {
          * 
          * @param optionData data instance of the layout option to register
          */
-        @SuppressWarnings("unchecked")
         public void addLayoutOption(final LayoutOptionData<?> optionData) {
             layoutOptionMap.put(optionData.getId(), optionData);
-            Class<?> clazz = optionData.getOptionClass();
-            if (clazz != null && clazz.isEnum()) {
-                enum2idMap.put((Class<Enum<?>>) clazz, optionData.getId());
-            }
         }
 
         /**
@@ -237,26 +223,6 @@ public class LayoutServices {
      */
     public final LayoutOptionData<?> getLayoutOptionData(final String id) {
         return layoutOptionMap.get(id);
-    }
-    
-    /**
-     * Returns a layout option data for the given enumeration class.
-     * 
-     * @param <T> enumeration class type
-     * @param clazz the enumeration class
-     * @return a corresponding layout option data, or {@code null} if there is no such
-     *     option data
-     */
-    @SuppressWarnings("unchecked")
-    public final <T extends Enum<?>> LayoutOptionData<T> getLayoutOptionData(final Class<T> clazz) {
-        String optionId = enum2idMap.get(clazz);
-        if (optionId != null) {
-            LayoutOptionData<?> optionData = layoutOptionMap.get(optionId);
-            if (optionData != null) {
-                return (LayoutOptionData<T>) optionData;
-            }
-        }
-        return null;
     }
 
     /**
