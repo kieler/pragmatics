@@ -84,14 +84,12 @@ public class EvolveHandler extends AbstractHandler {
                     this.model.autoRateAll(new SubProgressMonitor(this.monitor, ticks));
                 }
 
-                assert (this.model.getPopulation() != null);
+                assert this.model.getPopulation() != null;
 
             } else {
                 EvolPlugin.showError("The evolution job did not complete successfully.", null);
             }
         }
-
-
     }
 
     /**
@@ -162,23 +160,23 @@ public class EvolveHandler extends AbstractHandler {
                 (EvolView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                         .findView(EvolView.ID);
 
-        if ((view == null)) {
+        if (view == null) {
             return null;
         }
 
         EvolModel model = view.getEvolModel();
-        if (((model == null) || !model.isValid())) {
+        if ((model == null) || !model.isValid()) {
             return null;
         }
 
         String maxStepsAttr = executionEvent.getParameter(PARAM_MAX_STEPS);
-        int maxSteps = (maxStepsAttr == null ? MAX_STEPS : Integer.parseInt(maxStepsAttr));
+        int maxSteps = maxStepsAttr == null ? MAX_STEPS : Integer.parseInt(maxStepsAttr);
 
         String stepsBeforeAutoRatingAttr =
                 executionEvent.getParameter(PARAM_STEPS_PER_AUTO_RATING);
         int stepsBeforeAutoRating =
-                (stepsBeforeAutoRatingAttr == null ? STEPS_PER_AUTO_RATING : Integer
-                        .parseInt(stepsBeforeAutoRatingAttr));
+                stepsBeforeAutoRatingAttr == null ? STEPS_PER_AUTO_RATING : Integer
+                        .parseInt(stepsBeforeAutoRatingAttr);
 
         EvolveJob evolveJob = new EvolveJob("Evolving", model);
 
@@ -217,6 +215,6 @@ public class EvolveHandler extends AbstractHandler {
         if (p == 1) {
             return true;
         }
-        return (((i + 1) % p) == 0);
+        return ((i + 1) % p) == 0;
     }
 }
