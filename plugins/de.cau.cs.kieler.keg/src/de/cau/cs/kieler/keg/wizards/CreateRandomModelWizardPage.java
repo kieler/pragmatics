@@ -35,7 +35,7 @@ import de.cau.cs.kieler.keg.KEGPlugin;
 public class CreateRandomModelWizardPage extends WizardPage {
 
     /** extension for graph files. */
-    public static final String FILE_EXT = "graph";
+    public static final String FILE_EXT = "keg";
 
     /** preference name for number of nodes. */
     public static final String PREF_NODES = "nodes";
