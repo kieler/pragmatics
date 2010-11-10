@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -103,15 +104,8 @@ public final class EvolUtil {
 
             assert manager != null : "Could not get a layout manager for " + editor.getTitle();
 
-            // IKielerProgressMonitor monitor =
-            // EvolUtil.calculateLayout(manager, editor);
-
-            // if (monitor != null) {
-            // Apply the layout to the diagram in the editor.
-            // manager.applyAnimatedLayout(true /* animate */, false /*
-            // cacheLayout */, 0);
-            manager.applyAndZoom(0, true, false);
-            // }
+            int nodeCount = 0;
+            manager.applyAndZoom(nodeCount, true /* animate */, false /* cacheLayout */);
 
             return manager;
         }
@@ -707,36 +701,38 @@ public final class EvolUtil {
     /**
      * Auto-rate the given population in the appropriate editors.
      *
-     * @param thePopulation
-     *            the {@link Population} to be rated
+     * @param thePopulationIterator
+     *            an iterator over the {@link Population} to be rated
      * @param theMonitor
      *            a progress monitor; may be {@code null}
      * @param theWeightsGenomes
      *            a population of genomes encoding the metric weights
      */
     public static void autoRate(
-            final Population thePopulation, final IProgressMonitor theMonitor,
+            final ListIterator<Genome> thePopulationIterator, final IProgressMonitor theMonitor,
             final Population theWeightsGenomes) {
         // TODO: move code into a class RatingPopulation extends Population.
-        if (thePopulation == null) {
+        if (thePopulationIterator == null) {
             throw new IllegalArgumentException();
         }
 
         // Ensure there is a monitor of some sort.
         IProgressMonitor monitor = (theMonitor != null) ? theMonitor : new NullProgressMonitor();
 
-        int size = thePopulation.size();
-        int total = size;
+        // size of the iterator is unknown
+        // int total = size;
         final int scale = 100;
 
         try {
-            monitor.beginTask("Auto-rating individuals.", total * scale);
+            monitor.beginTask("Auto-rating individuals.", IProgressMonitor.UNKNOWN);
 
             // Calculate auto-rating for each individual.
-            for (final Genome ind : thePopulation) {
+            while (thePopulationIterator.hasNext()) {
                 if (monitor.isCanceled()) {
                     throw new OperationCanceledException();
                 }
+
+                Genome ind = thePopulationIterator.next();
 
                 Runnable runnable = new IndividualAutoRaterRunnable(ind, theWeightsGenomes);
 

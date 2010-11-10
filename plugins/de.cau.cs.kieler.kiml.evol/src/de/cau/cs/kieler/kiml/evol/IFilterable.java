@@ -18,6 +18,7 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.Collection;
 
+import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
 
 /**
@@ -32,12 +33,12 @@ import de.cau.cs.kieler.core.util.ICondition;
  */
 public interface IFilterable<CollectionType extends Collection<T>, T> {
     /**
-     * Filters the collection by the given filter.
+     * Returns an iterator that filters the collection by the given filter.
      *
      * @param filter
-     *            an {@link IItemFilter}
-     * @return a copy of the collection that contains only the items that pass
-     *         the given filter.
+     *            an {@link ICondition}
+     * @return an iterator that traverses the collection and returns only the
+     *         items that pass the given filter.
      */
-    CollectionType select(final ICondition<T> filter);
+    FilteredIterator<T> filteredIterator(final ICondition<T> filter);
 }

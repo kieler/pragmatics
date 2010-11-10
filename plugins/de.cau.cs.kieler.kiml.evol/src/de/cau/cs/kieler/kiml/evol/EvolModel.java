@@ -26,6 +26,7 @@ import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
@@ -112,7 +113,7 @@ public final class EvolModel {
         final Population predictors = getRatingPredictors();
         assert predictors != null;
 
-        EvolUtil.autoRate(population, theMonitor, predictors);
+        EvolUtil.autoRate(population.listIterator(), theMonitor, predictors);
 
         // Notify listeners.
         afterChange(ModelChangeType.AUTO_RATING);
@@ -199,7 +200,8 @@ public final class EvolModel {
             monitor.worked(afterStepWork * scale);
 
             // Calculate auto-rating for the yet unrated individuals.
-            final Population unrated = getPopulation().select(Population.UNRATED_FILTER);
+            final FilteredIterator<Genome> unrated =
+                    getPopulation().filteredIterator(Population.UNRATED_FILTER);
             assert unrated != null;
 
             final Population predictors = this.getRatingPredictors();
@@ -370,19 +372,18 @@ public final class EvolModel {
             monitor.beginTask("Resetting the model.", totalWork * scale);
 
             // Get the ID of the current layout provider.
-            final Maybe<LayoutProviderData> maybe = new Maybe<LayoutProviderData>();
-
-               MonitoredOperation.runInUI(new Runnable() {
+            final Maybe<LayoutProviderData> maybeProviderData = new Maybe<LayoutProviderData>();
+            Runnable runnable = new Runnable() {
                 public void run() {
                     IEditorPart editor = EvolUtil.getCurrentEditor();
                     EditPart part = EvolUtil.getCurrentEditPart(editor);
                     LayoutProviderData providerData =
                             EvolUtil.getLayoutProviderData(editor, part);
-                    maybe.set(providerData);
+                    maybeProviderData.set(providerData);
                 }
-            }, true /* synch */);
-
-            LayoutProviderData providerData = maybe.get();
+            };
+            MonitoredOperation.runInUI(runnable, true /* synch */);
+            LayoutProviderData providerData = maybeProviderData.get();
             this.layoutProviderId = providerData != null ? providerData.getId() : null;
 
             // Create an initial population of layout option genomes.

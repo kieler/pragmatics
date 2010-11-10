@@ -17,9 +17,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.evol.IFilterable;
-import de.cau.cs.kieler.kiml.evol.IItemFilter;
 
 /**
  * A population is a list of individuals (genomes).
@@ -87,50 +87,6 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
     }
 
     /**
-     * Randomly chooses one of the individuals in the list.
-     *
-     * @return an individual that is in the list, or {@code null}, if the list
-     *         is empty.
-     */
-    public Genome pick() {
-        Genome result = null;
-        if (size() > 0) {
-            int pos = (int) (Math.random() * size());
-            result = get(pos);
-        }
-        return result;
-    }
-
-    /**
-     *
-     * @param filter
-     *            an {@link IItemFilter} for {@link Genome} objects
-     * @return a new {@link Population} containing the {@link Genome} objects
-     *         that pass the filter.
-     */
-    public Population select(final ICondition<Genome> filter) {
-        Population result = new Population();
-        for (final Genome g : this) {
-            // TODO: use FilteredIterator from kieler.core(.util)
-            if (filter.evaluate(g)) {
-                result.add(g);
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        String newLine = System.getProperty("line.separator");
-        StringBuilder result = new StringBuilder();
-        int i = 0;
-        for (final Genome ind : this) {
-            result.append("#" + ++i + ": " + ind.toString() + newLine);
-        }
-        return result.toString();
-    }
-
-    /**
      * @return a string containing detailed information about the population.
      */
     public String getDetails() {
@@ -149,6 +105,45 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
             result.append("Features:" + newLine);
             result.append(ind.getFeatures() + newLine);
             result.append(newLine);
+        }
+        return result.toString();
+    }
+
+    /**
+     * Get a filtered iterator over this population, using the specified filter.
+     *
+     * @param filter
+     *            the filter
+     * @return a filtered iterator over this population
+     */
+    public FilteredIterator<Genome> filteredIterator(final ICondition<Genome> filter) {
+        FilteredIterator<Genome> result =
+                new FilteredIterator<Genome>(this.listIterator(), filter);
+        return result;
+    }
+
+    /**
+     * Randomly chooses one of the individuals in the list.
+     *
+     * @return an individual that is in the list, or {@code null}, if the list
+     *         is empty.
+     */
+    public Genome pick() {
+        Genome result = null;
+        if (size() > 0) {
+            int pos = (int) (Math.random() * size());
+            result = get(pos);
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        String newLine = System.getProperty("line.separator");
+        StringBuilder result = new StringBuilder();
+        int i = 0;
+        for (final Genome ind : this) {
+            result.append("#" + ++i + ": " + ind.toString() + newLine);
         }
         return result.toString();
     }

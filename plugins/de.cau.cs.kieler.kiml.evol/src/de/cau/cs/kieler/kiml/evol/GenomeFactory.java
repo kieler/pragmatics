@@ -833,7 +833,6 @@ final class GenomeFactory {
 
         // Create the layout hint gene.
         ListItemGene hintGene = createLayoutHintGene(providerIds, providerId);
-        assert hintGene != null : "Failed to create layout hint gene for " + typeId;
         result.add(hintGene);
 
         // Collect all learnable layout options that are known by the
