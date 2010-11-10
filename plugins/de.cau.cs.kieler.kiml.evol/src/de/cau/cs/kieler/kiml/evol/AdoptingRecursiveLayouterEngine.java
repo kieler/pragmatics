@@ -13,10 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
@@ -27,13 +24,14 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
+import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
@@ -160,7 +158,24 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         KShapeLayout shapeLayout = graph.getData(KShapeLayout.class);
 
-        Set<String> usedOptions = new HashSet<String>(individual.size());
+        // Memorize important options.
+        // The LAYOUTER_HINT is needed to find out if the new one is compatible.
+        // The others are needed because otherwise, layout providers might
+        // crash.
+        IProperty<?>[] importantOptions =
+                new IProperty<?>[] { LayoutOptions.LAYOUTER_HINT, LayoutOptions.INSETS };
+        ILayoutConfig oldValues = new VolatileLayoutConfig();
+        for (IProperty<?> property : importantOptions) {
+            oldValues.setProperty(property, shapeLayout.getProperty(property));
+        }
+
+        // Remove all options to make sure the omitted properties are removed.
+        shapeLayout.getAllProperties().clear();
+
+        // Restore important options.
+        for (Entry<?, ?> entry : oldValues.getAllProperties().entrySet()) {
+            shapeLayout.setProperty((IProperty<?>) entry.getKey(), entry.getValue());
+        }
 
         LayoutServices layoutServices = LayoutServices.getInstance();
 
@@ -173,6 +188,12 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
             LayoutOptionData<?> data = layoutServices.getLayoutOptionData((String) id);
             assert data != null : "No layout option data for " + id;
+
+            // Treat layout hint.
+            if (LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id)) {
+                handleLayouterHint(gene, shapeLayout);
+                continue;
+            }
 
             Type layoutOptionType = data.getType();
 
@@ -203,44 +224,62 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
                 shapeLayout.setProperty(data, value.toString());
                 break;
             }
-
-            // memorize used options
-            usedOptions.add(data.getId());
         }
-
-        // Make sure the omitted properties are removed.
-        retainOptions(shapeLayout, usedOptions);
 
         return graph;
     }
 
     /**
-     * Removes the unused layout options from the given graph data object.
+     * Sets the layout provider hint.
      *
+     * @param gene
+     *            the gene that encodes the value to set
      * @param targetGraphData
-     *            the graph data from which options shall be removed
-     * @param usedProperties
-     *            options that shall be retained (not removed)
+     *            the graph data for which the layout provider shall be set
      */
-    private static void retainOptions(
-            final KGraphData targetGraphData, final Set<String> usedProperties) {
+    private static void handleLayouterHint(final IGene<?> gene, final KGraphData targetGraphData) {
 
-        List<Pair<IProperty<?>, Object>> allProperties = targetGraphData.getAllProperties();
-        System.out.println(allProperties);
+        // Cannot use the int value of the gene because it
+        // is the index for the internal list in the gene.
 
-        Iterator<Pair<IProperty<?>, Object>> iterator = allProperties.iterator();
-        while (iterator.hasNext()) {
-            Pair<IProperty<?>, Object> next = iterator.next();
-            IProperty<?> property = next.getFirst();
+        // Are we allowed to set the layout hint?
+        boolean canSetLayoutHint =
+                EvolPlugin.getDefault().getPreferenceStore()
+                        .getBoolean(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
 
-            if (property instanceof LayoutOptionData<?>) {
-                Object id = property.getIdentifier();
-                if (!usedProperties.contains(id)) {
-                    System.out.println("remove: " + property);
-                    targetGraphData.setProperty(property, null);
-                }
-            }
+        if (!canSetLayoutHint) {
+            // We have nothing to do, for we are not allowed
+            // to set the layout hint at all.
+            return;
         }
+
+        // Are we allowed to set the layout hint for different
+        // types?
+        boolean canSetForDifferentType =
+                EvolPlugin.getDefault().getPreferenceStore()
+                        .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
+
+        String newLayoutHintId = gene.toString();
+
+        IProperty<String> data = LayoutOptions.LAYOUTER_HINT;
+
+        String oldLayoutHintId = targetGraphData.getProperty(data);
+        assert oldLayoutHintId != null;
+
+        LayoutProviderData providerData =
+                new DefaultLayoutConfig().getLayouterData(newLayoutHintId, null);
+
+        String newType = providerData.getType();
+
+        if (!canSetForDifferentType
+                && !EvolUtil.isCompatibleLayoutProvider(oldLayoutHintId, newType)) {
+            // we are not allowed do this
+            System.err.println("Attempt to set the layout hint to incompatible type: "
+                    + newLayoutHintId);
+            return;
+        }
+
+        targetGraphData.setProperty(data, newLayoutHintId);
     }
 
     /**
@@ -257,51 +296,11 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         Object value = gene.getValue();
         Object id = gene.getId();
 
-        if (LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id)) {
-            // Cannot use the int value of the gene because it
-            // is the index for the internal list in the gene.
+        assert (!LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id));
 
-            // Are we allowed to set the layout hint?
-            boolean canSetLayoutHint =
-                    EvolPlugin.getDefault().getPreferenceStore()
-                            .getBoolean(EvolPlugin.PREF_USE_LAYOUT_HINT_FROM_GENOME);
+        // a normal string option
+        targetGraphData.setProperty(data, value.toString());
 
-            if (!canSetLayoutHint) {
-                // We have nothing to do, for we are not allowed
-                // to set the layout hint at all.
-                return;
-            }
-
-            // Are we allowed to set the layout hint for different
-            // types?
-            boolean canSetForDifferentType =
-                    EvolPlugin.getDefault().getPreferenceStore()
-                            .getBoolean(EvolPlugin.PREF_USE_DIFFERENT_TYPE_LAYOUT_HINT);
-
-            String newLayoutHintId = gene.toString();
-
-            String oldLayoutHintId = (String) targetGraphData.getProperty(data);
-            assert oldLayoutHintId != null;
-
-            LayoutProviderData providerData =
-                    new DefaultLayoutConfig().getLayouterData(newLayoutHintId, null);
-
-            String newType = providerData.getType();
-
-            if (!canSetForDifferentType
-                    && !EvolUtil.isCompatibleLayoutProvider(oldLayoutHintId, newType)) {
-                // we are not allowed do this
-                System.err.println("Attempt to set the layout hint to incompatible type: "
-                        + newLayoutHintId);
-                return;
-            }
-
-            targetGraphData.setProperty(data, newLayoutHintId);
-
-        } else {
-            // a normal string option
-            targetGraphData.setProperty(data, value.toString());
-        }
     }
 
     /**
