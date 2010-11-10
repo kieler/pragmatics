@@ -142,6 +142,8 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <import feature="org.eclipse.emf.edit.ui" version="2.5.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.gef" version="3.5.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtend" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.kex" version="0.1.0.qualifier" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.intro" version="3.4.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -174,6 +176,13 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="de.cau.cs.kieler.kaom.diagram.custom"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kaom.samples"
          download-size="0"
          install-size="0"
          version="0.0.0"
