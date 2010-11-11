@@ -33,4 +33,14 @@
             content="intro/introContent.xml">
       </configExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard"
+            icon="icons/keksIcon.jpg"
+            id="de.cau.cs.kieler.kex.ui.wizard1"
+            name="Example Import">
+      </wizard>
+   </extension>
 </plugin>
