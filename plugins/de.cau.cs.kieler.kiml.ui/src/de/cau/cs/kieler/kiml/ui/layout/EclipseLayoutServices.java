@@ -706,19 +706,8 @@ public class EclipseLayoutServices extends LayoutServices {
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
         
-        // load priorities of layout providers
-        Collection<LayoutProviderData> layoutProviderData = getLayoutProviderData();
-        List<Pair<String, String>> diagramTypes = getDiagramTypes();
-        for (LayoutProviderData data : layoutProviderData) {
-            for (Pair<String, String> diagramType : diagramTypes) {
-                String preference = getPreferenceName(data.getId(), diagramType.getFirst());
-                if (preferenceStore.contains(preference)) {
-                    data.setDiagramSupport(diagramType.getFirst(), preferenceStore.getInt(preference));
-                }
-            }
-        }
-        
         // load default options for diagram types
+        List<Pair<String, String>> diagramTypes = getDiagramTypes();
         Collection<LayoutOptionData<?>> layoutOptionData = getLayoutOptionData();
         for (Pair<String, String> diagramType : diagramTypes) {
             for (LayoutOptionData<?> data : layoutOptionData) {
@@ -732,19 +721,19 @@ public class EclipseLayoutServices extends LayoutServices {
             }
         }
         
-        // load default options for edit parts
+        // load default options for diagram elements
         StringTokenizer editPartsTokenizer = new StringTokenizer(
                 preferenceStore.getString(PREF_REG_ELEMENTS), ";");
         while (editPartsTokenizer.hasMoreTokens()) {
             registeredElements.add(editPartsTokenizer.nextToken());
         }
-        for (String editPartName : registeredElements) {
+        for (String elementName : registeredElements) {
             for (LayoutOptionData<?> data : layoutOptionData) {
-                String preference = getPreferenceName(editPartName, data.getId());
+                String preference = getPreferenceName(elementName, data.getId());
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
                     if (value != null) {
-                        registry().addOption(editPartName, data.getId(), value);
+                        registry().addOption(elementName, data.getId(), value);
                     }
                 }
             }
@@ -757,12 +746,12 @@ public class EclipseLayoutServices extends LayoutServices {
     public void storePreferences() {
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
 
-        // store set of registered edit parts
-        StringBuilder editPartsString = new StringBuilder();
-        for (String editPartName : registeredElements) {
-            editPartsString.append(editPartName + ";");
+        // store set of registered diagram elements
+        StringBuilder elementsString = new StringBuilder();
+        for (String elementName : registeredElements) {
+            elementsString.append(elementName + ";");
         }
-        preferenceStore.setValue(PREF_REG_ELEMENTS, editPartsString.toString());
+        preferenceStore.setValue(PREF_REG_ELEMENTS, elementsString.toString());
     }
 
     /**

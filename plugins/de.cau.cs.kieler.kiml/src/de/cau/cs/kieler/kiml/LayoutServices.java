@@ -190,6 +190,19 @@ public class LayoutServices {
             }
             optionsMap.put(optionId, value);
         }
+        
+        /**
+         * Remove the value of the given option.
+         * 
+         * @param id identifier of the object for which an option shall be removed
+         * @param optionId identifier of a layout option
+         */
+        public void removeOption(final String id, final String optionId) {
+            Map<String, Object> optionsMap = id2OptionsMap.get(id);
+            if (optionsMap != null) {
+                optionsMap.remove(optionId);
+            }
+        }
 
     }
 

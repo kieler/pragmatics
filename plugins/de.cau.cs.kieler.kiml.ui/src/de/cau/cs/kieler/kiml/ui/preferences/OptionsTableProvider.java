@@ -37,12 +37,12 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
 
     /** data type for row entries in the table. */
     public static class DataEntry {
-        /** name of the associated diagram type or element type. */
-        private String associatedTypeName;
+        /** name of the associated diagram type or element. */
+        private String elementName;
         /** identifier of the associated diagram type or element type. */
-        private String associatedTypeId;
-        /** description of the type of element (diagram type / model element / edit part). */
-        private String typeDesc;
+        private String elementId;
+        /** type of element (diagram type / model element / edit part). */
+        private ElementType type;
         /** layout option data. */
         private LayoutOptionData<?> optionData;
         /** the current value. */
@@ -51,38 +51,46 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
         /**
          * Creates a data entry.
          * 
-         * @param thetypeName name of the associated diagram type or element type
-         * @param thetypeId identifier of the associated diagram type or element type
-         * @param thetypeDesc description of the type of element
-         *         (diagram type / model element / edit part)
+         * @param name name of the associated diagram type or element
+         * @param id identifier of the associated diagram type or element type
+         * @param thetype type of element (diagram type / model element / edit part)
          * @param theoptionData layout option data
          * @param thevalue the current value
          */
-        public DataEntry(final String thetypeName, final String thetypeId, final String thetypeDesc,
+        public DataEntry(final String name, final String id, final ElementType thetype,
                 final LayoutOptionData<?> theoptionData, final Object thevalue) {
-            this.associatedTypeName = thetypeName;
-            this.associatedTypeId = thetypeId;
-            this.typeDesc = thetypeDesc;
+            this.elementName = name;
+            this.elementId = id;
+            this.type = thetype;
             this.optionData = theoptionData;
             this.value = thevalue;
         }
 
         /**
-         * Returns the associated type name.
+         * Returns the associated element name.
          *
-         * @return the associated type name
+         * @return the name of the associated element
          */
-        public String getAssociatedTypeName() {
-            return associatedTypeName;
+        public String getElementName() {
+            return elementName;
         }
         
         /**
-         * Returns the associated type identifier.
+         * Returns the associated element identifier.
          * 
-         * @return the associated type identifier
+         * @return the identifier of the associated element
          */
-        public String getAssociatedTypeId() {
-            return associatedTypeId;
+        public String getElementId() {
+            return elementId;
+        }
+        
+        /**
+         * Returns the type of element (diagram type / model element / edit part).
+         * 
+         * @return the element type
+         */
+        public ElementType getType() {
+            return type;
         }
 
         /**
@@ -119,7 +127,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
         public boolean equals(final Object object) {
             if (object instanceof DataEntry) {
                 DataEntry other = (DataEntry) object;
-                return this.associatedTypeId.equals(other.associatedTypeId)
+                return this.elementId.equals(other.elementId)
                         && this.optionData.equals(other.optionData);
             } else {
                 return false;
@@ -131,7 +139,7 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
          */
         @Override
         public int hashCode() {
-            return associatedTypeId.hashCode() + optionData.hashCode();
+            return elementId.hashCode() + optionData.hashCode();
         }
     }
     
@@ -179,9 +187,9 @@ public class OptionsTableProvider extends LabelProvider implements ITableLabelPr
             DataEntry entry = (DataEntry) element;
             switch (columnIndex) {
             case COL_ELEMENT:
-                return entry.associatedTypeName;
+                return entry.elementName;
             case COL_TYPE:
-                return entry.typeDesc;
+                return entry.type.getDescription();
             case COL_OPTION:
                 return entry.optionData.getName();
             case COL_VALUE:

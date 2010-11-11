@@ -135,8 +135,6 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         optionEntries = new LinkedList<OptionsTableProvider.DataEntry>();
 
         // add options for edit parts and domain model elements
-        String editPartDescr = Messages.getString("kiml.ui.54");
-        String modelElemDescr = Messages.getString("kiml.ui.55");
         Set<String> elements = EclipseLayoutServices.getInstance().getRegisteredElements();
         for (String element : elements) {
             for (LayoutOptionData<?> data : layoutOptionData) {
@@ -146,19 +144,19 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                     if (value != null) {
                         int dotIndex = element.lastIndexOf('.');
                         String partName = element.substring(dotIndex + 1);
-                        String descr = partName.endsWith("EditPart") ? editPartDescr : modelElemDescr;
+                        ElementType type = partName.endsWith("EditPart")
+                                ? ElementType.EDIT_PART : ElementType.MODEL_ELEM;
                         if (partName.endsWith("Impl")) {
                             partName = partName.substring(0, partName.length() - "Impl".length());
                         }
                         optionEntries.add(new OptionsTableProvider.DataEntry(
-                                partName, element, descr, data, value));
+                                partName, element, type, data, value));
                     }
                 }
             }
         }
         
         // add options for diagram types
-        String diagtDescr = Messages.getString("kiml.ui.56");
         List<Pair<String, String>> diagramTypeList = layoutServices.getDiagramTypes();
         for (Pair<String, String> diagramType : diagramTypeList) {
             for (LayoutOptionData<?> data : layoutOptionData) {
@@ -169,7 +167,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
                     if (value != null) {
                         optionEntries.add(new OptionsTableProvider.DataEntry(
                                 diagramType.getSecond(), diagramType.getFirst(),
-                                diagtDescr, data, value));
+                                ElementType.DIAG_TYPE, data, value));
                     }
                 }
             }
@@ -455,27 +453,33 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     @Override
     public boolean performOk() {
-        LayoutServices layoutServices = LayoutServices.getInstance();
+        EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
+        LayoutServices.Registry registry = LayoutServices.getRegistry();
         // set new values for the general options
         getPreferenceStore().setValue(EclipseLayoutServices.PREF_OBLIQUE_ROUTE,
                 obliqueCheckBox.getSelection());
         
-        // store data for the diagram element options
+        // store data for the diagram element and diagram type options
         for (OptionsTableProvider.DataEntry entry : optionEntries) {
-            Object oldValue = layoutServices.getOption(entry.getAssociatedTypeId(),
+            Object oldValue = layoutServices.getOption(entry.getElementId(),
                     entry.getOptionData().getId());
             Object newValue = entry.getValue();
-            if (oldValue == null || !oldValue.equals(newValue)) {
-                if (newValue == null) {
-                    newValue = EclipseLayoutServices.getInstance().getDefault(
-                            entry.getAssociatedTypeId(), entry.getOptionData().getId());
-                }
-                LayoutServices.getRegistry().addOption(entry.getAssociatedTypeId(),
-                        entry.getOptionData().getId(), newValue);
+            if (oldValue == null && newValue != null || !oldValue.equals(newValue)) {
                 String preference = EclipseLayoutServices.getPreferenceName(
-                        entry.getAssociatedTypeId(), entry.getOptionData().getId());
-                getPreferenceStore().setValue(preference, newValue == null
-                        ? "null" : newValue.toString());
+                        entry.getElementId(), entry.getOptionData().getId());
+                if (newValue == null) {
+                    registry.removeOption(entry.getElementId(),
+                            entry.getOptionData().getId());
+                    getPreferenceStore().setToDefault(preference);
+                    layoutServices.getRegisteredElements().remove(entry.getElementId());
+                } else {
+                    registry.addOption(entry.getElementId(),
+                            entry.getOptionData().getId(), newValue);
+                    getPreferenceStore().setValue(preference, newValue.toString());
+                    if (entry.getType() != ElementType.DIAG_TYPE) {
+                        layoutServices.getRegisteredElements().add(entry.getElementId());
+                    }
+                }
             }
         }
         

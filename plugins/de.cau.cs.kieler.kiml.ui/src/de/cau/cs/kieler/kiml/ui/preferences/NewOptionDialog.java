@@ -49,16 +49,9 @@ import de.cau.cs.kieler.kiml.ui.preferences.OptionsTableProvider.DataEntry;
  * @author msp
  */
 public class NewOptionDialog extends Dialog {
-
-    /** edit part type. */
-    private static final String TYPE_EDITPART = "editPart";
-    /** domain model element type. */
-    private static final String TYPE_EOBJECT = "eObject";
-    /** diagram type. */
-    private static final String TYPE_DIAGRAMTP = "diagramTp";
     
     /** the currently selected element type. */
-    private String elementType;
+    private ElementType elementType;
     /** the text for selection of a specific element. */
     private Text elementText;
     /** the value of the specific element or diagram type. */
@@ -127,9 +120,9 @@ public class NewOptionDialog extends Dialog {
         layout.horizontalSpacing = HORIZONTAL_GAP;
         group.setLayout(layout);
         String[][] labelsAndValues = new String[][] {
-                { Messages.getString("kiml.ui.43"), TYPE_EDITPART }, //$NON-NLS-1$
-                { Messages.getString("kiml.ui.44"), TYPE_EOBJECT }, //$NON-NLS-1$
-                { Messages.getString("kiml.ui.45"), TYPE_DIAGRAMTP } //$NON-NLS-1$
+                { Messages.getString("kiml.ui.43"), ElementType.EDIT_PART.toString() }, //$NON-NLS-1$
+                { Messages.getString("kiml.ui.44"), ElementType.MODEL_ELEM.toString() }, //$NON-NLS-1$
+                { Messages.getString("kiml.ui.45"), ElementType.DIAG_TYPE.toString() } //$NON-NLS-1$
         };
         for (int i = 0; i < labelsAndValues.length; i++) {
             Button radio = new Button(group, SWT.RADIO | SWT.LEFT);
@@ -139,12 +132,12 @@ public class NewOptionDialog extends Dialog {
             radio.setData(labelAndValue[1]);
             radio.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(final SelectionEvent event) {
-                    elementType = (String) event.widget.getData();
-                    elementBrowseButton.setEnabled(elementType.equals(TYPE_DIAGRAMTP));
+                    elementType = ElementType.valueOf((String) event.widget.getData());
+                    elementBrowseButton.setEnabled(elementType == ElementType.DIAG_TYPE);
                 }
             });
         }
-        elementType = TYPE_EDITPART;
+        elementType = ElementType.EDIT_PART;
         GridData gridData = new GridData(SWT.FILL, SWT.TOP, true, false);
         gridData.minimumWidth = MINIMUM_WIDTH;
         group.setLayoutData(gridData);
@@ -342,18 +335,14 @@ public class NewOptionDialog extends Dialog {
      * @return a new data entry, or {@code null} if the dialog contents are invalid
      */
     public DataEntry createDataEntry() {
-        if (elementType != null && elementValue != null && optionValue != null) {
+        if (elementValue != null && optionValue != null) {
             LayoutServices layoutServices = LayoutServices.getInstance();
-            String name, descr;
-            if (elementType.equals(TYPE_DIAGRAMTP)) {
+            String name;
+            if (elementType == ElementType.DIAG_TYPE) {
                 name = layoutServices.getDiagramTypeName(elementValue);
-                descr = Messages.getString("kiml.ui.56"); //$NON-NLS-1$
             } else {
                 int dotIndex = elementValue.lastIndexOf('.');
                 name = elementValue.substring(dotIndex + 1);
-                descr = elementType.equals(TYPE_EDITPART)
-                        ? Messages.getString("kiml.ui.54") //$NON-NLS-1$
-                        : Messages.getString("kiml.ui.55"); //$NON-NLS-1$
             }
             LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(optionValue);
             if (optionData != null) {
@@ -362,7 +351,7 @@ public class NewOptionDialog extends Dialog {
                     value = optionData.getDefaultDefault();
                 }
                 if (name != null && value != null) {
-                    return new DataEntry(name, elementValue, descr, optionData, value);
+                    return new DataEntry(name, elementValue, elementType, optionData, value);
                 }
             }
         }
