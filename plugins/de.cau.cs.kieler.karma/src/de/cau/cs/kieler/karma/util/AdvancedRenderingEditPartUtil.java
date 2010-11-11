@@ -24,7 +24,6 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
@@ -109,21 +108,20 @@ public class AdvancedRenderingEditPartUtil {
             final AbstractGraphicalEditPart editPart) {
         if (conditions != null) {
             IFigure oldFigure;
-            SwitchableFigure attrFigure = null;
+            SwitchableFigure switchableFigure = null;
             if ((figure instanceof SwitchableFigure)) {
-                attrFigure = (SwitchableFigure) figure;
-                oldFigure = attrFigure.getCurrentFigure();
+                switchableFigure = (SwitchableFigure) figure;
+                oldFigure = switchableFigure.getCurrentFigure();
             } else {
                 oldFigure = figure;
             }
-            IFigure newFigure = null;
             for (HashMap<String, Object> conditionElement : conditions) {
                 @SuppressWarnings("unchecked")
                 ICondition<EObject> condition = (ICondition<EObject>) conditionElement
                         .get("condition");
 
                 if (condition.evaluate(modelElement)) {
-                    if (lastCondition == condition) {
+                    if (/*lastCondition == condition*/ false) {
                         return false;
                     } else {
                         lastCondition = condition;
@@ -137,71 +135,16 @@ public class AdvancedRenderingEditPartUtil {
                         IRenderingProvider renderingProvider = (IRenderingProvider) conditionElement
                                 .get("renderingProvider");
 
-                        // setting the new figure
-                        newFigure = renderingProvider.getFigureByString(figureParam, oldFigure,
-                                modelElement);
-                        if (newFigure != null) {
-                            if (attrFigure != null) {
-                                attrFigure.setCurrentFigure(newFigure);
-                            }
-                        }
-                        // setting the LayoutManager
-                        if (figure != null) {
-                            LayoutManager newLayoutManager = renderingProvider
-                                    .getLayoutManagerByString(layoutParam,
-                                            figure.getLayoutManager(), modelElement);
-                            if (newLayoutManager != null) {
-                                figure.setLayoutManager(newLayoutManager);
-                            }
-                        }
+                        this.setFigure(renderingProvider, figureParam, oldFigure,
+                                modelElement, switchableFigure);
+                        this.setLayoutManager(figure, renderingProvider, layoutParam, modelElement);
+                        this.setBorderItemLocator(editPart, renderingProvider, borderItemParam,
+                                modelElement, figure);
 
-                        // sets the new BoderItemLocator
-                        if (editPart instanceof IBorderItemEditPart) {
-                            if (editPart.getParent() instanceof AbstractBorderedShapeEditPart) {
-                                AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart) editPart
-                                        .getParent());
-                                IFigure mainFigure = parent.getMainFigure();
-                                if (editPart instanceof AdvancedRenderingLabelEditPart) {
-                                    IFigure contentPane = editPart.getContentPane();
-                                    if (contentPane != null) {
-                                        IBorderItemLocator oldLocator = (IBorderItemLocator) contentPane
-                                                .getParent().getLayoutManager()
-                                                .getConstraint(contentPane);
-
-                                        IBorderItemLocator newLocator = renderingProvider
-                                                .getBorderItemLocatorByString(borderItemParam,
-                                                        mainFigure, oldLocator, modelElement);
-
-                                        parent.setLayoutConstraint(editPart, contentPane,
-                                                newLocator);
-                                    } else {
-                                        lastCondition = null;
-                                    }
-                                } else {
-                                    IFigure parentsParent = figure.getParent().getParent();
-                                    if (parentsParent instanceof BorderedNodeFigure) {
-                                        BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) parentsParent;
-                                        if (borderedNodeFigure.getParent() != null) {
-                                            IBorderItemLocator oldLocator = (IBorderItemLocator) borderedNodeFigure
-                                                    .getParent().getLayoutManager()
-                                                    .getConstraint(borderedNodeFigure);
-                                            IBorderItemLocator newLocator = renderingProvider
-                                                    .getBorderItemLocatorByString(borderItemParam,
-                                                            mainFigure , oldLocator, modelElement);
-                                            if (oldLocator != newLocator) {
-                                                parent.setLayoutConstraint(editPart,
-                                                    borderedNodeFigure, newLocator);
-                                            }
-                                            //int i = 5;
-                                        } 
-                                    }
-                                }
-                            }
-                        }
                         // setting a fixed node size
                         if (((figureSize.getFirst() >= 0) && (figureSize.getSecond() >= 0))
-                                && attrFigure != null) {
-                            setFixedNodeSize(attrFigure, figure, figureSize);
+                                && switchableFigure != null) {
+                            setFixedNodeSize(switchableFigure, figure, figureSize);
                         }
 
                         return true;
@@ -212,7 +155,106 @@ public class AdvancedRenderingEditPartUtil {
         return false;
     }
 
-    private void setFixedNodeSize(final SwitchableFigure attrFigure, final IFigure figure,
+    /**
+     * method that gets a figure from the renderingProvider and sets it to the SwitchableFigure for display.
+     * @param renderingProvider the renderingProvider to get the new figure from.
+     * @param figureParam the string representation of the new figure to be given to the renderingProvider.
+     * @param oldFigure the old figure.
+     * @param modelElement the modelElement whose graphical representation should be changed 
+     * @param switchableFigure the enclosing SwitchableFigure
+     */
+    private void setFigure(final IRenderingProvider renderingProvider,
+            final String figureParam, final IFigure oldFigure, final EObject modelElement,
+            final SwitchableFigure switchableFigure) {
+        // setting the new figure
+        IFigure newFigure = renderingProvider.getFigureByString(figureParam, oldFigure, modelElement);
+        if (newFigure != null) {
+            if (switchableFigure != null) {
+                switchableFigure.setCurrentFigure(newFigure);
+            }
+        }
+    }
+
+    /**
+     * Method to get a new LayoutManager from the RenderingProvider and set it.
+     * @param figure the figure whose LayoutManager should be changed.
+     * @param renderingProvider the RenderingProvider.
+     * @param layoutParam the string representation of the layout to be given to the RenderingProvider.
+     * @param modelElement the ModelElement whose figures LayoutManager should be changed.
+     */
+    private void setLayoutManager(final IFigure figure, final IRenderingProvider renderingProvider,
+            final String layoutParam, final EObject modelElement) {
+        // setting the LayoutManager
+        if (figure != null) {
+            LayoutManager newLayoutManager = renderingProvider.getLayoutManagerByString(
+                    layoutParam, figure.getLayoutManager(), modelElement);
+            if (newLayoutManager != null) {
+                figure.setLayoutManager(newLayoutManager);
+            }
+        }
+    }
+
+    /**
+     * Method to get a new BorderItemLocator from the RenderingProvider and setting it to the BorderItem.
+     * @param editPart the EditPart of the BorderItem.
+     * @param renderingProvider the RenderingProvider.
+     * @param borderItemParam the string representation of the new BorderItemLocator.
+     * @param modelElement the ModelElement of the BorderItem
+     * @param figure the Figure of the BorderItem
+     */
+    private void setBorderItemLocator(final AbstractGraphicalEditPart editPart,
+            final IRenderingProvider renderingProvider, final String borderItemParam, final EObject modelElement,
+            final IFigure figure) {
+        // sets the new BoderItemLocator
+        if (editPart instanceof IBorderItemEditPart) {
+            if (editPart.getParent() instanceof AbstractBorderedShapeEditPart) {
+                AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart) editPart
+                        .getParent());
+                IFigure mainFigure = parent.getMainFigure();
+                if (editPart instanceof AdvancedRenderingLabelEditPart) {
+                    IFigure contentPane = editPart.getContentPane();
+                    if (contentPane != null) {
+                        IBorderItemLocator oldLocator = (IBorderItemLocator) contentPane
+                                .getParent().getLayoutManager().getConstraint(contentPane);
+                        IBorderItemLocator newLocator = renderingProvider
+                                .getBorderItemLocatorByString(borderItemParam, mainFigure,
+                                        oldLocator, modelElement);
+                        parent.setLayoutConstraint(editPart, contentPane, newLocator);
+                    } else {
+                        lastCondition = null;
+                    }
+                } else {
+                    IFigure parentsParent = figure.getParent().getParent();
+                    if (parentsParent instanceof BorderedNodeFigure) {
+                        BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) parentsParent;
+                        if (borderedNodeFigure.getParent() != null) {
+                            IBorderItemLocator oldLocator = (IBorderItemLocator) borderedNodeFigure
+                                    .getParent().getLayoutManager()
+                                    .getConstraint(borderedNodeFigure);
+                            IBorderItemLocator newLocator = renderingProvider
+                                    .getBorderItemLocatorByString(borderItemParam, mainFigure,
+                                            oldLocator, modelElement);
+                            if (oldLocator != newLocator) {
+                                parent.setLayoutConstraint(editPart, borderedNodeFigure, newLocator);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to set a fixed size of a SwitchableFigure.
+     * 
+     * @param switchableFigure
+     *            enclosing figure of the figure whose size should be set.
+     * @param figure
+     *            the figure whose size should be set.
+     * @param figureSize
+     *            the new fixed size
+     */
+    private void setFixedNodeSize(final SwitchableFigure switchableFigure, final IFigure figure,
             final Pair<Integer, Integer> figureSize) {
         Dimension dim = new Dimension(figureSize.getFirst(), figureSize.getSecond());
         figure.getBounds().setSize(dim);
@@ -222,7 +264,7 @@ public class AdvancedRenderingEditPartUtil {
         if (figure.getParent() instanceof DefaultSizeNodeFigure) {
             ((DefaultSizeNodeFigure) figure.getParent()).setDefaultSize(figure.getSize().getCopy());
         }
-        attrFigure.setResizeable(false);
+        switchableFigure.setResizeable(false);
     }
 
 }
