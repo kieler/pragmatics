@@ -27,6 +27,9 @@ import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
 
+import de.cau.cs.kieler.core.annotations.Annotatable;
+import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
+import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.kaom.impl.PortImpl;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.util.CustomPortLocator;
@@ -43,7 +46,18 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object) {
-        // TODO Auto-generated method stub
+        /*
+        if (object instanceof Annotatable) {
+            Annotatable ann = (Annotatable)object;
+            StringAnnotation stringAnnotation = AnnotationsFactory.eINSTANCE.createStringAnnotation();
+            stringAnnotation.setName("ptolemyClass");            
+            stringAnnotation.setValue("ptolemy.kernel.Port");
+            ann.getAnnotations().add(stringAnnotation);
+            */
+        //IFigure figure = KaomFigureProvider.createFigureFromIconDescription(object);
+        //return figure;
+        
+        
         return null;
     }
 

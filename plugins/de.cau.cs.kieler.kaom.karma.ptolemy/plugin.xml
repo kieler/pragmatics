@@ -15,11 +15,18 @@
                   layoutParam="ptolemy.actor.lib.MonitorValue"
                   value="ptolemy.actor.lib.MonitorValue">
             </customCondition>
-            <listSizeCondition
-                  feature="childEntities"
-                  size="&lt;0"
-                  type="Entity">
-            </listSizeCondition>
+            <compoundCondition>
+               <listSizeCondition
+                     feature="childEntities"
+                     size="&lt;0"
+                     type="Entity">
+               </listSizeCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
             <customCondition
                   borderItemParam="valueDisplay"
                   condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
@@ -35,26 +42,11 @@
                   key="ptolemyClass"
                   value="ptolemy.actor.lib.Accumulator">
             </customCondition>
-            <compoundCondition
-                  figureParam="icon">
-               <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                     figureParam="icon"
-                     key="ptolemyClass"
-                     value="ptolemyClass">
-               </customCondition>
-               <customCondition
-                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                     figureParam="icon"
-                     key="_icon"
-                     value="_icon">
-               </customCondition>
-            </compoundCondition>
             <customCondition
-                  condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
                   figureParam="_IconDescription"
-                  key="ptolemyClass"
-                  value="ptolemyClass">
+                  key="language"
+                  value="ptolemy">
             </customCondition>
          </conditions>
          <editPart
@@ -244,6 +236,14 @@
                   layoutParam="Director"
                   value="ptolemy.domains.dde.kernel.DDEDirector">
             </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.RecursiveAnnotationCondition"
+                  figureParam="Director"
+                  figureSize="102,32"
+                  key="ptolemyClass"
+                  layoutParam="Director"
+                  value="ptolemy.domains.ptera.kernel.PteraDirector">
+            </customCondition>
          </conditions>
          <editPart
                editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart">
@@ -252,51 +252,120 @@
       <configuration
             RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomPortProvider">
          <conditions>
-            <customCondition
-                  borderItemParam="NORTH"
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  key="_cardinal"
-                  value="NORTH">
-            </customCondition>
-            <customCondition
-                  borderItemParam="EAST"
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  key="_cardinal"
-                  value="EAST">
-            </customCondition>
-            <customCondition
-                  borderItemParam="SOUTH"
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  key="_cardinal"
-                  value="SOUTH">
-            </customCondition>
-            <customCondition
-                  borderItemParam="WEST"
-                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
-                  key="_cardinal"
-                  value="WEST">
-            </customCondition>
-            <customCondition
-                  borderItemParam="WEST"
-                  condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
-                  key="input"
-                  value="input">
-            </customCondition>
-            <customCondition
-                  borderItemParam="EAST"
-                  condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
-                  key="output"
-                  value="output">
-            </customCondition>
-            <customCondition
-                  borderItemParam="SOUTH"
-                  condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
-                  key="inputoutput"
-                  value="inputoutput">
-            </customCondition>
+            <compoundCondition
+                  borderItemParam="NORTH">
+               <customCondition
+                     borderItemParam="NORTH"
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="_cardinal"
+                     value="NORTH">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
+                  borderItemParam="EAST">
+               <customCondition
+                     borderItemParam="EAST"
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="_cardinal"
+                     value="EAST">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
+                  borderItemParam="SOUTH">
+               <customCondition
+                     borderItemParam="SOUTH"
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="_cardinal"
+                     value="SOUTH">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
+                  borderItemParam="WEST">
+               <customCondition
+                     borderItemParam="WEST"
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="_cardinal"
+                     value="WEST">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
+                  borderItemParam="WEST">
+               <customCondition
+                     borderItemParam="WEST"
+                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     key="input"
+                     value="input">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
+                  borderItemParam="EAST">
+               <customCondition
+                     borderItemParam="EAST"
+                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     key="output"
+                     value="output">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
+                  borderItemParam="SOUTH">
+               <customCondition
+                     borderItemParam="SOUTH"
+                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     key="inputoutput"
+                     value="inputoutput">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition></compoundCondition>
          </conditions>
          <editPart
                editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.PortEditPart">
+         </editPart>
+      </configuration>
+      <configuration
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomFigureProvider">
+         <conditions>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="connection"
+                  key="language"
+                  value="ptolemy">
+            </customCondition>
+         </conditions>
+         <editPart
+               editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.LinkEditPart">
          </editPart>
       </configuration>
    </extension>

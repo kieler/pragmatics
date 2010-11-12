@@ -19,7 +19,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -59,11 +58,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import ptolemy.actor.lib.Ramp;
 import ptolemy.data.expr.XMLParser;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.Entity;
 import ptolemy.kernel.util.ConfigurableAttribute;
+import ptolemy.kernel.util.NamedObj;
 import ptolemy.moml.test.TestIconLoader;
 import ptolemy.vergil.icon.EditorIcon;
 import de.cau.cs.kieler.core.annotations.Annotatable;
@@ -80,7 +79,6 @@ import de.cau.cs.kieler.kvid.datadistributor.IDataListener;
 import diva.canvas.CanvasUtilities;
 import diva.canvas.Figure;
 import diva.canvas.toolbox.ImageFigure;
-import diva.gui.toolbox.FigureIcon;
 
 /**
  * Karma rendering provider for rendering ptolemy diagrams in kaom.
@@ -120,7 +118,7 @@ public class KaomFigureProvider implements IRenderingProvider {
     /**
      * {@inheritDoc}
      */
-    public IFigure getDefaultFigure() {
+    public static IFigure getDefaultFigure() {
         RectangleFigure defaultFigure = new RectangleFigure();
         defaultFigure.setLineWidth(1);
         defaultFigure.setForegroundColor(ColorConstants.black);
@@ -133,7 +131,6 @@ public class KaomFigureProvider implements IRenderingProvider {
      */
     public LayoutManager getLayoutManagerByString(final String input,
             final LayoutManager oldLayoutManager, final EObject object) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -141,7 +138,6 @@ public class KaomFigureProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public LayoutManager getDefaultLayoutManager() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -150,7 +146,6 @@ public class KaomFigureProvider implements IRenderingProvider {
      */
     public BorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parent,
             final Object locator, final EObject object) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -161,7 +156,7 @@ public class KaomFigureProvider implements IRenderingProvider {
      *            the file holding the svg image
      * @return a scalable image figure
      */
-    private IFigure createSvg(final String file) {
+    private static IFigure createSvg(final String file) {
         RenderedImage img = RenderedImageFactory.getInstance(file.getBytes());
         ScalableImageFigure fig = new ScalableImageFigure(img, false, true, true);
         return fig;
@@ -174,7 +169,7 @@ public class KaomFigureProvider implements IRenderingProvider {
      *            the broken svg description
      * @return a repaired version of the input that an xml parser can understand.
      */
-    private String repairString(final String input) {
+    private static String repairString(final String input) {
         String[] parts = input.split("\"");
         String output = "";
         for (int i = 0; i < parts.length; i += 2) {
@@ -195,7 +190,7 @@ public class KaomFigureProvider implements IRenderingProvider {
      *            the string describing an svg in xml
      * @return an svg description compatible with the svg standard
      */
-    private String repairSvg(final String svg) {
+    private static String repairSvg(final String svg) {
         try {
             String svgDescription = svg;
             XMLParser xmlpars = new XMLParser();
@@ -382,10 +377,8 @@ public class KaomFigureProvider implements IRenderingProvider {
             svgDescription = stringWriter.getBuffer().toString();
             return svgDescription;
         } catch (CoreException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
@@ -396,17 +389,20 @@ public class KaomFigureProvider implements IRenderingProvider {
      * 
      * @return a figure represention an director
      */
-    private IFigure createDirector() {
+    private static IFigure createDirector() {
         String directorsvg = "<svg width=\"102\" height=\"32\"><rect x=\"0\" y=\"0\" width=\"100\" "
                 + " height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
         return createSvg(directorsvg);
     }
-    
-    private IFigure createAccumulator() {
+
+    private static IFigure createAccumulator() {
         String accsvg = "<svg height=\"41\" width=\"41\" >"
-                        + "<rect height=\"40\" style=\"fill:white;stroke:black;stroke-width:1\" width=\"40\" x=\"0.0\" y=\"0.0\" />"
-                        + "<path d=\"m 29.126953,6.2304687 0,3.0410157 -13.833984,0 8.789062,9.3515626 -8.789062,10.335937 14.554687,0 0,3.041016 -18.246093,0 0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
-                        + "</svg>";
+                + "<rect height=\"40\" style=\"fill:white;stroke:black;stroke-width:1\" " 
+                +       "width=\"40\" x=\"0.0\" y=\"0.0\" />"
+                + "<path d=\"m 29.126953,6.2304687 0,3.0410157 -13.833984,0 8.789062,9.3515626 " 
+                +       "-8.789062,10.335937 14.554687,0 0,3.041016 -18.246093,0 " 
+                +       "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
+                + "</svg>";
         return createSvg(accsvg);
     }
 
@@ -522,19 +518,27 @@ public class KaomFigureProvider implements IRenderingProvider {
      *            the model element
      * @return the figure
      */
-    private IFigure createFigureFromIconDescription(final EObject object) {
-        if (object instanceof de.cau.cs.kieler.kaom.Entity) {
-            de.cau.cs.kieler.kaom.Entity myEntity = (de.cau.cs.kieler.kaom.Entity) object;
+    public static IFigure createFigureFromIconDescription(final EObject object) {
+        if (object instanceof /*de.cau.cs.kieler.kaom.Entity*/ Annotatable) {
+            /*de.cau.cs.kieler.kaom.Entity*/ Annotatable myEntity = /*(de.cau.cs.kieler.kaom.Entity)*/ (Annotatable) object;
             Annotation annotation = myEntity.getAnnotation("ptolemyClass");
             if (annotation != null && annotation instanceof StringAnnotation) {
                 String ptolemyClassString = ((StringAnnotation) annotation).getValue();
                 try {
+                    Object obj;
+                    if (ptolemyClassString.equals("ptolemy.kernel.Port")) {
+                        Class<?> ptolemy = Class.forName(ptolemyClassString);
+                        Constructor<?> constr = ptolemy.getConstructor();
+                        obj = constr.newInstance();
+                    } else {
                     Class<?> ptolemy = Class.forName(ptolemyClassString);
                     Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class,
                             String.class);
-                    Object obj = constr.newInstance(new CompositeEntity(), "cache");
-                    if (obj instanceof Entity) {
-                        Entity entity = (Entity) obj;
+                    obj = constr.newInstance(new CompositeEntity(), "cache");
+                    }
+                    if (obj instanceof /*Entity*/NamedObj) {
+                        //Entity entity = (Entity) obj;
+                        NamedObj entity = (NamedObj) obj;
                         TestIconLoader til = new TestIconLoader();
                         try {
                             til.loadIconForClass(ptolemyClassString, entity);
@@ -547,11 +551,10 @@ public class KaomFigureProvider implements IRenderingProvider {
                         String svg = "";
                         if (icons.isEmpty()) {
                             ca = (ConfigurableAttribute) entity.getAttribute("_iconDescription");
-
+                            //here is null while port
                             svg = ca.getConfigureText();
                         } else {
                             EditorIcon icon = icons.get(0);
-                            Icon ic = icon.createIcon();
                             Figure shape = icon.createBackgroundFigure();
                             Image img;
                             img = getImageFromFigure(shape);
@@ -567,9 +570,10 @@ public class KaomFigureProvider implements IRenderingProvider {
                                     RenderingHints.VALUE_RENDER_QUALITY);
                             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                     RenderingHints.VALUE_ANTIALIAS_ON);
-                            ScalableImageFigure fig = new ScalableImageFigure(new org.eclipse.swt.graphics.Image(
-                                            Display.getCurrent(), CoreUiUtil
-                                                    .convertAWTImageToSWT(resizedImage)));
+                            ScalableImageFigure fig = new ScalableImageFigure(
+                                    new org.eclipse.swt.graphics.Image(Display.getCurrent(),
+                                            CoreUiUtil.convertAWTImageToSWT(resizedImage)));
+                            int gfa;
                             return fig;
                         }
                         svg = repairSvg(svg);
@@ -580,7 +584,6 @@ public class KaomFigureProvider implements IRenderingProvider {
                         }
                     }
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
@@ -591,57 +594,38 @@ public class KaomFigureProvider implements IRenderingProvider {
         throw new RuntimeException("initializing svg from ptolemyClass failed");
 
     }
-    
-    private Image getImageFromFigure(Figure figure) {
-        if (figure instanceof ImageFigure ) {
+
+    private static Image getImageFromFigure(final Figure figure) {
+        if (figure instanceof ImageFigure) {
             ImageFigure imageFigure = (ImageFigure) figure;
             Image image = imageFigure.getImage();
             if (image != null) {
-                image = image.getScaledInstance(image.getWidth(null), image.getHeight(null), Image.SCALE_DEFAULT);
+                image = image.getScaledInstance(image.getWidth(null), image.getHeight(null),
+                        Image.SCALE_DEFAULT);
                 return image;
             } else {
-                throw new NullPointerException("Failed to get an image from "
-                        + imageFigure);
+                throw new NullPointerException("Failed to get an image from " + imageFigure);
             }
         } else {
             Rectangle2D bounds = figure.getBounds();
-            Rectangle2D size = new Rectangle2D.Double(0, 0, figure.getBounds().getWidth(), figure.getBounds().getHeight());
-            AffineTransform transform = CanvasUtilities.computeFitTransform(
-                    bounds, size);
+            Rectangle2D size = new Rectangle2D.Double(0, 0, figure.getBounds().getWidth(), figure
+                    .getBounds().getHeight());
+            AffineTransform transform = CanvasUtilities.computeFitTransform(bounds, size);
             figure.transform(transform);
 
-            BufferedImage image = new BufferedImage((int)figure.getBounds().getWidth(), (int)figure.getBounds().getHeight(),
-                    BufferedImage.TYPE_4BYTE_ABGR);
+            BufferedImage image = new BufferedImage((int) figure.getBounds().getWidth(),
+                    (int) figure.getBounds().getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D graphics = image.createGraphics();
-            
-                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
-           
+
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
 
             graphics.setBackground(new Color(255, 255, 255, 255));
-            graphics.clearRect(0, 0, (int)figure.getBounds().getWidth(), (int)figure.getBounds().getHeight());
+            graphics.clearRect(0, 0, (int) figure.getBounds().getWidth(), (int) figure.getBounds()
+                    .getHeight());
             figure.paint(graphics);
             return image;
         }
-    }
-
-    private static org.eclipse.swt.graphics.Image makeSWTImage(Display display,
-            BufferedImage /* java.awt.Image ai */bufferedImage) throws Exception {
-        int width = bufferedImage.getWidth(null);
-        int height = bufferedImage.getHeight(null);
-        // BufferedImage bufferedImage = new BufferedImage(width, height,
-        // BufferedImage.TYPE_INT_RGB);
-        // Graphics2D g2d = bufferedImage.createGraphics();
-        // g2d.drawImage(ai, 0, 0, null);
-        // g2d.dispose();
-        int[] data = ((DataBufferInt) bufferedImage.getData().getDataBuffer()).getData();
-        ImageData imageData = new ImageData(width, height, 24, new PaletteData(0xFF0000, 0x00FF00,
-                0x0000FF));
-        imageData.setPixels(0, 0, data.length, data, 0);
-
-        org.eclipse.swt.graphics.Image swtImage = new org.eclipse.swt.graphics.Image(display,
-                imageData);
-        return swtImage;
     }
 
 }
