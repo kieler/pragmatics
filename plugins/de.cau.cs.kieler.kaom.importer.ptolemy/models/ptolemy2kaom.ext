@@ -28,6 +28,7 @@ create Entity this transform(moml::EntityType entity):
 	let list = {}:
 	this.setName(entity.name) -> 
 	createTrace(this,entity,"ptolemy","kaom") ->
+	this.addAnnotation("language", "ptolemy") ->
 	this.addAnnotation("ptolemyClass",entity.class1) ->
 	addProperties(this, entity.property) ->
 	addChildPorts(this) ->
@@ -39,6 +40,7 @@ create Entity this transform(moml::EntityType entity):
 create Relation this transform(moml::RelationType relation):
 	this.setName(relation.name) ->
 	createTrace(this,relation,"ptolemy","kaom") ->
+	this.addAnnotation("language", "ptolemy") ->
 	addProperties(this, relation.property)
 ;
 
@@ -54,6 +56,7 @@ create Link this transform(moml::LinkType link, Entity parent):
 	let port = if(link.port == null) then null else parent.getPort(link.port):
 	let linkables = {}:
 	createTrace(this,link,"ptolemy","kaom") ->
+	this.addAnnotation("language", "ptolemy") ->
 	(if(port != null) then (linkables.add(port)) else (null)) ->
 	(if(relation != null) then (linkables.add(relation)) else (null)) ->
 	(if(relation1 != null) then (linkables.add(relation1)) else (null)) ->
@@ -115,10 +118,18 @@ Void addChildPorts(Entity entity):
 	let javaPorts = getPorts(entityList):
 	let explicitPorts = ptolemyEntity.port.transform():
 	let mergedPorts = mergePortAttributes(javaPorts,explicitPorts):
-	entity.childPorts.addAll(mergedPorts)
+	let annotatedPorts = addLanguageToPort(mergedPorts):
+	entity.childPorts.addAll(annotatedPorts)
+;
+
+//Add an annotation that idetifies them as a Ptolemy port to all ports.
+List[Port] addLanguageToPort(List[Port] ports):
+	ports.addAnnotation("language", "ptolemy") ->
+	ports
 ;
 
 create Port this transform(moml::PortType ptolemyPort):
+	let language = new StringAnnotation:
 	this.setName(ptolemyPort.name) -> 
 	createTrace(this,ptolemyPort,"ptolemy","kaom") ->
 	addProperties(this,ptolemyPort.property) // this might add "input"/"output" annotations
