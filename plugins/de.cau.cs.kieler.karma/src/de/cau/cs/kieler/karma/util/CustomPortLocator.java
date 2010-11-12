@@ -4,39 +4,45 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 
+
+/**
+ * Custom BorderItemLocator used by the ptolemy port position mechanism. 
+ * Works exactly the same as the normal BorderItemLocator just added a method for public access
+ * of the constraint attribute. 
+ * @author ckru
+ *
+ */
 public class CustomPortLocator extends BorderItemLocator {
 
     public CustomPortLocator(IFigure parentFigure) {
         super(parentFigure);
-        // TODO Auto-generated constructor stub
     }
 
     public CustomPortLocator(int interval, IFigure parentFigure) {
         super(interval, parentFigure);
-        // TODO Auto-generated constructor stub
     }
 
     public CustomPortLocator(IFigure parentFigure, int preferredSide) {
         super(parentFigure, preferredSide);
-        // TODO Auto-generated constructor stub
     }
 
     public CustomPortLocator(IFigure parentFigure, int preferredSide, int interval) {
         super(parentFigure, preferredSide, interval);
-        // TODO Auto-generated constructor stub
     }
 
     public CustomPortLocator(IFigure borderItem, IFigure parentFigure, Rectangle constraint) {
         super(borderItem, parentFigure, constraint);
-        // TODO Auto-generated constructor stub
     }
 
     public CustomPortLocator(IFigure borderItem, IFigure parentFigure, Rectangle constraint,
             int interval) {
         super(borderItem, parentFigure, constraint, interval);
-        // TODO Auto-generated constructor stub
     }
 
+    /**
+     * public getter for the constraint attribute while the normal one is protected.
+     * @return the constraint
+     */
     public Rectangle getPublicConstraint() {
         return this.getConstraint();
     }

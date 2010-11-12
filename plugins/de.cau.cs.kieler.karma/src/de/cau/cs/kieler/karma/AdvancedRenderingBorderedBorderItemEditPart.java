@@ -16,13 +16,11 @@
 package de.cau.cs.kieler.karma;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.BorderedBorderItemEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
@@ -71,7 +69,7 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
      * {@inheritDoc}
      */
     public boolean updateFigure(final IFigure figure) {
-        return util.updateFigure(figure, this.getModelElement(), this);
+        return util.updateFigure(figure, this.getModelElement(), this, false);
     }
 
     /**
@@ -93,7 +91,7 @@ public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
         super.refresh();
         if (updateTriggerFigure) {
             updateTriggerFigure = false;
-            updateFigure(primaryShape);
+            util.updateFigure(primaryShape, this.getModelElement(), this, true);
         }
     }
 }

@@ -81,7 +81,7 @@ public class AdvancedRenderingEditPartUtil {
         if (!(notification.isTouch())) {
             IFigure figure = primaryShape;
             if (figure != null) {
-                boolean changed = this.updateFigure(figure, modelElement, editPart);
+                boolean changed = this.updateFigure(figure, modelElement, editPart, false);
                 if (changed) {
                     LayoutManager layoutManager = figure.getLayoutManager();
                     if (layoutManager != null) {
@@ -102,10 +102,13 @@ public class AdvancedRenderingEditPartUtil {
      *            the modelelement the figure belongs to.
      * @param editPart
      *            the edit part of the model element
+     * @param forceUpdate 
+     *            if true the update will be done even if the same conditions 
+     *            have been in place before.
      * @return true if the figure actually changed, false else.
      */
     public boolean updateFigure(final IFigure figure, final EObject modelElement,
-            final AbstractGraphicalEditPart editPart) {
+            final AbstractGraphicalEditPart editPart, Boolean forceUpdate) {
         if (conditions != null) {
             IFigure oldFigure;
             SwitchableFigure switchableFigure = null;
@@ -121,7 +124,7 @@ public class AdvancedRenderingEditPartUtil {
                         .get("condition");
 
                 if (condition.evaluate(modelElement)) {
-                    if (/*lastCondition == condition*/ false) {
+                    if (lastCondition == condition && !forceUpdate) {
                         return false;
                     } else {
                         lastCondition = condition;

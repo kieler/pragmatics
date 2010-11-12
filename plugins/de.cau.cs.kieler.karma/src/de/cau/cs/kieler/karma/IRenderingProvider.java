@@ -42,13 +42,6 @@ public interface IRenderingProvider {
     IFigure getFigureByString(final String input, final IFigure oldFigure, final EObject object);
 
     /**
-     * Returns the figure to be displayed on default.
-     * 
-     * @return the default figure
-     */
-    IFigure getDefaultFigure();
-
-    /**
      * Method that returns a LayoutManager according to a given string.
      * 
      * @param input
@@ -61,13 +54,6 @@ public interface IRenderingProvider {
      */
     LayoutManager getLayoutManagerByString(final String input,
             final LayoutManager oldLayoutManager, final EObject object);
-
-    /**
-     * Returns the default LayoutManager.
-     * 
-     * @return the default LayoutManager
-     */
-    LayoutManager getDefaultLayoutManager();
 
     /**
      * Method that returns a BorderItemLocator according to a given string.

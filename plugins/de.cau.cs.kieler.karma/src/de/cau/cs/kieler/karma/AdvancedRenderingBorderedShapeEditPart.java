@@ -23,7 +23,6 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
@@ -70,7 +69,7 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
      * {@inheritDoc}
      */
     public boolean updateFigure(final IFigure figure) {
-        return util.updateFigure(figure, this.getModelElement(), this);
+        return util.updateFigure(figure, this.getModelElement(), this, false);
     }
 
     /**
@@ -92,10 +91,12 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
         super.refresh();
         if (updateTriggerFigure) {
             updateTriggerFigure = false;
-            updateFigure(primaryShape);
+            util.updateFigure(primaryShape, this.getModelElement(), this, true);
         }
     }
     
+    // modified to use a custom BorderItemLocator for ptolemy port position purpose.
+    // No functionality lost to the normal BorderItemLocator and can be used the same. 
     @Override
     protected void addBorderItem(IFigure borderItemContainer,
             IBorderItemEditPart borderItemEditPart) {

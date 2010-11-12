@@ -48,7 +48,7 @@ public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAd
      * {@inheritDoc}
      */
     public boolean updateFigure(final IFigure figure) {
-        return util.updateFigure(figure, this.getModelElement(), this);
+        return util.updateFigure(figure, this.getModelElement(), this, false);
     }
 
     /**
@@ -70,7 +70,7 @@ public class AdvancedRenderingLabelEditPart extends LabelEditPart implements IAd
         super.refresh();
         if (updateTriggerFigure) {
             updateTriggerFigure = false;
-            updateFigure(primaryShape);
+            util.updateFigure(primaryShape, this.getModelElement(), this, true);
         }
     }
     

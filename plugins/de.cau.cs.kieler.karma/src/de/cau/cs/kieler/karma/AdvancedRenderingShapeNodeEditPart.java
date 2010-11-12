@@ -68,7 +68,7 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
      * {@inheritDoc}
      */
     public boolean updateFigure(final IFigure figure) {
-        return util.updateFigure(figure, this.getModelElement(), this);
+        return util.updateFigure(figure, this.getModelElement(), this, false);
     }
 
     /**
@@ -90,7 +90,7 @@ public abstract class AdvancedRenderingShapeNodeEditPart extends ShapeNodeEditPa
         super.refresh();
         if (updateTriggerFigure) {
             updateTriggerFigure = false;
-            updateFigure(primaryShape);
+            util.updateFigure(primaryShape, this.getModelElement(), this, true);
         }
     }
 

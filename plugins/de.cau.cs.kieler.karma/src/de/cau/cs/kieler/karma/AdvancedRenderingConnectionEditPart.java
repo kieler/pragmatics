@@ -20,7 +20,6 @@ import java.util.List;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionNodeEditPart;
 import org.eclipse.gmf.runtime.notation.View;
 
@@ -66,7 +65,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
      * {@inheritDoc}
      */
     public boolean updateFigure(final IFigure figure) {
-        return util.updateFigure(figure, this.getModelElement(), this);
+        return util.updateFigure(figure, this.getModelElement(), this, false);
     }
 
     /**
@@ -84,7 +83,7 @@ public abstract class AdvancedRenderingConnectionEditPart extends ConnectionNode
         IFigure figure = super.getFigure();
         if (updateTriggerFigure) {
             updateTriggerFigure = false;
-            updateFigure(figure);
+            util.updateFigure(figure, this.getModelElement(), this, true);
         }
         return figure;
     }
