@@ -99,6 +99,8 @@ public class KaomFigureProvider implements IRenderingProvider {
             return createMonitorValue(object);
         } else if (input.equals("valueDisplay")) {
             return createConstFigure(object);
+        } else if (input.equals("valuesDisplay")) {
+            return createValuesFigure(object);
         } else if (input.equals("Director")) {
             return createDirector();
         } else if (input.equals("accumulator")) {
@@ -482,10 +484,10 @@ public class KaomFigureProvider implements IRenderingProvider {
 
     }
 
-    private static final int LABELSIZE_WIDTH = 50;
-    private static final int LABELSIZE_HEIGHT = 10;
-    private static final int LABELLOCATION_X = 20;
-    private static final int LABELLOCATION_Y = 10;
+    private static final int LABELSIZE_WIDTH = 60;
+    private static final int LABELSIZE_HEIGHT = 12;
+    private static final int LABELLOCATION_X = 10;
+    private static final int LABELLOCATION_Y = 8;
 
     /**
      * creates a figure representing a constant.
@@ -498,6 +500,23 @@ public class KaomFigureProvider implements IRenderingProvider {
         IFigure constFigure = getDefaultFigure();
         if (object instanceof Annotatable) {
             Annotation valueAnn = ((Annotatable) object).getAnnotation("value");
+            if (valueAnn instanceof StringAnnotation) {
+                String value = ((StringAnnotation) valueAnn).getValue();
+                Label valueLabel = new Label();
+                valueLabel.setText(value);
+                valueLabel.setBounds(new Rectangle(LABELLOCATION_X, LABELLOCATION_Y,
+                        LABELSIZE_WIDTH, LABELSIZE_HEIGHT));
+                constFigure.setLayoutManager(new BorderLayout());
+                constFigure.add(valueLabel);
+            }
+        }
+        return constFigure;
+    }
+    
+    private IFigure createValuesFigure(final EObject object) {
+        IFigure constFigure = getDefaultFigure();
+        if (object instanceof Annotatable) {
+            Annotation valueAnn = ((Annotatable) object).getAnnotation("values");
             if (valueAnn instanceof StringAnnotation) {
                 String value = ((StringAnnotation) valueAnn).getValue();
                 Label valueLabel = new Label();

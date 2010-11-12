@@ -37,6 +37,15 @@
                   value="value">
             </customCondition>
             <customCondition
+                  borderItemParam="valuesDisplay"
+                  condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                  figureParam="valuesDisplay"
+                  figureSize="70,30"
+                  key="values"
+                  layoutParam="valuesDisplay"
+                  value="values">
+            </customCondition>
+            <customCondition
                   condition="de.cau.cs.kieler.karma.AnnotationCondition"
                   figureParam="accumulator"
                   key="ptolemyClass"
