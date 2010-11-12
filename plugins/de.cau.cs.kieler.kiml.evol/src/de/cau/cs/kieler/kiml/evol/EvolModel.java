@@ -89,17 +89,6 @@ public final class EvolModel {
     }
 
     /**
-     * Removes the specified model listener, if present. Requests to remove
-     * non-existent listeners are ignored.
-     *
-     * @param listener
-     *            the {@link IEvolModelListener} to remove
-     */
-    public void removeListener(final IEvolModelListener listener) {
-        this.listeners.remove(listener);
-    }
-
-    /**
      * Auto-rate all individuals in the appropriate editors.
      *
      * @param theMonitor
@@ -327,23 +316,16 @@ public final class EvolModel {
 
         return true;
     }
-
+    
     /**
-     * Checks whether the predictors model is valid.
-     *
-     * @return {@code true} iff predictors model is valid
+     * Removes the specified model listener, if present. Requests to remove
+     * non-existent listeners are ignored.
+     * 
+     * @param listener
+     *            the {@link IEvolModelListener} to remove
      */
-    private boolean isPredictorsAlgValid() {
-        if (this.predictorsEvolAlg == null) {
-            EvolPlugin.logStatus("Weights algorithm is not set.");
-            return false;
-        }
-
-        if (this.predictorsEvolAlg.getPopulation().isEmpty()) {
-            EvolPlugin.logStatus("Predictor population is empty.");
-            return false;
-        }
-        return true;
+    public void removeListener(final IEvolModelListener listener) {
+        this.listeners.remove(listener);
     }
 
     /**
@@ -372,30 +354,13 @@ public final class EvolModel {
             monitor.beginTask("Resetting the model.", totalWork * scale);
 
             // Get the ID of the current layout provider.
-            final Maybe<LayoutProviderData> maybeProviderData = new Maybe<LayoutProviderData>();
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    IEditorPart editor = EvolUtil.getCurrentEditor();
-                    EditPart part = EvolUtil.getCurrentEditPart(editor);
-                    LayoutProviderData providerData =
-                            EvolUtil.getLayoutProviderData(editor, part);
-                    maybeProviderData.set(providerData);
-                }
-            };
-            MonitoredOperation.runInUI(runnable, true /* synch */);
-            LayoutProviderData providerData = maybeProviderData.get();
+            LayoutProviderData providerData = getCurrentLayoutProviderDataSync();
             this.layoutProviderId = providerData != null ? providerData.getId() : null;
 
+            // Get the editors.
+            Set<IEditorPart> editors = getEditorsSync();
+
             // Create an initial population of layout option genomes.
-            final Maybe<Set<IEditorPart>> maybeEditors = new Maybe<Set<IEditorPart>>();
-            MonitoredOperation.runInUI(new Runnable() {
-                public void run() {
-                    maybeEditors.set(EvolUtil.getEditors());
-                }
-            }, true /* synch */);
-
-            Set<IEditorPart> editors = maybeEditors.get();
-
             Population sourcePopulation = null;
             try {
                 sourcePopulation = EvolUtil.createPopulation(editors);
@@ -490,7 +455,63 @@ public final class EvolModel {
         }
         return result;
     }
-
+    
+    /**
+     * Synchronously get the layout provider of the current editor.
+     * 
+     * @return the current layout provider data, or {@code null} if none can be
+     *         found
+     */
+    private LayoutProviderData getCurrentLayoutProviderDataSync() {
+        final Maybe<LayoutProviderData> maybeProviderData = new Maybe<LayoutProviderData>();
+        Runnable runnable = new Runnable() {
+            public void run() {
+                IEditorPart editor = EvolUtil.getCurrentEditor();
+                EditPart part = EvolUtil.getCurrentEditPart(editor);
+                LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, part);
+                maybeProviderData.set(providerData);
+            }
+        };
+        MonitoredOperation.runInUI(runnable, true /* synch */);
+        LayoutProviderData providerData = maybeProviderData.get();
+        return providerData;
+    }
+    
+    /**
+     * Synchronously gets the set of visible graphical editors.
+     * 
+     * @return set of visible graphical editors; may be empty
+     */
+    private Set<IEditorPart> getEditorsSync() {
+        final Maybe<Set<IEditorPart>> maybeEditors = new Maybe<Set<IEditorPart>>();
+        MonitoredOperation.runInUI(new Runnable() {
+            public void run() {
+                maybeEditors.set(EvolUtil.getEditors());
+            }
+        }, true /* synch */);
+        
+        Set<IEditorPart> editors = maybeEditors.get();
+        return editors;
+    }
+    
+    /**
+     * Checks whether the predictors model is valid.
+     * 
+     * @return {@code true} iff predictors model is valid
+     */
+    private boolean isPredictorsAlgValid() {
+        if (this.predictorsEvolAlg == null) {
+            EvolPlugin.logStatus("Weights algorithm is not set.");
+            return false;
+        }
+        
+        if (this.predictorsEvolAlg.getPopulation().isEmpty()) {
+            EvolPlugin.logStatus("Predictor population is empty.");
+            return false;
+        }
+        return true;
+    }
+    
     /**
      * Selects an interesting individual.
      */

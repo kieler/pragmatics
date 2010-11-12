@@ -22,14 +22,15 @@ import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
 
 /**
- * An interface for collections that can filter their content.
- *
+ * An interface for collections that can provide a filtered iterator of their
+ * content.
+ * 
  * @param <CollectionType>
  *            a collection type
  * @param <T>
  *            the type of elements in the collection
  * @author bdu
- *
+ * 
  */
 public interface IFilterable<CollectionType extends Collection<T>, T> {
     /**
