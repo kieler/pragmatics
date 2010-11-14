@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -109,7 +110,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         IContainer element = ResourcesPlugin.getWorkspace().getRoot();
         try {
             if (element != null) {
-                element.refreshLocal(IContainer.DEPTH_INFINITE, null);
+                element.refreshLocal(IContainer.DEPTH_INFINITE, new NullProgressMonitor());
             }
         } catch (CoreException e1) {
             // do nothing
