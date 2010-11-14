@@ -107,9 +107,6 @@ public class ImportExamplePage extends WizardResourceImportPage {
         super.setDescription("Choose examples to import and set destination location.");
     }
 
-    // TODO Probleme mit der Hintergrund farbe unter ubuntu, k�nnten mit dem
-    // set font der elemente geloest werden.
-
     @Override
     public void createControl(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
@@ -119,6 +116,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
         createTopGroup(composite);
         createMiddleComponent(composite);
         createBottomComponent(composite);
+        getShell().setMinimumSize(500, 600);
 
     }
 
