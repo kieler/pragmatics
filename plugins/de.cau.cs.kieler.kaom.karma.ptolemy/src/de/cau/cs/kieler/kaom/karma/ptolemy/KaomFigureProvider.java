@@ -44,6 +44,7 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
@@ -97,10 +98,9 @@ public class KaomFigureProvider implements IRenderingProvider {
             return createFigureFromIconDescription(object);
         } else if (input.equals("MonitorValue")) {
             return createMonitorValue(object);
-        } else if (input.equals("valueDisplay")) {
-            return createConstFigure(object);
-        } else if (input.equals("valuesDisplay")) {
-            return createValuesFigure(object);
+        } else if (input.startsWith("valueDisplay")) {
+            String[] parts = input.split("//");
+            return createValueFigure(object, parts[1]);
         } else if (input.equals("Director")) {
             return createDirector();
         } else if (input.equals("accumulator")) {
@@ -484,11 +484,50 @@ public class KaomFigureProvider implements IRenderingProvider {
 
     }
 
-    private static final int LABELSIZE_WIDTH = 60;
+    private static final int DEFAULT_WIDTH = 90;
     private static final int LABELSIZE_HEIGHT = 12;
-    private static final int LABELLOCATION_X = 10;
+    private static final int LABELLOCATION_X = 5;
     private static final int LABELLOCATION_Y = 8;
 
+    private IFigure createValueFigure(final EObject object, final String valueAttribute) {
+        RectangleFigure constFigure = (RectangleFigure) getDefaultFigure();
+        if (object instanceof Annotatable) {
+            Annotation iconAnn = ((Annotatable) object).getAnnotation("_icon");
+            int width;
+            if (iconAnn != null) {
+                StringAnnotation sizeAnn = (StringAnnotation) iconAnn.getAnnotation("displayWidth");                
+                
+            if (sizeAnn != null) {
+                width = Integer.parseInt(sizeAnn.getValue());
+            } else {
+                width = DEFAULT_WIDTH;
+            }
+            } else {
+                width = DEFAULT_WIDTH;
+            }
+            Dimension dim = new Dimension(width, 30);
+            constFigure.getBounds().setSize(dim);
+            constFigure.setMaximumSize(dim.getCopy());
+            constFigure.setMinimumSize(dim.getCopy());
+            constFigure.setPreferredSize(dim.getCopy());
+            
+            if (!valueAttribute.equals("null")) {
+                Annotation valueAnn = ((Annotatable) object).getAnnotation(valueAttribute);
+                String value = ((StringAnnotation) valueAnn).getValue();
+                Label valueLabel = new Label();
+                valueLabel.setText(value);
+                valueLabel.setBounds(new Rectangle(LABELLOCATION_X, LABELLOCATION_Y,
+                    /*width -5*/80, LABELSIZE_HEIGHT));
+                constFigure.setLayoutManager(new BorderLayout());
+                constFigure.add(valueLabel);
+            }
+            
+        }
+        return constFigure;
+        
+    }
+    
+    
     /**
      * creates a figure representing a constant.
      * 
@@ -496,6 +535,7 @@ public class KaomFigureProvider implements IRenderingProvider {
      *            the model element
      * @return the constant figure
      */
+    /*
     private IFigure createConstFigure(final EObject object) {
         IFigure constFigure = getDefaultFigure();
         if (object instanceof Annotatable) {
@@ -529,7 +569,8 @@ public class KaomFigureProvider implements IRenderingProvider {
         }
         return constFigure;
     }
-
+*/
+    
     /**
      * creates an appropriate figure according to the _IconDescription attribute of a ptolemy actor.
      * 
