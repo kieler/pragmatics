@@ -365,7 +365,6 @@ public class KiVi {
                 }
             }
         }
-        System.out.println("returning false");
         return false;
     }
 
