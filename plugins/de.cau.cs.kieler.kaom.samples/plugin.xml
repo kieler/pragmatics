@@ -9,7 +9,7 @@
  <extension point="de.cau.cs.kieler.kex">
     <category id="de.cau.cs.kieler.kaom">
     </category>
-	<example author="KIELER Workgroup" contact="kieler@informatik.uni-kiel.de" description="This quickstart example introduces in kaom." generation_date="Tue Sep 28 13:42:39 CEST 2010" overview_pic="examples/kaom_quickstart/rampAdd.png" root_directory="examples/" title="Kaom Quick Start">
+	<example author="KIELER Workgroup" contact="kieler@informatik.uni-kiel.de" description="This quickstart example introduces into KAOM." generation_date="Tue Sep 28 13:42:39 CEST 2010" overview_pic="examples/kaom_quickstart/rampAdd.png" root_directory="examples/" title="KAOM Quick Start">
 	   <category id="de.cau.cs.kieler.kaom">
 	   </category>
 	   <example_resource direct_open="false" local_path="examples/kaom_quickstart" resource_type="project">
@@ -23,12 +23,18 @@
 	   <example_resource direct_open="false" local_path="examples/kaom_quickstart/rampAdd.moml" resource_type="file">
 	   </example_resource>
 	</example>
-	<example author="KIELER Workgroup" contact="kieler@informatik.uni-kiel.de" description="The traffic light example shows concurrency in kaom. " generation_date="Tue Nov 02 20:42:36 CET 2010" overview_pic="examples/traffic_light/TrafficLight.png" root_directory="examples" title="Kaom Traffic Light">
+	<example author="KIELER Workgroup" contact="kieler@informatik.uni-kiel.de" description="The traffic light example shows concurrency in kaom. " generation_date="Tue Nov 02 20:42:36 CET 2010" overview_pic="examples/traffic_light/TrafficLight.png" root_directory="examples" title="KAOM Traffic Light">
 <category id="de.cau.cs.kieler.kaom"/>
 <example_resource direct_open="false" local_path="examples/traffic_light" resource_type="folder"/>
 <example_resource direct_open="true" local_path="examples/traffic_light/TrafficLight.kaod" resource_type="file"/>
 <example_resource direct_open="false" local_path="examples/traffic_light/TrafficLight.kaom" resource_type="file"/>
 <example_resource direct_open="false" local_path="examples/traffic_light/TrafficLight.moml" resource_type="file"/>
+</example>
+<example author="KIELER Workgroup" contact="kieler@informatik.uni-kiel.de" description="This example shows a KAOM diagram with a composite actor and its content." generation_date="Tue Nov 16 17:08:31 CET 2010" overview_pic="" root_directory="examples" title="KAOM Hierarchy">
+<category id="de.cau.cs.kieler.kaom"/>
+<example_resource direct_open="true" local_path="examples/newmodel.kaod" resource_type="file"/>
+<example_resource direct_open="false" local_path="examples/newmodel.kaom" resource_type="file"/>
+<example_resource direct_open="false" local_path="examples/newmodel.moml" resource_type="file"/>
 </example>
 </extension>  
 </plugin>
