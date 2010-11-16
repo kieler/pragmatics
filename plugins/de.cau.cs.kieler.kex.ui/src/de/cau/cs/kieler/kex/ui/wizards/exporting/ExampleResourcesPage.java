@@ -101,7 +101,7 @@ public class ExampleResourcesPage extends WizardPage {
         childComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         Label directOpenDesc = new Label(childComp, SWT.NONE);
         directOpenDesc.setText("Select files, that should "
-                + "open directly after importing that example.");
+                + "open directly when importing that example.");
         this.directOpenTree = new Tree(childComp, SWT.CHECK | SWT.BORDER);
         directOpenTree.setLayoutData(new GridData(GridData.FILL_BOTH));
         fillDirectOpenTree();

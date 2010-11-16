@@ -76,7 +76,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
         super(name, selection);
         setTitle(name);
         setDescription("Set destination and preview picture "
-                + "for exported example and determine example cateories.");
+                + "for exported example and determine example categories.");
         checkedCategories = new ArrayList<String>();
         creatableCategories = new ArrayList<String>();
     }
