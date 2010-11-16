@@ -18,7 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.util.ExampleExport;
@@ -30,199 +35,228 @@ import de.cau.cs.kieler.kex.model.plugin.PluginExampleCollector;
 import de.cau.cs.kieler.kex.model.plugin.PluginExampleCreator;
 
 /**
- * This class manages the import and export in kex. It represents the bridge from kex.ui to kex
- * code.
+ * This class manages the import and export in kex. It represents the bridge
+ * from kex.ui to kex code.
  * 
  * @author pkl
  * 
  */
 public final class ExampleManager {
 
-    private static ExampleManager instance;
+	private static ExampleManager instance;
 
-    /**
-     * set true, if examples has been loaded, otherwise false.
-     */
-    private boolean isLoaded;
+	/**
+	 * set true, if examples has been loaded, otherwise false.
+	 */
+	private boolean isLoaded;
 
-    private final PluginExampleCollector extensionCollector;
-    private final DBExampleCollector databaseCollector;
+	private final PluginExampleCollector extensionCollector;
+	private final DBExampleCollector databaseCollector;
 
-    private final PluginExampleCreator extensionCreator;
+	private final PluginExampleCreator extensionCreator;
 
-    private ExampleManager() {
-        this.extensionCollector = new PluginExampleCollector();
-        this.extensionCreator = new PluginExampleCreator();
-        this.databaseCollector = new DBExampleCollector();
-    }
+	private ExampleManager() {
+		this.extensionCollector = new PluginExampleCollector();
+		this.extensionCreator = new PluginExampleCreator();
+		this.databaseCollector = new DBExampleCollector();
+	}
 
-    /**
-     * Singleton call of {@link ExampleManager}.
-     * 
-     * @return {@link ExampleManager}
-     */
-    public static synchronized ExampleManager get() {
-        if (instance == null) {
-            instance = new ExampleManager();
-        }
-        return instance;
-    }
+	/**
+	 * Singleton call of {@link ExampleManager}.
+	 * 
+	 * @return {@link ExampleManager}
+	 */
+	public static synchronized ExampleManager get() {
+		if (instance == null) {
+			instance = new ExampleManager();
+		}
+		return instance;
+	}
 
-    /**
-     * Loads examples, if not loaded before.
-     * 
-     * @param forceLoad
-     *            , set this parameter to force loading of examples
-     * @throws KielerException
-     *             , can be thrown by <code> load() </code>.
-     */
-    public void load(final boolean forceLoad) throws KielerException {
-        if (!this.isLoaded || forceLoad) {
-            load();
-            // after completely loaded
-            this.isLoaded = true;
-        }
-    }
+	/**
+	 * Loads examples, if not loaded before.
+	 * 
+	 * @param forceLoad
+	 *            , set this parameter to force loading of examples
+	 * @throws KielerException
+	 *             , can be thrown by <code> load() </code>.
+	 */
+	public void load(final boolean forceLoad) throws KielerException {
+		if (!this.isLoaded || forceLoad) {
+			load();
+			// after completely loaded
+			this.isLoaded = true;
+		}
+	}
 
-    /**
-     * searches the examplepool of a source for a special example.
-     * 
-     * @param type
-     *            , {@link SourceType}
-     * @param exampleTitle
-     *            , {@link String}
-     * @return {@link Example}
-     * @throws KielerException
-     *             , can be thrown by <code> {@link PluginExampleCollector}.getExample(...) </code>
-     *             and if the example found example is null.
-     */
-    public Example getExample(final SourceType type, final String exampleTitle)
-            throws KielerException {
-        if (type == SourceType.KIELER) {
-            if (isLoaded) {
-                Map<String, Example> examplePool = extensionCollector.getExamplePool();
-                Example example = examplePool.get(exampleTitle);
-                if (example != null) {
-                    return example;
-                } else {
-                    throw new KielerException(ErrorMessage.NO_EXAMPLE_FOUND + exampleTitle);
-                }
-            } else {
-                return PluginExampleCollector.getExample(exampleTitle);
-            }
-        }
-        if (type == SourceType.PUBLIC) {
-            // search in online interface for example
-            return DBExampleCollector.getExample(exampleTitle);
-        }
-        return null;
-    }
+	/**
+	 * searches the examplepool of a source for a special example.
+	 * 
+	 * @param type
+	 *            , {@link SourceType}
+	 * @param exampleTitle
+	 *            , {@link String}
+	 * @return {@link Example}
+	 * @throws KielerException
+	 *             , can be thrown by
+	 *             <code> {@link PluginExampleCollector}.getExample(...) </code>
+	 *             and if the example found example is null.
+	 */
+	public Example getExample(final SourceType type, final String exampleTitle)
+			throws KielerException {
+		if (type == SourceType.KIELER) {
+			if (isLoaded) {
+				Map<String, Example> examplePool = extensionCollector
+						.getExamplePool();
+				Example example = examplePool.get(exampleTitle);
+				if (example != null) {
+					return example;
+				} else {
+					throw new KielerException(ErrorMessage.NO_EXAMPLE_FOUND
+							+ exampleTitle);
+				}
+			} else {
+				return PluginExampleCollector.getExample(exampleTitle);
+			}
+		}
+		if (type == SourceType.PUBLIC) {
+			// search in online interface for example
+			return DBExampleCollector.getExample(exampleTitle);
+		}
+		return null;
+	}
 
-    private void load() throws KielerException {
-        this.extensionCollector.load();
-        // TODO test impl of an online interface.
-        this.databaseCollector.load();
-    }
+	private void load() throws KielerException {
+		this.extensionCollector.load();
+		// TODO test impl of an online interface.
+		this.databaseCollector.load();
+	}
 
-    /**
-     * Adds all examples of a the collectors to the result map.
-     * 
-     * @return {@link Map} with {@link String} as key and {@link Example} as value.
-     */
-    public Map<String, Example> getExamples() {
-        Map<String, Example> result = this.extensionCollector.getExamplePool();
-        result.putAll(databaseCollector.getExamplePool());
-        return result;
-    }
+	/**
+	 * Adds all examples of a the collectors to the result map.
+	 * 
+	 * @return {@link Map} with {@link String} as key and {@link Example} as
+	 *         value.
+	 */
+	public Map<String, Example> getExamples() {
+		Map<String, Example> result = this.extensionCollector.getExamplePool();
+		result.putAll(databaseCollector.getExamplePool());
+		return result;
+	}
 
-    /**
-     * Creates a resultlist with categories of collectors.
-     * 
-     * @return {@link List} of {@link String}.
-     */
-    public List<String> getCategories() {
-        List<String> result = new ArrayList<String>();
-        result.addAll(databaseCollector.getCategories());
-        result.addAll(extensionCollector.getCategories());
-        return result;
-    }
+	/**
+	 * Creates a resultlist with categories of collectors.
+	 * 
+	 * @return {@link List} of {@link String}.
+	 */
+	public List<String> getCategories() {
+		List<String> result = new ArrayList<String>();
+		result.addAll(databaseCollector.getCategories());
+		result.addAll(extensionCollector.getCategories());
+		return result;
+	}
 
-    /**
-     * This method calls an validate and uses the {@link ExampleImport} to import examples.
-     * 
-     * @param selectedResource
-     *            , {@link IPath}
-     * @param selectedExamples
-     *            , {@link List} of {@link Example}
-     * @param checkDuplicate
-     *            , boolean
-     * @return {@link List} of {@link String}
-     * @throws KielerException
-     *             , if ExampleImport.validate(...) or ExampleImport.importExamples(...) throws it.
-     */
-    public List<String> importExamples(final IPath selectedResource,
-            final List<Example> selectedExamples, final boolean checkDuplicate)
-            throws KielerException {
-        ExampleImport.validate(selectedResource, selectedExamples, checkDuplicate);
-        return ExampleImport.importExamples(selectedResource, selectedExamples, checkDuplicate);
-    }
+	/**
+	 * This method calls an validate and uses the {@link ExampleImport} to
+	 * import examples.
+	 * 
+	 * @param selectedResource
+	 *            , {@link IPath}
+	 * @param selectedExamples
+	 *            , {@link List} of {@link Example}
+	 * @param checkDuplicate
+	 *            , boolean
+	 * @return {@link List} of {@link String}
+	 * @throws KielerException
+	 *             , if ExampleImport.validate(...) or
+	 *             ExampleImport.importExamples(...) throws it.
+	 */
+	public List<String> importExamples(final IPath selectedResource,
+			final List<Example> selectedExamples, final boolean checkDuplicate)
+			throws KielerException {
+		ExampleImport.validate(selectedResource, selectedExamples,
+				checkDuplicate);
+		return ExampleImport.importExamples(selectedResource, selectedExamples,
+				checkDuplicate);
+	}
 
-    /**
-     * Exports a given example. Created and deleted categories will managed, too.
-     * 
-     * @param properties
-     *            , {@link Map} with {@link ExampleElement} as key and {@link Object} as value.
-     * @throws KielerException
-     *             , can be thrown at several places.
-     */
-    public void export(final Map<ExampleElement, Object> properties) throws KielerException {
+	/**
+	 * Exports a given example. Created and deleted categories will managed,
+	 * too.
+	 * 
+	 * @param properties
+	 *            , {@link Map} with {@link ExampleElement} as key and
+	 *            {@link Object} as value.
+	 * @throws KielerException
+	 *             , can be thrown at several places.
+	 */
+	public void export(final Map<ExampleElement, Object> properties)
+			throws KielerException {
 
-        ExampleExport.validate(properties, this.extensionCollector, this.databaseCollector);
+		ExampleExport.validate(properties, this.extensionCollector,
+				this.databaseCollector);
 
-        if (SourceType.KIELER.equals(properties.get(ExampleElement.SOURCETYPE))) {
-            ExampleExport.exportInPlugin(properties, this.extensionCreator);
-            // } else if (SourceType.PUBLIC.equals(properties.get(ExampleElement.SOURCETYPE))) {
-            // // TODO build online interface
-        } else {
-            throw new KielerException(ErrorMessage.NO_SOURCETYPE);
-        }
-    }
+		if (SourceType.KIELER.equals(properties.get(ExampleElement.SOURCETYPE))) {
+			ExampleExport.exportInPlugin(properties, this.extensionCreator);
+			// } else if
+			// (SourceType.PUBLIC.equals(properties.get(ExampleElement.SOURCETYPE)))
+			// {
+			// // TODO build online interface
+		} else {
+			throw new KielerException(ErrorMessage.NO_SOURCETYPE);
+		}
+	}
 
-    /**
-     * Loads the preview picture.
-     * 
-     * @param example
-     *            , {@link Example}
-     * @return {@link InputStream}
-     * @throws KielerException
-     *             , if ExampleImport.loadOverviewPic(...) throws it.
-     */
-    public InputStream loadOverviewPic(final Example example) throws KielerException {
-        return ExampleImport.loadOverviewPic(example);
-    }
+	/**
+	 * Loads the preview picture.
+	 * 
+	 * @param example
+	 *            , {@link Example}
+	 * @return {@link InputStream}
+	 * @throws KielerException
+	 *             , if ExampleImport.loadOverviewPic(...) throws it.
+	 */
+	public InputStream loadOverviewPic(final Example example)
+			throws KielerException {
+		return ExampleImport.loadOverviewPic(example);
+	}
 
-    /**
-     * Loads the standard picture.
-     * 
-     * @return {@link InputStream}
-     */
-    public InputStream loadStandardPic() {
-        return ExampleImport.loadStandardPic();
-    }
+	/**
+	 * Loads the standard picture.
+	 * 
+	 * @return {@link InputStream}
+	 */
+	public InputStream loadStandardPic() {
+		return ExampleImport.loadStandardPic();
+	}
 
-    /**
-     * Imports a quickstart example.
-     * 
-     * @param quickStarter
-     *            , {@link Example}
-     * @return files which can be open directly, List<String>
-     * @throws KielerException
-     *             , if anything goes wrong at ExampleImport.importExamples(...).
-     */
-    public List<String> quickStartImport(final Example quickStarter) throws KielerException {
-        List<Example> quickStarts = new ArrayList<Example>();
-        quickStarts.add(quickStarter);
-        return ExampleImport.importExamples(null, quickStarts, false);
-    }
+	/**
+	 * Imports a quickstart example.
+	 * 
+	 * @param quickStarter
+	 *            , {@link Example}
+	 * @return files which can be open directly, List<String>
+	 * @throws KielerException
+	 *             , if anything goes wrong at
+	 *             ExampleImport.importExamples(...).
+	 */
+	public List<String> quickStartImport(final Example quickStarter)
+			throws KielerException {
+		List<Example> quickStarts = new ArrayList<Example>();
+		quickStarts.add(quickStarter);
+		return ExampleImport.importExamples(null, quickStarts, false);
+	}
+
+	public void createNewProject(String projectName) {
+		IProgressMonitor progressMonitor = new NullProgressMonitor();
+		IProject project = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(projectName);
+		try {
+			project.create(progressMonitor);
+			project.open(progressMonitor);
+		} catch (CoreException e) {
+			// TODO think about error handling
+		}
+	}
 
 }

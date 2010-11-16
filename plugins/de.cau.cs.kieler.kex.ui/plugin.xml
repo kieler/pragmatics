@@ -10,7 +10,7 @@
       <wizard
             category="de.cau.cs.kieler.ui.export"
             class="de.cau.cs.kieler.kex.ui.wizards.exporting.ExampleExportWizard"
-            icon="icons/keksIcon.jpg"
+            icon="icons/keksIcon.gif"
             id="de.cau.cs.kieler.kex.ui.exportWizard"
             name="Example">
       </wizard>
@@ -21,7 +21,7 @@
       <wizard
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard"
-            icon="icons/keksIcon.jpg"
+            icon="icons/keksIcon.gif"
             id="de.cau.cs.kieler.kex.ui.importWizard"
             name="Example">
       </wizard>
@@ -39,7 +39,7 @@
             name="KIELER Examples"
             class="de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard"
             category="org.eclipse.ui.Examples/de.cau.cs.kieler.examples"
-            icon="icons/keksIcon.jpg"
+            icon="icons/keksIcon.gif"
             project="true">
             <description>%DomainExample_description</description>
         </wizard>

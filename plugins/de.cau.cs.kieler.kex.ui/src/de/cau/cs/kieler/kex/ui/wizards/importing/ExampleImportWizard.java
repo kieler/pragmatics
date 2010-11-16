@@ -19,8 +19,10 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -39,6 +41,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
+import de.cau.cs.kieler.kex.model.Example;
 
 /**
  * This wizard contains all elements for an kex import wizard.
@@ -48,98 +51,123 @@ import de.cau.cs.kieler.kex.controller.ExampleManager;
  */
 public class ExampleImportWizard extends Wizard implements IImportWizard {
 
-    private ImportExamplePage mainPage;
+	private ImportExamplePage mainPage;
 
-    private boolean checkDuplicate;
+	private boolean checkDuplicate;
 
-    private static final String ERROR_TITLE = "Could not complete Import";
+	private static final String ERROR_TITLE = "Could not complete Import";
 
-    /**
-     * Constructor for {@link ExampleImportWizard}.
-     */
-    public ExampleImportWizard() {
-        super();
-    }
+	/**
+	 * Constructor for {@link ExampleImportWizard}.
+	 */
+	public ExampleImportWizard() {
+		super();
+	}
 
-    /**
-     * initializes the Wizard and adds the mainpage of Type {@link WizardPage} to it.
-     * 
-     * @param workbench
-     *            , {@link IWorkbench}
-     * @param selection
-     *            , {@link IStructuredSelection}
-     */
-    public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-        setWindowTitle("Kieler Example Import");
-        setNeedsProgressMonitor(true);
-        this.checkDuplicate = false;
-        try {
-            ExampleManager.get().load(true);
-        } catch (KielerException e) {
-            MessageDialog.openError(this.getShell(), "Can't initialize existing example pool.",
-                    e.getLocalizedMessage());
-        }
-        mainPage = new ImportExamplePage("Import Example", selection);
-    }
+	/**
+	 * initializes the Wizard and adds the mainpage of Type {@link WizardPage}
+	 * to it.
+	 * 
+	 * @param workbench
+	 *            , {@link IWorkbench}
+	 * @param selection
+	 *            , {@link IStructuredSelection}
+	 */
+	public void init(final IWorkbench workbench,
+			final IStructuredSelection selection) {
+		setWindowTitle("Kieler Example Import");
+		setNeedsProgressMonitor(true);
+		this.checkDuplicate = false;
+		try {
+			ExampleManager.get().load(true);
+		} catch (KielerException e) {
+			MessageDialog.openError(this.getShell(),
+					"Can't initialize existing example pool.",
+					e.getLocalizedMessage());
+		}
+		mainPage = new ImportExamplePage("Import Example", selection);
+	}
 
-    @Override
-    public final void addPages() {
-        super.addPages();
-        addPage(mainPage);
-    }
+	@Override
+	public final void addPages() {
+		super.addPages();
+		addPage(mainPage);
+	}
 
-    @Override
-    public final boolean performFinish() {
-        List<String> directOpens = null;
-        try {
-            directOpens = ExampleManager.get().importExamples(mainPage.getContainerPath(),
-                    mainPage.getCheckedExamples(), checkDuplicate);
-        } catch (KielerException e) {
-            if (e.getLocalizedMessage().equals(ErrorMessage.DUPLICATE_EXAMPLE)) {
-                checkDuplicate = !MessageDialog.openQuestion(getShell(), ERROR_TITLE,
-                        e.getLocalizedMessage() + " Do you want to override it?");
+	@Override
+	public final boolean performFinish() {
+		List<String> directOpens = null;
+		try {
+			IPath projectPath = mainPage.getResourcePath();
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			List<Example> checkedExamples = mainPage.getCheckedExamples();
+			if (checkedExamples.isEmpty()) {
+				throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
+			}
+			if (!root.exists(projectPath)) {
+				ExampleManager.get().createNewProject(
+						projectPath.toPortableString());
+			}
+			directOpens = ExampleManager.get().importExamples(projectPath,
+					checkedExamples, checkDuplicate);
+		} catch (KielerException e) {
+			if (e.getLocalizedMessage().equals(ErrorMessage.DUPLICATE_EXAMPLE)) {
+				checkDuplicate = !MessageDialog.openQuestion(getShell(),
+						ERROR_TITLE, e.getLocalizedMessage()
+								+ " Do you want to override it?");
 
-            } else {
-                MessageDialog.openError(getShell(), ERROR_TITLE, e.getLocalizedMessage());
-            }
+			} else {
+				MessageDialog.openError(getShell(), ERROR_TITLE,
+						e.getLocalizedMessage());
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        // refresh workspace
-        IContainer element = ResourcesPlugin.getWorkspace().getRoot();
-        try {
-            if (element != null) {
-                element.refreshLocal(IContainer.DEPTH_INFINITE, new NullProgressMonitor());
-            }
-        } catch (CoreException e1) {
-            // do nothing
-            return true;
-        }
+		// refresh workspace
+		IContainer element = ResourcesPlugin.getWorkspace().getRoot();
+		try {
+			if (element != null) {
+				element.refreshLocal(IContainer.DEPTH_INFINITE,
+						new NullProgressMonitor());
+			}
+		} catch (CoreException e1) {
+			// do nothing
+			return true;
+		}
 
-        // open direct opens
-        if (directOpens != null) {
-            IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            IWorkbenchPage page = win.getActivePage();
-            for (String path : directOpens) {
-                IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
-                        .findFilesForLocationURI(URIUtil.toURI(path), IResource.FILE);
-                if (files.length == 1) {
-                    IEditorDescriptor defaultEditor = PlatformUI.getWorkbench().getEditorRegistry()
-                            .getDefaultEditor(files[0].getName());
-                    if (defaultEditor == null) {
-                        defaultEditor = PlatformUI.getWorkbench().getEditorRegistry()
-                                .findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-                    }
-                    try {
-                        page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
-                    } catch (PartInitException e) {
-                        MessageDialog.openError(getShell(), "Opening Editor",
-                                e.getLocalizedMessage());
-                    }
-                }
-            }
-        }
-        return true;
-    }
+		// open direct opens
+		if (directOpens != null) {
+			IWorkbenchWindow win = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow();
+			IWorkbenchPage page = win.getActivePage();
+			for (String path : directOpens) {
+				IFile[] files = ResourcesPlugin
+						.getWorkspace()
+						.getRoot()
+						.findFilesForLocationURI(URIUtil.toURI(path),
+								IResource.FILE);
+				if (files.length == 1) {
+					IEditorDescriptor defaultEditor = PlatformUI.getWorkbench()
+							.getEditorRegistry()
+							.getDefaultEditor(files[0].getName());
+					if (defaultEditor == null) {
+						defaultEditor = PlatformUI
+								.getWorkbench()
+								.getEditorRegistry()
+								.findEditor(
+										IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+					}
+					try {
+						page.openEditor(new FileEditorInput(files[0]),
+								defaultEditor.getId());
+					} catch (PartInitException e) {
+						MessageDialog.openError(getShell(), "Opening Editor",
+								e.getLocalizedMessage());
+					}
+				}
+			}
+		}
+		return true;
+	}
 }
