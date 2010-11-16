@@ -20,7 +20,7 @@ COPTS = -I. -I$(OGDF) -fmessage-length=0
 OGDFobj = ${shell find $(OGDF)/_release -iname '*.o' -print}
 
 default:
-	echo "Use one of the targets: win32, win64, osx32, osx64, linux32, linux64, solaris"
+	@echo "Use one of the targets: win32, win64, osx32, osx64, linux32, linux64, solaris"
 
 #compiling wrapper ( ./ogdf_wrap.cpp)
 $(LIB_DIR)/%/ogdf_wrap.o : ogdf_wrap.cpp

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OGDF Library for MacOSX x86
 Bundle-SymbolicName: net.ogdf.lib.macosx.x86;singleton:=true
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.1.0.qualifier
 Bundle-Vendor: Technische Universität Dortmund
 Fragment-Host: net.ogdf.lib;bundle-version="2.0.0"
 Eclipse-PlatformFilter: (& (osgi.os=macosx) (osgi.arch=x86))
