@@ -409,7 +409,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             KOption koption = koptionMap.get(optionData);
             if (koption != null) {
                 if (optionData.parseValue(koption.getValue()) != null) {
-                    return true;
+                    return false;
                 }
             }
         }

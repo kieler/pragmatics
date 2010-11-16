@@ -50,20 +50,20 @@ public abstract class OgdfLayouter {
     /** layout option identifier for label edge distance. */
     public static final String LABEL_EDGE_DIST_ID
             = "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance";
-    /** label edge distance property. */
-    public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
-            LABEL_EDGE_DIST_ID, -1.0f);
     /** default value for label edge distance. */
     public static final float DEF_LABEL_EDGE_DIST = 15.0f;
+    /** label edge distance property. */
+    public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
+            LABEL_EDGE_DIST_ID, DEF_LABEL_EDGE_DIST);
     
     /** layout option identifier for label margin distance. */
     public static final String LABEL_MARGIN_DIST_ID
             = "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance";
-    /** label margin distance property. */
-    public static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
-            LABEL_MARGIN_DIST_ID, -1.0f);
     /** default value for label margin distance. */
     public static final float DEF_LABEL_MARGIN_DIST = 15.0f;
+    /** label margin distance property. */
+    public static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
+            LABEL_MARGIN_DIST_ID, DEF_LABEL_MARGIN_DIST);
     
     /** the minimal distance between the source point and the first bend point. */
     private static final float SOURCE_POINT_FIRST_BEND_DISTANCE = 4;
@@ -76,8 +76,7 @@ public abstract class OgdfLayouter {
      */
     public void initDefaults(final IPropertyHolder defaultsHolder) {
         defaultsHolder.setProperty(LayoutOptions.BORDER_SPACING, DEF_BORDER_SPACING);
-        defaultsHolder.setProperty(LABEL_EDGE_DIST, DEF_LABEL_EDGE_DIST);
-        defaultsHolder.setProperty(LABEL_MARGIN_DIST, DEF_LABEL_MARGIN_DIST);
+        defaultsHolder.setProperty(LayoutOptions.RANDOM_SEED, 1);
     }
     
     /**
@@ -97,6 +96,8 @@ public abstract class OgdfLayouter {
         Ogdf.loadLibrary();
 
         try {
+            // set the random number generator seed
+            setRandomSeed(layoutNode);
             // prepare the algorithm for use and pre-process the graph
             prepareLayouter(layoutNode);
             // transform the graph
@@ -115,6 +116,23 @@ public abstract class OgdfLayouter {
             // deallocate objects in the library
             Ogdf.cleanup();
             progressMonitor.done();
+        }
+    }
+    
+    /**
+     * Set the random number generator seed.
+     * 
+     * @param node parent node from which the seed option is taken
+     */
+    private void setRandomSeed(final KNode node) {
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        Integer seed = nodeLayout.getProperty(LayoutOptions.RANDOM_SEED);
+        if (seed == null) {
+            Ogdf.randSeed(1);
+        } else if (seed == 0) {
+            Ogdf.randSeed((int) System.currentTimeMillis());
+        } else {
+            Ogdf.randSeed(seed);
         }
     }
 

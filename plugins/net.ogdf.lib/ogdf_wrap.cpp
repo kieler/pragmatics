@@ -1,6 +1,6 @@
 /*
  * The c++ side wrapper of the OGDF library for java.
- * Uses jni to provide it's functionality.
+ * Uses JNI to provide its functionality.
  *
  * Author: mri
  */
@@ -17,7 +17,6 @@
 #include <ogdf/basic/UMLGraph.h>
 #include <ogdf/labeling/ELabelInterface.h>
 #include <ogdf/labeling/ELabelPosSimple.h>
-#include <ogdf/labeling/EdgeLabel.h>
 #include <ogdf/module/LayoutModule.h>
 #include <ogdf/module/UMLLayoutModule.h>
 #include <ogdf/layered/SugiyamaLayout.h>
@@ -333,6 +332,11 @@ void throwJavaException(JNIEnv* jenv, const char* msg) {
 }
 
 // the jni wrapper interface
+
+JNIEXPORT void JNICALL Java_net_ogdf_lib_Ogdf_randSeed
+  (JNIEnv *, jclass, jint seed) {
+    srand(seed);
+}
 
 JNIEXPORT void JNICALL Java_net_ogdf_lib_Ogdf_createGraph
   (JNIEnv *, jclass, jboolean umlGraph) {

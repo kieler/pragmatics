@@ -18,7 +18,6 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * The OGDF layout provider, that is the entry class used by KIML to call

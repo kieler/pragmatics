@@ -2,7 +2,7 @@
 <feature
       id="net.ogdf.lib"
       label="OGDF Library"
-      version="2.0.0.qualifier"
+      version="2.1.0.qualifier"
       provider-name="Technische Universität Dortmund"
       os="linux,macosx,solaris,win32"
       arch="sparc,x86,x86_64">
@@ -14,7 +14,7 @@ using a dedicated module mechanism. It includes sophisticated
 data structures that are commonly used in graph drawing, equipped
 with rich public interfaces. Its self-contained code does not
 require any additional libraries, except for some optional branch-and-cut
-algorithms. This feature is built with the release version 2007.11 of OGDF.
+algorithms. This feature is built with the release version 2010.10 (Sassafras) of OGDF.
    </description>
 
    <copyright>

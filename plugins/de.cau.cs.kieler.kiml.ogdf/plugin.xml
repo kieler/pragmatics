@@ -9,7 +9,7 @@
       </category>
       <layoutOption
             appliesTo="parents"
-            default="-1"
+            default="15"
             description="Distance of edge labels to the nodes"
             id="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
             name="Label Distance"
@@ -17,7 +17,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            default="-1"
+            default="15"
             description="Spacing of labels to the edges"
             id="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
             name="Label Spacing"
@@ -89,6 +89,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -119,6 +122,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.aspectRatio">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -144,6 +150,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -171,6 +180,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -191,6 +203,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -210,6 +225,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
       </layoutProvider>
       <layoutProvider
@@ -237,6 +255,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -257,6 +278,9 @@
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.ogdf"
@@ -276,6 +300,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
       </layoutProvider>
    </extension>

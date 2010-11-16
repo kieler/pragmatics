@@ -101,6 +101,13 @@ public class Ogdf {
 	/*
 	 * Global ogdf
 	 */
+	
+	/**
+	 * Initialize the pseudo-random number generator seed.
+	 * 
+	 * @param seed the new seed value.
+	 */
+	public final static native void randSeed(int seed);
 
 	/**
 	 * Creates new Graph and GraphAttributes and sets them as the current graph.
