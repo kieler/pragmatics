@@ -24,7 +24,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.keg.Node#getNodeLabel <em>Node Label</em>}</li>
- *   <li>{@link de.cau.cs.kieler.keg.Node#isIsHypernode <em>Is Hypernode</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.keg.Node#isHypernode <em>Hypernode</em>}</li>
  * </ul>
  * </p>
  *
@@ -60,30 +60,30 @@ public interface Node extends KNode {
     void setNodeLabel(String value);
 
     /**
-     * Returns the value of the '<em><b>Is Hypernode</b></em>' attribute.
+     * Returns the value of the '<em><b>Hypernode</b></em>' attribute.
      * The default value is <code>"false"</code>.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Is Hypernode</em>' attribute isn't clear,
+     * If the meaning of the '<em>Hypernode</em>' attribute isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Is Hypernode</em>' attribute.
-     * @see #setIsHypernode(boolean)
-     * @see de.cau.cs.kieler.keg.KEGPackage#getNode_IsHypernode()
+     * @return the value of the '<em>Hypernode</em>' attribute.
+     * @see #setHypernode(boolean)
+     * @see de.cau.cs.kieler.keg.KEGPackage#getNode_Hypernode()
      * @model default="false" required="true"
      * @generated
      */
-    boolean isIsHypernode();
+    boolean isHypernode();
 
     /**
-     * Sets the value of the '{@link de.cau.cs.kieler.keg.Node#isIsHypernode <em>Is Hypernode</em>}' attribute.
+     * Sets the value of the '{@link de.cau.cs.kieler.keg.Node#isHypernode <em>Hypernode</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Is Hypernode</em>' attribute.
-     * @see #isIsHypernode()
+     * @param value the new value of the '<em>Hypernode</em>' attribute.
+     * @see #isHypernode()
      * @generated
      */
-    void setIsHypernode(boolean value);
+    void setHypernode(boolean value);
 
 } // Node

@@ -52,28 +52,28 @@ public class GraphsOCLFactory {
         if (cached.expressions[index] == null) {
             final String[] exprBodies =
                     new String[] {
-                            "self.isHypernode = false", //$NON-NLS-1$
+                            "self.hypernode = false", //$NON-NLS-1$
                             "self.node.parent->size() > 0", //$NON-NLS-1$
-                            "self.isHypernode = true", //$NON-NLS-1$
+                            "self.hypernode = true", //$NON-NLS-1$
                             "true", //$NON-NLS-1$
                             "\'Hypernode\'", //$NON-NLS-1$
-                            "self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node", //$NON-NLS-1$
+                            "self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node", //$NON-NLS-1$
                             "true", //$NON-NLS-1$
-                            "self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node", //$NON-NLS-1$
-                            "self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port", //$NON-NLS-1$
+                            "self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node", //$NON-NLS-1$
+                            "self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port", //$NON-NLS-1$
                             "true", //$NON-NLS-1$
                             "keg::EdgeType::Port2Port", //$NON-NLS-1$
-                            "self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port", //$NON-NLS-1$
+                            "self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port", //$NON-NLS-1$
                             "keg::EdgeType::Port2Port", //$NON-NLS-1$
-                            "self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node", //$NON-NLS-1$
+                            "self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node", //$NON-NLS-1$
                             "true", //$NON-NLS-1$
                             "keg::EdgeType::Port2Node", //$NON-NLS-1$
-                            "self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node", //$NON-NLS-1$
+                            "self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node", //$NON-NLS-1$
                             "keg::EdgeType::Port2Node", //$NON-NLS-1$
-                            "self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port", //$NON-NLS-1$
+                            "self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port", //$NON-NLS-1$
                             "true", //$NON-NLS-1$
                             "keg::EdgeType::Node2Port", //$NON-NLS-1$
-                            "self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port", //$NON-NLS-1$
+                            "self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port", //$NON-NLS-1$
                             "keg::EdgeType::Node2Port", //$NON-NLS-1$
                     };
             cached.expressions[index] =

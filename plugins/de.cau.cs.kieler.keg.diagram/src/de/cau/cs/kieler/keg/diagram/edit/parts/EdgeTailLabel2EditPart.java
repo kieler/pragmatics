@@ -54,7 +54,7 @@ public class EdgeTailLabel2EditPart extends LabelEditPart implements
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 6005;
+    public static final int VISUAL_ID = 6008;
 
     /**
      * @generated
@@ -83,7 +83,7 @@ public class EdgeTailLabel2EditPart extends LabelEditPart implements
         registerSnapBackPosition(
                 GraphsVisualIDRegistry
                         .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel2EditPart.VISUAL_ID),
-                new Point(0, 120));
+                new Point(0, 80));
     }
 
     /**
@@ -312,7 +312,7 @@ public class EdgeTailLabel2EditPart extends LabelEditPart implements
             parser =
                     GraphsParserProvider
                             .getParser(
-                                    GraphsElementTypes.Edge_4001,
+                                    GraphsElementTypes.Edge_4002,
                                     getParserElement(),
                                     GraphsVisualIDRegistry
                                             .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel2EditPart.VISUAL_ID));

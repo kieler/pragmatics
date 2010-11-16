@@ -95,7 +95,7 @@ public class RandomGraphGenerator {
                 compoundCount++;
             } else if (rand > hierarchyProb
                     && rand <= hierarchyProb + hyperNodeProb) {
-                node.setIsHypernode(true);
+                node.setHypernode(true);
                 nodesLeft--;
             } else {
                 nodesLeft--;
@@ -149,11 +149,11 @@ public class RandomGraphGenerator {
 
         // connect edge
         Edge edge = factory.createEdge();
-        edge.setIsDirected(directed);
+        edge.setDirected(directed);
         // connect through ports
         if (usePorts) {
-            if (sourceNode.isIsHypernode()) {
-                if (!targetNode.isIsHypernode()) {
+            if (sourceNode.isHypernode()) {
+                if (!targetNode.isHypernode()) {
                     Port targetPort = factory.createPort();
                     targetNode.getPorts().add(targetPort);
                     edge.setTargetPort(targetPort);
@@ -163,7 +163,7 @@ public class RandomGraphGenerator {
                 Port sourcePort = factory.createPort();
                 sourceNode.getPorts().add(sourcePort);
                 edge.setSourcePort(sourcePort);
-                if (targetNode.isIsHypernode()) {
+                if (targetNode.isHypernode()) {
                     edge.setType(EdgeType.PORT2_NODE);
                 } else {
                     Port targetPort = factory.createPort();

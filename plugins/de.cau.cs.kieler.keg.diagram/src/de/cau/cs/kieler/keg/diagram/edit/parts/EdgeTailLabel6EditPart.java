@@ -48,13 +48,13 @@ import de.cau.cs.kieler.keg.diagram.providers.GraphsParserProvider;
 /**
  * @generated
  */
-public class EdgeHeadLabel25EditPart extends LabelEditPart implements
+public class EdgeTailLabel6EditPart extends LabelEditPart implements
         ITextAwareEditPart {
 
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 6023;
+    public static final int VISUAL_ID = 6028;
 
     /**
      * @generated
@@ -82,14 +82,14 @@ public class EdgeHeadLabel25EditPart extends LabelEditPart implements
     static {
         registerSnapBackPosition(
                 GraphsVisualIDRegistry
-                        .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel25EditPart.VISUAL_ID),
+                        .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel6EditPart.VISUAL_ID),
                 new Point(0, 80));
     }
 
     /**
      * @generated
      */
-    public EdgeHeadLabel25EditPart(View view) {
+    public EdgeTailLabel6EditPart(View view) {
         super(view);
     }
 
@@ -110,7 +110,7 @@ public class EdgeHeadLabel25EditPart extends LabelEditPart implements
      * @generated
      */
     public int getKeyPoint() {
-        return ConnectionLocator.SOURCE;
+        return ConnectionLocator.TARGET;
     }
 
     /**
@@ -312,10 +312,10 @@ public class EdgeHeadLabel25EditPart extends LabelEditPart implements
             parser =
                     GraphsParserProvider
                             .getParser(
-                                    GraphsElementTypes.Edge_4005,
+                                    GraphsElementTypes.Edge_4006,
                                     getParserElement(),
                                     GraphsVisualIDRegistry
-                                            .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel25EditPart.VISUAL_ID));
+                                            .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel6EditPart.VISUAL_ID));
         }
         return parser;
     }

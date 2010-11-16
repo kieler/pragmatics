@@ -75,7 +75,7 @@ Void transformNestedGraphHyperedges(graphml::NodeType node):
 
 Void transformHyperedge(graphml::HyperedgeType hyperedge, Node parent):
 	let hypernode = new Node:
-	hypernode.setIsHypernode(true) ->
+	hypernode.setHypernode(true) ->
 	parent.children.add(hypernode) ->
 	hyperedge.endpoint.connectEndpointToHypernode(hypernode)
 ;

@@ -18,22 +18,14 @@ import de.cau.cs.kieler.keg.diagram.edit.parts.Edge6EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Edge7EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Edge8EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeEditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel12EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel13EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel14EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel15EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel16EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel17EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel18EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel1EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel22EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel23EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel24EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel25EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel26EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel27EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel28EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel2EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel3EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel4EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel5EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel6EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel7EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel8EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabelEditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel2EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel3EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel4EditPart;
@@ -42,22 +34,14 @@ import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel6EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel7EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel8EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabelEditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel12EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel13EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel14EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel15EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel16EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel17EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel18EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel1EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel22EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel23EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel24EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel25EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel26EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel27EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel28EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel2EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel3EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel4EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel5EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel6EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel7EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel8EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabelEditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Node2EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Node3EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.Node4EditPart;
@@ -313,16 +297,10 @@ public class GraphsVisualIDRegistry {
             if (EdgeMidLabelEditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel1EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeHeadLabelEditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel2EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel1EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel2EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeTailLabelEditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             break;
@@ -330,16 +308,10 @@ public class GraphsVisualIDRegistry {
             if (EdgeMidLabel2EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel12EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeHeadLabel2EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel22EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel12EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel22EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeTailLabel2EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             break;
@@ -347,16 +319,10 @@ public class GraphsVisualIDRegistry {
             if (EdgeMidLabel3EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel13EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeHeadLabel3EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel23EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel13EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel23EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeTailLabel3EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             break;
@@ -364,16 +330,10 @@ public class GraphsVisualIDRegistry {
             if (EdgeMidLabel4EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel14EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeHeadLabel4EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel24EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel14EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel24EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeTailLabel4EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             break;
@@ -381,16 +341,10 @@ public class GraphsVisualIDRegistry {
             if (EdgeMidLabel5EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel15EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeHeadLabel5EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel25EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel15EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel25EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeTailLabel5EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             break;
@@ -398,16 +352,10 @@ public class GraphsVisualIDRegistry {
             if (EdgeMidLabel6EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel16EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeHeadLabel6EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel26EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel16EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel26EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeTailLabel6EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             break;
@@ -415,16 +363,10 @@ public class GraphsVisualIDRegistry {
             if (EdgeMidLabel7EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel17EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeHeadLabel7EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel27EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel17EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel27EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeTailLabel7EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             break;
@@ -432,16 +374,10 @@ public class GraphsVisualIDRegistry {
             if (EdgeMidLabel8EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel18EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeHeadLabel8EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
-            if (EdgeHeadLabel28EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel18EditPart.VISUAL_ID == nodeVisualID) {
-                return true;
-            }
-            if (EdgeTailLabel28EditPart.VISUAL_ID == nodeVisualID) {
+            if (EdgeTailLabel8EditPart.VISUAL_ID == nodeVisualID) {
                 return true;
             }
             break;

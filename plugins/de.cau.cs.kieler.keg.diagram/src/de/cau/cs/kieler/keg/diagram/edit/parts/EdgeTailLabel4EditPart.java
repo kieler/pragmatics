@@ -48,13 +48,13 @@ import de.cau.cs.kieler.keg.diagram.providers.GraphsParserProvider;
 /**
  * @generated
  */
-public class EdgeHeadLabel12EditPart extends LabelEditPart implements
+public class EdgeTailLabel4EditPart extends LabelEditPart implements
         ITextAwareEditPart {
 
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 6007;
+    public static final int VISUAL_ID = 6018;
 
     /**
      * @generated
@@ -82,14 +82,14 @@ public class EdgeHeadLabel12EditPart extends LabelEditPart implements
     static {
         registerSnapBackPosition(
                 GraphsVisualIDRegistry
-                        .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel12EditPart.VISUAL_ID),
-                new Point(0, 60));
+                        .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel4EditPart.VISUAL_ID),
+                new Point(0, 80));
     }
 
     /**
      * @generated
      */
-    public EdgeHeadLabel12EditPart(View view) {
+    public EdgeTailLabel4EditPart(View view) {
         super(view);
     }
 
@@ -110,7 +110,7 @@ public class EdgeHeadLabel12EditPart extends LabelEditPart implements
      * @generated
      */
     public int getKeyPoint() {
-        return ConnectionLocator.SOURCE;
+        return ConnectionLocator.TARGET;
     }
 
     /**
@@ -312,10 +312,10 @@ public class EdgeHeadLabel12EditPart extends LabelEditPart implements
             parser =
                     GraphsParserProvider
                             .getParser(
-                                    GraphsElementTypes.Edge_4002,
+                                    GraphsElementTypes.Edge_4004,
                                     getParserElement(),
                                     GraphsVisualIDRegistry
-                                            .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel12EditPart.VISUAL_ID));
+                                            .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel4EditPart.VISUAL_ID));
         }
         return parser;
     }

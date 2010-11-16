@@ -151,13 +151,13 @@ public interface KEGPackage extends EPackage {
     int NODE__NODE_LABEL = KGraphPackage.KNODE_FEATURE_COUNT + 0;
 
     /**
-     * The feature id for the '<em><b>Is Hypernode</b></em>' attribute.
+     * The feature id for the '<em><b>Hypernode</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int NODE__IS_HYPERNODE = KGraphPackage.KNODE_FEATURE_COUNT + 1;
+    int NODE__HYPERNODE = KGraphPackage.KNODE_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>Node</em>' class.
@@ -233,22 +233,13 @@ public interface KEGPackage extends EPackage {
     int EDGE__LABELS = KGraphPackage.KEDGE__LABELS;
 
     /**
-     * The feature id for the '<em><b>Head Label1</b></em>' attribute.
+     * The feature id for the '<em><b>Head Label</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EDGE__HEAD_LABEL1 = KGraphPackage.KEDGE_FEATURE_COUNT + 0;
-
-    /**
-     * The feature id for the '<em><b>Head Label2</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int EDGE__HEAD_LABEL2 = KGraphPackage.KEDGE_FEATURE_COUNT + 1;
+    int EDGE__HEAD_LABEL = KGraphPackage.KEDGE_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Mid Label</b></em>' attribute.
@@ -257,34 +248,25 @@ public interface KEGPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int EDGE__MID_LABEL = KGraphPackage.KEDGE_FEATURE_COUNT + 2;
+    int EDGE__MID_LABEL = KGraphPackage.KEDGE_FEATURE_COUNT + 1;
 
     /**
-     * The feature id for the '<em><b>Tail Label1</b></em>' attribute.
+     * The feature id for the '<em><b>Tail Label</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EDGE__TAIL_LABEL1 = KGraphPackage.KEDGE_FEATURE_COUNT + 3;
+    int EDGE__TAIL_LABEL = KGraphPackage.KEDGE_FEATURE_COUNT + 2;
 
     /**
-     * The feature id for the '<em><b>Tail Label2</b></em>' attribute.
+     * The feature id for the '<em><b>Directed</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EDGE__TAIL_LABEL2 = KGraphPackage.KEDGE_FEATURE_COUNT + 4;
-
-    /**
-     * The feature id for the '<em><b>Is Directed</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int EDGE__IS_DIRECTED = KGraphPackage.KEDGE_FEATURE_COUNT + 5;
+    int EDGE__DIRECTED = KGraphPackage.KEDGE_FEATURE_COUNT + 3;
 
     /**
      * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -293,7 +275,7 @@ public interface KEGPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int EDGE__TYPE = KGraphPackage.KEDGE_FEATURE_COUNT + 6;
+    int EDGE__TYPE = KGraphPackage.KEDGE_FEATURE_COUNT + 4;
 
     /**
      * The number of structural features of the '<em>Edge</em>' class.
@@ -302,7 +284,7 @@ public interface KEGPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int EDGE_FEATURE_COUNT = KGraphPackage.KEDGE_FEATURE_COUNT + 7;
+    int EDGE_FEATURE_COUNT = KGraphPackage.KEDGE_FEATURE_COUNT + 5;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.keg.impl.PortImpl <em>Port</em>}' class.
@@ -401,15 +383,15 @@ public interface KEGPackage extends EPackage {
     EAttribute getNode_NodeLabel();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Node#isIsHypernode <em>Is Hypernode</em>}'.
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Node#isHypernode <em>Hypernode</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Is Hypernode</em>'.
-     * @see de.cau.cs.kieler.keg.Node#isIsHypernode()
+     * @return the meta object for the attribute '<em>Hypernode</em>'.
+     * @see de.cau.cs.kieler.keg.Node#isHypernode()
      * @see #getNode()
      * @generated
      */
-    EAttribute getNode_IsHypernode();
+    EAttribute getNode_Hypernode();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.keg.Edge <em>Edge</em>}'.
@@ -422,26 +404,15 @@ public interface KEGPackage extends EPackage {
     EClass getEdge();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Edge#getHeadLabel1 <em>Head Label1</em>}'.
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Edge#getHeadLabel <em>Head Label</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Head Label1</em>'.
-     * @see de.cau.cs.kieler.keg.Edge#getHeadLabel1()
+     * @return the meta object for the attribute '<em>Head Label</em>'.
+     * @see de.cau.cs.kieler.keg.Edge#getHeadLabel()
      * @see #getEdge()
      * @generated
      */
-    EAttribute getEdge_HeadLabel1();
-
-    /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Edge#getHeadLabel2 <em>Head Label2</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Head Label2</em>'.
-     * @see de.cau.cs.kieler.keg.Edge#getHeadLabel2()
-     * @see #getEdge()
-     * @generated
-     */
-    EAttribute getEdge_HeadLabel2();
+    EAttribute getEdge_HeadLabel();
 
     /**
      * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Edge#getMidLabel <em>Mid Label</em>}'.
@@ -455,37 +426,26 @@ public interface KEGPackage extends EPackage {
     EAttribute getEdge_MidLabel();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Edge#getTailLabel1 <em>Tail Label1</em>}'.
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Edge#getTailLabel <em>Tail Label</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Tail Label1</em>'.
-     * @see de.cau.cs.kieler.keg.Edge#getTailLabel1()
+     * @return the meta object for the attribute '<em>Tail Label</em>'.
+     * @see de.cau.cs.kieler.keg.Edge#getTailLabel()
      * @see #getEdge()
      * @generated
      */
-    EAttribute getEdge_TailLabel1();
+    EAttribute getEdge_TailLabel();
 
     /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Edge#getTailLabel2 <em>Tail Label2</em>}'.
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Edge#isDirected <em>Directed</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Tail Label2</em>'.
-     * @see de.cau.cs.kieler.keg.Edge#getTailLabel2()
+     * @return the meta object for the attribute '<em>Directed</em>'.
+     * @see de.cau.cs.kieler.keg.Edge#isDirected()
      * @see #getEdge()
      * @generated
      */
-    EAttribute getEdge_TailLabel2();
-
-    /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Edge#isIsDirected <em>Is Directed</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Is Directed</em>'.
-     * @see de.cau.cs.kieler.keg.Edge#isIsDirected()
-     * @see #getEdge()
-     * @generated
-     */
-    EAttribute getEdge_IsDirected();
+    EAttribute getEdge_Directed();
 
     /**
      * Returns the meta object for the attribute '{@link de.cau.cs.kieler.keg.Edge#getType <em>Type</em>}'.
@@ -570,12 +530,12 @@ public interface KEGPackage extends EPackage {
         EAttribute NODE__NODE_LABEL = eINSTANCE.getNode_NodeLabel();
 
         /**
-         * The meta object literal for the '<em><b>Is Hypernode</b></em>' attribute feature.
+         * The meta object literal for the '<em><b>Hypernode</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute NODE__IS_HYPERNODE = eINSTANCE.getNode_IsHypernode();
+        EAttribute NODE__HYPERNODE = eINSTANCE.getNode_Hypernode();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.keg.impl.EdgeImpl <em>Edge</em>}' class.
@@ -588,20 +548,12 @@ public interface KEGPackage extends EPackage {
         EClass EDGE = eINSTANCE.getEdge();
 
         /**
-         * The meta object literal for the '<em><b>Head Label1</b></em>' attribute feature.
+         * The meta object literal for the '<em><b>Head Label</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute EDGE__HEAD_LABEL1 = eINSTANCE.getEdge_HeadLabel1();
-
-        /**
-         * The meta object literal for the '<em><b>Head Label2</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute EDGE__HEAD_LABEL2 = eINSTANCE.getEdge_HeadLabel2();
+        EAttribute EDGE__HEAD_LABEL = eINSTANCE.getEdge_HeadLabel();
 
         /**
          * The meta object literal for the '<em><b>Mid Label</b></em>' attribute feature.
@@ -612,28 +564,20 @@ public interface KEGPackage extends EPackage {
         EAttribute EDGE__MID_LABEL = eINSTANCE.getEdge_MidLabel();
 
         /**
-         * The meta object literal for the '<em><b>Tail Label1</b></em>' attribute feature.
+         * The meta object literal for the '<em><b>Tail Label</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute EDGE__TAIL_LABEL1 = eINSTANCE.getEdge_TailLabel1();
+        EAttribute EDGE__TAIL_LABEL = eINSTANCE.getEdge_TailLabel();
 
         /**
-         * The meta object literal for the '<em><b>Tail Label2</b></em>' attribute feature.
+         * The meta object literal for the '<em><b>Directed</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
-        EAttribute EDGE__TAIL_LABEL2 = eINSTANCE.getEdge_TailLabel2();
-
-        /**
-         * The meta object literal for the '<em><b>Is Directed</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute EDGE__IS_DIRECTED = eINSTANCE.getEdge_IsDirected();
+        EAttribute EDGE__DIRECTED = eINSTANCE.getEdge_Directed();
 
         /**
          * The meta object literal for the '<em><b>Type</b></em>' attribute feature.

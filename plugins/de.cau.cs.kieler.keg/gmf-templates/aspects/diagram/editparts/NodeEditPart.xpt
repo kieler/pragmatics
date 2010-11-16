@@ -110,8 +110,10 @@ public class «editPartClassName» «EXPAND extendsList»
 	«EXPAND xpt::Common::generatedMemberComment»
 	protected org.eclipse.draw2d.IFigure contentPane;
 
+	«IF editPartClassName <> 'Node2EditPart' and editPartClassName <> 'Node4EditPart' -»
 	«EXPAND xpt::Common::generatedMemberComment»
 	protected org.eclipse.draw2d.IFigure primaryShape;
+	«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE createDefaultEditPolicies FOR gmfgen::GenNode-»

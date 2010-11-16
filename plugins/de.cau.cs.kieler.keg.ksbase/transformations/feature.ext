@@ -40,7 +40,7 @@ Void addNeighbour(Node node):
 //Connects two nodes with a directed edge
 Void connectDirected(Node source, Node target):
 	let edge = new Edge:
-	edge.setIsDirected(true) ->
+	edge.setDirected(true) ->
 	edge.setSource(source) ->
 	edge.setTarget(target) ->
 	setSelection(edge)
@@ -49,7 +49,7 @@ Void connectDirected(Node source, Node target):
 //Connects two nodes with an undirected edge
 Void connectUndirected(Node source, Node target):
 	let edge = new Edge:
-	edge.setIsDirected(false) ->
+	edge.setDirected(false) ->
 	edge.setSource(source) ->
 	edge.setTarget(target) ->
 	setSelection(edge)
@@ -58,7 +58,7 @@ Void connectUndirected(Node source, Node target):
 //Connects any number of nodes with a hyperedge
 Void connectHyper(List[Node] nodes):
 	let hypernode = new Node:
-	hypernode.setIsHypernode(true) ->
+	hypernode.setHypernode(true) ->
 	nodes.connectUndirectedReverse(hypernode) ->
 	nodes.get(0).parent.children.add(hypernode) ->
 	setSelection(hypernode)
@@ -74,14 +74,14 @@ Void flip(Edge edge):
 
 //Toggle directed/undirected edge
 Void toggleDirectedUndirected(Edge edge):
-	let directed = edge.isDirected:
-	edge.setIsDirected(!directed)
+	let directed = edge.directed:
+	edge.setDirected(!directed)
 ;
 
 //Toggle node/hypernode
 Void toggleNodeHyper(Node node):
-	let hypernode = node.isHypernode:
-	node.setIsHypernode(!hypernode)
+	let hypernode = node.hypernode:
+	node.setHypernode(!hypernode)
 ;
 
 //Moves any number of nodes into a compound node
@@ -100,7 +100,7 @@ Void moveTo(Node node, Node parent):
 //Connects two nodes with an undirected edge (parameter ordering reversed)
 Void connectUndirectedReverse(Node target, Node source):
 	let edge = new Edge:
-	edge.setIsDirected(false) ->
+	edge.setDirected(false) ->
 	edge.setSource(source) ->
 	edge.setTarget(target) ->
 	setSelection(edge)

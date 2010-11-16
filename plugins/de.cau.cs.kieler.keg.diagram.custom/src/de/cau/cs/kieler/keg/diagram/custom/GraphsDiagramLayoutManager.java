@@ -250,7 +250,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
             }
         }
-        if (((Node) graphNode).isIsHypernode()) {
+        if (((Node) graphNode).isHypernode()) {
             nodeLayout.setProperty(LayoutOptions.HYPERNODE, true);
         }
         layoutConfig.setFocus(editPart);

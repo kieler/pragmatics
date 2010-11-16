@@ -278,7 +278,7 @@ Void pasteNodeOnEdge(Edge target, Node newNode, KNode edgeKeeper):
  let source = target.source:
  let dest = target.target:
  let dummyEdge = new Edge:
- (target.isDirected ? dummyEdge.setIsDirected(true) : dummyEdge.setIsDirected(false)) ->
+ (target.directed ? dummyEdge.setDirected(true) : dummyEdge.setDirected(false)) ->
  (edgeKeeper == source ?
   (source.parent.children.add(newNode) ->
    dummyEdge.setSource(newNode) ->

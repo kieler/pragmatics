@@ -313,57 +313,22 @@ public class Messages extends NLS {
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Port_3002_incominglinks;
+    public static String NavigatorGroupName_Node_3001_incominglinks;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Port_3002_outgoinglinks;
+    public static String NavigatorGroupName_Node_3001_outgoinglinks;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Node_1000_links;
+    public static String NavigatorGroupName_Edge_4004_target;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Edge_4001_target;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4001_source;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4007_target;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4007_source;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4002_target;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4002_source;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4003_target;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4003_source;
+    public static String NavigatorGroupName_Edge_4004_source;
 
     /**
      * @generated
@@ -378,16 +343,6 @@ public class Messages extends NLS {
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Node_3003_incominglinks;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Node_3003_outgoinglinks;
-
-    /**
-     * @generated
-     */
     public static String NavigatorGroupName_Node_2002_incominglinks;
 
     /**
@@ -398,12 +353,77 @@ public class Messages extends NLS {
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Node_3001_incominglinks;
+    public static String NavigatorGroupName_Edge_4002_target;
 
     /**
      * @generated
      */
-    public static String NavigatorGroupName_Node_3001_outgoinglinks;
+    public static String NavigatorGroupName_Edge_4002_source;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Node_3003_incominglinks;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Node_3003_outgoinglinks;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Edge_4001_target;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Edge_4001_source;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Node_1000_links;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Port_3002_incominglinks;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Port_3002_outgoinglinks;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Edge_4007_target;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Edge_4007_source;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Edge_4006_target;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Edge_4006_source;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Edge_4003_target;
+
+    /**
+     * @generated
+     */
+    public static String NavigatorGroupName_Edge_4003_source;
 
     /**
      * @generated
@@ -424,26 +444,6 @@ public class Messages extends NLS {
      * @generated
      */
     public static String NavigatorGroupName_Edge_4005_source;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4006_target;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4006_source;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4004_target;
-
-    /**
-     * @generated
-     */
-    public static String NavigatorGroupName_Edge_4004_source;
 
     /**
      * @generated

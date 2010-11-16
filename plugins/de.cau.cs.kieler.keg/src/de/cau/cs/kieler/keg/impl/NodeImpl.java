@@ -32,7 +32,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.keg.impl.NodeImpl#getNodeLabel <em>Node Label</em>}</li>
- *   <li>{@link de.cau.cs.kieler.keg.impl.NodeImpl#isIsHypernode <em>Is Hypernode</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.keg.impl.NodeImpl#isHypernode <em>Hypernode</em>}</li>
  * </ul>
  * </p>
  *
@@ -60,24 +60,24 @@ public class NodeImpl extends KNodeImpl implements Node {
     protected String nodeLabel = NODE_LABEL_EDEFAULT;
 
     /**
-     * The default value of the '{@link #isIsHypernode() <em>Is Hypernode</em>}' attribute.
+     * The default value of the '{@link #isHypernode() <em>Hypernode</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #isIsHypernode()
+     * @see #isHypernode()
      * @generated
      * @ordered
      */
-    protected static final boolean IS_HYPERNODE_EDEFAULT = false;
+    protected static final boolean HYPERNODE_EDEFAULT = false;
 
     /**
-     * The cached value of the '{@link #isIsHypernode() <em>Is Hypernode</em>}' attribute.
+     * The cached value of the '{@link #isHypernode() <em>Hypernode</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #isIsHypernode()
+     * @see #isHypernode()
      * @generated
      * @ordered
      */
-    protected boolean isHypernode = IS_HYPERNODE_EDEFAULT;
+    protected boolean hypernode = HYPERNODE_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -124,8 +124,8 @@ public class NodeImpl extends KNodeImpl implements Node {
      * <!-- end-user-doc -->
      * @generated
      */
-    public boolean isIsHypernode() {
-        return isHypernode;
+    public boolean isHypernode() {
+        return hypernode;
     }
 
     /**
@@ -133,11 +133,11 @@ public class NodeImpl extends KNodeImpl implements Node {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setIsHypernode(boolean newIsHypernode) {
-        boolean oldIsHypernode = isHypernode;
-        isHypernode = newIsHypernode;
+    public void setHypernode(boolean newHypernode) {
+        boolean oldHypernode = hypernode;
+        hypernode = newHypernode;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.NODE__IS_HYPERNODE, oldIsHypernode, isHypernode));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.NODE__HYPERNODE, oldHypernode, hypernode));
     }
 
     /**
@@ -150,8 +150,8 @@ public class NodeImpl extends KNodeImpl implements Node {
         switch (featureID) {
             case KEGPackage.NODE__NODE_LABEL:
                 return getNodeLabel();
-            case KEGPackage.NODE__IS_HYPERNODE:
-                return isIsHypernode();
+            case KEGPackage.NODE__HYPERNODE:
+                return isHypernode();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -167,8 +167,8 @@ public class NodeImpl extends KNodeImpl implements Node {
             case KEGPackage.NODE__NODE_LABEL:
                 setNodeLabel((String)newValue);
                 return;
-            case KEGPackage.NODE__IS_HYPERNODE:
-                setIsHypernode((Boolean)newValue);
+            case KEGPackage.NODE__HYPERNODE:
+                setHypernode((Boolean)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -185,8 +185,8 @@ public class NodeImpl extends KNodeImpl implements Node {
             case KEGPackage.NODE__NODE_LABEL:
                 setNodeLabel(NODE_LABEL_EDEFAULT);
                 return;
-            case KEGPackage.NODE__IS_HYPERNODE:
-                setIsHypernode(IS_HYPERNODE_EDEFAULT);
+            case KEGPackage.NODE__HYPERNODE:
+                setHypernode(HYPERNODE_EDEFAULT);
                 return;
         }
         super.eUnset(featureID);
@@ -202,8 +202,8 @@ public class NodeImpl extends KNodeImpl implements Node {
         switch (featureID) {
             case KEGPackage.NODE__NODE_LABEL:
                 return NODE_LABEL_EDEFAULT == null ? nodeLabel != null : !NODE_LABEL_EDEFAULT.equals(nodeLabel);
-            case KEGPackage.NODE__IS_HYPERNODE:
-                return isHypernode != IS_HYPERNODE_EDEFAULT;
+            case KEGPackage.NODE__HYPERNODE:
+                return hypernode != HYPERNODE_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -220,8 +220,8 @@ public class NodeImpl extends KNodeImpl implements Node {
         StringBuffer result = new StringBuffer(super.toString());
         result.append(" (nodeLabel: ");
         result.append(nodeLabel);
-        result.append(", isHypernode: ");
-        result.append(isHypernode);
+        result.append(", hypernode: ");
+        result.append(hypernode);
         result.append(')');
         return result.toString();
     }

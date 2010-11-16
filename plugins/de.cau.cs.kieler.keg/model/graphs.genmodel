@@ -18,15 +18,13 @@
     </genEnums>
     <genClasses ecoreClass="graphs.ecore#//Node">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Node/nodeLabel"/>
-      <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Node/isHypernode"/>
+      <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Node/hypernode"/>
     </genClasses>
     <genClasses ecoreClass="graphs.ecore#//Edge">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/headLabel1"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/headLabel2"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/headLabel"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/midLabel"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/tailLabel1"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/tailLabel2"/>
-      <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/isDirected"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/tailLabel"/>
+      <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/directed"/>
       <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute graphs.ecore#//Edge/type"/>
     </genClasses>
     <genClasses ecoreClass="graphs.ecore#//Port">

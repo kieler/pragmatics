@@ -48,13 +48,13 @@ import de.cau.cs.kieler.keg.diagram.providers.GraphsParserProvider;
 /**
  * @generated
  */
-public class EdgeTailLabel24EditPart extends LabelEditPart implements
+public class EdgeTailLabelEditPart extends LabelEditPart implements
         ITextAwareEditPart {
 
     /**
      * @generated
      */
-    public static final int VISUAL_ID = 6020;
+    public static final int VISUAL_ID = 6003;
 
     /**
      * @generated
@@ -82,14 +82,14 @@ public class EdgeTailLabel24EditPart extends LabelEditPart implements
     static {
         registerSnapBackPosition(
                 GraphsVisualIDRegistry
-                        .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel24EditPart.VISUAL_ID),
-                new Point(0, 120));
+                        .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabelEditPart.VISUAL_ID),
+                new Point(0, 80));
     }
 
     /**
      * @generated
      */
-    public EdgeTailLabel24EditPart(View view) {
+    public EdgeTailLabelEditPart(View view) {
         super(view);
     }
 
@@ -312,10 +312,10 @@ public class EdgeTailLabel24EditPart extends LabelEditPart implements
             parser =
                     GraphsParserProvider
                             .getParser(
-                                    GraphsElementTypes.Edge_4004,
+                                    GraphsElementTypes.Edge_4001,
                                     getParserElement(),
                                     GraphsVisualIDRegistry
-                                            .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel24EditPart.VISUAL_ID));
+                                            .getType(de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabelEditPart.VISUAL_ID));
         }
         return parser;
     }

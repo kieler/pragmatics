@@ -14,22 +14,14 @@ import org.eclipse.gmf.runtime.emf.ui.services.parser.ParserHintAdapter;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.keg.KEGPackage;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel12EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel13EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel14EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel15EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel16EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel17EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel18EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel1EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel22EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel23EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel24EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel25EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel26EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel27EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel28EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel2EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel3EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel4EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel5EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel6EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel7EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabel8EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeHeadLabelEditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel2EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel3EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel4EditPart;
@@ -38,22 +30,14 @@ import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel6EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel7EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabel8EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeMidLabelEditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel12EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel13EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel14EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel15EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel16EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel17EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel18EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel1EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel22EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel23EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel24EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel25EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel26EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel27EditPart;
-import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel28EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel2EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel3EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel4EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel5EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel6EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel7EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabel8EditPart;
+import de.cau.cs.kieler.keg.diagram.edit.parts.EdgeTailLabelEditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.NodeNodeLabel2EditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.NodeNodeLabelEditPart;
 import de.cau.cs.kieler.keg.diagram.edit.parts.PortPortLabelEditPart;
@@ -141,77 +125,37 @@ public class GraphsParserProvider extends AbstractProvider implements
     /**
      * @generated
      */
-    private IParser edgeHeadLabel1_6002Parser;
+    private IParser edgeHeadLabel_6002Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel1_6002Parser() {
-        if (edgeHeadLabel1_6002Parser == null) {
+    private IParser getEdgeHeadLabel_6002Parser() {
+        if (edgeHeadLabel_6002Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel1() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_HeadLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel1_6002Parser = parser;
+            edgeHeadLabel_6002Parser = parser;
         }
-        return edgeHeadLabel1_6002Parser;
+        return edgeHeadLabel_6002Parser;
     }
 
     /**
      * @generated
      */
-    private IParser edgeHeadLabel2_6003Parser;
+    private IParser edgeTailLabel_6003Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel2_6003Parser() {
-        if (edgeHeadLabel2_6003Parser == null) {
+    private IParser getEdgeTailLabel_6003Parser() {
+        if (edgeTailLabel_6003Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel2() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_TailLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel2_6003Parser = parser;
+            edgeTailLabel_6003Parser = parser;
         }
-        return edgeHeadLabel2_6003Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel1_6004Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel1_6004Parser() {
-        if (edgeTailLabel1_6004Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel1() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel1_6004Parser = parser;
-        }
-        return edgeTailLabel1_6004Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel2_6005Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel2_6005Parser() {
-        if (edgeTailLabel2_6005Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel2() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel2_6005Parser = parser;
-        }
-        return edgeTailLabel2_6005Parser;
+        return edgeTailLabel_6003Parser;
     }
 
     /**
@@ -235,77 +179,37 @@ public class GraphsParserProvider extends AbstractProvider implements
     /**
      * @generated
      */
-    private IParser edgeHeadLabel1_6007Parser;
+    private IParser edgeHeadLabel_6007Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel1_6007Parser() {
-        if (edgeHeadLabel1_6007Parser == null) {
+    private IParser getEdgeHeadLabel_6007Parser() {
+        if (edgeHeadLabel_6007Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel1() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_HeadLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel1_6007Parser = parser;
+            edgeHeadLabel_6007Parser = parser;
         }
-        return edgeHeadLabel1_6007Parser;
+        return edgeHeadLabel_6007Parser;
     }
 
     /**
      * @generated
      */
-    private IParser edgeHeadLabel2_6008Parser;
+    private IParser edgeTailLabel_6008Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel2_6008Parser() {
-        if (edgeHeadLabel2_6008Parser == null) {
+    private IParser getEdgeTailLabel_6008Parser() {
+        if (edgeTailLabel_6008Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel2() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_TailLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel2_6008Parser = parser;
+            edgeTailLabel_6008Parser = parser;
         }
-        return edgeHeadLabel2_6008Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel1_6009Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel1_6009Parser() {
-        if (edgeTailLabel1_6009Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel1() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel1_6009Parser = parser;
-        }
-        return edgeTailLabel1_6009Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel2_6010Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel2_6010Parser() {
-        if (edgeTailLabel2_6010Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel2() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel2_6010Parser = parser;
-        }
-        return edgeTailLabel2_6010Parser;
+        return edgeTailLabel_6008Parser;
     }
 
     /**
@@ -329,77 +233,37 @@ public class GraphsParserProvider extends AbstractProvider implements
     /**
      * @generated
      */
-    private IParser edgeHeadLabel1_6012Parser;
+    private IParser edgeHeadLabel_6012Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel1_6012Parser() {
-        if (edgeHeadLabel1_6012Parser == null) {
+    private IParser getEdgeHeadLabel_6012Parser() {
+        if (edgeHeadLabel_6012Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel1() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_HeadLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel1_6012Parser = parser;
+            edgeHeadLabel_6012Parser = parser;
         }
-        return edgeHeadLabel1_6012Parser;
+        return edgeHeadLabel_6012Parser;
     }
 
     /**
      * @generated
      */
-    private IParser edgeHeadLabel2_6013Parser;
+    private IParser edgeTailLabel_6013Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel2_6013Parser() {
-        if (edgeHeadLabel2_6013Parser == null) {
+    private IParser getEdgeTailLabel_6013Parser() {
+        if (edgeTailLabel_6013Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel2() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_TailLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel2_6013Parser = parser;
+            edgeTailLabel_6013Parser = parser;
         }
-        return edgeHeadLabel2_6013Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel1_6014Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel1_6014Parser() {
-        if (edgeTailLabel1_6014Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel1() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel1_6014Parser = parser;
-        }
-        return edgeTailLabel1_6014Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel2_6015Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel2_6015Parser() {
-        if (edgeTailLabel2_6015Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel2() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel2_6015Parser = parser;
-        }
-        return edgeTailLabel2_6015Parser;
+        return edgeTailLabel_6013Parser;
     }
 
     /**
@@ -423,77 +287,37 @@ public class GraphsParserProvider extends AbstractProvider implements
     /**
      * @generated
      */
-    private IParser edgeHeadLabel1_6017Parser;
+    private IParser edgeHeadLabel_6017Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel1_6017Parser() {
-        if (edgeHeadLabel1_6017Parser == null) {
+    private IParser getEdgeHeadLabel_6017Parser() {
+        if (edgeHeadLabel_6017Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel1() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_HeadLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel1_6017Parser = parser;
+            edgeHeadLabel_6017Parser = parser;
         }
-        return edgeHeadLabel1_6017Parser;
+        return edgeHeadLabel_6017Parser;
     }
 
     /**
      * @generated
      */
-    private IParser edgeHeadLabel2_6018Parser;
+    private IParser edgeTailLabel_6018Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel2_6018Parser() {
-        if (edgeHeadLabel2_6018Parser == null) {
+    private IParser getEdgeTailLabel_6018Parser() {
+        if (edgeTailLabel_6018Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel2() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_TailLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel2_6018Parser = parser;
+            edgeTailLabel_6018Parser = parser;
         }
-        return edgeHeadLabel2_6018Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel1_6019Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel1_6019Parser() {
-        if (edgeTailLabel1_6019Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel1() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel1_6019Parser = parser;
-        }
-        return edgeTailLabel1_6019Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel2_6020Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel2_6020Parser() {
-        if (edgeTailLabel2_6020Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel2() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel2_6020Parser = parser;
-        }
-        return edgeTailLabel2_6020Parser;
+        return edgeTailLabel_6018Parser;
     }
 
     /**
@@ -517,77 +341,37 @@ public class GraphsParserProvider extends AbstractProvider implements
     /**
      * @generated
      */
-    private IParser edgeHeadLabel1_6022Parser;
+    private IParser edgeHeadLabel_6022Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel1_6022Parser() {
-        if (edgeHeadLabel1_6022Parser == null) {
+    private IParser getEdgeHeadLabel_6022Parser() {
+        if (edgeHeadLabel_6022Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel1() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_HeadLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel1_6022Parser = parser;
+            edgeHeadLabel_6022Parser = parser;
         }
-        return edgeHeadLabel1_6022Parser;
+        return edgeHeadLabel_6022Parser;
     }
 
     /**
      * @generated
      */
-    private IParser edgeHeadLabel2_6023Parser;
+    private IParser edgeTailLabel_6023Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel2_6023Parser() {
-        if (edgeHeadLabel2_6023Parser == null) {
+    private IParser getEdgeTailLabel_6023Parser() {
+        if (edgeTailLabel_6023Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel2() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_TailLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel2_6023Parser = parser;
+            edgeTailLabel_6023Parser = parser;
         }
-        return edgeHeadLabel2_6023Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel1_6024Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel1_6024Parser() {
-        if (edgeTailLabel1_6024Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel1() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel1_6024Parser = parser;
-        }
-        return edgeTailLabel1_6024Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel2_6025Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel2_6025Parser() {
-        if (edgeTailLabel2_6025Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel2() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel2_6025Parser = parser;
-        }
-        return edgeTailLabel2_6025Parser;
+        return edgeTailLabel_6023Parser;
     }
 
     /**
@@ -611,77 +395,37 @@ public class GraphsParserProvider extends AbstractProvider implements
     /**
      * @generated
      */
-    private IParser edgeHeadLabel1_6027Parser;
+    private IParser edgeHeadLabel_6027Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel1_6027Parser() {
-        if (edgeHeadLabel1_6027Parser == null) {
+    private IParser getEdgeHeadLabel_6027Parser() {
+        if (edgeHeadLabel_6027Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel1() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_HeadLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel1_6027Parser = parser;
+            edgeHeadLabel_6027Parser = parser;
         }
-        return edgeHeadLabel1_6027Parser;
+        return edgeHeadLabel_6027Parser;
     }
 
     /**
      * @generated
      */
-    private IParser edgeHeadLabel2_6028Parser;
+    private IParser edgeTailLabel_6028Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel2_6028Parser() {
-        if (edgeHeadLabel2_6028Parser == null) {
+    private IParser getEdgeTailLabel_6028Parser() {
+        if (edgeTailLabel_6028Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel2() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_TailLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel2_6028Parser = parser;
+            edgeTailLabel_6028Parser = parser;
         }
-        return edgeHeadLabel2_6028Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel1_6029Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel1_6029Parser() {
-        if (edgeTailLabel1_6029Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel1() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel1_6029Parser = parser;
-        }
-        return edgeTailLabel1_6029Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel2_6030Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel2_6030Parser() {
-        if (edgeTailLabel2_6030Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel2() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel2_6030Parser = parser;
-        }
-        return edgeTailLabel2_6030Parser;
+        return edgeTailLabel_6028Parser;
     }
 
     /**
@@ -705,77 +449,37 @@ public class GraphsParserProvider extends AbstractProvider implements
     /**
      * @generated
      */
-    private IParser edgeHeadLabel1_6032Parser;
+    private IParser edgeHeadLabel_6032Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel1_6032Parser() {
-        if (edgeHeadLabel1_6032Parser == null) {
+    private IParser getEdgeHeadLabel_6032Parser() {
+        if (edgeHeadLabel_6032Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel1() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_HeadLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel1_6032Parser = parser;
+            edgeHeadLabel_6032Parser = parser;
         }
-        return edgeHeadLabel1_6032Parser;
+        return edgeHeadLabel_6032Parser;
     }
 
     /**
      * @generated
      */
-    private IParser edgeHeadLabel2_6033Parser;
+    private IParser edgeTailLabel_6033Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel2_6033Parser() {
-        if (edgeHeadLabel2_6033Parser == null) {
+    private IParser getEdgeTailLabel_6033Parser() {
+        if (edgeTailLabel_6033Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel2() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_TailLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel2_6033Parser = parser;
+            edgeTailLabel_6033Parser = parser;
         }
-        return edgeHeadLabel2_6033Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel1_6034Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel1_6034Parser() {
-        if (edgeTailLabel1_6034Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel1() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel1_6034Parser = parser;
-        }
-        return edgeTailLabel1_6034Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel2_6035Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel2_6035Parser() {
-        if (edgeTailLabel2_6035Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel2() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel2_6035Parser = parser;
-        }
-        return edgeTailLabel2_6035Parser;
+        return edgeTailLabel_6033Parser;
     }
 
     /**
@@ -799,77 +503,37 @@ public class GraphsParserProvider extends AbstractProvider implements
     /**
      * @generated
      */
-    private IParser edgeHeadLabel1_6037Parser;
+    private IParser edgeHeadLabel_6037Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel1_6037Parser() {
-        if (edgeHeadLabel1_6037Parser == null) {
+    private IParser getEdgeHeadLabel_6037Parser() {
+        if (edgeHeadLabel_6037Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel1() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_HeadLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel1_6037Parser = parser;
+            edgeHeadLabel_6037Parser = parser;
         }
-        return edgeHeadLabel1_6037Parser;
+        return edgeHeadLabel_6037Parser;
     }
 
     /**
      * @generated
      */
-    private IParser edgeHeadLabel2_6038Parser;
+    private IParser edgeTailLabel_6038Parser;
 
     /**
      * @generated
      */
-    private IParser getEdgeHeadLabel2_6038Parser() {
-        if (edgeHeadLabel2_6038Parser == null) {
+    private IParser getEdgeTailLabel_6038Parser() {
+        if (edgeTailLabel_6038Parser == null) {
             EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_HeadLabel2() };
+                    new EAttribute[] { KEGPackage.eINSTANCE.getEdge_TailLabel() };
             MessageFormatParser parser = new MessageFormatParser(features);
-            edgeHeadLabel2_6038Parser = parser;
+            edgeTailLabel_6038Parser = parser;
         }
-        return edgeHeadLabel2_6038Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel1_6039Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel1_6039Parser() {
-        if (edgeTailLabel1_6039Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel1() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel1_6039Parser = parser;
-        }
-        return edgeTailLabel1_6039Parser;
-    }
-
-    /**
-     * @generated
-     */
-    private IParser edgeTailLabel2_6040Parser;
-
-    /**
-     * @generated
-     */
-    private IParser getEdgeTailLabel2_6040Parser() {
-        if (edgeTailLabel2_6040Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { KEGPackage.eINSTANCE
-                            .getEdge_TailLabel2() };
-            MessageFormatParser parser = new MessageFormatParser(features);
-            edgeTailLabel2_6040Parser = parser;
-        }
-        return edgeTailLabel2_6040Parser;
+        return edgeTailLabel_6038Parser;
     }
 
     /**
@@ -885,84 +549,52 @@ public class GraphsParserProvider extends AbstractProvider implements
             return getPortPortLabel_5001Parser();
         case EdgeMidLabelEditPart.VISUAL_ID:
             return getEdgeMidLabel_6001Parser();
-        case EdgeHeadLabel1EditPart.VISUAL_ID:
-            return getEdgeHeadLabel1_6002Parser();
-        case EdgeHeadLabel2EditPart.VISUAL_ID:
-            return getEdgeHeadLabel2_6003Parser();
-        case EdgeTailLabel1EditPart.VISUAL_ID:
-            return getEdgeTailLabel1_6004Parser();
-        case EdgeTailLabel2EditPart.VISUAL_ID:
-            return getEdgeTailLabel2_6005Parser();
+        case EdgeHeadLabelEditPart.VISUAL_ID:
+            return getEdgeHeadLabel_6002Parser();
+        case EdgeTailLabelEditPart.VISUAL_ID:
+            return getEdgeTailLabel_6003Parser();
         case EdgeMidLabel2EditPart.VISUAL_ID:
             return getEdgeMidLabel_6006Parser();
-        case EdgeHeadLabel12EditPart.VISUAL_ID:
-            return getEdgeHeadLabel1_6007Parser();
-        case EdgeHeadLabel22EditPart.VISUAL_ID:
-            return getEdgeHeadLabel2_6008Parser();
-        case EdgeTailLabel12EditPart.VISUAL_ID:
-            return getEdgeTailLabel1_6009Parser();
-        case EdgeTailLabel22EditPart.VISUAL_ID:
-            return getEdgeTailLabel2_6010Parser();
+        case EdgeHeadLabel2EditPart.VISUAL_ID:
+            return getEdgeHeadLabel_6007Parser();
+        case EdgeTailLabel2EditPart.VISUAL_ID:
+            return getEdgeTailLabel_6008Parser();
         case EdgeMidLabel3EditPart.VISUAL_ID:
             return getEdgeMidLabel_6011Parser();
-        case EdgeHeadLabel13EditPart.VISUAL_ID:
-            return getEdgeHeadLabel1_6012Parser();
-        case EdgeHeadLabel23EditPart.VISUAL_ID:
-            return getEdgeHeadLabel2_6013Parser();
-        case EdgeTailLabel13EditPart.VISUAL_ID:
-            return getEdgeTailLabel1_6014Parser();
-        case EdgeTailLabel23EditPart.VISUAL_ID:
-            return getEdgeTailLabel2_6015Parser();
+        case EdgeHeadLabel3EditPart.VISUAL_ID:
+            return getEdgeHeadLabel_6012Parser();
+        case EdgeTailLabel3EditPart.VISUAL_ID:
+            return getEdgeTailLabel_6013Parser();
         case EdgeMidLabel4EditPart.VISUAL_ID:
             return getEdgeMidLabel_6016Parser();
-        case EdgeHeadLabel14EditPart.VISUAL_ID:
-            return getEdgeHeadLabel1_6017Parser();
-        case EdgeHeadLabel24EditPart.VISUAL_ID:
-            return getEdgeHeadLabel2_6018Parser();
-        case EdgeTailLabel14EditPart.VISUAL_ID:
-            return getEdgeTailLabel1_6019Parser();
-        case EdgeTailLabel24EditPart.VISUAL_ID:
-            return getEdgeTailLabel2_6020Parser();
+        case EdgeHeadLabel4EditPart.VISUAL_ID:
+            return getEdgeHeadLabel_6017Parser();
+        case EdgeTailLabel4EditPart.VISUAL_ID:
+            return getEdgeTailLabel_6018Parser();
         case EdgeMidLabel5EditPart.VISUAL_ID:
             return getEdgeMidLabel_6021Parser();
-        case EdgeHeadLabel15EditPart.VISUAL_ID:
-            return getEdgeHeadLabel1_6022Parser();
-        case EdgeHeadLabel25EditPart.VISUAL_ID:
-            return getEdgeHeadLabel2_6023Parser();
-        case EdgeTailLabel15EditPart.VISUAL_ID:
-            return getEdgeTailLabel1_6024Parser();
-        case EdgeTailLabel25EditPart.VISUAL_ID:
-            return getEdgeTailLabel2_6025Parser();
+        case EdgeHeadLabel5EditPart.VISUAL_ID:
+            return getEdgeHeadLabel_6022Parser();
+        case EdgeTailLabel5EditPart.VISUAL_ID:
+            return getEdgeTailLabel_6023Parser();
         case EdgeMidLabel6EditPart.VISUAL_ID:
             return getEdgeMidLabel_6026Parser();
-        case EdgeHeadLabel16EditPart.VISUAL_ID:
-            return getEdgeHeadLabel1_6027Parser();
-        case EdgeHeadLabel26EditPart.VISUAL_ID:
-            return getEdgeHeadLabel2_6028Parser();
-        case EdgeTailLabel16EditPart.VISUAL_ID:
-            return getEdgeTailLabel1_6029Parser();
-        case EdgeTailLabel26EditPart.VISUAL_ID:
-            return getEdgeTailLabel2_6030Parser();
+        case EdgeHeadLabel6EditPart.VISUAL_ID:
+            return getEdgeHeadLabel_6027Parser();
+        case EdgeTailLabel6EditPart.VISUAL_ID:
+            return getEdgeTailLabel_6028Parser();
         case EdgeMidLabel7EditPart.VISUAL_ID:
             return getEdgeMidLabel_6031Parser();
-        case EdgeHeadLabel17EditPart.VISUAL_ID:
-            return getEdgeHeadLabel1_6032Parser();
-        case EdgeHeadLabel27EditPart.VISUAL_ID:
-            return getEdgeHeadLabel2_6033Parser();
-        case EdgeTailLabel17EditPart.VISUAL_ID:
-            return getEdgeTailLabel1_6034Parser();
-        case EdgeTailLabel27EditPart.VISUAL_ID:
-            return getEdgeTailLabel2_6035Parser();
+        case EdgeHeadLabel7EditPart.VISUAL_ID:
+            return getEdgeHeadLabel_6032Parser();
+        case EdgeTailLabel7EditPart.VISUAL_ID:
+            return getEdgeTailLabel_6033Parser();
         case EdgeMidLabel8EditPart.VISUAL_ID:
             return getEdgeMidLabel_6036Parser();
-        case EdgeHeadLabel18EditPart.VISUAL_ID:
-            return getEdgeHeadLabel1_6037Parser();
-        case EdgeHeadLabel28EditPart.VISUAL_ID:
-            return getEdgeHeadLabel2_6038Parser();
-        case EdgeTailLabel18EditPart.VISUAL_ID:
-            return getEdgeTailLabel1_6039Parser();
-        case EdgeTailLabel28EditPart.VISUAL_ID:
-            return getEdgeTailLabel2_6040Parser();
+        case EdgeHeadLabel8EditPart.VISUAL_ID:
+            return getEdgeHeadLabel_6037Parser();
+        case EdgeTailLabel8EditPart.VISUAL_ID:
+            return getEdgeTailLabel_6038Parser();
         }
         return null;
     }

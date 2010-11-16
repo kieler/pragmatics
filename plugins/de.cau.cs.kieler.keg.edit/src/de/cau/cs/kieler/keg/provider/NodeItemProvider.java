@@ -140,7 +140,7 @@ public class NodeItemProvider
 
         switch (notification.getFeatureID(Node.class)) {
             case KEGPackage.NODE__NODE_LABEL:
-            case KEGPackage.NODE__IS_HYPERNODE:
+            case KEGPackage.NODE__HYPERNODE:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;
         }

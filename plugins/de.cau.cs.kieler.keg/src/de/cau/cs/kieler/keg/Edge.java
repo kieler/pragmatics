@@ -23,12 +23,10 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.keg.Edge#getHeadLabel1 <em>Head Label1</em>}</li>
- *   <li>{@link de.cau.cs.kieler.keg.Edge#getHeadLabel2 <em>Head Label2</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.keg.Edge#getHeadLabel <em>Head Label</em>}</li>
  *   <li>{@link de.cau.cs.kieler.keg.Edge#getMidLabel <em>Mid Label</em>}</li>
- *   <li>{@link de.cau.cs.kieler.keg.Edge#getTailLabel1 <em>Tail Label1</em>}</li>
- *   <li>{@link de.cau.cs.kieler.keg.Edge#getTailLabel2 <em>Tail Label2</em>}</li>
- *   <li>{@link de.cau.cs.kieler.keg.Edge#isIsDirected <em>Is Directed</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.keg.Edge#getTailLabel <em>Tail Label</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.keg.Edge#isDirected <em>Directed</em>}</li>
  *   <li>{@link de.cau.cs.kieler.keg.Edge#getType <em>Type</em>}</li>
  * </ul>
  * </p>
@@ -39,56 +37,30 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
  */
 public interface Edge extends KEdge {
     /**
-     * Returns the value of the '<em><b>Head Label1</b></em>' attribute.
+     * Returns the value of the '<em><b>Head Label</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Head Label1</em>' attribute isn't clear,
+     * If the meaning of the '<em>Head Label</em>' attribute isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Head Label1</em>' attribute.
-     * @see #setHeadLabel1(String)
-     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_HeadLabel1()
+     * @return the value of the '<em>Head Label</em>' attribute.
+     * @see #setHeadLabel(String)
+     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_HeadLabel()
      * @model
      * @generated
      */
-    String getHeadLabel1();
+    String getHeadLabel();
 
     /**
-     * Sets the value of the '{@link de.cau.cs.kieler.keg.Edge#getHeadLabel1 <em>Head Label1</em>}' attribute.
+     * Sets the value of the '{@link de.cau.cs.kieler.keg.Edge#getHeadLabel <em>Head Label</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Head Label1</em>' attribute.
-     * @see #getHeadLabel1()
+     * @param value the new value of the '<em>Head Label</em>' attribute.
+     * @see #getHeadLabel()
      * @generated
      */
-    void setHeadLabel1(String value);
-
-    /**
-     * Returns the value of the '<em><b>Head Label2</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Head Label2</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Head Label2</em>' attribute.
-     * @see #setHeadLabel2(String)
-     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_HeadLabel2()
-     * @model
-     * @generated
-     */
-    String getHeadLabel2();
-
-    /**
-     * Sets the value of the '{@link de.cau.cs.kieler.keg.Edge#getHeadLabel2 <em>Head Label2</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Head Label2</em>' attribute.
-     * @see #getHeadLabel2()
-     * @generated
-     */
-    void setHeadLabel2(String value);
+    void setHeadLabel(String value);
 
     /**
      * Returns the value of the '<em><b>Mid Label</b></em>' attribute.
@@ -117,83 +89,57 @@ public interface Edge extends KEdge {
     void setMidLabel(String value);
 
     /**
-     * Returns the value of the '<em><b>Tail Label1</b></em>' attribute.
+     * Returns the value of the '<em><b>Tail Label</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Tail Label1</em>' attribute isn't clear,
+     * If the meaning of the '<em>Tail Label</em>' attribute isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Tail Label1</em>' attribute.
-     * @see #setTailLabel1(String)
-     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_TailLabel1()
+     * @return the value of the '<em>Tail Label</em>' attribute.
+     * @see #setTailLabel(String)
+     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_TailLabel()
      * @model
      * @generated
      */
-    String getTailLabel1();
+    String getTailLabel();
 
     /**
-     * Sets the value of the '{@link de.cau.cs.kieler.keg.Edge#getTailLabel1 <em>Tail Label1</em>}' attribute.
+     * Sets the value of the '{@link de.cau.cs.kieler.keg.Edge#getTailLabel <em>Tail Label</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Tail Label1</em>' attribute.
-     * @see #getTailLabel1()
+     * @param value the new value of the '<em>Tail Label</em>' attribute.
+     * @see #getTailLabel()
      * @generated
      */
-    void setTailLabel1(String value);
+    void setTailLabel(String value);
 
     /**
-     * Returns the value of the '<em><b>Tail Label2</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Tail Label2</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Tail Label2</em>' attribute.
-     * @see #setTailLabel2(String)
-     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_TailLabel2()
-     * @model
-     * @generated
-     */
-    String getTailLabel2();
-
-    /**
-     * Sets the value of the '{@link de.cau.cs.kieler.keg.Edge#getTailLabel2 <em>Tail Label2</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Tail Label2</em>' attribute.
-     * @see #getTailLabel2()
-     * @generated
-     */
-    void setTailLabel2(String value);
-
-    /**
-     * Returns the value of the '<em><b>Is Directed</b></em>' attribute.
+     * Returns the value of the '<em><b>Directed</b></em>' attribute.
      * The default value is <code>"false"</code>.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Is Directed</em>' attribute isn't clear,
+     * If the meaning of the '<em>Directed</em>' attribute isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * @return the value of the '<em>Is Directed</em>' attribute.
-     * @see #setIsDirected(boolean)
-     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_IsDirected()
+     * @return the value of the '<em>Directed</em>' attribute.
+     * @see #setDirected(boolean)
+     * @see de.cau.cs.kieler.keg.KEGPackage#getEdge_Directed()
      * @model default="false" required="true"
      * @generated
      */
-    boolean isIsDirected();
+    boolean isDirected();
 
     /**
-     * Sets the value of the '{@link de.cau.cs.kieler.keg.Edge#isIsDirected <em>Is Directed</em>}' attribute.
+     * Sets the value of the '{@link de.cau.cs.kieler.keg.Edge#isDirected <em>Directed</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Is Directed</em>' attribute.
-     * @see #isIsDirected()
+     * @param value the new value of the '<em>Directed</em>' attribute.
+     * @see #isDirected()
      * @generated
      */
-    void setIsDirected(boolean value);
+    void setDirected(boolean value);
 
     /**
      * Returns the value of the '<em><b>Type</b></em>' attribute.

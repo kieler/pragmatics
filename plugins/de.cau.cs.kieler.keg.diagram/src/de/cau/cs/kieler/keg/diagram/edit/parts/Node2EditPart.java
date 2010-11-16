@@ -7,7 +7,6 @@ import java.util.List;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -18,7 +17,6 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.LayoutEditPolicy;
 import org.eclipse.gef.editpolicies.NonResizableEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.BorderItemSelectionEditPolicy;
@@ -29,10 +27,12 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
-import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
+import de.cau.cs.kieler.core.ui.figures.RoundedRectangleFigure;
+import de.cau.cs.kieler.karma.AdvancedRenderingBorderedShapeEditPart;
+import de.cau.cs.kieler.karma.SwitchableFigure;
 import de.cau.cs.kieler.keg.custom.KEGNode;
 import de.cau.cs.kieler.keg.custom.NodeLayout;
 import de.cau.cs.kieler.keg.diagram.edit.policies.Node2CanonicalEditPolicy;
@@ -43,7 +43,7 @@ import de.cau.cs.kieler.keg.diagram.providers.GraphsElementTypes;
 /**
  * @generated
  */
-public class Node2EditPart extends AbstractBorderedShapeEditPart
+public class Node2EditPart extends AdvancedRenderingBorderedShapeEditPart
 
 implements KEGNode
 
@@ -58,11 +58,6 @@ implements KEGNode
      * @generated
      */
     protected IFigure contentPane;
-
-    /**
-     * @generated
-     */
-    protected IFigure primaryShape;
 
     /**
      * @generated
@@ -125,7 +120,9 @@ implements KEGNode
      * @generated
      */
     protected IFigure createNodeShape() {
-        return primaryShape = new NodeFigure();
+        primaryShape = new NodeFigure();
+        Node2EditPart.this.updateFigure(primaryShape);
+        return primaryShape;
     }
 
     /**
@@ -204,7 +201,9 @@ implements KEGNode
      * @generated
      */
     protected org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure createNodePlate() {
-        DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(40, 40);
+        RoundedRectangleFigure result = new RoundedRectangleFigure();
+        result.setCornerDimensions(new Dimension(40, 40));
+
         return result;
     }
 
@@ -407,7 +406,7 @@ implements KEGNode
     /**
      * @generated
      */
-    public class NodeFigure extends RoundedRectangle {
+    public class NodeFigure extends SwitchableFigure {
 
         /**
          * @generated
@@ -423,10 +422,10 @@ implements KEGNode
 
             this.setLayoutManager(layoutThis);
 
-            this.setCornerDimensions(new Dimension(getMapMode().DPtoLP(40),
-                    getMapMode().DPtoLP(40)));
             this.setForegroundColor(THIS_FORE);
             this.setBackgroundColor(THIS_BACK);
+            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(40),
+                    getMapMode().DPtoLP(40)));
 
             this.setBorder(new MarginBorder(getMapMode().DPtoLP(5),
                     getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),

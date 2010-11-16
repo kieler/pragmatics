@@ -126,7 +126,8 @@ public class PortEditPart extends BorderedBorderItemEditPart implements KEGPort
      * @generated
      */
     protected IFigure createNodeShape() {
-        return primaryShape = new PortFigure();
+        primaryShape = new PortFigure();
+        return primaryShape;
     }
 
     /**

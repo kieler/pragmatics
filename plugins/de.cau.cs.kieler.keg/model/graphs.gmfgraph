@@ -8,10 +8,9 @@
     <descriptors
         name="NodeFigure">
       <actualFigure
-          xsi:type="gmfgraph:RoundedRectangle"
+          xsi:type="gmfgraph:CustomFigure"
           name="NodeFigure"
-          cornerWidth="40"
-          cornerHeight="40">
+          qualifiedClassName="de.cau.cs.kieler.karma.SwitchableFigure">
         <layout
             xsi:type="gmfgraph:CustomLayout"
             qualifiedClassName="de.cau.cs.kieler.keg.custom.NodeLayout"/>
@@ -23,6 +22,9 @@
             red="80"
             green="230"
             blue="154"/>
+        <preferredSize
+            dx="40"
+            dy="40"/>
         <insets
             top="5"
             left="5"

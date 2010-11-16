@@ -72,51 +72,27 @@ public class EdgeItemProvider
         if (itemPropertyDescriptors == null) {
             super.getPropertyDescriptors(object);
 
-            addHeadLabel1PropertyDescriptor(object);
-            addHeadLabel2PropertyDescriptor(object);
+            addHeadLabelPropertyDescriptor(object);
             addMidLabelPropertyDescriptor(object);
-            addTailLabel1PropertyDescriptor(object);
-            addTailLabel2PropertyDescriptor(object);
+            addTailLabelPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
 
     /**
-     * This adds a property descriptor for the Head Label1 feature.
+     * This adds a property descriptor for the Head Label feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected void addHeadLabel1PropertyDescriptor(Object object) {
+    protected void addHeadLabelPropertyDescriptor(Object object) {
         itemPropertyDescriptors.add
             (createItemPropertyDescriptor
                 (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
                  getResourceLocator(),
-                 getString("_UI_Edge_headLabel1_feature"),
-                 getString("_UI_PropertyDescriptor_description", "_UI_Edge_headLabel1_feature", "_UI_Edge_type"),
-                 KEGPackage.Literals.EDGE__HEAD_LABEL1,
-                 true,
-                 false,
-                 false,
-                 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-                 null,
-                 null));
-    }
-
-    /**
-     * This adds a property descriptor for the Head Label2 feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addHeadLabel2PropertyDescriptor(Object object) {
-        itemPropertyDescriptors.add
-            (createItemPropertyDescriptor
-                (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-                 getResourceLocator(),
-                 getString("_UI_Edge_headLabel2_feature"),
-                 getString("_UI_PropertyDescriptor_description", "_UI_Edge_headLabel2_feature", "_UI_Edge_type"),
-                 KEGPackage.Literals.EDGE__HEAD_LABEL2,
+                 getString("_UI_Edge_headLabel_feature"),
+                 getString("_UI_PropertyDescriptor_description", "_UI_Edge_headLabel_feature", "_UI_Edge_type"),
+                 KEGPackage.Literals.EDGE__HEAD_LABEL,
                  true,
                  false,
                  false,
@@ -148,41 +124,19 @@ public class EdgeItemProvider
     }
 
     /**
-     * This adds a property descriptor for the Tail Label1 feature.
+     * This adds a property descriptor for the Tail Label feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected void addTailLabel1PropertyDescriptor(Object object) {
+    protected void addTailLabelPropertyDescriptor(Object object) {
         itemPropertyDescriptors.add
             (createItemPropertyDescriptor
                 (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
                  getResourceLocator(),
-                 getString("_UI_Edge_tailLabel1_feature"),
-                 getString("_UI_PropertyDescriptor_description", "_UI_Edge_tailLabel1_feature", "_UI_Edge_type"),
-                 KEGPackage.Literals.EDGE__TAIL_LABEL1,
-                 true,
-                 false,
-                 false,
-                 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-                 null,
-                 null));
-    }
-
-    /**
-     * This adds a property descriptor for the Tail Label2 feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addTailLabel2PropertyDescriptor(Object object) {
-        itemPropertyDescriptors.add
-            (createItemPropertyDescriptor
-                (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-                 getResourceLocator(),
-                 getString("_UI_Edge_tailLabel2_feature"),
-                 getString("_UI_PropertyDescriptor_description", "_UI_Edge_tailLabel2_feature", "_UI_Edge_type"),
-                 KEGPackage.Literals.EDGE__TAIL_LABEL2,
+                 getString("_UI_Edge_tailLabel_feature"),
+                 getString("_UI_PropertyDescriptor_description", "_UI_Edge_tailLabel_feature", "_UI_Edge_type"),
+                 KEGPackage.Literals.EDGE__TAIL_LABEL,
                  true,
                  false,
                  false,
@@ -210,7 +164,7 @@ public class EdgeItemProvider
      */
     @Override
     public String getText(Object object) {
-        String label = ((Edge)object).getHeadLabel1();
+        String label = ((Edge)object).getHeadLabel();
         return label == null || label.length() == 0 ?
             getString("_UI_Edge_type") :
             getString("_UI_Edge_type") + " " + label;
@@ -228,12 +182,10 @@ public class EdgeItemProvider
         updateChildren(notification);
 
         switch (notification.getFeatureID(Edge.class)) {
-            case KEGPackage.EDGE__HEAD_LABEL1:
-            case KEGPackage.EDGE__HEAD_LABEL2:
+            case KEGPackage.EDGE__HEAD_LABEL:
             case KEGPackage.EDGE__MID_LABEL:
-            case KEGPackage.EDGE__TAIL_LABEL1:
-            case KEGPackage.EDGE__TAIL_LABEL2:
-            case KEGPackage.EDGE__IS_DIRECTED:
+            case KEGPackage.EDGE__TAIL_LABEL:
+            case KEGPackage.EDGE__DIRECTED:
             case KEGPackage.EDGE__TYPE:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;

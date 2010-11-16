@@ -32,12 +32,10 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.keg.impl.EdgeImpl#getHeadLabel1 <em>Head Label1</em>}</li>
- *   <li>{@link de.cau.cs.kieler.keg.impl.EdgeImpl#getHeadLabel2 <em>Head Label2</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.keg.impl.EdgeImpl#getHeadLabel <em>Head Label</em>}</li>
  *   <li>{@link de.cau.cs.kieler.keg.impl.EdgeImpl#getMidLabel <em>Mid Label</em>}</li>
- *   <li>{@link de.cau.cs.kieler.keg.impl.EdgeImpl#getTailLabel1 <em>Tail Label1</em>}</li>
- *   <li>{@link de.cau.cs.kieler.keg.impl.EdgeImpl#getTailLabel2 <em>Tail Label2</em>}</li>
- *   <li>{@link de.cau.cs.kieler.keg.impl.EdgeImpl#isIsDirected <em>Is Directed</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.keg.impl.EdgeImpl#getTailLabel <em>Tail Label</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.keg.impl.EdgeImpl#isDirected <em>Directed</em>}</li>
  *   <li>{@link de.cau.cs.kieler.keg.impl.EdgeImpl#getType <em>Type</em>}</li>
  * </ul>
  * </p>
@@ -46,44 +44,24 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class EdgeImpl extends KEdgeImpl implements Edge {
     /**
-     * The default value of the '{@link #getHeadLabel1() <em>Head Label1</em>}' attribute.
+     * The default value of the '{@link #getHeadLabel() <em>Head Label</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getHeadLabel1()
+     * @see #getHeadLabel()
      * @generated
      * @ordered
      */
-    protected static final String HEAD_LABEL1_EDEFAULT = null;
+    protected static final String HEAD_LABEL_EDEFAULT = null;
 
     /**
-     * The cached value of the '{@link #getHeadLabel1() <em>Head Label1</em>}' attribute.
+     * The cached value of the '{@link #getHeadLabel() <em>Head Label</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getHeadLabel1()
+     * @see #getHeadLabel()
      * @generated
      * @ordered
      */
-    protected String headLabel1 = HEAD_LABEL1_EDEFAULT;
-
-    /**
-     * The default value of the '{@link #getHeadLabel2() <em>Head Label2</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getHeadLabel2()
-     * @generated
-     * @ordered
-     */
-    protected static final String HEAD_LABEL2_EDEFAULT = null;
-
-    /**
-     * The cached value of the '{@link #getHeadLabel2() <em>Head Label2</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getHeadLabel2()
-     * @generated
-     * @ordered
-     */
-    protected String headLabel2 = HEAD_LABEL2_EDEFAULT;
+    protected String headLabel = HEAD_LABEL_EDEFAULT;
 
     /**
      * The default value of the '{@link #getMidLabel() <em>Mid Label</em>}' attribute.
@@ -106,64 +84,44 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
     protected String midLabel = MID_LABEL_EDEFAULT;
 
     /**
-     * The default value of the '{@link #getTailLabel1() <em>Tail Label1</em>}' attribute.
+     * The default value of the '{@link #getTailLabel() <em>Tail Label</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getTailLabel1()
+     * @see #getTailLabel()
      * @generated
      * @ordered
      */
-    protected static final String TAIL_LABEL1_EDEFAULT = null;
+    protected static final String TAIL_LABEL_EDEFAULT = null;
 
     /**
-     * The cached value of the '{@link #getTailLabel1() <em>Tail Label1</em>}' attribute.
+     * The cached value of the '{@link #getTailLabel() <em>Tail Label</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getTailLabel1()
+     * @see #getTailLabel()
      * @generated
      * @ordered
      */
-    protected String tailLabel1 = TAIL_LABEL1_EDEFAULT;
+    protected String tailLabel = TAIL_LABEL_EDEFAULT;
 
     /**
-     * The default value of the '{@link #getTailLabel2() <em>Tail Label2</em>}' attribute.
+     * The default value of the '{@link #isDirected() <em>Directed</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getTailLabel2()
+     * @see #isDirected()
      * @generated
      * @ordered
      */
-    protected static final String TAIL_LABEL2_EDEFAULT = null;
+    protected static final boolean DIRECTED_EDEFAULT = false;
 
     /**
-     * The cached value of the '{@link #getTailLabel2() <em>Tail Label2</em>}' attribute.
+     * The cached value of the '{@link #isDirected() <em>Directed</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getTailLabel2()
+     * @see #isDirected()
      * @generated
      * @ordered
      */
-    protected String tailLabel2 = TAIL_LABEL2_EDEFAULT;
-
-    /**
-     * The default value of the '{@link #isIsDirected() <em>Is Directed</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #isIsDirected()
-     * @generated
-     * @ordered
-     */
-    protected static final boolean IS_DIRECTED_EDEFAULT = false;
-
-    /**
-     * The cached value of the '{@link #isIsDirected() <em>Is Directed</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #isIsDirected()
-     * @generated
-     * @ordered
-     */
-    protected boolean isDirected = IS_DIRECTED_EDEFAULT;
+    protected boolean directed = DIRECTED_EDEFAULT;
 
     /**
      * The default value of the '{@link #getType() <em>Type</em>}' attribute.
@@ -209,8 +167,8 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getHeadLabel1() {
-        return headLabel1;
+    public String getHeadLabel() {
+        return headLabel;
     }
 
     /**
@@ -218,32 +176,11 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setHeadLabel1(String newHeadLabel1) {
-        String oldHeadLabel1 = headLabel1;
-        headLabel1 = newHeadLabel1;
+    public void setHeadLabel(String newHeadLabel) {
+        String oldHeadLabel = headLabel;
+        headLabel = newHeadLabel;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__HEAD_LABEL1, oldHeadLabel1, headLabel1));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public String getHeadLabel2() {
-        return headLabel2;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setHeadLabel2(String newHeadLabel2) {
-        String oldHeadLabel2 = headLabel2;
-        headLabel2 = newHeadLabel2;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__HEAD_LABEL2, oldHeadLabel2, headLabel2));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__HEAD_LABEL, oldHeadLabel, headLabel));
     }
 
     /**
@@ -272,8 +209,8 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getTailLabel1() {
-        return tailLabel1;
+    public String getTailLabel() {
+        return tailLabel;
     }
 
     /**
@@ -281,11 +218,11 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setTailLabel1(String newTailLabel1) {
-        String oldTailLabel1 = tailLabel1;
-        tailLabel1 = newTailLabel1;
+    public void setTailLabel(String newTailLabel) {
+        String oldTailLabel = tailLabel;
+        tailLabel = newTailLabel;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__TAIL_LABEL1, oldTailLabel1, tailLabel1));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__TAIL_LABEL, oldTailLabel, tailLabel));
     }
 
     /**
@@ -293,8 +230,8 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getTailLabel2() {
-        return tailLabel2;
+    public boolean isDirected() {
+        return directed;
     }
 
     /**
@@ -302,32 +239,11 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setTailLabel2(String newTailLabel2) {
-        String oldTailLabel2 = tailLabel2;
-        tailLabel2 = newTailLabel2;
+    public void setDirected(boolean newDirected) {
+        boolean oldDirected = directed;
+        directed = newDirected;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__TAIL_LABEL2, oldTailLabel2, tailLabel2));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean isIsDirected() {
-        return isDirected;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setIsDirected(boolean newIsDirected) {
-        boolean oldIsDirected = isDirected;
-        isDirected = newIsDirected;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__IS_DIRECTED, oldIsDirected, isDirected));
+            eNotify(new ENotificationImpl(this, Notification.SET, KEGPackage.EDGE__DIRECTED, oldDirected, directed));
     }
 
     /**
@@ -359,18 +275,14 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KEGPackage.EDGE__HEAD_LABEL1:
-                return getHeadLabel1();
-            case KEGPackage.EDGE__HEAD_LABEL2:
-                return getHeadLabel2();
+            case KEGPackage.EDGE__HEAD_LABEL:
+                return getHeadLabel();
             case KEGPackage.EDGE__MID_LABEL:
                 return getMidLabel();
-            case KEGPackage.EDGE__TAIL_LABEL1:
-                return getTailLabel1();
-            case KEGPackage.EDGE__TAIL_LABEL2:
-                return getTailLabel2();
-            case KEGPackage.EDGE__IS_DIRECTED:
-                return isIsDirected();
+            case KEGPackage.EDGE__TAIL_LABEL:
+                return getTailLabel();
+            case KEGPackage.EDGE__DIRECTED:
+                return isDirected();
             case KEGPackage.EDGE__TYPE:
                 return getType();
         }
@@ -385,23 +297,17 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KEGPackage.EDGE__HEAD_LABEL1:
-                setHeadLabel1((String)newValue);
-                return;
-            case KEGPackage.EDGE__HEAD_LABEL2:
-                setHeadLabel2((String)newValue);
+            case KEGPackage.EDGE__HEAD_LABEL:
+                setHeadLabel((String)newValue);
                 return;
             case KEGPackage.EDGE__MID_LABEL:
                 setMidLabel((String)newValue);
                 return;
-            case KEGPackage.EDGE__TAIL_LABEL1:
-                setTailLabel1((String)newValue);
+            case KEGPackage.EDGE__TAIL_LABEL:
+                setTailLabel((String)newValue);
                 return;
-            case KEGPackage.EDGE__TAIL_LABEL2:
-                setTailLabel2((String)newValue);
-                return;
-            case KEGPackage.EDGE__IS_DIRECTED:
-                setIsDirected((Boolean)newValue);
+            case KEGPackage.EDGE__DIRECTED:
+                setDirected((Boolean)newValue);
                 return;
             case KEGPackage.EDGE__TYPE:
                 setType((EdgeType)newValue);
@@ -418,23 +324,17 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KEGPackage.EDGE__HEAD_LABEL1:
-                setHeadLabel1(HEAD_LABEL1_EDEFAULT);
-                return;
-            case KEGPackage.EDGE__HEAD_LABEL2:
-                setHeadLabel2(HEAD_LABEL2_EDEFAULT);
+            case KEGPackage.EDGE__HEAD_LABEL:
+                setHeadLabel(HEAD_LABEL_EDEFAULT);
                 return;
             case KEGPackage.EDGE__MID_LABEL:
                 setMidLabel(MID_LABEL_EDEFAULT);
                 return;
-            case KEGPackage.EDGE__TAIL_LABEL1:
-                setTailLabel1(TAIL_LABEL1_EDEFAULT);
+            case KEGPackage.EDGE__TAIL_LABEL:
+                setTailLabel(TAIL_LABEL_EDEFAULT);
                 return;
-            case KEGPackage.EDGE__TAIL_LABEL2:
-                setTailLabel2(TAIL_LABEL2_EDEFAULT);
-                return;
-            case KEGPackage.EDGE__IS_DIRECTED:
-                setIsDirected(IS_DIRECTED_EDEFAULT);
+            case KEGPackage.EDGE__DIRECTED:
+                setDirected(DIRECTED_EDEFAULT);
                 return;
             case KEGPackage.EDGE__TYPE:
                 setType(TYPE_EDEFAULT);
@@ -451,18 +351,14 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KEGPackage.EDGE__HEAD_LABEL1:
-                return HEAD_LABEL1_EDEFAULT == null ? headLabel1 != null : !HEAD_LABEL1_EDEFAULT.equals(headLabel1);
-            case KEGPackage.EDGE__HEAD_LABEL2:
-                return HEAD_LABEL2_EDEFAULT == null ? headLabel2 != null : !HEAD_LABEL2_EDEFAULT.equals(headLabel2);
+            case KEGPackage.EDGE__HEAD_LABEL:
+                return HEAD_LABEL_EDEFAULT == null ? headLabel != null : !HEAD_LABEL_EDEFAULT.equals(headLabel);
             case KEGPackage.EDGE__MID_LABEL:
                 return MID_LABEL_EDEFAULT == null ? midLabel != null : !MID_LABEL_EDEFAULT.equals(midLabel);
-            case KEGPackage.EDGE__TAIL_LABEL1:
-                return TAIL_LABEL1_EDEFAULT == null ? tailLabel1 != null : !TAIL_LABEL1_EDEFAULT.equals(tailLabel1);
-            case KEGPackage.EDGE__TAIL_LABEL2:
-                return TAIL_LABEL2_EDEFAULT == null ? tailLabel2 != null : !TAIL_LABEL2_EDEFAULT.equals(tailLabel2);
-            case KEGPackage.EDGE__IS_DIRECTED:
-                return isDirected != IS_DIRECTED_EDEFAULT;
+            case KEGPackage.EDGE__TAIL_LABEL:
+                return TAIL_LABEL_EDEFAULT == null ? tailLabel != null : !TAIL_LABEL_EDEFAULT.equals(tailLabel);
+            case KEGPackage.EDGE__DIRECTED:
+                return directed != DIRECTED_EDEFAULT;
             case KEGPackage.EDGE__TYPE:
                 return type != TYPE_EDEFAULT;
         }
@@ -479,18 +375,14 @@ public class EdgeImpl extends KEdgeImpl implements Edge {
         if (eIsProxy()) return super.toString();
 
         StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (headLabel1: ");
-        result.append(headLabel1);
-        result.append(", headLabel2: ");
-        result.append(headLabel2);
+        result.append(" (headLabel: ");
+        result.append(headLabel);
         result.append(", midLabel: ");
         result.append(midLabel);
-        result.append(", tailLabel1: ");
-        result.append(tailLabel1);
-        result.append(", tailLabel2: ");
-        result.append(tailLabel2);
-        result.append(", isDirected: ");
-        result.append(isDirected);
+        result.append(", tailLabel: ");
+        result.append(tailLabel);
+        result.append(", directed: ");
+        result.append(directed);
         result.append(", type: ");
         result.append(type);
         result.append(')');

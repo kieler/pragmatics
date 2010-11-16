@@ -52,5 +52,32 @@
          </description>
       </wizard>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.karma">
+      <configuration
+            RenderingProvider="de.cau.cs.kieler.keg.custom.KEGFigureProvider">
+         <conditions>
+            <customCondition
+                  condition="de.cau.cs.kieler.keg.custom.NoPortsCondition"
+                  figureParam="noPorts">
+            </customCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.keg.custom.PortsCondition"
+                  figureParam="ports">
+            </customCondition></conditions>
+         <package
+               class="de.cau.cs.kieler.core.kgraph.KGraphPackage">
+         </package>
+         <package
+               class="de.cau.cs.kieler.keg.KEGPackage">
+         </package>
+         <editPart
+               editPart="de.cau.cs.kieler.keg.diagram.edit.parts.Node2EditPart">
+         </editPart>
+         <editPart
+               editPart="de.cau.cs.kieler.keg.diagram.edit.parts.Node4EditPart">
+         </editPart>
+      </configuration>
+   </extension>
       
 </plugin>

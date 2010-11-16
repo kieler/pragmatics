@@ -12,7 +12,7 @@
       <domainMetaElement
           href="graphs.ecore#//Node"/>
       <domainSpecialization
-          body="self.isHypernode = false"/>
+          body="self.hypernode = false"/>
       <labelMappings
           xsi:type="gmfmap:FeatureLabelMapping">
         <diagramLabel
@@ -78,14 +78,14 @@
       <domainMetaElement
           href="graphs.ecore#//Node"/>
       <domainSpecialization
-          body="self.isHypernode = true"/>
+          body="self.hypernode = true"/>
       <domainInitializer
           xsi:type="gmfmap:FeatureSeqInitializer">
         <initializers
             xsi:type="gmfmap:FeatureValueSpec">
           <feature
               xsi:type="ecore:EAttribute"
-              href="graphs.ecore#//Node/isHypernode"/>
+              href="graphs.ecore#//Node/hypernode"/>
           <value
               body="true"/>
         </initializers>
@@ -109,14 +109,14 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
+        body="self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
           xsi:type="gmfmap:FeatureValueSpec">
         <feature
             xsi:type="ecore:EAttribute"
-            href="graphs.ecore#//Edge/isDirected"/>
+            href="graphs.ecore#//Edge/directed"/>
         <value
             body="true"/>
       </initializers>
@@ -133,28 +133,14 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel1"/>
+          href="graphs.ecore#//Edge/headLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel1"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel2"/>
+          href="graphs.ecore#//Edge/tailLabel"/>
     </labelMappings>
     <containmentFeature
         href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KNode/outgoingEdges"/>
@@ -174,7 +160,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
+        body="self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
@@ -187,28 +173,14 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel1"/>
+          href="graphs.ecore#//Edge/headLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel1"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel2"/>
+          href="graphs.ecore#//Edge/tailLabel"/>
     </labelMappings>
     <containmentFeature
         href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KNode/outgoingEdges"/>
@@ -228,14 +200,14 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
+        body="self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
           xsi:type="gmfmap:FeatureValueSpec">
         <feature
             xsi:type="ecore:EAttribute"
-            href="graphs.ecore#//Edge/isDirected"/>
+            href="graphs.ecore#//Edge/directed"/>
         <value
             body="true"/>
       </initializers>
@@ -260,28 +232,14 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel1"/>
+          href="graphs.ecore#//Edge/headLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel1"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel2"/>
+          href="graphs.ecore#//Edge/tailLabel"/>
     </labelMappings>
     <containmentFeature
         href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KNode/outgoingEdges"/>
@@ -301,7 +259,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
+        body="self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
@@ -325,28 +283,14 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel1"/>
+          href="graphs.ecore#//Edge/headLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel1"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel2"/>
+          href="graphs.ecore#//Edge/tailLabel"/>
     </labelMappings>
     <containmentFeature
         href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KNode/outgoingEdges"/>
@@ -366,14 +310,14 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
+        body="self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
           xsi:type="gmfmap:FeatureValueSpec">
         <feature
             xsi:type="ecore:EAttribute"
-            href="graphs.ecore#//Edge/isDirected"/>
+            href="graphs.ecore#//Edge/directed"/>
         <value
             body="true"/>
       </initializers>
@@ -398,28 +342,14 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel1"/>
+          href="graphs.ecore#//Edge/headLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel1"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel2"/>
+          href="graphs.ecore#//Edge/tailLabel"/>
     </labelMappings>
     <containmentFeature
         href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KNode/outgoingEdges"/>
@@ -439,7 +369,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
+        body="self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
@@ -463,28 +393,14 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel1"/>
+          href="graphs.ecore#//Edge/headLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel1"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel2"/>
+          href="graphs.ecore#//Edge/tailLabel"/>
     </labelMappings>
     <containmentFeature
         href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KNode/outgoingEdges"/>
@@ -504,14 +420,14 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
+        body="self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
           xsi:type="gmfmap:FeatureValueSpec">
         <feature
             xsi:type="ecore:EAttribute"
-            href="graphs.ecore#//Edge/isDirected"/>
+            href="graphs.ecore#//Edge/directed"/>
         <value
             body="true"/>
       </initializers>
@@ -536,28 +452,14 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel1"/>
+          href="graphs.ecore#//Edge/headLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel1"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel2"/>
+          href="graphs.ecore#//Edge/tailLabel"/>
     </labelMappings>
     <containmentFeature
         href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KNode/outgoingEdges"/>
@@ -577,7 +479,7 @@
     <domainMetaElement
         href="graphs.ecore#//Edge"/>
     <domainSpecialization
-        body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
+        body="self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
     <domainInitializer
         xsi:type="gmfmap:FeatureSeqInitializer">
       <initializers
@@ -601,28 +503,14 @@
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel1"/>
+          href="graphs.ecore#//Edge/headLabel"/>
     </labelMappings>
     <labelMappings
         xsi:type="gmfmap:FeatureLabelMapping">
       <diagramLabel
           href="graphs.gmfgraph#EdgeLabel"/>
       <features
-          href="graphs.ecore#//Edge/headLabel2"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel1"/>
-    </labelMappings>
-    <labelMappings
-        xsi:type="gmfmap:FeatureLabelMapping">
-      <diagramLabel
-          href="graphs.gmfgraph#EdgeLabel"/>
-      <features
-          href="graphs.ecore#//Edge/tailLabel2"/>
+          href="graphs.ecore#//Edge/tailLabel"/>
     </labelMappings>
     <containmentFeature
         href="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KNode/outgoingEdges"/>

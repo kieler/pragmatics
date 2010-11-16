@@ -26,7 +26,7 @@ public class ElementInitializers {
                     GraphsOCLFactory.getExpression(3,
                             KEGPackage.eINSTANCE.getNode(), null).evaluate(
                             instance);
-            instance.setIsHypernode(((Boolean) value_0).booleanValue());
+            instance.setHypernode(((Boolean) value_0).booleanValue());
             Object value_1 =
                     GraphsOCLFactory.getExpression(4,
                             KEGPackage.eINSTANCE.getNode(), null).evaluate(
@@ -47,7 +47,7 @@ public class ElementInitializers {
                     GraphsOCLFactory.getExpression(3,
                             KEGPackage.eINSTANCE.getNode(), null).evaluate(
                             instance);
-            instance.setIsHypernode(((Boolean) value_0).booleanValue());
+            instance.setHypernode(((Boolean) value_0).booleanValue());
             Object value_1 =
                     GraphsOCLFactory.getExpression(4,
                             KEGPackage.eINSTANCE.getNode(), null).evaluate(
@@ -68,7 +68,7 @@ public class ElementInitializers {
                     GraphsOCLFactory.getExpression(6,
                             KEGPackage.eINSTANCE.getEdge(), null).evaluate(
                             instance);
-            instance.setIsDirected(((Boolean) value_0).booleanValue());
+            instance.setDirected(((Boolean) value_0).booleanValue());
         } catch (RuntimeException e) {
             GraphsDiagramEditorPlugin.getInstance().logError(
                     "Element initialization failed", e); //$NON-NLS-1$						
@@ -84,7 +84,7 @@ public class ElementInitializers {
                     GraphsOCLFactory.getExpression(9,
                             KEGPackage.eINSTANCE.getEdge(), null).evaluate(
                             instance);
-            instance.setIsDirected(((Boolean) value_0).booleanValue());
+            instance.setDirected(((Boolean) value_0).booleanValue());
             Object value_1 =
                     GraphsOCLFactory.getExpression(10,
                             KEGPackage.eINSTANCE.getEdge(), null).evaluate(
@@ -129,7 +129,7 @@ public class ElementInitializers {
                     GraphsOCLFactory.getExpression(14,
                             KEGPackage.eINSTANCE.getEdge(), null).evaluate(
                             instance);
-            instance.setIsDirected(((Boolean) value_0).booleanValue());
+            instance.setDirected(((Boolean) value_0).booleanValue());
             Object value_1 =
                     GraphsOCLFactory.getExpression(15,
                             KEGPackage.eINSTANCE.getEdge(), null).evaluate(
@@ -174,7 +174,7 @@ public class ElementInitializers {
                     GraphsOCLFactory.getExpression(19,
                             KEGPackage.eINSTANCE.getEdge(), null).evaluate(
                             instance);
-            instance.setIsDirected(((Boolean) value_0).booleanValue());
+            instance.setDirected(((Boolean) value_0).booleanValue());
             Object value_1 =
                     GraphsOCLFactory.getExpression(20,
                             KEGPackage.eINSTANCE.getEdge(), null).evaluate(

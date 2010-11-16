@@ -152,7 +152,7 @@ public class KEGPackageImpl extends EPackageImpl implements KEGPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getNode_IsHypernode() {
+    public EAttribute getNode_Hypernode() {
         return (EAttribute)nodeEClass.getEStructuralFeatures().get(1);
     }
 
@@ -170,7 +170,7 @@ public class KEGPackageImpl extends EPackageImpl implements KEGPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getEdge_HeadLabel1() {
+    public EAttribute getEdge_HeadLabel() {
         return (EAttribute)edgeEClass.getEStructuralFeatures().get(0);
     }
 
@@ -179,7 +179,7 @@ public class KEGPackageImpl extends EPackageImpl implements KEGPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getEdge_HeadLabel2() {
+    public EAttribute getEdge_MidLabel() {
         return (EAttribute)edgeEClass.getEStructuralFeatures().get(1);
     }
 
@@ -188,7 +188,7 @@ public class KEGPackageImpl extends EPackageImpl implements KEGPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getEdge_MidLabel() {
+    public EAttribute getEdge_TailLabel() {
         return (EAttribute)edgeEClass.getEStructuralFeatures().get(2);
     }
 
@@ -197,7 +197,7 @@ public class KEGPackageImpl extends EPackageImpl implements KEGPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getEdge_TailLabel1() {
+    public EAttribute getEdge_Directed() {
         return (EAttribute)edgeEClass.getEStructuralFeatures().get(3);
     }
 
@@ -206,26 +206,8 @@ public class KEGPackageImpl extends EPackageImpl implements KEGPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getEdge_TailLabel2() {
-        return (EAttribute)edgeEClass.getEStructuralFeatures().get(4);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getEdge_IsDirected() {
-        return (EAttribute)edgeEClass.getEStructuralFeatures().get(5);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EAttribute getEdge_Type() {
-        return (EAttribute)edgeEClass.getEStructuralFeatures().get(6);
+        return (EAttribute)edgeEClass.getEStructuralFeatures().get(4);
     }
 
     /**
@@ -285,15 +267,13 @@ public class KEGPackageImpl extends EPackageImpl implements KEGPackage {
         // Create classes and their features
         nodeEClass = createEClass(NODE);
         createEAttribute(nodeEClass, NODE__NODE_LABEL);
-        createEAttribute(nodeEClass, NODE__IS_HYPERNODE);
+        createEAttribute(nodeEClass, NODE__HYPERNODE);
 
         edgeEClass = createEClass(EDGE);
-        createEAttribute(edgeEClass, EDGE__HEAD_LABEL1);
-        createEAttribute(edgeEClass, EDGE__HEAD_LABEL2);
+        createEAttribute(edgeEClass, EDGE__HEAD_LABEL);
         createEAttribute(edgeEClass, EDGE__MID_LABEL);
-        createEAttribute(edgeEClass, EDGE__TAIL_LABEL1);
-        createEAttribute(edgeEClass, EDGE__TAIL_LABEL2);
-        createEAttribute(edgeEClass, EDGE__IS_DIRECTED);
+        createEAttribute(edgeEClass, EDGE__TAIL_LABEL);
+        createEAttribute(edgeEClass, EDGE__DIRECTED);
         createEAttribute(edgeEClass, EDGE__TYPE);
 
         portEClass = createEClass(PORT);
@@ -342,15 +322,13 @@ public class KEGPackageImpl extends EPackageImpl implements KEGPackage {
         // Initialize classes and features; add operations and parameters
         initEClass(nodeEClass, Node.class, "Node", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getNode_NodeLabel(), theEcorePackage.getEString(), "nodeLabel", null, 1, 1, Node.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getNode_IsHypernode(), theEcorePackage.getEBoolean(), "isHypernode", "false", 1, 1, Node.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getNode_Hypernode(), theEcorePackage.getEBoolean(), "hypernode", "false", 1, 1, Node.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(edgeEClass, Edge.class, "Edge", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getEdge_HeadLabel1(), theEcorePackage.getEString(), "headLabel1", null, 0, 1, Edge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getEdge_HeadLabel2(), theEcorePackage.getEString(), "headLabel2", null, 0, 1, Edge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getEdge_HeadLabel(), theEcorePackage.getEString(), "headLabel", null, 0, 1, Edge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getEdge_MidLabel(), theEcorePackage.getEString(), "midLabel", null, 0, 1, Edge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getEdge_TailLabel1(), theEcorePackage.getEString(), "tailLabel1", null, 0, 1, Edge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getEdge_TailLabel2(), theEcorePackage.getEString(), "tailLabel2", null, 0, 1, Edge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getEdge_IsDirected(), theEcorePackage.getEBoolean(), "isDirected", "false", 1, 1, Edge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getEdge_TailLabel(), theEcorePackage.getEString(), "tailLabel", null, 0, 1, Edge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getEdge_Directed(), theEcorePackage.getEBoolean(), "directed", "false", 1, 1, Edge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getEdge_Type(), this.getEdgeType(), "type", null, 1, 1, Edge.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(portEClass, Port.class, "Port", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.draw2d.AbstractBackground;
 import org.eclipse.draw2d.Ellipse;
+import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
@@ -22,8 +25,8 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
-import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
+import org.eclipse.gmf.runtime.gef.ui.internal.figures.OvalFigure;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
@@ -105,7 +108,8 @@ implements KEGNode
      * @generated
      */
     protected IFigure createNodeShape() {
-        return primaryShape = new HypernodeFigure();
+        primaryShape = new HypernodeFigure();
+        return primaryShape;
     }
 
     /**
@@ -119,7 +123,30 @@ implements KEGNode
      * @generated
      */
     protected NodeFigure createNodePlate() {
-        DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(20, 20);
+        OvalFigure result = new OvalFigure() {
+            @Override
+            public Dimension getPreferredSize(int wHint, int hHint) {
+                return new Dimension(20, 20);
+            }
+
+            @Override
+            public void paintFigure(Graphics graphics) {
+                // this code is copied from the base classes because the
+                // implementation of the OvalFigure had to be skipped
+                if (isOpaque() && getBorder() != null) {
+                    Rectangle tempRect = new Rectangle(getBounds());
+                    tempRect.crop(getBorder().getInsets(this));
+                    graphics.fillRectangle(tempRect);
+                    return;
+                }
+                if (isOpaque())
+                    graphics.fillRectangle(getBounds());
+                if (getBorder() instanceof AbstractBackground)
+                    ((AbstractBackground) getBorder()).paintBackground(this,
+                            graphics, NO_INSETS);
+            }
+        };
+
         return result;
     }
 

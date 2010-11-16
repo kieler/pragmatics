@@ -28,7 +28,6 @@
         visualID="3001"
         editPartClassName="Node4EditPart"
         itemSemanticEditPolicyClassName="Node4ItemSemanticEditPolicy"
-        notationViewFactoryClassName="NodeViewFactory"
         canonicalEditPolicyClassName="Node4CanonicalEditPolicy"
         childNodes="//@diagram/@childNodes.1"
         compartments="//@diagram/@compartments.1"
@@ -43,11 +42,14 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="NodeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class NodeFigure extends org.eclipse.draw2d.RoundedRectangle {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureNodeLabelFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public NodeFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;de.cau.cs.kieler.keg.custom.NodeLayout layoutThis = new de.cau.cs.kieler.keg.custom.NodeLayout();&#xA;&#xA;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;this.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(40)&#xA;, getMapMode().DPtoLP(40)&#xA;));&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#x9;this.setBackgroundColor(THIS_BACK&#xA;);&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureNodeLabelFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;fFigureNodeLabelFigure.setText(&quot;&quot;);&#xA;&#xA;this.add(fFigureNodeLabelFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureNodeLabelFigure() {&#xA;&#x9;&#x9;return fFigureNodeLabelFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 20, 0);&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_BACK = new org.eclipse.swt.graphics.Color(null, 80, 230, 154);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class NodeFigure extends de.cau.cs.kieler.karma.SwitchableFigure {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureNodeLabelFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public NodeFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;de.cau.cs.kieler.keg.custom.NodeLayout layoutThis = new de.cau.cs.kieler.keg.custom.NodeLayout();&#xA;&#xA;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;&#xA;&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#x9;this.setBackgroundColor(THIS_BACK&#xA;);&#xA;this.setPreferredSize(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(40)&#xA;, getMapMode().DPtoLP(40)&#xA;));&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureNodeLabelFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;fFigureNodeLabelFigure.setText(&quot;&quot;);&#xA;&#xA;this.add(fFigureNodeLabelFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureNodeLabelFigure() {&#xA;&#x9;&#x9;return fFigureNodeLabelFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 20, 0);&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_BACK = new org.eclipse.swt.graphics.Color(null, 80, 230, 154);&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"
             fixedBackground="true"/>
+        <attributes
+            xsi:type="gmfgen:DefaultSizeAttributes"
+            height="40"/>
       </viewmap>
       <modelFacet
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.0">
@@ -61,8 +63,7 @@
       <labels
           visualID="5002"
           editPartClassName="NodeNodeLabel2EditPart"
-          itemSemanticEditPolicyClassName="NodeNodeLabel2ItemSemanticEditPolicy"
-          notationViewFactoryClassName="NodeNodeLabelViewFactory">
+          itemSemanticEditPolicyClassName="NodeNodeLabel2ItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -82,7 +83,6 @@
         visualID="3002"
         editPartClassName="PortEditPart"
         itemSemanticEditPolicyClassName="PortItemSemanticEditPolicy"
-        notationViewFactoryClassName="PortViewFactory"
         canonicalEditPolicyClassName="PortCanonicalEditPolicy"
         graphicalNodeEditPolicyClassName="PortGraphicalNodeEditPolicy"
         createCommandClassName="PortCreateCommand"
@@ -121,8 +121,7 @@
           xsi:type="gmfgen:GenExternalNodeLabel"
           visualID="5001"
           editPartClassName="PortPortLabelEditPart"
-          itemSemanticEditPolicyClassName="PortPortLabelItemSemanticEditPolicy"
-          notationViewFactoryClassName="PortPortLabelViewFactory">
+          itemSemanticEditPolicyClassName="PortPortLabelItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -141,7 +140,6 @@
         visualID="3003"
         editPartClassName="Node5EditPart"
         itemSemanticEditPolicyClassName="Node5ItemSemanticEditPolicy"
-        notationViewFactoryClassName="NodeViewFactory"
         canonicalEditPolicyClassName="Node5CanonicalEditPolicy"
         graphicalNodeEditPolicyClassName="Node4GraphicalNodeEditPolicy"
         createCommandClassName="Node4CreateCommand"
@@ -179,7 +177,7 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.3">
             <feature
-                href="graphs.genmodel#//keg/Node/isHypernode"/>
+                href="graphs.genmodel#//keg/Node/hypernode"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
@@ -194,7 +192,6 @@
         visualID="2001"
         editPartClassName="Node2EditPart"
         itemSemanticEditPolicyClassName="Node2ItemSemanticEditPolicy"
-        notationViewFactoryClassName="NodeViewFactory"
         canonicalEditPolicyClassName="Node2CanonicalEditPolicy"
         childNodes="//@diagram/@childNodes.1"
         compartments="//@diagram/@compartments.0"
@@ -208,11 +205,14 @@
       <viewmap
           xsi:type="gmfgen:InnerClassViewmap"
           className="NodeFigure"
-          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class NodeFigure extends org.eclipse.draw2d.RoundedRectangle {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureNodeLabelFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public NodeFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;de.cau.cs.kieler.keg.custom.NodeLayout layoutThis = new de.cau.cs.kieler.keg.custom.NodeLayout();&#xA;&#xA;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;this.setCornerDimensions(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(40)&#xA;, getMapMode().DPtoLP(40)&#xA;));&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#x9;this.setBackgroundColor(THIS_BACK&#xA;);&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureNodeLabelFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;fFigureNodeLabelFigure.setText(&quot;&quot;);&#xA;&#xA;this.add(fFigureNodeLabelFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureNodeLabelFigure() {&#xA;&#x9;&#x9;return fFigureNodeLabelFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 20, 0);&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_BACK = new org.eclipse.swt.graphics.Color(null, 80, 230, 154);&#xA;&#xA;">
+          classBody="&#xA;/**&#xA; * @generated&#xA; */&#xA;public class NodeFigure extends de.cau.cs.kieler.karma.SwitchableFigure {&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel fFigureNodeLabelFigure; &#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public NodeFigure() {&#xA;&#x9;&#x9;&#xA;&#x9;de.cau.cs.kieler.keg.custom.NodeLayout layoutThis = new de.cau.cs.kieler.keg.custom.NodeLayout();&#xA;&#xA;&#xA;&#x9;this.setLayoutManager(layoutThis);&#xA;&#xA;&#x9;&#x9;&#xA;&#xA;&#x9;this.setForegroundColor(THIS_FORE&#xA;);&#xA;&#x9;this.setBackgroundColor(THIS_BACK&#xA;);&#xA;this.setPreferredSize(new org.eclipse.draw2d.geometry.Dimension(getMapMode().DPtoLP(40)&#xA;, getMapMode().DPtoLP(40)&#xA;));&#xA;&#xA;this.setBorder(new org.eclipse.draw2d.MarginBorder(getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;, getMapMode().DPtoLP(5)&#xA;));&#xA;&#x9;&#x9;createContents();&#xA;&#x9;}&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;private void createContents(){&#xA;&#xA;&#xA;fFigureNodeLabelFigure = new org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel();&#xA;fFigureNodeLabelFigure.setText(&quot;&quot;);&#xA;&#xA;this.add(fFigureNodeLabelFigure);&#xA;&#xA;&#xA;&#x9;}&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#x9;/**&#xA;&#x9; * @generated&#xA;&#x9; */&#xA;&#x9;public org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel getFigureNodeLabelFigure() {&#xA;&#x9;&#x9;return fFigureNodeLabelFigure;&#xA;&#x9;}&#xA;&#xA;&#xA;}&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_FORE = new org.eclipse.swt.graphics.Color(null, 0, 20, 0);&#xA;&#xA;/**&#xA; * @generated&#xA; */&#xA;static final org.eclipse.swt.graphics.Color THIS_BACK = new org.eclipse.swt.graphics.Color(null, 80, 230, 154);&#xA;&#xA;">
         <attributes
             xsi:type="gmfgen:StyleAttributes"
             fixedForeground="true"
             fixedBackground="true"/>
+        <attributes
+            xsi:type="gmfgen:DefaultSizeAttributes"
+            height="40"/>
       </viewmap>
       <modelFacet
           modelElementSelector="//@expressionProviders/@providers.0/@expressions.0">
@@ -226,8 +226,7 @@
       <labels
           visualID="5003"
           editPartClassName="NodeNodeLabelEditPart"
-          itemSemanticEditPolicyClassName="NodeNodeLabelItemSemanticEditPolicy"
-          notationViewFactoryClassName="NodeNodeLabelViewFactory">
+          itemSemanticEditPolicyClassName="NodeNodeLabelItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -246,7 +245,6 @@
         visualID="2002"
         editPartClassName="Node3EditPart"
         itemSemanticEditPolicyClassName="Node3ItemSemanticEditPolicy"
-        notationViewFactoryClassName="NodeViewFactory"
         canonicalEditPolicyClassName="Node3CanonicalEditPolicy"
         graphicalNodeEditPolicyClassName="Node2GraphicalNodeEditPolicy"
         createCommandClassName="Node2CreateCommand">
@@ -283,7 +281,7 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.3">
             <feature
-                href="graphs.genmodel#//keg/Node/isHypernode"/>
+                href="graphs.genmodel#//keg/Node/hypernode"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
@@ -298,7 +296,6 @@
         visualID="4001"
         editPartClassName="EdgeEditPart"
         itemSemanticEditPolicyClassName="EdgeItemSemanticEditPolicy"
-        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="EdgeCreateCommand"
         reorientCommandClassName="EdgeReorientCommand">
       <diagramRunTimeClass
@@ -329,7 +326,7 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.6">
             <feature
-                href="graphs.genmodel#//keg/Edge/isDirected"/>
+                href="graphs.genmodel#//keg/Edge/directed"/>
           </initializers>
         </modelElementInitializer>
         <sourceMetaFeature
@@ -340,8 +337,7 @@
       <labels
           visualID="6001"
           editPartClassName="EdgeMidLabelEditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabelItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeMidLabelViewFactory">
+          itemSemanticEditPolicyClassName="EdgeMidLabelItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -360,9 +356,8 @@
       </labels>
       <labels
           visualID="6002"
-          editPartClassName="EdgeHeadLabel1EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel1ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory"
+          editPartClassName="EdgeHeadLabelEditPart"
+          itemSemanticEditPolicyClassName="EdgeHeadLabelItemSemanticEditPolicy"
           alignment="SOURCE">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
@@ -377,15 +372,14 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel"/>
         </modelFacet>
       </labels>
       <labels
           visualID="6003"
-          editPartClassName="EdgeHeadLabel2EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel2ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory"
-          alignment="SOURCE">
+          editPartClassName="EdgeTailLabelEditPart"
+          itemSemanticEditPolicyClassName="EdgeTailLabelItemSemanticEditPolicy"
+          alignment="TARGET">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -399,51 +393,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel2"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6004"
-          editPartClassName="EdgeTailLabel1EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel1ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel1ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="100"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6005"
-          editPartClassName="EdgeTailLabel2EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel2ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel2ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="120"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel"/>
         </modelFacet>
       </labels>
     </links>
@@ -451,7 +401,6 @@
         visualID="4002"
         editPartClassName="Edge2EditPart"
         itemSemanticEditPolicyClassName="Edge2ItemSemanticEditPolicy"
-        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge2CreateCommand"
         reorientCommandClassName="Edge2ReorientCommand">
       <diagramRunTimeClass
@@ -484,8 +433,7 @@
       <labels
           visualID="6006"
           editPartClassName="EdgeMidLabel2EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel2ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeMidLabelViewFactory">
+          itemSemanticEditPolicyClassName="EdgeMidLabel2ItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -504,9 +452,8 @@
       </labels>
       <labels
           visualID="6007"
-          editPartClassName="EdgeHeadLabel12EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel12ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory"
+          editPartClassName="EdgeHeadLabel2EditPart"
+          itemSemanticEditPolicyClassName="EdgeHeadLabel2ItemSemanticEditPolicy"
           alignment="SOURCE">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
@@ -521,15 +468,14 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel"/>
         </modelFacet>
       </labels>
       <labels
           visualID="6008"
-          editPartClassName="EdgeHeadLabel22EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel22ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory"
-          alignment="SOURCE">
+          editPartClassName="EdgeTailLabel2EditPart"
+          itemSemanticEditPolicyClassName="EdgeTailLabel2ItemSemanticEditPolicy"
+          alignment="TARGET">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -543,51 +489,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel2"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6009"
-          editPartClassName="EdgeTailLabel12EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel12ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel1ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="100"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6010"
-          editPartClassName="EdgeTailLabel22EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel22ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel2ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="120"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel"/>
         </modelFacet>
       </labels>
     </links>
@@ -595,7 +497,6 @@
         visualID="4003"
         editPartClassName="Edge3EditPart"
         itemSemanticEditPolicyClassName="Edge3ItemSemanticEditPolicy"
-        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge3CreateCommand"
         reorientCommandClassName="Edge3ReorientCommand">
       <diagramRunTimeClass
@@ -626,7 +527,7 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.9">
             <feature
-                href="graphs.genmodel#//keg/Edge/isDirected"/>
+                href="graphs.genmodel#//keg/Edge/directed"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
@@ -643,8 +544,7 @@
       <labels
           visualID="6011"
           editPartClassName="EdgeMidLabel3EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel3ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeMidLabelViewFactory">
+          itemSemanticEditPolicyClassName="EdgeMidLabel3ItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -663,9 +563,8 @@
       </labels>
       <labels
           visualID="6012"
-          editPartClassName="EdgeHeadLabel13EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel13ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory"
+          editPartClassName="EdgeHeadLabel3EditPart"
+          itemSemanticEditPolicyClassName="EdgeHeadLabel3ItemSemanticEditPolicy"
           alignment="SOURCE">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
@@ -680,15 +579,14 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel"/>
         </modelFacet>
       </labels>
       <labels
           visualID="6013"
-          editPartClassName="EdgeHeadLabel23EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel23ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory"
-          alignment="SOURCE">
+          editPartClassName="EdgeTailLabel3EditPart"
+          itemSemanticEditPolicyClassName="EdgeTailLabel3ItemSemanticEditPolicy"
+          alignment="TARGET">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -702,51 +600,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel2"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6014"
-          editPartClassName="EdgeTailLabel13EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel13ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel1ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="100"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6015"
-          editPartClassName="EdgeTailLabel23EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel23ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel2ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="120"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel"/>
         </modelFacet>
       </labels>
     </links>
@@ -754,7 +608,6 @@
         visualID="4004"
         editPartClassName="Edge4EditPart"
         itemSemanticEditPolicyClassName="Edge4ItemSemanticEditPolicy"
-        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge4CreateCommand"
         reorientCommandClassName="Edge4ReorientCommand">
       <diagramRunTimeClass
@@ -796,8 +649,7 @@
       <labels
           visualID="6016"
           editPartClassName="EdgeMidLabel4EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel4ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeMidLabelViewFactory">
+          itemSemanticEditPolicyClassName="EdgeMidLabel4ItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -816,9 +668,8 @@
       </labels>
       <labels
           visualID="6017"
-          editPartClassName="EdgeHeadLabel14EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel14ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory"
+          editPartClassName="EdgeHeadLabel4EditPart"
+          itemSemanticEditPolicyClassName="EdgeHeadLabel4ItemSemanticEditPolicy"
           alignment="SOURCE">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
@@ -833,15 +684,14 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel"/>
         </modelFacet>
       </labels>
       <labels
           visualID="6018"
-          editPartClassName="EdgeHeadLabel24EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel24ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory"
-          alignment="SOURCE">
+          editPartClassName="EdgeTailLabel4EditPart"
+          itemSemanticEditPolicyClassName="EdgeTailLabel4ItemSemanticEditPolicy"
+          alignment="TARGET">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -855,51 +705,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel2"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6019"
-          editPartClassName="EdgeTailLabel14EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel14ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel1ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="100"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6020"
-          editPartClassName="EdgeTailLabel24EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel24ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel2ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="120"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel"/>
         </modelFacet>
       </labels>
     </links>
@@ -907,7 +713,6 @@
         visualID="4005"
         editPartClassName="Edge5EditPart"
         itemSemanticEditPolicyClassName="Edge5ItemSemanticEditPolicy"
-        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge5CreateCommand"
         reorientCommandClassName="Edge5ReorientCommand">
       <diagramRunTimeClass
@@ -938,7 +743,7 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.14">
             <feature
-                href="graphs.genmodel#//keg/Edge/isDirected"/>
+                href="graphs.genmodel#//keg/Edge/directed"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
@@ -955,8 +760,7 @@
       <labels
           visualID="6021"
           editPartClassName="EdgeMidLabel5EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel5ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeMidLabelViewFactory">
+          itemSemanticEditPolicyClassName="EdgeMidLabel5ItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -975,9 +779,8 @@
       </labels>
       <labels
           visualID="6022"
-          editPartClassName="EdgeHeadLabel15EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel15ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory"
+          editPartClassName="EdgeHeadLabel5EditPart"
+          itemSemanticEditPolicyClassName="EdgeHeadLabel5ItemSemanticEditPolicy"
           alignment="SOURCE">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
@@ -992,15 +795,14 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel"/>
         </modelFacet>
       </labels>
       <labels
           visualID="6023"
-          editPartClassName="EdgeHeadLabel25EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel25ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory"
-          alignment="SOURCE">
+          editPartClassName="EdgeTailLabel5EditPart"
+          itemSemanticEditPolicyClassName="EdgeTailLabel5ItemSemanticEditPolicy"
+          alignment="TARGET">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1014,51 +816,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel2"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6024"
-          editPartClassName="EdgeTailLabel15EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel15ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel1ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="100"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6025"
-          editPartClassName="EdgeTailLabel25EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel25ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel2ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="120"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel"/>
         </modelFacet>
       </labels>
     </links>
@@ -1066,7 +824,6 @@
         visualID="4006"
         editPartClassName="Edge6EditPart"
         itemSemanticEditPolicyClassName="Edge6ItemSemanticEditPolicy"
-        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge6CreateCommand"
         reorientCommandClassName="Edge6ReorientCommand">
       <diagramRunTimeClass
@@ -1108,8 +865,7 @@
       <labels
           visualID="6026"
           editPartClassName="EdgeMidLabel6EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel6ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeMidLabelViewFactory">
+          itemSemanticEditPolicyClassName="EdgeMidLabel6ItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1128,9 +884,8 @@
       </labels>
       <labels
           visualID="6027"
-          editPartClassName="EdgeHeadLabel16EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel16ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory"
+          editPartClassName="EdgeHeadLabel6EditPart"
+          itemSemanticEditPolicyClassName="EdgeHeadLabel6ItemSemanticEditPolicy"
           alignment="SOURCE">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
@@ -1145,15 +900,14 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel"/>
         </modelFacet>
       </labels>
       <labels
           visualID="6028"
-          editPartClassName="EdgeHeadLabel26EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel26ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory"
-          alignment="SOURCE">
+          editPartClassName="EdgeTailLabel6EditPart"
+          itemSemanticEditPolicyClassName="EdgeTailLabel6ItemSemanticEditPolicy"
+          alignment="TARGET">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1167,51 +921,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel2"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6029"
-          editPartClassName="EdgeTailLabel16EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel16ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel1ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="100"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6030"
-          editPartClassName="EdgeTailLabel26EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel26ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel2ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="120"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel"/>
         </modelFacet>
       </labels>
     </links>
@@ -1219,7 +929,6 @@
         visualID="4007"
         editPartClassName="Edge7EditPart"
         itemSemanticEditPolicyClassName="Edge7ItemSemanticEditPolicy"
-        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge7CreateCommand"
         reorientCommandClassName="Edge7ReorientCommand">
       <diagramRunTimeClass
@@ -1250,7 +959,7 @@
               xsi:type="gmfgen:GenFeatureValueSpec"
               value="//@expressionProviders/@providers.0/@expressions.19">
             <feature
-                href="graphs.genmodel#//keg/Edge/isDirected"/>
+                href="graphs.genmodel#//keg/Edge/directed"/>
           </initializers>
           <initializers
               xsi:type="gmfgen:GenFeatureValueSpec"
@@ -1267,8 +976,7 @@
       <labels
           visualID="6031"
           editPartClassName="EdgeMidLabel7EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel7ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeMidLabelViewFactory">
+          itemSemanticEditPolicyClassName="EdgeMidLabel7ItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1287,9 +995,8 @@
       </labels>
       <labels
           visualID="6032"
-          editPartClassName="EdgeHeadLabel17EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel17ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory"
+          editPartClassName="EdgeHeadLabel7EditPart"
+          itemSemanticEditPolicyClassName="EdgeHeadLabel7ItemSemanticEditPolicy"
           alignment="SOURCE">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
@@ -1304,15 +1011,14 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel"/>
         </modelFacet>
       </labels>
       <labels
           visualID="6033"
-          editPartClassName="EdgeHeadLabel27EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel27ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory"
-          alignment="SOURCE">
+          editPartClassName="EdgeTailLabel7EditPart"
+          itemSemanticEditPolicyClassName="EdgeTailLabel7ItemSemanticEditPolicy"
+          alignment="TARGET">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1326,51 +1032,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel2"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6034"
-          editPartClassName="EdgeTailLabel17EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel17ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel1ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="100"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6035"
-          editPartClassName="EdgeTailLabel27EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel27ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel2ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="120"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel"/>
         </modelFacet>
       </labels>
     </links>
@@ -1378,7 +1040,6 @@
         visualID="4008"
         editPartClassName="Edge8EditPart"
         itemSemanticEditPolicyClassName="Edge8ItemSemanticEditPolicy"
-        notationViewFactoryClassName="EdgeViewFactory"
         createCommandClassName="Edge8CreateCommand"
         reorientCommandClassName="Edge8ReorientCommand">
       <diagramRunTimeClass
@@ -1420,8 +1081,7 @@
       <labels
           visualID="6036"
           editPartClassName="EdgeMidLabel8EditPart"
-          itemSemanticEditPolicyClassName="EdgeMidLabel8ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeMidLabelViewFactory">
+          itemSemanticEditPolicyClassName="EdgeMidLabel8ItemSemanticEditPolicy">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1440,9 +1100,8 @@
       </labels>
       <labels
           visualID="6037"
-          editPartClassName="EdgeHeadLabel18EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel18ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel1ViewFactory"
+          editPartClassName="EdgeHeadLabel8EditPart"
+          itemSemanticEditPolicyClassName="EdgeHeadLabel8ItemSemanticEditPolicy"
           alignment="SOURCE">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
@@ -1457,15 +1116,14 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel1"/>
+              href="graphs.genmodel#//keg/Edge/headLabel"/>
         </modelFacet>
       </labels>
       <labels
           visualID="6038"
-          editPartClassName="EdgeHeadLabel28EditPart"
-          itemSemanticEditPolicyClassName="EdgeHeadLabel28ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeHeadLabel2ViewFactory"
-          alignment="SOURCE">
+          editPartClassName="EdgeTailLabel8EditPart"
+          itemSemanticEditPolicyClassName="EdgeTailLabel8ItemSemanticEditPolicy"
+          alignment="TARGET">
         <diagramRunTimeClass
             href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
         <viewmap
@@ -1479,51 +1137,7 @@
             xsi:type="gmfgen:FeatureLabelModelFacet"
             parser="//@labelParsers/@implementations.0">
           <metaFeatures
-              href="graphs.genmodel#//keg/Edge/headLabel2"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6039"
-          editPartClassName="EdgeTailLabel18EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel18ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel1ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="100"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel1"/>
-        </modelFacet>
-      </labels>
-      <labels
-          visualID="6040"
-          editPartClassName="EdgeTailLabel28EditPart"
-          itemSemanticEditPolicyClassName="EdgeTailLabel28ItemSemanticEditPolicy"
-          notationViewFactoryClassName="EdgeTailLabel2ViewFactory"
-          alignment="TARGET">
-        <diagramRunTimeClass
-            href="../../../plugin/org.eclipse.gmf.runtime.notation/model/notation.genmodel#//notation/Node"/>
-        <viewmap
-            xsi:type="gmfgen:FigureViewmap"
-            figureQualifiedClassName="org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel">
-          <attributes
-              xsi:type="gmfgen:LabelOffsetAttributes"
-              y="120"/>
-        </viewmap>
-        <modelFacet
-            xsi:type="gmfgen:FeatureLabelModelFacet"
-            parser="//@labelParsers/@implementations.0">
-          <metaFeatures
-              href="graphs.genmodel#//keg/Edge/tailLabel2"/>
+              href="graphs.genmodel#//keg/Edge/tailLabel"/>
         </modelFacet>
       </labels>
     </links>
@@ -1531,7 +1145,6 @@
         visualID="7001"
         editPartClassName="NodeNodeCompartmentEditPart"
         itemSemanticEditPolicyClassName="NodeNodeCompartmentItemSemanticEditPolicy"
-        notationViewFactoryClassName="NodeNodeCompartmentViewFactory"
         canonicalEditPolicyClassName="NodeNodeCompartmentCanonicalEditPolicy"
         childNodes="//@diagram/@childNodes.0 //@diagram/@childNodes.2"
         title="NodeCompartment"
@@ -1550,7 +1163,6 @@
         visualID="7002"
         editPartClassName="NodeNodeCompartment2EditPart"
         itemSemanticEditPolicyClassName="NodeNodeCompartment2ItemSemanticEditPolicy"
-        notationViewFactoryClassName="NodeNodeCompartmentViewFactory"
         canonicalEditPolicyClassName="NodeNodeCompartment2CanonicalEditPolicy"
         childNodes="//@diagram/@childNodes.0 //@diagram/@childNodes.2"
         title="NodeCompartment"
@@ -1630,6 +1242,7 @@
     <requiredPlugins>org.eclipse.draw2d</requiredPlugins>
     <requiredPlugins>org.eclipse.gmf.runtime.draw2d.ui</requiredPlugins>
     <requiredPlugins>de.cau.cs.kieler.core.ui</requiredPlugins>
+    <requiredPlugins>de.cau.cs.kieler.karma</requiredPlugins>
   </plugin>
   <editor/>
   <navigator>
@@ -2207,59 +1820,59 @@
         xsi:type="gmfgen:GenExpressionInterpreter">
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.isHypernode = false"/>
+          body="self.hypernode = false"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
           body="self.node.parent->size() > 0"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.isHypernode = true"/>
+          body="self.hypernode = true"/>
       <expressions
           body="true"/>
       <expressions
           body="'Hypernode'"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
+          body="self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
       <expressions
           body="true"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
+          body="self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Node"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
+          body="self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
       <expressions
           body="true"/>
       <expressions
           body="keg::EdgeType::Port2Port"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
+          body="self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Port"/>
       <expressions
           body="keg::EdgeType::Port2Port"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
+          body="self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
       <expressions
           body="true"/>
       <expressions
           body="keg::EdgeType::Port2Node"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
+          body="self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Port2Node"/>
       <expressions
           body="keg::EdgeType::Port2Node"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(keg::Edge).isDirected = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
+          body="self.oclAsType(keg::Edge).directed = true and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
       <expressions
           body="true"/>
       <expressions
           body="keg::EdgeType::Node2Port"/>
       <expressions
           xsi:type="gmfgen:GenConstraint"
-          body="self.oclAsType(keg::Edge).isDirected = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
+          body="self.oclAsType(keg::Edge).directed = false and self.oclAsType(keg::Edge).type = keg::EdgeType::Node2Port"/>
       <expressions
           body="keg::EdgeType::Node2Port"/>
     </providers>
@@ -2268,7 +1881,7 @@
       extensibleViaService="true">
     <implementations
         xsi:type="gmfgen:PredefinedParser"
-        uses="//@diagram/@childNodes.1/@labels.0/@modelFacet //@diagram/@childNodes.0/@labels.0/@modelFacet //@diagram/@topLevelNodes.0/@labels.0/@modelFacet //@diagram/@links.0/@labels.0/@modelFacet //@diagram/@links.0/@labels.1/@modelFacet //@diagram/@links.0/@labels.2/@modelFacet //@diagram/@links.0/@labels.3/@modelFacet //@diagram/@links.0/@labels.4/@modelFacet //@diagram/@links.1/@labels.0/@modelFacet //@diagram/@links.1/@labels.1/@modelFacet //@diagram/@links.1/@labels.2/@modelFacet //@diagram/@links.1/@labels.3/@modelFacet //@diagram/@links.1/@labels.4/@modelFacet //@diagram/@links.2/@labels.0/@modelFacet //@diagram/@links.2/@labels.1/@modelFacet //@diagram/@links.2/@labels.2/@modelFacet //@diagram/@links.2/@labels.3/@modelFacet //@diagram/@links.2/@labels.4/@modelFacet //@diagram/@links.3/@labels.0/@modelFacet //@diagram/@links.3/@labels.1/@modelFacet //@diagram/@links.3/@labels.2/@modelFacet //@diagram/@links.3/@labels.3/@modelFacet //@diagram/@links.3/@labels.4/@modelFacet //@diagram/@links.4/@labels.0/@modelFacet //@diagram/@links.4/@labels.1/@modelFacet //@diagram/@links.4/@labels.2/@modelFacet //@diagram/@links.4/@labels.3/@modelFacet //@diagram/@links.4/@labels.4/@modelFacet //@diagram/@links.5/@labels.0/@modelFacet //@diagram/@links.5/@labels.1/@modelFacet //@diagram/@links.5/@labels.2/@modelFacet //@diagram/@links.5/@labels.3/@modelFacet //@diagram/@links.5/@labels.4/@modelFacet //@diagram/@links.6/@labels.0/@modelFacet //@diagram/@links.6/@labels.1/@modelFacet //@diagram/@links.6/@labels.2/@modelFacet //@diagram/@links.6/@labels.3/@modelFacet //@diagram/@links.6/@labels.4/@modelFacet //@diagram/@links.7/@labels.0/@modelFacet //@diagram/@links.7/@labels.1/@modelFacet //@diagram/@links.7/@labels.2/@modelFacet //@diagram/@links.7/@labels.3/@modelFacet //@diagram/@links.7/@labels.4/@modelFacet"/>
+        uses="//@diagram/@childNodes.1/@labels.0/@modelFacet //@diagram/@childNodes.0/@labels.0/@modelFacet //@diagram/@topLevelNodes.0/@labels.0/@modelFacet //@diagram/@links.0/@labels.0/@modelFacet //@diagram/@links.0/@labels.1/@modelFacet //@diagram/@links.0/@labels.2/@modelFacet //@diagram/@links.1/@labels.0/@modelFacet //@diagram/@links.1/@labels.1/@modelFacet //@diagram/@links.1/@labels.2/@modelFacet //@diagram/@links.2/@labels.0/@modelFacet //@diagram/@links.2/@labels.1/@modelFacet //@diagram/@links.2/@labels.2/@modelFacet //@diagram/@links.3/@labels.0/@modelFacet //@diagram/@links.3/@labels.1/@modelFacet //@diagram/@links.3/@labels.2/@modelFacet //@diagram/@links.4/@labels.0/@modelFacet //@diagram/@links.4/@labels.1/@modelFacet //@diagram/@links.4/@labels.2/@modelFacet //@diagram/@links.5/@labels.0/@modelFacet //@diagram/@links.5/@labels.1/@modelFacet //@diagram/@links.5/@labels.2/@modelFacet //@diagram/@links.6/@labels.0/@modelFacet //@diagram/@links.6/@labels.1/@modelFacet //@diagram/@links.6/@labels.2/@modelFacet //@diagram/@links.7/@labels.0/@modelFacet //@diagram/@links.7/@labels.1/@modelFacet //@diagram/@links.7/@labels.2/@modelFacet"/>
   </labelParsers>
   <contextMenus
       context="//@diagram">
