@@ -50,7 +50,13 @@ public class KaomPortProvider implements IRenderingProvider {
         //return figure;
         
         //return null;
-        return createSvg(getBlackPortSvgString());
+        if (input.equals("UP")) {
+            return createSvg(getBlackUpwardsPortSvgString());
+        } else if (input.equals("DOWN")) {
+            return createSvg(getBlackDownwardsPortSvgString());
+        } else {       
+            return createSvg(getBlackPortSvgString());
+        }
     }
 
     /**
@@ -82,6 +88,18 @@ public class KaomPortProvider implements IRenderingProvider {
                 + "</svg>";
     }
 
+    private String getBlackDownwardsPortSvgString() {
+        return "<svg width=\"5\" height=\"5\">"
+                + "<polygon points=\"0,0 4.5,0 2.2,4.5 0,0\" style=\"fill:black;stroke:black;stroke-width:1\" />"
+                + "</svg>";
+    }
+    
+    private String getBlackUpwardsPortSvgString() {
+        return "<svg width=\"5\" height=\"5\">"
+                + "<polygon points=\"0,4.5 4.5,4.5 2.2,0 0,4.5\" style=\"fill:black;stroke:black;stroke-width:1\" />"
+                + "</svg>";
+    }
+    
     /**
      * method for generating a scalable image figure from a file.
      * 
