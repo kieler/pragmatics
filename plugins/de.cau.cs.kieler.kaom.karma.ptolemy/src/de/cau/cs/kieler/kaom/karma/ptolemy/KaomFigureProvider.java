@@ -579,25 +579,18 @@ public class KaomFigureProvider implements IRenderingProvider {
      * @return the figure
      */
     public static IFigure createFigureFromIconDescription(final EObject object) {
-        if (object instanceof /*de.cau.cs.kieler.kaom.Entity*/ Annotatable) {
-            /*de.cau.cs.kieler.kaom.Entity*/ Annotatable myEntity = /*(de.cau.cs.kieler.kaom.Entity)*/ (Annotatable) object;
-            Annotation annotation = myEntity.getAnnotation("ptolemyClass");
+        if (object instanceof Annotatable) {
+            Annotatable myAnnotatable =  (Annotatable) object;
+            Annotation annotation = myAnnotatable.getAnnotation("ptolemyClass");
             if (annotation != null && annotation instanceof StringAnnotation) {
                 String ptolemyClassString = ((StringAnnotation) annotation).getValue();
                 try {
                     Object obj;
-                    if (ptolemyClassString.equals("ptolemy.kernel.Port")) {
-                        Class<?> ptolemy = Class.forName(ptolemyClassString);
-                        Constructor<?> constr = ptolemy.getConstructor();
-                        obj = constr.newInstance();
-                    } else {
                     Class<?> ptolemy = Class.forName(ptolemyClassString);
                     Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class,
                             String.class);
                     obj = constr.newInstance(new CompositeEntity(), "cache");
-                    }
-                    if (obj instanceof /*Entity*/NamedObj) {
-                        //Entity entity = (Entity) obj;
+                    if (obj instanceof NamedObj) {
                         NamedObj entity = (NamedObj) obj;
                         TestIconLoader til = new TestIconLoader();
                         try {
@@ -611,7 +604,6 @@ public class KaomFigureProvider implements IRenderingProvider {
                         String svg = "";
                         if (icons.isEmpty()) {
                             ca = (ConfigurableAttribute) entity.getAttribute("_iconDescription");
-                            //here is null while port
                             svg = ca.getConfigureText();
                         } else {
                             EditorIcon icon = icons.get(0);
@@ -633,7 +625,6 @@ public class KaomFigureProvider implements IRenderingProvider {
                             ScalableImageFigure fig = new ScalableImageFigure(
                                     new org.eclipse.swt.graphics.Image(Display.getCurrent(),
                                             CoreUiUtil.convertAWTImageToSWT(resizedImage)));
-                            int gfa;
                             return fig;
                         }
                         svg = repairSvg(svg);

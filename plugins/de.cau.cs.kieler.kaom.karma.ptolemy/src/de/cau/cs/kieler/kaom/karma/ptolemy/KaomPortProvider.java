@@ -19,25 +19,17 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
 
-import de.cau.cs.kieler.core.annotations.Annotatable;
-import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
-import de.cau.cs.kieler.core.annotations.StringAnnotation;
-import de.cau.cs.kieler.kaom.impl.PortImpl;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.util.CustomPortLocator;
 
 /**
- * @author ckru
- * 
- *         {@inheritDoc}
+ * @author ckru        
  */
 public class KaomPortProvider implements IRenderingProvider {
 
@@ -57,8 +49,8 @@ public class KaomPortProvider implements IRenderingProvider {
         //IFigure figure = KaomFigureProvider.createFigureFromIconDescription(object);
         //return figure;
         
-        
-        return null;
+        //return null;
+        return createSvg(getBlackPortSvgString());
     }
 
     /**
@@ -72,9 +64,21 @@ public class KaomPortProvider implements IRenderingProvider {
         return defaultFigure;
     }
 
-    private String getPortSvgString() {
-        return "<svg width=\"7\" height=\"7\">"
-                + "<polygon points=\"0,6 0,0 6,3 0,6\" style=\"fill:black;stroke:black;stroke-width:1\" />"
+    private String getWhitePortSvgString() {
+        return "<svg width=\"5\" height=\"5\">"
+                + "<polygon points=\"0,4.5 0,0 4.5,2.2 0,4.5\" style=\"fill:white;stroke:black;stroke-width:1\" />"
+                + "</svg>";
+    }
+    
+    private String getBlackPortSvgString() {
+        return "<svg width=\"5\" height=\"5\">"
+                + "<polygon points=\"0,4.5 0,0 4.5,2.2 0,4.5\" style=\"fill:black;stroke:black;stroke-width:1\" />"
+                + "</svg>";
+    }
+    
+    private String getGrayPortSvgString() {
+        return "<svg width=\"5\" height=\"5\">"
+                + "<polygon points=\"0,4.5 0,0 4.5,2.2 0,4.5\" style=\"fill:gray;stroke:black;stroke-width:1\" />"
                 + "</svg>";
     }
 
