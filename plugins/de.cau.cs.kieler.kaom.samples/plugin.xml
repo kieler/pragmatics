@@ -32,9 +32,10 @@
 </example>
 <example author="KIELER Workgroup" contact="kieler@informatik.uni-kiel.de" description="This example shows a KAOM diagram with a composite actor and its content." generation_date="Tue Nov 16 17:08:31 CET 2010" overview_pic="" root_directory="examples" title="KAOM Hierarchy">
 <category id="de.cau.cs.kieler.kaom"/>
-<example_resource direct_open="true" local_path="examples/newmodel.kaod" resource_type="file"/>
-<example_resource direct_open="false" local_path="examples/newmodel.kaom" resource_type="file"/>
-<example_resource direct_open="false" local_path="examples/newmodel.moml" resource_type="file"/>
+<example_resource direct_open="false" local_path="examples/kaom_hierarchy" resource_type="folder"/>
+<example_resource direct_open="true" local_path="examples/kaom_hierarchy/newmodel.kaod" resource_type="file"/>
+<example_resource direct_open="false" local_path="examples/kaom_hierarchy/newmodel.kaom" resource_type="file"/>
+<example_resource direct_open="false" local_path="examples/kaom_hierarchy/newmodel.moml" resource_type="file"/>
 </example>
 </extension>  
 </plugin>
