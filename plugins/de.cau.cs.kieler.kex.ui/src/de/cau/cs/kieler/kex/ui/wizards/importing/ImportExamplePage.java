@@ -116,7 +116,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
         createTopGroup(composite);
         createMiddleComponent(composite);
         createBottomComponent(composite);
-        getShell().setMinimumSize(500, 600);
+        getShell().setMinimumSize(540, 600);
 
     }
 

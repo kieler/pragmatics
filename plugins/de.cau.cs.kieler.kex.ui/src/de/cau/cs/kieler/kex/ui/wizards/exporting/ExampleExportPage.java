@@ -86,10 +86,10 @@ public class ExampleExportPage extends WizardResourceImportPage {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
         setControl(composite);
-
         createTopGroup(composite);
         createMiddleGroup(composite);
         createBottomGroup(composite);
+        getShell().setMinimumSize(540, 600);
     }
 
     @Override

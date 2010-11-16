@@ -76,7 +76,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         try {
             ExampleManager.get().load(false);
         } catch (KielerException e) {
-            MessageDialog.openError(this.getShell(), "Can´t initialize existing example pool.",
+            MessageDialog.openError(this.getShell(), "Can't initialize existing example pool.",
                     e.getLocalizedMessage());
         }
         mainPage = new ImportExamplePage("Import Example", selection);

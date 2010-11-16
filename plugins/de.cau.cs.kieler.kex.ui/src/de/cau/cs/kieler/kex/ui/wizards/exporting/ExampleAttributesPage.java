@@ -66,7 +66,7 @@ public class ExampleAttributesPage extends WizardPage {
         composite.setLayout(new GridLayout());
         setControl(composite);
         addAttributeFields(composite);
-        getShell().setMinimumSize(500, 600);
+        getShell().setMinimumSize(540, 600);
     }
 
     /**

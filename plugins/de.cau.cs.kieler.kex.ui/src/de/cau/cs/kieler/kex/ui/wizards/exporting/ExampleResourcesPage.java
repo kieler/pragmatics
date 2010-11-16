@@ -93,6 +93,7 @@ public class ExampleResourcesPage extends WizardPage {
         createResourcesGroup(composite);
         createDirectOpenComposite(composite);
         setControl(composite);
+        getShell().setMinimumSize(540, 600);
     }
 
     private void createDirectOpenComposite(final Composite composite) {

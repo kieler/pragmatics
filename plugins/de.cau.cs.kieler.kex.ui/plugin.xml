@@ -26,21 +26,29 @@
             name="Example">
       </wizard>
    </extension>
+ <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="de.cau.cs.kieler.examples"
+            name="KIELER"
+            parentCategory="org.eclipse.ui.Examples">
+      </category>
+       </extension>
+    <extension point="org.eclipse.ui.newWizards">
+        <wizard    id="de.cau.cs.kieler.kex.ui.newWizard"
+            name="KIELER Examples"
+            class="de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard"
+            category="org.eclipse.ui.Examples/de.cau.cs.kieler.examples"
+            icon="icons/keksIcon.jpg"
+            project="true">
+            <description>%DomainExample_description</description>
+        </wizard>
+    </extension>
    <extension
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
             content="intro/introContent.xml">
       </configExtension>
-   </extension>
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard"
-            icon="icons/keksIcon.jpg"
-            id="de.cau.cs.kieler.kex.ui.wizard1"
-            name="Example Import">
-      </wizard>
    </extension>
 </plugin>
