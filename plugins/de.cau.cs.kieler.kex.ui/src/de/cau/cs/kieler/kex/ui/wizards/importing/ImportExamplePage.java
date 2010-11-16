@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
@@ -226,6 +227,10 @@ public class ImportExamplePage extends WizardResourceImportPage {
         });
 
         List<String> categories = ExampleManager.get().getCategories();
+        if (categories.size() == 0) {
+            MessageDialog.openError(getShell(), "Could not start example import wizard",
+                    "There are no examples to import. Please check installed features!");
+        }
         for (int i = 0; i < categories.size(); i++) {
             TreeItem iItem = new TreeItem(exampleTree, SWT.CHECK);
             iItem.setText(categories.get(i));
@@ -245,7 +250,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
     private void addExamplesToItem(final String category, final TreeItem tItem) {
         for (Example example : ExampleManager.get().getExamples().values()) {
             if (example.contains(category)) {
-                TreeItem item = new TreeItem(tItem, SWT.NONE);
+                TreeItem item = new TreeItem(tItem, SWT.CHECK);
                 item.setText(example.getTitle());
                 item.setData(example);
             }
