@@ -232,7 +232,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
                     "There are no examples to import. Please check installed features!");
         }
         for (int i = 0; i < categories.size(); i++) {
-            TreeItem iItem = new TreeItem(exampleTree, SWT.CHECK);
+            TreeItem iItem = new TreeItem(exampleTree, SWT.NONE);
             iItem.setText(categories.get(i));
             addExamplesToItem(categories.get(i), iItem);
         }
