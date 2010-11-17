@@ -16,5 +16,5 @@
 /**
  * Contains {@link org.eclipse.ui.plugin.AbstractUIPlugin} class.
  */
-package de.cau.cs.kieler.kaom.samples;
+package de.cau.cs.kieler.kaom.examples;
 
