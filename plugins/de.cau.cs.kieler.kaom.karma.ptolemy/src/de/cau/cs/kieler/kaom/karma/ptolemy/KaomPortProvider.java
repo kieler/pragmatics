@@ -38,22 +38,14 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object) {
-        /*
-        if (object instanceof Annotatable) {
-            Annotatable ann = (Annotatable)object;
-            StringAnnotation stringAnnotation = AnnotationsFactory.eINSTANCE.createStringAnnotation();
-            stringAnnotation.setName("ptolemyClass");            
-            stringAnnotation.setValue("ptolemy.kernel.Port");
-            ann.getAnnotations().add(stringAnnotation);
-            */
-        //IFigure figure = KaomFigureProvider.createFigureFromIconDescription(object);
-        //return figure;
-        
-        //return null;
         if (input.equals("UP")) {
             return createSvg(getBlackUpwardsPortSvgString());
         } else if (input.equals("DOWN")) {
-            return createSvg(getBlackDownwardsPortSvgString());
+            return createSvg(getWhiteDownwardsPortSvgString());
+        } else if (input.equals("white")) {
+            return createSvg(getWhitePortSvgString());
+        } else if (input.equals("gray")) {
+            return createSvg(getGrayPortSvgString());
         } else {       
             return createSvg(getBlackPortSvgString());
         }
@@ -88,9 +80,9 @@ public class KaomPortProvider implements IRenderingProvider {
                 + "</svg>";
     }
 
-    private String getBlackDownwardsPortSvgString() {
+    private String getWhiteDownwardsPortSvgString() {
         return "<svg width=\"5\" height=\"5\">"
-                + "<polygon points=\"0,0 4.5,0 2.2,4.5 0,0\" style=\"fill:black;stroke:black;stroke-width:1\" />"
+                + "<polygon points=\"0,0 4.5,0 2.2,4.5 0,0\" style=\"fill:white;stroke:black;stroke-width:1\" />"
                 + "</svg>";
     }
     
@@ -103,12 +95,12 @@ public class KaomPortProvider implements IRenderingProvider {
     /**
      * method for generating a scalable image figure from a file.
      * 
-     * @param file
-     *            the file holding the svg image
+     * @param svgString
+     *            the string representing the svg image
      * @return a scalable image figure
      */
-    private IFigure createSvg(final String file) {
-        RenderedImage img = RenderedImageFactory.getInstance(file.getBytes());
+    private IFigure createSvg(final String svgString) {
+        RenderedImage img = RenderedImageFactory.getInstance(svgString.getBytes());
         ScalableImageFigure fig = new ScalableImageFigure(img, false, true, true);
         return fig;
     }

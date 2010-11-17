@@ -154,12 +154,12 @@ public class KaomFigureProvider implements IRenderingProvider {
     /**
      * method for generating a scalable image figure from a file.
      * 
-     * @param file
-     *            the file holding the svg image
+     * @param svgString
+     *            the string representing the svg image
      * @return a scalable image figure
      */
-    private static IFigure createSvg(final String file) {
-        RenderedImage img = RenderedImageFactory.getInstance(file.getBytes());
+    private static IFigure createSvg(final String svgString) {
+        RenderedImage img = RenderedImageFactory.getInstance(svgString.getBytes());
         ScalableImageFigure fig = new ScalableImageFigure(img, false, true, true);
         return fig;
     }
