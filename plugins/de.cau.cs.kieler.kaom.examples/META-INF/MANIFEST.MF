@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER Actor Oriented Modeling Samples
-Bundle-SymbolicName: de.cau.cs.kieler.kaom.samples;singleton:=true
+Bundle-Name: KIELER Actor Oriented Modeling Examples
+Bundle-SymbolicName: de.cau.cs.kieler.kaom.examples;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Bundle-Activator: de.cau.cs.kieler.kaom.samples.KaomSamples
+Bundle-Activator: de.cau.cs.kieler.kaom.examples.KAOMExamplesPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.cau.cs.kieler.kaom.diagram;bundle-version="0.1.0",

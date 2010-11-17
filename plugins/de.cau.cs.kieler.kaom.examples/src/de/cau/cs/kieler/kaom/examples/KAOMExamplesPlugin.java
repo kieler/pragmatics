@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @author pkl
  */
-public class KaomSamples extends AbstractUIPlugin {
+public class KAOMExamplesPlugin extends AbstractUIPlugin {
 
     /**
      * The plug-in ID.
@@ -29,12 +29,12 @@ public class KaomSamples extends AbstractUIPlugin {
     public static final String PLUGIN_ID = "de.cau.cs.kieler.kaom.samples"; //$NON-NLS-1$
 
     // The shared instance
-    private static KaomSamples plugin;
+    private static KAOMExamplesPlugin plugin;
 
     /**
-     * The constructor of {@link KaomSamples}.
+     * The constructor of {@link KAOMExamplesPlugin}.
      */
-    public KaomSamples() {
+    public KAOMExamplesPlugin() {
     }
 
     /**
@@ -70,7 +70,7 @@ public class KaomSamples extends AbstractUIPlugin {
      * 
      * @return the shared instance
      */
-    public static KaomSamples getDefault() {
+    public static KAOMExamplesPlugin getDefault() {
         return plugin;
     }
 
