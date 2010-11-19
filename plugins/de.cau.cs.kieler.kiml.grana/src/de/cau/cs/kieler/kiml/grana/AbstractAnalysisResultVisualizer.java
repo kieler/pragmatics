@@ -41,7 +41,7 @@ public abstract class AbstractAnalysisResultVisualizer {
     /**
      * Visualizes the given result object by returning html if {@code
      * canVisualize} returns true for the given result. Returns null if
-     * {@code usesResultDialog} returns true.
+     * {@code usesResultDialog} returns false.
      * 
      * @param result
      *            the result to visualize
