@@ -24,6 +24,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * Class for encapsulating the actual drawn figure to avoid
@@ -97,11 +98,11 @@ public class SwitchableFigure extends Shape {
 
         if (this.getParent() instanceof DefaultSizeNodeFigure
                 && figure instanceof ScalableImageFigure) {
-            ((DefaultSizeNodeFigure) this.getParent())
-                    .setDefaultSize(((ScalableImageFigure) figure).getImage()
-                            .getBounds().width + 2,
-                            ((ScalableImageFigure) figure).getImage()
-                                    .getBounds().height + 2);
+            DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
+            Image image = ((ScalableImageFigure) figure).getImage();
+            if (image != null ) {
+                    defaultSizeNodeFigure.setDefaultSize(image.getBounds().width + 2, image.getBounds().height + 2);
+            }
         }
         // this.repaint();
         
