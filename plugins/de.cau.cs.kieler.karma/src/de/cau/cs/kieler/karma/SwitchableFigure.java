@@ -26,10 +26,11 @@ import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.swt.graphics.Color;
 
 /**
+ * Class for encapsulating the actual drawn figure to avoid
+ * inheritance problems. Also has some additional methods for example
+ * changing resizeability.
  * 
- * @author ckru Class for encapsulating the actual drawn figure to avoid
- *         inheritance problems. Also has some additional methods for example
- *         changing resizeability.
+ * @author ckru 
  * 
  */
 public class SwitchableFigure extends Shape {
@@ -103,6 +104,7 @@ public class SwitchableFigure extends Shape {
                                     .getBounds().height + 2);
         }
         // this.repaint();
+        
     }
 
     /**

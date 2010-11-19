@@ -39,15 +39,15 @@ public class KaomPortProvider implements IRenderingProvider {
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object) {
         if (input.equals("UP")) {
-            return createSvg(getBlackUpwardsPortSvgString());
+            return createSvg(getUpwardsPortSvgString("black"));
         } else if (input.equals("DOWN")) {
-            return createSvg(getWhiteDownwardsPortSvgString());
+            return createSvg(getDownwardsPortSvgString("white"));
         } else if (input.equals("white")) {
-            return createSvg(getWhitePortSvgString());
+            return createSvg(getPortSvgString("white"));
         } else if (input.equals("gray")) {
-            return createSvg(getGrayPortSvgString());
+            return createSvg(getPortSvgString("gray"));
         } else {       
-            return createSvg(getBlackPortSvgString());
+            return createSvg(getPortSvgString("black"));
         }
     }
 
@@ -62,33 +62,42 @@ public class KaomPortProvider implements IRenderingProvider {
         return defaultFigure;
     }
 
-    private String getWhitePortSvgString() {
+    /**
+     * Holds an svg image description of a triangle pointing east.
+     * @param color a css compatible color name
+     * @return the svg description
+     */
+    private String getPortSvgString(String color) {
         return "<svg width=\"5\" height=\"5\">"
-                + "<polygon points=\"0,4.5 0,0 4.5,2.2 0,4.5\" style=\"fill:white;stroke:black;stroke-width:1\" />"
-                + "</svg>";
-    }
-    
-    private String getBlackPortSvgString() {
-        return "<svg width=\"5\" height=\"5\">"
-                + "<polygon points=\"0,4.5 0,0 4.5,2.2 0,4.5\" style=\"fill:black;stroke:black;stroke-width:1\" />"
-                + "</svg>";
-    }
-    
-    private String getGrayPortSvgString() {
-        return "<svg width=\"5\" height=\"5\">"
-                + "<polygon points=\"0,4.5 0,0 4.5,2.2 0,4.5\" style=\"fill:gray;stroke:black;stroke-width:1\" />"
+                + "<polygon points=\"0,4.5 0,0 4.5,2.2 0,4.5\" style=\"fill:" 
+                + color 
+                + ";stroke:black;stroke-width:1\" />"
                 + "</svg>";
     }
 
-    private String getWhiteDownwardsPortSvgString() {
+    /**
+     * Holds an svg image description of a triangle pointing south.
+     * @param color a css compatible color name
+     * @return the svg description
+     */
+    private String getDownwardsPortSvgString(String color) {
         return "<svg width=\"5\" height=\"5\">"
-                + "<polygon points=\"0,0 4.5,0 2.2,4.5 0,0\" style=\"fill:white;stroke:black;stroke-width:1\" />"
+                + "<polygon points=\"0,0 4.5,0 2.2,4.5 0,0\" style=\"fill:" 
+                + color 
+                + ";stroke:black;stroke-width:1\" />"
                 + "</svg>";
     }
     
-    private String getBlackUpwardsPortSvgString() {
+    /**
+     * Holds an svg image description of a triangle pointing north.
+     * @param color a css compatible color name
+     * @return the svg description
+     */
+    private String getUpwardsPortSvgString(String color) {
         return "<svg width=\"5\" height=\"5\">"
-                + "<polygon points=\"0,4.5 4.5,4.5 2.2,0 0,4.5\" style=\"fill:black;stroke:black;stroke-width:1\" />"
+                + "<polygon points=\"0,4.5 4.5,4.5 2.2,0 0,4.5\" style=\"fill:" 
+                + color 
+                + ";stroke:black;stroke-width:1\" />"
                 + "</svg>";
     }
     
@@ -149,7 +158,6 @@ public class KaomPortProvider implements IRenderingProvider {
                     return newlocator;
                 }
             }
-
         }
         return null;
     }

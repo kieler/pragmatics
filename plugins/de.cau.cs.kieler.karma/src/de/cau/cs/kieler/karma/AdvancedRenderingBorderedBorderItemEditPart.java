@@ -27,9 +27,10 @@ import org.eclipse.gmf.runtime.notation.View;
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
 
 /**
- * @author ckru
+ * EditPart for using KARMA with BorderedBorderItems
  * 
- *         EditPart for using KARMA with BorderedBorderItems
+ * @author ckru
+ *        
  */
 public abstract class AdvancedRenderingBorderedBorderItemEditPart extends
         BorderedBorderItemEditPart implements IAdvancedRenderingEditPart {
