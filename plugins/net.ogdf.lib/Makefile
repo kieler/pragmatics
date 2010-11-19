@@ -9,13 +9,13 @@
 #   Call 'make [win32|win64|osx32|osx64|linux32|linux64|solaris]'
 #
 
-OGDF = /home/msp/lab/ogdf.v2010.10
+OGDF = D:\libs\OGDF
 
 # name /location of the lib to be build
 LIB = ogdf
 LIB_DIR = lib
 
-COPTS = -I. -I$(OGDF) -fmessage-length=0
+COPTS = -fmessage-length=0
 
 OGDFobj = ${shell find $(OGDF)/_release -iname '*.o' -print}
 
@@ -25,8 +25,7 @@ default:
 #compiling wrapper ( ./ogdf_wrap.cpp)
 $(LIB_DIR)/%/ogdf_wrap.o : ogdf_wrap.cpp
 	mkdir -p $(@D)
-	$(CC) $(COPTS) $(JAVA_INC) -c -o $@ $<
-
+	$(CC) $(COPTS) -I$(OGDF) $(JAVA_INC) -c -o $@ $<
 
 .SECONDEXPANSION:
 	
@@ -34,13 +33,13 @@ $(LIB_DIR)/%/ogdf_wrap.o : ogdf_wrap.cpp
 #$(OGDFobj)
 $(LIB_DIR)/%: $$(@D)/ogdf_wrap.o
 	mkdir -p $(@D)
-	$(CC) $(COPTS) $(JAVA_INC) $(LOPTS) $(JAVA_LIB) -o $@ $(@D)/ogdf_wrap.o $(OGDF)/_release/libOGDF.a $(LIBS)
+	$(CC) $(COPTS) -I$(OGDF) $(JAVA_INC) $(LOPTS) $(JAVA_LIB) -o $@ $(@D)/ogdf_wrap.o $(OGDF)/_release/libOGDF.a $(LIBS)
 
 
 # run this target on a windows machine with mingw (the gcc 4.5 version)
 # -Wl,--kill-at -Wl,--add-stdcall-alias
-win32: CC = g++ -fmessage-length=0 -msse3 -I. -DOGDF_THROW_WITH_INFO -O1 -enable-auto-import -Wl,--add-stdcall-alias
-win32: JAVA_INC = -IC:/Programme/Java/jdk1.6.0_21/include -IC:/Programme/Java/jdk1.6.0_21/include/win32
+win32: CC = g++ -msse3 -DOGDF_THROW_WITH_INFO -O1 -enable-auto-import -Wl,--add-stdcall-alias
+win32: JAVA_INC = -ID:\libs\jdk1.6.0_17\include -ID:\libs\jdk1.6.0_17\include\win32
 win32: LOPTS = -shared
 win32: LIBS = -lpsapi
 win32: JAVA_LIB =
