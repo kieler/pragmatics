@@ -29,9 +29,6 @@
 		«EXPAND xpt::Common::generatedMemberComment»
 		protected org.eclipse.draw2d.IFigure createNodeShape() {
 			primaryShape = new «fqn»()«IF node.childNodes->notEmpty() and node.getLayoutType() = gmfgen::ViewmapLayoutType::XY_LAYOUT»«EXPAND forceUseLocalCoordinates»«ENDIF»;
-			«IF node.editPartClassName = 'Node2EditPart' or node.editPartClassName = 'Node4EditPart'-»
-				«node.editPartClassName».this.updateFigure(primaryShape);
-			«ENDIF-»
 			return primaryShape; 
 		}
 
@@ -50,9 +47,6 @@
 	«EXPAND xpt::Common::generatedMemberComment»
 	protected org.eclipse.draw2d.IFigure createNodeShape() {
 		primaryShape = new «className»()«IF node.childNodes->notEmpty() and node.getLayoutType() = gmfgen::ViewmapLayoutType::XY_LAYOUT»«EXPAND forceUseLocalCoordinates»«ENDIF»;
-		«IF node.editPartClassName = 'Node2EditPart' or node.editPartClassName = 'Node4EditPart'-»
-			«node.editPartClassName».this.updateFigure(primaryShape);
-		«ENDIF-»
 		return primaryShape;
 	}
 

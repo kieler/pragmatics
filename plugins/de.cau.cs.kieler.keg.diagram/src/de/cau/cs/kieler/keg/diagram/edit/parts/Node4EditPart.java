@@ -121,7 +121,6 @@ implements KEGNode
      */
     protected IFigure createNodeShape() {
         primaryShape = new NodeFigure();
-        Node4EditPart.this.updateFigure(primaryShape);
         return primaryShape;
     }
 
