@@ -16,9 +16,13 @@ package de.cau.cs.kieler.kex.ui.wizards.importing;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -49,6 +53,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
@@ -427,6 +433,74 @@ public class ImportExamplePage extends WizardResourceImportPage {
                 .append(example.getContact()).append("\n").append("\n")
                 .append(example.getDescription());
         getExampleDescription().setText(sb.toString());
+    }
+
+    @Override
+    protected boolean determinePageCompletion() {
+        boolean complete = validateSourceGroup() && myValidateDestinationGroup()
+                && validateOptionsGroup();
+
+        // Avoid draw flicker by not clearing the error
+        // message unless all is valid.
+        if (complete) {
+            setErrorMessage(null);
+        }
+
+        return complete;
+    }
+
+    private boolean myValidateDestinationGroup() {
+        IPath containerPath = getContainerFullPath();
+        if (containerPath == null) {
+            setMessage(IDEWorkbenchMessages.WizardImportPage_specifyFolder);
+            return false;
+        }
+
+        // If the container exist, validate it
+        IContainer container = getSpecifiedContainer();
+        if (container == null) {
+            // If it exists but is not valid then abort
+            if (IDEWorkbenchPlugin.getPluginWorkspace().getRoot().exists(getContainerFullPath())) {
+                return false;
+            }
+
+            // if it is does not exist be sure the project does
+            IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
+            IPath projectPath = containerPath.removeLastSegments(containerPath.segmentCount() - 1);
+
+            if (workspace.getRoot().exists(projectPath)) {
+                return true;
+            }
+            setMessage(IDEWorkbenchMessages.WizardImportPage_projectNotExist,
+                    IMessageProvider.WARNING);
+            return false;
+        }
+        if (!container.isAccessible()) {
+            setMessage(IDEWorkbenchMessages.WizardImportPage_folderMustExist,
+                    IMessageProvider.WARNING);
+            return false;
+        }
+        if (container.getLocationURI() == null) {
+            if (container.isLinked()) {
+                setErrorMessage(IDEWorkbenchMessages.WizardImportPage_undefinedPathVariable);
+            } else {
+                setErrorMessage(IDEWorkbenchMessages.WizardImportPage_containerNotExist);
+            }
+            return false;
+        }
+
+        if (sourceConflictsWithDestination(containerPath)) {
+            setErrorMessage(getSourceConflictMessage());
+            return false;
+        }
+
+        if (container instanceof IWorkspaceRoot) {
+            setMessage(IDEWorkbenchMessages.WizardImportPage_specifyProject,
+                    IMessageProvider.WARNING);
+            return false;
+        }
+        return true;
+
     }
 
     // TODO falls ein image nicht richtig geladen wird wegen format fehler oder
