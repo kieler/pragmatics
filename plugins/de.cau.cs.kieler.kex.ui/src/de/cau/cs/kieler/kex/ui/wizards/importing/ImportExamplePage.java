@@ -87,7 +87,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
     private static final int IMG_PADDINGS_WIDTH = 40;
     private static final int IMG_PADDINGS_HEIGHT = 120;
-    private static final String INIT_PROJECT = "kieler_samples";
+    private static final String INIT_PROJECT = "kieler_examples";
 
     private Text exampleDescription;
 
