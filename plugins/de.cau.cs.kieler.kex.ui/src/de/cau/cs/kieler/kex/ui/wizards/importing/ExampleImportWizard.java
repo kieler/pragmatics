@@ -104,6 +104,8 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             if (!root.exists(projectPath)) {
                 ExampleManager.get().createNewProject(projectPath.toPortableString());
             }
+            if (!root.isAccessible())
+                ExampleManager.get().openProject(projectPath.toPortableString());
             directOpens = ExampleManager.get().importExamples(projectPath, checkedExamples,
                     checkDuplicate);
         } catch (KielerException e) {

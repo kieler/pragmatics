@@ -243,7 +243,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
                     "There are no examples to import. Please check installed features!");
         }
         for (int i = 0; i < categories.size(); i++) {
-            TreeItem iItem = new TreeItem(exampleTree, SWT.NONE);
+            TreeItem iItem = new TreeItem(exampleTree, SWT.CHECK);
             iItem.setText(categories.get(i));
             addExamplesToItem(categories.get(i), iItem);
         }
@@ -362,12 +362,14 @@ public class ImportExamplePage extends WizardResourceImportPage {
         TreeItem selected = (TreeItem) e.item;
         // parent is != null if selected is a example
         if (selected.getParentItem() != null) {
+            // selected is a example
             Object data = selected.getData();
             Image previewPic = null;
             if (data instanceof Example) {
                 selectedExample = (Example) data;
                 updateDescriptionLabel(selectedExample);
                 previewPic = loadImage(IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
+                selected.getParentItem().setChecked(false);
             } else {
                 getExampleDescription().setText("");
                 selectedExample = null;
@@ -377,8 +379,16 @@ public class ImportExamplePage extends WizardResourceImportPage {
             }
             updateImageLabel(previewPic);
         } else {
+            // selected is a category
             getExampleDescription().setText("");
             updateImageLabel(initPreviewImage());
+            if (e.detail == SWT.CHECK) {
+                boolean check = selected.getChecked();
+                TreeItem[] items = selected.getItems();
+                for (TreeItem treeItem : items) {
+                    treeItem.setChecked(check);
+                }
+            }
         }
     }
 
