@@ -142,7 +142,7 @@ public class Entity3EditPart extends AdvancedRenderingBorderedShapeEditPart {
 	/**
 	 * @generated
 	 */
-	protected void addBorderItem(IFigure borderItemContainer,
+	public void addBorderItem(IFigure borderItemContainer,
 			IBorderItemEditPart borderItemEditPart) {
 		if (borderItemEditPart instanceof EntityName2EditPart) {
 
