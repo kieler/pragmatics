@@ -19,11 +19,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.util.ExampleExport;
@@ -232,24 +234,26 @@ public final class ExampleManager {
         return ExampleImport.importExamples(null, quickStarts, false);
     }
 
-    public void createNewProject(String projectName) {
-        IProgressMonitor progressMonitor = new NullProgressMonitor();
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-        try {
-            project.create(progressMonitor);
-            project.open(progressMonitor);
-        } catch (CoreException e) {
-            // TODO think about error handling
-        }
-    }
-
-    public void openProject(String projectName) {
-        IProgressMonitor progressMonitor = new NullProgressMonitor();
-        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-        try {
-            project.open(progressMonitor);
-        } catch (CoreException e) {
-            // TODO think about error handling
+    /**
+     * Checks if an project is accessible. If not, checks if exists, if not a new project with first
+     * segment of resourcePath becomes create. Then the project becomes open.
+     * 
+     * @param resourcePath
+     *            , IPath of import location.
+     */
+    public void prepareProject(IPath resourcePath) {
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IProject project = root.getProject(resourcePath.segment(0));
+        if (!project.isAccessible()) {
+            IProgressMonitor progressMonitor = new NullProgressMonitor();
+            try {
+                if (!root.exists(Path.fromPortableString(project.getName()))) {
+                    project.create(progressMonitor);
+                }
+                project.open(progressMonitor);
+            } catch (CoreException e) {
+                // TODO think about error handling
+            }
         }
     }
 

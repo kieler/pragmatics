@@ -19,7 +19,6 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -96,16 +95,14 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         List<String> directOpens = null;
         try {
             IPath projectPath = mainPage.getResourcePath();
-            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
             List<Example> checkedExamples = mainPage.getCheckedExamples();
             if (checkedExamples.isEmpty()) {
                 throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
             }
-            if (!root.exists(projectPath)) {
-                ExampleManager.get().createNewProject(projectPath.toPortableString());
+            if (projectPath == null || projectPath.isEmpty()) {
+                throw new KielerException("No import location has be selected.");
             }
-            if (!root.isAccessible())
-                ExampleManager.get().openProject(projectPath.toPortableString());
+            ExampleManager.get().prepareProject(projectPath);
             directOpens = ExampleManager.get().importExamples(projectPath, checkedExamples,
                     checkDuplicate);
         } catch (KielerException e) {
