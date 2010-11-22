@@ -18,7 +18,9 @@ package de.cau.cs.kieler.karma;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
+import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 
 /**
  * Class for providing figures represented by a string.
@@ -37,9 +39,11 @@ public interface IRenderingProvider {
      *            the old figure
      * @param object
      *            the model element
+     * @param part
+     *            the corresponding editPart
      * @return the figure
      */
-    IFigure getFigureByString(final String input, final IFigure oldFigure, final EObject object);
+    IFigure getFigureByString(final String input, final IFigure oldFigure, final EObject object, final EditPart part);
 
     /**
      * Method that returns a LayoutManager according to a given string.
@@ -71,4 +75,8 @@ public interface IRenderingProvider {
     IBorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parentFigure,
             final Object locator, final EObject object);
 
+    
+    //NodeFigure getNodePlateByString(final String input, final EObject object);
+
+    
 }

@@ -23,15 +23,19 @@ import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
+import org.eclipse.gmf.runtime.diagram.ui.internal.figures.BorderItemContainerFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
+import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.karma.AdvancedRenderingBorderedShapeEditPart;
 import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.SwitchableFigure;
@@ -107,7 +111,7 @@ public class AdvancedRenderingEditPartUtil {
      *            have been in place before.
      * @return true if the figure actually changed, false else.
      */
-    public boolean updateFigure(final IFigure figure, final EObject modelElement,
+    public boolean updateFigure(IFigure figure, final EObject modelElement,
             final AbstractGraphicalEditPart editPart, Boolean forceUpdate) {
         if (conditions != null) {
             IFigure oldFigure;
@@ -134,16 +138,35 @@ public class AdvancedRenderingEditPartUtil {
                         String figureParam = (String) conditionElement.get("figureParam");
                         String layoutParam = (String) conditionElement.get("layoutParam");
                         String borderItemParam = (String) conditionElement.get("borderItemParam");
+                        //String nodePlateParam = (String) conditionElement.get("nodePlateParam");
 
+                        
                         IRenderingProvider renderingProvider = (IRenderingProvider) conditionElement
                                 .get("renderingProvider");
-
+                        /*
+                        if (editPart instanceof AdvancedRenderingBorderedShapeEditPart) {
+                            IFigure oldParent = editPart.getFigure().getParent();
+                            
+                            IFigure oldBicf = ((BorderedNodeFigure)editPart.getFigure()).getBorderItemContainer(); 
+                            List<?> borderItems = oldBicf.getChildren();
+                            this.setNodePlate(nodePlateParam, editPart, renderingProvider, modelElement);
+                            editPart.getFigure().setParent(oldParent);
+                            figure = ((AdvancedRenderingBorderedShapeEditPart) editPart).getPrimaryShape();
+                            IFigure newBicf = ((BorderedNodeFigure)editPart.getFigure()).getBorderItemContainer();
+                            for (Object item: borderItems) {
+                                ((AdvancedRenderingBorderedShapeEditPart) editPart).addBorderItem(newBicf, (IBorderItemEditPart)item);
+                            }
+                            //figure.setParent(oldParent);
+                            oldFigure = ((SwitchableFigure)figure).getCurrentFigure();
+                            
+                        }
+                        */
                         this.setFigure(renderingProvider, figureParam, oldFigure,
-                                modelElement, switchableFigure);
+                                modelElement, switchableFigure, editPart);
                         this.setLayoutManager(figure, renderingProvider, layoutParam, modelElement);
                         this.setBorderItemLocator(editPart, renderingProvider, borderItemParam,
                                 modelElement, figure);
-
+                                                 
                         // setting a fixed node size
                         if (((figureSize.getFirst() >= 0) && (figureSize.getSecond() >= 0))
                                 && switchableFigure != null) {
@@ -158,6 +181,18 @@ public class AdvancedRenderingEditPartUtil {
         return false;
     }
 
+    /*
+    private void setNodePlate(String nodePlateParam, AbstractGraphicalEditPart editPart, IRenderingProvider renderingProvider, EObject modelElement ) {
+        if (editPart instanceof AdvancedRenderingBorderedShapeEditPart) {
+            NodeFigure newNodeFigure = renderingProvider.getNodePlateByString(nodePlateParam, modelElement);
+            if (newNodeFigure != null) {
+                ((AdvancedRenderingBorderedShapeEditPart) editPart).MyNodePlate = newNodeFigure;
+                ((AdvancedRenderingBorderedShapeEditPart) editPart).setFigure(null);
+            }
+        }      
+    }
+*/
+    
     /**
      * method that gets a figure from the renderingProvider and sets it to the SwitchableFigure for display.
      * @param renderingProvider the renderingProvider to get the new figure from.
@@ -168,9 +203,9 @@ public class AdvancedRenderingEditPartUtil {
      */
     private void setFigure(final IRenderingProvider renderingProvider,
             final String figureParam, final IFigure oldFigure, final EObject modelElement,
-            final SwitchableFigure switchableFigure) {
+            final SwitchableFigure switchableFigure, EditPart part) {
         // setting the new figure
-        IFigure newFigure = renderingProvider.getFigureByString(figureParam, oldFigure, modelElement);
+        IFigure newFigure = renderingProvider.getFigureByString(figureParam, oldFigure, modelElement, part);
         if (newFigure != null) {
             if (switchableFigure != null) {
                 switchableFigure.setCurrentFigure(newFigure);
@@ -266,6 +301,8 @@ public class AdvancedRenderingEditPartUtil {
         figure.setPreferredSize(dim.getCopy());
         if (figure.getParent() instanceof DefaultSizeNodeFigure) {
             ((DefaultSizeNodeFigure) figure.getParent()).setDefaultSize(figure.getSize().getCopy());
+        } else if (figure.getParent() instanceof NodeFigure) {
+            ((NodeFigure) figure.getParent()).setSize(figure.getSize().getCopy());
         }
         switchableFigure.setResizeable(false);
     }

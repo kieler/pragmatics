@@ -14,17 +14,30 @@
  *****************************************************************************/
 package de.cau.cs.kieler.kaom.karma.ptolemy;
 
+import java.lang.reflect.Constructor;
+import java.util.List;
+
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
+import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 
+import ptolemy.actor.lib.Ramp;
+import ptolemy.kernel.CompositeEntity;
+
+import de.cau.cs.kieler.core.annotations.Annotatable;
+import de.cau.cs.kieler.core.annotations.Annotation;
+import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.kaom.Port;
+import de.cau.cs.kieler.karma.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.util.CustomPortLocator;
 
@@ -37,7 +50,73 @@ public class KaomPortProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
-            final EObject object) {
+            final EObject object, EditPart part) {
+        EditPart parentPart = part.getParent();
+        if (parentPart instanceof IAdvancedRenderingEditPart) {
+        EObject parentObject = ((IAdvancedRenderingEditPart)parentPart).getModelElement();
+        if (parentObject instanceof Annotatable) {
+            Annotatable myAnnotatable =  (Annotatable) parentObject;
+            Annotation annotation = myAnnotatable.getAnnotation("ptolemyClass");
+            if (annotation != null && annotation instanceof StringAnnotation) {
+                String ptolemyClassString = ((StringAnnotation) annotation).getValue();
+        Class<?> ptolemy;
+        try {
+            Object obj;
+            ptolemy = Class.forName(ptolemyClassString);
+            Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class,
+                    String.class);
+            obj = constr.newInstance(new CompositeEntity(), "cache");
+            ptolemy.kernel.Entity entity = (ptolemy.kernel.Entity) obj;
+            if (object instanceof Port) {
+                Port port = (Port) object;
+                String name = port.getName();
+                ptolemy.kernel.Port ptolemyPort = entity.getPort(name);
+                if (ptolemyPort instanceof ptolemy.actor.parameters.ParameterPort) {
+                    if (input.equals("UP")) {
+                        return createSvg(getUpwardsPortSvgString("gray")); 
+                    } else if (input.equals("DOWN")) {
+                        return createSvg(getDownwardsPortSvgString("gray"));
+                    } else {
+                        return createSvg(getPortSvgString("gray"));
+                    }               
+                } else if (ptolemyPort instanceof ptolemy.actor.IOPort) {
+                    if (((ptolemy.actor.IOPort)(ptolemyPort)).isMultiport()) {
+                        if (input.equals("UP")) {
+                            return createSvg(getUpwardsPortSvgString("white")); 
+                        } else if (input.equals("DOWN")) {
+                            return createSvg(getDownwardsPortSvgString("white"));
+                        } else {
+                            return createSvg(getPortSvgString("white"));
+                        }   
+                    } else { 
+                        if (input.equals("UP")) {
+                            return createSvg(getUpwardsPortSvgString("black")); 
+                        } else if (input.equals("DOWN")) {
+                            return createSvg(getDownwardsPortSvgString("black"));
+                        } else {
+                            return createSvg(getPortSvgString("black"));
+                        }   
+                    } 
+                } else {
+                    if (input.equals("UP")) {
+                        return createSvg(getUpwardsPortSvgString("black")); 
+                    } else if (input.equals("DOWN")) {
+                        return createSvg(getDownwardsPortSvgString("black"));
+                    } else {
+                        return createSvg(getPortSvgString("black"));
+                    }   
+                }
+            }
+            
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        }
+        }
+        }
+        /*
         if (input.equals("UP")) {
             return createSvg(getUpwardsPortSvgString("black"));
         } else if (input.equals("DOWN")) {
@@ -49,6 +128,8 @@ public class KaomPortProvider implements IRenderingProvider {
         } else {       
             return createSvg(getPortSvgString("black"));
         }
+        */
+        return null;
     }
 
     /**
@@ -159,6 +240,11 @@ public class KaomPortProvider implements IRenderingProvider {
                 }
             }
         }
+        return null;
+    }
+
+    public NodeFigure getNodePlateByString(String input, EObject object) {
+        // TODO Auto-generated method stub
         return null;
     }
 }

@@ -23,6 +23,8 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
+import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
+import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
@@ -45,6 +47,8 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
      */
     private AdvancedRenderingEditPartUtil util;
 
+    public NodeFigure MyNodePlate;
+    
     /**
      * The constructor. Just calls super.
      * 
@@ -98,10 +102,29 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
     // modified to use a custom BorderItemLocator for ptolemy port position purpose.
     // No functionality lost to the normal BorderItemLocator and can be used the same. 
     @Override
-    protected void addBorderItem(IFigure borderItemContainer,
+    public void addBorderItem(IFigure borderItemContainer,
             IBorderItemEditPart borderItemEditPart) {
-    borderItemContainer.add(borderItemEditPart.getFigure(),
+        borderItemContainer.add(borderItemEditPart.getFigure(),
             new CustomPortLocator(getMainFigure()));
-}
+    }
+    
+    protected NodeFigure createNodePlate() {
+        if (MyNodePlate == null) {
+            DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(40, 40);
+            return result;
+        } else {
+            return MyNodePlate;
+        }
+    }
+    
+    public void setFigure(IFigure figure) {
+        super.setFigure(figure);
+    }
+    
+    public IFigure getPrimaryShape() {
+        return primaryShape;
+    }
+    
+    
     
 }

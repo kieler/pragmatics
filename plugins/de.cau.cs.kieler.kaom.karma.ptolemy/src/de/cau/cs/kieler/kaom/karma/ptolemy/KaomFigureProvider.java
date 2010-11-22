@@ -45,11 +45,14 @@ import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
+import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
+import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -65,6 +68,7 @@ import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.core.ui.figures.RoundedRectangleFigure;
 import de.cau.cs.kieler.core.ui.util.CoreUiUtil;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.kvid.KvidUtil;
@@ -88,7 +92,7 @@ public class KaomFigureProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
-            final EObject object) {
+            final EObject object, final EditPart part) {
         if (input.equals("_IconDescription")) {
             return createFigureFromIconDescription(object);
         } else if (input.equals("MonitorValue")) {
@@ -573,7 +577,7 @@ public class KaomFigureProvider implements IRenderingProvider {
      *            the model element
      * @return the figure
      */
-    public static IFigure createFigureFromIconDescription(final EObject object) {
+    private static IFigure createFigureFromIconDescription(final EObject object) {
         if (object instanceof Annotatable) {
             Annotatable myAnnotatable =  (Annotatable) object;
             Annotation annotation = myAnnotatable.getAnnotation("ptolemyClass");
@@ -672,6 +676,11 @@ public class KaomFigureProvider implements IRenderingProvider {
             figure.paint(graphics);
             return image;
         }
+    }
+
+    public NodeFigure getNodePlateByString(String input, EObject object) {
+        //return new DefaultSizeNodeFigure(50,70);
+        return null;
     }
 
 }

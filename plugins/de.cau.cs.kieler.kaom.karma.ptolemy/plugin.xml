@@ -368,8 +368,7 @@
                </customCondition>
             </compoundCondition>
             <compoundCondition
-                  borderItemParam="WEST"
-                  figureParam="gray">
+                  borderItemParam="WEST">
                <customCondition
                      borderItemParam="WEST"
                      condition="de.cau.cs.kieler.karma.AnnotationCondition"
@@ -383,8 +382,7 @@
                </customCondition>
             </compoundCondition>
             <compoundCondition
-                  borderItemParam="WEST"
-                  figureParam="white">
+                  borderItemParam="WEST">
                <customCondition
                      borderItemParam="WEST"
                      condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
@@ -398,8 +396,7 @@
                </customCondition>
             </compoundCondition>
             <compoundCondition
-                  borderItemParam="EAST"
-                  figureParam="black">
+                  borderItemParam="EAST">
                <customCondition
                      borderItemParam="EAST"
                      condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
