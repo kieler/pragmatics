@@ -41,7 +41,7 @@
             category="org.eclipse.ui.Examples/de.cau.cs.kieler.examples"
             icon="icons/keksIcon.gif"
             project="true">
-            <description>%DomainExample_description</description>
+            <description>Add KIELER examples to your workspace.</description>
         </wizard>
     </extension>
    <extension

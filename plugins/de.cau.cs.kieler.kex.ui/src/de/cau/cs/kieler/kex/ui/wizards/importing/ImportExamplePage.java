@@ -369,7 +369,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
                 selectedExample = (Example) data;
                 updateDescriptionLabel(selectedExample);
                 previewPic = loadImage(IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
-                selected.getParentItem().setChecked(false);
+                updateCategory(e);
             } else {
                 getExampleDescription().setText("");
                 selectedExample = null;
@@ -390,6 +390,22 @@ public class ImportExamplePage extends WizardResourceImportPage {
                 }
             }
         }
+    }
+
+    private void updateCategory(final SelectionEvent e) {
+        if (e.detail != SWT.CHECK) {
+            return;
+        }
+        TreeItem parentItem = ((TreeItem) e.item).getParentItem();
+        TreeItem[] items = parentItem.getItems();
+        boolean selectedAll = true;
+        for (TreeItem treeItem : items) {
+            if (!treeItem.getChecked()) {
+                selectedAll = false;
+                break;
+            }
+        }
+        parentItem.setChecked(selectedAll);
     }
 
     /**
