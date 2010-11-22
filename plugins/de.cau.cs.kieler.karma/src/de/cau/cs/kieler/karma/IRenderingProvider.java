@@ -20,7 +20,6 @@ import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
-import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 
 /**
  * Class for providing figures represented by a string.
