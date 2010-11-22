@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kaom:Entity xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ann="http://kieler.cs.cau.de/annotations" xmlns:kaom="http://kieler.cs.cau.de/KAOM">
-  <childEntities name="newmodel">
+  <childEntities name="hierarchy">
     <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.actor.TypedCompositeActor"/>
     <annotations xsi:type="ann:StringAnnotation" name="_createdBy" value="8.1.devel">
       <annotations xsi:type="ann:StringAnnotation" name="ptolemyClass" value="ptolemy.kernel.attributes.VersionAttribute"/>
