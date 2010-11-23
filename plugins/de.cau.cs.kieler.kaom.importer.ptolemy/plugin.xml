@@ -9,40 +9,6 @@
 -->
 
 <plugin>
-	 <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="de.cau.cs.kieler"
-            defaultHandler="de.cau.cs.kieler.kaom.importer.ptolemy.Ptolemy2KaomTransformationHandler"
-            id="de.cau.cs.kieler.kaom.importer.ptolemy.ptolemy2kaom"
-            name="Create KAOM model from Ptolemy model.">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="popup:de.cau.cs.kieler">
-         <command
-               commandId="de.cau.cs.kieler.kaom.importer.ptolemy.ptolemy2kaom"
-               label="Create *.kaom KAOM Model from Ptolemy *.moml Model"
-               style="push"
-               tooltip="Create KAOM Model from Ptolemy Model.">
-            <visibleWhen
-                 checkEnabled="false">
-              <iterate>
-                 <adapt
-                       type="org.eclipse.core.resources.IResource">
-                    <test
-                          forcePluginActivation="false"
-                          property="org.eclipse.core.resources.name"
-                          value="*.moml">
-                    </test>
-                 </adapt>
-              </iterate>
-           </visibleWhen>
-         </command>
-      </menuContribution>
-   </extension>
    <extension
          point="org.eclipse.ui.importWizards">
       <wizard

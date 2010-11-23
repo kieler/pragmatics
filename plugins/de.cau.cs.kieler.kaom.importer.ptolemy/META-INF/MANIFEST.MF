@@ -24,4 +24,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Activator: de.cau.cs.kieler.kaom.importer.ptolemy.Activator
+Bundle-Activator: de.cau.cs.kieler.kaom.importer.ptolemy.KaomImporterPtolemyPlugin

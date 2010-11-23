@@ -39,7 +39,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
 import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
 import de.cau.cs.kieler.kaom.KaomPackage;
-import de.cau.cs.kieler.kaom.importer.ptolemy.Activator;
+import de.cau.cs.kieler.kaom.importer.ptolemy.KaomImporterPtolemyPlugin;
 
 /**
  * A wizard to import diagrams exported from Ptolemy2.
@@ -74,7 +74,7 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
     public ImportDiagramWizard() {
         super();
         setWindowTitle(LOC_WIZARD_TITLE);
-        setDialogSettings(Activator.getDefault().getDialogSettings());
+        setDialogSettings(KaomImporterPtolemyPlugin.getDefault().getDialogSettings());
     }
 
     
@@ -127,7 +127,7 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
         if (sourceFileURI == null) {
             Status status = new Status(
                     IStatus.ERROR,
-                    Activator.PLUGIN_ID,
+                    KaomImporterPtolemyPlugin.PLUGIN_ID,
                     "The source file could not be found.");
             StatusManager.getManager().handle(status, StatusManager.SHOW);
             success = false;
@@ -144,7 +144,7 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
         if (!resource.exists() || !(resource instanceof IContainer)) {
             Status status = new Status(
                     IStatus.ERROR,
-                    Activator.PLUGIN_ID,
+                    KaomImporterPtolemyPlugin.PLUGIN_ID,
                     "The target file could not be created.");
             StatusManager.getManager().handle(status, StatusManager.SHOW);
             success = false;
@@ -161,7 +161,8 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
                 
                 try {
                     doFinish(sourceFileURI, targetFileURI, monitor);
-                } catch (KielerException e) {
+                }
+                catch (KielerException e) {
                     throw new InvocationTargetException(e);
                 }
             }
@@ -179,7 +180,7 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
             Throwable realException = e.getTargetException();
             Status status = new Status(
                     IStatus.ERROR,
-                    Activator.PLUGIN_ID,
+                    KaomImporterPtolemyPlugin.PLUGIN_ID,
                     0,
                     "Ptolemy2 diagram import failed.",
                     realException);
@@ -211,7 +212,6 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
         EPackage p3 = AnnotationsPackage.eINSTANCE;
         
         // Do my bidding, little ones!
-        
         XtendTransformationUtil
             .model2ModelTransform(transformation, fun, sourceFile, targetFile, p1, p2, p3);
     }

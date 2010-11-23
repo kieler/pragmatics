@@ -78,8 +78,7 @@ public class ImportDiagramSourceFilePage extends WizardPage {
         public int category(Object element) {
             if (element instanceof IContainer) {
                 return CAT_CONTAINERS;
-            }
-            else {
+            } else {
                 return CAT_NORMAL_RESOURCES;
             }
         }
