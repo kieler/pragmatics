@@ -414,7 +414,7 @@ public class ImportDiagramSourceFilePage extends WizardPage {
                     boolean fileTypeMatches = false;
                     String fileName = file.getName();
                     int separatorLocation = fileName.lastIndexOf('.');
-                    if (separatorLocation >= 0) {
+                    if (separatorLocation >= 0 && separatorLocation < fileName.length() - 1) {
                         String extension = fileName.substring(separatorLocation + 1);
                         
                         for (String ptolemyExt : PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS) {
