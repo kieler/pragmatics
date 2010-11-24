@@ -20,6 +20,7 @@ import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 import org.eclipse.swt.graphics.Color;
 
@@ -43,7 +44,7 @@ public class KEGFigureProvider implements IRenderingProvider {
      * {@inheritDoc}
      */
     public IFigure getFigureByString(final String input,
-            final IFigure oldFigure, EObject object) {
+            final IFigure oldFigure, final EObject object, final EditPart editPart) {
         if (input.equals("noPorts")) {
             return createNodeWithoutPortsFigure();
         }
