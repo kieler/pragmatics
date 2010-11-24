@@ -7,8 +7,8 @@ Bundle-Activator: de.cau.cs.kieler.kaom.examples.KAOMExamplesPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.cau.cs.kieler.kaom.diagram;bundle-version="0.1.0",
- de.cau.cs.kieler.kex,
- org.eclipse.ui.intro
+ org.eclipse.ui.intro,
+ de.cau.cs.kieler.kex.ui;bundle-version="0.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

@@ -241,7 +241,7 @@ public final class ExampleManager {
      * @param resourcePath
      *            , IPath of import location.
      */
-    public void prepareProject(IPath resourcePath) {
+    public void generateProject(IPath resourcePath) {
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IProject project = root.getProject(resourcePath.segment(0));
         if (!project.isAccessible()) {

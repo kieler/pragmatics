@@ -102,7 +102,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             if (projectPath == null || projectPath.isEmpty()) {
                 throw new KielerException("No import location has be selected.");
             }
-            ExampleManager.get().prepareProject(projectPath);
+            ExampleManager.get().generateProject(projectPath);
             directOpens = ExampleManager.get().importExamples(projectPath, checkedExamples,
                     checkDuplicate);
         } catch (KielerException e) {

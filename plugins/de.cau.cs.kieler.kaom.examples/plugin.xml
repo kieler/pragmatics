@@ -9,18 +9,18 @@
  <extension point="de.cau.cs.kieler.kex">
     <category id="de.cau.cs.kieler.kaom">
     </category>
-	<example author="KIELER Workgroup" contact="kieler@informatik.uni-kiel.de" description="This quickstart example introduces into KAOM." generation_date="Tue Sep 28 13:42:39 CEST 2010" overview_pic="examples/kaom_quickstart/rampAdd.png" root_directory="examples/" title="KAOM Quick Start">
+	<example author="KIELER Workgroup" contact="kieler@informatik.uni-kiel.de" description="This is a simple example of KAOM." generation_date="Tue Sep 28 13:42:39 CEST 2010" overview_pic="examples/ramp_add/rampAdd.png" root_directory="examples/" title="Ramp Add">
 	   <category id="de.cau.cs.kieler.kaom">
 	   </category>
-	   <example_resource direct_open="false" local_path="examples/kaom_quickstart" resource_type="project">
+	   <example_resource direct_open="false" local_path="examples/ramp_add" resource_type="folder">
 	   </example_resource>
-	   <example_resource direct_open="false" local_path="examples/kaom_quickstart/rampAdd.csv" resource_type="file">
+	   <example_resource direct_open="false" local_path="examples/ramp_add/rampAdd.csv" resource_type="file">
 	   </example_resource>
-	   <example_resource direct_open="true" local_path="examples/kaom_quickstart/rampAdd.kaod" resource_type="file">
+	   <example_resource direct_open="true" local_path="examples/ramp_add/rampAdd.kaod" resource_type="file">
 	   </example_resource>
-	   <example_resource direct_open="false" local_path="examples/kaom_quickstart/rampAdd.kaom" resource_type="file">
+	   <example_resource direct_open="false" local_path="examples/ramp_add/rampAdd.kaom" resource_type="file">
 	   </example_resource>
-	   <example_resource direct_open="false" local_path="examples/kaom_quickstart/rampAdd.moml" resource_type="file">
+	   <example_resource direct_open="false" local_path="examples/ramp_add/rampAdd.moml" resource_type="file">
 	   </example_resource>
 	</example>
 <example author="KIELER Workgroup" contact="kieler@informatik.uni-kiel.de" description="This example shows a KAOM diagram with a composite actor and its content." generation_date="Tue Nov 16 17:08:31 CET 2010" overview_pic="examples/kaom_hierarchy/hierarchy.png" root_directory="examples" title="KAOM Hierarchy">
@@ -35,7 +35,7 @@
       contact="kieler@informatik.uni-kiel.de"
       description="This quickstart example introduces into KAOM."
       generation_date="Tue Sep 28 13:42:39 CEST 2010"
-      overview_pic="examples/kaom_quickstart/rampAdd.png"
+      overview_pic="examples/ramp_add/rampAdd.png"
       root_directory="examples"
       title="KAOM Simple">
    <category
@@ -43,22 +43,22 @@
    </category>
    <example_resource
          direct_open="false"
-         local_path="examples/kaom_quickstart"
+         local_path="examples/ramp_add"
          resource_type="project">
    </example_resource>
    <example_resource
          direct_open="true"
-         local_path="examples/kaom_quickstart/rampAdd.kaod"
+         local_path="examples/ramp_add/rampAdd.kaod"
          resource_type="file">
    </example_resource>
    <example_resource
          direct_open="false"
-         local_path="examples/kaom_quickstart/rampAdd.kaom"
+         local_path="examples/ramp_add/rampAdd.kaom"
          resource_type="file">
    </example_resource>
    <example_resource
          direct_open="false"
-         local_path="examples/kaom_quickstart/rampAdd.moml"
+         local_path="examples/ramp_add/rampAdd.moml"
          resource_type="file">
    </example_resource>
 </example>

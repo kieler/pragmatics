@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kex.ui.actions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -22,6 +23,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
@@ -64,21 +67,30 @@ public class QuickStartAction implements IIntroAction {
         try {
             sourcetype = SourceType.valueOf(sourceType);
         } catch (IllegalArgumentException i) {
-            showError("Could not identify sourcetype", i.getMessage());
+            showError("Could not identify sourcetype.", i.getMessage());
             return;
         }
         if (sourceType == null) {
-            showError("Introtag Error", "Missing property sourceType");
+            showError("Introtag Error", "Missing property sourceType.");
             return;
         }
 
         String exampleTitle = params.getProperty("exampleTitle");
         if (exampleTitle == null) {
-            showError("Introtag Error", "Missing property exampleTitle");
+            showError("Introtag Error", "Missing property exampleTitle.");
             return;
         }
+
+        String projectName = params.getProperty("projectName");
+        if (projectName == null) {
+            showError("Introtag Error", "Missing property projectName.");
+        }
+
         Example quickStarter = null;
         try {
+            // TODO editorabhängig suchen, d.h. pluginid aus link mit
+            // reinreichen und dann suchen, da exampleTitle
+            // nicht unbedingt eindeutig
             quickStarter = ExampleManager.get().getExample(sourcetype, exampleTitle);
         } catch (KielerException e) {
             showError("Example loading error", e.getMessage());
@@ -88,10 +100,15 @@ public class QuickStartAction implements IIntroAction {
             showError("Example loading error", "Could not find example with title " + exampleTitle);
             return;
         }
+        ArrayList<Example> examples = new ArrayList<Example>();
+        examples.add(quickStarter);
 
+        IPath projectPath = Path.fromPortableString(projectName);
+        ExampleManager.get().generateProject(projectPath);
         IntroPlugin.closeIntro();
         try {
-            List<String> directOpens = ExampleManager.get().quickStartImport(quickStarter);
+            List<String> directOpens = ExampleManager.get().importExamples(projectPath, examples,
+                    false);
             postfix(directOpens);
         } catch (KielerException e) {
             showError("Could not import example", e.getMessage());
