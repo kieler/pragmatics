@@ -15,7 +15,6 @@
 package de.cau.cs.kieler.kaom.karma.ptolemy;
 
 import java.lang.reflect.Constructor;
-import java.util.List;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
@@ -30,7 +29,6 @@ import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 
-import ptolemy.actor.lib.Ramp;
 import ptolemy.kernel.CompositeEntity;
 
 import de.cau.cs.kieler.core.annotations.Annotatable;
@@ -149,8 +147,8 @@ public class KaomPortProvider implements IRenderingProvider {
      * @return the svg description
      */
     private String getPortSvgString(String color) {
-        return "<svg width=\"5\" height=\"5\">"
-                + "<polygon points=\"0,4.5 0,0 4.5,2.2 0,4.5\" style=\"fill:" 
+        return "<svg width=\"7.5\" height=\"7.5\">"
+                + "<polygon points=\"0,7 0,0 7,3.5 0,7\" style=\"fill:" 
                 + color 
                 + ";stroke:black;stroke-width:1\" />"
                 + "</svg>";
@@ -162,8 +160,8 @@ public class KaomPortProvider implements IRenderingProvider {
      * @return the svg description
      */
     private String getDownwardsPortSvgString(String color) {
-        return "<svg width=\"5\" height=\"5\">"
-                + "<polygon points=\"0,0 4.5,0 2.2,4.5 0,0\" style=\"fill:" 
+        return "<svg width=\"7.5\" height=\"7.5\">"
+                + "<polygon points=\"0,0 7,0 3.5,7 0,0\" style=\"fill:" 
                 + color 
                 + ";stroke:black;stroke-width:1\" />"
                 + "</svg>";
@@ -175,8 +173,8 @@ public class KaomPortProvider implements IRenderingProvider {
      * @return the svg description
      */
     private String getUpwardsPortSvgString(String color) {
-        return "<svg width=\"5\" height=\"5\">"
-                + "<polygon points=\"0,4.5 4.5,4.5 2.2,0 0,4.5\" style=\"fill:" 
+        return "<svg width=\"7.5\" height=\"7.5\">"
+                + "<polygon points=\"0,7 7,7 3.5,0 0,7\" style=\"fill:" 
                 + color 
                 + ";stroke:black;stroke-width:1\" />"
                 + "</svg>";

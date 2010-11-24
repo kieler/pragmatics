@@ -51,7 +51,6 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
-import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
@@ -68,7 +67,6 @@ import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
-import de.cau.cs.kieler.core.ui.figures.RoundedRectangleFigure;
 import de.cau.cs.kieler.core.ui.util.CoreUiUtil;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.kvid.KvidUtil;
@@ -99,14 +97,16 @@ public class KaomFigureProvider implements IRenderingProvider {
             return createMonitorValue(object);
         } else if (input.startsWith("valueDisplay")) {
             String[] parts = input.split("//");
-            return createValueFigure(object, parts[1]);
+            return createValueFigure(object, parts[1], part);
         } else if (input.equals("Director")) {
             return createDirector();
         } else if (input.equals("accumulator")) {
             return createAccumulator();
         } else if (input.equals("connection")) {
             if (oldFigure instanceof PolylineConnectionEx) {
-                ((PolylineConnectionEx) oldFigure).setTargetDecoration(null);
+                PolylineConnectionEx connection = ((PolylineConnectionEx) oldFigure);
+                connection.setTargetDecoration(null);
+                connection.setLineWidthFloat(1.5f);
                 return oldFigure;
             } else {
                 return null;
@@ -488,7 +488,7 @@ public class KaomFigureProvider implements IRenderingProvider {
     private static final int LABELLOCATION_X = 5;
     private static final int LABELLOCATION_Y = 8;
 
-    private IFigure createValueFigure(final EObject object, final String valueAttribute) {
+    private IFigure createValueFigure(final EObject object, final String valueAttribute, final EditPart part) {
         RectangleFigure constFigure = (RectangleFigure) getDefaultFigure();
         if (object instanceof Annotatable) {
             Annotation iconAnn = ((Annotatable) object).getAnnotation("_icon");
