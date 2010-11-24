@@ -11,19 +11,29 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
+
 package de.cau.cs.kieler.kaom.importer.ptolemy;
 
+
 /**
- * Contains constants commonly used in the plug-in.
+ * Contains constants commonly used in the plug-in. This class is not to be instantiated.
  * 
  * @author cds
  */
-public class PtolemyImporterConstants {
+public final class PtolemyImporterConstants {
     
     /** The possible extensions for Ptolemy diagram files. */
-    public static final String[] PTOLEMY_FILE_EXTENSIONS = {"xml", "moml"};
+    public static final String[] PTOLEMY_FILE_EXTENSIONS = {"moml"};
     
     /** Our target file extension. */
     public static final String TARGET_FILE_EXTENSION = "kaom";
+    
+    
+    /**
+     * This class is not to be instantiated.
+     */
+    private PtolemyImporterConstants() {
+        // This space intentionally left mostly blank
+    }
     
 }

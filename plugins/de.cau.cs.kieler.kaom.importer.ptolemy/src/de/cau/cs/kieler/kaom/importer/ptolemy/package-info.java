@@ -16,4 +16,3 @@
  * Utility classes for the import of Ptolemy2 diagrams.
  */
 package de.cau.cs.kieler.kaom.importer.ptolemy;
-

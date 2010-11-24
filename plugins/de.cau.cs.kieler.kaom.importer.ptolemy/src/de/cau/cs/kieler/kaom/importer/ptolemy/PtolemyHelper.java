@@ -40,17 +40,30 @@ import de.cau.cs.kieler.kaom.Port;
 
 /**
  * Helper methods to inspect Ptolemy models. Could be used from Xtend transformations.
+ * 
  * @author haf
+ * @author cds
  */
 public class PtolemyHelper implements IExecutionContextAware {
 
 //    /** The Xtend execution context. Currently not used. */
-//    ExecutionContext ctx;
+//    private ExecutionContext ctx;
 
+    
+    /**
+     * Constructs a new instance.
+     */
     public PtolemyHelper() {
     }
 
-    public List<Port> getPorts(List<EntityType> entities) {
+    
+    /**
+     * Returns a list of all the ports of the given entity types.
+     * 
+     * @param entities the entity types whose ports to return.
+     * @return list of ports.
+     */
+    public List<Port> getPorts(final List<EntityType> entities) {
         List<Port> ports = new BasicEList<Port>();
         for (EntityType entity : entities) {
             ports.addAll(getPorts(entity));
@@ -58,7 +71,13 @@ public class PtolemyHelper implements IExecutionContextAware {
         return ports;
     }
 
-    public List<Port> getPorts(EntityType ptolemyEntity) {
+    /**
+     * Returns a list of ports of the given entity type.
+     * 
+     * @param ptolemyEntity the entity type whose ports to return.
+     * @return list of ports.
+     */
+    public List<Port> getPorts(final EntityType ptolemyEntity) {
         List<Port> kaomPorts = new LinkedList<Port>();
         try {
             NamedObj actor = instanciatePtolemyEntity(ptolemyEntity);
@@ -67,17 +86,20 @@ public class PtolemyHelper implements IExecutionContextAware {
                 if (obj instanceof IOPort) {
                     IOPort ptolemyPort = (IOPort) obj;
                     Port kaomPort = KaomFactory.eINSTANCE.createPort();
+                    
                     // find out whether it is an input or output (or both)
                     if (ptolemyPort.isInput()) {
                         Annotation isInput = AnnotationsFactory.eINSTANCE.createAnnotation();
                         isInput.setName("input");
                         kaomPort.getAnnotations().add(isInput);
                     }
+                    
                     if (ptolemyPort.isOutput()) {
                         Annotation isOutput = AnnotationsFactory.eINSTANCE.createAnnotation();
                         isOutput.setName("output");
                         kaomPort.getAnnotations().add(isOutput);
                     }
+                    
                     // set the name
                     kaomPort.setName(ptolemyPort.getName());
 
@@ -101,13 +123,11 @@ public class PtolemyHelper implements IExecutionContextAware {
     /**
      * Instanciate a Ptolemy Entity for a given EntityType model object.
      * 
-     * @param entity
-     *            given EMF EntityType model object
+     * @param entity given EMF EntityType model object
      * @return corresponding Ptolemy object
-     * @throws Exception
-     *             may throw different Exceptions during parsing
+     * @throws Exception may throw different Exceptions during parsing
      */
-    private NamedObj instanciatePtolemyEntity(EntityType entity) throws Exception {
+    private NamedObj instanciatePtolemyEntity(final EntityType entity) throws Exception {
         String classname = entity.getClass1();
         if (classname.equals("ptolemy.domains.modal.kernel.State")) {
             return instanciatePtolemyState(entity);
@@ -115,7 +135,7 @@ public class PtolemyHelper implements IExecutionContextAware {
         return instanciatePtolemyActor(entity);
     }
 
-    private NamedObj instanciatePtolemyActor(EntityType entity) throws Exception {
+    private NamedObj instanciatePtolemyActor(final EntityType entity) throws Exception {
         String classname = entity.getClass1();
         // use the Ptolemy internal Model ML (MoML) parser parsing XML and
         // creates Ptolemy models
@@ -131,7 +151,7 @@ public class PtolemyHelper implements IExecutionContextAware {
         return actor;
     }
 
-    private NamedObj instanciatePtolemyState(EntityType entity) throws Exception {
+    private NamedObj instanciatePtolemyState(final EntityType entity) throws Exception {
         String classname = entity.getClass1();
         // use the Ptolemy internal Model ML (MoML) parser parsing XML and
         // creates Ptolemy models
@@ -139,7 +159,8 @@ public class PtolemyHelper implements IExecutionContextAware {
         // atomic actors require a valid parent so create a dummy parent
         // states may only be in a ModalController and not in a normal
         // CompositeActor
-        String parent = "<entity name=\"TopLevel\" class=\"ptolemy.domains.modal.modal.ModalController\">";
+        String parent =
+            "<entity name=\"TopLevel\" class=\"ptolemy.domains.modal.modal.ModalController\">";
         // embed the real entity description in the parent
         String child = parent + "<entity name=\"" + entity.getName() + "\"class=\"" + classname
                 + "\"/> </entity>";
@@ -156,7 +177,7 @@ public class PtolemyHelper implements IExecutionContextAware {
      * @param ptolemyAttribute
      * @return the created KAOM Annotation
      */
-    static private Annotation getAnnotation(Attribute ptolemyAttribute) {
+    private static Annotation getAnnotation(final Attribute ptolemyAttribute) {
         StringAnnotation kaomAnnotation = AnnotationsFactory.eINSTANCE.createStringAnnotation();
         StringAnnotation classAnnotation = AnnotationsFactory.eINSTANCE.createStringAnnotation();
 
@@ -179,10 +200,12 @@ public class PtolemyHelper implements IExecutionContextAware {
      * 
      * This implementation currently does nothing since the execution context is
      * not used at the moment.
+     * 
+     * @param context the execution context.
      */
-    public void setExecutionContext(ExecutionContext ctx) {
+    public void setExecutionContext(final ExecutionContext context) {
 //        // This is currently not used
-//        this.ctx = ctx;
+//        this.ctx = context;
     }
 
 }

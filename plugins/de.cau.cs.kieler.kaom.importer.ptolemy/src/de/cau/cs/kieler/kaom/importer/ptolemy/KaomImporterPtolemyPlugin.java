@@ -17,6 +17,7 @@ package de.cau.cs.kieler.kaom.importer.ptolemy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+
 /**
  * The activator class controls the plug-in life cycle.
  * 
@@ -30,26 +31,26 @@ public class KaomImporterPtolemyPlugin extends AbstractUIPlugin {
     /** The shared instance. */
     private static KaomImporterPtolemyPlugin plugin;
     
+    
     /**
      * The constructor.
      */
     public KaomImporterPtolemyPlugin() {
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+    
+    /**
+     * {@inheritDoc}
      */
-    public void start(BundleContext context) throws Exception {
+    public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+    /**
+     * {@inheritDoc}
      */
-    public void stop(BundleContext context) throws Exception {
+    public void stop(final BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
     }
@@ -62,5 +63,4 @@ public class KaomImporterPtolemyPlugin extends AbstractUIPlugin {
     public static KaomImporterPtolemyPlugin getDefault() {
         return plugin;
     }
-
 }

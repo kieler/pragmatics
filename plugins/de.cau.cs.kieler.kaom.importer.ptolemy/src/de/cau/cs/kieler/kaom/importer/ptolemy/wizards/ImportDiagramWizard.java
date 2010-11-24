@@ -109,17 +109,14 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
             File file = sourceFilePage.getExternalFile();
             if (file != null) {
                 sourceFileURI = URI.createFileURI(file.getPath());
-            }
-            else {
+            } else {
                 sourceFileURI = null;
             }
-        }
-        else {
+        } else {
             IFile file = sourceFilePage.getWorkspaceFile();
             if (file != null) {
                 sourceFileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
-            }
-            else {
+            } else {
                 sourceFileURI = null;
             }
         }
@@ -161,8 +158,7 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
                 
                 try {
                     doFinish(sourceFileURI, targetFileURI, monitor);
-                }
-                catch (KielerException e) {
+                } catch (KielerException e) {
                     throw new InvocationTargetException(e);
                 }
             }
@@ -172,11 +168,9 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
         try {
             getContainer().run(true, false, job);
             success = true;
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             success = false;
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             Throwable realException = e.getTargetException();
             Status status = new Status(
                     IStatus.ERROR,
@@ -199,11 +193,12 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
      * @param monitor the progress monitor.
      * @throws KielerException if anything goes wrong during the transformation.
      */
-    private void doFinish(URI sourceFile, URI targetFile, IProgressMonitor monitor)
-        throws KielerException {
+    private void doFinish(final URI sourceFile, final URI targetFile,
+            final IProgressMonitor monitor) throws KielerException {
         
         monitor.beginTask(LOC_TASK, IProgressMonitor.UNKNOWN);
         
+        // Setup the transformation
         final String transformation = "models/ptolemy2kaom";
         final String fun = "transform";
 
@@ -219,7 +214,7 @@ public class ImportDiagramWizard extends Wizard implements IImportWizard {
     /**
      * {@inheritDoc}
      */
-    public void init(IWorkbench workbench, IStructuredSelection selection) {
-        this.selection = selection;
+    public void init(final IWorkbench workbench, final IStructuredSelection theSelection) {
+        this.selection = theSelection;
     }
 }

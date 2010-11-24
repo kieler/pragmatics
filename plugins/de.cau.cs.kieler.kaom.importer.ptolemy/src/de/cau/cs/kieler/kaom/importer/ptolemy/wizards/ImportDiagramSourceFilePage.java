@@ -11,6 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
+
 package de.cau.cs.kieler.kaom.importer.ptolemy.wizards;
 
 import java.io.File;
@@ -47,6 +48,7 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
 
+
 /**
  * Source file page in the {@link ImportDiagramWizard}. Allows the user to select the
  * file to import from.
@@ -75,7 +77,7 @@ public class ImportDiagramSourceFilePage extends WizardPage {
          * {@inheritDoc}
          */
         @Override
-        public int category(Object element) {
+        public int category(final Object element) {
             if (element instanceof IContainer) {
                 return CAT_CONTAINERS;
             } else {
@@ -96,11 +98,12 @@ public class ImportDiagramSourceFilePage extends WizardPage {
          * {@inheritDoc}
          */
         @Override
-        public boolean select(Viewer viewer, Object parentElement, Object element) {
+        public boolean select(final Viewer viewer, final Object parentElement,
+                final Object element) {
+            
             if (element instanceof IContainer) {
                 return true;
-            }
-            else if (element instanceof IFile) {
+            } else if (element instanceof IFile) {
                 // Check if the file's extension matches one of the Ptolemy file extensions
                 String extension = ((IFile) element).getFileExtension();
                 if (extension == null) {
@@ -114,8 +117,7 @@ public class ImportDiagramSourceFilePage extends WizardPage {
                 }
                 
                 return false;
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -128,7 +130,7 @@ public class ImportDiagramSourceFilePage extends WizardPage {
         "Select the Ptolemy2 file to import.";
     private static final String LOC_FILEDIALOG_TITLE = "Open Ptolemy2 Diagram";
     private static final String LOC_ERR_NO_PTOLEMY_FILE_SELECTED =
-        "Select a Ptolemy2 file. (file extension either .xml or .moml)";
+        "Select a Ptolemy2 file. (file extension .moml)";
     private static final String LOC_ERR_FILE_DOESNT_EXIST =
         "Enter an existing file name.";
     private static final String LOC_ERR_FILE_UNREADABLE =
@@ -137,6 +139,10 @@ public class ImportDiagramSourceFilePage extends WizardPage {
     // DIALOG SETTINGS KEYS
     private static final String SETT_FROM_WORKSPACE = "importDiagramWizard.source.workspace";
     private static final String SETT_FILE_NAME_HISTORY = "importDiagramWizard.fileName.history";
+    
+    // MISCELLANEOUS CONSTANTS
+    /** The number of history items remembered in the combo box. */
+    private static final int HISTORY_ITEMS = 10;
     
     // GUI CONTROLS
     private Composite container;
@@ -154,12 +160,13 @@ public class ImportDiagramSourceFilePage extends WizardPage {
     private IStructuredSelection selection;
     
     
+    
     /**
      * Constructs a new source file wizard page.
      * 
-     * @param selection the selection the wizard was called on.
+     * @param theSelection the selection the wizard was called on.
      */
-    protected ImportDiagramSourceFilePage(IStructuredSelection selection) {
+    protected ImportDiagramSourceFilePage(final IStructuredSelection theSelection) {
         super("importDiagramWizard.importDiagramSourceFilePage");
         
         this.setTitle(LOC_PAGE_TITLE);
@@ -167,7 +174,7 @@ public class ImportDiagramSourceFilePage extends WizardPage {
         
         this.setPageComplete(false);
         
-        this.selection = selection;
+        this.selection = theSelection;
     }
     
     
@@ -192,8 +199,7 @@ public class ImportDiagramSourceFilePage extends WizardPage {
     public File getExternalFile() {
         if (fileSystemButton.getSelection() && isPageComplete()) {
             return new File(fileNameCombo.getText());
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -206,24 +212,21 @@ public class ImportDiagramSourceFilePage extends WizardPage {
      */
     public IFile getWorkspaceFile() {
         if (workspaceButton.getSelection() && isPageComplete()) {
-            IStructuredSelection selection =
+            IStructuredSelection treeSelection =
                 (IStructuredSelection) workspaceTreeViewer.getSelection();
             
-            if (selection.isEmpty()) {
+            if (treeSelection.isEmpty()) {
                 return null;
-            }
-            else {
-                Object element = selection.getFirstElement();
+            } else {
+                Object element = treeSelection.getFirstElement();
                 
                 if (element instanceof IFile) {
                     return (IFile) element;
-                }
-                else {
+                } else {
                     return null;
                 }
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -232,7 +235,11 @@ public class ImportDiagramSourceFilePage extends WizardPage {
     /**
      * {@inheritDoc}
      */
-    public void createControl(Composite parent) {
+    public void createControl(final Composite parent) {
+        // This method uses magic numbers for layout purposes, so keep Checkstyle from
+        // checking for those
+        // CHECKSTYLEOFF MagicNumber
+        
         GridData gd;
         GridLayout gl = new GridLayout(2, false);
         
@@ -300,31 +307,31 @@ public class ImportDiagramSourceFilePage extends WizardPage {
         // Register event handlers
         fileSystemButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
                 updateControlEnablement();
                 updatePageCompleteState();
             }
         });
         fileNameCombo.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            public void modifyText(final ModifyEvent e) {
                 updatePageCompleteState();
             }
         });
         fileNameBrowseButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
                 doOpenFileDialog();
             }
         });
         workspaceButton.addSelectionListener(new SelectionAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
                 updateControlEnablement();
                 updatePageCompleteState();
             }
         });
         workspaceTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
+            public void selectionChanged(final SelectionChangedEvent event) {
                 updatePageCompleteState();
             }
         });
@@ -333,6 +340,8 @@ public class ImportDiagramSourceFilePage extends WizardPage {
         restoreSettings();
         updateControlEnablement();
         setPreselectedResource();
+        
+        // CHECKSTYLEON MagicNumber
     }
     
     /**
@@ -352,7 +361,7 @@ public class ImportDiagramSourceFilePage extends WizardPage {
      * 
      * The page is considered complete if one of the following conditions holds:
      * - the user chose to import an external file and the given file name refers to
-     *   a valid, existing, readable file.
+     *   a valid, existing, readable Ptolemy diagram file.
      * - the user chose to import a workspace-internal file and has selected a
      *   Ptolemy diagram file.
      * 
@@ -362,17 +371,17 @@ public class ImportDiagramSourceFilePage extends WizardPage {
      * pretty much unimportant, but it's still something to bear in mind.
      */
     private void updatePageCompleteState() {
-        boolean pageComplete = false;
         boolean importFromWorkspace = workspaceButton.getSelection();
         String errorMessage = null;
         
         if (importFromWorkspace) {
             // Check if the selected resource is a Ptolemy2 diagram file
-            IStructuredSelection selection =
+            boolean fileTypeMatches = false;
+            IStructuredSelection treeSelection =
                 (IStructuredSelection) workspaceTreeViewer.getSelection();
             
-            if (!selection.isEmpty()) {
-                Object element = selection.getFirstElement();
+            if (!treeSelection.isEmpty()) {
+                Object element = treeSelection.getFirstElement();
                 
                 if (element instanceof IFile) {
                     IFile file = (IFile) element;
@@ -380,38 +389,54 @@ public class ImportDiagramSourceFilePage extends WizardPage {
                     
                     for (String ptolemyExt : PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS) {
                         if (ptolemyExt.equalsIgnoreCase(extension)) {
-                            pageComplete = true;
+                            fileTypeMatches = true;
                             break;
                         }
                     }
                 }
             }
             
-            if (!pageComplete) {
+            if (!fileTypeMatches) {
                 // No valid file has been selected
                 errorMessage = LOC_ERR_NO_PTOLEMY_FILE_SELECTED;
             }
-        }
-        else {
+        } else {
             // Check if the file name refers to an existing file
             File file = new File(fileNameCombo.getText());
             
-            if (file.exists() && file.isFile()) {
-                if (file.canRead()) {
-                    pageComplete = true;
-                }
-                else {
-                    errorMessage = LOC_ERR_FILE_UNREADABLE;
-                }
-            }
-            else {
+            if (!file.exists() || !file.isFile()) {
                 errorMessage = LOC_ERR_FILE_DOESNT_EXIST;
+            } else {
+                if (!file.canRead()) {
+                    errorMessage = LOC_ERR_FILE_UNREADABLE;
+                } else {
+                    // Get the file's file extension
+                    boolean fileTypeMatches = false;
+                    String fileName = file.getName();
+                    int separatorLocation = fileName.lastIndexOf('.');
+                    if (separatorLocation >= 0) {
+                        String extension = fileName.substring(separatorLocation + 1);
+                        
+                        for (String ptolemyExt : PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS) {
+                            if (ptolemyExt.equalsIgnoreCase(extension)) {
+                                fileTypeMatches = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        fileTypeMatches = false;
+                    }
+                    
+                    if (!fileTypeMatches) {
+                        errorMessage = LOC_ERR_NO_PTOLEMY_FILE_SELECTED;
+                    }
+                }
             }
         }
         
         // Apply complete status and set error message
         this.setErrorMessage(errorMessage);
-        this.setPageComplete(pageComplete);
+        this.setPageComplete(errorMessage == null);
     }
     
     /**
@@ -478,13 +503,12 @@ public class ImportDiagramSourceFilePage extends WizardPage {
         boolean importFromWorkspace = settings.getBoolean(SETT_FROM_WORKSPACE);
         if (importFromWorkspace) {
             workspaceButton.setSelection(true);
-        }
-        else {
+        } else {
             fileSystemButton.setSelection(true);
         }
         
         // Restore the file name history
-        String historyItems[] = settings.getArray(SETT_FILE_NAME_HISTORY);
+        String[] historyItems = settings.getArray(SETT_FILE_NAME_HISTORY);
         if (historyItems != null) {
             fileNameCombo.setItems(historyItems);
         }
@@ -508,13 +532,9 @@ public class ImportDiagramSourceFilePage extends WizardPage {
         // If an external file should be imported, the current text must be either
         // moved to the top of the list (if it's already in there) or added to the
         // list (if it isn't).
-        if (importFromWorkspace) {
-            // The list hasn't changed, so don't do anything
-            ;
-        }
-        else {
-            String items[] = fileNameCombo.getItems();
-            List<String> fileList = new ArrayList<String>(11);
+        if (!importFromWorkspace) {
+            String[] items = fileNameCombo.getItems();
+            List<String> fileList = new ArrayList<String>(HISTORY_ITEMS + 1);
             
             // Add the current entry
             String fileName = fileNameCombo.getText();
@@ -528,12 +548,12 @@ public class ImportDiagramSourceFilePage extends WizardPage {
                 }
             }
             
-            // The file list is limited to 10 items
-            if (fileList.size() > 10) {
+            // The file list is limited to a certain number of items
+            if (fileList.size() > HISTORY_ITEMS) {
                 fileList.remove(fileList.size() - 1);
             }
             
-            settings.put(SETT_FILE_NAME_HISTORY, fileList.toArray(new String[10]));
+            settings.put(SETT_FILE_NAME_HISTORY, fileList.toArray(new String[HISTORY_ITEMS]));
         }
     }
 }

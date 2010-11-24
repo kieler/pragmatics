@@ -11,12 +11,14 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
+
 package de.cau.cs.kieler.kaom.importer.ptolemy.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
+
 
 /**
  * Target file page in the {@link ImportDiagramWizard}. Allows the user to specify where
@@ -37,7 +39,7 @@ public class ImportDiagramTargetFilePage extends WizardNewFileCreationPage {
      * 
      * @param selection the selection the wizard was called on.
      */
-    public ImportDiagramTargetFilePage(IStructuredSelection selection) {
+    public ImportDiagramTargetFilePage(final IStructuredSelection selection) {
         super("importDiagramWizard.importDiagramNewFilePage", selection);
         this.setTitle(LOC_PAGE_TITLE);
         this.setDescription(LOC_PAGE_DESCRIPTION);
