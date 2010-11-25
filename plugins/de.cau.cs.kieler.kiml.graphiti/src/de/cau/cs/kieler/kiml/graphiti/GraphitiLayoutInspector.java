@@ -17,8 +17,11 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
+import org.eclipse.graphiti.ui.internal.util.gef.ScalableRootEditPartAnimated;
 
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 
@@ -28,7 +31,7 @@ import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
  */
 public class GraphitiLayoutInspector implements ILayoutInspector {
 
-    IPictogramElementEditPart focusEditPart;
+    private IPictogramElementEditPart focusEditPart;
 
     public GraphitiLayoutInspector(final IPictogramElementEditPart editPart) {
         if (editPart == null) {
@@ -41,21 +44,22 @@ public class GraphitiLayoutInspector implements ILayoutInspector {
      * {@inheritDoc}
      */
     public EditPart getFocusPart() {
-        return null;
+        return (EditPart) focusEditPart;
     }
 
     /**
      * {@inheritDoc}
      */
     public EObject getFocusModel() {
-        return null;
+        return focusEditPart.getPictogramElement();
     }
 
     /**
      * {@inheritDoc}
      */
     public TransactionalEditingDomain getEditingDomain() {
-        return null;
+        return focusEditPart.getConfigurationProvider().getDiagramEditor()
+                .getEditingDomain();
     }
 
     /**
@@ -69,7 +73,10 @@ public class GraphitiLayoutInspector implements ILayoutInspector {
      * {@inheritDoc}
      */
     public ZoomManager getZoomManager() {
-        return null;
+        GraphicalViewer viewer = focusEditPart.getConfigurationProvider()
+                .getDiagramEditor().getGraphicalViewer();
+        RootEditPart rep = viewer.getRootEditPart();
+        ScalableRootEditPartAnimated part = (ScalableRootEditPartAnimated) rep;
+        return part.getZoomManager();
     }
-
 }

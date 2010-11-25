@@ -13,12 +13,12 @@ package de.cau.cs.kieler.kiml.graphiti;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
@@ -33,12 +33,14 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
@@ -47,6 +49,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -64,7 +67,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     private KNode layoutGraph;
 
     /** Root element of the current selection. */
-    private GraphicalEditPart layoutRootPart;
+    private EditPart layoutRootPart;
 
     /** map of pictogram Element to KGraph Element. */
     private Map<PictogramElement, KGraphElement> pictElem2GraphElemMap = new HashMap<PictogramElement, KGraphElement>();
@@ -96,6 +99,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("restriction")
     @Override
     protected boolean supports(final EditPart editPart) {
         return editPart instanceof IPictogramElementEditPart;
@@ -115,10 +119,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (editorPart instanceof DiagramEditor) {
             diagramEditor = (DiagramEditor) editorPart;
 
-            EditPart topEditPart = diagramEditor.getGraphicalViewer()
-                    .getContents();
-            if (topEditPart instanceof IPictogramElementEditPart) {
-                PictogramElement element = ((IPictogramElementEditPart) topEditPart)
+            layoutRootPart = diagramEditor.getGraphicalViewer().getContents();
+            if (layoutRootPart instanceof IPictogramElementEditPart) {
+                PictogramElement element = ((IPictogramElementEditPart) layoutRootPart)
                         .getPictogramElement();
                 if (element != null) {
                     KNode topNode = KimlUtil.createInitializedNode();
@@ -137,8 +140,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                             element.getGraphicsAlgorithm().getHeight(),
                             element.getGraphicsAlgorithm().getWidth() });
                     layoutGraph = topNode;
+                    buildLayoutGraphRecursively(element, topNode);
                 }
-
             }
         }
 
@@ -355,13 +358,30 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
+     * map of editor change listeners to all editors for which they have
+     * registered.
+     */
+    private Map<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>> listenerMap = new HashMap<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>>();
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void addChangeListener(final IEditorPart editorPart,
             final IEditorChangeListener listener) {
-        // TODO Auto-generated method stub
-
+        if (editorPart instanceof DiagramEditor) {
+            final DiagramEditor diagramEditor = (DiagramEditor) editorPart;
+            diagramEditor.getGraphicalViewer().addSelectionChangedListener(
+                    listener);
+            List<Pair<DiagramEditor, ISelectionChangedListener>> editorList = listenerMap
+                    .get(listener);
+            if (editorList == null) {
+                editorList = new LinkedList<Pair<DiagramEditor, ISelectionChangedListener>>();
+                listenerMap.put(listener, editorList);
+            }
+            editorList.add(new Pair<DiagramEditor, ISelectionChangedListener>(
+                    diagramEditor, listener));
+        }
     }
 
     /**
@@ -369,8 +389,14 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      */
     @Override
     public void removeChangeListener(final IEditorChangeListener listener) {
-        // TODO Auto-generated method stub
-
+        List<Pair<DiagramEditor, ISelectionChangedListener>> editorList = listenerMap
+                .remove(listener);
+        if (editorList != null) {
+            for (Pair<DiagramEditor, ISelectionChangedListener> pair : editorList) {
+                pair.getFirst().getGraphicalViewer()
+                        .removeSelectionChangedListener(pair.getSecond());
+            }
+        }
     }
 
     /**
@@ -378,8 +404,12 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      */
     @Override
     public ISelection getSelection(final IEditorPart editorPart) {
-        // TODO Auto-generated method stub
-        return null;
+        if (editorPart instanceof DiagramEditor) {
+            return ((DiagramEditor) editorPart).getGraphicalViewer()
+                    .getSelection();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -463,6 +493,10 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      */
     @Override
     public ILayoutInspector getInspector(final IEditorPart editorPart) {
+        if (editorPart instanceof DiagramEditor) {
+            DiagramEditor ed = (DiagramEditor) editorPart;
+            return getInspector(ed.getGraphicalViewer().getRootEditPart());
+        }
         return null;
     }
 
@@ -471,7 +505,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      */
     @Override
     public ILayoutConfig getLayoutConfig(final EditPart editPart) {
-        return null;
+        ILayoutConfig config = new EclipseLayoutConfig();
+        config.setFocus(editPart);
+        return config;
     }
 
 }
