@@ -8,3 +8,9 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: de.cau.cs.kieler.core,
  de.cau.cs.kieler.kiml,
  net.sourceforge.lpsolve;bundle-version="5.5.0";resolution:=optional
+Export-Package: de.cau.cs.kieler.klay.layered,
+ de.cau.cs.kieler.klay.layered.graph,
+ de.cau.cs.kieler.klay.layered.impl,
+ de.cau.cs.kieler.klay.layered.impl.edges,
+ de.cau.cs.kieler.klay.layered.modules,
+ de.cau.cs.kieler.klay.layered.options
