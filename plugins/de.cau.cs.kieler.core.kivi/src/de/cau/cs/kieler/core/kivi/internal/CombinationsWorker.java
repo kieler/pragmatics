@@ -44,6 +44,7 @@ public class CombinationsWorker extends Thread {
         while (!isInterrupted()) {
             try {
                 ITriggerState triggerState = triggerStates.take();
+                System.out.println("TriggerState queue length: " + triggerStates.size());
                 try {
                     KiVi.getInstance().distributeTriggerState(triggerState);
                 } catch (Exception e) {

@@ -49,6 +49,7 @@ public class EffectsWorker extends Thread {
                         effects.wait();
                     }
                     effect = effects.remove(0);
+                    System.out.println("Effect queue length: " + effects.size());
                 }
                 try {
 //                    long time = System.nanoTime();
