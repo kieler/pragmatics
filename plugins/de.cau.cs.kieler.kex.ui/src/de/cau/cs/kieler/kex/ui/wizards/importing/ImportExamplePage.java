@@ -20,24 +20,16 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -48,7 +40,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -291,60 +282,60 @@ public class ImportExamplePage extends WizardResourceImportPage {
         FormData formData2 = new FormData(IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
         formData2.top = new FormAttachment(previewDesc, OFFSET);
         imageLabel.setLayoutData(formData2);
-        imageLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseDown(final MouseEvent e) {
-                super.mouseDown(e);
-                if (selectedExample == null) {
-                    return;
-                }
-                Dialog dialog = new Dialog(imageLabel.getShell()) {
-
-                    private Rectangle bounds;
-
-                    @Override
-                    protected void createButtonsForButtonBar(final Composite parent) {
-                        super.createButton(parent, IDialogConstants.OK_ID,
-                                IDialogConstants.OK_LABEL, true);
-                    }
-
-                    @Override
-                    protected Control createDialogArea(final Composite parent) {
-                        Composite composite = (Composite) super.createDialogArea(parent);
-                        Composite innerComp = new Composite(composite, SWT.CENTER | SWT.BORDER);
-                        innerComp.setLayout(new GridLayout());
-                        Label imgLabel = new Label(innerComp, SWT.BORDER | SWT.V_SCROLL
-                                | SWT.H_SCROLL);
-                        imgLabel.setLayoutData(new GridData(GridData.CENTER));
-                        Image image = loadImage(IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT);
-                        bounds = image.getBounds();
-                        imgLabel.setImage(image);
-                        return composite;
-                    }
-
-                    @Override
-                    protected Point getInitialSize() {
-                        // imagesize + paddings
-                        return new Point(bounds.width + IMG_PADDINGS_WIDTH, bounds.height
-                                + IMG_PADDINGS_HEIGHT);
-                    }
-
-                    @Override
-                    protected void configureShell(final Shell newShell) {
-                        super.configureShell(newShell);
-                        newShell.setText("Preview Picture");
-                    }
-
-                };
-                dialog.open();
-            }
-        });
-        imageLabel.addMouseTrackListener(new MouseTrackAdapter() {
-            @Override
-            public void mouseHover(final MouseEvent e) {
-                imageLabel.setCursor(new Cursor(imageLabel.getDisplay(), SWT.CURSOR_HAND));
-            }
-        });
+        // imageLabel.addMouseListener(new MouseAdapter() {
+        // @Override
+        // public void mouseDown(final MouseEvent e) {
+        // super.mouseDown(e);
+        // if (selectedExample == null) {
+        // return;
+        // }
+        // Dialog dialog = new Dialog(imageLabel.getShell()) {
+        //
+        // private Rectangle bounds;
+        //
+        // @Override
+        // protected void createButtonsForButtonBar(final Composite parent) {
+        // super.createButton(parent, IDialogConstants.OK_ID,
+        // IDialogConstants.OK_LABEL, true);
+        // }
+        //
+        // @Override
+        // protected Control createDialogArea(final Composite parent) {
+        // Composite composite = (Composite) super.createDialogArea(parent);
+        // Composite innerComp = new Composite(composite, SWT.CENTER | SWT.BORDER);
+        // innerComp.setLayout(new GridLayout());
+        // Label imgLabel = new Label(innerComp, SWT.BORDER | SWT.V_SCROLL
+        // | SWT.H_SCROLL);
+        // imgLabel.setLayoutData(new GridData(GridData.CENTER));
+        // Image image = loadImage(IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT);
+        // bounds = image.getBounds();
+        // imgLabel.setImage(image);
+        // return composite;
+        // }
+        //
+        // @Override
+        // protected Point getInitialSize() {
+        // // imagesize + paddings
+        // return new Point(bounds.width + IMG_PADDINGS_WIDTH, bounds.height
+        // + IMG_PADDINGS_HEIGHT);
+        // }
+        //
+        // @Override
+        // protected void configureShell(final Shell newShell) {
+        // super.configureShell(newShell);
+        // newShell.setText("Preview Picture");
+        // }
+        //
+        // };
+        // dialog.open();
+        // }
+        // });
+        // imageLabel.addMouseTrackListener(new MouseTrackAdapter() {
+        // @Override
+        // public void mouseHover(final MouseEvent e) {
+        // imageLabel.setCursor(new Cursor(imageLabel.getDisplay(), SWT.CURSOR_HAND));
+        // }
+        // });
     }
 
     /**

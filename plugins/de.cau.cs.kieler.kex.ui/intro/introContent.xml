@@ -7,8 +7,7 @@
 		   label="Import Examples"
 		   url="http://org.eclipse.ui.intro/runAction?pluginId=de.cau.cs.kieler.kex.ui&amp;class=de.cau.cs.kieler.kex.ui.actions.ImportWizardAction&amp;id=de.cau.cs.kieler.kex.ui.importWizardAction"
 		   id="welcome-import-example"
-		   style-id="content-link"
-		   icon="icons/keksIcon.jpg">
+		   style-id="content-link">
 		   <text>Opens a wizard to import examples</text>
 		</link>
       </extensionContent>

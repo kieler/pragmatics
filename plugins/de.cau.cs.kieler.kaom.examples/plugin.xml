@@ -30,37 +30,5 @@
 <example_resource direct_open="false" local_path="examples/kaom_hierarchy/hierarchy.kaom" resource_type="file"/>
 <example_resource direct_open="false" local_path="examples/kaom_hierarchy/hierarchy.moml" resource_type="file"/>
 </example>
-<example
-      author="KIELER Workgroup"
-      contact="kieler@informatik.uni-kiel.de"
-      description="This quickstart example introduces into KAOM."
-      generation_date="Tue Sep 28 13:42:39 CEST 2010"
-      overview_pic="examples/ramp_add/rampAdd.png"
-      root_directory="examples"
-      title="KAOM Simple">
-   <category
-         id="de.cau.cs.kieler.kaom">
-   </category>
-   <example_resource
-         direct_open="false"
-         local_path="examples/ramp_add"
-         resource_type="project">
-   </example_resource>
-   <example_resource
-         direct_open="true"
-         local_path="examples/ramp_add/rampAdd.kaod"
-         resource_type="file">
-   </example_resource>
-   <example_resource
-         direct_open="false"
-         local_path="examples/ramp_add/rampAdd.kaom"
-         resource_type="file">
-   </example_resource>
-   <example_resource
-         direct_open="false"
-         local_path="examples/ramp_add/rampAdd.moml"
-         resource_type="file">
-   </example_resource>
-</example>
 </extension>  
 </plugin>
