@@ -80,7 +80,7 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
         Dimension offset = getBorderItemOffset();
         switch (getPreferredSideOfParent()) {
         case PositionConstants.EAST:
-            location.x = parentBorder.x + parentBorder.width - offset.width;
+            location.x = parentBorder.x + parentBorder.width - offset.width - 1;
             location.y = parentBorder.y + (parentBorder.height - location.height) / 2;
             if (numberOfPorts == 1) {
 
@@ -92,7 +92,7 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
             }
             break;
         case PositionConstants.WEST:
-            location.x = parentBorder.x - location.width + offset.width;
+            location.x = parentBorder.x - location.width + offset.width + 3;
             location.y = parentBorder.y + (parentBorder.height - location.height) / 2;
             if (numberOfPorts == 1) {
 
@@ -133,29 +133,6 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
          * IFigure figure = this.getConflictingBorderItemFigure(location.getTopLeft(), borderItem);
          * if (figure != null) { //figure.getBounds().y += 3; location.y +=10; }
          */
-    }
-
-    @Override
-    protected IFigure getConflictingBorderItemFigure(Point recommendedLocation,
-            IFigure targetBorderItem) {
-        Rectangle recommendedRect = new Rectangle(recommendedLocation, getSize(targetBorderItem));
-        List borderItems = targetBorderItem.getParent().getChildren();
-
-        // Only check those border items that would have already been
-        // relocated. See Bugzilla#214799.
-        int currentIndex = borderItems.indexOf(targetBorderItem);
-        for (int i = 0; i < currentIndex; i++) {
-            IFigure borderItem = (IFigure) borderItems.get(i);
-            if (!(borderItem instanceof EntityNameFigure)) {
-                if (borderItem.isVisible()) {
-                    Rectangle rect = borderItem.getBounds().getCopy();
-                    if (rect.intersects(recommendedRect)) {
-                        return borderItem;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
 }
