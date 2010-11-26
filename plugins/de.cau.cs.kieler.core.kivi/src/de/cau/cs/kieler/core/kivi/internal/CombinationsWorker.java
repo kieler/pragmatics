@@ -64,6 +64,7 @@ public class CombinationsWorker extends Thread {
     public void trigger(final ITriggerState triggerState) {
         try {
             triggerStates.put(triggerState);
+            System.out.println("Added TriggerState: " + triggerState);
         } catch (InterruptedException e) {
             // got interrupted
         }
