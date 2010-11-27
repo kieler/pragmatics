@@ -633,6 +633,9 @@ public class KaomFigureProvider implements IRenderingProvider {
                             return createSvg(svg);
                         }
                     }
+                } catch (ClassNotFoundException ce) {
+                    ce.printStackTrace();
+                    return getDefaultFigure();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
