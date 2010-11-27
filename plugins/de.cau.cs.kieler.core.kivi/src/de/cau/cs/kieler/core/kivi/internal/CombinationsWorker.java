@@ -31,7 +31,7 @@ public class CombinationsWorker extends Thread {
      * Queue of triggers containing events that need to be handled.
      */
     private BlockingQueue<ITriggerState> triggerStates = new LinkedBlockingQueue<ITriggerState>();
-    
+
     /**
      * Default constructor, sets thread name as combinations.
      */
@@ -44,9 +44,11 @@ public class CombinationsWorker extends Thread {
         while (!isInterrupted()) {
             try {
                 ITriggerState triggerState = triggerStates.take();
-                System.out.println("TriggerState queue length: " + triggerStates.size());
                 try {
+                    long time = System.nanoTime();
                     KiVi.getInstance().distributeTriggerState(triggerState);
+                    System.out.printf("%7dµs for %s\n", (System.nanoTime() - time) / 1000,
+                            triggerState);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -55,16 +57,16 @@ public class CombinationsWorker extends Thread {
             }
         }
     }
-    
+
     /**
      * Insert a new trigger state into the queue.
      * 
-     * @param triggerState the trigger state to be inserted
+     * @param triggerState
+     *            the trigger state to be inserted
      */
     public void trigger(final ITriggerState triggerState) {
         try {
             triggerStates.put(triggerState);
-            System.out.println("Added TriggerState: " + triggerState);
         } catch (InterruptedException e) {
             // got interrupted
         }
