@@ -47,8 +47,10 @@ public class CombinationsWorker extends Thread {
                 try {
                     long time = System.nanoTime();
                     KiVi.getInstance().distributeTriggerState(triggerState);
-                    System.out.printf("%7dµs for %s\n", (System.nanoTime() - time) / 1000,
-                            triggerState);
+                    time = System.nanoTime() - time;
+                    if (time > 100000) {
+                        System.out.printf("%7dµs for %s\n", time / 1000, triggerState);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
