@@ -51,9 +51,7 @@ public class EffectsWorker extends Thread {
                     effect = effects.remove(0);
                 }
                 try {
-//                    long time = System.nanoTime();
                     effect.execute();
-//                    System.out.printf("%7dµs - %s\n", (System.nanoTime() - time) / 1000, effect);
                     synchronized (effectsListeners) {
                         for (IEffectsListener listener : effectsListeners) {
                             listener.executedEffect(effect);
