@@ -55,10 +55,11 @@ public class AddEClassFeature extends AbstractAddShapeFeature {
  
         // define a default size for the shape
         int width = 100;
-        int height = 50; 
+        int height = 110; 
         IGaService gaService = Graphiti.getGaService();
  
         {
+        	/*
             // create and set graphics algorithm
             RoundedRectangle roundedRectangle =
                 gaService.createRoundedRectangle(containerShape, 5, 5);
@@ -67,7 +68,7 @@ public class AddEClassFeature extends AbstractAddShapeFeature {
             roundedRectangle.setLineWidth(2);
             
             gaService.setLocationAndSize(roundedRectangle,
-                    context.getX(), context.getY(), width, height);
+                    context.getX(), context.getY(), width, height);*/
             
             //NEU
             Ellipse ellipse = gaService.createEllipse( containerShape);
@@ -77,7 +78,7 @@ public class AddEClassFeature extends AbstractAddShapeFeature {
             ellipse.setBackground(manageColor(255,255,255));
             
             gaService.setLocationAndSize(ellipse,
-                    context.getX(), context.getY(), width, height);
+                    context.getX(), context.getY()+10, width, height-10);
             
             //NEU
             
@@ -93,6 +94,9 @@ public class AddEClassFeature extends AbstractAddShapeFeature {
             link(containerShape, addedClass);
         }
  
+        
+        
+        /*
         // SHAPE WITH LINE
         {
             // create shape for line
@@ -103,7 +107,7 @@ public class AddEClassFeature extends AbstractAddShapeFeature {
                 gaService.createPolyline(shape, new int[] { 0, 20, width, 20 });
             polyline.setForeground(manageColor(CLASS_FOREGROUND));
             polyline.setLineWidth(2);
-        }
+        }*/
  
         // SHAPE WITH TEXT
         {
@@ -121,6 +125,13 @@ public class AddEClassFeature extends AbstractAddShapeFeature {
             // create link and wire it
             link(shape, addedClass);
         }
+        
+        // add a chopbox anchor to the shape
+        peCreateService.createChopboxAnchor(containerShape);
+  
+        // call the layout feature
+        layoutPictogramElement(containerShape);
+        
  
         return containerShape;
     }

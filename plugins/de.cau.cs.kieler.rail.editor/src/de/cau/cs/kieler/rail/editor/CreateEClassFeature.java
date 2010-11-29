@@ -15,7 +15,7 @@ public class CreateEClassFeature extends AbstractCreateFeature  {
  
     public CreateEClassFeature(IFeatureProvider fp) {
         // set name and description of the creation feature
-        super(fp, "EClass", "Create EClass");
+        super(fp, "Einbruchstelle", "Einbruchstelle erstellen");
     }
  
     public boolean canCreate(ICreateContext context) {
