@@ -8,10 +8,8 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
-import org.eclipse.gmf.runtime.diagram.ui.figures.IBorderItemLocator;
 
 import de.cau.cs.kieler.kaom.Port;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityName2EditPart.EntityNameFigure;
 
 public class PtolemyPortBorderItemLocator extends BorderItemLocator {
 
@@ -82,57 +80,72 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
         case PositionConstants.EAST:
             location.x = parentBorder.x + parentBorder.width - offset.width - 1;
             location.y = parentBorder.y + (parentBorder.height - location.height) / 2;
-            if (numberOfPorts == 1) {
-
-            } else if (this.index < numberOfPorts / 2) {
-                location.y -= ((location.height / 2 + 4) * ((numberOfPorts / 2) - index));
-            } else if (index > numberOfPorts / 2) {
-                location.y += (location.height / 2 + 5) + (location.height / 2 + 5)
-                        * (index - numberOfPorts / 2);
-            }
+            distributePortsVerticalOffset(location);
             break;
         case PositionConstants.WEST:
             location.x = parentBorder.x - location.width + offset.width + 3;
             location.y = parentBorder.y + (parentBorder.height - location.height) / 2;
-            if (numberOfPorts == 1) {
-
-            } else if (this.index < numberOfPorts / 2) {
-                location.y -= ((location.height / 2 + 4) * ((numberOfPorts / 2) - index));
-            } else if (index >= numberOfPorts / 2) {
-
-                location.y += (location.height / 2 + 5) + (location.height / 2 + 5)
-                        * (index - numberOfPorts / 2);
-            }
+            distributePortsVerticalOffset(location);
             break;
         case PositionConstants.NORTH:
             location.x = parentBorder.x + (parentBorder.width - location.width) / 2;
             location.y = parentBorder.y - location.height + offset.height;
-            if (numberOfPorts == 1) {
-
-            } else if (this.index < numberOfPorts / 2) {
-                location.x -= ((location.width / 2 + 4) * ((numberOfPorts / 2) - index));
-            } else if (index > numberOfPorts / 2) {
-                location.x += (location.width / 2 + 5) + (location.width / 2 + 5)
-                        * (index - numberOfPorts / 2);
-            }
+            distributePortsHorizontalOffset(location);
             break;
         default:
             location.x = parentBorder.x + (parentBorder.width - location.width) / 2;
             location.y = parentBorder.y + parentBorder.height - offset.height;
-            if (numberOfPorts == 1) {
-
-            } else if (this.index < numberOfPorts / 2) {
-                location.x -= ((location.width / 2 + 4) * ((numberOfPorts / 2) - index));
-            } else if (index > numberOfPorts / 2) {
-                location.x += (location.width / 2 + 5) + (location.width / 2 + 5)
-                        * (index - numberOfPorts / 2);
-            }
+            distributePortsHorizontalOffset(location);
         }
 
         /*
          * IFigure figure = this.getConflictingBorderItemFigure(location.getTopLeft(), borderItem);
          * if (figure != null) { //figure.getBounds().y += 3; location.y +=10; }
          */
+    }
+    
+    private void distributePortsVerticalOffset(Rectangle location) {
+        if (numberOfPorts == 1) {
+        } else if ((numberOfPorts % 2) == 1) {
+            if (this.index == (numberOfPorts + 1) / 2) {
+
+            } else if (this.index < numberOfPorts / 2) {
+                location.y -= ((location.height / 2 + 4) * ((numberOfPorts / 2) - index));
+            } else if (index >= numberOfPorts / 2) {
+                location.y += (location.height / 2 + 5) + (location.height / 2 + 5)
+                        * (index - numberOfPorts / 2);
+            }
+        } else {
+
+        if (this.index < numberOfPorts / 2) {
+            location.y -= ((location.height / 2 + 4) * ((numberOfPorts / 2) - index));
+        } else if (index >= numberOfPorts / 2) {
+            location.y += (location.height / 2 + 5) + (location.height / 2 + 5)
+                    * (index - numberOfPorts / 2);
+        }
+        }
+    }
+    
+    private void distributePortsHorizontalOffset(Rectangle location) {
+        if (numberOfPorts == 1) {
+        } else if ((numberOfPorts % 2) == 1) {
+            if (this.index == (numberOfPorts + 1) / 2) {
+
+            } else if (this.index < numberOfPorts / 2) {
+                location.x -= ((location.width / 2 + 4) * ((numberOfPorts / 2) - index));
+            } else if (index >= numberOfPorts / 2) {
+                location.x += (location.width / 2 + 5) + (location.width / 2 + 5)
+                        * (index - numberOfPorts / 2);
+            }
+        } else {
+
+            if (this.index < numberOfPorts / 2) {
+                location.x -= ((location.width / 2 + 4) * ((numberOfPorts / 2) - index));
+            } else if (index >= numberOfPorts / 2) {
+                location.x += (location.width / 2 + 5) + (location.width / 2 + 5)
+                        * (index - numberOfPorts / 2);
+            }
+        }
     }
 
 }
