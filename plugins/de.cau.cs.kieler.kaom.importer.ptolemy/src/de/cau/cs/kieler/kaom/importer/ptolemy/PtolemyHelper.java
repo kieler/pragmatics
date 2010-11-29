@@ -29,6 +29,7 @@ import ptolemy.kernel.Entity;
 import ptolemy.kernel.util.Attribute;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.moml.MoMLParser;
+import ptolemy.moml.filter.BackwardCompatibility;
 
 import com.microstar.xml.XmlException;
 
@@ -80,7 +81,7 @@ public class PtolemyHelper implements IExecutionContextAware {
     public List<Port> getPorts(final EntityType ptolemyEntity) {
         List<Port> kaomPorts = new LinkedList<Port>();
         try {
-            NamedObj actor = instanciatePtolemyEntity(ptolemyEntity);
+            NamedObj actor = instantiatePtolemyEntity(ptolemyEntity);
 
             for (Object obj : ((Entity) actor).portList()) {
                 if (obj instanceof IOPort) {
@@ -127,43 +128,69 @@ public class PtolemyHelper implements IExecutionContextAware {
      * @return corresponding Ptolemy object
      * @throws Exception may throw different Exceptions during parsing
      */
-    private NamedObj instanciatePtolemyEntity(final EntityType entity) throws Exception {
+    private NamedObj instantiatePtolemyEntity(final EntityType entity) throws Exception {
         String classname = entity.getClass1();
+        
         if (classname.equals("ptolemy.domains.modal.kernel.State")) {
-            return instanciatePtolemyState(entity);
+            return instantiatePtolemyState(entity);
         }
-        return instanciatePtolemyActor(entity);
+        
+        return instantiatePtolemyActor(entity);
     }
 
-    private NamedObj instanciatePtolemyActor(final EntityType entity) throws Exception {
+    /**
+     * Instantiate a Ptolemy Actor Entity for a given EntityType model object.
+     * 
+     * @param entity given EMF EntityType model object describing an Actor entity.
+     * @return corresponding Ptolemy object.
+     * @throws Exception may throw different exceptions during parsing.
+     */
+    private NamedObj instantiatePtolemyActor(final EntityType entity) throws Exception {
         String classname = entity.getClass1();
+        
         // use the Ptolemy internal Model ML (MoML) parser parsing XML and
         // creates Ptolemy models
         MoMLParser parser = new MoMLParser();
+        MoMLParser.setMoMLFilters(BackwardCompatibility.allFilters());
+        
         // atomic actors require a valid parent so create a dummy parent
         String parent = "<entity name=\"TopLevel\" class=\"ptolemy.actor.TypedCompositeActor\">";
+        
         // embed the real entity description in the parent
         String child = parent + "<entity name=\"" + entity.getName() + "\"class=\"" + classname
                 + "\"/> </entity>";
+        
         // let the parser do the job
         NamedObj actor = parser.parse(child);
         actor = (Entity) ((TypedCompositeActor) actor).entityList().get(0);
         return actor;
     }
 
-    private NamedObj instanciatePtolemyState(final EntityType entity) throws Exception {
+    /**
+     * Instantiate a Ptolemy State Entity for a given EntityType model object.
+     * 
+     * @param entity given EMF EntityType model object describing a State entity.
+     * @return corresponding Ptolemy object.
+     * @throws Exception may throw different exceptions during parsing.
+     */
+    private NamedObj instantiatePtolemyState(final EntityType entity) throws Exception {
         String classname = entity.getClass1();
+        
         // use the Ptolemy internal Model ML (MoML) parser parsing XML and
         // creates Ptolemy models
         MoMLParser parser = new MoMLParser();
+        MoMLParser.setMoMLFilters(BackwardCompatibility.allFilters());
+        
         // atomic actors require a valid parent so create a dummy parent
         // states may only be in a ModalController and not in a normal
         // CompositeActor
         String parent =
             "<entity name=\"TopLevel\" class=\"ptolemy.domains.modal.modal.ModalController\">";
+        
         // embed the real entity description in the parent
         String child = parent + "<entity name=\"" + entity.getName() + "\"class=\"" + classname
                 + "\"/> </entity>";
+        
         // let the parser do the job
         NamedObj actor = parser.parse(child);
         actor = (Entity) ((CompositeEntity) actor).entityList().get(0);
