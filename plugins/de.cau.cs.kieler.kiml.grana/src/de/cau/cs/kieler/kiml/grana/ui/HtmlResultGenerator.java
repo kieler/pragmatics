@@ -14,10 +14,7 @@
 package de.cau.cs.kieler.kiml.grana.ui;
 
 import java.util.List;
-import java.util.Map;
-
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisServices;
+import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 
 /**
  * A utility class for generating html from a set of analysis results.
@@ -37,31 +34,24 @@ public final class HtmlResultGenerator {
      * Generates html for the given analyses and results using the registered
      * visualizers.
      * 
-     * @param analyses
-     *            the analyses
-     * @param results
-     *            the results for the analyses
+     * @param boundVisualizations
+     *            the visualizations
      * @return the generated html, or null if no analysis could be visualized
      */
-    public static String generate(final List<AbstractInfoAnalysis> analyses,
-            final Map<String, Object> results) {
+    public static String generate(
+            final List<BoundVisualization> boundVisualizations) {
 
         // build the html content
         boolean empty = true;
         String html =
                 "<HTML><HEAD></HEAD><BODY><TABLE border=0 cellpadding='10'>";
-        for (AbstractInfoAnalysis analysis : analyses) {
-            Object obj = results.get(analysis.getID());
-            String analysisHtml =
-                    AnalysisServices.getInstance().visualizeResult(obj);
-            if (analysisHtml != null) {
+        for (BoundVisualization visualization : boundVisualizations) {
                 empty = false;
                 html += "<TR><TD><b>";
-                html += analysis.getName();
+                html += visualization.getAnalysis().getName();
                 html += "</b></TD><TD>";
-                html += analysisHtml;
+                html += visualization.get();
                 html += "</TD></TR>";
-            }
         }
         html += "</TABLE></BODY></HTML>";
 

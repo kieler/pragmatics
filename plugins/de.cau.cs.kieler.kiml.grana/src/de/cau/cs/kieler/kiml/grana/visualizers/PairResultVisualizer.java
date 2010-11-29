@@ -14,19 +14,18 @@
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.grana.AbstractAnalysisResultVisualizer;
+import de.cau.cs.kieler.kiml.grana.visualization.AbstractSimpleVisualizer;
 
 /**
  * A special visualizer for pairs.
  *
  * @author msp
  */
-public class PairResultVisualizer extends AbstractAnalysisResultVisualizer {
+public class PairResultVisualizer extends AbstractSimpleVisualizer<String> {
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean canVisualize(final Object result) {
         return (result instanceof Pair<?, ?>);
     }
@@ -34,7 +33,6 @@ public class PairResultVisualizer extends AbstractAnalysisResultVisualizer {
     /**
      * {@inheritDoc}
      */
-    @Override
     public String visualize(final Object result) {
         if (result instanceof Pair<?, ?>) {
             Pair<?, ?> pair = (Pair<?, ?>) result;

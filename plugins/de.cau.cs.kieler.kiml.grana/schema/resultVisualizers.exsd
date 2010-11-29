@@ -3,7 +3,7 @@
 <schema targetNamespace="de.cau.cs.kieler.kiml.grana" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="de.cau.cs.kieler.kiml.grana" id="analysisProviders" name="AnalysisProviders"/>
+         <meta.schema plugin="de.cau.cs.kieler.kiml.grana" id="resultVisualizers" name="ResultVisualizers"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -18,9 +18,9 @@
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="provider"/>
-            <element ref="bundle"/>
-            <element ref="category"/>
+            <element ref="type"/>
+            <element ref="visualizer"/>
+            <element ref="visualizationMethod"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -49,130 +49,16 @@
       </complexType>
    </element>
 
-   <element name="provider">
+   <element name="type">
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="dependency"/>
          </sequence>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.IAnalysis"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="category" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.analysisProviders/category/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="helper" type="boolean">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="bundle">
-      <complexType>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.IAnalysisBundle"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="category">
-      <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -180,17 +66,81 @@
 
    <element name="dependency">
       <complexType>
-         <attribute name="analysis" type="string" use="required">
+         <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.analysisProviders/provider/@id"/>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.resultVisualizers/type/@name"/>
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="weak" type="boolean">
+      </complexType>
+   </element>
+
+   <element name="visualizer">
+      <complexType>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.resultVisualizers/type/@name"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.visualization.IVisualizer"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="visualizationMethod">
+      <complexType>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.resultVisualizers/type/@name"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":de.cau.cs.kieler.kiml.grana.visualization.IVisualizationMethod"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="silent" type="boolean" use="required">
             <annotation>
                <documentation>
                   

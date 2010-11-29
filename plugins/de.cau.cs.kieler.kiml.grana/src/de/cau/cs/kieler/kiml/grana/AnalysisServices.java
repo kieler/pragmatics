@@ -31,6 +31,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.util.Dependency;
+import de.cau.cs.kieler.core.util.DependencyGraph;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
 
 /**
@@ -43,31 +45,13 @@ public final class AnalysisServices implements IBundleChangedListener {
     /** identifier of the extension point for analysis providers. */
     public static final String EXTP_ID_ANALYSIS_PROVIDERS =
             "de.cau.cs.kieler.kiml.grana.analysisProviders";
-    /**
-     * name of the 'analysisProvider' element in the 'analysis providers'
-     * extension point.
-     */
+    /** name of the 'provider' element. */
     public static final String ELEMENT_ANALYSIS_PROVIDER = "provider";
-    /**
-     * name of the 'analysisBundle' element in the 'analysis providers'
-     * extension point.
-     */
+    /** name of the 'bundle' element. */
     public static final String ELEMENT_ANALYSIS_BUNDLE = "bundle";
-    /**
-     * name of the 'analysisCategory' element in the 'analysis providers'
-     * extension point.
-     */
+    /** name of the 'category' element. */
     public static final String ELEMENT_ANALYSIS_CATEGORY = "category";
-    /**
-     * name of the 'analysisResultVisualizer' element in the 'analysis
-     * providers' extension point.
-     */
-    public static final String ELEMENT_ANALYSIS_RESULT_VISUALIZER =
-            "resultVisualizer";
-    /**
-     * name of the 'analysisDependency' element in the 'analysis providers'
-     * extension point.
-     */
+    /** name of the 'dependency' element. */
     public static final String ELEMENT_ANALYSIS_DEPENDENCY = "dependency";
     /** name of the 'analysis' attribute in the extension points. */
     public static final String ATTRIBUTE_ANALYSIS = "analysis";
@@ -81,11 +65,9 @@ public final class AnalysisServices implements IBundleChangedListener {
     public static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points. */
     public static final String ATTRIBUTE_NAME = "name";
-    /** name of the 'priority' attribute in the extension points. */
-    public static final String ATTRIBUTE_PRIORITY = "priority";
-    /** name of the 'weak' attribute in the extension point. */ 
+    /** name of the 'weak' attribute in the extension point. */
     private static final String ATTRIBUTE_WEAK = "weak";
-    /** name of the 'helper' attribute in the extension point. */ 
+    /** name of the 'helper' attribute in the extension point. */
     private static final String ATTRIBUTE_HELPER = "helper";
     /** id of the default category. */
     public static final String DEFAULT_CATEGORY_ID =
@@ -99,18 +81,12 @@ public final class AnalysisServices implements IBundleChangedListener {
     /** the analysis categories. */
     private final List<AnalysisCategory> categories =
             new LinkedList<AnalysisCategory>();
-    /** the analysis visualizers. */
-    private final List<AbstractAnalysisResultVisualizer> visualizers =
-            new LinkedList<AbstractAnalysisResultVisualizer>();
     /** the category id mapped on the appropriate category. */
     private final Map<String, AnalysisCategory> categoryIdMapping =
             new HashMap<String, AnalysisCategory>();
     /** the analysis id mapped on the appropriate analysis. */
     private final Map<String, AbstractInfoAnalysis> analysisIdMapping =
             new HashMap<String, AbstractInfoAnalysis>();
-    /** the visualizer mapped on their priority. */
-    private final Map<AbstractAnalysisResultVisualizer, Integer> visualizerPriorityMapping =
-            new HashMap<AbstractAnalysisResultVisualizer, Integer>();
     /** the default category. */
     private AnalysisCategory defaultCategory = null;
 
@@ -217,7 +193,8 @@ public final class AnalysisServices implements IBundleChangedListener {
                                 element.getAttribute(ATTRIBUTE_DESCRIPTION);
                         String category =
                                 element.getAttribute(ATTRIBUTE_CATEGORY);
-                        String helperString = element.getAttribute(ATTRIBUTE_HELPER);
+                        String helperString =
+                                element.getAttribute(ATTRIBUTE_HELPER);
                         // if the weak string is invalid the
                         // parser returns false, which handles
                         // the case correctly
@@ -247,7 +224,8 @@ public final class AnalysisServices implements IBundleChangedListener {
                                         .getName())) {
                                     String analysisId =
                                             child.getAttribute(ATTRIBUTE_ANALYSIS);
-                                    String weakString = child.getAttribute(ATTRIBUTE_WEAK);
+                                    String weakString =
+                                            child.getAttribute(ATTRIBUTE_WEAK);
                                     if (analysisId == null
                                             || analysisId.length() == 0) {
                                         reportError(EXTP_ID_ANALYSIS_PROVIDERS,
@@ -290,34 +268,11 @@ public final class AnalysisServices implements IBundleChangedListener {
                             for (AbstractInfoAnalysis analysis : analysisBundle
                                     .getAnalyses()) {
                                 analyses.add(analysis);
-                                analysisIdMapping.put(analysis.getID(),
+                                analysisIdMapping.put(analysis.getId(),
                                         analysis);
                             }
                             analysisBundle.addBundleChangedListener(this);
                         }
-                    }
-                } catch (CoreException exception) {
-                    StatusManager.getManager().handle(exception,
-                            GranaPlugin.PLUGIN_ID);
-                }
-            } else if (ELEMENT_ANALYSIS_RESULT_VISUALIZER.equals(element
-                    .getName())) {
-                // initialize a visualizer from the extension point
-                try {
-                    AbstractAnalysisResultVisualizer visualizer =
-                            (AbstractAnalysisResultVisualizer) element
-                                    .createExecutableExtension(ATTRIBUTE_CLASS);
-                    if (visualizer != null) {
-                        String priorityString =
-                                element.getAttribute(ATTRIBUTE_PRIORITY);
-                        int priority;
-                        try {
-                            priority = Integer.parseInt(priorityString);
-                        } catch (NumberFormatException exception) {
-                            priority = 0;
-                        }
-                        visualizers.add(visualizer);
-                        visualizerPriorityMapping.put(visualizer, priority);
                     }
                 } catch (CoreException exception) {
                     StatusManager.getManager().handle(exception,
@@ -331,11 +286,11 @@ public final class AnalysisServices implements IBundleChangedListener {
                 dependencyGraph.addAll(analyses);
         analyses.removeAll(unresolvedAnalyses);
         for (AbstractInfoAnalysis analysis : unresolvedAnalyses) {
-            analysisIdMapping.remove(analysis.getID());
+            analysisIdMapping.remove(analysis.getId());
             // display a warning
             String message =
                     "Analysis "
-                            + analysis.getID()
+                            + analysis.getId()
                             + " is missing a dependency or is part of a dependency cycle.";
             IStatus status =
                     new Status(IStatus.WARNING, GranaPlugin.PLUGIN_ID, 0,
@@ -360,8 +315,6 @@ public final class AnalysisServices implements IBundleChangedListener {
         }
         // sort the categories
         Collections.sort(categories, new CategoryComparator());
-        // sort the visualizers
-        Collections.sort(visualizers, new VisualizerComparator());
         // sort the analyses
         for (AnalysisCategory category : categories) {
             Collections.sort(category.getAnalyses(), new AnalysisComparator());
@@ -387,15 +340,6 @@ public final class AnalysisServices implements IBundleChangedListener {
     }
 
     /**
-     * Returns the visualizers.
-     * 
-     * @return the visualizers
-     */
-    public List<AbstractAnalysisResultVisualizer> getVisualizers() {
-        return visualizers;
-    }
-
-    /**
      * Returns the category specified by id or null if no such category exists.
      * 
      * @param id
@@ -418,29 +362,6 @@ public final class AnalysisServices implements IBundleChangedListener {
     }
 
     /**
-     * Calls appropriate visualizers for the given result. Returns a string
-     * containing html to display the result or null if no visualizer was found
-     * which produces html for this result.
-     * 
-     * @param result
-     *            the result to visualize
-     * @return a string containing html to visualize the given result
-     */
-    public String visualizeResult(final Object result) {
-        String html = null;
-        for (AbstractAnalysisResultVisualizer visualizer : visualizers) {
-            if (visualizer.canVisualize(result)) {
-                if (visualizer.usesResultDialog() && html == null) {
-                    html = visualizer.visualize(result);
-                } else {
-                    visualizer.visualize(result);
-                }
-            }
-        }
-        return html;
-    }
-
-    /**
      * Takes a list of analyses and returns a list that includes the given
      * analysis and their dependencies in an order so that all dependencies of
      * an analysis are listed before it.
@@ -460,7 +381,7 @@ public final class AnalysisServices implements IBundleChangedListener {
     public void analysisAdded(final AbstractInfoAnalysis analysis) {
         // check if all dependencies for the analysis are present
         if (dependencyGraph.add(analysis)) {
-            analysisIdMapping.put(analysis.getID(), analysis);
+            analysisIdMapping.put(analysis.getId(), analysis);
             AnalysisCategory category =
                     categoryIdMapping.get(analysis.getCategory());
             // if the category does not exist take default one
@@ -482,7 +403,7 @@ public final class AnalysisServices implements IBundleChangedListener {
         for (AnalysisCategory category : categories) {
             category.getAnalyses().removeAll(removedAnalyses);
         }
-        analysisIdMapping.remove(analysis.getID());
+        analysisIdMapping.remove(analysis.getId());
     }
 
     /**
@@ -524,23 +445,6 @@ public final class AnalysisServices implements IBundleChangedListener {
         public int compare(final AbstractInfoAnalysis analysis1,
                 final AbstractInfoAnalysis analysis2) {
             return analysis1.getName().compareTo(analysis2.getName());
-        }
-
-    }
-
-    /**
-     * Helper class for comparing visualizers.
-     */
-    private class VisualizerComparator implements
-            Comparator<AbstractAnalysisResultVisualizer> {
-
-        /**
-         * {@inheritDoc}
-         */
-        public int compare(final AbstractAnalysisResultVisualizer visualizer1,
-                final AbstractAnalysisResultVisualizer visualizer2) {
-            return -visualizerPriorityMapping.get(visualizer1).compareTo(
-                    visualizerPriorityMapping.get(visualizer2));
         }
 
     }
@@ -596,7 +500,7 @@ public final class AnalysisServices implements IBundleChangedListener {
          * {@inheritDoc}
          */
         @Override
-        public String getID() {
+        public String getId() {
             return analysisId;
         }
 
@@ -631,7 +535,7 @@ public final class AnalysisServices implements IBundleChangedListener {
         public boolean isHelper() {
             return analysisHelper;
         }
-        
+
         /**
          * {@inheritDoc}
          */

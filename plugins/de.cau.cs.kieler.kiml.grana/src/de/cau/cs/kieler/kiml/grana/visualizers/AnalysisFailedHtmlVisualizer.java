@@ -13,15 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
-import de.cau.cs.kieler.kiml.grana.AbstractAnalysisResultVisualizer;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
+import de.cau.cs.kieler.kiml.grana.visualization.AbstractSimpleVisualizer;
 
 /**
- * The visualizer for failed analyses.
+ * The html visualizer for failed analyses.
  * 
  * @author mri
  */
-public class AnalysisFailedVisualizer extends AbstractAnalysisResultVisualizer {
+public class AnalysisFailedHtmlVisualizer extends AbstractSimpleVisualizer<String> {
 
     /**
      * {@inheritDoc}

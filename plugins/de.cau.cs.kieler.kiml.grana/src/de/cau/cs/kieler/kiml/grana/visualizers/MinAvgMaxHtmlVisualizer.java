@@ -13,18 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
-import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.kiml.grana.AbstractAnalysisResultVisualizer;
 import de.cau.cs.kieler.kiml.grana.MinAvgMaxResult;
 
 /**
- * A specialized visualizer for the {@code MinAvgMaxResult} result class.
+ * A specialized visualizer for the {@code MinAvgMaxResult} result class using
+ * html.
  * 
  * @author mri
  */
-public class MinAvgMaxResultVisualizer extends AbstractAnalysisResultVisualizer {
-
-    private static final int MAX_DECIMAL_PLACE = 2;
+public class MinAvgMaxHtmlVisualizer extends MinAvgMaxVisualizer {
 
     /**
      * {@inheritDoc}
@@ -33,23 +30,6 @@ public class MinAvgMaxResultVisualizer extends AbstractAnalysisResultVisualizer 
         return (result instanceof MinAvgMaxResult<?, ?>);
     }
 
-    private static final float D = (float) KielerMath.pow(10, MAX_DECIMAL_PLACE);
-    
-    private Object anonymousRound(final Object o) {
-        if (o instanceof Float) {
-            Float f = (Float) o;
-            f = (float) Math.round(f * D); 
-            f /= D;
-            return f;
-        } else if (o instanceof Double) {
-            Double f = (Double) o;
-            f = (double) Math.round(f * D); 
-            f /= D;
-            return f;
-        }
-        return o;
-    }
-    
     /**
      * {@inheritDoc}
      */
@@ -59,8 +39,8 @@ public class MinAvgMaxResultVisualizer extends AbstractAnalysisResultVisualizer 
             Object min = anonymousRound(minAvgMax.getMin());
             Object avg = anonymousRound(minAvgMax.getAvg());
             Object max = anonymousRound(minAvgMax.getMax());
-            return "<b>Min:</b> " + min + "<br/><b>Avg:</b> "
-                    + avg + "<br/><b>Max:</b> " + max;
+            return "<b>Min:</b> " + min + "<br/><b>Avg:</b> " + avg
+                    + "<br/><b>Max:</b> " + max;
         } else {
             return result.toString();
         }

@@ -23,9 +23,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.ui.AnalysisResultDialog;
 import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyzer;
-import de.cau.cs.kieler.kiml.grana.views.AnalysisResultViewPart;
+import de.cau.cs.kieler.kiml.grana.ui.GranaUIUtil;
+import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
 
 /**
  * The handler that is responsible for receiving user input on the analyses to
@@ -42,24 +42,16 @@ public class AnalysisHandler extends AbstractAnalysisHandler {
        
         // get the active editor
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-        // get the last selected analyses
+        // set the current shell
         Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
+        GranaUIUtil.setCurrentShell(shell);
+        // get the last selected analyses
         List<AbstractInfoAnalysis> analyses = getLastAnalysesSelection();
         // perform the analyses on the active diagram
         Map<String, Object> results =
                 DiagramAnalyzer.analyse(editorPart, null, analyses, true);
-        // refresh the result view
-        AnalysisResultViewPart view = AnalysisResultViewPart.findView();
-        if (view != null) {
-            view.setAnalysisResults(analyses, results);
-        }
-        // prepare the result dialog
-        AnalysisResultDialog resultDialog =
-                new AnalysisResultDialog(shell, analyses, results);
-        // only show the result dialog if there is something to show
-        if (!resultDialog.isEmpty()) {
-            resultDialog.open();
-        }
+        // visualize the results
+        VisualizationServices.getInstance().visualize(analyses, results, false);
 
         return null;
     }

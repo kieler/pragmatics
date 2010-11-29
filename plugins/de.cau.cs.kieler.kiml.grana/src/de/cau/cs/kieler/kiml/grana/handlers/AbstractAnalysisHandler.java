@@ -73,7 +73,7 @@ public abstract class AbstractAnalysisHandler extends AbstractHandler {
         // serialize the analyses ids
         String analysesIdsSerialized = "";
         for (AbstractInfoAnalysis analysis : analyses) {
-            analysesIdsSerialized += analysis.getID() + ";";
+            analysesIdsSerialized += analysis.getId() + ";";
         }
         preferenceStore.setValue(LAST_ANALYSES_PREFERENCE,
                 analysesIdsSerialized);

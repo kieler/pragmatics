@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.grana.ui;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.ui.CoreUIPlugin;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 
 /**
  * The dialog for presenting the results of a set of analyses.
@@ -55,17 +54,14 @@ public class AnalysisResultDialog extends Dialog {
      * 
      * @param parentShell
      *            the parent shell
-     * @param analyses
-     *            the perfomed analyses
-     * @param results
-     *            the analysis results to display
+     * @param boundVisualizations
+     *            the visualizations
      */
     public AnalysisResultDialog(final Shell parentShell,
-            final List<AbstractInfoAnalysis> analyses,
-            final Map<String, Object> results) {
+            final List<BoundVisualization> boundVisualizations) {
         super(parentShell);
         // build the html content
-        html = HtmlResultGenerator.generate(analyses, results);
+        html = HtmlResultGenerator.generate(boundVisualizations);
 
         setShellStyle(SWT.CLOSE | SWT.TITLE | SWT.BORDER
                 | SWT.APPLICATION_MODAL | SWT.RESIZE);
@@ -92,8 +88,9 @@ public class AnalysisResultDialog extends Dialog {
                 browser.setText(html);
             }
         } catch (SWTError e) {
-            IStatus status = new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
-                    "Could not instantiate Browser.", e);
+            IStatus status =
+                    new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
+                            "Could not instantiate Browser.", e);
             StatusManager.getManager().handle(status);
         }
         return composite;

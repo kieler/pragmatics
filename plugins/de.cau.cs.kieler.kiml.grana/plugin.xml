@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="analysisProviders" name="AnalysisProviders" schema="schema/analysisProviders.exsd"/>
+   <extension-point id="resultVisualizers" name="ResultVisualizers" schema="schema/resultVisualizers.exsd"/>
    <extension
          point="org.eclipse.ui.commands">
       <command
@@ -143,22 +144,60 @@
             id="de.cau.cs.kieler.kiml.grana.layers"
             name="Horizontal / Vertical Layers">
       </provider>
-      <resultVisualizer
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kiml.grana.resultVisualizers">
+      <type
+            name="text">
+      </type>
+      <type
+            name="html">
+         <dependency
+               type="text">
+         </dependency>
+      </type>
+      <visualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.ToStringVisualizer"
-            priority="1">
-      </resultVisualizer>
-      <resultVisualizer
-            class="de.cau.cs.kieler.kiml.grana.visualizers.MinAvgMaxResultVisualizer"
-            priority="10">
-      </resultVisualizer>
-      <resultVisualizer
-            class="de.cau.cs.kieler.kiml.grana.visualizers.AnalysisFailedVisualizer"
-            priority="10">
-      </resultVisualizer>
-      <resultVisualizer
+            priority="1"
+            type="text">
+      </visualizer>
+      <visualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.PairResultVisualizer"
-            priority="10">
-      </resultVisualizer>
+            priority="10"
+            type="text">
+      </visualizer>
+      <visualizer
+            class="de.cau.cs.kieler.kiml.grana.visualizers.MinAvgMaxVisualizer"
+            priority="10"
+            type="text">
+      </visualizer>
+      <visualizer
+            class="de.cau.cs.kieler.kiml.grana.visualizers.MinAvgMaxHtmlVisualizer"
+            priority="10"
+            type="html">
+      </visualizer>
+      <visualizer
+            class="de.cau.cs.kieler.kiml.grana.visualizers.AnalysisFailedHtmlVisualizer"
+            priority="10"
+            type="html">
+      </visualizer>
+      <visualizer
+            class="de.cau.cs.kieler.kiml.grana.visualizers.BasicHtmlVisualizer"
+            priority="1"
+            type="html">
+      </visualizer>
+      <visualizationMethod
+            class="de.cau.cs.kieler.kiml.grana.ui.DialogVisualizationMethod"
+            default="true"
+            silent="false"
+            type="html">
+      </visualizationMethod>
+      <visualizationMethod
+            class="de.cau.cs.kieler.kiml.grana.ui.ViewVisualizationMethod"
+            default="true"
+            silent="true"
+            type="html">
+      </visualizationMethod>
    </extension>
    <extension
          point="de.cau.cs.kieler.core.kivi.combinations">

@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
 /**
  * This class provides static methods to start an analysis of a given diagram.
+ * Most of the defined methods provide a convinience API.
  * 
  * @author mri
  */
@@ -57,13 +58,13 @@ public final class DiagramAnalyzer {
 
     /**
      * Starts the given analysis on a diagram.
-     *
+     * 
      * @param editorPart
-     *            the editor the analysis is performed on, or {@code null} if the diagram
-     *            is not part of an editor
+     *            the editor the analysis is performed on, or {@code null} if
+     *            the diagram is not part of an editor
      * @param editPart
-     *            the edit part the analysis is performed on, or {@code null} if the whole
-     *            diagram shall be analysed
+     *            the edit part the analysis is performed on, or {@code null} if
+     *            the whole diagram shall be analysed
      * @param analysis
      *            the analysis to perform
      * @param progressBar
@@ -78,13 +79,13 @@ public final class DiagramAnalyzer {
 
     /**
      * Starts the given analysis on a diagram with predefined options.
-     *
+     * 
      * @param editorPart
-     *            the editor the analysis is performed on, or {@code null} if the diagram
-     *            is not part of an editor
+     *            the editor the analysis is performed on, or {@code null} if
+     *            the diagram is not part of an editor
      * @param editPart
-     *            the edit part the analysis is performed on, or {@code null} if the whole
-     *            diagram shall be analysed
+     *            the edit part the analysis is performed on, or {@code null} if
+     *            the whole diagram shall be analysed
      * @param analysis
      *            the analysis to perform
      * @param options
@@ -101,8 +102,8 @@ public final class DiagramAnalyzer {
         analyses.add(analysis);
         Map<String, Object> result =
                 analyse(editorPart, editPart, analyses, options, progressBar);
-        if (result.containsKey(analysis.getID())) {
-            return result.get(analysis.getID());
+        if (result.containsKey(analysis.getId())) {
+            return result.get(analysis.getId());
         } else {
             return null;
         }
@@ -110,13 +111,13 @@ public final class DiagramAnalyzer {
 
     /**
      * Starts the given analyses on the diagram.
-     *
+     * 
      * @param editorPart
-     *            the editor the analysis is performed on, or {@code null} if the diagram
-     *            is not part of an editor
+     *            the editor the analysis is performed on, or {@code null} if
+     *            the diagram is not part of an editor
      * @param editPart
-     *            the edit part the analysis is performed on, or {@code null} if the whole
-     *            diagram shall be analysed
+     *            the edit part the analysis is performed on, or {@code null} if
+     *            the whole diagram shall be analysed
      * @param analyses
      *            the analyses to perform
      * @param progressBar
@@ -131,13 +132,13 @@ public final class DiagramAnalyzer {
 
     /**
      * Starts the given analyses on the diagram with predefined options.
-     *
+     * 
      * @param editorPart
-     *            the editor the analysis is performed on, or {@code null} if the diagram
-     *            is not part of an editor
+     *            the editor the analysis is performed on, or {@code null} if
+     *            the diagram is not part of an editor
      * @param editPart
-     *            the edit part the analysis is performed on, or {@code null} if the whole
-     *            diagram shall be analysed
+     *            the edit part the analysis is performed on, or {@code null} if
+     *            the whole diagram shall be analysed
      * @param analyses
      *            the analyses to perform
      * @param options
@@ -173,10 +174,9 @@ public final class DiagramAnalyzer {
                             IKielerProgressMonitor kmonitor =
                                     new KielerProgressMonitor(monitor,
                                             MAX_PROGRESS_LEVELS);
-                            kmonitor.begin("Begin analyses",
-                                    analysesSequence.size());
-                            lastResult = doAnalyses(kmonitor, analysesSequence, options);
-                            kmonitor.done();
+                            lastResult =
+                                    doAnalyses(kmonitor, analysesSequence,
+                                            options);
                             if (kmonitor.isCanceled()) {
                                 return new Status(IStatus.CANCEL,
                                         GranaPlugin.PLUGIN_ID, 0, null, null);
@@ -204,13 +204,14 @@ public final class DiagramAnalyzer {
                 }
             }, true);
             // second phase: analyse the graph
-            return doAnalyses(new BasicProgressMonitor(0), analysesSequence, options);
+            return doAnalyses(new BasicProgressMonitor(0), analysesSequence,
+                    options);
         }
     }
 
     /**
      * Starts the given analysis on a diagram.
-     *
+     * 
      * @param parentNode
      *            the graph the analyses shall be performed on
      * @param analysis
@@ -226,7 +227,7 @@ public final class DiagramAnalyzer {
 
     /**
      * Starts the given analysis on a diagram with predefined options.
-     *
+     * 
      * @param parentNode
      *            the graph the analyses shall be performed on
      * @param analysis
@@ -238,14 +239,15 @@ public final class DiagramAnalyzer {
      * @return the analysis result
      */
     public static Object analyse(final KNode parentNode,
-            final AbstractInfoAnalysis analysis, final Map<String, Object> options, 
-            final boolean progressBar) {
+            final AbstractInfoAnalysis analysis,
+            final Map<String, Object> options, final boolean progressBar) {
         List<AbstractInfoAnalysis> analyses =
                 new LinkedList<AbstractInfoAnalysis>();
         analyses.add(analysis);
-        Map<String, Object> result = analyse(parentNode, analyses, options, progressBar);
-        if (result.containsKey(analysis.getID())) {
-            return result.get(analysis.getID());
+        Map<String, Object> result =
+                analyse(parentNode, analyses, options, progressBar);
+        if (result.containsKey(analysis.getId())) {
+            return result.get(analysis.getId());
         } else {
             return null;
         }
@@ -253,7 +255,7 @@ public final class DiagramAnalyzer {
 
     /**
      * Starts the given analyses on the kgraph.
-     *
+     * 
      * @param parentNode
      *            the graph the analyses shall be performed on
      * @param analyses
@@ -269,7 +271,7 @@ public final class DiagramAnalyzer {
 
     /**
      * Starts the given analyses on the kgraph with predefined options.
-     *
+     * 
      * @param parentNode
      *            the graph the analyses shall be performed on
      * @param analyses
@@ -281,8 +283,8 @@ public final class DiagramAnalyzer {
      * @return the analyses results
      */
     public static Map<String, Object> analyse(final KNode parentNode,
-            final List<AbstractInfoAnalysis> analyses, final Map<String, Object> options,
-            final boolean progressBar) {
+            final List<AbstractInfoAnalysis> analyses,
+            final Map<String, Object> options, final boolean progressBar) {
         final List<AbstractInfoAnalysis> analysesSequence =
                 AnalysisServices.getInstance().getExecutionOrder(analyses);
         currentGraph = parentNode;
@@ -297,10 +299,9 @@ public final class DiagramAnalyzer {
                             IKielerProgressMonitor kmonitor =
                                     new KielerProgressMonitor(monitor,
                                             MAX_PROGRESS_LEVELS);
-                            kmonitor.begin("Begin analyses",
-                                    analysesSequence.size());
-                            lastResult = doAnalyses(kmonitor, analysesSequence, options);
-                            kmonitor.done();
+                            lastResult =
+                                    doAnalyses(kmonitor, analysesSequence,
+                                            options);
                             if (kmonitor.isCanceled()) {
                                 return new Status(IStatus.CANCEL,
                                         GranaPlugin.PLUGIN_ID, 0, null, null);
@@ -317,13 +318,103 @@ public final class DiagramAnalyzer {
             // perform analysis without a progress bar
         } else {
             // analyse the graph
-            return doAnalyses(new BasicProgressMonitor(0), analysesSequence, options);
+            return doAnalyses(new BasicProgressMonitor(0), analysesSequence,
+                    options);
         }
     }
 
     /**
+     * Starts the given analysis on a diagram using a progress monitor.
+     * 
+     * @param parentNode
+     *            the graph the analyses shall be performed on
+     * @param analysis
+     *            the analysis to perform
+     * @param monitor
+     *            the progress monitor
+     * @return the analysis result
+     */
+    public static Object analyse(final KNode parentNode,
+            final AbstractInfoAnalysis analysis,
+            final IKielerProgressMonitor monitor) {
+        return analyse(parentNode, analysis, null, monitor);
+    }
+
+    /**
+     * Starts the given analysis on a diagram with predefined options and using
+     * a progress monitor.
+     * 
+     * @param parentNode
+     *            the graph the analyses shall be performed on
+     * @param analysis
+     *            the analysis to perform
+     * @param options
+     *            the options
+     * @param monitor
+     *            the progress monitor
+     * @return the analysis result
+     */
+    public static Object analyse(final KNode parentNode,
+            final AbstractInfoAnalysis analysis,
+            final Map<String, Object> options,
+            final IKielerProgressMonitor monitor) {
+        List<AbstractInfoAnalysis> analyses =
+                new LinkedList<AbstractInfoAnalysis>();
+        analyses.add(analysis);
+        Map<String, Object> result =
+                analyse(parentNode, analyses, options, monitor);
+        if (result.containsKey(analysis.getId())) {
+            return result.get(analysis.getId());
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Starts the given analyses on the kgraph using a progress monitor.
+     * 
+     * @param parentNode
+     *            the graph the analyses shall be performed on
+     * @param analyses
+     *            the analyses to perform
+     * @param monitor
+     *            the progress monitor
+     * @return the analyses results
+     */
+    public static Map<String, Object> analyse(final KNode parentNode,
+            final List<AbstractInfoAnalysis> analyses,
+            final IKielerProgressMonitor monitor) {
+        return analyse(parentNode, analyses, null, monitor);
+    }
+
+    /**
+     * Starts the given analyses on the kgraph with predefined options and using
+     * a progress monitor.
+     * 
+     * @param parentNode
+     *            the graph the analyses shall be performed on
+     * @param analyses
+     *            the analyses to perform
+     * @param options
+     *            the options
+     * @param monitor
+     *            the progress monitor
+     * @return the analyses results
+     */
+    public static Map<String, Object> analyse(final KNode parentNode,
+            final List<AbstractInfoAnalysis> analyses,
+            final Map<String, Object> options,
+            final IKielerProgressMonitor monitor) {
+        final List<AbstractInfoAnalysis> analysesSequence =
+                AnalysisServices.getInstance().getExecutionOrder(analyses);
+        currentGraph = parentNode;
+        lastResult = null;
+        return doAnalyses(monitor, analysesSequence, options);
+    }
+
+    /**
      * Calls the actual analyses for the current graph.
-     *
+     * 
      * @param monitor
      *            the monitor
      * @param analyses
@@ -336,28 +427,30 @@ public final class DiagramAnalyzer {
             final IKielerProgressMonitor monitor,
             final List<AbstractInfoAnalysis> analyses,
             final Map<String, Object> options) {
+        monitor.begin("Begin analyses", analyses.size());
         Map<String, Object> results;
         if (options == null) {
-             results = new HashMap<String, Object>(analyses.size());
+            results = new HashMap<String, Object>(analyses.size());
         } else {
-             results = options;
+            results = options;
         }
         for (AbstractInfoAnalysis analysis : analyses) {
             try {
                 if (monitor.isCanceled()) {
-                    results.put(analysis.getID(), new AnalysisFailed(
+                    results.put(analysis.getId(), new AnalysisFailed(
                             AnalysisFailed.Type.Canceled));
                 } else {
                     results.put(
-                            analysis.getID(),
+                            analysis.getId(),
                             analysis.doAnalysis(currentGraph, results,
                                     monitor.subTask(1)));
                 }
             } catch (Exception e) {
-                results.put(analysis.getID(), new AnalysisFailed(
+                results.put(analysis.getId(), new AnalysisFailed(
                         AnalysisFailed.Type.Failed, e));
             }
         }
+        monitor.done();
         return results;
     }
 }

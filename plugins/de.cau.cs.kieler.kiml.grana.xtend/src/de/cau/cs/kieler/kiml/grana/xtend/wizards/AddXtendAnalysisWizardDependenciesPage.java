@@ -259,7 +259,7 @@ public class AddXtendAnalysisWizardDependenciesPage extends WizardPage {
             Object obj = item.getData();
             if (obj instanceof AbstractInfoAnalysis) {
                 AbstractInfoAnalysis analysis = (AbstractInfoAnalysis) obj;
-                dependencies.add(analysis.getID());
+                dependencies.add(analysis.getId());
             }
         }
         return dependencies;

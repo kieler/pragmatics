@@ -38,7 +38,7 @@ public class AnalysisFailed {
     private static final String MESSAGE_ANALYSIS_CANCELED = "Analysis canceled";
     /** the message for a missing or wrong typed dependency result. */
     private static final String MESSAGE_ANALYSIS_DEPENDENCY =
-            "Analysis canceled";
+            "Analysis misses a dependency";
     /** the analysis failed type. */
     private Type type;
     /** the associated exception. */

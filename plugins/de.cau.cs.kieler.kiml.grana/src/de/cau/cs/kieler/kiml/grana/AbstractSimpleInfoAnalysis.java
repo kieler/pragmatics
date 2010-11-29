@@ -16,9 +16,11 @@ package de.cau.cs.kieler.kiml.grana;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.cau.cs.kieler.core.util.Dependency;
+
 /**
  * Analyses that derive from this class can define dependencies without using
- * the Dependency class.
+ * the {@code Dependency} class.
  * 
  * @author mri
  */

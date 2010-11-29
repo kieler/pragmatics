@@ -110,7 +110,7 @@ public class XtendAnalysis extends AbstractSimpleInfoAnalysis {
     /**
      * {@inheritDoc}
      */
-    public String getID() {
+    public String getId() {
         return id;
     }
 

@@ -13,18 +13,17 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
-import de.cau.cs.kieler.kiml.grana.visualization.AbstractSimpleVisualizer;
+import java.util.Map;
+
+import de.cau.cs.kieler.kiml.grana.visualization.IVisualizer;
+import de.cau.cs.kieler.kiml.grana.visualization.Visualization;
 
 /**
- * The simplest possible visualizer. Returns the result of the {@code
- * toString} method.
+ * The html visualizer which simply uses the text visualization as it is.
  * 
  * @author mri
  */
-public class ToStringVisualizer extends AbstractSimpleVisualizer<String> {
-
-    /** the message that is displayed on a null result. */
-    private static final String MESSAGE_NULL_RESULT = "No result";
+public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
 
     /**
      * {@inheritDoc}
@@ -36,11 +35,14 @@ public class ToStringVisualizer extends AbstractSimpleVisualizer<String> {
     /**
      * {@inheritDoc}
      */
-    public String visualize(final Object result) {
-        if (result == null) {
-           return MESSAGE_NULL_RESULT; 
+    public String visualize(final Object result,
+            final Map<String, Visualization> dependencies, final Object parameter) {
+        Visualization textVisualization = dependencies.get("text");
+        if (textVisualization == null) {
+            return result.toString();
         }
-        return result.toString();
+        return textVisualization.get(result);
     }
 
+    
 }

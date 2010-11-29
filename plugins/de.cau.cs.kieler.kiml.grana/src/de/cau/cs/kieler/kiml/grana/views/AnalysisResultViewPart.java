@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.grana.views;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -30,8 +29,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.ui.CoreUIPlugin;
-import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.ui.HtmlResultGenerator;
+import de.cau.cs.kieler.kiml.grana.visualization.BoundVisualization;
 
 /**
  * A view that is an alternative way to display analysis results.
@@ -75,8 +74,9 @@ public class AnalysisResultViewPart extends ViewPart {
             browser.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         } catch (SWTError e) {
-            IStatus status = new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
-                    "Could not instantiate Browser.", e);
+            IStatus status =
+                    new Status(IStatus.ERROR, CoreUIPlugin.PLUGIN_ID,
+                            "Could not instantiate Browser.", e);
             StatusManager.getManager().handle(status, StatusManager.LOG);
         }
     }
@@ -90,14 +90,12 @@ public class AnalysisResultViewPart extends ViewPart {
     /**
      * Sets the analysis results.
      * 
-     * @param analyses
-     *            the analyses
-     * @param results
-     *            the results
+     * @param boundVisualizations
+     *            the visualizations
      */
-    public void setAnalysisResults(final List<AbstractInfoAnalysis> analyses,
-            final Map<String, Object> results) {
-        html = HtmlResultGenerator.generate(analyses, results);
+    public void setAnalysisResults(
+            final List<BoundVisualization> boundVisualizations) {
+        html = HtmlResultGenerator.generate(boundVisualizations);
         if (html != null && browser != null) {
             browser.setText(html);
         }
