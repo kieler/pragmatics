@@ -49,7 +49,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
 import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
@@ -505,8 +504,10 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      */
     @Override
     public ILayoutConfig getLayoutConfig(final EditPart editPart) {
-        ILayoutConfig config = new EclipseLayoutConfig();
-        config.setFocus(editPart);
+        GraphitiLayoutConfig config = new GraphitiLayoutConfig();
+        if (editPart instanceof IPictogramElementEditPart) {
+            config.initialize((IPictogramElementEditPart) editPart);
+        }
         return config;
     }
 
