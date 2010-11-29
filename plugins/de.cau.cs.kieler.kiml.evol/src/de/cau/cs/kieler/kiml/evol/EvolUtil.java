@@ -432,7 +432,7 @@ public final class EvolUtil {
                     new ArrayList<AbstractInfoAnalysis>(metricIds.size());
             for (final AbstractInfoAnalysis metric : metrics) {
 
-                String metricId = metric.getID();
+                String metricId = metric.getId();
                 if (!weightsMap.containsKey(metricId)) {
                     // Skip this analysis.
                     continue;

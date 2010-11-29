@@ -196,7 +196,7 @@ public final class EvolutionServices {
         List<String> metricIds = new ArrayList<String>(metrics.size());
 
         for (final AbstractInfoAnalysis metric : metrics) {
-            metricIds.add(metric.getID());
+            metricIds.add(metric.getId());
         }
 
         this.layoutMetricsMap = new HashMap<String, IConfigurationElement>();
