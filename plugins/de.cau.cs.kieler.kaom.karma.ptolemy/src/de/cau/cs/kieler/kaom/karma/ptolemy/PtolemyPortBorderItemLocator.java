@@ -80,22 +80,22 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
         case PositionConstants.EAST:
             location.x = parentBorder.x + parentBorder.width - offset.width - 1;
             location.y = parentBorder.y + (parentBorder.height - location.height) / 2;
-            distributePortsVerticalOffset(location);
+            distributePortsVertical(location);
             break;
         case PositionConstants.WEST:
             location.x = parentBorder.x - location.width + offset.width + 3;
             location.y = parentBorder.y + (parentBorder.height - location.height) / 2;
-            distributePortsVerticalOffset(location);
+            distributePortsVertical(location);
             break;
         case PositionConstants.NORTH:
             location.x = parentBorder.x + (parentBorder.width - location.width) / 2;
             location.y = parentBorder.y - location.height + offset.height;
-            distributePortsHorizontalOffset(location);
+            distributePortsHorizontal(location);
             break;
         default:
             location.x = parentBorder.x + (parentBorder.width - location.width) / 2;
             location.y = parentBorder.y + parentBorder.height - offset.height;
-            distributePortsHorizontalOffset(location);
+            distributePortsHorizontal(location);
         }
 
         /*
@@ -104,7 +104,7 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
          */
     }
     
-    private void distributePortsVerticalOffset(Rectangle location) {
+    private void distributePortsVertical(Rectangle location) {
         if (numberOfPorts == 1) {
         } else if ((numberOfPorts % 2) == 1) {
             if (this.index == (numberOfPorts + 1) / 2) {
@@ -126,7 +126,7 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
         }
     }
     
-    private void distributePortsHorizontalOffset(Rectangle location) {
+    private void distributePortsHorizontal(Rectangle location) {
         if (numberOfPorts == 1) {
         } else if ((numberOfPorts % 2) == 1) {
             if (this.index == (numberOfPorts + 1) / 2) {

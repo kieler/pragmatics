@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  * 
  *****************************************************************************/
-package de.cau.cs.kieler.kaom.karma.ptolemy;
+package de.cau.cs.kieler.kaom.karma.renderingprovider;
 
 import java.lang.reflect.Constructor;
 import java.util.LinkedList;
@@ -40,6 +40,7 @@ import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.PortNameEditPart;
+import de.cau.cs.kieler.kaom.karma.ptolemy.PtolemyPortBorderItemLocator;
 import de.cau.cs.kieler.karma.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.util.CustomPortLocator;

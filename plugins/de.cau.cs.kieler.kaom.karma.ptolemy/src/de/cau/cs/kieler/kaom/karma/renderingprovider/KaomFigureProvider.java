@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kaom.karma.ptolemy;
+package de.cau.cs.kieler.kaom.karma.renderingprovider;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -41,8 +41,11 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LayoutManager;
+import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.draw2d.RotatableDecoration;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
@@ -106,6 +109,15 @@ public class KaomFigureProvider implements IRenderingProvider {
             if (oldFigure instanceof PolylineConnectionEx) {
                 PolylineConnectionEx connection = ((PolylineConnectionEx) oldFigure);
                 connection.setTargetDecoration(null);
+                connection.setLineWidthFloat(1.5f);
+                return oldFigure;
+            } else {
+                return null;
+            }
+        } else if (input.equals("stateConnection")) {
+            if (oldFigure instanceof PolylineConnectionEx) {
+                PolylineConnectionEx connection = ((PolylineConnectionEx) oldFigure);
+                connection.setTargetDecoration(createArrowDecoration());
                 connection.setLineWidthFloat(1.5f);
                 return oldFigure;
             } else {
@@ -524,6 +536,26 @@ public class KaomFigureProvider implements IRenderingProvider {
         }
         return constFigure;
         
+    }
+    
+    private static final int ARROW_SIZE = 10;
+    private static final double ARROW_X_SCALE = 1.0;
+    private static final double ARROW_Y_SCALE = 0.5;
+    /**
+     * Create the arrow decoration.
+     * 
+     * @return The decoration.
+     */
+    private RotatableDecoration createArrowDecoration() {
+        PolygonDecoration arrowDecoration = new PolygonDecoration();
+        PointList arrowDecorationPoints = new PointList();
+        arrowDecorationPoints.addPoint(-ARROW_SIZE, ARROW_SIZE);
+        arrowDecorationPoints.addPoint(1, 0);
+        arrowDecorationPoints.addPoint(-ARROW_SIZE, -ARROW_SIZE);
+        arrowDecorationPoints.addPoint(-ARROW_SIZE / 2, 0);
+        arrowDecoration.setTemplate(arrowDecorationPoints);
+        arrowDecoration.setScale(ARROW_X_SCALE, ARROW_Y_SCALE);
+        return arrowDecoration;
     }
     
     

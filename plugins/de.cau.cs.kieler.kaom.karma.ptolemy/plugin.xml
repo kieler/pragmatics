@@ -5,7 +5,7 @@
          point="de.cau.cs.kieler.karma">
       <configuration
             Priority="2"
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomFigureProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomFigureProvider">
          <conditions>
             <customCondition
                   condition="de.cau.cs.kieler.karma.AnnotationCondition"
@@ -129,7 +129,7 @@
       </configuration>
       <configuration
             Priority="3"
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomFigureProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomFigureProvider">
          <conditions>
             <customCondition
                   condition="de.cau.cs.kieler.karma.RecursiveAnnotationCondition"
@@ -321,7 +321,7 @@
          </editPart>
       </configuration>
       <configuration
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomPortProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomPortProvider">
          <conditions>
             <compoundCondition
                   borderItemParam="NORTH"
@@ -429,8 +429,23 @@
          </editPart>
       </configuration>
       <configuration
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.ptolemy.KaomFigureProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomFigureProvider">
          <conditions>
+            <compoundCondition
+                  figureParam="stateConnection">
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     figureParam="connection"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.kaom.karma.ptolemy.conditions.ConnectionSourceCondition"
+                     figureParam="stateConnection"
+                     key="ptolemyClass"
+                     value="ptolemy.domains.modal.kernel.State">
+               </customCondition>
+            </compoundCondition>
             <customCondition
                   condition="de.cau.cs.kieler.karma.AnnotationCondition"
                   figureParam="connection"
@@ -440,6 +455,68 @@
          </conditions>
          <editPart
                editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.LinkEditPart">
+         </editPart>
+      </configuration>
+      <configuration
+            Priority="3"
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.PtolemyStateMachineProvider">
+         <conditions>
+            <compoundCondition
+                  figureParam="initialFinalState"
+                  figureSize="30,30">
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="ptolemyClass"
+                     value="ptolemy.domains.modal.kernel.State">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="isFinalState"
+                     value="true">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="isInitialState"
+                     value="true">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
+                  figureParam="initialState"
+                  figureSize="30,30">
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="ptolemyClass"
+                     value="ptolemy.domains.modal.kernel.State">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="isInitialState"
+                     value="true">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
+                  figureParam="finalState"
+                  figureSize="30,30">
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="ptolemyClass"
+                     value="ptolemy.domains.modal.kernel.State">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="isFinalState"
+                     value="true">
+               </customCondition>
+            </compoundCondition>
+            <customCondition
+                  condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                  figureParam="normalState"
+                  figureSize="30,30"
+                  key="ptolemyClass"
+                  value="ptolemy.domains.modal.kernel.State">
+            </customCondition></conditions>
+         <editPart
+               editPart="de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart">
          </editPart>
       </configuration>
    </extension>
