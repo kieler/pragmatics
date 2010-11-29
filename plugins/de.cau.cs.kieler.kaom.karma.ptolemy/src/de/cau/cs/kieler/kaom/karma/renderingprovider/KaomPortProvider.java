@@ -58,6 +58,7 @@ public class KaomPortProvider implements IRenderingProvider {
         EditPart parentPart = part.getParent();
 
         // /// make port name invisible. not working yet.
+        /*
         Object partChild = part.getChildren().get(0);
         if (partChild instanceof PortNameEditPart) {
             PortNameEditPart portNameEditPart = (PortNameEditPart) partChild;
@@ -65,6 +66,7 @@ public class KaomPortProvider implements IRenderingProvider {
             portNameEditPart.getFigure().setSize(0, 0);
 
         }
+        */
         // ///
         if (parentPart instanceof IAdvancedRenderingEditPart) {
             EObject parentObject = ((IAdvancedRenderingEditPart) parentPart).getModelElement();
