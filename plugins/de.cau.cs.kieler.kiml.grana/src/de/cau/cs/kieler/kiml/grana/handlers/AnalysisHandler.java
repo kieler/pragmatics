@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.grana.handlers;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.swt.widgets.Shell;
@@ -33,7 +34,7 @@ import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
  * 
  * @author mri
  */
-public class AnalysisHandler extends AbstractAnalysisHandler {
+public class AnalysisHandler extends AbstractHandler {
 
     /**
      * {@inheritDoc}
@@ -46,7 +47,7 @@ public class AnalysisHandler extends AbstractAnalysisHandler {
         Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
         GranaUIUtil.setCurrentShell(shell);
         // get the last selected analyses
-        List<AbstractInfoAnalysis> analyses = getLastAnalysesSelection();
+        List<AbstractInfoAnalysis> analyses = GranaHandlerUtil.getLastAnalysesSelection();
         // perform the analyses on the active diagram
         Map<String, Object> results =
                 DiagramAnalyzer.analyse(editorPart, null, analyses, true);

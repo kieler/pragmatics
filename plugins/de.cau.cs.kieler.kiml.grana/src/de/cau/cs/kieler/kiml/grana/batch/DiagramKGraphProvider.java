@@ -1,0 +1,143 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+package de.cau.cs.kieler.kiml.grana.batch;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
+
+import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
+import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+
+/**
+ * The KGraph provider that retrieves a KGraph by opening a diagram file in an
+ * editor and using KIML to build the graph structure.
+ * 
+ * @author mri
+ */
+public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
+
+    /** the message for an unsupported diagram editor. */
+    private static final String MESSAGE_NO_MANAGER =
+            "The editor for the diagram file is not supported by KIML.";
+    /** the message for a failed diagram layout. */
+    private static final String MESSAGE_LAYOUT_FAILED =
+            "The layout of the diagram failed.";
+    /** the message for a missing eclipse editor. */
+    private static final String MESSAGE_NO_EDITOR =
+            "The diagram file could not be opened in an eclipse editor.";
+
+    /** the 'layout before analysis' option. */
+    private boolean layoutBeforeAnalysis;
+    /** the last exception thrown inside the UI thread. */
+    private Exception lastException;
+    /** the last created kgraph instance. */
+    private KNode graph;
+
+    /**
+     * {@inheritDoc}
+     */
+    public KNode getKGraph(final IPath parameter,
+            final IKielerProgressMonitor monitor) throws Exception {
+        monitor.begin("Retrieving KGraph from " + parameter.toString(), 1);
+        // get the diagram file
+        final IFile diagramFile =
+                ResourcesPlugin.getWorkspace().getRoot().getFile(parameter);
+        lastException = null;
+        MonitoredOperation.runInUI(new Runnable() {
+            public void run() {
+                // open the diagram file in an editor
+                IWorkbenchPage page =
+                        PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                                .getActivePage();
+                IEditorDescriptor editorDescriptor =
+                        IDE.getDefaultEditor(diagramFile);
+                if (editorDescriptor.isOpenExternal()) {
+                    throw new RuntimeException(MESSAGE_NO_EDITOR);
+                }
+                IEditorPart editorPart;
+                try {
+                    editorPart =
+                            IDE.openEditor(page, diagramFile,
+                                    editorDescriptor.getId(), true);
+                } catch (PartInitException e) {
+                    lastException = e;
+                    return;
+                }
+                // get the layout manager for the editor
+                DiagramLayoutManager layoutManager =
+                        EclipseLayoutServices.getInstance().getManager(
+                                editorPart, null);
+                if (layoutManager == null) {
+                    page.closeEditor(editorPart, false);
+                    lastException = new RuntimeException(MESSAGE_NO_MANAGER);
+                    return;
+                }
+                // build the graph
+                graph = layoutManager.buildLayoutGraph(editorPart, null, false);
+                // layout if the option is set
+                if (layoutBeforeAnalysis) {
+                    IStatus status = layoutManager.layout(monitor, false);
+                    if (!status.isOK()) {
+                        page.closeEditor(editorPart, false);
+                        lastException =
+                                new KielerException(MESSAGE_LAYOUT_FAILED,
+                                        status.getException());
+                        return;
+                    }
+                }
+                page.closeEditor(editorPart, false);
+            }
+        }, true);
+        monitor.done();
+        // throw any exceptions that occurred inside the UI thread
+        if (lastException != null) {
+            throw lastException;
+        }
+        return graph;
+    }
+
+    /**
+     * Sets the option which specifies whether layout should be performed before
+     * the KGraph is built.
+     * 
+     * @param layoutBeforeAnalysisOption
+     *            true if layout should be performed before the kgraph
+     *            generation
+     */
+    public void setLayoutBeforeAnalysis(final boolean layoutBeforeAnalysisOption) {
+        layoutBeforeAnalysis = layoutBeforeAnalysisOption;
+    }
+
+    /**
+     * Returns the option which specifies whether layout should be performed
+     * before the KGraph is built.
+     * 
+     * @return true if layout should be performed before the kgraph generation
+     */
+    public boolean getLayoutBeforeAnalysis() {
+        return layoutBeforeAnalysis;
+    }
+}

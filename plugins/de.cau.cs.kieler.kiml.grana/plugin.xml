@@ -17,6 +17,12 @@
             id="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
             name="Configure Analyses">
       </command>
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.BatchHandler"
+            id="de.cau.cs.kieler.kiml.grana.command.setupBatch"
+            name="Setup Batch">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -46,6 +52,15 @@
          <command
                commandId="de.cau.cs.kieler.kiml.grana.command.configureAnalyses"
                label="Configure..."
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.cau.cs.kieler">
+         <command
+               commandId="de.cau.cs.kieler.kiml.grana.command.setupBatch"
+               label="Setup Analysis Batch..."
                style="push">
          </command>
       </menuContribution>

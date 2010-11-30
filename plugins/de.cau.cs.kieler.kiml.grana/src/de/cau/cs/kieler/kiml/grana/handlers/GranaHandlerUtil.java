@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.grana.handlers;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
@@ -24,21 +23,29 @@ import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
 
 /**
- * The base class for handlers that perform an analysis of any kind.
+ * A utility class for grana handlers.
  * 
  * @author mri
  */
-public abstract class AbstractAnalysisHandler extends AbstractHandler {
-    
+public final class GranaHandlerUtil {
+
     /** the name for the last analyses preference. */
-    public static final String LAST_ANALYSES_PREFERENCE = "lastAnalysesPreference"; 
-   
+    private static final String LAST_ANALYSES_PREFERENCE =
+            "lastAnalysesPreference";
+
+    /**
+     * Make this class not instantiable.
+     */
+    private GranaHandlerUtil() {
+        // do nothing
+    }
+
     /**
      * Returns the last selected analyses from the preference store.
      * 
      * @return the last selected analyses
      */
-    protected List<AbstractInfoAnalysis> getLastAnalysesSelection() {
+    public static List<AbstractInfoAnalysis> getLastAnalysesSelection() {
         List<AbstractInfoAnalysis> result =
                 new LinkedList<AbstractInfoAnalysis>();
         // get the preference store
@@ -65,7 +72,7 @@ public abstract class AbstractAnalysisHandler extends AbstractHandler {
      * @param analyses
      *            the analyses
      */
-    protected void setLastAnalysesSelection(
+    public static void setLastAnalysesSelection(
             final List<AbstractInfoAnalysis> analyses) {
         // get the preference store
         IPreferenceStore preferenceStore =
