@@ -51,14 +51,27 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         
         for (KNode node : layoutNode.getChildren()) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            // set the fixed position of the node, or leave it as it is
             KVector pos = nodeLayout.getProperty(LayoutOptions.POSITION);
             if (pos == null) {
                 nodeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
             } else {
                 nodeLayout.setXpos((float) pos.x);
                 nodeLayout.setYpos((float) pos.y);
+                // set the fixed size of the node
+                if (!nodeLayout.getProperty(LayoutOptions.FIXED_SIZE)) {
+                    float width = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
+                    if (width > 0) {
+                        nodeLayout.setWidth(width);
+                    }
+                    float height = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
+                    if (height > 0) {
+                        nodeLayout.setHeight(height);
+                    }
+                }
             }
             
+            // set the fixed position of the ports, or leave them as they are
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
                 pos = portLayout.getProperty(LayoutOptions.POSITION);
@@ -70,6 +83,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 }
             }
             
+            // set fixed routing for the connected edges, or leave them as they are
             for (KEdge edge : node.getOutgoingEdges()) {
                 processEdge(edge);
             }
