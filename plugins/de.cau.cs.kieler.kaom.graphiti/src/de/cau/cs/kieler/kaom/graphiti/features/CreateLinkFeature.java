@@ -13,13 +13,10 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-import javax.swing.JOptionPane;
-
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateConnectionFeature;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 
 import de.cau.cs.kieler.kaom.Entity;
@@ -30,150 +27,66 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
 
 /**
+ * Creates a link object and passes this object to the {@link AddLinkFeature}.
  * 
- * @author atr Creates a link object and passes this object to AddLinkFeature class.
+ * @author atr
  */
 public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
     /**
+     * The constructor.
      * 
-     * @param fp
-     * 
-     *            Constructor.
+     * @param fp the feature provider
      */
     public CreateLinkFeature(final IFeatureProvider fp) {
         super(fp, "Link", "Create Link");
     }
 
     /**
-     * 
-     * {@inheritDoc} Checks if the source and target elements are Linkable.
+     * {@inheritDoc}
      */
     public boolean canCreate(final ICreateConnectionContext context) {
+        Object source = getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent());
+        Object target = getBusinessObjectForPictogramElement(context.getTargetAnchor().getParent());
 
-        Object source = null, target = null;
-        source = getObject(context.getSourceAnchor());
-        target = getObject(context.getTargetAnchor());
-
-        if (source != null && target != null && source != target) {
-
-            return true;
-        }
-
-        return false;
+        return (source instanceof Linkable && target instanceof Linkable && source != target);
     }
 
     /**
      * {@inheritDoc}
-     * 
      */
     public boolean canStartConnection(final ICreateConnectionContext context) {
-
-        if (context.getSourceAnchor() != null) {
-
-            if (getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent()) != null) {
-                return true;
-            }
-        }
-        return false;
+        return (context.getSourceAnchor() != null
+                && getBusinessObjectForPictogramElement(
+                context.getSourceAnchor().getParent()) != null);
     }
 
     /**
-     * {@inheritDoc} Creates a new connection object .
+     * {@inheritDoc}
      */
     public Connection create(final ICreateConnectionContext context) {
+        Object source = getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent());
+        Object target = getBusinessObjectForPictogramElement(context.getTargetAnchor().getParent());
 
-        Connection newConnection = null;
-
-        Object source = null, target = null;
-
-        source = getObject(context.getSourceAnchor());
-        target = getObject(context.getTargetAnchor());
-
-        if (source != null && target != null) {
-
-            Link link = createLink(source, target);
+        if (source instanceof Linkable && target instanceof Linkable) {
+            KaomFactory kaomFactory = KaomFactory.eINSTANCE;
+            Link link = kaomFactory.createLink();
+            link.setSource((Linkable) source);
+            link.setTarget((Linkable) target);
+            Entity topEntity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(getDiagram());
+            topEntity.getChildLinks().add(link);
+            
+            getFeatureProvider().getDirectEditingInfo().setActive(true);
             AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(),
                     context.getTargetAnchor());
-
             addContext.setNewObject(link);
-            newConnection = (Connection) getFeatureProvider().addIfPossible(addContext);
+            return (Connection) getFeatureProvider().addIfPossible(addContext);
         }
 
-        return newConnection;
-
-    }
-
-    /**
-     * 
-     * Returns the Entity belonging to the anchor, or null if not available.
-     * 
-     * @param anchor
-     * @return
-     */
-    private Object getObject(final Anchor anchor) {
-
-        if (anchor != null) {
-
-            Object obj = getBusinessObjectForPictogramElement(anchor.getParent());
-
-            if (obj instanceof Linkable) {
-                return (Linkable) obj;
-            }
-        }
         return null;
     }
 
     /**
-     * 
-     * Creates a Link between two Linkable Objects.
-     */
-
-    private Link createLink(final Object source, final Object target) {
-
-        KaomFactory kaomFactory = KaomFactory.eINSTANCE;
-        Link link = kaomFactory.createLink();
-
-        if (source instanceof Linkable) {
-
-            Linkable linkableSource = (Linkable) source;
-            linkableSource.getOutgoingLinks().add(link);
-        } else {
-            JOptionPane.showMessageDialog(null, "Source object not linkable", "ERROR",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-
-        if (target instanceof Linkable) {
-
-            Linkable linkableTarget = (Linkable) target;
-            linkableTarget.getIncomingLinks().add(link);
-        } else {
-            JOptionPane.showMessageDialog(null, "Target Object not linkable", "ERROR",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-
-        addToDiagram(link, source, target);
-        getFeatureProvider().getDirectEditingInfo().setActive(true);
-        return link;
-
-    }
-
-    /**
-     * 
-     * @param newLink
-     * @param source
-     * @param target
-     * 
-     *            Adds the link as a child link to the top level entity
-     */
-
-    private void addToDiagram(final Link newLink, final Object source, final Object target) {
-        Entity topEntity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(getDiagram());
-        topEntity.getChildLinks().add(newLink);
-    }
-
-    /**
-     * Gets the image for the link.
      * {@inheritDoc}
      */
     @Override

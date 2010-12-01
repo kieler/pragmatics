@@ -32,27 +32,32 @@ import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
 
 /**
+ * Adds a link between the source and the target elements.
  * 
  * @author atr 
- * Adds a link between the source and the target Adds the name of the link.
  */
 public class AddLinkFeature extends AbstractAddFeature {
+
+    /**
+     * The Constructor.
+     * 
+     * @param fp the feature provider
+     */
+    public AddLinkFeature(final IFeatureProvider fp) {
+        super(fp);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean canAdd(final IAddContext context) {
+        return (context instanceof IAddConnectionContext && context.getNewObject() instanceof Link);
+    }
 
     private static final double CONNECTION_DECORATOR_LOCATION = 0.5;
     private static final int TEXT_LOCATION = 10;
 
     /**
-     * 
-     * @param fp
-     *            Constructor
-     */
-    public AddLinkFeature(final IFeatureProvider fp) {
-        super(fp);
-
-    }
-
-    /**
-     * 
      * {@inheritDoc}
      */
     public PictogramElement add(final IAddContext context) {
@@ -93,18 +98,6 @@ public class AddLinkFeature extends AbstractAddFeature {
         directEditingInfo.setGraphicsAlgorithm(text);
         return conn;
 
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    public boolean canAdd(final IAddContext context) {
-
-        if (context instanceof IAddConnectionContext && context.getNewObject() instanceof Link) {
-            return true;
-        }
-        return false;
     }
 
     /**

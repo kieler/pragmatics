@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
 public class CreateEntityFeature extends AbstractCreateFeature {
 
     /**
-     * the constructor.
+     * The constructor.
      * 
      * @param fp the feature provider
      */
