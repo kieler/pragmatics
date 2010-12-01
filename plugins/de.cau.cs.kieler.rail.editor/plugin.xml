@@ -6,8 +6,8 @@
     <diagramType
       description="This is the diagram type for my Graphiti tutorial"
       id="de.cau.cs.kieler.rail.editor.DiagramType"
-      name="Rail editor"
-      type="Rail editor">
+      name="Rail"
+      type="Rail">
     </diagramType>
   </extension>
  
@@ -22,5 +22,22 @@
         id="de.cau.cs.kieler.rail.editor.DiagramType">
       </diagramType>
     </diagramTypeProvider>
+  </extension>
+  <extension
+        point="org.eclipse.ui.newWizards">
+     <wizard
+           class="de.cau.cs.kieler.KrailCreationWizardPage"
+           id="de.cau.cs.kieler.rail.editor.WizardPage"
+           name="Rail editor">
+     </wizard>
+  </extension>
+  <extension
+        point="org.eclipse.ui.editors">
+     <editor
+           default="false"
+           extensions="krail"
+           id="de.cau.cs.kieler.rail.editor"
+           name="Rail Editor">
+     </editor>
   </extension>
 </plugin>

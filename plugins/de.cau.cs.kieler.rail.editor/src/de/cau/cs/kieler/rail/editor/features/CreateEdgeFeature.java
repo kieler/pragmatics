@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.rail.editor;
+package de.cau.cs.kieler.rail.editor.features;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EReference;
@@ -10,10 +10,10 @@ import org.eclipse.graphiti.features.impl.AbstractCreateConnectionFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 
-public class CreateEReferenceFeature extends
+public class CreateEdgeFeature extends
        AbstractCreateConnectionFeature {
  
-    public CreateEReferenceFeature (IFeatureProvider fp) {
+    public CreateEdgeFeature (IFeatureProvider fp) {
         // provide name and description for the UI, e.g. the palette
         super(fp, "Verbindung", "Verbindung erstellen");
     }

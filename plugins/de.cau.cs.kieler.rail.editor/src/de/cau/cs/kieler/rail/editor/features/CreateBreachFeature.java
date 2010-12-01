@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.rail.editor;
+package de.cau.cs.kieler.rail.editor.features;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.graphiti.examples.common.ExampleUtil;
@@ -7,13 +7,18 @@ import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 
+import de.cau.cs.kieler.rail.Topologie.Model;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.SpecializedVerticesFactory;
+import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
 
-public class CreateEClassFeature extends AbstractCreateFeature  {
+
+public class CreateBreachFeature extends AbstractCreateFeature  {
     private static final String TITLE = "Create class";
     
     private static final String USER_QUESTION = "Enter new class name";
  
-    public CreateEClassFeature(IFeatureProvider fp) {
+    public CreateBreachFeature(IFeatureProvider fp) {
         // set name and description of the creation feature
         super(fp, "Einbruchstelle", "Einbruchstelle erstellen");
     }
@@ -24,24 +29,15 @@ public class CreateEClassFeature extends AbstractCreateFeature  {
  
     public Object[] create(ICreateContext context) {
         // ask user for EClass name
-        String newClassName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
-        if (newClassName == null || newClassName.trim().length() == 0) {
-            return EMPTY;
-        }
- 
-        // create EClass
-        EClass newClass = EcoreFactory.eINSTANCE.createEClass();
-        // Add model element to resource.
-        // We add the model element to the resource of the diagram for
-        // simplicity's sake. Normally, a customer would use its own
-        // model persistence layer for storing the business model separately.
-        getDiagram().eResource().getContents().add(newClass);
-        newClass.setName(newClassName);
- 
+        Einbruchsknoten vertex = SpecializedVerticesFactory.eINSTANCE.createEinbruchsknoten();
+        Model model = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(context.getTargetContainer());
+        
+        model.getVertices().add(vertex);    
+        
         // do the add
-        addGraphicalRepresentation(context, newClass);
+        addGraphicalRepresentation(context, vertex);
  
         // return newly created business object(s)
-        return new Object[] { newClass };
+        return new Object[] { vertex };
     }
 }

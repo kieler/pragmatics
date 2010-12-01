@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.rail.editor;
+package de.cau.cs.kieler.rail.editor.features;
 
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -13,9 +13,9 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.IColorConstant;
 
-public class AddEReferenceFeature extends AbstractAddFeature {
+public class AddEdgeFeature extends AbstractAddFeature {
  
-    public AddEReferenceFeature (IFeatureProvider fp) {
+    public AddEdgeFeature (IFeatureProvider fp) {
         super(fp);
     }
  

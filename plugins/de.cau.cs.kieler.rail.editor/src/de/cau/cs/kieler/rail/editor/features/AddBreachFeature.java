@@ -1,4 +1,4 @@
-package de.cau.cs.kieler.rail.editor;
+package de.cau.cs.kieler.rail.editor.features;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -19,7 +19,7 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
-public class AddEClassFeature extends AbstractAddShapeFeature {
+public class AddBreachFeature extends AbstractAddShapeFeature {
     private static final IColorConstant CLASS_TEXT_FOREGROUND =
         new ColorConstant(51, 51, 153);
  
@@ -29,7 +29,7 @@ public class AddEClassFeature extends AbstractAddShapeFeature {
     private static final IColorConstant CLASS_BACKGROUND =
         new ColorConstant(255, 204, 153);
  
-    public AddEClassFeature(IFeatureProvider fp) {
+    public AddBreachFeature(IFeatureProvider fp) {
         super(fp);
     }
  
@@ -54,8 +54,8 @@ public class AddEClassFeature extends AbstractAddShapeFeature {
              peCreateService.createContainerShape(targetDiagram, true);
  
         // define a default size for the shape
-        int width = 100;
-        int height = 110; 
+        int width = 50;
+        int height = 50; 
         IGaService gaService = Graphiti.getGaService();
  
         {
@@ -72,7 +72,7 @@ public class AddEClassFeature extends AbstractAddShapeFeature {
             
             //NEU
             Ellipse ellipse = gaService.createEllipse( containerShape);
-            ellipse.setLineWidth(10);
+            ellipse.setLineWidth(3);
             ellipse.setFilled(false);
             ellipse.setForeground(manageColor(0,0,0));
             ellipse.setBackground(manageColor(255,255,255));
