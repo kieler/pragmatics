@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.graphiti;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,16 +25,23 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.impl.PropertyImpl;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
+import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 
 /**
  * @author soh
  */
+@SuppressWarnings("restriction")
 public class GraphitiLayoutConfig extends EclipseLayoutConfig {
 
     public static class GraphitiLayoutProperty extends PropertyImpl implements
@@ -48,13 +54,10 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         }
     }
 
-    private Map<String, String> optionMap = new HashMap<String, String>();
-
     @Override
     public void clearProperties() {
         EditPart part = getEditPart();
         if (part instanceof IPictogramElementEditPart) {
-            optionMap = new HashMap<String, String>();
             final IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) part;
             GraphitiLayoutInspector li = new GraphitiLayoutInspector(
                     focusEditPart);
@@ -72,7 +75,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                     while (iter.hasNext()) {
                         Property p = iter.next();
 
-                        if (p.getKey().startsWith("KIELER_")) {
+                        if (p.getKey().startsWith("de.cau.cs.kieler")) {
                             iter.remove();
                         }
                     }
@@ -93,21 +96,20 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      */
     @Override
     public boolean isDefault(final LayoutOptionData<?> optionData) {
+        EditPart ed = getEditPart();
+        IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) ed;
+        EList<Property> prop = focusEditPart.getPictogramElement()
+                .getProperties();
         // check option value from notation model
-        if (optionMap.isEmpty()) {
-            String value = optionMap.get(optionData.getId());
-            if (value != null) {
-                if (optionData.parseValue(value) != null) {
-                    return false;
+        for (Property property : prop) {
+            if (property.getKey().equals(optionData.getId())) {
+                String value = property.getValue();
+                if (value != null) {
+                    if (optionData.parseValue(value) != null) {
+                        return false;
+                    }
                 }
             }
-
-            // KOption koption = koptionMap.get(optionData);
-            // if (koption != null) {
-            // if (optionData.parseValue(koption.getValue()) != null) {
-            // return false;
-            // }
-            // }
         }
         return super.isDefault(optionData);
     }
@@ -123,40 +125,12 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      *            an option value
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void setProperty(final IProperty<?> property, final Object value) {
         if (property instanceof LayoutOptionData<?>) {
             LayoutOptionData<?> optionData = (LayoutOptionData<?>) property;
             if (value == null) {
-                optionMap.remove(optionData.getId());
                 removeOption(optionData.getId());
-                // if (optionStyle != null) {
-                // removeKOption(optionStyle, optionData);
-                // koptionMap.remove(optionData);
-                // }
             } else {
-                String currentValue = optionMap.get(optionData.getId());
-                if (currentValue == null) {
-                    optionMap.put(optionData.getId(), value.toString());
-                    // if (optionStyle == null) {
-                    // if (getEditPart() instanceof IGraphicalEditPart) {
-                    // IGraphicalEditPart focusEditPart = (IGraphicalEditPart)
-                    // getEditPart();
-                    // optionStyle = LayoutOptionsFactory.eINSTANCE
-                    // .createLayoutOptionStyle();
-                    // focusEditPart.getNotationView().getStyles()
-                    // .add(optionStyle);
-                    // } else {
-                    // super.setProperty(property, value);
-                    // return;
-                    // }
-                    // }
-                    // koption = LayoutOptionsFactory.eINSTANCE.createKOption();
-                    // koption.setKey(optionData.getId());
-                    // optionStyle.getOptions().add(koption);
-                    // koptionMap.put(optionData, koption);
-                }
-                optionMap.put(optionData.getId(), value.toString());
                 setOption(optionData.getId(), value.toString());
             }
         } else {
@@ -188,12 +162,11 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                     while (iter.hasNext()) {
                         Property p = iter.next();
 
-                        if (p.getKey().equals("KIELER_" + id)) {
+                        if (p.getKey().equals(id)) {
                             p.setValue(string);
                             return;
                         }
                     }
-
                     prop.add(new GraphitiLayoutProperty(id, string));
                 }
             });
@@ -223,7 +196,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                     while (iter.hasNext()) {
                         Property p = iter.next();
 
-                        if (p.getKey().equals("KIELER_" + id)) {
+                        if (p.getKey().equals(id)) {
                             iter.remove();
                         }
                     }
@@ -246,21 +219,23 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     protected <T> T doGetProperty(final LayoutOptionData<T> optionData) {
         T result;
         // check option value from notation model
-        if (!optionMap.isEmpty()) {
-            String value = optionMap.get(optionData.getId());
-            if (value != null) {
-                result = optionData.parseValue(value);
-                if (result != null) {
-                    return result;
+        if (super.getEditPart() instanceof IPictogramElementEditPart) {
+            // add user defined global layout options
+            IPictogramElementEditPart editPart = (IPictogramElementEditPart) super
+                    .getEditPart();
+
+            for (Property p : editPart.getPictogramElement().getProperties()) {
+                if (p.getKey().equals(optionData.getId())) {
+                    String value = p.getValue();
+                    if (value != null) {
+                        result = optionData.parseValue(value);
+                        if (result != null) {
+                            return result;
+                        }
+                    }
                 }
             }
         }
-
-        // check default option of diagram edit part
-        // result = getDiagramDefault(optionData);
-        // if (result != null) {
-        // return result;
-        // }
 
         // fall back to the user-stored or preconfigured configuration
         return super.doGetProperty(optionData);
@@ -273,32 +248,39 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      *            an edit part
      */
     public final void initialize(final IPictogramElementEditPart editPart) {
-        optionMap = new HashMap<String, String>();
         // find an appropriate property source and set the layout option targets
         final IPictogramElementEditPart focusEditPart = editPart;
 
         setFocus(focusEditPart);
 
-        GraphitiLayoutInspector li = new GraphitiLayoutInspector(focusEditPart);
-        final TransactionalEditingDomain ed = li.getEditingDomain();
-        CommandStack cs = ed.getCommandStack();
-        cs.execute(new RecordingCommand(ed) {
-
-            @Override
-            protected void doExecute() {
-                EList<Property> prop = focusEditPart.getPictogramElement()
-                        .getProperties();
-
-                for (Property p : prop) {
-                    if (p.getKey().startsWith("KIELER_")) {
-                        String key = p.getKey().replaceFirst("KIELER_", "");
-                        String value = p.getValue();
-
-                        optionMap.put(key, value);
-                    }
+        PictogramElement pe = editPart.getPictogramElement();
+        if (pe instanceof Diagram) {
+            super.initialize(Target.PARENTS, getEditPart(), null);
+        } else if (pe instanceof ContainerShape) {
+            super.initialize(Target.NODES, getEditPart(), null);
+            List<PictogramElement> children = editPart.getModelChildren();
+            boolean hasPorts = false;
+            boolean hasChildren = false;
+            for (PictogramElement pe1 : children) {
+                if (pe1 instanceof Anchor) {
+                    hasPorts = true;
+                } else {
+                    hasChildren = true;
                 }
             }
-        });
+            if (hasChildren) {
+                super.initialize(Target.EDGES, getEditPart(), null);
+                super.initialize(Target.PARENTS, getEditPart(), null);
+            }
+            if (hasPorts) {
+                super.initialize(Target.PORTS, getEditPart(), null);
+            }
+
+        } else if (pe instanceof Connection) {
+            super.initialize(Target.EDGES, getEditPart(), null);
+        } else if (pe instanceof Anchor) {
+            super.initialize(Target.PORTS, getEditPart(), null);
+        }
     }
 
     public static List<Property> getProperties(
@@ -308,8 +290,8 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         EList<Property> prop = editPart.getPictogramElement().getProperties();
 
         for (Property p : prop) {
-            if (p.getKey().startsWith("KIELER_")) {
-                String key = p.getKey().replaceFirst("KIELER_", "");
+            if (p.getKey().startsWith("de.cau.cs.kieler")) {
+                String key = p.getKey();
                 String value = p.getValue();
 
                 result.add(new GraphitiLayoutProperty(key, value));
@@ -333,21 +315,6 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
             IPictogramElementEditPart editPart = (IPictogramElementEditPart) super
                     .getEditPart();
             addOptions(options, false, getProperties(editPart));
-
-            // DiagramEditPart diagramEditPart =
-            // GraphitiLayoutInspector.getDiagramEditPart(editPart);
-            // if (diagramEditPart != editPart && diagramEditPart != null) {
-            // LayoutOptionStyle style = (LayoutOptionStyle)
-            // diagramEditPart.getNotationView()
-            // .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-            // addOptions(options, style, true);
-            // }
-            //
-            // // add user defined local layout options
-            // LayoutOptionStyle style = (LayoutOptionStyle)
-            // editPart.getNotationView().getStyle(
-            // LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
-            // addOptions(options, style, false);
         }
     }
 
@@ -355,7 +322,6 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
             final boolean onlyDefault, final List<Property> props) {
         LayoutServices layoutServices = LayoutServices.getInstance();
         for (Property option : props) {
-            // if (!onlyDefault || option.isDefault()) {
             LayoutOptionData<?> optionData = layoutServices
                     .getLayoutOptionData(option.getKey());
             if (optionData != null) {
@@ -364,7 +330,6 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                     options.put(optionData, value);
                 }
             }
-            // }
         }
     }
 }
