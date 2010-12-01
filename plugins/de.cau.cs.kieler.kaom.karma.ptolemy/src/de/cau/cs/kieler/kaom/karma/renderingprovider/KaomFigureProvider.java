@@ -95,7 +95,7 @@ public class KaomFigureProvider implements IRenderingProvider {
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object, final EditPart part) {
         if (input.equals("_IconDescription")) {
-            return createFigureFromIconDescription(object);
+            return createPtolemyFigure(getPtolemyInstance(object));
         } else if (input.equals("MonitorValue")) {
             return createMonitorValue(object);
         } else if (input.startsWith("valueDisplay")) {
@@ -410,11 +410,11 @@ public class KaomFigureProvider implements IRenderingProvider {
 
     private static IFigure createAccumulator() {
         String accsvg = "<svg height=\"41\" width=\"41\" >"
-                + "<rect height=\"40\" style=\"fill:white;stroke:black;stroke-width:1\" " 
-                +       "width=\"40\" x=\"0.0\" y=\"0.0\" />"
-                + "<path d=\"m 29.126953,6.2304687 0,3.0410157 -13.833984,0 8.789062,9.3515626 " 
-                +       "-8.789062,10.335937 14.554687,0 0,3.041016 -18.246093,0 " 
-                +       "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
+                + "<rect height=\"40\" style=\"fill:white;stroke:black;stroke-width:1\" "
+                + "width=\"40\" x=\"0.0\" y=\"0.0\" />"
+                + "<path d=\"m 29.126953,6.2304687 0,3.0410157 -13.833984,0 8.789062,9.3515626 "
+                + "-8.789062,10.335937 14.554687,0 0,3.041016 -18.246093,0 "
+                + "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
                 + "</svg>";
         return createSvg(accsvg);
     }
@@ -500,19 +500,20 @@ public class KaomFigureProvider implements IRenderingProvider {
     private static final int LABELLOCATION_X = 5;
     private static final int LABELLOCATION_Y = 8;
 
-    private IFigure createValueFigure(final EObject object, final String valueAttribute, final EditPart part) {
+    private IFigure createValueFigure(final EObject object, final String valueAttribute,
+            final EditPart part) {
         RectangleFigure constFigure = (RectangleFigure) getDefaultFigure();
         if (object instanceof Annotatable) {
             Annotation iconAnn = ((Annotatable) object).getAnnotation("_icon");
             int width;
             if (iconAnn != null) {
-                StringAnnotation sizeAnn = (StringAnnotation) iconAnn.getAnnotation("displayWidth");                
-                
-            if (sizeAnn != null) {
-                width = Integer.parseInt(sizeAnn.getValue());
-            } else {
-                width = DEFAULT_WIDTH;
-            }
+                StringAnnotation sizeAnn = (StringAnnotation) iconAnn.getAnnotation("displayWidth");
+
+                if (sizeAnn != null) {
+                    width = Integer.parseInt(sizeAnn.getValue());
+                } else {
+                    width = DEFAULT_WIDTH;
+                }
             } else {
                 width = DEFAULT_WIDTH;
             }
@@ -521,26 +522,27 @@ public class KaomFigureProvider implements IRenderingProvider {
             constFigure.setMaximumSize(dim.getCopy());
             constFigure.setMinimumSize(dim.getCopy());
             constFigure.setPreferredSize(dim.getCopy());
-            
+
             if (!valueAttribute.equals("null")) {
                 Annotation valueAnn = ((Annotatable) object).getAnnotation(valueAttribute);
                 String value = ((StringAnnotation) valueAnn).getValue();
                 Label valueLabel = new Label();
                 valueLabel.setText(value);
                 valueLabel.setBounds(new Rectangle(LABELLOCATION_X, LABELLOCATION_Y,
-                    /*width -5*/80, LABELSIZE_HEIGHT));
+                /* width -5 */80, LABELSIZE_HEIGHT));
                 constFigure.setLayoutManager(new BorderLayout());
                 constFigure.add(valueLabel);
             }
-            
+
         }
         return constFigure;
-        
+
     }
-    
+
     private static final int ARROW_SIZE = 10;
     private static final double ARROW_X_SCALE = 1.0;
     private static final double ARROW_Y_SCALE = 0.5;
+
     /**
      * Create the arrow decoration.
      * 
@@ -557,8 +559,7 @@ public class KaomFigureProvider implements IRenderingProvider {
         arrowDecoration.setScale(ARROW_X_SCALE, ARROW_Y_SCALE);
         return arrowDecoration;
     }
-    
-    
+
     /**
      * creates a figure representing a constant.
      * 
@@ -567,41 +568,23 @@ public class KaomFigureProvider implements IRenderingProvider {
      * @return the constant figure
      */
     /*
-    private IFigure createConstFigure(final EObject object) {
-        IFigure constFigure = getDefaultFigure();
-        if (object instanceof Annotatable) {
-            Annotation valueAnn = ((Annotatable) object).getAnnotation("value");
-            if (valueAnn instanceof StringAnnotation) {
-                String value = ((StringAnnotation) valueAnn).getValue();
-                Label valueLabel = new Label();
-                valueLabel.setText(value);
-                valueLabel.setBounds(new Rectangle(LABELLOCATION_X, LABELLOCATION_Y,
-                        LABELSIZE_WIDTH, LABELSIZE_HEIGHT));
-                constFigure.setLayoutManager(new BorderLayout());
-                constFigure.add(valueLabel);
-            }
-        }
-        return constFigure;
-    }
-    
-    private IFigure createValuesFigure(final EObject object) {
-        IFigure constFigure = getDefaultFigure();
-        if (object instanceof Annotatable) {
-            Annotation valueAnn = ((Annotatable) object).getAnnotation("values");
-            if (valueAnn instanceof StringAnnotation) {
-                String value = ((StringAnnotation) valueAnn).getValue();
-                Label valueLabel = new Label();
-                valueLabel.setText(value);
-                valueLabel.setBounds(new Rectangle(LABELLOCATION_X, LABELLOCATION_Y,
-                        LABELSIZE_WIDTH, LABELSIZE_HEIGHT));
-                constFigure.setLayoutManager(new BorderLayout());
-                constFigure.add(valueLabel);
-            }
-        }
-        return constFigure;
-    }
-*/
-    
+     * private IFigure createConstFigure(final EObject object) { IFigure constFigure =
+     * getDefaultFigure(); if (object instanceof Annotatable) { Annotation valueAnn = ((Annotatable)
+     * object).getAnnotation("value"); if (valueAnn instanceof StringAnnotation) { String value =
+     * ((StringAnnotation) valueAnn).getValue(); Label valueLabel = new Label();
+     * valueLabel.setText(value); valueLabel.setBounds(new Rectangle(LABELLOCATION_X,
+     * LABELLOCATION_Y, LABELSIZE_WIDTH, LABELSIZE_HEIGHT)); constFigure.setLayoutManager(new
+     * BorderLayout()); constFigure.add(valueLabel); } } return constFigure; }
+     * 
+     * private IFigure createValuesFigure(final EObject object) { IFigure constFigure =
+     * getDefaultFigure(); if (object instanceof Annotatable) { Annotation valueAnn = ((Annotatable)
+     * object).getAnnotation("values"); if (valueAnn instanceof StringAnnotation) { String value =
+     * ((StringAnnotation) valueAnn).getValue(); Label valueLabel = new Label();
+     * valueLabel.setText(value); valueLabel.setBounds(new Rectangle(LABELLOCATION_X,
+     * LABELLOCATION_Y, LABELSIZE_WIDTH, LABELSIZE_HEIGHT)); constFigure.setLayoutManager(new
+     * BorderLayout()); constFigure.add(valueLabel); } } return constFigure; }
+     */
+
     /**
      * creates an appropriate figure according to the _IconDescription attribute of a ptolemy actor.
      * 
@@ -609,9 +592,58 @@ public class KaomFigureProvider implements IRenderingProvider {
      *            the model element
      * @return the figure
      */
-    private static IFigure createFigureFromIconDescription(final EObject object) {
+    private static IFigure createPtolemyFigure(final NamedObj nObj) {
+        if (nObj == null) {
+            return getDefaultFigure();
+        } else {
+            TestIconLoader til = new TestIconLoader();
+            try {
+                til.loadIconForClass(nObj.getClassName(), nObj);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            List<EditorIcon> icons = nObj.attributeList(EditorIcon.class);
+            ConfigurableAttribute ca = null;
+            String svg = "";
+            if (icons.isEmpty()) {
+                ca = (ConfigurableAttribute) nObj.getAttribute("_iconDescription");
+                svg = ca.getConfigureText();
+            } else {
+                EditorIcon icon = icons.get(0);
+                Figure shape = icon.createBackgroundFigure();
+                Image img;
+                img = getImageFromFigure(shape);
+                BufferedImage resizedImage = new BufferedImage(img.getWidth(null),
+                        img.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                Graphics2D g = resizedImage.createGraphics();
+                g.drawImage(img, 0, 0, null);
+                g.dispose();
+                g.setComposite(AlphaComposite.Src);
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                g.setRenderingHint(RenderingHints.KEY_RENDERING,
+                        RenderingHints.VALUE_RENDER_QUALITY);
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+                ScalableImageFigure fig = new ScalableImageFigure(
+                        new org.eclipse.swt.graphics.Image(Display.getCurrent(),
+                                CoreUiUtil.convertAWTImageToSWT(resizedImage)));
+                return fig;
+            }
+            svg = repairSvg(svg);
+            if (svg == null) {
+                return getDefaultFigure();
+            } else {
+                return createSvg(svg);
+            }
+        }
+
+    }
+
+    private NamedObj getPtolemyInstance(EObject object) {
         if (object instanceof Annotatable) {
-            Annotatable myAnnotatable =  (Annotatable) object;
+            Annotatable myAnnotatable = (Annotatable) object;
             Annotation annotation = myAnnotatable.getAnnotation("ptolemyClass");
             if (annotation != null && annotation instanceof StringAnnotation) {
                 String ptolemyClassString = ((StringAnnotation) annotation).getValue();
@@ -622,62 +654,18 @@ public class KaomFigureProvider implements IRenderingProvider {
                             String.class);
                     obj = constr.newInstance(new CompositeEntity(), "cache");
                     if (obj instanceof NamedObj) {
-                        NamedObj entity = (NamedObj) obj;
-                        TestIconLoader til = new TestIconLoader();
-                        try {
-                            til.loadIconForClass(ptolemyClassString, entity);
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                        List<EditorIcon> icons = entity.attributeList(EditorIcon.class);
-                        ConfigurableAttribute ca = null;
-                        String svg = "";
-                        if (icons.isEmpty()) {
-                            ca = (ConfigurableAttribute) entity.getAttribute("_iconDescription");
-                            svg = ca.getConfigureText();
-                        } else {
-                            EditorIcon icon = icons.get(0);
-                            Figure shape = icon.createBackgroundFigure();
-                            Image img;
-                            img = getImageFromFigure(shape);
-                            BufferedImage resizedImage = new BufferedImage(img.getWidth(null),
-                                    img.getHeight(null), BufferedImage.TYPE_INT_RGB);
-                            Graphics2D g = resizedImage.createGraphics();
-                            g.drawImage(img, 0, 0, null);
-                            g.dispose();
-                            g.setComposite(AlphaComposite.Src);
-                            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                                    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                            g.setRenderingHint(RenderingHints.KEY_RENDERING,
-                                    RenderingHints.VALUE_RENDER_QUALITY);
-                            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                    RenderingHints.VALUE_ANTIALIAS_ON);
-                            ScalableImageFigure fig = new ScalableImageFigure(
-                                    new org.eclipse.swt.graphics.Image(Display.getCurrent(),
-                                            CoreUiUtil.convertAWTImageToSWT(resizedImage)));
-                            return fig;
-                        }
-                        svg = repairSvg(svg);
-                        if (svg == null) {
-                            return getDefaultFigure();
-                        } else {
-                            return createSvg(svg);
-                        }
+                        NamedObj nObj = (NamedObj) obj;
+                        return nObj;
                     }
                 } catch (ClassNotFoundException ce) {
                     ce.printStackTrace();
-                    return getDefaultFigure();
+                    return null;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-            } else {
-                return getDefaultFigure();
             }
         }
         throw new RuntimeException("initializing svg from ptolemyClass failed");
-
     }
 
     private static Image getImageFromFigure(final Figure figure) {
@@ -714,7 +702,7 @@ public class KaomFigureProvider implements IRenderingProvider {
     }
 
     public NodeFigure getNodePlateByString(String input, EObject object) {
-        //return new DefaultSizeNodeFigure(50,70);
+        // return new DefaultSizeNodeFigure(50,70);
         return null;
     }
 
