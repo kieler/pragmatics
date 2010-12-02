@@ -1,4 +1,5 @@
 /*
+
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
@@ -54,6 +55,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
             throws KielerException {
         progressMonitor.begin("Railway layout", 1);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
+        
+        System.out.println("Hi there!");
 
 
         progressMonitor.done();

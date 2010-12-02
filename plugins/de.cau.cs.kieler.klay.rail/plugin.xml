@@ -9,7 +9,25 @@
             id="de.cau.cs.kieler.klay.rail"
             name="KLay Railway"
             type="de.cau.cs.kieler.layout.types.layered">
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.rail.nodeType">
+         </knownOption>
       </layoutProvider>
+      <layoutOption
+            appliesTo="nodes"
+            class="de.cau.cs.kieler.klay.rail.options.NodeType"
+            default="BREACH_OR_CLOSE"
+            description="Which railway element is this node"
+            id="de.cau.cs.kieler.klay.rail.nodeType"
+            name="Node Type"
+            type="enum">
+      </layoutOption>
    </extension>
 
 </plugin>
