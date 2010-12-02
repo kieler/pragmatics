@@ -18,6 +18,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.rail.nodeType">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.rail.entryPoint">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="nodes"
@@ -27,6 +30,14 @@
             id="de.cau.cs.kieler.klay.rail.nodeType"
             name="Node Type"
             type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="nodes"
+            default="false"
+            description="Is this an entry point? Only one per connected component."
+            id="de.cau.cs.kieler.klay.rail.entryPoint"
+            name="Entry Point"
+            type="boolean">
       </layoutOption>
    </extension>
 
