@@ -81,6 +81,9 @@ import de.cau.cs.kieler.kaom.graphiti.features.UpdateLinkFeature;
  */
 public class FeatureProvider extends DefaultFeatureProvider {
 
+    /** the style provider that is used by the features. */
+    private StyleProvider styleProvider;
+    
     /**
      * Constructor.
      * 
@@ -88,6 +91,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     public FeatureProvider(final IDiagramTypeProvider dtp) {
         super(dtp);
+        styleProvider = new StyleProvider(dtp.getDiagram());
     }
 
     /**
@@ -106,13 +110,13 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public IAddFeature getAddFeature(final IAddContext context) {
         if (context.getNewObject() instanceof Entity) {
-            return new AddEntityFeature(this);
+            return new AddEntityFeature(this, styleProvider);
         } else if (context.getNewObject() instanceof Link) {
-            return new AddLinkFeature(this);
+            return new AddLinkFeature(this, styleProvider);
         } else if (context.getNewObject() instanceof Port) {
-            return new AddPortFeature(this);
+            return new AddPortFeature(this, styleProvider);
         } else if (context.getNewObject() instanceof Relation) {
-            return new AddRelationFeature(this);
+            return new AddRelationFeature(this, styleProvider);
         }
         return super.getAddFeature(context);
     }
@@ -197,7 +201,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public ICustomFeature[] getCustomFeatures(final ICustomContext context) {
         return new ICustomFeature[] { new RenameEntityFeature(this),
-                new ChangeColorEntityFeature(this, true), new ChangeColorEntityFeature(this, false) };
+                new ChangeColorEntityFeature(this, styleProvider, true),
+                new ChangeColorEntityFeature(this, styleProvider, false) };
     }
 
     /**
@@ -256,9 +261,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public IDeleteFeature getDeleteFeature(final IDeleteContext context) {
-        IDeleteFeature ret = null;
-        ret = new DeleteFeature(this);
-        return ret;
+        return new DeleteFeature(this);
     }
 
 }

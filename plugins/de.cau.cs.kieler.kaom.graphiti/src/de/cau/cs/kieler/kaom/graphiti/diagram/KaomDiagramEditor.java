@@ -15,15 +15,11 @@ package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
-import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
-import org.eclipse.graphiti.util.ColorConstant;
 
 import de.cau.cs.kieler.kaom.Entity;
 
@@ -83,48 +79,6 @@ public class KaomDiagramEditor extends DiagramEditor {
             }
         }
         throw new IllegalStateException("No resource with a top level entity was found.");
-    }
-    
-    /**
-     * Fetch the style with given identifier.
-     * 
-     * @param diagram the diagram for which the style shall be fetched
-     * @param id the style identifier
-     * @return a style instance, or {@code null} if the id is unknown
-     */
-    public Style fetchStyle(final Diagram diagram, final String id) {
-        Style style = null;
-        for (Style diagramStyle : diagram.getStyles()) {
-            if (id.equals(diagramStyle.getId())) {
-                 style = diagramStyle;
-                 break;
-            }
-        }
-        if (style == null) {
-            style = createStyle(diagram, id);
-        }
-        return style;
-    }
-    
-    /** the default style id for KAOM diagrams. */
-    public static final String DEFAULT_STYLE = "default";
-    
-    /**
-     * Create the style with given identifier.
-     * 
-     * @param diagram the diagram where the style shall be created
-     * @param id the style identifier
-     * @return a new style instance, or {@code null} if the id is unknown
-     */
-    private Style createStyle(final Diagram diagram, final String id) {
-        if (DEFAULT_STYLE.equals(id)) {
-            IGaService gaService = Graphiti.getGaService();
-            Style style = gaService.createStyle(diagram, id);
-            style.setForeground(gaService.manageColor(diagram, ColorConstant.BLACK));
-            style.setBackground(gaService.manageColor(diagram, ColorConstant.WHITE));
-            return style;
-        }
-        return null;
     }
 
 }

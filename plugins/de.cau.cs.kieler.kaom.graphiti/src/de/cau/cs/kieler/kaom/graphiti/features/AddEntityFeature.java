@@ -16,9 +16,7 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import de.cau.cs.kieler.kaom.Entity;
-import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
-import de.cau.cs.kieler.kaom.graphiti.util.PropertyUtil;
-import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
+import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
@@ -26,7 +24,6 @@ import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
-import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -41,13 +38,18 @@ import org.eclipse.graphiti.services.IPeCreateService;
  */
 public class AddEntityFeature extends AbstractAddShapeFeature {
 
+    /** the style provider. */ 
+    private StyleProvider styleProvider;
+    
     /**
      * The constructor.
      * 
      * @param fp the feature provider
+     * @param thestyleProvider the style provider
      */
-    public AddEntityFeature(final IFeatureProvider fp) {
+    public AddEntityFeature(final IFeatureProvider fp, final StyleProvider thestyleProvider) {
         super(fp);
+        this.styleProvider = thestyleProvider;
     }
 
     /**
@@ -64,7 +66,6 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
         ContainerShape parentContainerShape = context.getTargetContainer();
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         ContainerShape entityShape = peCreateService.createContainerShape(parentContainerShape, true);
-        PropertyUtil.setEClassShape(entityShape);
         peCreateService.createChopboxAnchor(entityShape);
         Entity entity = (Entity) context.getNewObject();
         link(entityShape, entity);
@@ -81,19 +82,17 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
                 height + 2 * AddPortFeature.PORT_SIZE);
         // rectangle added to port container
         Rectangle rectangleShape = gaService.createRectangle(portContainer);
-        Style style = ((KaomDiagramEditor) getDiagramEditor()).fetchStyle(getDiagram(),
-                KaomDiagramEditor.DEFAULT_STYLE);
-        rectangleShape.setStyle(style);
+        rectangleShape.setStyle(styleProvider.getStyle());
 
         // a separator line for the entity label
         Shape shape = peCreateService.createShape(entityShape, false);
         Polyline polyline = gaService.createPolyline(shape);
-        polyline.setStyle(style);
+        polyline.setStyle(styleProvider.getStyle());
 
         // the entity label
         shape = peCreateService.createShape(entityShape, false);
         Text text = gaService.createDefaultText(shape, entity.getName());
-        text.setStyle(StyleUtil.getStyleForEClassText(getDiagram()));
+        text.setStyle(styleProvider.getStyle());
         text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
         text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
         link(shape, entity);

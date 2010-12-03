@@ -29,7 +29,7 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 
 import de.cau.cs.kieler.kaom.Link;
-import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
+import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
 /**
  * Adds a link between the source and the target elements.
@@ -38,13 +38,17 @@ import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
  */
 public class AddLinkFeature extends AbstractAddFeature {
 
+    /** the style provider. */ 
+    private StyleProvider styleProvider;
+    
     /**
      * The Constructor.
      * 
      * @param fp the feature provider
      */
-    public AddLinkFeature(final IFeatureProvider fp) {
+    public AddLinkFeature(final IFeatureProvider fp, final StyleProvider thestyleProvider) {
         super(fp);
+        this.styleProvider = thestyleProvider;
     }
 
     /**
@@ -61,7 +65,6 @@ public class AddLinkFeature extends AbstractAddFeature {
      * {@inheritDoc}
      */
     public PictogramElement add(final IAddContext context) {
-
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
         Link elink = (Link) context.getNewObject();
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
@@ -71,14 +74,14 @@ public class AddLinkFeature extends AbstractAddFeature {
         conn.setEnd(addConContext.getTargetAnchor());
         IGaService gaService = Graphiti.getGaService();
         Polyline polyline = gaService.createPolyline(conn);
-        polyline.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
+        polyline.setStyle(styleProvider.getStyle());
 
         link(conn, elink);
 
         ConnectionDecorator textDecorator = peCreateService.createConnectionDecorator(conn, true,
                 CONNECTION_DECORATOR_LOCATION, true);
         Text text = gaService.createDefaultText(textDecorator);
-        text.setStyle(StyleUtil.getStyleForEClassText((getDiagram())));
+        text.setStyle(styleProvider.getStyle());
         gaService.setLocation(text, TEXT_LOCATION, 0);
 
         // add static graphical decorators (composition and navigable)
@@ -108,7 +111,7 @@ public class AddLinkFeature extends AbstractAddFeature {
     private Polyline createArrow(final GraphicsAlgorithmContainer gaContainer) {
         Polyline polyline = Graphiti.getGaCreateService().createPolyline(gaContainer,
                 new int[] { -15, 10, 0, 0, -15, -10 });
-        polyline.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
+        polyline.setStyle(styleProvider.getStyle());
         return polyline;
     }
 

@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
+import de.cau.cs.kieler.core.model.graphiti.GraphitiUtil;
 import de.cau.cs.kieler.kaom.Entity;
-import de.cau.cs.kieler.kaom.graphiti.util.GraphitiUtil;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;

@@ -31,7 +31,7 @@ import org.eclipse.graphiti.services.IPeCreateService;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
-import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
+import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
 /**
  * 
@@ -39,6 +39,9 @@ import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
  */
 public class AddPortFeature extends AbstractAddShapeFeature {
 
+    /** the style provider. */ 
+    private StyleProvider styleProvider;
+    
     /**
      * Port created at a distance.
      */
@@ -50,8 +53,9 @@ public class AddPortFeature extends AbstractAddShapeFeature {
      * @param fp
      *            Constructor.
      */
-    public AddPortFeature(final IFeatureProvider fp) {
+    public AddPortFeature(final IFeatureProvider fp, final StyleProvider thestyleProvider) {
         super(fp);
+        this.styleProvider = thestyleProvider;
     }
 
     /**
@@ -109,7 +113,7 @@ public class AddPortFeature extends AbstractAddShapeFeature {
 
         Ellipse boxEllipse = gaService.createEllipse(boxAnchor);
         boxEllipse.setFilled(true);
-        boxEllipse.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
+        boxEllipse.setStyle(styleProvider.getStyle());
 
         final int w = PORT_SIZE;
         gaService.setLocationAndSize(boxEllipse, -w, -w, 2 * w, 2 * w);

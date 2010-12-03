@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kaom.graphiti.diagram;
+package de.cau.cs.kieler.core.model.graphiti.ui;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -28,7 +28,7 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
  * 
  * @author msp
  */
-public class KaomCreationWizardPage extends WizardNewFileCreationPage {
+public class CreationWizardPage extends WizardNewFileCreationPage {
 
     /** the file extension to use for this wizard page. */
     private String extension;
@@ -40,7 +40,7 @@ public class KaomCreationWizardPage extends WizardNewFileCreationPage {
      * @param selection the current resource selection
      * @param theextension the file extension
      */
-    public KaomCreationWizardPage(final String pageName, final IStructuredSelection selection,
+    public CreationWizardPage(final String pageName, final IStructuredSelection selection,
             final String theextension) {
         super(pageName, selection);
         this.extension = theextension;
@@ -78,7 +78,7 @@ public class KaomCreationWizardPage extends WizardNewFileCreationPage {
      */
     @Override
     public void setVisible(final boolean visible) {
-        if (visible) {
+        if (visible && (getFileName() == null || getFileName().length() == 0)) {
             setFileName(getUniqueFileName(getContainerFullPath(), copyFileName(), extension));
         }
         super.setVisible(visible);
@@ -87,8 +87,8 @@ public class KaomCreationWizardPage extends WizardNewFileCreationPage {
     private String copyFileName() {
         String fileName = null;
         IWizardPage previousPage = getPreviousPage();
-        if (previousPage instanceof KaomCreationWizardPage) {
-            KaomCreationWizardPage copyPage = (KaomCreationWizardPage) previousPage;
+        if (previousPage instanceof CreationWizardPage) {
+            CreationWizardPage copyPage = (CreationWizardPage) previousPage;
             fileName = copyPage.getFileName();
             if (fileName.endsWith(copyPage.extension)) {
                 fileName = fileName.substring(0, fileName.length()

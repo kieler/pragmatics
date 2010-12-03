@@ -29,7 +29,7 @@ import org.eclipse.graphiti.util.IColorConstant;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
-import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
+import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
 /**
  * 
@@ -37,6 +37,8 @@ import de.cau.cs.kieler.kaom.graphiti.util.StyleUtil;
  */
 public class AddRelationFeature extends AbstractAddShapeFeature {
 
+    /** the style provider. */ 
+    private StyleProvider styleProvider;
     private static final int[] VERTICES_POSITION = { -9, 0, 0, 12, 9, 0, 0, -12 };
     private static final IColorConstant RELATION_BACKGROUND = new ColorConstant(70, 70, 70);
 
@@ -45,8 +47,9 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
      * @param fp
      *            Constructor.
      */
-    public AddRelationFeature(final IFeatureProvider fp) {
+    public AddRelationFeature(final IFeatureProvider fp, final StyleProvider thestyleProvider) {
         super(fp);
+        this.styleProvider = thestyleProvider;
     }
 
     /**
@@ -66,7 +69,7 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
 
             Polygon polygon = gaService.createPolygon(containerShape, VERTICES_POSITION);
 
-            polygon.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
+            polygon.setStyle(styleProvider.getStyle());
             polygon.setBackground(manageColor(RELATION_BACKGROUND));
             Graphiti.getGaService().setLocation(containerShape.getGraphicsAlgorithm(),
                     context.getX(), context.getY(), false);
@@ -84,7 +87,7 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
                     containerShape, true);
             Polygon polygon = gaService.createPolygon(childcontainershape, VERTICES_POSITION);
 
-            polygon.setStyle(StyleUtil.getStyleForEClass(getDiagram()));
+            polygon.setStyle(styleProvider.getStyle());
             polygon.setBackground(manageColor(RELATION_BACKGROUND));
             Graphiti.getGaService().setLocation(childcontainershape.getGraphicsAlgorithm(),
                     context.getX(), context.getY(), false);
