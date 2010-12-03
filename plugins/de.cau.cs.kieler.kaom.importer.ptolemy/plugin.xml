@@ -18,6 +18,16 @@
             id="de.cau.cs.kieler.kaom.importer.ptolemy.importWizard"
             name="Import Ptolemy2 Diagram">
       </wizard>
+      <wizard
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard"
+            icon="icons/importdiagram.gif"
+            id="de.cau.cs.kieler.kaom.importer.ptolemy.importDiagramsWizard"
+            name="%importWizard.name">
+         <description>
+            %importWizard.description
+         </description>
+      </wizard>
    </extension>
 <!-- haf: this is now moved to org.ptolemy.moml
    <extension point="org.eclipse.emf.ecore.generated_package">

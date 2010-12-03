@@ -22,11 +22,20 @@ package de.cau.cs.kieler.kaom.importer.ptolemy;
  */
 public final class PtolemyImporterConstants {
     
-    /** The possible extensions for Ptolemy diagram files. */
+    /**
+     * The possible extensions for Ptolemy diagram files.
+     */
     public static final String[] PTOLEMY_FILE_EXTENSIONS = {"moml"};
     
-    /** Our target file extension. */
-    public static final String TARGET_FILE_EXTENSION = "kaom";
+    /**
+     * Our target file extension for model files.
+     */
+    public static final String TARGET_MODEL_FILE_EXTENSION = "kaom";
+    
+    /**
+     * Our target file extension for diagram files.
+     */
+    public static final String TARGET_DIAGRAM_FILE_EXTENSION = "kaod";
     
     
     /**

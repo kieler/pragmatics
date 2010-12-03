@@ -43,7 +43,7 @@ public class ImportDiagramTargetFilePage extends WizardNewFileCreationPage {
         super("importDiagramWizard.importDiagramNewFilePage", selection);
         this.setTitle(LOC_PAGE_TITLE);
         this.setDescription(LOC_PAGE_DESCRIPTION);
-        this.setFileExtension(PtolemyImporterConstants.TARGET_FILE_EXTENSION);
+        this.setFileExtension(PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION);
     }
 
 }
