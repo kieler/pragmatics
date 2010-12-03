@@ -19,6 +19,9 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.impl.EinbruchsknotenImpl;
+
 public class AddBreachFeature extends AbstractAddShapeFeature {
     private static final IColorConstant CLASS_TEXT_FOREGROUND =
         new ColorConstant(51, 51, 153);
@@ -35,6 +38,7 @@ public class AddBreachFeature extends AbstractAddShapeFeature {
  
     public boolean canAdd(IAddContext context) {
         // check if user wants to add a EClass
+    	//TODO change here
         if (context.getNewObject() instanceof EClass) {
             // check if user wants to add to a diagram
             if (context.getTargetContainer() instanceof Diagram) {
@@ -45,6 +49,7 @@ public class AddBreachFeature extends AbstractAddShapeFeature {
     }
  
     public PictogramElement add(IAddContext context) {
+    	//TODO Change here
         EClass addedClass = (EClass) context.getNewObject();
         Diagram targetDiagram = (Diagram) context.getTargetContainer();
  

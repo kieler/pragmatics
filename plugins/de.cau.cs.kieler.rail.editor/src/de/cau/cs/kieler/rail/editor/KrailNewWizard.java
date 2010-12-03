@@ -229,6 +229,7 @@ public class KrailNewWizard extends Wizard implements INewWizard {
         modelResource.setTrackingModification(true);
         Model model = TopologieFactory.eINSTANCE.createModel();
         modelResource.getContents().add(model);
+        
         diagramResource.setTrackingModification(true);
         Diagram diagram = Graphiti.getPeCreateService().createDiagram(
                 KrailDiagramEditor.DIAGRAM_TYPE, diagramName,
