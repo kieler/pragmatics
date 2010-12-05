@@ -24,8 +24,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.ui.DiagramAnalyzer;
 import de.cau.cs.kieler.kiml.grana.ui.GranaUIUtil;
+import de.cau.cs.kieler.kiml.grana.util.DiagramAnalyzer;
+import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
 import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
 
 /**
@@ -47,7 +48,7 @@ public class AnalysisHandler extends AbstractHandler {
         Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
         GranaUIUtil.setCurrentShell(shell);
         // get the last selected analyses
-        List<AbstractInfoAnalysis> analyses = GranaHandlerUtil.getLastAnalysesSelection();
+        List<AbstractInfoAnalysis> analyses = GranaUtil.getLastAnalysesSelection();
         // perform the analyses on the active diagram
         Map<String, Object> results =
                 DiagramAnalyzer.analyse(editorPart, null, analyses, true);

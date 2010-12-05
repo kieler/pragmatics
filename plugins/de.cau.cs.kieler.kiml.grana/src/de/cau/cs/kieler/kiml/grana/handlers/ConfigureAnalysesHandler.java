@@ -25,9 +25,10 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisServices;
 import de.cau.cs.kieler.kiml.grana.ui.AnalysisSelectionDialog;
+import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
 
 /**
- * The handler which is responsible to configure the analyses selection.
+ * The handler which responsibility is to configure the analyses selection.
  * 
  * @author mri
  */
@@ -42,16 +43,14 @@ public class ConfigureAnalysesHandler extends AbstractHandler {
         Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
         AnalysisSelectionDialog selectionDialog =
                 new AnalysisSelectionDialog(shell, AnalysisServices
-                        .getInstance().getCategories());
-        selectionDialog.setInitialElementSelections(GranaHandlerUtil
-                .getLastAnalysesSelection());
+                        .getInstance().getCategories(),
+                        GranaUtil.getLastAnalysesSelection());
         int code = selectionDialog.open();
-
         if (code == Dialog.OK) {
             // get the selected analyses
             List<AbstractInfoAnalysis> analyses = selectionDialog.getAnalyses();
             // save the last user selection
-            GranaHandlerUtil.setLastAnalysesSelection(analyses);
+            GranaUtil.setLastAnalysesSelection(analyses);
         }
 
         return null;

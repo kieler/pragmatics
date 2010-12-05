@@ -74,7 +74,8 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                                 .getActivePage();
                 IEditorDescriptor editorDescriptor =
                         IDE.getDefaultEditor(diagramFile);
-                if (editorDescriptor.isOpenExternal()) {
+                if (editorDescriptor == null
+                        || editorDescriptor.isOpenExternal()) {
                     throw new RuntimeException(MESSAGE_NO_EDITOR);
                 }
                 IEditorPart editorPart;

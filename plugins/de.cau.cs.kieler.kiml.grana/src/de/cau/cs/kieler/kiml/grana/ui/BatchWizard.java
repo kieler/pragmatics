@@ -19,6 +19,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 
+import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
+
 /**
  * The batch wizard lets the user select any number of diagram files and starts
  * a job which opens the diagrams, applies automatic layout, performs all
@@ -31,12 +34,18 @@ public class BatchWizard extends Wizard {
     /** the wizard title. */
     private static final String TITLE = "Initialize a batch graph analysis";
 
+    /** the preference store key for the selected analyses. */
+    private static final String PREFERENCE_SELECTED_ANALYSES =
+            "grana.batch.selectedAnalyses";
+
     /** the initial selection. */
     private IStructuredSelection selection = null;
     /** the file selection page. */
     private BatchFileSelectionPage fileSelectionPage;
     /** the result file page. */
     private BatchResultFilePage resultFilePage;
+    /** the analysis selection page. */
+    private BatchAnalysisSelectionPage analysisSelectionPage;
 
     /** the selected files. */
     private List<IPath> selectedFiles;
@@ -44,6 +53,8 @@ public class BatchWizard extends Wizard {
     private boolean layoutBeforeAnalysis;
     /** the result file. */
     private IPath resultFile;
+    /** the selected analyses. */
+    private List<AbstractInfoAnalysis> selectedAnalyses;
 
     /**
      * Constructs a BatchWizard without initial file selection.
@@ -72,8 +83,13 @@ public class BatchWizard extends Wizard {
     public void addPages() {
         fileSelectionPage = new BatchFileSelectionPage(selection);
         resultFilePage = new BatchResultFilePage();
+        selectedAnalyses =
+                GranaUtil.getAnalysesSelection(PREFERENCE_SELECTED_ANALYSES);
+        analysisSelectionPage =
+                new BatchAnalysisSelectionPage(selectedAnalyses);
         addPage(fileSelectionPage);
         addPage(resultFilePage);
+        addPage(analysisSelectionPage);
     }
 
     /**
@@ -86,6 +102,9 @@ public class BatchWizard extends Wizard {
         selectedFiles = fileSelectionPage.getSelectedFiles();
         layoutBeforeAnalysis = fileSelectionPage.getLayoutBeforeAnalysis();
         resultFile = resultFilePage.getResultFile();
+        selectedAnalyses = analysisSelectionPage.getAnalyses();
+        GranaUtil.setAnalysesSelection(PREFERENCE_SELECTED_ANALYSES,
+                selectedAnalyses);
         return true;
     }
 
@@ -114,5 +133,14 @@ public class BatchWizard extends Wizard {
      */
     public IPath getResultFile() {
         return resultFile;
+    }
+
+    /**
+     * Returns the selected analyses.
+     * 
+     * @return the selected analyses
+     */
+    public List<AbstractInfoAnalysis> getAnalyses() {
+        return selectedAnalyses;
     }
 }

@@ -13,20 +13,14 @@
  */
 package de.cau.cs.kieler.kiml.grana.ui;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
@@ -37,83 +31,40 @@ import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
  * 
  * @author mri
  */
-public class AnalysisSelectionDialog extends CheckedTreeSelectionDialog {
+public class AnalysisSelectionDialog extends Dialog implements
+        ISelectionListener {
 
     /** the dialogs title. */
     private static final String TITLE = "Select analyses";
-    /** the information message. */
-    private static final String MESSAGE_INFO = "Select the analyses to perform";
-    /** the no-selection error message. */
-    private static final String MESSAGE_NO_SELECTION =
-            "At least one analysis has to be selected.";
+    /** the width of the dialog area. */
+    private static final int WIDTH = 400;
+    /** the height of the dialog area. */
+    private static final int HEIGHT = 400;
+
     /** the selected analyses. */
     private List<AbstractInfoAnalysis> result;
-
-    /** maps analyses on their parents. */
-    private Map<AbstractInfoAnalysis, AnalysisCategory> parentMap;
+    /** the analyses categories. */
+    private List<AnalysisCategory> categories;
+    /** the initially selected analyses. */
+    private List<AbstractInfoAnalysis> initialAnalyses;
 
     /**
      * Constructs the dialog.
      * 
      * @param parent
      *            the parent shell
-     * 
      * @param analysisCategories
      *            the categories to display
+     * @param selectedAnalyses
+     *            the currently selectedAnalyses
      */
     public AnalysisSelectionDialog(final Shell parent,
-            final Collection<AnalysisCategory> analysisCategories) {
-        super(parent, new AnalysisLabelProvider(), new AnalysisContentProvider(
-                analysisCategories));
-        // set general options
-        setTitle(TITLE);
-        setMessage(MESSAGE_INFO);
-        // set the tree input
-        setInput(analysisCategories);
-        // set a custom selection validator
-        setValidator(new ISelectionStatusValidator() {
-            public IStatus validate(final Object[] selection) {
-                if (selection.length > 0) {
-                    return new Status(IStatus.OK, PlatformUI.PLUGIN_ID,
-                            IStatus.OK, "", null);
-                } else {
-                    return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
-                            IStatus.OK, MESSAGE_NO_SELECTION, null);
-                }
-            }
-        });
-    }
-
-    /**
-     * Creates the dialog.
-     */
-    public void create() {
-        super.create();
-        // get the analysis parent mapping
-        AnalysisContentProvider contentProvider =
-                (AnalysisContentProvider) getTreeViewer().getContentProvider();
-        parentMap = contentProvider.getParentMap();
-        // add a check state listener
-        getTreeViewer().addCheckStateListener(
-                new CheckStateListener(getTreeViewer()));
-        // correct initial category selection
-        for (AnalysisCategory category : parentMap.values()) {
-            boolean allChecked = true;
-            boolean oneChecked = false;
-            for (AbstractInfoAnalysis infoAnalysis : category.getAnalyses()) {
-                if (!getTreeViewer().getChecked(infoAnalysis)) {
-                    allChecked = false;
-                } else {
-                    oneChecked = true;
-                }
-            }
-            if (allChecked) {
-                getTreeViewer().setChecked(category, true);
-            }
-            if (oneChecked) {
-                getTreeViewer().setExpandedState(category, true);
-            }
-        }
+            final List<AnalysisCategory> analysisCategories,
+            final List<AbstractInfoAnalysis> selectedAnalyses) {
+        super(parent);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
+        categories = analysisCategories;
+        initialAnalyses = selectedAnalyses;
     }
 
     /**
@@ -128,67 +79,33 @@ public class AnalysisSelectionDialog extends CheckedTreeSelectionDialog {
     /**
      * {@inheritDoc}
      */
-    protected void computeResult() {
-        result = new LinkedList<AbstractInfoAnalysis>();
-        Object[] checkedElements = getTreeViewer().getCheckedElements();
-        // add only analyses to the result
-        for (Object obj : checkedElements) {
-            if (obj instanceof AbstractInfoAnalysis) {
-                result.add((AbstractInfoAnalysis) obj);
-            }
-        }
-        setResult(result);
+    @Override
+    protected Control createDialogArea(final Composite parent) {
+        Composite composite = (Composite) super.createDialogArea(parent);
+        AnalysisSelectionViewer viewer =
+                new AnalysisSelectionViewer(parent, categories, initialAnalyses);
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+        data.widthHint = WIDTH;
+        data.heightHint = HEIGHT;
+        viewer.setLayoutData(data);
+        viewer.addSelectionListener(this);
+        return composite;
     }
 
     /**
-     * A check state listener for providing selection consistency.
+     * {@inheritDoc}
      */
-    private class CheckStateListener implements ICheckStateListener {
+    @Override
+    protected void configureShell(final Shell shell) {
+        super.configureShell(shell);
+        shell.setText(TITLE);
+    }
 
-        private CheckboxTreeViewer treeViewer;
-
-        /**
-         * Constructs a check state listener.
-         * 
-         * @param checkboxTreeViewer
-         *            the tree viewer this listener is registered on
-         */
-        public CheckStateListener(final CheckboxTreeViewer checkboxTreeViewer) {
-            treeViewer = checkboxTreeViewer;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void checkStateChanged(final CheckStateChangedEvent event) {
-            Object obj = event.getElement();
-            if (obj instanceof AnalysisCategory) {
-                // the check state of a category was changed
-                AnalysisCategory category = (AnalysisCategory) obj;
-                for (AbstractInfoAnalysis analysis : category.getAnalyses()) {
-                    treeViewer.setChecked(analysis, event.getChecked());
-                }
-                updateOKStatus();
-                treeViewer.setExpandedState(category, true);
-            } else if (obj instanceof AbstractInfoAnalysis) {
-                // the check state of an analysis was changed
-                AbstractInfoAnalysis analysis = (AbstractInfoAnalysis) obj;
-                AnalysisCategory category = parentMap.get(analysis);
-                if (category != null) {
-                    if (event.getChecked()) {
-                        for (AbstractInfoAnalysis infoAnalysis : category
-                                .getAnalyses()) {
-                            if (!treeViewer.getChecked(infoAnalysis)) {
-                                return;
-                            }
-                        }
-                        treeViewer.setChecked(category, true);
-                    } else {
-                        treeViewer.setChecked(category, false);
-                    }
-                }
-            }
-        }
-
+    /**
+     * {@inheritDoc}
+     */
+    public void selectionChanged(
+            final List<AbstractInfoAnalysis> selectedAnalyses) {
+        result = selectedAnalyses;
     }
 }

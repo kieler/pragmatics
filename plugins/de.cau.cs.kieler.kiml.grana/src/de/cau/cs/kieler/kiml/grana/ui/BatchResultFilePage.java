@@ -33,7 +33,7 @@ public class BatchResultFilePage extends WizardNewFileCreationPage {
     private static final String PAGE_NAME = "ResultFilePage";
     /** the description of this page. */
     private static final String MESSAGE_DESCRIPTION =
-            "Select a file for the batch results.";
+            "Select a file for the batch results";
     /** the message that is displayed while the input is correct. */
     private static final String MESSAGE_OK =
             "Create a new result file for the batch results.";
@@ -48,6 +48,7 @@ public class BatchResultFilePage extends WizardNewFileCreationPage {
         super(PAGE_NAME, new StructuredSelection());
         setTitle(MESSAGE_DESCRIPTION);
         setDescription(MESSAGE_OK);
+        setAllowExistingResources(true);
     }
 
     /**

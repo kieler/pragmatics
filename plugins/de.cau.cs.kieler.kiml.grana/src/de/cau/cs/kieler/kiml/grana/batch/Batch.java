@@ -62,6 +62,9 @@ public class Batch {
         monitor.begin("Executing analysis batch", batchJobs.size());
         BatchResult batchResult = new BatchResult(analyses);
         for (BatchJob<?> batchJob : batchJobs) {
+            if (monitor.isCanceled()) {
+                return null;
+            }
             try {
                 BatchJobResult<?> batchJobResult =
                         batchJob.execute(analyses, monitor.subTask(1));

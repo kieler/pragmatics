@@ -19,6 +19,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
+import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 
@@ -39,7 +40,7 @@ public class LayoutAnalysisCombination extends AbstractCombination {
         DiagramLayoutManager manager = layoutState.getEffect().getManager();
         if (manager != null) {
             final List<AbstractInfoAnalysis> analyses =
-                    GranaHandlerUtil.getLastAnalysesSelection();
+                    GranaUtil.getLastAnalysesSelection();
             KNode parentNode = manager.getLayoutGraph();
             schedule(new AnalysisEffect(parentNode, analyses, false));
         }

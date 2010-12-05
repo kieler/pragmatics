@@ -41,7 +41,7 @@ public class BatchFileSelectionPage extends WizardExportResourcesPage {
     private static final String PAGE_NAME = "FileSelectionPage";
     /** the description of this page. */
     private static final String MESSAGE_DESCRIPTION =
-            "Select all diagram files for the batch analysis.";
+            "Select all diagram files for the batch analysis";
     /** the message for the 'layout before analysis' option. */
     private static final String MESSAGE_LAYOUT_BEFORE_ANALYSIS =
             "Layout diagrams before analysis";

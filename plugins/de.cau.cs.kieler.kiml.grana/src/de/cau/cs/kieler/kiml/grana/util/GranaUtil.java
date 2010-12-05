@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.grana.handlers;
+package de.cau.cs.kieler.kiml.grana.util;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
  * 
  * @author mri
  */
-public final class GranaHandlerUtil {
+public final class GranaUtil {
 
     /** the name for the last analyses preference. */
     private static final String LAST_ANALYSES_PREFERENCE =
@@ -36,24 +36,36 @@ public final class GranaHandlerUtil {
     /**
      * Make this class not instantiable.
      */
-    private GranaHandlerUtil() {
+    private GranaUtil() {
         // do nothing
     }
 
     /**
-     * Returns the last selected analyses from the preference store.
+     * Returns the last analyses selection from the preference store.
      * 
-     * @return the last selected analyses
+     * @return the last analyses selection
      */
     public static List<AbstractInfoAnalysis> getLastAnalysesSelection() {
+        return getAnalysesSelection(LAST_ANALYSES_PREFERENCE);
+    }
+
+    /**
+     * Returns an analysis selection from the preference store.
+     * 
+     * @param preferenceKey
+     *            the key of the preference which stores the given analysis
+     *            selection
+     * @return the last selected analyses
+     */
+    public static List<AbstractInfoAnalysis> getAnalysesSelection(
+            final String preferenceKey) {
         List<AbstractInfoAnalysis> result =
                 new LinkedList<AbstractInfoAnalysis>();
         // get the preference store
         IPreferenceStore preferenceStore =
                 GranaPlugin.getDefault().getPreferenceStore();
         // get the serialized analyses ids from the preference store
-        String analysesIdsSerialized =
-                preferenceStore.getString(LAST_ANALYSES_PREFERENCE);
+        String analysesIdsSerialized = preferenceStore.getString(preferenceKey);
         String[] analysesIds = analysesIdsSerialized.split(";");
         for (String analysisId : analysesIds) {
             AbstractInfoAnalysis analysis =
@@ -67,12 +79,26 @@ public final class GranaHandlerUtil {
     }
 
     /**
-     * Sets the last selected analyses in the preference store.
+     * Sets the last analyses selection in the preference store.
      * 
+     * @param analyses
+     *            the last analyses selection
+     */
+    public static void setLastAnalysesSelection(
+            final List<AbstractInfoAnalysis> analyses) {
+        setAnalysesSelection(LAST_ANALYSES_PREFERENCE, analyses);
+    }
+
+    /**
+     * Sets an analysis selection in the preference store.
+     * 
+     * @param preferenceKey
+     *            the key of the preference which stores the given analysis
+     *            selection
      * @param analyses
      *            the analyses
      */
-    public static void setLastAnalysesSelection(
+    public static void setAnalysesSelection(final String preferenceKey,
             final List<AbstractInfoAnalysis> analyses) {
         // get the preference store
         IPreferenceStore preferenceStore =
@@ -82,7 +108,6 @@ public final class GranaHandlerUtil {
         for (AbstractInfoAnalysis analysis : analyses) {
             analysesIdsSerialized += analysis.getId() + ";";
         }
-        preferenceStore.setValue(LAST_ANALYSES_PREFERENCE,
-                analysesIdsSerialized);
+        preferenceStore.setValue(preferenceKey, analysesIdsSerialized);
     }
 }

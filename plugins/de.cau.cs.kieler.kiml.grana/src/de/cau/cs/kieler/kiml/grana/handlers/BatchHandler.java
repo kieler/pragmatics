@@ -94,20 +94,24 @@ public class BatchHandler extends AbstractHandler {
                         try {
                             // create the batch
                             Batch batch =
-                                    new Batch(
-                                            GranaHandlerUtil
-                                                    .getLastAnalysesSelection());
+                                    new Batch(wizard.getAnalyses());
                             // create a batch job for every selected file
                             for (IPath file : wizard.getSelectedFiles()) {
+                                DiagramKGraphProvider provider =
+                                        new DiagramKGraphProvider();
+                                provider.setLayoutBeforeAnalysis(wizard
+                                        .getLayoutBeforeAnalysis());
                                 BatchJob<IPath> batchJob =
-                                        new BatchJob<IPath>(file,
-                                                new DiagramKGraphProvider());
+                                        new BatchJob<IPath>(file, provider);
                                 batch.appendJob(batchJob);
                             }
                             monitor.worked(WORK_BATCH);
                             // execute the batch
                             BatchResult result =
                                     batch.execute(monitor.subTask(WORK_EXECUTE));
+                            if (monitor.isCanceled()) {
+                                return;
+                            }
                             // serialize the batch result
                             URI fileURI =
                                     URI.createPlatformResourceURI(wizard
@@ -121,10 +125,10 @@ public class BatchHandler extends AbstractHandler {
                             serializer.serialize(outputStream, result,
                                     monitor.subTask(WORK_SERIALIZE));
                             outputStream.close();
-//                            for (Pair<BatchJob<?>, Exception> job : result
-//                                    .getFailedJobs()) {
-//                                job.getSecond().printStackTrace();
-//                            }
+                            // for (Pair<BatchJob<?>, Exception> job : result
+                            // .getFailedJobs()) {
+                            // job.getSecond().printStackTrace();
+                            // }
                         } catch (Exception e) {
                             IStatus status =
                                     new Status(IStatus.ERROR,
