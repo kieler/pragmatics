@@ -12,9 +12,12 @@ import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
 import de.cau.cs.kieler.rail.editor.features.AddBreachFeature;
+import de.cau.cs.kieler.rail.editor.features.AddDeadEndVertex;
 import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateBreachFeature;
+import de.cau.cs.kieler.rail.editor.features.CreateDeadEndVertex;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
 
 /**
@@ -35,7 +38,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
         // is object for add request a EClass or EReference?
         if (context.getNewObject() instanceof Einbruchsknoten) {
             return new AddBreachFeature(this);
-        } else if (context.getNewObject() instanceof Edge) {
+        } else if (context.getNewObject() instanceof Stumpfgleisknoten) {
+        	return new AddDeadEndVertex(this);
+        }
+        else if (context.getNewObject() instanceof Edge) {
             return new AddEdgeFeature(this);
         }
         return super.getAddFeature(context);
@@ -44,7 +50,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public ICreateFeature[] getCreateFeatures() {
-        return new ICreateFeature[] { new CreateBreachFeature(this) };
+        return new ICreateFeature[] { new CreateBreachFeature(this), new CreateDeadEndVertex(this) };
     }
     
     @Override
