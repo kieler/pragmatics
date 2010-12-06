@@ -103,6 +103,16 @@ import diva.canvas.toolbox.ImageFigure;
 public class KaomFigureProvider implements IRenderingProvider {
 
     /**
+     * Width of connection line.
+     */
+    private static float LINE_WIDTH = 1.5f;
+    
+    /**
+     * Radius of the rounded edges. 
+     */
+    private static int ROUNDED_BENDPOINTS_RADIUS = 10;
+    
+    /**
      * {@inheritDoc}
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
@@ -122,24 +132,29 @@ public class KaomFigureProvider implements IRenderingProvider {
             if (oldFigure instanceof PolylineConnectionEx) {
                 PolylineConnectionEx connection = ((PolylineConnectionEx) oldFigure);
                 connection.setTargetDecoration(null);
-                connection.setLineWidthFloat(1.5f);
+                connection.setLineWidthFloat(LINE_WIDTH);
                 final ConnectionEditPart cPart = (ConnectionEditPart) part;
 
-                AbstractEMFOperation emfOp = new AbstractEMFOperation(cPart.getEditingDomain(), "line routing setting") {
+                AbstractEMFOperation emfOp = new AbstractEMFOperation(cPart.getEditingDomain(),
+                        "line routing setting") {
                     @Override
-                    protected IStatus doExecute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
-                    RoutingStyle style = (RoutingStyle) ((View) cPart.getModel()).getStyle(NotationPackage.Literals.ROUTING_STYLE);
-                    style.setRouting(Routing.RECTILINEAR_LITERAL);   //or Routing.TREE_LITERAL
-                    style.setRoundedBendpointsRadius(10);
-                    style.setSmoothness(Smoothness.NONE_LITERAL);
-                    return Status.OK_STATUS;
+                    protected IStatus doExecute(final IProgressMonitor monitor, final IAdaptable info)
+                            throws ExecutionException {
+                        RoutingStyle style = (RoutingStyle) ((View) cPart.getModel())
+                                .getStyle(NotationPackage.Literals.ROUTING_STYLE);
+                        style.setRouting(Routing.RECTILINEAR_LITERAL); // or Routing.TREE_LITERAL
+                        style.setRoundedBendpointsRadius(ROUNDED_BENDPOINTS_RADIUS);
+                        style.setSmoothness(Smoothness.NONE_LITERAL);
+                        return Status.OK_STATUS;
                     }
                 };
 
-                try {           
+                try {
                     OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
-                } catch (ExecutionException e) {}
-                
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
                 return oldFigure;
             } else {
                 return null;
@@ -148,7 +163,7 @@ public class KaomFigureProvider implements IRenderingProvider {
             if (oldFigure instanceof PolylineConnectionEx) {
                 PolylineConnectionEx connection = ((PolylineConnectionEx) oldFigure);
                 connection.setTargetDecoration(createArrowDecoration());
-                connection.setLineWidthFloat(1.5f);
+                connection.setLineWidthFloat(LINE_WIDTH);
                 return oldFigure;
             } else {
                 return null;
@@ -159,7 +174,8 @@ public class KaomFigureProvider implements IRenderingProvider {
     }
 
     /**
-     * {@inheritDoc}
+     * builds a default figure for this diagram.
+     * @return the default figure
      */
     public static IFigure getDefaultFigure() {
         RectangleFigure defaultFigure = new RectangleFigure();
@@ -671,7 +687,7 @@ public class KaomFigureProvider implements IRenderingProvider {
 
     }
 
-    private NamedObj getPtolemyInstance(EObject object) {
+    private NamedObj getPtolemyInstance(final EObject object) {
         if (object instanceof Annotatable) {
             Annotatable myAnnotatable = (Annotatable) object;
             Annotation annotation = myAnnotatable.getAnnotation("ptolemyClass");

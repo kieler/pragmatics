@@ -1,3 +1,17 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+
 package de.cau.cs.kieler.kaom.karma.ptolemy;
 
 import java.util.List;
@@ -11,6 +25,13 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 
 import de.cau.cs.kieler.kaom.Port;
 
+
+/**
+ * BorderItemLocator for determining the correct locations of ports in a kaom ptolemy diagram.
+ * 
+ * @author ckru
+ *
+ */
 public class PtolemyPortBorderItemLocator extends BorderItemLocator {
 
     private int numberOfPorts;
@@ -73,7 +94,7 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
      * @param borderItem
      *            a border item
      */
-    private void locate(final Rectangle location, IFigure borderItem) {
+    private void locate(final Rectangle location, final IFigure borderItem) {
         Rectangle parentBorder = getParentBorder();
         Dimension offset = getBorderItemOffset();
         switch (getPreferredSideOfParent()) {
@@ -104,8 +125,9 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
          */
     }
     
-    private void distributePortsVertical(Rectangle location) {
+    private void distributePortsVertical(final Rectangle location) {
         if (numberOfPorts == 1) {
+            
         } else if ((numberOfPorts % 2) == 1) {
             if (this.index == (numberOfPorts + 1) / 2) {
 
@@ -126,7 +148,7 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
         }
     }
     
-    private void distributePortsHorizontal(Rectangle location) {
+    private void distributePortsHorizontal(final Rectangle location) {
         if (numberOfPorts == 1) {
         } else if ((numberOfPorts % 2) == 1) {
             if (this.index == (numberOfPorts + 1) / 2) {
