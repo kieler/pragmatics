@@ -18,7 +18,6 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
-import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Connection;
@@ -45,6 +44,7 @@ public class AddLinkFeature extends AbstractAddFeature {
      * The Constructor.
      * 
      * @param fp the feature provider
+     * @param thestyleProvider the style provider
      */
     public AddLinkFeature(final IFeatureProvider fp, final StyleProvider thestyleProvider) {
         super(fp);
@@ -58,15 +58,20 @@ public class AddLinkFeature extends AbstractAddFeature {
         return (context instanceof IAddConnectionContext && context.getNewObject() instanceof Link);
     }
 
-    private static final double CONNECTION_DECORATOR_LOCATION = 0.5;
-    private static final int TEXT_LOCATION = 10;
-
+    /** relative location of link labels on the edge. */
+    private static final double TEXT_LOCATION = 0.5;
+    /** absolute offset of link labels from the edge. */
+    private static final int TEXT_OFFSET = 10;
+    /** length of link arrows. */
+    private static final int ARROW_LENGTH = 10;
+    /** width of link arrows. */
+    private static final int ARROW_WIDTH = 10;
+    
     /**
      * {@inheritDoc}
      */
     public PictogramElement add(final IAddContext context) {
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
-        Link elink = (Link) context.getNewObject();
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
 
         Connection conn = peCreateService.createFreeFormConnection(getDiagram());
@@ -74,24 +79,24 @@ public class AddLinkFeature extends AbstractAddFeature {
         conn.setEnd(addConContext.getTargetAnchor());
         IGaService gaService = Graphiti.getGaService();
         Polyline polyline = gaService.createPolyline(conn);
-        polyline.setStyle(styleProvider.getStyle());
+        polyline.setStyle(styleProvider.getStyle(StyleProvider.EDGE_STYLE));
+        link(conn, context.getNewObject());
 
-        link(conn, elink);
-
-        ConnectionDecorator textDecorator = peCreateService.createConnectionDecorator(conn, true,
-                CONNECTION_DECORATOR_LOCATION, true);
+        ConnectionDecorator textDecorator = peCreateService.createConnectionDecorator(
+                conn, true, TEXT_LOCATION, true);
         Text text = gaService.createDefaultText(textDecorator);
         text.setStyle(styleProvider.getStyle());
-        gaService.setLocation(text, TEXT_LOCATION, 0);
+        gaService.setLocation(text, TEXT_OFFSET, 0);
 
         // add static graphical decorators (composition and navigable)
-        ConnectionDecorator cd;
-        cd = peCreateService.createConnectionDecorator(conn, false, 1.0, true);
-        createArrow(cd);
+        ConnectionDecorator arrowDecorator = peCreateService.createConnectionDecorator(
+                conn, false, 1.0, true);
+        Polyline arrow = gaService.createPolygon(arrowDecorator,
+                new int[] { -ARROW_LENGTH, ARROW_WIDTH / 2, 0, 0, -ARROW_LENGTH, -ARROW_WIDTH / 2 });
+        arrow.setStyle(styleProvider.getStyle(StyleProvider.SOLID_STYLE));
 
         // provide information to support direct-editing directly
         // after object creation (must be activated additionally)
-
         IDirectEditingInfo directEditingInfo = getFeatureProvider().getDirectEditingInfo();
         // set container shape for direct editing after object creation
         directEditingInfo.setMainPictogramElement(conn);
@@ -100,19 +105,6 @@ public class AddLinkFeature extends AbstractAddFeature {
         directEditingInfo.setPictogramElement(textDecorator);
         directEditingInfo.setGraphicsAlgorithm(text);
         return conn;
-
-    }
-
-    /**
-     * 
-     * @param gaContainer
-     * @return Creates the shape of an arrow
-     */
-    private Polyline createArrow(final GraphicsAlgorithmContainer gaContainer) {
-        Polyline polyline = Graphiti.getGaCreateService().createPolyline(gaContainer,
-                new int[] { -15, 10, 0, 0, -15, -10 });
-        polyline.setStyle(styleProvider.getStyle());
-        return polyline;
     }
 
 }

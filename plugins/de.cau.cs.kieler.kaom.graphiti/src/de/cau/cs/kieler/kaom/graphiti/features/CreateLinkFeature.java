@@ -17,6 +17,8 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateConnectionFeature;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 
 import de.cau.cs.kieler.kaom.Entity;
@@ -46,10 +48,18 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
      * {@inheritDoc}
      */
     public boolean canCreate(final ICreateConnectionContext context) {
-        Object source = getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent());
-        Object target = getBusinessObjectForPictogramElement(context.getTargetAnchor().getParent());
+        Object source = null, target = null;
+        Anchor sourceAnchor = context.getSourceAnchor();
+        if (sourceAnchor != null) {
+            source = getBusinessObjectForPictogramElement(sourceAnchor.getParent());
+        }
+        Anchor targetAnchor = context.getTargetAnchor();
+        if (targetAnchor != null) {
+            target = getBusinessObjectForPictogramElement(targetAnchor.getParent());
+        }
 
-        return (source instanceof Linkable && target instanceof Linkable && source != target);
+        return (sourceAnchor == null || source instanceof Linkable)
+                && (targetAnchor == null || target instanceof Linkable);
     }
 
     /**
@@ -65,8 +75,19 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
      * {@inheritDoc}
      */
     public Connection create(final ICreateConnectionContext context) {
-        Object source = getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent());
-        Object target = getBusinessObjectForPictogramElement(context.getTargetAnchor().getParent());
+        Object source = null, target = null;
+        Anchor sourceAnchor = context.getSourceAnchor();
+        if (sourceAnchor instanceof BoxRelativeAnchor) {
+            source = getBusinessObjectForPictogramElement(context.getSourceAnchor());
+        } else if (sourceAnchor != null) {
+            source = getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent());
+        }
+        Anchor targetAnchor = context.getTargetAnchor();
+        if (targetAnchor instanceof BoxRelativeAnchor) {
+            target = getBusinessObjectForPictogramElement(context.getTargetAnchor());
+        } else if (targetAnchor != null) {
+            target = getBusinessObjectForPictogramElement(context.getTargetAnchor().getParent());
+        }
 
         if (source instanceof Linkable && target instanceof Linkable) {
             KaomFactory kaomFactory = KaomFactory.eINSTANCE;

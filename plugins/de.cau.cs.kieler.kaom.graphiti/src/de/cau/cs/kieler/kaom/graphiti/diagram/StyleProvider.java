@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.mm.algorithms.styles.LineStyle;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
@@ -71,6 +72,10 @@ public class StyleProvider {
     
     /** the default style id for KAOM diagrams. */
     public static final String DEFAULT_STYLE = "default";
+    /** style id for items with solid color fill. */
+    public static final String SOLID_STYLE = "solid";
+    /** style id for edges (links). */
+    public static final String EDGE_STYLE = "link";
     
     /**
      * Create the style with given identifier.
@@ -80,12 +85,20 @@ public class StyleProvider {
      * @return a new style instance, or {@code null} if the id is unknown
      */
     private Style createStyle(final Diagram diagram, final String id) {
+        IGaService gaService = Graphiti.getGaService();
         if (DEFAULT_STYLE.equals(id)) {
-            IGaService gaService = Graphiti.getGaService();
             Style style = gaService.createStyle(diagram, id);
             style.setForeground(gaService.manageColor(diagram, ColorConstant.BLACK));
             style.setBackground(gaService.manageColor(diagram, ColorConstant.WHITE));
             return style;
+        } else if (SOLID_STYLE.equals(id)) {
+            Style defaultStyle = getStyle(DEFAULT_STYLE);
+            Style style = gaService.createStyle(defaultStyle, id);
+            style.setFilled(true);
+        } else if (EDGE_STYLE.equals(id)) {
+            Style style = gaService.createStyle(diagram, id);
+            style.setForeground(gaService.manageColor(diagram, ColorConstant.BLACK));
+            style.setLineStyle(LineStyle.SOLID);
         }
         return null;
     }
