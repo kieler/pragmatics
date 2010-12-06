@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -286,7 +287,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
     public IPath getTargetContainerPath() {
         return this.getContainerFullPath();
     }
-    
+
     
     /**
      * {@inheritDoc}
@@ -488,6 +489,15 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
         
         // Set the options page as the previous page
         this.setPreviousPage(((ImportDiagramsWizard) newWizard).getOptionsPage());
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IWizardPage getNextPage() {
+        // This is the wizard's last page
+        return null;
     }
     
     /**

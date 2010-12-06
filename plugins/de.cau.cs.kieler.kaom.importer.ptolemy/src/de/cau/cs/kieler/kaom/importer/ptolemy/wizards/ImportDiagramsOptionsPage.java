@@ -15,6 +15,7 @@
 package de.cau.cs.kieler.kaom.importer.ptolemy.wizards;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -93,6 +94,20 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         return optOverwriteButton.getSelection();
     }
     
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IWizardPage getNextPage() {
+        ImportDiagramsWizard wizard = (ImportDiagramsWizard) getWizard();
+        
+        if (isFileSystemSource()) {
+            return wizard.getFileSystemSourcesPage();
+        } else {
+            return wizard.getWorkspaceSourcesPage();
+        }
+    }
     
     /**
      * {@inheritDoc}

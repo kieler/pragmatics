@@ -13,13 +13,6 @@
          point="org.eclipse.ui.importWizards">
       <wizard
             category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramWizard"
-            icon="icons/importdiagram.gif"
-            id="de.cau.cs.kieler.kaom.importer.ptolemy.importWizard"
-            name="Import Ptolemy2 Diagram">
-      </wizard>
-      <wizard
-            category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard"
             icon="icons/importdiagram.gif"
             id="de.cau.cs.kieler.kaom.importer.ptolemy.importDiagramsWizard"

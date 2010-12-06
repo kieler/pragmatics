@@ -46,6 +46,11 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
      */
     private ImportDiagramsFileSystemSourcesPage fileSystemSourcesPage;
     
+    /**
+     * The wizard page to select the files to import from the workspace.
+     */
+    private ImportDiagramsWorkspaceSourcesPage workspaceSourcesPage;
+    
     // MISCELLANEOUS
     /**
      * The selection the import wizard was called on.
@@ -100,8 +105,8 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
      * 
      * @return the wizard's workspace source page.
      */
-    void getWorkspaceSourcesPage() {
-        // TODO Implement.
+    ImportDiagramsWorkspaceSourcesPage getWorkspaceSourcesPage() {
+        return workspaceSourcesPage;
     }
     
     /**
@@ -111,9 +116,28 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
     public void addPages() {
         optionsPage = new ImportDiagramsOptionsPage();
         fileSystemSourcesPage = new ImportDiagramsFileSystemSourcesPage(selection);
+        workspaceSourcesPage = new ImportDiagramsWorkspaceSourcesPage(selection);
         
         this.addPage(optionsPage);
         this.addPage(fileSystemSourcesPage);
+        this.addPage(workspaceSourcesPage);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canFinish() {
+        // Check if the options page and the selected sources page is complete
+        boolean complete = optionsPage.isPageComplete();
+        
+        if (optionsPage.isFileSystemSource()) {
+            complete &= fileSystemSourcesPage.isPageComplete();
+        } else {
+            complete &= workspaceSourcesPage.isPageComplete();
+        }
+        
+        return complete;
     }
     
     /**
@@ -136,7 +160,8 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
             sourceFiles = fileSystemSourcesPage.getSourceFiles();
             targetContainerPath = fileSystemSourcesPage.getTargetContainerPath();
         } else {
-            // TODO Retrieve values from the workspace sources page
+            sourceFiles = workspaceSourcesPage.getSourceFiles();
+            targetContainerPath = workspaceSourcesPage.getTargetContainerPath();
         }
         
         // Create the importer and let it do its work
