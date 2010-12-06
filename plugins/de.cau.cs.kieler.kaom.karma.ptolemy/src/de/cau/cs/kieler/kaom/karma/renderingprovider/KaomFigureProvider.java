@@ -35,7 +35,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
@@ -48,13 +54,20 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
+import org.eclipse.gmf.runtime.notation.NotationPackage;
+import org.eclipse.gmf.runtime.notation.Routing;
+import org.eclipse.gmf.runtime.notation.RoutingStyle;
+import org.eclipse.gmf.runtime.notation.Smoothness;
+import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -110,6 +123,23 @@ public class KaomFigureProvider implements IRenderingProvider {
                 PolylineConnectionEx connection = ((PolylineConnectionEx) oldFigure);
                 connection.setTargetDecoration(null);
                 connection.setLineWidthFloat(1.5f);
+                final ConnectionEditPart cPart = (ConnectionEditPart) part;
+
+                AbstractEMFOperation emfOp = new AbstractEMFOperation(cPart.getEditingDomain(), "line routing setting") {
+                    @Override
+                    protected IStatus doExecute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+                    RoutingStyle style = (RoutingStyle) ((View) cPart.getModel()).getStyle(NotationPackage.Literals.ROUTING_STYLE);
+                    style.setRouting(Routing.RECTILINEAR_LITERAL);   //or Routing.TREE_LITERAL
+                    style.setRoundedBendpointsRadius(10);
+                    style.setSmoothness(Smoothness.NONE_LITERAL);
+                    return Status.OK_STATUS;
+                    }
+                };
+
+                try {           
+                    OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
+                } catch (ExecutionException e) {}
+                
                 return oldFigure;
             } else {
                 return null;
