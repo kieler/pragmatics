@@ -14,10 +14,10 @@ import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
 import de.cau.cs.kieler.rail.editor.features.AddBreachFeature;
-import de.cau.cs.kieler.rail.editor.features.AddDeadEndVertex;
+import de.cau.cs.kieler.rail.editor.features.AddDeadEndVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateBreachFeature;
-import de.cau.cs.kieler.rail.editor.features.CreateDeadEndVertex;
+import de.cau.cs.kieler.rail.editor.features.CreateDeadEndVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
 
 /**
@@ -39,7 +39,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
         if (context.getNewObject() instanceof Einbruchsknoten) {
             return new AddBreachFeature(this);
         } else if (context.getNewObject() instanceof Stumpfgleisknoten) {
-        	return new AddDeadEndVertex(this);
+        	return new AddDeadEndVertexFeature(this);
         }
         else if (context.getNewObject() instanceof Edge) {
             return new AddEdgeFeature(this);
@@ -50,7 +50,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public ICreateFeature[] getCreateFeatures() {
-        return new ICreateFeature[] { new CreateBreachFeature(this), new CreateDeadEndVertex(this) };
+    	//, new CreateDeadEndVertexFeature(this)
+        return new ICreateFeature[] { new CreateBreachFeature(this) };
     }
     
     @Override

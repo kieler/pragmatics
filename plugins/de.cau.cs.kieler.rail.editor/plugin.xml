@@ -4,7 +4,7 @@
   <extension
       point="org.eclipse.graphiti.ui.diagramTypes">
     <diagramType
-      description="This is the diagram type for my Graphiti tutorial"
+      description="This is the diagram type for the rail editor."
       id="de.cau.cs.kieler.rail.editor.DiagramType"
       name="Rail"
       type="Rail">

@@ -27,12 +27,12 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
  * @author hdw
  *
  */
-public class AddDeadEndVertex extends AbstractAddShapeFeature {
+public class AddDeadEndVertexFeature extends AbstractAddShapeFeature {
 
     private static final IColorConstant CLASS_TEXT_FOREGROUND =
         new ColorConstant(51, 51, 153);
 	
-	public AddDeadEndVertex(IFeatureProvider fp) {
+	public AddDeadEndVertexFeature(IFeatureProvider fp) {
 		super(fp);
 		// TODO Auto-generated constructor stub
 	}

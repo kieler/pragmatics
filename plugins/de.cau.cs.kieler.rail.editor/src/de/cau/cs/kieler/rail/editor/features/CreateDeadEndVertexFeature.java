@@ -18,14 +18,14 @@ import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
  * @author hdw
  *
  */
-public class CreateDeadEndVertex extends AbstractCreateFeature {
+public class CreateDeadEndVertexFeature extends AbstractCreateFeature {
 
 	/**
 	 * @param fp
 	 * @param name
 	 * @param description
 	 */
-	public CreateDeadEndVertex(IFeatureProvider fp) {
+	public CreateDeadEndVertexFeature(IFeatureProvider fp) {
 		super(fp, "Stumpfgleis", "Stumpfgleis erstellen");
 	}
 
