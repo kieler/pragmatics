@@ -25,3 +25,4 @@ Import-Package: de.cau.cs.kieler.kaom,
  org.eclipse.graphiti,
  org.eclipse.graphiti.examples.common,
  org.eclipse.ui.ide
+Export-Package: de.cau.cs.kieler.kaom.graphiti.diagram

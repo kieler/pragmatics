@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.diagram;
 
+import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
@@ -26,19 +27,16 @@ import org.eclipse.graphiti.util.ColorConstant;
  */
 public class StyleProvider {
 
-    /** the diagram for which this style provider is operating. */
-    private Diagram diagram;
+    /** the diagram type provider for which this style provider is operating. */
+    private IDiagramTypeProvider diagramTypeProvider;
     
     /**
-     * Creates a style provider for a given diagram.
+     * Creates a style provider for a given diagram type provider.
      * 
-     * @param thediagram the diagram for which this style provider is created
+     * @param provider the diagram type provider
      */
-    public StyleProvider(final Diagram thediagram) {
-        if (thediagram == null) {
-            throw new NullPointerException("Diagram is null.");
-        }
-        this.diagram = thediagram;
+    public StyleProvider(final IDiagramTypeProvider provider) {
+        this.diagramTypeProvider = provider;
     }
     
     /**
@@ -57,6 +55,7 @@ public class StyleProvider {
      * @return a style instance, or {@code null} if the id is unknown
      */
     public Style getStyle(final String id) {
+        Diagram diagram = diagramTypeProvider.getDiagram();
         Style style = null;
         for (Style diagramStyle : diagram.getStyles()) {
             if (id.equals(diagramStyle.getId())) {
@@ -65,7 +64,7 @@ public class StyleProvider {
             }
         }
         if (style == null) {
-            style = createStyle(id);
+            style = createStyle(diagram, id);
         }
         return style;
     }
@@ -76,10 +75,11 @@ public class StyleProvider {
     /**
      * Create the style with given identifier.
      * 
+     * @param diagram the diagram
      * @param id the style identifier
      * @return a new style instance, or {@code null} if the id is unknown
      */
-    private Style createStyle(final String id) {
+    private Style createStyle(final Diagram diagram, final String id) {
         if (DEFAULT_STYLE.equals(id)) {
             IGaService gaService = Graphiti.getGaService();
             Style style = gaService.createStyle(diagram, id);

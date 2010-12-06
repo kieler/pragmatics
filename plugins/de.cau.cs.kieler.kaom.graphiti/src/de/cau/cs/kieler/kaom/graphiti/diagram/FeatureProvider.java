@@ -91,7 +91,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     public FeatureProvider(final IDiagramTypeProvider dtp) {
         super(dtp);
-        styleProvider = new StyleProvider(dtp.getDiagram());
+        styleProvider = new StyleProvider(dtp);
     }
 
     /**
