@@ -236,8 +236,8 @@ public class KaomPortProvider implements IRenderingProvider {
                     if (input.equals("NORTH")) {
                         List<Port> portsOfSide = new LinkedList<Port>();
                         for (Port port: ports) {
-                            Annotation cardinal = port.getAnnotation("_cardinal");
-                            if (cardinal != null && cardinal.equals("NORTH")) {
+                            StringAnnotation cardinal = (StringAnnotation) port.getAnnotation("_cardinal");
+                            if (cardinal != null && cardinal.getValue().equals("NORTH")) {
                                 portsOfSide.add(port);
                             }
                         }
@@ -247,9 +247,9 @@ public class KaomPortProvider implements IRenderingProvider {
                     } else if (input.equals("EAST")) {
                         List<Port> portsOfSide = new LinkedList<Port>();
                         for (Port port: ports) {
-                            Annotation cardinal = port.getAnnotation("_cardinal");
+                            StringAnnotation cardinal = (StringAnnotation) port.getAnnotation("_cardinal");
                             Annotation output = port.getAnnotation("output");
-                            if ((cardinal != null && cardinal.equals("EAST")) || output != null) {
+                            if ((cardinal != null && cardinal.getValue().equals("EAST")) || output != null) {
                                 portsOfSide.add(port);
                             } 
                         }
@@ -259,9 +259,9 @@ public class KaomPortProvider implements IRenderingProvider {
                     } else if (input.equals("SOUTH")) {
                         List<Port> portsOfSide = new LinkedList<Port>();
                         for (Port port: ports) {
-                            Annotation cardinal = port.getAnnotation("_cardinal");
+                            StringAnnotation cardinal = (StringAnnotation) port.getAnnotation("_cardinal");
                             Annotation output = port.getAnnotation("inputoutput");
-                            if ((cardinal != null && cardinal.equals("SOUTH")) || output != null) {
+                            if ((cardinal != null && cardinal.getValue().equals("SOUTH")) || output != null) {
                                 portsOfSide.add(port);
                             } 
                         }
@@ -271,9 +271,9 @@ public class KaomPortProvider implements IRenderingProvider {
                     } else if (input.equals("WEST")) {
                         List<Port> portsOfSide = new LinkedList<Port>();
                         for (Port port: ports) {
-                            Annotation cardinal = port.getAnnotation("_cardinal");
+                            StringAnnotation cardinal = (StringAnnotation) port.getAnnotation("_cardinal");
                             Annotation output = port.getAnnotation("input");
-                            if ((cardinal != null && cardinal.equals("WEST")) || output != null) {
+                            if ((cardinal != null && cardinal.getValue().equals("WEST")) || output != null) {
                                 portsOfSide.add(port);
                             } 
                         }
