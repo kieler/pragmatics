@@ -326,7 +326,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
      * @param n the number to insert
      */
     private static void insert(final int[] array, final int start, final int end, final int n) {
-        int insx = Arrays.binarySearch(array, start, end, n);
+        int insx = binarySearch(array, start, end, n);
         if (insx < 0) {
             insx = -insx - 1;
         }
@@ -334,6 +334,36 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
             array[j + 1] = array[j];
         }
         array[insx] = n;
+    }
+    
+    /**
+     * Searches a range of the specified array of ints for the specified value using the
+     * binary search algorithm. The range must be sorted prior to making this call.
+     *
+     * @param a the array to be searched
+     * @param fromIndex the index of the first element (inclusive) to be searched
+     * @param toIndex the index of the last element (exclusive) to be searched
+     * @param key the value to be searched for
+     * @return index of the search key
+     */
+    private static int binarySearch(final int[] a, final int fromIndex,
+            final int toIndex, final int key) {
+        int low = fromIndex;
+        int high = toIndex - 1;
+
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            int midVal = a[mid];
+
+            if (midVal < key) {
+                low = mid + 1;
+            } else if (midVal > key) {
+                high = mid - 1;
+            } else {
+                return mid; // key found
+            }
+        }
+        return -(low + 1); // key not found
     }
     
     /**
