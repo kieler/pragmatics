@@ -13,12 +13,16 @@
  */
 package de.cau.cs.kieler.kiml.grana.batch;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -68,10 +72,19 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
         lastException = null;
         MonitoredOperation.runInUI(new Runnable() {
             public void run() {
-                // open the diagram file in an editor
                 IWorkbenchPage page =
                         PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                                 .getActivePage();
+                // remember the initially opened editors
+                Set<IEditorPart> initialEditors = new HashSet<IEditorPart>();
+                for (IEditorReference editorReference : page
+                        .getEditorReferences()) {
+                    IEditorPart editor = editorReference.getEditor(false);
+                    if (editor != null) {
+                        initialEditors.add(editor);
+                    }
+                }
+                // open the diagram file in an editor
                 IEditorDescriptor editorDescriptor =
                         IDE.getDefaultEditor(diagramFile);
                 if (editorDescriptor == null
@@ -92,7 +105,9 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                         EclipseLayoutServices.getInstance().getManager(
                                 editorPart, null);
                 if (layoutManager == null) {
-                    page.closeEditor(editorPart, false);
+                    if (!initialEditors.contains(editorPart)) {
+                        page.closeEditor(editorPart, false);
+                    }
                     lastException = new RuntimeException(MESSAGE_NO_MANAGER);
                     return;
                 }
@@ -102,14 +117,18 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                 if (layoutBeforeAnalysis) {
                     IStatus status = layoutManager.layout(monitor, false);
                     if (!status.isOK()) {
-                        page.closeEditor(editorPart, false);
+                        if (!initialEditors.contains(editorPart)) {
+                            page.closeEditor(editorPart, false);
+                        }
                         lastException =
                                 new KielerException(MESSAGE_LAYOUT_FAILED,
                                         status.getException());
                         return;
                     }
                 }
-                page.closeEditor(editorPart, false);
+                if (!initialEditors.contains(editorPart)) {
+                    page.closeEditor(editorPart, false);
+                }
             }
         }, true);
         monitor.done();
