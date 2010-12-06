@@ -14,12 +14,13 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.gmf.runtime.draw2d.ui;bundle-version="1.3.0",
  org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.3.0",
  org.eclipse.ui.ide;bundle-version="3.5.2",
- de.cau.cs.kieler.core.kgraph;bundle-version="0.2.0",
- de.cau.cs.kieler.core.ui;bundle-version="0.2.0",
+ org.eclipse.xtend.util.stdlib;bundle-version="1.0.0",
  org.graphdrawing.graphml;bundle-version="1.0.0",
- de.cau.cs.kieler.core.model;bundle-version="0.2.0",
- de.cau.cs.kieler.core;bundle-version="0.3.0",
- org.eclipse.xtend.util.stdlib;bundle-version="1.0.0"
+ de.cau.cs.kieler.core.kgraph,
+ de.cau.cs.kieler.core.ui,
+ de.cau.cs.kieler.core.model,
+ de.cau.cs.kieler.core,
+ de.cau.cs.kieler.karma
 Bundle-ActivationPolicy: lazy
 Export-Package: de.cau.cs.kieler.keg,
  de.cau.cs.kieler.keg.custom,
