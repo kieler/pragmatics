@@ -37,9 +37,9 @@ public class AddBreachFeature extends AbstractAddShapeFeature {
     }
  
     public boolean canAdd(IAddContext context) {
-        // check if user wants to add a EClass
+        // check if user wants to add a Einbruchsknoten
     	//TODO change here
-        if (context.getNewObject() instanceof EClass) {
+        if (context.getNewObject() instanceof Einbruchsknoten) {
             // check if user wants to add to a diagram
             if (context.getTargetContainer() instanceof Diagram) {
                 return true;
@@ -50,7 +50,7 @@ public class AddBreachFeature extends AbstractAddShapeFeature {
  
     public PictogramElement add(IAddContext context) {
     	//TODO Change here
-        EClass addedClass = (EClass) context.getNewObject();
+        Einbruchsknoten addedClass = (Einbruchsknoten) context.getNewObject();
         Diagram targetDiagram = (Diagram) context.getTargetContainer();
  
         // CONTAINER SHAPE WITH ROUNDED RECTANGLE

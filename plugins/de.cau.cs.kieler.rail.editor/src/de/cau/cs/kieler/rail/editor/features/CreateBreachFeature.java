@@ -28,7 +28,7 @@ public class CreateBreachFeature extends AbstractCreateFeature  {
     }
  
     public Object[] create(ICreateContext context) {
-        // ask user for EClass name
+        // ask user for Einbruchsknoten name
         Einbruchsknoten vertex = SpecializedVerticesFactory.eINSTANCE.createEinbruchsknoten();
         Model model = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(context.getTargetContainer());
         
