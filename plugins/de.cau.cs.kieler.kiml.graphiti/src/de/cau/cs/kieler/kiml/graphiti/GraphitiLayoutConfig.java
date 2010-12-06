@@ -44,9 +44,23 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 @SuppressWarnings("restriction")
 public class GraphitiLayoutConfig extends EclipseLayoutConfig {
 
+    /**
+     * Custom property that allow assigning key, value in the constructor.
+     * 
+     * @author soh
+     */
     public static class GraphitiLayoutProperty extends PropertyImpl implements
             Property {
 
+        /**
+         * 
+         * Creates a new GraphitiLayoutProperty.
+         * 
+         * @param keyParam
+         *            the key
+         * @param valueParam
+         *            the value
+         */
         public GraphitiLayoutProperty(final String keyParam,
                 final String valueParam) {
             super.setKey(keyParam);
@@ -283,6 +297,13 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         }
     }
 
+    /**
+     * Get the layout properties from the given editpart.
+     * 
+     * @param editPart
+     *            the edit part
+     * @return the list of properties
+     */
     public static List<Property> getProperties(
             final IPictogramElementEditPart editPart) {
         List<Property> result = new LinkedList<Property>();
@@ -310,14 +331,25 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     protected void addProperties(final Map<IProperty<?>, Object> options) {
         super.addProperties(options);
 
-        if (super.getEditPart() instanceof IPictogramElementEditPart) {
+        EditPart part = super.getEditPart();
+
+        if (part instanceof IPictogramElementEditPart) {
             // add user defined global layout options
-            IPictogramElementEditPart editPart = (IPictogramElementEditPart) super
-                    .getEditPart();
+            IPictogramElementEditPart editPart = (IPictogramElementEditPart) part;
             addOptions(options, false, getProperties(editPart));
         }
     }
 
+    /**
+     * Add the options from the list of properties to the options map.
+     * 
+     * @param options
+     *            map to add the options to
+     * @param onlyDefault
+     *            true if only defaults should be added
+     * @param props
+     *            the list of properties
+     */
     private static void addOptions(final Map<IProperty<?>, Object> options,
             final boolean onlyDefault, final List<Property> props) {
         LayoutServices layoutServices = LayoutServices.getInstance();

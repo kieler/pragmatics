@@ -57,6 +57,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 /**
  * @author atr
  */
+@SuppressWarnings("restriction")
 public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
     /** diagram editor of the currently layouted diagram. */
@@ -98,7 +99,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("restriction")
     @Override
     protected boolean supports(final EditPart editPart) {
         return editPart instanceof IPictogramElementEditPart;
@@ -139,12 +139,28 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                             element.getGraphicsAlgorithm().getHeight(),
                             element.getGraphicsAlgorithm().getWidth() });
                     layoutGraph = topNode;
-                    buildLayoutGraphRecursively(element, topNode);
+
+                    GraphitiLayoutConfig layoutConfig;
+                    if (getExternalConfig() == null) {
+                        layoutConfig = new GraphitiLayoutConfig();
+                    } else {
+                        layoutConfig = new GraphitiLayoutConfig();
+                        // FIXME: implement external config support
+                        // layoutConfig = new
+                        // GraphitiLayoutConfig(getExternalConfig());
+                    }
+
+                    buildLayoutGraphRecursively(element, topNode, layoutConfig);
+
+                    // set user defined layout options for the diagram
+                    layoutConfig.setFocus(layoutRootPart);
+                    shapeLayout.copyProperties(layoutConfig);
+
+                    processConnections(layoutConfig);
                 }
             }
         }
 
-        processConnections();
         return layoutGraph;
     }
 
@@ -156,10 +172,13 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      *            the corresponding KNode
      * @param currentElement
      *            the currently analyzed element
+     * @param layoutConfig
+     *            the layout config
      * @return returns true if current pictogram element has further children
      */
     private boolean buildLayoutGraphRecursively(
-            final PictogramElement currentElement, final KNode topNode) {
+            final PictogramElement currentElement, final KNode topNode,
+            final GraphitiLayoutConfig layoutConfig) {
         EList<Shape> list = null;
         boolean returnstate = true;
         if (topNode != null) {
@@ -167,7 +186,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             if (currentElement instanceof Diagram) {
                 list = ((Diagram) currentElement).getChildren();
             } else if (currentElement instanceof ContainerShape) {
-
                 list = ((ContainerShape) currentElement).getChildren();
             }
 
@@ -191,12 +209,18 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     shapeLayout.setProperty(LayoutOptions.MIN_WIDTH, 20.0f);
                     shapeLayout.setProperty(LayoutOptions.MIN_HEIGHT, 20.0f);
 
+                    // set user defined layout options for the port
+                    layoutConfig.setFocus(diagramEditor
+                            .getEditPartForPictogramElement(cs));
+                    shapeLayout.copyProperties(layoutConfig);
+
                     pictElem2GraphElemMap.put(cs, childnode);
                     graphElemHeightWidth.put(
                             cs,
                             new int[] { containerGa.getHeight(),
                                     containerGa.getWidth() });
-                    boolean state = buildLayoutGraphRecursively(cs, childnode);
+                    boolean state = buildLayoutGraphRecursively(cs, childnode,
+                            layoutConfig);
 
                     shapeLayout.setProperty(LayoutOptions.FIXED_SIZE, state);
                     // }
@@ -249,9 +273,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (editPart instanceof IPictogramElementEditPart) {
             return new GraphitiLayoutInspector(
                     (IPictogramElementEditPart) editPart);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -369,8 +392,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     public void addChangeListener(final IEditorPart editorPart,
             final IEditorChangeListener listener) {
         if (editorPart instanceof DiagramEditor) {
-            final DiagramEditor diagramEditor = (DiagramEditor) editorPart;
-            diagramEditor.getGraphicalViewer().addSelectionChangedListener(
+            final DiagramEditor diagEditor = (DiagramEditor) editorPart;
+            diagEditor.getGraphicalViewer().addSelectionChangedListener(
                     listener);
             List<Pair<DiagramEditor, ISelectionChangedListener>> editorList = listenerMap
                     .get(listener);
@@ -379,7 +402,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 listenerMap.put(listener, editorList);
             }
             editorList.add(new Pair<DiagramEditor, ISelectionChangedListener>(
-                    diagramEditor, listener));
+                    diagEditor, listener));
         }
     }
 
@@ -406,16 +429,17 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (editorPart instanceof DiagramEditor) {
             return ((DiagramEditor) editorPart).getGraphicalViewer()
                     .getSelection();
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
      * Creates new edges and takes care of the labels for each connection
      * identified in the {@code buildLayoutGraphRecursively} method.
+     * 
+     * @param layoutConfig
      */
-    private void processConnections() {
+    private void processConnections(final GraphitiLayoutConfig layoutConfig) {
 
         for (Connection connection : connections) {
             KEdge edge = KimlUtil.createInitializedEdge();
@@ -482,6 +506,11 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 kpoint.setY(point.getY());
                 edgeLayout.getBendPoints().add(kpoint);
             }
+
+            // set user defined layout options for the edge
+            layoutConfig.setFocus(diagramEditor
+                    .getEditPartForPictogramElement(connection));
+            edgeLayout.copyProperties(layoutConfig);
 
         }
 
