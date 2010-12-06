@@ -36,6 +36,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
 import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 
 /**
@@ -43,6 +44,8 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
  */
 @SuppressWarnings("restriction")
 public class GraphitiLayoutConfig extends EclipseLayoutConfig {
+
+    public static final String PREFIX = "layout:";
 
     /**
      * Custom property that allow assigning key, value in the constructor.
@@ -89,7 +92,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                     while (iter.hasNext()) {
                         Property p = iter.next();
 
-                        if (p.getKey().startsWith("de.cau.cs.kieler")) {
+                        if (p.getKey().startsWith(PREFIX)) {
                             iter.remove();
                         }
                     }
@@ -116,11 +119,15 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                 .getProperties();
         // check option value from notation model
         for (Property property : prop) {
-            if (property.getKey().equals(optionData.getId())) {
-                String value = property.getValue();
-                if (value != null) {
-                    if (optionData.parseValue(value) != null) {
-                        return false;
+            String key = property.getKey();
+            if (key.startsWith(PREFIX)) {
+                key = key.replaceFirst(PREFIX, "");
+                if (key.equals(optionData.getId())) {
+                    String value = property.getValue();
+                    if (value != null) {
+                        if (optionData.parseValue(value) != null) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -176,12 +183,16 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                     while (iter.hasNext()) {
                         Property p = iter.next();
 
-                        if (p.getKey().equals(id)) {
-                            p.setValue(string);
-                            return;
+                        String key = p.getKey();
+                        if (key.startsWith(PREFIX)) {
+                            key = key.replaceFirst(PREFIX, "");
+                            if (key.equals(id)) {
+                                p.setValue(string);
+                                return;
+                            }
                         }
                     }
-                    prop.add(new GraphitiLayoutProperty(id, string));
+                    prop.add(new GraphitiLayoutProperty(PREFIX + id, string));
                 }
             });
         }
@@ -210,8 +221,12 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                     while (iter.hasNext()) {
                         Property p = iter.next();
 
-                        if (p.getKey().equals(id)) {
-                            iter.remove();
+                        String key = p.getKey();
+                        if (key.startsWith(PREFIX)) {
+                            key = key.replaceFirst(PREFIX, "");
+                            if (key.equals(id)) {
+                                iter.remove();
+                            }
                         }
                     }
                 }
@@ -239,12 +254,16 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                     .getEditPart();
 
             for (Property p : editPart.getPictogramElement().getProperties()) {
-                if (p.getKey().equals(optionData.getId())) {
-                    String value = p.getValue();
-                    if (value != null) {
-                        result = optionData.parseValue(value);
-                        if (result != null) {
-                            return result;
+                String key = p.getKey();
+                if (key.startsWith(PREFIX)) {
+                    key = key.replaceFirst(PREFIX, "");
+                    if (key.equals(optionData.getId())) {
+                        String value = p.getValue();
+                        if (value != null) {
+                            result = optionData.parseValue(value);
+                            if (result != null) {
+                                return result;
+                            }
                         }
                     }
                 }
@@ -267,11 +286,13 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
 
         setFocus(focusEditPart);
 
+        String layoutHint = getLayoutHint();
+
         PictogramElement pe = editPart.getPictogramElement();
         if (pe instanceof Diagram) {
-            super.initialize(Target.PARENTS, getEditPart(), null);
+            super.initialize(Target.PARENTS, getEditPart(), layoutHint);
         } else if (pe instanceof ContainerShape) {
-            super.initialize(Target.NODES, getEditPart(), null);
+            super.initialize(Target.NODES, getEditPart(), layoutHint);
             List<PictogramElement> children = editPart.getModelChildren();
             boolean hasPorts = false;
             boolean hasChildren = false;
@@ -283,18 +304,31 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                 }
             }
             if (hasChildren) {
-                super.initialize(Target.EDGES, getEditPart(), null);
-                super.initialize(Target.PARENTS, getEditPart(), null);
+                super.initialize(Target.EDGES, getEditPart(), layoutHint);
+                super.initialize(Target.PARENTS, getEditPart(), layoutHint);
             }
             if (hasPorts) {
-                super.initialize(Target.PORTS, getEditPart(), null);
+                super.initialize(Target.PORTS, getEditPart(), layoutHint);
             }
 
         } else if (pe instanceof Connection) {
-            super.initialize(Target.EDGES, getEditPart(), null);
+            super.initialize(Target.EDGES, getEditPart(), layoutHint);
         } else if (pe instanceof Anchor) {
-            super.initialize(Target.PORTS, getEditPart(), null);
+            super.initialize(Target.PORTS, getEditPart(), layoutHint);
         }
+    }
+
+    /**
+     * @return
+     */
+    private String getLayoutHint() {
+        List<Property> list = getProperties((IPictogramElementEditPart) getEditPart());
+        for (Property p : list) {
+            if (p.getKey().equals(LayoutOptions.LAYOUTER_HINT_ID)) {
+                return p.getValue();
+            }
+        }
+        return null;
     }
 
     /**
@@ -311,8 +345,8 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         EList<Property> prop = editPart.getPictogramElement().getProperties();
 
         for (Property p : prop) {
-            if (p.getKey().startsWith("de.cau.cs.kieler")) {
-                String key = p.getKey();
+            if (p.getKey().startsWith(PREFIX)) {
+                String key = p.getKey().replaceFirst(PREFIX, "");
                 String value = p.getValue();
 
                 result.add(new GraphitiLayoutProperty(key, value));

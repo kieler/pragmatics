@@ -209,6 +209,18 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     shapeLayout.setProperty(LayoutOptions.MIN_WIDTH, 20.0f);
                     shapeLayout.setProperty(LayoutOptions.MIN_HEIGHT, 20.0f);
 
+                    // KInsets kinsets = null;
+                    // // set insets if not yet defined
+                    // if (kinsets == null) {
+                    // kinsets = topNode.getData(KShapeLayout.class)
+                    // .getProperty(LayoutOptions.INSETS);
+                    //
+                    // kinsets.setLeft(40);
+                    // kinsets.setTop(5);
+                    // kinsets.setRight(40);
+                    // kinsets.setBottom(5);
+                    // }
+
                     // set user defined layout options for the port
                     layoutConfig.setFocus(diagramEditor
                             .getEditPartForPictogramElement(cs));
