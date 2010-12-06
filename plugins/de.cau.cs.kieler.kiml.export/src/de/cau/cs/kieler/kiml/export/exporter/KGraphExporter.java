@@ -14,45 +14,41 @@
 package de.cau.cs.kieler.kiml.export.exporter;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.transformation.TransformationException;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.export.ExportUtil;
 import de.cau.cs.kieler.kiml.export.ExporterConfiguration;
-import de.cau.cs.kieler.kiml.export.util.XtendUtil;
 
 /**
- * A graph exporter for the GraphML file format.
+ * A graph exporter for the raw KGraph.
  * 
  * @author mri
  */
-public class GraphMLExporter extends AbstractExporter {
+public class KGraphExporter extends AbstractExporter {
 
     /** the supported file extensions. */
-    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "graphml" };
-    /** the xtend transformation file. */
-    private static final String XTEND_TRANSFORMATION_FILE =
-            "/transformations/kgraph2graphml.ext";
-    /** the xtend extension which is performing the transformation. */
-    private static final String XTEND_TRANSFORMATION = "transform";
-
-    /**
-     * Constructs a GML exporter.
-     */
-    public GraphMLExporter() {
-    }
+    private static final String[] SUPPORTED_FILE_EXTENSIONS = { "kgraph" };
+    /** a dummy file extension. */
+    private static final String FILE_EXT_DUMMY = "dummyext";
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String getName() {
-        return "GraphML";
+        return "KGraph";
     }
 
     /**
@@ -78,25 +74,26 @@ public class GraphMLExporter extends AbstractExporter {
     public void doExport(final IKielerProgressMonitor monitor,
             final ExporterConfiguration configuration, final KNode graph)
             throws KielerException {
-        monitor.begin("Exporting KGraph to GraphML", 1);
-
+        monitor.begin("Exporting KGraph", 1);
         try {
-            XtendUtil.resetGenerators();
-            ExportUtil.transformKGraph2Model(
-                    monitor.subTask(1),
-                    XTEND_TRANSFORMATION_FILE,
-                    XTEND_TRANSFORMATION,
-                    null,
-                    graph,
+            OutputStream outputStream =
                     ExportUtil.createOutputStream(
                             configuration.getExportFilePath(),
-                            configuration.isWorkspacePath()),
-                    new GraphMLResourceFactoryImpl(),
-                    "de.cau.cs.kieler.core.kgraph.KGraphPackage",
-                    "org.graphdrawing.graphml.GraphMLPackage");
+                            configuration.isWorkspacePath());
+            ResourceSet resourceSet = new ResourceSetImpl();
+            // resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
+            // .put(FILE_EXT_DUMMY, new KGraphResourceFactory());
+            Resource resource =
+                    resourceSet.createResource(URI.createURI("http:///My."
+                            + FILE_EXT_DUMMY));
+            resource.getContents().add(graph);
+            Map<String, Object> options = new HashMap<String, Object>();
+            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+            options.put(XMLResource.OPTION_FORMATTED, true);
+            // write to the stream
+            resource.save(outputStream, options);
+            outputStream.close();
         } catch (IOException e) {
-            throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
-        } catch (TransformationException e) {
             throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
         } finally {
             monitor.done();

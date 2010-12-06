@@ -18,6 +18,7 @@ import org.osgi.framework.BundleContext;
 
 import de.cau.cs.kieler.kiml.export.exporter.GMLExporter;
 import de.cau.cs.kieler.kiml.export.exporter.GraphMLExporter;
+import de.cau.cs.kieler.kiml.export.exporter.KGraphExporter;
 import de.cau.cs.kieler.kiml.export.exporter.OGMLExporter;
 
 /**
@@ -50,6 +51,7 @@ public class ExportActivator extends AbstractUIPlugin {
         ExportServices.getInstance().addExporter(new GraphMLExporter());
         ExportServices.getInstance().addExporter(new OGMLExporter());
         ExportServices.getInstance().addExporter(new GMLExporter());
+        ExportServices.getInstance().addExporter(new KGraphExporter());
     }
 
     /**

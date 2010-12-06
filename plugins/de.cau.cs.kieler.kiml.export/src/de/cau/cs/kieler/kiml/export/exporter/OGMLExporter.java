@@ -48,7 +48,7 @@ public class OGMLExporter extends AbstractExporter {
     private static final ExporterOption<Boolean> OPTION_LAYOUT_INFORMATION =
             new ExporterOption<Boolean>("ogml.layoutInformation",
                     "Include layout information?", true);
-    
+
     /**
      * Constructs an OGML exporter.
      */
@@ -91,7 +91,8 @@ public class OGMLExporter extends AbstractExporter {
 
         try {
             List<Object> parameters = new LinkedList<Object>();
-            parameters.add(configuration.getProperty(OPTION_LAYOUT_INFORMATION));
+            parameters
+                    .add(configuration.getProperty(OPTION_LAYOUT_INFORMATION));
             XtendUtil.resetGenerators();
             ExportUtil.transformKGraph2Model(
                     monitor.subTask(1),
@@ -111,9 +112,9 @@ public class OGMLExporter extends AbstractExporter {
             throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
         } catch (TransformationException e) {
             throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
+        } finally {
+            monitor.done();
         }
-
-        monitor.done();
     }
 
 }
