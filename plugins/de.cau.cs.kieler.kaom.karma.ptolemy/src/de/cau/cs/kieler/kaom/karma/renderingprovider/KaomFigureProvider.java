@@ -152,7 +152,7 @@ public class KaomFigureProvider implements IRenderingProvider {
                 try {
                     OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
                 } catch (ExecutionException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
 
                 return oldFigure;
