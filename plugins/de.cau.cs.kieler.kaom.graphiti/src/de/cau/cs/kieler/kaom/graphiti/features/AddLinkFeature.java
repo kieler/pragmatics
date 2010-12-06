@@ -27,6 +27,7 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 
+import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
@@ -38,7 +39,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 public class AddLinkFeature extends AbstractAddFeature {
 
     /** the style provider. */ 
-    private StyleProvider styleProvider;
+    private IStyleProvider styleProvider;
     
     /**
      * The Constructor.
@@ -46,7 +47,7 @@ public class AddLinkFeature extends AbstractAddFeature {
      * @param fp the feature provider
      * @param thestyleProvider the style provider
      */
-    public AddLinkFeature(final IFeatureProvider fp, final StyleProvider thestyleProvider) {
+    public AddLinkFeature(final IFeatureProvider fp, final IStyleProvider thestyleProvider) {
         super(fp);
         this.styleProvider = thestyleProvider;
     }
@@ -63,34 +64,34 @@ public class AddLinkFeature extends AbstractAddFeature {
     /** absolute offset of link labels from the edge. */
     private static final int TEXT_OFFSET = 10;
     /** length of link arrows. */
-    private static final int ARROW_LENGTH = 10;
+    private static final int ARROW_LENGTH = 8;
     /** width of link arrows. */
-    private static final int ARROW_WIDTH = 10;
+    private static final int ARROW_WIDTH = 8;
     
     /**
      * {@inheritDoc}
      */
     public PictogramElement add(final IAddContext context) {
-        IAddConnectionContext addConContext = (IAddConnectionContext) context;
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
 
-        Connection conn = peCreateService.createFreeFormConnection(getDiagram());
-        conn.setStart(addConContext.getSourceAnchor());
-        conn.setEnd(addConContext.getTargetAnchor());
+        Connection connection = peCreateService.createFreeFormConnection(getDiagram());
+        IAddConnectionContext addConContext = (IAddConnectionContext) context;
+        connection.setStart(addConContext.getSourceAnchor());
+        connection.setEnd(addConContext.getTargetAnchor());
         IGaService gaService = Graphiti.getGaService();
-        Polyline polyline = gaService.createPolyline(conn);
-        polyline.setStyle(styleProvider.getStyle(StyleProvider.EDGE_STYLE));
-        link(conn, context.getNewObject());
+        Polyline polyline = gaService.createPolyline(connection);
+        polyline.setStyle(styleProvider.getStyle());
+        link(connection, context.getNewObject());
 
         ConnectionDecorator textDecorator = peCreateService.createConnectionDecorator(
-                conn, true, TEXT_LOCATION, true);
+                connection, true, TEXT_LOCATION, true);
         Text text = gaService.createDefaultText(textDecorator);
         text.setStyle(styleProvider.getStyle());
         gaService.setLocation(text, TEXT_OFFSET, 0);
 
         // add static graphical decorators (composition and navigable)
         ConnectionDecorator arrowDecorator = peCreateService.createConnectionDecorator(
-                conn, false, 1.0, true);
+                connection, false, 1.0, true);
         Polyline arrow = gaService.createPolygon(arrowDecorator,
                 new int[] { -ARROW_LENGTH, ARROW_WIDTH / 2, 0, 0, -ARROW_LENGTH, -ARROW_WIDTH / 2 });
         arrow.setStyle(styleProvider.getStyle(StyleProvider.SOLID_STYLE));
@@ -98,13 +99,12 @@ public class AddLinkFeature extends AbstractAddFeature {
         // provide information to support direct-editing directly
         // after object creation (must be activated additionally)
         IDirectEditingInfo directEditingInfo = getFeatureProvider().getDirectEditingInfo();
-        // set container shape for direct editing after object creation
-        directEditingInfo.setMainPictogramElement(conn);
+        directEditingInfo.setMainPictogramElement(connection);
         // set shape and graphics algorithm where the editor for
         // direct editing shall be opened after object creation
         directEditingInfo.setPictogramElement(textDecorator);
         directEditingInfo.setGraphicsAlgorithm(text);
-        return conn;
+        return connection;
     }
 
 }

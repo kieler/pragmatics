@@ -26,6 +26,7 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
+import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
@@ -38,7 +39,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 public class AddRelationFeature extends AbstractAddShapeFeature {
 
     /** the style provider. */ 
-    private StyleProvider styleProvider;
+    private IStyleProvider styleProvider;
     private static final int[] VERTICES_POSITION = { -9, 0, 0, 12, 9, 0, 0, -12 };
     private static final IColorConstant RELATION_BACKGROUND = new ColorConstant(70, 70, 70);
 
@@ -47,7 +48,7 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
      * @param fp
      *            Constructor.
      */
-    public AddRelationFeature(final IFeatureProvider fp, final StyleProvider thestyleProvider) {
+    public AddRelationFeature(final IFeatureProvider fp, final IStyleProvider thestyleProvider) {
         super(fp);
         this.styleProvider = thestyleProvider;
     }

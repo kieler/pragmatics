@@ -47,6 +47,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
+import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Port;
@@ -82,7 +83,7 @@ import de.cau.cs.kieler.kaom.graphiti.features.UpdateLinkFeature;
 public class FeatureProvider extends DefaultFeatureProvider {
 
     /** the style provider that is used by the features. */
-    private StyleProvider styleProvider;
+    private IStyleProvider styleProvider;
     
     /**
      * Constructor.

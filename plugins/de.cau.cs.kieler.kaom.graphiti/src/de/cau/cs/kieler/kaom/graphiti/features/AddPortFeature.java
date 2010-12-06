@@ -29,6 +29,7 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 
+import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
@@ -40,7 +41,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 public class AddPortFeature extends AbstractAddShapeFeature {
 
     /** the style provider. */ 
-    private StyleProvider styleProvider;
+    private IStyleProvider styleProvider;
     
     /**
      * Port created at a distance.
@@ -53,7 +54,7 @@ public class AddPortFeature extends AbstractAddShapeFeature {
      * @param fp
      *            Constructor.
      */
-    public AddPortFeature(final IFeatureProvider fp, final StyleProvider thestyleProvider) {
+    public AddPortFeature(final IFeatureProvider fp, final IStyleProvider thestyleProvider) {
         super(fp);
         this.styleProvider = thestyleProvider;
     }

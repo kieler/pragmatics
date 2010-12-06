@@ -90,8 +90,7 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
         }
 
         if (source instanceof Linkable && target instanceof Linkable) {
-            KaomFactory kaomFactory = KaomFactory.eINSTANCE;
-            Link link = kaomFactory.createLink();
+            Link link = KaomFactory.eINSTANCE.createLink();
             link.setSource((Linkable) source);
             link.setTarget((Linkable) target);
             Entity topEntity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(getDiagram());

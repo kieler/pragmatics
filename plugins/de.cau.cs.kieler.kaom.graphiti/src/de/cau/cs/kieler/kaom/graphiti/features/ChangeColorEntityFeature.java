@@ -18,6 +18,7 @@ import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
+import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
@@ -29,7 +30,7 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 public class ChangeColorEntityFeature extends AbstractCustomFeature {
 
     /** the style provider. */ 
-    private StyleProvider styleProvider;
+    private IStyleProvider styleProvider;
     private boolean background;
     
     /**
@@ -38,7 +39,7 @@ public class ChangeColorEntityFeature extends AbstractCustomFeature {
      * @param fp
      * Constructor.
      */
-    public ChangeColorEntityFeature(final IFeatureProvider fp, final StyleProvider thestyleProvider,
+    public ChangeColorEntityFeature(final IFeatureProvider fp, final IStyleProvider thestyleProvider,
             final boolean backgrond) {
         super(fp);
         this.styleProvider = thestyleProvider;

@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 
 import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
+
+import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
@@ -39,7 +41,7 @@ import org.eclipse.graphiti.services.IPeCreateService;
 public class AddEntityFeature extends AbstractAddShapeFeature {
 
     /** the style provider. */ 
-    private StyleProvider styleProvider;
+    private IStyleProvider styleProvider;
     
     /**
      * The constructor.
@@ -47,7 +49,7 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
      * @param fp the feature provider
      * @param thestyleProvider the style provider
      */
-    public AddEntityFeature(final IFeatureProvider fp, final StyleProvider thestyleProvider) {
+    public AddEntityFeature(final IFeatureProvider fp, final IStyleProvider thestyleProvider) {
         super(fp);
         this.styleProvider = thestyleProvider;
     }

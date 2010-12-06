@@ -76,11 +76,11 @@ public class UpdateLinkFeature extends AbstractUpdateFeature {
                 || (!(pictogramName == null) && !pictogramName.equals(businessName))) {
             updateRequired = true;
         }
-        if (updateRequired) {
-            return Reason.createTrueReason("Name is out of Date");
-        } else {
+//        if (updateRequired) {
+//            return Reason.createTrueReason("Name is out of Date");
+//        } else {
             return Reason.createFalseReason();
-        }
+//        }
     }
 
     /**
