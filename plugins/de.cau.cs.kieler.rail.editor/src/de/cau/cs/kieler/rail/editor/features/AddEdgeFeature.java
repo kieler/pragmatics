@@ -13,10 +13,12 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.IColorConstant;
 
-public class AddEdgeFeature extends AbstractAddFeature {
+import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
+
+public class AddEdgeFeature extends AddFeature {
  
-    public AddEdgeFeature (IFeatureProvider fp) {
-        super(fp);
+    public AddEdgeFeature (IFeatureProvider fp,final IStyleProvider styleProvider) {
+        super(fp, styleProvider);
     }
  
     public PictogramElement add(IAddContext context) {

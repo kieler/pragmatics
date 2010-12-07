@@ -75,6 +75,9 @@ public class StyleProvider implements IStyleProvider {
     public static final String DEFAULT_STYLE = "default";
     /** style id for items with solid color fill. */
     public static final String SOLID_STYLE = "solid";
+    //TODO new one.
+    /** style id for Breach (Einbruchsstelle)*/
+    public static final String BREACH = "breach";
     
     /**
      * Create the style with given identifier.
@@ -94,6 +97,10 @@ public class StyleProvider implements IStyleProvider {
             Style defaultStyle = getStyle(DEFAULT_STYLE);
             Style style = gaService.createStyle(defaultStyle, id);
             style.setFilled(true);
+        } else if (BREACH.equals(id)){  //TODO strage. I think??
+        	Style style = gaService.createStyle(diagram, id);
+        	//TODO has to fix.
+        	return style;
         }
         return null;
     }

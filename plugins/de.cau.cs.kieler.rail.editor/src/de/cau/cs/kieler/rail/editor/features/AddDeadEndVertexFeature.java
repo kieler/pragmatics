@@ -84,7 +84,7 @@ public class AddDeadEndVertexFeature extends AbstractAddShapeFeature {
             
             //NEU
         	
-        	
+        	/*
         	
             Ellipse ellipse = gaService.createEllipse( containerShape);
             ellipse.setLineWidth(3);
@@ -96,7 +96,7 @@ public class AddDeadEndVertexFeature extends AbstractAddShapeFeature {
             
             gaService.setLocationAndSize(ellipse,
                     context.getX(), context.getY()+10, width, height-10);
-            
+            */
             //NEU
             
             

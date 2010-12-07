@@ -46,7 +46,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
         	return new AddDeadEndVertexFeature(this);
         }
         else if (context.getNewObject() instanceof Edge) {
-            return new AddEdgeFeature(this);
+            return new AddEdgeFeature(this,styleProvider);
         }
         return super.getAddFeature(context);
     }

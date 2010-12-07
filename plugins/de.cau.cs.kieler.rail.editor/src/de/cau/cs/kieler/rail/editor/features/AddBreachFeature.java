@@ -19,20 +19,10 @@ import org.eclipse.graphiti.util.IColorConstant;
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 
-public class AddBreachFeature extends AbstractAddShapeFeature {
-    private static final IColorConstant CLASS_TEXT_FOREGROUND =
-        new ColorConstant(51, 51, 153);
- 
-    private static final IColorConstant CLASS_FOREGROUND =
-        new ColorConstant(255, 102, 0);
- 
-    private static final IColorConstant CLASS_BACKGROUND =
-        new ColorConstant(255, 204, 153);
-    /** the style provider. */ 
-    private IStyleProvider styleProvider;
+public class AddBreachFeature extends AddFeature {
+    
     public AddBreachFeature(IFeatureProvider fp, final IStyleProvider thestyleProvider) {
-        super(fp);
-        this.styleProvider = thestyleProvider;
+        super(fp,thestyleProvider);
     }
  
     public boolean canAdd(IAddContext context) {
@@ -62,19 +52,9 @@ public class AddBreachFeature extends AbstractAddShapeFeature {
         int height = 50; 
         IGaService gaService = Graphiti.getGaService();
  
+        
+        
         {
-        	/*
-            // create and set graphics algorithm
-            RoundedRectangle roundedRectangle =
-                gaService.createRoundedRectangle(containerShape, 5, 5);
-            roundedRectangle.setForeground(manageColor(CLASS_FOREGROUND));
-            roundedRectangle.setBackground(manageColor(CLASS_BACKGROUND));
-            roundedRectangle.setLineWidth(2);
-            
-            gaService.setLocationAndSize(roundedRectangle,
-                    context.getX(), context.getY(), width, height);*/
-            
-            //NEU
             Ellipse ellipse = gaService.createEllipse( containerShape);
             ellipse.setLineWidth(3);
             ellipse.setFilled(false);
@@ -84,7 +64,7 @@ public class AddBreachFeature extends AbstractAddShapeFeature {
             gaService.setLocationAndSize(ellipse,
                     context.getX(), context.getY()+10, width, height-10);
             
-            //NEU
+            ellipse.setStyle(styleProvider.getStyle("1"));
             
             
  
@@ -97,21 +77,6 @@ public class AddBreachFeature extends AbstractAddShapeFeature {
             // create link and wire it
             link(containerShape, addedClass);
         }
- 
-        
-        
-        /*
-        // SHAPE WITH LINE
-        {
-            // create shape for line
-            Shape shape = peCreateService.createShape(containerShape, false);
- 
-            // create and set graphics algorithm
-            Polyline polyline =
-                gaService.createPolyline(shape, new int[] { 0, 20, width, 20 });
-            polyline.setForeground(manageColor(CLASS_FOREGROUND));
-            polyline.setLineWidth(2);
-        }*/
  
         // SHAPE WITH TEXT
         {
@@ -136,7 +101,6 @@ public class AddBreachFeature extends AbstractAddShapeFeature {
         // call the layout feature
         layoutPictogramElement(containerShape);
         
- 
         return containerShape;
     }
 }
