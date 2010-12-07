@@ -84,6 +84,7 @@ import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.core.ui.util.CoreUiUtil;
+import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.kvid.KvidUtil;
 import de.cau.cs.kieler.kvid.data.DataObject;
@@ -694,6 +695,11 @@ public class KaomFigureProvider implements IRenderingProvider {
             if (annotation != null && annotation instanceof StringAnnotation) {
                 String ptolemyClassString = ((StringAnnotation) annotation).getValue();
                 try {
+                    /* First, assume that the actor is defined in a Java class.
+                     * If that fails, we fall back to letting Ptolemy load the
+                     * actor, which handles the case of the actor being defined
+                     * in its own Ptolemy model file.
+                     */
                     Object obj;
                     Class<?> ptolemy = Class.forName(ptolemyClassString);
                     Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class,
@@ -704,8 +710,19 @@ public class KaomFigureProvider implements IRenderingProvider {
                         return nObj;
                     }
                 } catch (ClassNotFoundException ce) {
-                    ce.printStackTrace();
-                    return null;
+                    // Do nothing. We'll handle that after the try-catch block.
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+                try {
+                    // Use Ptolemy to load the actor
+                    PtolemyHelper ptolemyHelper = new PtolemyHelper();
+                    NamedObj nObj = ptolemyHelper.instantiatePtolemyEntity(ptolemyClassString);
+                    
+                    if (nObj != null) {
+                        return nObj;
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
