@@ -19,6 +19,7 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
+import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.impl.EinbruchsknotenImpl;
 
@@ -31,9 +32,11 @@ public class AddBreachFeature extends AbstractAddShapeFeature {
  
     private static final IColorConstant CLASS_BACKGROUND =
         new ColorConstant(255, 204, 153);
- 
-    public AddBreachFeature(IFeatureProvider fp) {
+    /** the style provider. */ 
+    private IStyleProvider styleProvider;
+    public AddBreachFeature(IFeatureProvider fp, final IStyleProvider thestyleProvider) {
         super(fp);
+        this.styleProvider = thestyleProvider;
     }
  
     public boolean canAdd(IAddContext context) {

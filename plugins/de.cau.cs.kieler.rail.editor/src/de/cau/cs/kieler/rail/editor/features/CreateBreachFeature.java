@@ -5,6 +5,7 @@ import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 import de.cau.cs.kieler.rail.Topologie.Model;
@@ -30,7 +31,13 @@ public class CreateBreachFeature extends AbstractCreateFeature  {
     public Object[] create(ICreateContext context) {
         // ask user for Einbruchsknoten name
         Einbruchsknoten vertex = SpecializedVerticesFactory.eINSTANCE.createEinbruchsknoten();
-        Model model = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(context.getTargetContainer());
+        
+        KrailDiagramEditor kde = ((KrailDiagramEditor) getDiagramEditor());
+        ContainerShape tc = context.getTargetContainer();
+        Model model = kde.fetchModel(tc);
+        
+        //Model model = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(context.getTargetContainer());
+        
         
         model.getVertices().add(vertex);    
         
