@@ -55,7 +55,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public ICreateFeature[] getCreateFeatures() {
     	//, new CreateDeadEndVertexFeature(this)
-        return new ICreateFeature[] { new CreateBreachFeature(this), new CreateDeadEndVertexFeature(this) };
+        return new ICreateFeature[] { new CreateBreachFeature(this) , new CreateDeadEndVertexFeature(this)};
     }
     
     @Override
