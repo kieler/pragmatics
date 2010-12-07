@@ -33,12 +33,14 @@ import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 
 import ptolemy.kernel.CompositeEntity;
+import ptolemy.kernel.util.NamedObj;
 
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
+import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper;
 import de.cau.cs.kieler.kaom.karma.ptolemy.PtolemyPortBorderItemLocator;
 import de.cau.cs.kieler.karma.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
@@ -73,14 +75,9 @@ public class KaomPortProvider implements IRenderingProvider {
                 Annotation annotation = myAnnotatable.getAnnotation("ptolemyClass");
                 if (annotation != null && annotation instanceof StringAnnotation) {
                     String ptolemyClassString = ((StringAnnotation) annotation).getValue();
-                    Class<?> ptolemy;
                     try {
-                        Object obj;
-                        ptolemy = Class.forName(ptolemyClassString);
-                        Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class,
-                                String.class);
-                        obj = constr.newInstance(new CompositeEntity(), "cache");
-                        ptolemy.kernel.Entity entity = (ptolemy.kernel.Entity) obj;
+                        ptolemy.kernel.Entity entity = getPtolemyEntity(ptolemyClassString);
+                        
                         if (object instanceof Port) {
                             Port port = (Port) object;
                             String name = port.getName();
@@ -296,5 +293,35 @@ public class KaomPortProvider implements IRenderingProvider {
     public NodeFigure getNodePlateByString(String input, EObject object) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    /**
+     * Loads the given Ptolemy entity.
+     * 
+     * @param className the entity's class name.
+     * @return the loaded entity.
+     * @throws Exception various exceptions can occurr.
+     */
+    private ptolemy.kernel.Entity getPtolemyEntity(final String className) throws Exception {
+        try {
+            Class<?> ptolemy = Class.forName(className);
+            Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class,
+                    String.class);
+            Object obj = constr.newInstance(new CompositeEntity(), "cache");
+            ptolemy.kernel.Entity entity = (ptolemy.kernel.Entity) obj;
+            return entity;
+        } catch (ClassNotFoundException e) {
+            // Not a class actor, continue below
+        }
+
+        // Use Ptolemy to load the actor
+        PtolemyHelper ptolemyHelper = new PtolemyHelper();
+        NamedObj nObj = ptolemyHelper.instantiatePtolemyEntity(className);
+        
+        if (nObj instanceof ptolemy.kernel.Entity) {
+            return (ptolemy.kernel.Entity) nObj;
+        } else {
+            throw new Exception("Couldn't load Ptolemy Entity '" + className + "'.");
+        }
     }
 }
