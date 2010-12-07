@@ -128,25 +128,39 @@ public class PtolemyHelper implements IExecutionContextAware {
      * @return corresponding Ptolemy object
      * @throws Exception may throw different Exceptions during parsing
      */
-    private NamedObj instantiatePtolemyEntity(final EntityType entity) throws Exception {
+    public NamedObj instantiatePtolemyEntity(final EntityType entity) throws Exception {
         String classname = entity.getClass1();
         
         if (classname.equals("ptolemy.domains.modal.kernel.State")) {
-            return instantiatePtolemyState(entity);
+            return instantiatePtolemyState(entity.getClass1(), entity.getName());
         }
         
-        return instantiatePtolemyActor(entity);
+        return instantiatePtolemyActor(entity.getClass1(), entity.getName());
+    }
+    
+    /**
+     * Instantiate a Ptolemy entity with the given class name.
+     * 
+     * @param className the class name of the actor to instantiate.
+     * @return corresponding Ptolemy object.
+     * @throws Exception may throw different exceptions during parsing.
+     */
+    public NamedObj instantiatePtolemyEntity(final String className) throws Exception {
+        return instantiatePtolemyActor(className, "actorInstance");
     }
 
     /**
      * Instantiate a Ptolemy Actor Entity for a given EntityType model object.
      * 
-     * @param entity given EMF EntityType model object describing an Actor entity.
+     * @param className the class name of the actor to instantiate.
+     * @param entityName a non-empty string that identifies the actor instance. This is mainly
+     *                   interesting for debug messages and can be chosen more or less at
+     *                   random.
      * @return corresponding Ptolemy object.
      * @throws Exception may throw different exceptions during parsing.
      */
-    private NamedObj instantiatePtolemyActor(final EntityType entity) throws Exception {
-        String classname = entity.getClass1();
+    private NamedObj instantiatePtolemyActor(final String className, final String entityName)
+        throws Exception {
         
         // use the Ptolemy internal Model ML (MoML) parser parsing XML and
         // creates Ptolemy models
@@ -157,7 +171,7 @@ public class PtolemyHelper implements IExecutionContextAware {
         String parent = "<entity name=\"TopLevel\" class=\"ptolemy.actor.TypedCompositeActor\">";
         
         // embed the real entity description in the parent
-        String child = parent + "<entity name=\"" + entity.getName() + "\"class=\"" + classname
+        String child = parent + "<entity name=\"" + entityName + "\"class=\"" + className
                 + "\"/> </entity>";
         
         // let the parser do the job
@@ -169,12 +183,15 @@ public class PtolemyHelper implements IExecutionContextAware {
     /**
      * Instantiate a Ptolemy State Entity for a given EntityType model object.
      * 
-     * @param entity given EMF EntityType model object describing a State entity.
+     * @param className the class name of the actor to instantiate.
+     * @param entityName a non-empty string that identifies the actor instance. This is mainly
+     *                   interesting for debug messages and can be chosen more or less at
+     *                   random.
      * @return corresponding Ptolemy object.
      * @throws Exception may throw different exceptions during parsing.
      */
-    private NamedObj instantiatePtolemyState(final EntityType entity) throws Exception {
-        String classname = entity.getClass1();
+    private NamedObj instantiatePtolemyState(final String className, final String entityName)
+    throws Exception {
         
         // use the Ptolemy internal Model ML (MoML) parser parsing XML and
         // creates Ptolemy models
@@ -188,7 +205,7 @@ public class PtolemyHelper implements IExecutionContextAware {
             "<entity name=\"TopLevel\" class=\"ptolemy.domains.modal.modal.ModalController\">";
         
         // embed the real entity description in the parent
-        String child = parent + "<entity name=\"" + entity.getName() + "\"class=\"" + classname
+        String child = parent + "<entity name=\"" + entityName + "\"class=\"" + className
                 + "\"/> </entity>";
         
         // let the parser do the job

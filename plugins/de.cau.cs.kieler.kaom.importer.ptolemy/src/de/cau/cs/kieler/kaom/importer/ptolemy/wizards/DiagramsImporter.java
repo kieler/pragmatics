@@ -53,7 +53,6 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.ptolemy.moml.MomlPackage;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
 import de.cau.cs.kieler.core.model.util.XtendStatus;
 import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
@@ -120,22 +119,22 @@ class DiagramsImporter implements IRunnableWithProgress {
     /**
      * Constructs a new instance with the given configuration.
      * 
-     * @param _wizard the wizard using this importer.
-     * @param _sourceFiles the list of source files to import.
-     * @param _targetContainerPath the possibly non-existent container to import them to.
-     * @param _initializeDiagramFiles whether to initialize KAOD diagram files.
-     * @param _overwriteWithoutWarning whether existing files should be overwritten without
+     * @param theWizard the wizard using this importer.
+     * @param theSourceFiles the list of source files to import.
+     * @param theTargetContainerPath the possibly non-existent container to import them to.
+     * @param bInitializeDiagramFiles whether to initialize KAOD diagram files.
+     * @param bOverwriteWithoutWarning whether existing files should be overwritten without
      *                                 warning.
      */
-    public DiagramsImporter(ImportDiagramsWizard _wizard, List<File> _sourceFiles,
-            IPath _targetContainerPath, boolean _initializeDiagramFiles,
-            boolean _overwriteWithoutWarning) {
+    public DiagramsImporter(final ImportDiagramsWizard theWizard, final List<File> theSourceFiles,
+            final IPath theTargetContainerPath, final boolean bInitializeDiagramFiles,
+            final boolean bOverwriteWithoutWarning) {
         
-        wizard = _wizard;
-        sourceFiles = _sourceFiles;
-        targetContainerPath = _targetContainerPath;
-        initializeDiagramFiles = _initializeDiagramFiles;
-        overwriteWithoutWarning = _overwriteWithoutWarning;
+        wizard = theWizard;
+        sourceFiles = theSourceFiles;
+        targetContainerPath = theTargetContainerPath;
+        initializeDiagramFiles = bInitializeDiagramFiles;
+        overwriteWithoutWarning = bOverwriteWithoutWarning;
     }
     
     
@@ -174,12 +173,13 @@ class DiagramsImporter implements IRunnableWithProgress {
     /**
      * {@inheritDoc}
      */
-    public void run(IProgressMonitor monitor) throws InvocationTargetException,
+    public void run(final IProgressMonitor monitor) throws InvocationTargetException,
             InterruptedException {
         
         // If the progress monitor was omitted, use the null monitor
-        if (monitor == null) {
-            monitor = new NullProgressMonitor();
+        IProgressMonitor progressMonitor = monitor;
+        if (progressMonitor == null) {
+            progressMonitor = new NullProgressMonitor();
         }
         
         // Calculate how much work there is to be done (also counting the subtask of having
@@ -188,7 +188,7 @@ class DiagramsImporter implements IRunnableWithProgress {
         int totalWork = sourceFiles.size() * workPerSourceFile + 1;
         
         // Begin the main task
-        monitor.beginTask("Import Ptolemy2 diagrams...", totalWork);
+        progressMonitor.beginTask("Import Ptolemy2 diagrams...", totalWork);
         
         /* The main task is splitted into two subtasks:
          *  1. Ensuring the existence of the target container.
@@ -197,24 +197,24 @@ class DiagramsImporter implements IRunnableWithProgress {
         
         // Subtask 1
         try {
-            targetContainer = getTargetContainer(new SubProgressMonitor(monitor, 1));
+            targetContainer = getTargetContainer(new SubProgressMonitor(progressMonitor, 1));
         } catch (CoreException e) {
             exception = e;
-            monitor.done();
+            progressMonitor.done();
             return;
         }
         
         // Subtask 2
         try {
-            importFiles(new SubProgressMonitor(monitor, totalWork - 1));
+            importFiles(new SubProgressMonitor(progressMonitor, totalWork - 1));
         } catch (CoreException e) {
             exception = e;
-            monitor.done();
+            progressMonitor.done();
             return;
         }
         
         // Everything's done. Yay!
-        monitor.done();
+        progressMonitor.done();
     }
     
     /**
@@ -224,7 +224,7 @@ class DiagramsImporter implements IRunnableWithProgress {
      * @return the target container.
      * @throws CoreException if something goes wrong creating the target container.
      */
-    private IContainer getTargetContainer(IProgressMonitor monitor) throws CoreException {
+    private IContainer getTargetContainer(final IProgressMonitor monitor) throws CoreException {
         monitor.beginTask("Ensure target container existence.", 1);
         
         // Declare some helpful variables
@@ -267,7 +267,7 @@ class DiagramsImporter implements IRunnableWithProgress {
      * @param monitor monitor to report progress to.
      * @throws CoreException if the import fails.
      */
-    private void importFiles(IProgressMonitor monitor) throws CoreException {
+    private void importFiles(final IProgressMonitor monitor) throws CoreException {
         // Calculate the total work to be done
         int totalWork = sourceFiles.size();
         if (initializeDiagramFiles) {
@@ -325,7 +325,7 @@ class DiagramsImporter implements IRunnableWithProgress {
      * @return the new base file name, or {@code null} if the user decided to cancel the
      *         operation.
      */
-    private String getBaseFileName(String sourceFileName) {
+    private String getBaseFileName(final String sourceFileName) {
         // Get the file's base name
         String sourceFileExtension = Utils.getFileExtension(sourceFileName);
         String sourceFileBaseName = sourceFileName.substring(
@@ -358,7 +358,7 @@ class DiagramsImporter implements IRunnableWithProgress {
         
         // If we have a name clash, ask the user for a new name. Politely.
         if (modelFileNameClash || diagramFileNameClash) {
-            StringBuilder sb = new StringBuilder(300);
+            StringBuilder sb = new StringBuilder();
             sb.append("The target folder already contains the following file(s):\n\n");
             
             if (modelFileNameClash) {
@@ -416,8 +416,8 @@ class DiagramsImporter implements IRunnableWithProgress {
      * @param monitor the progress monitor to report progress to.
      * @throws CoreException if the transformation fails.
      */
-    private void doImportModelFile(File sourceFile, String targetFileName, IProgressMonitor monitor)
-        throws CoreException {
+    private void doImportModelFile(final File sourceFile, final String targetFileName,
+            final IProgressMonitor monitor) throws CoreException {
         
         URI sourceFileURI, targetFileURI;
         
@@ -463,7 +463,7 @@ class DiagramsImporter implements IRunnableWithProgress {
      * @param targetFileName the diagram file name.
      * @throws CoreException in case of an error.
      */
-    private void doImportDiagramFile(String sourceFileName, String targetFileName)
+    private void doImportDiagramFile(final String sourceFileName, final String targetFileName)
         throws CoreException {
         
         // Get the source file
@@ -515,8 +515,8 @@ class DiagramsImporter implements IRunnableWithProgress {
                 affectedFiles) {
             
             @Override
-            protected CommandResult doExecuteWithResult(IProgressMonitor monitor, IAdaptable info)
-                    throws ExecutionException {
+            protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
+                    final IAdaptable info) throws ExecutionException {
 
                 targetResource.getContents().add(diagram);
                 return CommandResult.newOKCommandResult();

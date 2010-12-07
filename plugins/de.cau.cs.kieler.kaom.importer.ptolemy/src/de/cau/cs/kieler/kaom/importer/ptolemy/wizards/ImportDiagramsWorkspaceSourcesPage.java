@@ -64,7 +64,7 @@ public class ImportDiagramsWorkspaceSourcesPage extends WizardExportResourcesPag
      * 
      * @param selection the selection the wizard was called on.
      */
-    public ImportDiagramsWorkspaceSourcesPage(IStructuredSelection selection) {
+    public ImportDiagramsWorkspaceSourcesPage(final IStructuredSelection selection) {
         super(PAGE_NAME, selection);
         
         this.setTitle("Import from workspace");
@@ -110,7 +110,7 @@ public class ImportDiagramsWorkspaceSourcesPage extends WizardExportResourcesPag
     /**
      * {@inheritDoc}
      */
-    public void handleEvent(Event event) {
+    public void handleEvent(final Event event) {
         /* It's not in the least bit clear to me why WizardDataTranserPage implements
          * Listener, but does not implement it. (neither does WizardExportResourcesPage)
          */
@@ -129,7 +129,11 @@ public class ImportDiagramsWorkspaceSourcesPage extends WizardExportResourcesPag
      * {@inheritDoc}
      */
     @Override
-    protected void createDestinationGroup(Composite parent) {
+    protected void createDestinationGroup(final Composite parent) {
+        // This method uses magic numbers for layout purposes, so keep Checkstyle from
+        // checking for those
+        // CHECKSTYLEOFF MagicNumber
+        
         GridLayout gl = new GridLayout(3, false);
         
         // Target Composite
@@ -155,7 +159,7 @@ public class ImportDiagramsWorkspaceSourcesPage extends WizardExportResourcesPag
              * {@inheritDoc}
              */
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
                 doBrowse();
             }
         });
@@ -165,7 +169,7 @@ public class ImportDiagramsWorkspaceSourcesPage extends WizardExportResourcesPag
      * {@inheritDoc}
      */
     @Override
-    protected void createOptionsGroup(Composite parent) {
+    protected void createOptionsGroup(final Composite parent) {
         // We don't need no stinkin' options group around here!
     }
 
@@ -173,7 +177,7 @@ public class ImportDiagramsWorkspaceSourcesPage extends WizardExportResourcesPag
      * {@inheritDoc}
      */
     @Override
-    public void setWizard(IWizard newWizard) {
+    public void setWizard(final IWizard newWizard) {
         super.setWizard(newWizard);
         
         // Set the options page as the previous page

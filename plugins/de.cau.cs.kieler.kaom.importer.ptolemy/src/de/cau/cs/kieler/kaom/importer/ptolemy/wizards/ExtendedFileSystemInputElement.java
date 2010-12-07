@@ -40,9 +40,9 @@ public class ExtendedFileSystemInputElement extends ExtendedFileSystemElement {
     /**
      * Constructs a new instance representing the given file.
      * 
-     * @param file
+     * @param file the file to represent.
      */
-    public ExtendedFileSystemInputElement(File file) {
+    public ExtendedFileSystemInputElement(final File file) {
         super(file, null);
         
         wrappedElement = new ExtendedFileSystemElement(file, null);
@@ -94,7 +94,7 @@ public class ExtendedFileSystemInputElement extends ExtendedFileSystemElement {
      * {@inheritDoc}
      */
     @Override
-    public void setFileSystemObject(Object value) {
+    public void setFileSystemObject(final Object value) {
         wrappedElement.setFileSystemObject(value);
     }
 
@@ -102,15 +102,16 @@ public class ExtendedFileSystemInputElement extends ExtendedFileSystemElement {
      * {@inheritDoc}
      */
     @Override
-    public void addChild(FileSystemElement child) {
+    public void addChild(final FileSystemElement child) {
         wrappedElement.addChild(child);
     }
 
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("rawtypes")
     @Override
-    public Object getAdapter(Class adapter) {
+    public Object getAdapter(final Class adapter) {
         return wrappedElement.getAdapter(adapter);
     }
 
@@ -158,7 +159,7 @@ public class ExtendedFileSystemInputElement extends ExtendedFileSystemElement {
      * {@inheritDoc}
      */
     @Override
-    public void removeFolder(FileSystemElement child) {
+    public void removeFolder(final FileSystemElement child) {
         wrappedElement.removeFolder(child);
     }
 
@@ -166,7 +167,7 @@ public class ExtendedFileSystemInputElement extends ExtendedFileSystemElement {
      * {@inheritDoc}
      */
     @Override
-    public void setParent(FileSystemElement element) {
+    public void setParent(final FileSystemElement element) {
         wrappedElement.setParent(element);
     }
 

@@ -112,7 +112,7 @@ public class ImportDiagramsOptionsPage extends WizardPage {
     /**
      * {@inheritDoc}
      */
-    public void createControl(Composite parent) {
+    public void createControl(final Composite parent) {
         // This method uses magic numbers for layout purposes, so keep Checkstyle from
         // checking for those
         // CHECKSTYLEOFF MagicNumber
@@ -136,7 +136,8 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         // Source File System Button
         sourceFileSystemButton = new Button(container, SWT.RADIO);
         sourceFileSystemButton.setText("File system");
-        sourceFileSystemButton.setToolTipText("The Ptolemy2 diagrams to import are not inside the workspace.");
+        sourceFileSystemButton.setToolTipText(
+                "The Ptolemy2 diagrams to import are not inside the workspace.");
         
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalIndent = 15;
@@ -146,7 +147,8 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         // Source Workspace Button
         sourceWorkspaceButton = new Button(container, SWT.RADIO);
         sourceWorkspaceButton.setText("Workspace");
-        sourceWorkspaceButton.setToolTipText("The Ptolemy2 diagrams to import are inside the workspace.");
+        sourceWorkspaceButton.setToolTipText(
+                "The Ptolemy2 diagrams to import are inside the workspace.");
         
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalIndent = 15;
@@ -167,7 +169,9 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         // Opt Initialize Diagram Files Button
         optInitializeDiagramFilesButton = new Button(container, SWT.CHECK);
         optInitializeDiagramFilesButton.setText("Initialize KAOD diagram files");
-        optInitializeDiagramFilesButton.setToolTipText("If checked, for each imported diagram a KAOD file is automatically created that can be opened with the diagram editor.");
+        optInitializeDiagramFilesButton.setToolTipText(
+                "If checked, for each imported diagram a KAOD file is automatically created that "
+                + "can be opened with the diagram editor.");
         
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalIndent = 15;
@@ -177,7 +181,8 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         // Opt Overwrite Button
         optOverwriteButton = new Button(container, SWT.CHECK);
         optOverwriteButton.setText("Overwrite existing resources without warning.");
-        optOverwriteButton.setToolTipText("If checked, imported diagrams that conflict with an existing resource's name will replace that resource instead of being renamed.");
+        optOverwriteButton.setToolTipText("If checked, imported diagrams that conflict with an "
+                + "existing resource's name will replace that resource instead of being renamed.");
         
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalIndent = 15;

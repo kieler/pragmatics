@@ -43,9 +43,8 @@ public class ExtendedFileSystemElement extends FileSystemElement {
      * 
      * @param theFile the file represented by this object..
      * @param parent the parent, if any.
-     * @param theFile 
      */
-    public ExtendedFileSystemElement(File theFile, FileSystemElement parent) {
+    public ExtendedFileSystemElement(final File theFile, final FileSystemElement parent) {
         super(theFile.getName(), parent, theFile.isDirectory());
         
         file = theFile;
@@ -90,7 +89,7 @@ public class ExtendedFileSystemElement extends FileSystemElement {
      * {@inheritDoc}
      */
     @Override
-    public void setFileSystemObject(Object value) {
+    public void setFileSystemObject(final Object value) {
         if (value instanceof File) {
             super.setFileSystemObject(value);
         } else {

@@ -57,12 +57,6 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
      */
     private IStructuredSelection selection;
     
-    /**
-     * Whether the last import was successful. This is a variable because the actual
-     * import is run inside a job that has no way of returning a value.
-     */
-    private boolean success;
-    
     
     /**
      * Constructs a Ptolemy2 diagram import wizard.
@@ -198,7 +192,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
     /**
      * {@inheritDoc}
      */
-    public void init(IWorkbench workbench, IStructuredSelection theSelection) {
+    public void init(final IWorkbench workbench, final IStructuredSelection theSelection) {
         selection = theSelection;
     }
 }

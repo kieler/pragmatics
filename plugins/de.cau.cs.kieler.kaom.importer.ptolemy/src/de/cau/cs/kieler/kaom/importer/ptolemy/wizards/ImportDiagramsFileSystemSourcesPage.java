@@ -65,13 +65,14 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
         /**
          * {@inheritDoc}
          */
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        public void inputChanged(final Viewer viewer, final Object oldInput,
+                final Object newInput) {
         }
         
         /**
          * {@inheritDoc}
          */
-        public Object[] getElements(Object inputElement) {
+        public Object[] getElements(final Object inputElement) {
             if (inputElement instanceof ExtendedFileSystemInputElement) {
                 return new Object[] {
                         ((ExtendedFileSystemInputElement) inputElement).getWrappedElement()
@@ -84,7 +85,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
         /**
          * {@inheritDoc}
          */
-        public Object[] getChildren(Object parentElement) {
+        public Object[] getChildren(final Object parentElement) {
             if (parentElement instanceof ExtendedFileSystemElement) {
                 ExtendedFileSystemElement folderElement = (ExtendedFileSystemElement) parentElement;
                 
@@ -117,7 +118,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
         /**
          * {@inheritDoc}
          */
-        public Object getParent(Object element) {
+        public Object getParent(final Object element) {
             if (element instanceof ExtendedFileSystemElement) {
                 return ((ExtendedFileSystemElement) element).getParent();
             } else {
@@ -128,7 +129,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
         /**
          * {@inheritDoc}
          */
-        public boolean hasChildren(Object element) {
+        public boolean hasChildren(final Object element) {
             if (element instanceof ExtendedFileSystemElement) {
                 // Check if we already know if this element has children
                 ExtendedFileSystemElement folder = (ExtendedFileSystemElement) element;
@@ -161,14 +162,16 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
         /**
          * {@inheritDoc}
          */
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        public void inputChanged(final Viewer viewer, final Object oldInput,
+                final Object newInput) {
+            
             // Nothing to be done here
         }
 
         /**
          * {@inheritDoc}
          */
-        public Object[] getElements(Object inputElement) {
+        public Object[] getElements(final Object inputElement) {
             if (inputElement instanceof ExtendedFileSystemElement) {
                 ExtendedFileSystemElement folderElement = (ExtendedFileSystemElement) inputElement;
                 
@@ -201,21 +204,21 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
         /**
          * {@inheritDoc}
          */
-        public Object[] getChildren(Object parentElement) {
+        public Object[] getChildren(final Object parentElement) {
             return new Object[0];
         }
 
         /**
          * {@inheritDoc}
          */
-        public Object getParent(Object element) {
+        public Object getParent(final Object element) {
             return null;
         }
 
         /**
          * {@inheritDoc}
          */
-        public boolean hasChildren(Object element) {
+        public boolean hasChildren(final Object element) {
             return false;
         }
         
@@ -251,7 +254,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
      * 
      * @param selection the selection the wizard was called on.
      */
-    public ImportDiagramsFileSystemSourcesPage(IStructuredSelection selection) {
+    public ImportDiagramsFileSystemSourcesPage(final IStructuredSelection selection) {
         super(PAGE_NAME, selection);
         
         this.setTitle("Import from file system");
@@ -293,7 +296,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
      * {@inheritDoc}
      */
     @Override
-    protected void createOptionsGroup(Composite parent) {
+    protected void createOptionsGroup(final Composite parent) {
         // We don't want the options group to be created
     }
 
@@ -301,7 +304,11 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
      * {@inheritDoc}
      */
     @Override
-    protected void createSourceGroup(Composite parent) {
+    protected void createSourceGroup(final Composite parent) {
+        // This method uses magic numbers for layout purposes, so keep Checkstyle from
+        // checking for those
+        // CHECKSTYLEOFF MagicNumber
+        
         GridLayout gl;
         
         // Container
@@ -376,7 +383,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
              * {@inheritDoc}
              */
             @Override
-            public void focusLost(FocusEvent e) {
+            public void focusLost(final FocusEvent e) {
                 applyNewRootDir(rootDirCombo.getText());
             }
         });
@@ -386,7 +393,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
              * {@inheritDoc}
              */
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
                 doBrowse();
             }
         });
@@ -396,7 +403,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
              * {@inheritDoc}
              */
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
                 setAllSelections(true);
                 updatePageCompletion();
             }
@@ -407,11 +414,13 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
              * {@inheritDoc}
              */
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
                 setAllSelections(false);
                 updatePageCompletion();
             }
         });
+        
+        // CHECKSTYLEON MagicNumber
     }
 
     /**
@@ -484,7 +493,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
      * {@inheritDoc}
      */
     @Override
-    public void setWizard(IWizard newWizard) {
+    public void setWizard(final IWizard newWizard) {
         super.setWizard(newWizard);
         
         // Set the options page as the previous page
@@ -524,7 +533,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
      * @param newDir the new root directory. If this is empty, nothing happens.
      */
     @SuppressWarnings("restriction")
-    private void applyNewRootDir(String newDir) {
+    private void applyNewRootDir(final String newDir) {
         if (newDir == null || newDir.trim().length() == 0) {
             return;
         }

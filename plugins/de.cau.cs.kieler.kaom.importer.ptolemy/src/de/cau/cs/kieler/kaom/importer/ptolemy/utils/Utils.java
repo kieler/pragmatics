@@ -51,7 +51,9 @@ public final class Utils {
      * @param deflt the default value.
      * @return the setting's value or its default value.
      */
-    public static String getSetting(IDialogSettings settings, String key, String deflt) {
+    public static String getSetting(final IDialogSettings settings, final String key,
+            final String deflt) {
+        
         String setting = settings.get(key);
         
         if (setting == null) {
@@ -70,7 +72,9 @@ public final class Utils {
      * @param deflt the default value.
      * @return the setting's value or its default value.
      */
-    public static boolean getSettingBoolean(IDialogSettings settings, String key, boolean deflt) {
+    public static boolean getSettingBoolean(final IDialogSettings settings, final String key,
+            final boolean deflt) {
+        
         String setting = settings.get(key);
         
         if (setting == null) {
@@ -89,7 +93,9 @@ public final class Utils {
      * @param deflt the default value.
      * @return the setting's value or its default value.
      */
-    public static String[] getSettingArray(IDialogSettings settings, String key, String[] deflt) {
+    public static String[] getSettingArray(final IDialogSettings settings, final String key,
+            final String[] deflt) {
+        
         String setting = settings.get(key);
         
         if (setting == null) {
@@ -112,7 +118,9 @@ public final class Utils {
      * @param space the amount of space to insert.
      * @param columns the number of columns in the grid layout.
      */
-    public static void insertVerticalSpace(Composite container, int space, int columns) {
+    public static void insertVerticalSpace(final Composite container, final int space,
+            final int columns) {
+        
         Label label = new Label(container, SWT.NULL);
         
         GridData gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
@@ -138,7 +146,9 @@ public final class Utils {
      * @param maxSize the maximum size of the returned array.
      * @return the array with the given item moved or inserted.
      */
-    public static String[] insertOrMoveToTop(String[] array, String item, int maxSize) {
+    public static String[] insertOrMoveToTop(final String[] array, final String item,
+            final int maxSize) {
+        
         if (item == null || item.length() == 0) {
             return array;
         }
@@ -175,7 +185,7 @@ public final class Utils {
      * @param fileName name of the file whose extension to return.
      * @return the file extension, if any.
      */
-    public static String getFileExtension(String fileName) {
+    public static String getFileExtension(final String fileName) {
         int extensionIndex = fileName.lastIndexOf('.');
         if (extensionIndex <= 0 || extensionIndex == fileName.length() - 1) {
             return "";
@@ -192,7 +202,7 @@ public final class Utils {
      * @return {@code true} if we think that the given name denotes a Ptolemy2 diagram file.
      * @see de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS
      */
-    public static boolean isPtolemyFile(String name) {
+    public static boolean isPtolemyFile(final String name) {
         String extension = getFileExtension(name);
         if (extension.length() == 0) {
             return false;
