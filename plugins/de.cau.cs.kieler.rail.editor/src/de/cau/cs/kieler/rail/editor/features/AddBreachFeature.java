@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.rail.editor.features;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
@@ -40,7 +41,7 @@ public class AddBreachFeature extends AddFeature {
         Einbruchsknoten addedClass = (Einbruchsknoten) context.getNewObject();
         Diagram targetDiagram = (Diagram) context.getTargetContainer();
  
-        // CONTAINER SHAPE WITH ROUNDED RECTANGLE
+        // CONTAINER SHAPE WITH CIRCLE
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         ContainerShape containerShape =
              peCreateService.createContainerShape(targetDiagram, true);
@@ -55,6 +56,7 @@ public class AddBreachFeature extends AddFeature {
         
         
         {
+        	//Create Ellipse
             Ellipse ellipse = gaService.createEllipse( containerShape);
             ellipse.setLineWidth(3);
             ellipse.setFilled(false);
@@ -64,11 +66,11 @@ public class AddBreachFeature extends AddFeature {
             gaService.setLocationAndSize(ellipse,
                     context.getX(), context.getY()+10, width, height-10);
             
-            ellipse.setStyle(styleProvider.getStyle("1"));
+            //ellipse.setStyle(styleProvider.getStyle("1"));
             
             
  
-            // if added Clas has no resource we add it to the resource 
+            // if added Class has no resource we add it to the resource 
             // of the diagram
             // in a real scenario the business model would have its own resource
             if (addedClass.eResource() == null) {
@@ -84,7 +86,8 @@ public class AddBreachFeature extends AddFeature {
             Shape shape = peCreateService.createShape(containerShape, false);
  
             // create and set text graphics algorithm
-            Text text = gaService.createDefaultText(shape, addedClass.getName());
+            addedClass.setName("test");  //TODO ???
+            Text text = gaService.createDefaultText(shape, addedClass.getName()); //addedClass.getName()
             text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);

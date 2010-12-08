@@ -71,33 +71,6 @@ public class AddDeadEndVertexFeature extends AbstractAddShapeFeature {
         IGaService gaService = Graphiti.getGaService();
  
         {
-        	/*
-            // create and set graphics algorithm
-            RoundedRectangle roundedRectangle =
-                gaService.createRoundedRectangle(containerShape, 5, 5);
-            roundedRectangle.setForeground(manageColor(CLASS_FOREGROUND));
-            roundedRectangle.setBackground(manageColor(CLASS_BACKGROUND));
-            roundedRectangle.setLineWidth(2);
-            
-            gaService.setLocationAndSize(roundedRectangle,
-                    context.getX(), context.getY(), width, height);*/
-            
-            //NEU
-        	
-        	/*
-        	
-            Ellipse ellipse = gaService.createEllipse( containerShape);
-            ellipse.setLineWidth(3);
-            ellipse.setFilled(false);
-            ellipse.setForeground(manageColor(0,0,0));
-            ellipse.setBackground(manageColor(255,255,255));
-            
-            
-            
-            gaService.setLocationAndSize(ellipse,
-                    context.getX(), context.getY()+10, width, height-10);
-            */
-            //NEU
             
             
  
@@ -134,10 +107,11 @@ public class AddDeadEndVertexFeature extends AbstractAddShapeFeature {
         
      // triangle through points: top-middle, bottom-right, bottom-left
         //50, 0, 100, 100, 0, 100
+        {
         int xy[] = new int[] { width/2, 0, width/2, height };
 		//IGaService gaService = Graphiti.getGaService();
-        Polygon p = gaService.createPolygon(containerShape, xy);
-        
+        Polyline p = gaService.createPolyline(containerShape, xy);
+        }
  
         // SHAPE WITH TEXT
         {
@@ -145,6 +119,7 @@ public class AddDeadEndVertexFeature extends AbstractAddShapeFeature {
             Shape shape = peCreateService.createShape(containerShape, false);
  
             // create and set text graphics algorithm
+            addedClass.setName("Test");
             Text text = gaService.createDefaultText(shape, addedClass.getName());
             text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);

@@ -7,7 +7,11 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
+import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
@@ -21,6 +25,7 @@ import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateBreachFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateDeadEndVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
+import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
 
 /**
  * @author hdw
@@ -62,6 +67,18 @@ public class FeatureProvider extends DefaultFeatureProvider {
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
         return new ICreateConnectionFeature[] {
             new CreateEdgeFeature (this) };
+    }
+    
+    @Override
+    public IUpdateFeature getUpdateFeature(IUpdateContext context) {
+        PictogramElement pictogramElement = context.getPictogramElement();
+        if (pictogramElement instanceof ContainerShape) {
+            Object bo = getBusinessObjectForPictogramElement(pictogramElement);
+            if (bo instanceof Einbruchsknoten) {
+                return new UpdateBreachFeature(this);
+            }
+        }
+        return super.getUpdateFeature(context);
     }
 
 }
