@@ -7,8 +7,10 @@ import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
+import org.eclipse.graphiti.features.IDirectEditingFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -25,6 +27,7 @@ import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateBreachFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateDeadEndVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
+import de.cau.cs.kieler.rail.editor.features.DirectEditBreachFeatures;
 import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
 
 /**
@@ -79,6 +82,17 @@ public class FeatureProvider extends DefaultFeatureProvider {
             }
         }
         return super.getUpdateFeature(context);
+    }
+    
+    @Override
+    public IDirectEditingFeature getDirectEditingFeature(
+        IDirectEditingContext context) {
+        PictogramElement pe = context.getPictogramElement();
+        Object bo = getBusinessObjectForPictogramElement(pe);
+        if (bo instanceof Einbruchsknoten) {
+            return new DirectEditBreachFeatures(this);
+        }
+        return super.getDirectEditingFeature(context);
     }
 
 }
