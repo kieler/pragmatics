@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.EditPartViewer;
 import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
@@ -31,6 +32,8 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.graphiti.ui.internal.editor.GraphitiScrollingGraphicalViewer;
+import org.eclipse.graphiti.ui.internal.parts.DiagramEditPart;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -181,8 +184,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             final GraphitiLayoutConfig layoutConfig) {
         EList<Shape> list = null;
         boolean returnstate = true;
-        if (topNode != null) {
 
+        if (topNode != null) {
             if (currentElement instanceof Diagram) {
                 list = ((Diagram) currentElement).getChildren();
             } else if (currentElement instanceof ContainerShape) {
@@ -209,19 +212,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     shapeLayout.setProperty(LayoutOptions.MIN_WIDTH, 20.0f);
                     shapeLayout.setProperty(LayoutOptions.MIN_HEIGHT, 20.0f);
 
-                    // KInsets kinsets = null;
-                    // // set insets if not yet defined
-                    // if (kinsets == null) {
-                    // kinsets = topNode.getData(KShapeLayout.class)
-                    // .getProperty(LayoutOptions.INSETS);
-                    //
-                    // kinsets.setLeft(40);
-                    // kinsets.setTop(5);
-                    // kinsets.setRight(40);
-                    // kinsets.setBottom(5);
-                    // }
-
-                    // set user defined layout options for the port
+                    // set user defined layout options
                     layoutConfig.setFocus(diagramEditor
                             .getEditPartForPictogramElement(cs));
                     shapeLayout.copyProperties(layoutConfig);
@@ -285,6 +276,45 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (editPart instanceof IPictogramElementEditPart) {
             return new GraphitiLayoutInspector(
                     (IPictogramElementEditPart) editPart);
+        }
+        EditPart part = getEditPartFromDiagramEditorInternal2(editPart);
+        if (part != null) {
+            return getInspector(part);
+        }
+        return null;
+    }
+
+    /**
+     * In some cases the EditPart passed to the methods is the mysterious
+     * DiagramEditorInternal$2. This method tries to get the rootedit part from
+     * the corresponding diagram.
+     * 
+     * @param editPart
+     * @return
+     */
+    private EditPart getEditPartFromDiagramEditorInternal2(
+            final EditPart editPart) {
+        if (editPart.getParent() == null) {
+            EditPartViewer viewer = editPart.getViewer();
+            if (viewer instanceof GraphitiScrollingGraphicalViewer) {
+                GraphitiScrollingGraphicalViewer graphitiViewer = (GraphitiScrollingGraphicalViewer) viewer;
+                EditPart contents = graphitiViewer.getContents();
+                if (contents instanceof DiagramEditPart) {
+                    return contents;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ILayoutInspector getInspector(final IEditorPart editorPart) {
+        if (editorPart instanceof DiagramEditor) {
+            DiagramEditor ed = (DiagramEditor) editorPart;
+            return getInspector(ed.getGraphicalViewer().getRootEditPart());
         }
         return null;
     }
@@ -532,22 +562,15 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    public ILayoutInspector getInspector(final IEditorPart editorPart) {
-        if (editorPart instanceof DiagramEditor) {
-            DiagramEditor ed = (DiagramEditor) editorPart;
-            return getInspector(ed.getGraphicalViewer().getRootEditPart());
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ILayoutConfig getLayoutConfig(final EditPart editPart) {
         GraphitiLayoutConfig config = new GraphitiLayoutConfig();
         if (editPart instanceof IPictogramElementEditPart) {
             config.initialize((IPictogramElementEditPart) editPart);
+        } else {
+            EditPart part = getEditPartFromDiagramEditorInternal2(editPart);
+            if (part != null) {
+                config.setFocus(part);
+            }
         }
         return config;
     }
