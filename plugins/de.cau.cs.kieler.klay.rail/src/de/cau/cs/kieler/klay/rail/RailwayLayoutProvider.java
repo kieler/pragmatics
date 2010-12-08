@@ -22,9 +22,12 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.KGraphImporter;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.impl.LayerSweepCrossingMinimizer;
@@ -36,6 +39,7 @@ import de.cau.cs.kieler.klay.layered.modules.ICycleBreaker;
 import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
+import de.cau.cs.kieler.klay.rail.options.NodeType;
 
 /**
  *
@@ -126,9 +130,11 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
         }
-        monitor.begin("Layered layout phases", 1 + 1 + 1 + 1 + 1);
+        monitor.begin("Layered layout phases", 1 + 1 + 1 + 1);
         LayeredGraph layeredGraph = importer.getGraph();
         List<LNode> nodes = importer.getImportedNodes();
+        
+        preprocess(nodes);
 
         // phase 1: cycle breaking
         cycleBreaker.reset(monitor.subTask(1));
@@ -138,8 +144,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         layerer.layer(nodes, layeredGraph);
         layeredGraph.splitEdges();
         // phase 3: crossing minimization
-        crossingMinimizer.reset(monitor.subTask(1));
-        crossingMinimizer.minimizeCrossings(layeredGraph);
+        //crossingMinimizer.reset(monitor.subTask(1));
+        //crossingMinimizer.minimizeCrossings(layeredGraph);
         // phase 4: node placement
         nodePlacer.reset(monitor.subTask(1));
         nodePlacer.placeNodes(layeredGraph);
@@ -148,6 +154,41 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         edgeRouter.routeEdges(layeredGraph);
 
         monitor.done();
+    }
+    
+    /**
+     * Method to apply general conventions of the railway layout to nodes.
+     * These are, for example, the port positions on a node.
+     * 
+     * @param thenodes A list of nodes to process
+     */
+    public void preprocess(final List<LNode> thenodes) {
+        for (LNode lNode : thenodes) {
+            if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
+                List<LPort> ports = lNode.getPorts();
+                if (ports.size() != 1) {
+                    throw new IllegalArgumentException("An entry point may only have one port.");
+                }
+                LPort port = ports.get(0);
+                port.setSide(PortSide.EAST);
+                port.getPos().y = port.getNode().getSize().y / 2;
+            } else if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.BREACH_OR_CLOSE)) {
+                List<LPort> ports = lNode.getPorts();
+                if (ports.size() != 1) {
+                    throw new IllegalArgumentException("A breach or close may only have one port.");
+                }
+                LPort port = ports.get(0);
+                if (port.getType().equals(PortType.INPUT)) {
+                    port.setSide(PortSide.WEST);
+                } else if (port.getType().equals(PortType.OUTPUT)) {
+                    port.setSide(PortSide.EAST);
+                } else {
+                    throw new IllegalArgumentException("Railway layout doesn't allow undefined ports.");
+                }
+                port.getPos().y = port.getNode().getSize().y / 2;
+            }
+            //TODO: handling switches            
+        }
     }
     
 }
