@@ -90,9 +90,9 @@ public class GMLExporter extends AbstractExporter {
      * {@inheritDoc}
      */
     @Override
-    public void doExport(final IKielerProgressMonitor monitor,
-            final ExporterConfiguration configuration, final KNode graph)
-            throws KielerException {
+    public void doExport(final KNode graph,
+            final ExporterConfiguration configuration,
+            final IKielerProgressMonitor monitor) throws KielerException {
         monitor.begin("Exporting KGraph to GML", 1);
 
         try {
@@ -100,8 +100,9 @@ public class GMLExporter extends AbstractExporter {
                     ExportUtil.createOutputStream(
                             configuration.getExportFilePath(),
                             configuration.isWorkspacePath());
-            serializeKGraphAsGML(monitor.subTask(1), graph, outputStream,
-                    configuration.getProperty(OPTION_LAYOUT_INFORMATION));
+            serializeKGraphAsGML(graph, outputStream,
+                    configuration.getProperty(OPTION_LAYOUT_INFORMATION),
+                    monitor.subTask(1));
             outputStream.close();
 
         } catch (IOException e) {
@@ -129,10 +130,9 @@ public class GMLExporter extends AbstractExporter {
      * @throws IOException
      *             thrown when an io operation failed
      */
-    public static void serializeKGraphAsGML(
-            final IKielerProgressMonitor monitor, final KNode graph,
-            final OutputStream outputStream, final boolean layoutInformation)
-            throws IOException {
+    public static void serializeKGraphAsGML(final KNode graph,
+            final OutputStream outputStream, final boolean layoutInformation,
+            final IKielerProgressMonitor monitor) throws IOException {
         monitor.begin("Serializing KGraph as GML", 2);
         OutputStreamWriter writer =
                 new OutputStreamWriter(outputStream, "UTF-8");

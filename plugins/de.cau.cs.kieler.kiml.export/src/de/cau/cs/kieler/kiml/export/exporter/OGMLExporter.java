@@ -84,9 +84,9 @@ public class OGMLExporter extends AbstractExporter {
      * {@inheritDoc}
      */
     @Override
-    public void doExport(final IKielerProgressMonitor monitor,
-            final ExporterConfiguration configuration, final KNode graph)
-            throws KielerException {
+    public void doExport(final KNode graph,
+            final ExporterConfiguration configuration,
+            final IKielerProgressMonitor monitor) throws KielerException {
         monitor.begin("Exporting KGraph to OGML", 1);
 
         try {

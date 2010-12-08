@@ -27,17 +27,16 @@ public interface IExporter {
     /**
      * Performs the actual graph export using the given configuration.
      * 
-     * @param monitor
-     *            the progress monitor
-     * @param configuration
-     *            the export configuration
      * @param graph
      *            the graph
+     * @param configuration
+     *            the export configuration
+     * @param monitor
+     *            the progress monitor
      * 
      * @throws KielerException
      *             thrown when the export failed
      */
-    void doExport(final IKielerProgressMonitor monitor,
-            final ExporterConfiguration configuration, final KNode graph)
-            throws KielerException;
+    void doExport(final KNode graph, final ExporterConfiguration configuration,
+            final IKielerProgressMonitor monitor) throws KielerException;
 }

@@ -59,9 +59,9 @@ public abstract class AbstractExporter implements IExporter {
     /**
      * {@inheritDoc}
      */
-    public abstract void doExport(final IKielerProgressMonitor monitor,
-            final ExporterConfiguration configuration, final KNode graph)
-            throws KielerException;
+    public abstract void doExport(final KNode graph,
+            final ExporterConfiguration configuration,
+            final IKielerProgressMonitor monitor) throws KielerException;
 
     /**
      * Returns the options that are available for this exporter.
