@@ -42,11 +42,11 @@ import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 
 /**
- *
+ * 
  * Provider class for railway layout.
- *
+ * 
  * @author jjc
- *
+ * 
  */
 public class RailwayLayoutProvider extends AbstractLayoutProvider {
 
@@ -64,7 +64,9 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     private INodePlacer nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
     private IEdgeRouter edgeRouter = new SimpleSplineEdgeRouter();
-    
+
+    private final int SWITCH_PORTS = 3;
+
     /**
      * Initialize default values for options.
      */
@@ -74,8 +76,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     @Override
-    public void doLayout(final KNode layoutNode,
-            final IKielerProgressMonitor progressMonitor)
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Railway layout", 1);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
@@ -83,23 +84,26 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         // transform the input graph
         IGraphImporter graphImporter = new KGraphImporter(layoutNode);
         LayeredGraph layeredGraph = graphImporter.getGraph();
-        
+
         setOptions(layeredGraph, layoutNode, parentLayout);
-        
+
         // perform the actual layout
         layout(graphImporter, progressMonitor.subTask(1));
         // apply the layout results to the original graph
         graphImporter.applyLayout();
-        
+
         progressMonitor.done();
     }
 
     /**
      * Set layout options for the layered graph.
      * 
-     * @param layeredGraph a new layered graph
-     * @param parent the original parent node
-     * @param parentLayout the layout data for the parent node
+     * @param layeredGraph
+     *            a new layered graph
+     * @param parent
+     *            the original parent node
+     * @param parentLayout
+     *            the layout data for the parent node
      */
     private void setOptions(final LayeredGraph layeredGraph, final KNode parent,
             final KShapeLayout parentLayout) {
@@ -108,15 +112,15 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         if (objSpacing >= 0) {
             layeredGraph.setProperty(Properties.OBJ_SPACING, objSpacing);
         }
-        
+
         // set border spacing option
         float borSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borSpacing >= 0) {
             layeredGraph.setProperty(Properties.BOR_SPACING, borSpacing);
         }
-        
+
     }
-    
+
     /**
      * Perform the five phases of the layered layouter.
      * 
@@ -133,7 +137,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         monitor.begin("Layered layout phases", 1 + 1 + 1 + 1);
         LayeredGraph layeredGraph = importer.getGraph();
         List<LNode> nodes = importer.getImportedNodes();
-        
+
+        redirectEdges(nodes);
         preprocess(nodes);
 
         // phase 1: cycle breaking
@@ -144,8 +149,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         layerer.layer(nodes, layeredGraph);
         layeredGraph.splitEdges();
         // phase 3: crossing minimization
-        //crossingMinimizer.reset(monitor.subTask(1));
-        //crossingMinimizer.minimizeCrossings(layeredGraph);
+        // crossingMinimizer.reset(monitor.subTask(1));
+        // crossingMinimizer.minimizeCrossings(layeredGraph);
         // phase 4: node placement
         nodePlacer.reset(monitor.subTask(1));
         nodePlacer.placeNodes(layeredGraph);
@@ -155,14 +160,61 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
 
         monitor.done();
     }
-    
+
     /**
-     * Method to apply general conventions of the railway layout to nodes.
-     * These are, for example, the port positions on a node.
+     * Validates the graph against the requirements of a railway graph. This has to be executed
+     * before any processing or layouting is done.
      * 
-     * @param thenodes A list of nodes to process
+     * @param thenodes
+     *            A list of nodes to validate
      */
-    public void preprocess(final List<LNode> thenodes) {
+    public void validateRailwayGraph(final List<LNode> thenodes) {
+        int foundEntryNodes = 0;
+        for (LNode lNode : thenodes) {
+            if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
+                foundEntryNodes++;
+            }
+            if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.BREACH_OR_CLOSE)) {
+                if (lNode.getPorts().size() != 1) {
+                    throw new IllegalArgumentException("A breach or close may only have one port.");
+                }
+            }
+            if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)
+                    || lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_RIGHT)) {
+                if (lNode.getPorts().size() != SWITCH_PORTS) {
+                    throw new IllegalArgumentException("A switch has to have exactly "
+                            + SWITCH_PORTS + " ports.");
+                }
+            }
+            //TODO: circle detection here or in redirection?
+        }
+    }
+
+    /**
+     * Method to correct the direction of all edges. Edges have to go out from the entry point, this
+     * method will apply this to given graph.
+     * 
+     * @param thenodes
+     *            A list of nodes to process
+     */
+    private void redirectEdges(final List<LNode> thenodes) {
+        for (LNode lNode : thenodes) {
+            if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
+                // can do this because validation was executed earlier
+                LPort entryPort = lNode.getPorts().get(0);
+                //TODO: BFS for right direction and circle detection
+            }
+        }
+    }
+
+    /**
+     * Method to apply general conventions of the railway layout to nodes. These are, for example,
+     * the port positions on a node.
+     * 
+     * @param thenodes
+     *            A list of nodes to process
+     */
+    private void preprocess(final List<LNode> thenodes) {
         for (LNode lNode : thenodes) {
             if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
                 List<LPort> ports = lNode.getPorts();
@@ -183,12 +235,13 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                 } else if (port.getType().equals(PortType.OUTPUT)) {
                     port.setSide(PortSide.EAST);
                 } else {
-                    throw new IllegalArgumentException("Railway layout doesn't allow undefined ports.");
+                    throw new IllegalArgumentException(
+                            "Railway layout doesn't allow undefined ports.");
                 }
                 port.getPos().y = port.getNode().getSize().y / 2;
             }
-            //TODO: handling switches            
+            // TODO: handling switches
         }
     }
-    
+
 }
