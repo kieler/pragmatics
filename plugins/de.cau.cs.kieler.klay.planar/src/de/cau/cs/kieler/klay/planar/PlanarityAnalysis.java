@@ -58,20 +58,20 @@ public class PlanarityAnalysis implements IAnalysis {
         this.tester.reset();
         List<IEdge> edges = this.tester.planarSubgraph(graph);
 
-        String result;
-        if (edges.isEmpty()) {
-            result = "The graph is planar.";
-        } else {
-            result = "The graph is not planar.<br>Conflicting edges:<br>";
-            for (IEdge edge : edges) {
-                KNode src = (KNode) edge.getSource().getProperty(PGraphFactory.TOKGRAPH);
-                KNode dst = (KNode) edge.getTarget().getProperty(PGraphFactory.TOKGRAPH);
-                result += "( " + src.getLabel().getText() + " ; " + dst.getLabel().getText()
-                        + " )<br>";
-            }
-        }
+        // String result;
+        // if (edges.isEmpty()) {
+        // result = "The graph is planar.";
+        // } else {
+        // result = "The graph is not planar.<br>Conflicting edges:<br>";
+        // for (IEdge edge : edges) {
+        // KNode src = (KNode) edge.getSource().getProperty(PGraphFactory.TOKGRAPH);
+        // KNode dst = (KNode) edge.getTarget().getProperty(PGraphFactory.TOKGRAPH);
+        // result += "( " + src.getLabel().getText() + " ; " + dst.getLabel().getText()
+        // + " )<br>";
+        // }
+        // }
 
         progressMonitor.done();
-        return result;
+        return edges.isEmpty();
     }
 }
