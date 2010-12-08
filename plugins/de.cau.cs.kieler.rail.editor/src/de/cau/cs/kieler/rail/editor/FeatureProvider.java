@@ -21,13 +21,15 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 import de.cau.cs.kieler.rail.editor.features.AddBreachFeature;
 import de.cau.cs.kieler.rail.editor.features.AddDeadEndVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
-import de.cau.cs.kieler.rail.editor.features.CreateBreachFeature;
-import de.cau.cs.kieler.rail.editor.features.CreateDeadEndVertexFeature;
+import de.cau.cs.kieler.rail.editor.features.AddFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
+import de.cau.cs.kieler.rail.editor.features.CreateFeature;
 import de.cau.cs.kieler.rail.editor.features.DirectEditBreachFeatures;
+import de.cau.cs.kieler.rail.editor.features.TypeFeatures;
 import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
 
 /**
@@ -47,11 +49,22 @@ public class FeatureProvider extends DefaultFeatureProvider {
 	
     @Override
     public IAddFeature getAddFeature(IAddContext context) {
-        // is object for add request a EClass or EReference?
-        if (context.getNewObject() instanceof Einbruchsknoten) {
+        // is object for add request a Einbruchsknoten, Stumpfgleisknoten or EReference?
+        /*if (context.getNewObject() instanceof Einbruchsknoten) {
             return new AddBreachFeature(this,this.styleProvider);
         } else if (context.getNewObject() instanceof Stumpfgleisknoten) {
         	return new AddDeadEndVertexFeature(this);
+        }
+        else if (context.getNewObject() instanceof Edge) {
+            return new AddEdgeFeature(this,styleProvider);
+        }
+        return super.getAddFeature(context);*/
+    	if (context.getNewObject() instanceof Einbruchsknoten) {
+            return new AddFeature(this,this.styleProvider,TypeFeatures.BREANCH);
+        } else if (context.getNewObject() instanceof Stumpfgleisknoten) {
+        	return new AddFeature(this,this.styleProvider,TypeFeatures.DEADENDVERTEX);
+        } else if (context.getNewObject() instanceof Weichenknoten) {
+        	return new AddFeature(this,this.styleProvider,TypeFeatures.SWITCHVERTEX_LEFT);  //TODO How to resolve for both cases.
         }
         else if (context.getNewObject() instanceof Edge) {
             return new AddEdgeFeature(this,styleProvider);
@@ -63,7 +76,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public ICreateFeature[] getCreateFeatures() {
     	//, new CreateDeadEndVertexFeature(this)
-        return new ICreateFeature[] { new CreateBreachFeature(this) , new CreateDeadEndVertexFeature(this)};
+    	
+    	return new ICreateFeature[] { new CreateFeature(this,TypeFeatures.BREANCH ),new CreateFeature(this,TypeFeatures.DEADENDVERTEX ), new CreateFeature(this,TypeFeatures.SWITCHVERTEX_LEFT),new CreateFeature(this,TypeFeatures.SWITCHVERTEX_RIGHT)};
+        //return new ICreateFeature[] { new CreateBreachFeature(this) , new CreateDeadEndVertexFeature(this)};
     }
     
     @Override

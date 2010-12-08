@@ -1,9 +1,8 @@
 package de.cau.cs.kieler.rail.editor.features;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
-import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
+import org.eclipse.graphiti.features.impl.AbstractAddFeature;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
@@ -20,10 +19,25 @@ import org.eclipse.graphiti.util.IColorConstant;
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 
-public class AddBreachFeature extends AddFeature {
+public class AddBreachFeature extends AbstractAddFeature {
     
-    public AddBreachFeature(IFeatureProvider fp, final IStyleProvider thestyleProvider) {
-        super(fp,thestyleProvider);
+	
+	/** the style provider. */ 
+    protected IStyleProvider styleProvider;
+    
+    protected static final IColorConstant CLASS_TEXT_FOREGROUND =
+        new ColorConstant(51, 51, 153);
+ 
+    protected static final IColorConstant CLASS_FOREGROUND =
+        new ColorConstant(255, 102, 0);
+ 
+    protected static final IColorConstant CLASS_BACKGROUND =
+        new ColorConstant(255, 204, 153);
+
+
+	public AddBreachFeature(IFeatureProvider fp, final IStyleProvider thestyleProvider) {
+        super(fp);
+        this.styleProvider = styleProvider;
     }
  
     public boolean canAdd(IAddContext context) {
@@ -86,7 +100,7 @@ public class AddBreachFeature extends AddFeature {
             Shape shape = peCreateService.createShape(containerShape, false);
  
             // create and set text graphics algorithm
-            addedClass.setName("test");  //TODO ???
+            addedClass.setName("test");  //TODO so noch nicht
             Text text = gaService.createDefaultText(shape, addedClass.getName()); //addedClass.getName()
             text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
