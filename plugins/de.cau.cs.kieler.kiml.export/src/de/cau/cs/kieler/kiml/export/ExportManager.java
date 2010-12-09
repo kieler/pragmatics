@@ -21,22 +21,30 @@ import java.util.List;
  * 
  * @author mri
  */
-public final class ExportServices {
+public final class ExportManager {
 
     /** the singleton instance. */
-    private static ExportServices instance = new ExportServices();
+    private static ExportManager instance = new ExportManager();
+
+    /**
+     * A private constructor to make this class a singleton.
+     */
+    private ExportManager() {
+        // do nothing
+    }
 
     /**
      * Returns the singleton instance.
      * 
      * @return the singleton instance
      */
-    public static ExportServices getInstance() {
+    public static ExportManager getInstance() {
         return instance;
     }
 
     /** the registered exporters. */
-    private List<AbstractExporter> exporters = new LinkedList<AbstractExporter>();
+    private List<AbstractExporter> exporters =
+            new LinkedList<AbstractExporter>();
 
     /**
      * Registers a graph exporter.

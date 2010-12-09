@@ -49,11 +49,11 @@ public class ExportActivator extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
         
-        ExportServices.getInstance().addExporter(new GraphMLExporter());
-        ExportServices.getInstance().addExporter(new OGMLExporter());
-        ExportServices.getInstance().addExporter(new GMLExporter());
-        ExportServices.getInstance().addExporter(new KGraphExporter());
-        ExportServices.getInstance().addExporter(new DotExporter());
+        ExportManager.getInstance().addExporter(new GraphMLExporter());
+        ExportManager.getInstance().addExporter(new OGMLExporter());
+        ExportManager.getInstance().addExporter(new GMLExporter());
+        ExportManager.getInstance().addExporter(new KGraphExporter());
+        ExportManager.getInstance().addExporter(new DotExporter());
     }
 
     /**

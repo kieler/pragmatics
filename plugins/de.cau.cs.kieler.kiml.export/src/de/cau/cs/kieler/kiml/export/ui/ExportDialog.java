@@ -51,7 +51,7 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.export.ExportActivator;
-import de.cau.cs.kieler.kiml.export.ExportServices;
+import de.cau.cs.kieler.kiml.export.ExportManager;
 import de.cau.cs.kieler.kiml.export.ExporterConfiguration;
 import de.cau.cs.kieler.kiml.export.ExporterOption;
 
@@ -144,7 +144,7 @@ public class ExportDialog extends Dialog {
         preferenceStore = ExportActivator.getDefault().getPreferenceStore();
         // check if there are any exporters registered
         noExporter =
-                ExportServices.getInstance().getExporterNames().length == 0;
+                ExportManager.getInstance().getExporterNames().length == 0;
         // get dialog width and height from the preference store
         int width = preferenceStore.getInt(PREFERENCE_DIALOG_WIDTH);
         if (width > 0) {
@@ -267,12 +267,12 @@ public class ExportDialog extends Dialog {
         label.setText("File F&ormat:");
         fileFormatCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
         String[] exporterNames =
-                ExportServices.getInstance().getExporterNames();
+                ExportManager.getInstance().getExporterNames();
         if (exporterNames.length > 0) {
             fileFormatCombo.setItems(exporterNames);
             // load exporter from preference store
             String exporter = preferenceStore.getString(PREFERENCE_EXPORTER);
-            if (ExportServices.getInstance().getExporterByName(exporter) != null) {
+            if (ExportManager.getInstance().getExporterByName(exporter) != null) {
                 fileFormatCombo.setText(exporter);
             } else {
                 fileFormatCombo.setText(exporterNames[0]);
@@ -305,7 +305,7 @@ public class ExportDialog extends Dialog {
                 createComposite(scrolledComposite, 2,
                         EXPORT_OPTIONS_COMPOSITE_MARGIN,
                         EXPORT_OPTIONS_COMPOSITE_MARGIN);
-        for (AbstractExporter exporter : ExportServices.getInstance()
+        for (AbstractExporter exporter : ExportManager.getInstance()
                 .getExporter()) {
             LinkedList<Control> controls = new LinkedList<Control>();
             optionControls.put(exporter, controls);
@@ -630,7 +630,7 @@ public class ExportDialog extends Dialog {
         String exporterName =
                 fileFormatCombo.getItem(fileFormatCombo.getSelectionIndex());
         AbstractExporter exporter =
-                ExportServices.getInstance().getExporterByName(exporterName);
+                ExportManager.getInstance().getExporterByName(exporterName);
         List<Control> controls = optionControls.get(exporter);
         if (controls != null) {
             for (Control control : controls) {
