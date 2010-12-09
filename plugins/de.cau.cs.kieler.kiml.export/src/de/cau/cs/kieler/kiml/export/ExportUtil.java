@@ -182,7 +182,6 @@ public final class ExportUtil {
         options.put(XMLResource.OPTION_FORMATTED, true);
         // write to the stream
         resource.save(outputStream, options);
-        outputStream.close();
         monitor.done();
     }
 }

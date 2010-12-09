@@ -28,9 +28,8 @@ import com.google.inject.Injector;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
-import de.cau.cs.kieler.kiml.export.ExportUtil;
-import de.cau.cs.kieler.kiml.export.ExporterConfiguration;
 import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
@@ -73,8 +72,8 @@ public class DotExporter extends AbstractExporter {
      * {@inheritDoc}
      */
     @Override
-    public void doExport(final KNode graph,
-            final ExporterConfiguration configuration,
+    public void doExport(final KNode graph, final OutputStream stream,
+            final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) throws KielerException {
         monitor.begin("Exporting KGraph to Dot", 2);
         try {
@@ -86,10 +85,6 @@ public class DotExporter extends AbstractExporter {
                             KGraphDotTransformation.DOT_COMMAND,
                             monitor.subTask(1));
             // write to file
-            OutputStream outputStream =
-                    ExportUtil.createOutputStream(
-                            configuration.getExportFilePath(),
-                            configuration.isWorkspacePath());
             Injector injector =
                     new GraphvizDotStandaloneSetup()
                             .createInjectorAndDoEMFRegistration();
@@ -99,11 +94,10 @@ public class DotExporter extends AbstractExporter {
                     (XtextResource) resourceSet.createResource(URI
                             .createURI("http:///My.graphviz-dot"));
             resource.getContents().add(dotGraph);
-            Map<String, Object> options = new HashMap<String, Object>();
-            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
+            Map<String, Object> resourceOptions = new HashMap<String, Object>();
+            resourceOptions.put(XMLResource.OPTION_ENCODING, "UTF-8");
             // write to the stream
-            resource.save(outputStream, options);
-            outputStream.close();
+            resource.save(stream, resourceOptions);
         } catch (IOException e) {
             throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
         } finally {

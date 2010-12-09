@@ -25,10 +25,9 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
-import de.cau.cs.kieler.kiml.export.ExportUtil;
-import de.cau.cs.kieler.kiml.export.ExporterConfiguration;
 import de.cau.cs.kieler.kiml.export.ExporterOption;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -90,20 +89,15 @@ public class GMLExporter extends AbstractExporter {
      * {@inheritDoc}
      */
     @Override
-    public void doExport(final KNode graph,
-            final ExporterConfiguration configuration,
+    public void doExport(final KNode graph, final OutputStream stream,
+            final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) throws KielerException {
         monitor.begin("Exporting KGraph to GML", 1);
 
         try {
-            OutputStream outputStream =
-                    ExportUtil.createOutputStream(
-                            configuration.getExportFilePath(),
-                            configuration.isWorkspacePath());
-            serializeKGraphAsGML(graph, outputStream,
-                    configuration.getProperty(OPTION_LAYOUT_INFORMATION),
+            serializeKGraphAsGML(graph, stream,
+                    options.getProperty(OPTION_LAYOUT_INFORMATION),
                     monitor.subTask(1));
-            outputStream.close();
 
         } catch (IOException e) {
             throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);

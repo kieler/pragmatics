@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.export.handlers;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -25,8 +28,10 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
-import de.cau.cs.kieler.kiml.export.ExporterConfiguration;
+import de.cau.cs.kieler.kiml.export.AbstractExporter;
+import de.cau.cs.kieler.kiml.export.ExportUtil;
 import de.cau.cs.kieler.kiml.export.ui.ExportDialog;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
@@ -48,21 +53,29 @@ public class ExportHandler extends AbstractHandler {
         ExportDialog exportDialog = new ExportDialog(shell);
         int code = exportDialog.open();
         if (code == Dialog.OK) {
-            // retrieve a kgraph representation of the diagram
-            KNode graph =
-                    EclipseLayoutServices.getInstance()
-                            .getManager(editorPart, null)
-                            .buildLayoutGraph(editorPart, null, false);
-            // get the selected configuration
-            ExporterConfiguration configuration =
-                    exportDialog.getConfiguration();
-            // perform the export
-            IKielerProgressMonitor monitor =
-                    new KielerProgressMonitor(new NullProgressMonitor());
             try {
-                configuration.getExporter().doExport(graph, configuration,
-                        monitor);
+                // retrieve a kgraph representation of the diagram
+                KNode graph =
+                        EclipseLayoutServices.getInstance()
+                                .getManager(editorPart, null)
+                                .buildLayoutGraph(editorPart, null, false);
+                // get the selected configuration
+                AbstractExporter exporter = exportDialog.getExporter();
+                String filePath = exportDialog.getExportFile();
+                boolean isWorkspacePath = exportDialog.isExportWorkspacePath();
+                MapPropertyHolder options = exportDialog.getOptions();
+                // open the export file
+                OutputStream stream =
+                        ExportUtil
+                                .createOutputStream(filePath, isWorkspacePath);
+                // perform the export
+                IKielerProgressMonitor monitor =
+                        new KielerProgressMonitor(new NullProgressMonitor());
+                exporter.doExport(graph, stream, options, monitor);
             } catch (KielerException e) {
+                // TODO handle this properly
+                e.printStackTrace();
+            } catch (IOException e) {
                 // TODO handle this properly
                 e.printStackTrace();
             }

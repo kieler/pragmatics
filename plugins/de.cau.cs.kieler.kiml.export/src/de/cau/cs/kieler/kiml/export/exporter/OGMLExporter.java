@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.export.exporter;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,9 +24,9 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.model.transformation.TransformationException;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.export.ExportUtil;
-import de.cau.cs.kieler.kiml.export.ExporterConfiguration;
 import de.cau.cs.kieler.kiml.export.ExporterOption;
 import de.cau.cs.kieler.kiml.export.util.XtendUtil;
 
@@ -84,15 +85,15 @@ public class OGMLExporter extends AbstractExporter {
      * {@inheritDoc}
      */
     @Override
-    public void doExport(final KNode graph,
-            final ExporterConfiguration configuration,
+    public void doExport(final KNode graph, final OutputStream stream,
+            final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) throws KielerException {
         monitor.begin("Exporting KGraph to OGML", 1);
 
         try {
             List<Object> parameters = new LinkedList<Object>();
             parameters
-                    .add(configuration.getProperty(OPTION_LAYOUT_INFORMATION));
+                    .add(options.getProperty(OPTION_LAYOUT_INFORMATION));
             XtendUtil.resetGenerators();
             ExportUtil.transformKGraph2Model(
                     monitor.subTask(1),
@@ -100,9 +101,7 @@ public class OGMLExporter extends AbstractExporter {
                     XTEND_TRANSFORMATION,
                     parameters,
                     graph,
-                    ExportUtil.createOutputStream(
-                            configuration.getExportFilePath(),
-                            configuration.isWorkspacePath()),
+                    stream,
                     new OgmlResourceFactoryImpl(),
                     "de.cau.cs.kieler.core.kgraph.KGraphPackage",
                     "net.ogdf.ogml.OgmlPackage",

@@ -27,9 +27,8 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
-import de.cau.cs.kieler.kiml.export.ExportUtil;
-import de.cau.cs.kieler.kiml.export.ExporterConfiguration;
 
 /**
  * A graph exporter for the raw KGraph.
@@ -71,26 +70,21 @@ public class KGraphExporter extends AbstractExporter {
      * {@inheritDoc}
      */
     @Override
-    public void doExport(final KNode graph,
-            final ExporterConfiguration configuration,
+    public void doExport(final KNode graph, final OutputStream stream,
+            final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) throws KielerException {
         monitor.begin("Exporting KGraph", 1);
         try {
-            OutputStream outputStream =
-                    ExportUtil.createOutputStream(
-                            configuration.getExportFilePath(),
-                            configuration.isWorkspacePath());
             ResourceSet resourceSet = new ResourceSetImpl();
             Resource resource =
                     resourceSet.createResource(URI.createURI("http:///My."
                             + FILE_EXT_DUMMY));
             resource.getContents().add(graph);
-            Map<String, Object> options = new HashMap<String, Object>();
-            options.put(XMLResource.OPTION_ENCODING, "UTF-8");
-            options.put(XMLResource.OPTION_FORMATTED, true);
+            Map<String, Object> resourceOptions = new HashMap<String, Object>();
+            resourceOptions.put(XMLResource.OPTION_ENCODING, "UTF-8");
+            resourceOptions.put(XMLResource.OPTION_FORMATTED, true);
             // write to the stream
-            resource.save(outputStream, options);
-            outputStream.close();
+            resource.save(stream, resourceOptions);
         } catch (IOException e) {
             throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
         } finally {

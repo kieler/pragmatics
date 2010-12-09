@@ -49,10 +49,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.export.ExportActivator;
 import de.cau.cs.kieler.kiml.export.ExportManager;
-import de.cau.cs.kieler.kiml.export.ExporterConfiguration;
 import de.cau.cs.kieler.kiml.export.ExporterOption;
 
 /**
@@ -126,8 +126,12 @@ public class ExportDialog extends Dialog {
     private Label messageLabel = null;
     /** the last selected exporter. */
     private AbstractExporter lastExporter = null;
-    /** the selected configuration. */
-    private ExporterConfiguration configuration = null;
+    /** the selected options. */
+    private MapPropertyHolder options = null;
+    /** the export file path. */
+    private String exportFile = null;
+    /** is the selected path relative to the workspace? */
+    private boolean exportWorkspacePath = false;
     /** is no exporter registered? */
     private boolean noExporter = false;
 
@@ -143,8 +147,7 @@ public class ExportDialog extends Dialog {
         // receive the preference store
         preferenceStore = ExportActivator.getDefault().getPreferenceStore();
         // check if there are any exporters registered
-        noExporter =
-                ExportManager.getInstance().getExporterNames().length == 0;
+        noExporter = ExportManager.getInstance().getExporterNames().length == 0;
         // get dialog width and height from the preference store
         int width = preferenceStore.getInt(PREFERENCE_DIALOG_WIDTH);
         if (width > 0) {
@@ -266,8 +269,7 @@ public class ExportDialog extends Dialog {
         Label label = new Label(composite, SWT.NONE);
         label.setText("File F&ormat:");
         fileFormatCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-        String[] exporterNames =
-                ExportManager.getInstance().getExporterNames();
+        String[] exporterNames = ExportManager.getInstance().getExporterNames();
         if (exporterNames.length > 0) {
             fileFormatCombo.setItems(exporterNames);
             // load exporter from preference store
@@ -687,13 +689,43 @@ public class ExportDialog extends Dialog {
     }
 
     /**
-     * Returns the export configuration selected by the user.
+     * Returns the selected exporter.
      * 
-     * @return the export configuration or null if the dialog has not been
-     *         successfully finished
+     * @return the selected exporter
      */
-    public ExporterConfiguration getConfiguration() {
-        return configuration;
+    public AbstractExporter getExporter() {
+        return lastExporter;
+    }
+
+    /**
+     * Returns the selected export file path.
+     * 
+     * @return the selected path or null if the dialog has not successfully
+     *         finished
+     */
+    public String getExportFile() {
+        return exportFile;
+    }
+
+    /**
+     * Returns whether the selected export file path is relative to the
+     * workspace.
+     * 
+     * @return true if the selected export file path is relative to the
+     *         workspace
+     */
+    public boolean isExportWorkspacePath() {
+        return exportWorkspacePath;
+    }
+
+    /**
+     * Returns the selected options.
+     * 
+     * @return the selected options or null if the dialog has not successfully
+     *         finished
+     */
+    public MapPropertyHolder getOptions() {
+        return options;
     }
 
     /**
@@ -720,9 +752,10 @@ public class ExportDialog extends Dialog {
     @Override
     protected void okPressed() {
         // create export configuration
-        configuration =
-                new ExporterConfiguration(lastExporter, fileText.getText(),
-                        workspacePathCheckbox.getSelection());
+        options = new MapPropertyHolder() {
+        };
+        exportFile = fileText.getText();
+        exportWorkspacePath = workspacePathCheckbox.getSelection();
         // attach options
         for (ExporterOption<?> option : lastExporter.getOptions()) {
             attachExportOption(option);
@@ -766,7 +799,7 @@ public class ExportDialog extends Dialog {
                     .getEnumConstants()) {
                 if (constant.toString().equals(choice)) {
                     if (!constant.equals(option.getDefault())) {
-                        configuration.setProperty(option, constant);
+                        options.setProperty(option, constant);
                         preferenceStore.setValue(option.getIdentifier()
                                 .toString(), constant.toString());
                     } else {
@@ -783,7 +816,7 @@ public class ExportDialog extends Dialog {
         Button checkbox = (Button) optionInputs.get(option);
         Boolean value = checkbox.getSelection();
         if (value != option.getDefault()) {
-            configuration.setProperty(option, value);
+            options.setProperty(option, value);
             preferenceStore.setValue(option.getIdentifier().toString(),
                     value.toString());
         } else {
@@ -796,7 +829,7 @@ public class ExportDialog extends Dialog {
         try {
             Integer value = Integer.parseInt(input.getText());
             if (value != option.getDefault()) {
-                configuration.setProperty(option, value);
+                options.setProperty(option, value);
                 preferenceStore.setValue(option.getIdentifier().toString(),
                         value.toString());
             } else {
@@ -813,7 +846,7 @@ public class ExportDialog extends Dialog {
         try {
             Float value = Float.parseFloat(input.getText());
             if (value != option.getDefault()) {
-                configuration.setProperty(option, value);
+                options.setProperty(option, value);
                 preferenceStore.setValue(option.getIdentifier().toString(),
                         value.toString());
             } else {
@@ -830,7 +863,7 @@ public class ExportDialog extends Dialog {
         try {
             Double value = Double.parseDouble(input.getText());
             if (value != option.getDefault()) {
-                configuration.setProperty(option, value);
+                options.setProperty(option, value);
                 preferenceStore.setValue(option.getIdentifier().toString(),
                         value.toString());
             } else {
@@ -846,7 +879,7 @@ public class ExportDialog extends Dialog {
         Text input = (Text) optionInputs.get(option);
         String value = input.getText();
         if (value != option.getDefault()) {
-            configuration.setProperty(option, value);
+            options.setProperty(option, value);
             preferenceStore.setValue(option.getIdentifier().toString(), value);
         } else {
             preferenceStore.setToDefault(option.getIdentifier().toString());

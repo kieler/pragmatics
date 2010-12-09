@@ -16,7 +16,8 @@ package de.cau.cs.kieler.kiml.export;
 import de.cau.cs.kieler.core.properties.Property;
 
 /**
- * An exporter option providing a name, a description and a number of choices.
+ * An exporter option providing a description in addition to the
+ * {@code Property} functionality.
  * 
  * @author mri
  * 
@@ -29,7 +30,7 @@ public class ExporterOption<T> extends Property<T> {
     private String description;
 
     /**
-     * Constructs an exporter option.
+     * Constructs an ExporterOption.
      * 
      * @param theId
      *            the option id

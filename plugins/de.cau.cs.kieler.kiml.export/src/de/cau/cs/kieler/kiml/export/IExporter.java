@@ -13,9 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.export;
 
+import java.io.OutputStream;
+
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 
 /**
  * The interface for all graph exporters.
@@ -25,18 +28,22 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 public interface IExporter {
 
     /**
-     * Performs the actual graph export using the given configuration.
+     * Performs the actual graph export by using the given options and writing
+     * the result to the stream.
      * 
      * @param graph
      *            the graph
-     * @param configuration
-     *            the export configuration
+     * @param stream
+     *            the output stream
+     * @param options
+     *            the export options
      * @param monitor
      *            the progress monitor
      * 
      * @throws KielerException
      *             thrown when the export failed
      */
-    void doExport(final KNode graph, final ExporterConfiguration configuration,
+    void doExport(final KNode graph, final OutputStream stream,
+            final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) throws KielerException;
 }
