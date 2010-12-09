@@ -28,7 +28,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
-import de.cau.cs.kieler.klay.layered.KGraphImporter;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -86,7 +85,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
 
         // transform the input graph
-        IGraphImporter graphImporter = new KGraphImporter(layoutNode);
+        IGraphImporter graphImporter = new KRailGraphImporter(layoutNode);
         LayeredGraph layeredGraph = graphImporter.getGraph();
 
         setOptions(layeredGraph, layoutNode, parentLayout);

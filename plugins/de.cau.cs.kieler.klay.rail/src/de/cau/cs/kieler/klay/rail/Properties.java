@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.rail;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 
 /**
@@ -25,6 +26,17 @@ import de.cau.cs.kieler.klay.rail.options.NodeType;
  * 
  */
 public final class Properties {
+    
+    /** the original object from which a graph element was created. */
+    public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
+    /** priority of elements. */
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
+    /** flag for reversed edges. */
+    public static final IProperty<Boolean> REVERSED = new Property<Boolean>("reversed", false);
+    
+    /** port constraints. */
+    public static final Property<PortConstraints> PORT_CONS = new Property<PortConstraints>(
+            LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
 
     /** default value for object spacing. */
     public static final float DEF_SPACING = 20.0f;
