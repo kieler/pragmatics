@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.KGraphImporter;
+import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
@@ -68,7 +69,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     /** phase 5: Edge routing module. */
     private IEdgeRouter edgeRouter = new SimpleSplineEdgeRouter();
 
-    private final int SWITCH_PORTS = 3;
+    private static final int SWITCH_PORTS = 3;
 
     /**
      * Initialize default values for options.
@@ -141,9 +142,14 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         LayeredGraph layeredGraph = importer.getGraph();
         List<LNode> nodes = importer.getImportedNodes();
 
+        System.out.println("Validating ...");
+        validateRailwayGraph(nodes);
+        System.out.println("Redirecting ...");
         redirectEdges(nodes);
+        System.out.println("Preprocessing ...");
         preprocess(nodes);
-
+        System.out.println("Ready to start layout.");
+        
         // phase 1: cycle breaking
         cycleBreaker.reset(monitor.subTask(1));
         cycleBreaker.breakCycles(nodes);
@@ -165,8 +171,10 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Validates the graph against the requirements of a railway graph. This has to be executed
-     * before any processing or layouting is done.
+     * Validates the graph against the requirements of a railway graph.
+     * This has to be executed before any processing or layouting is done.
+     * When this was executed, we may often access the first member of
+     * some lists, because we know then that they contain only one element.
      * 
      * @param thenodes
      *            A list of nodes to validate
@@ -179,18 +187,22 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
             }
             if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.BREACH_OR_CLOSE)) {
                 if (lNode.getPorts().size() != 1) {
+                    System.out.println("A breach or close may only have one port.");
                     throw new IllegalArgumentException("A breach or close may only have one port.");
                 }
             }
             if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)
                     || lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_RIGHT)) {
                 if (lNode.getPorts().size() != SWITCH_PORTS) {
+                    System.out.println("A switch has to have exactly "
+                            + SWITCH_PORTS + " ports.");
                     throw new IllegalArgumentException("A switch has to have exactly "
                             + SWITCH_PORTS + " ports.");
                 }
             }
             for (LPort lPort : lNode.getPorts()) {
                 if (lPort.getEdges().size() != 1) {
+                    System.out.println("Each port may only have one edge");
                     throw new IllegalArgumentException("Each port may only have one edge");
                 }
             }
@@ -206,26 +218,39 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
      *            A list of nodes to process
      */
     private void redirectEdges(final List<LNode> thenodes) {
-        LNode entryNode = new LNode();
-        HashMap<LNode, Boolean> visited = new HashMap<LNode, Boolean>();
-        Queue<LNode> queue = new LinkedList<LNode>();
+        LPort entryPort = new LPort();
+        HashMap<LPort, Boolean> visited = new HashMap<LPort, Boolean>();
+        Queue<LPort> queue = new LinkedList<LPort>();
         for (LNode lNode : thenodes) {
-            visited.put(lNode, false);
             if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
                 // can do this because validation was executed earlier
-                entryNode = lNode;
-                LPort entryPort = entryNode.getPorts().get(0);
+                LNode entryNode = lNode;
+                entryPort = entryNode.getPorts().get(0);
                 if (entryPort.getType().equals(PortType.INPUT)) {
-                    
+                    //entry port has to be output since all edges
+                    //are directed right bound coming from here
+                    swapPorts(entryPort.getEdges().get(0));
                 }
             }
+            for (LPort lPort : lNode.getPorts()) {
+                visited.put(lPort, false);
+            }
         }
-        queue.add(entryNode);
-        visited.put(entryNode, true);
+        queue.add(entryPort);
+        visited.put(entryPort, true);
         while (!queue.isEmpty()) {
-            LNode currentNode = queue.poll();
-            for (LPort lPort : currentNode.getPorts()) {
-
+            LPort currentPort = queue.poll();
+            LPort currentTarget = currentPort.getEdges().get(0).getTarget();
+            visited.put(currentTarget, true);
+            LNode nextNode = currentTarget.getNode();
+            for (LPort lPort : nextNode.getPorts()) {
+                if (!visited.get(lPort)) {
+                    if (lPort.getType().equals(PortType.INPUT)) {
+                        swapPorts(lPort.getEdges().get(0));
+                    }
+                    queue.add(lPort);
+                    visited.put(lPort, true);
+                }
             }
         }
     }
@@ -261,6 +286,19 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
             }
             // TODO: handling switches
         }
+    }
+    
+    /**
+     * Swaps the direction of an edges and changes the port types while doing so.
+     * 
+     * @param theedge The edge to use.
+     */
+    private void swapPorts(final LEdge theedge) {
+        LPort swap = theedge.getSource();
+        swap.setType(PortType.INPUT);
+        theedge.setSource(theedge.getTarget());
+        theedge.setTarget(swap);
+        theedge.getSource().setType(PortType.OUTPUT);
     }
 
 }
