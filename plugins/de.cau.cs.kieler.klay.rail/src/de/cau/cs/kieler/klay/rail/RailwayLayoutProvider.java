@@ -13,7 +13,10 @@
  */
 package de.cau.cs.kieler.klay.rail;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
@@ -186,6 +189,11 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                             + SWITCH_PORTS + " ports.");
                 }
             }
+            for (LPort lPort : lNode.getPorts()) {
+                if (lPort.getEdges().size() != 1) {
+                    throw new IllegalArgumentException("Each port may only have one edge");
+                }
+            }
             //TODO: circle detection here or in redirection?
         }
     }
@@ -198,11 +206,26 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
      *            A list of nodes to process
      */
     private void redirectEdges(final List<LNode> thenodes) {
+        LNode entryNode = new LNode();
+        HashMap<LNode, Boolean> visited = new HashMap<LNode, Boolean>();
+        Queue<LNode> queue = new LinkedList<LNode>();
         for (LNode lNode : thenodes) {
+            visited.put(lNode, false);
             if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
                 // can do this because validation was executed earlier
-                LPort entryPort = lNode.getPorts().get(0);
-                //TODO: BFS for right direction and circle detection
+                entryNode = lNode;
+                LPort entryPort = entryNode.getPorts().get(0);
+                if (entryPort.getType().equals(PortType.INPUT)) {
+                    
+                }
+            }
+        }
+        queue.add(entryNode);
+        visited.put(entryNode, true);
+        while (!queue.isEmpty()) {
+            LNode currentNode = queue.poll();
+            for (LPort lPort : currentNode.getPorts()) {
+
             }
         }
     }
@@ -218,17 +241,13 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         for (LNode lNode : thenodes) {
             if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
                 List<LPort> ports = lNode.getPorts();
-                if (ports.size() != 1) {
-                    throw new IllegalArgumentException("An entry point may only have one port.");
-                }
+                //can do this because validation was done earlier
                 LPort port = ports.get(0);
                 port.setSide(PortSide.EAST);
                 port.getPos().y = port.getNode().getSize().y / 2;
             } else if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.BREACH_OR_CLOSE)) {
                 List<LPort> ports = lNode.getPorts();
-                if (ports.size() != 1) {
-                    throw new IllegalArgumentException("A breach or close may only have one port.");
-                }
+                //same as above
                 LPort port = ports.get(0);
                 if (port.getType().equals(PortType.INPUT)) {
                     port.setSide(PortSide.WEST);
