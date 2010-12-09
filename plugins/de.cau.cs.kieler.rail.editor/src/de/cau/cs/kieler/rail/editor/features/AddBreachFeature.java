@@ -64,7 +64,7 @@ public class AddBreachFeature extends AbstractAddFeature {
         
         // define a default size for the shape
         int width = 50;
-        int height = 50; 
+        int height = 50;
         IGaService gaService = Graphiti.getGaService();
  
         

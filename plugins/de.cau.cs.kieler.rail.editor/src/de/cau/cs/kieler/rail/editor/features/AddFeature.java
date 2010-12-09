@@ -10,6 +10,7 @@ import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
+import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -116,7 +117,8 @@ public class AddFeature extends AbstractAddFeature {
         int height = 50; 
         IGaService gaService = Graphiti.getGaService();
  
-        
+        System.out.println(context.getHeight());
+        System.out.println(context.getWidth());
         
         {
         	//Create Ellipse
@@ -266,9 +268,12 @@ public class AddFeature extends AbstractAddFeature {
  
      // define a default size for the shape
         int width = 50;
-        int height = 50; 
+        int height = 50;
         IGaService gaService = Graphiti.getGaService();
- 
+        
+        System.out.println(context.getHeight());
+        System.out.println(context.getWidth());
+        
         {
             
             
@@ -293,7 +298,7 @@ public class AddFeature extends AbstractAddFeature {
  
             // create and set graphics algorithm
             Polyline polyline =
-                gaService.createPolyline(shape, new int[] { width/2, 0, width/2, height });
+                gaService.createPolyline(shape, new int[] { context.getX()+width/2, context.getY(),context.getX()+ width/2,context.getY()+ height });
             polyline.setForeground(manageColor(100,0,100));
             polyline.setLineWidth(2);
             polyline.setHeight(height);
@@ -307,10 +312,13 @@ public class AddFeature extends AbstractAddFeature {
      // triangle through points: top-middle, bottom-right, bottom-left
         //50, 0, 100, 100, 0, 100
         {
-        int xy[] = new int[] { 0, height/2, width, height /2};
+        int xy[] = new int[] { context.getX(), context.getY() + height/2,context.getX()+ width,context.getY()+ height /2};
 		//IGaService gaService = Graphiti.getGaService();
         Polyline p = gaService.createPolyline(containerShape, xy);
-        Polyline p2 = gaService.createPolyline(containerShape, new int[] { 0, height/2, width, (int)(0.57735026919*height /2)});
+        Polyline p2 = gaService.createPolyline(containerShape, new int[] { context.getX(), context.getY()+height/2,context.getX()+ width, context.getY()+(int)(0.57735026919*height /2)});
+        
+        gaService.setLocationAndSize(p,context.getX(), context.getY() ,width,height );
+        gaService.setLocationAndSize(p2,context.getX(), context.getY() ,width,height );
         }
  
         // SHAPE WITH TEXT
@@ -325,11 +333,14 @@ public class AddFeature extends AbstractAddFeature {
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
             text.getFont().setBold(true);
-            gaService.setLocationAndSize(text, 0, 0, width, 20);
+            gaService.setLocationAndSize(text, context.getX(), context.getY(), width, height);
  
             // create link and wire it
             link(shape, addedClass);
         }
+        
+
+        
         
         // add a chopbox anchor to the shape
         peCreateService.createChopboxAnchor(containerShape);
