@@ -207,6 +207,9 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
             }
             //TODO: circle detection here or in redirection?
         }
+        if (foundEntryNodes != 1) {
+            throw new IllegalArgumentException("Currently the graph needs exactly one entry point.");
+        }
     }
 
     /**
@@ -268,20 +271,26 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                 //can do this because validation was done earlier
                 LPort port = ports.get(0);
                 port.setSide(PortSide.EAST);
-                port.getPos().y = port.getNode().getSize().y / 2;
+                System.out.println("Eastside!!");
+                port.getPos().x = port.getNode().getSize().x;
+                port.getPos().y = port.getNode().getSize().y / 5;
             } else if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.BREACH_OR_CLOSE)) {
                 List<LPort> ports = lNode.getPorts();
                 //same as above
                 LPort port = ports.get(0);
                 if (port.getType().equals(PortType.INPUT)) {
                     port.setSide(PortSide.WEST);
+                    System.out.println("Westside!!");
+                    port.getPos().x = 0;
                 } else if (port.getType().equals(PortType.OUTPUT)) {
                     port.setSide(PortSide.EAST);
+                    System.out.println("Eastside!!");
+                    port.getPos().x = port.getNode().getSize().x;
                 } else {
                     throw new IllegalArgumentException(
                             "Railway layout doesn't allow undefined ports.");
                 }
-                port.getPos().y = port.getNode().getSize().y / 2;
+                port.getPos().y = port.getNode().getSize().y / 5;
             }
             // TODO: handling switches
         }

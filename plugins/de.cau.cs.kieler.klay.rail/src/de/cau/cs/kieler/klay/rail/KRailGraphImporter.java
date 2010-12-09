@@ -29,9 +29,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
@@ -102,6 +102,7 @@ public class KRailGraphImporter implements IGraphImporter {
             newNode.getSize().x = nodeLayout.getWidth();
             newNode.getSize().y = nodeLayout.getHeight();
             newNode.setProperty(Properties.NODE_TYPE, nodeLayout.getProperty(Properties.NODE_TYPE));
+            newNode.setProperty(Properties.ENTRY_POINT, nodeLayout.getProperty(Properties.ENTRY_POINT));
             layeredNodes.add(newNode);
             elemMap.put(child, newNode);
             KPort[] sortedPorts = KimlUtil.getSortedPorts(child);
@@ -218,13 +219,13 @@ public class KRailGraphImporter implements IGraphImporter {
                         edge.id = -1;
                     }
                 }
-                for (LPort port: lnode.getPorts()) {
+                for (LPort port : lnode.getPorts()) {
                     Object original = port.getProperty(Properties.ORIGIN);
                     if (original instanceof KPort) {
                         KPort kport = (KPort) original;
                         KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                         portLayout.setXpos((float) (port.getPos().x + offset.x));
-                        portLayout.setXpos((float) (port.getPos().y + offset.y));
+                        portLayout.setYpos((float) (port.getPos().y + offset.y));
                     }
                 }
             }
