@@ -8,7 +8,9 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import de.cau.cs.kieler.rail.Topologie.Model;
 
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.SpecializedVerticesFactory;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
 
 
@@ -53,6 +55,7 @@ public class CreateFeature extends AbstractCreateFeature  {
     
     private Vertex getVertex()
     {
+    	Vertex vertex;
 		switch(type){
     	case BREANCH:
         	return SpecializedVerticesFactory.eINSTANCE.createEinbruchsknoten();
@@ -60,8 +63,12 @@ public class CreateFeature extends AbstractCreateFeature  {
     		return SpecializedVerticesFactory.eINSTANCE.createStumpfgleisknoten();
     	//TODO Make for both cases possible.
     	case SWITCHVERTEX_LEFT:
+    		vertex = SpecializedVerticesFactory.eINSTANCE.createWeichenknoten();
+    		((Weichenknoten)vertex).setAbzweigendeLage(EOrientation.LINKS);
+    		return vertex;
     	case SWITCHVERTEX_RIGHT:
-    		Vertex vertex = SpecializedVerticesFactory.eINSTANCE.createWeichenknoten();
+    		vertex = SpecializedVerticesFactory.eINSTANCE.createWeichenknoten();
+    		((Weichenknoten)vertex).setAbzweigendeLage(EOrientation.RECHTS);
     		return vertex;
 		}
     	return null;

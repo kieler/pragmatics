@@ -254,8 +254,9 @@ public class AddFeature extends AbstractAddFeature {
         return containerShape;
     }
 	
-	private PictogramElement addSwitchVertex(IAddContext context, EOrientation links) {
+	private PictogramElement addSwitchVertex(IAddContext context, EOrientation orientatin) {
 		Weichenknoten addedClass = (Weichenknoten) context.getNewObject();
+		addedClass.setAbzweigendeLage(orientatin);
         Diagram targetDiagram = (Diagram) context.getTargetContainer();
  
      // CONTAINER SHAPE WITH ROUNDED RECTANGLE
