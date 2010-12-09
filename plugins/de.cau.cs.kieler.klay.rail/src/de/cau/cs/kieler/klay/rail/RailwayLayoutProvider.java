@@ -148,7 +148,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         System.out.println("Preprocessing ...");
         preprocess(nodes);
         System.out.println("Ready to start layout.");
-        
+
         // phase 1: cycle breaking
         cycleBreaker.reset(monitor.subTask(1));
         cycleBreaker.breakCycles(nodes);
@@ -170,10 +170,9 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Validates the graph against the requirements of a railway graph.
-     * This has to be executed before any processing or layouting is done.
-     * When this was executed, we may often access the first member of
-     * some lists, because we know then that they contain only one element.
+     * Validates the graph against the requirements of a railway graph. This has to be executed
+     * before any processing or layouting is done. When this was executed, we may often access the
+     * first member of some lists, because we know then that they contain only one element.
      * 
      * @param thenodes
      *            A list of nodes to validate
@@ -193,8 +192,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
             if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)
                     || lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_RIGHT)) {
                 if (lNode.getPorts().size() != SWITCH_PORTS) {
-                    System.out.println("A switch has to have exactly "
-                            + SWITCH_PORTS + " ports.");
+                    System.out.println("A switch has to have exactly " + SWITCH_PORTS + " ports.");
                     throw new IllegalArgumentException("A switch has to have exactly "
                             + SWITCH_PORTS + " ports.");
                 }
@@ -205,7 +203,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                     throw new IllegalArgumentException("Each port may only have one edge");
                 }
             }
-            //TODO: circle detection here or in redirection?
+            // TODO: circle detection here or in redirection?
         }
         if (foundEntryNodes != 1) {
             throw new IllegalArgumentException("Currently the graph needs exactly one entry point.");
@@ -229,8 +227,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                 LNode entryNode = lNode;
                 entryPort = entryNode.getPorts().get(0);
                 if (entryPort.getType().equals(PortType.INPUT)) {
-                    //entry port has to be output since all edges
-                    //are directed right bound coming from here
+                    // entry port has to be output since all edges
+                    // are directed right bound coming from here
                     swapPorts(entryPort.getEdges().get(0));
                 }
             }
@@ -268,38 +266,74 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         for (LNode lNode : thenodes) {
             if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
                 List<LPort> ports = lNode.getPorts();
-                //can do this because validation was done earlier
+                // can do this because validation was done earlier
                 LPort port = ports.get(0);
                 port.setSide(PortSide.EAST);
-                System.out.println("Eastside!!");
                 port.getPos().x = port.getNode().getSize().x;
                 port.getPos().y = port.getNode().getSize().y / 5;
             } else if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.BREACH_OR_CLOSE)) {
                 List<LPort> ports = lNode.getPorts();
-                //same as above
+                // same as above
                 LPort port = ports.get(0);
                 if (port.getType().equals(PortType.INPUT)) {
                     port.setSide(PortSide.WEST);
-                    System.out.println("Westside!!");
                     port.getPos().x = 0;
                 } else if (port.getType().equals(PortType.OUTPUT)) {
                     port.setSide(PortSide.EAST);
-                    System.out.println("Eastside!!");
                     port.getPos().x = port.getNode().getSize().x;
                 } else {
                     throw new IllegalArgumentException(
                             "Railway layout doesn't allow undefined ports.");
                 }
                 port.getPos().y = port.getNode().getSize().y / 5;
+            } else if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)) {
+                List<LPort> ports = lNode.getPorts();
+                // same as above
+                int inputPorts = 0;
+                int outputPorts = 0;
+                for (LPort lPort : ports) {
+                    if (lPort.getType().equals(PortType.INPUT)) {
+                        inputPorts++;
+                    } else if (lPort.getType().equals(PortType.OUTPUT)) {
+                        outputPorts++;
+                    } else {
+                        throw new IllegalArgumentException(
+                                "Railway layout doesn't allow undefined ports.");
+                    }
+                }
+                boolean flipped = (inputPorts == 2);
+                int flipOffset = 0;
+                for (LPort lPort : ports) {
+                    if (lPort.getType().equals(PortType.INPUT)) {
+                        lPort.setSide(PortSide.WEST);
+                        lPort.getPos().x = 0;
+                        if (flipped) {
+                            lPort.getPos().y = lPort.getNode().getSize().y / (7 - flipOffset);
+                            flipOffset = 3;
+                        } else {
+                            lPort.getPos().y = lPort.getNode().getSize().y / 5;
+                        }
+                    } else  {
+                        lPort.setSide(PortSide.EAST);
+                        lPort.getPos().x = lPort.getNode().getSize().x;
+                        if (flipped) {
+                            lPort.getPos().y = lPort.getNode().getSize().y / 5;
+                        } else {
+                            lPort.getPos().y = lPort.getNode().getSize().y / (6 + flipOffset);
+                            flipOffset = 3;
+                        }
+                    }
+                }
             }
             // TODO: handling switches
         }
     }
-    
+
     /**
      * Swaps the direction of an edges and changes the port types while doing so.
      * 
-     * @param theedge The edge to use.
+     * @param theedge
+     *            The edge to use.
      */
     private void swapPorts(final LEdge theedge) {
         LPort swap = theedge.getSource();
