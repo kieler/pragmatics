@@ -72,6 +72,7 @@ public class ExportHandler extends AbstractHandler {
                 IKielerProgressMonitor monitor =
                         new KielerProgressMonitor(new NullProgressMonitor());
                 exporter.doExport(graph, stream, options, monitor);
+                stream.close();
             } catch (KielerException e) {
                 // TODO handle this properly
                 e.printStackTrace();
