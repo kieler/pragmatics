@@ -42,7 +42,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-import de.cau.cs.kieler.core.ui.commands.ReInitDiagramCommand;
+import de.cau.cs.kieler.core.ui.commands.AbstractReInitDiagramCommand;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
@@ -57,7 +57,7 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
  * @author soh
  * @kieler.rating 2010-06-14 proposed yellow
  */
-public class ReInitKaomDiagramCommand extends ReInitDiagramCommand {
+public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
 
     /** File extension for diagram files. */
     private static final String DIAGRAM_EXTENSION = "kaod";

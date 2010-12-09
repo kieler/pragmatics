@@ -84,5 +84,32 @@
             name="KAOM Diagram (Graphiti)">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+         <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.kaom.graphiti.diagram.ReInitKaomDiagramCommand"
+            description="Reinitialize the diagram for the selected kaom file overwriting the old kaog file."
+            id="de.cau.cs.kieler.kaom.graphiti.reinitDiagram"
+            name="Reinitialize and save kaog diagram">
+      </command>
+         </extension>
+      <extension
+         point="org.eclipse.ui.menus">
+            <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="de.cau.cs.kieler"
+               label="KIELER"
+               mnemonic="K">
+            <command
+                  commandId="de.cau.cs.kieler.kaom.graphiti.reinitDiagram"
+                  label="Reinitialize and save kaog diagram"
+                  style="push"
+                  tooltip="Reinitialize the diagram for the selected kaom file overwriting the old kaog file.">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
 
 </plugin>
