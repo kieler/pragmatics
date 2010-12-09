@@ -118,6 +118,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                         curCross += minimizeCrossings(fixedLayer, freeLayer, true, backDone);
                         fixedLayer = freeLayer;
                     }
+                    forwDone = true;
                 } else {
                     // perform a backwards sweep
                     for (int i = layerCount - 2; i >= 0; i--) {
@@ -125,6 +126,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
                         curCross += minimizeCrossings(fixedLayer, freeLayer, false, forwDone);
                         fixedLayer = freeLayer;
                     }
+                    backDone = true;
                 }
                 forward = !forward;
             } while (curCross < lastCross);
@@ -507,10 +509,10 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
             for (LNode node : layer) {
                 maxBary = Math.max(maxBary, nodeBarycenter[node.id]);
             }
+            maxBary += 2;
             for (LNode node : layer) {
-                float value = nodeBarycenter[node.id];
-                if (value < 0) {
-                    nodeBarycenter[node.id] = random.nextFloat() * maxBary;
+                if (nodeBarycenter[node.id] < 0) {
+                    nodeBarycenter[node.id] = random.nextFloat() * maxBary - 1;
                 }
             }
         }
