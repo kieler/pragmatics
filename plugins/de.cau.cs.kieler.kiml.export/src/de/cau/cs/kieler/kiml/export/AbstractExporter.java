@@ -16,10 +16,6 @@ package de.cau.cs.kieler.kiml.export;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
-
 /**
  * The base class for graph exporter.
  * 
@@ -55,13 +51,6 @@ public abstract class AbstractExporter implements IExporter {
      * @return the supported file extensions
      */
     public abstract String[] getExtensions();
-
-    /**
-     * {@inheritDoc}
-     */
-    public abstract void doExport(final KNode graph,
-            final ExporterConfiguration configuration,
-            final IKielerProgressMonitor monitor) throws KielerException;
 
     /**
      * Returns the options that are available for this exporter.
