@@ -155,6 +155,12 @@ public final class ExportUtil {
             transformationFramework.setParameters(params);
         }
         // initialize the transformation
+        String[] metamodels = new String[involvedMetamodels.length + 1];
+        int i = 0;
+        for (String metamodel : involvedMetamodels) {
+            metamodels[i++] = metamodel; 
+        }
+        metamodels[i] = "de.cau.cs.kieler.core.kgraph.KGraphPackage";
         transformationFramework.initializeTransformation(xtendFilePath,
                 extension, involvedMetamodels);
         // execute the transformation

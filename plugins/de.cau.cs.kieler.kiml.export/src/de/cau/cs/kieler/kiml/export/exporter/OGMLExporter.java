@@ -103,7 +103,6 @@ public class OGMLExporter extends AbstractExporter {
                     stream,
                     new OgmlResourceFactoryImpl(),
                     monitor.subTask(1),
-                    "de.cau.cs.kieler.core.kgraph.KGraphPackage",
                     "net.ogdf.ogml.OgmlPackage",
                     "de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage");
 

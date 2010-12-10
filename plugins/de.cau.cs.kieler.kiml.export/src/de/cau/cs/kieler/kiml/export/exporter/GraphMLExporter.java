@@ -91,7 +91,6 @@ public class GraphMLExporter extends AbstractExporter {
                     stream,
                     new GraphMLResourceFactoryImpl(),
                     monitor.subTask(1),
-                    "de.cau.cs.kieler.core.kgraph.KGraphPackage",
                     "org.graphdrawing.graphml.GraphMLPackage");
         } catch (IOException e) {
             throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
