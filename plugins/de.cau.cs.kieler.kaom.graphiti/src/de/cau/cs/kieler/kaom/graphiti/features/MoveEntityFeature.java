@@ -26,6 +26,7 @@ import org.eclipse.graphiti.services.Graphiti;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
+import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
 
 /**
  * 
@@ -33,13 +34,17 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
  */
 public class MoveEntityFeature extends DefaultMoveShapeFeature {
 
+    /** the semantic provider used to fetch the top-level element of the current diagram. */
+    private SemanticProvider semanticProvider;
+    
     /**
      * 
      * @param fp
      *            Constructor
      */
-    public MoveEntityFeature(final IFeatureProvider fp) {
+    public MoveEntityFeature(final IFeatureProvider fp, final SemanticProvider sp) {
         super(fp);
+        this.semanticProvider = sp;
     }
 
     /**
@@ -77,11 +82,11 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
 
             // check if the source container is the diagram and get the parent Entity
             // in which this element is contained
-            oldParentEntity = getParentEntity(oldContainerShape);
+            oldParentEntity = semanticProvider.fetchEntity(oldContainerShape);
 
             // check if the target container is the diagram and get the parent Entity
             // in which this element is contained
-            newParentEntity = getParentEntity(newContainerShape);
+            newParentEntity = semanticProvider.fetchEntity(newContainerShape);
 
             Entity en = (Entity) getBusinessObjectForPictogramElement(shapeToMove);
 
@@ -114,17 +119,6 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
                         avoidNegativeCoordinates());
             }
         }
-    }
-    
-    /**
-     * Returns the parent entity for the given container.
-     * 
-     * @param container a container shape
-     * @return the parent entity
-     */
-    private Entity getParentEntity(final ContainerShape container) {
-        Entity entity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(container);
-        return entity;
     }
 
 }

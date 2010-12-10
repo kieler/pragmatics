@@ -82,8 +82,10 @@ import de.cau.cs.kieler.kaom.graphiti.features.UpdateLinkFeature;
  */
 public class FeatureProvider extends DefaultFeatureProvider {
 
-    /** the style provider that is used by the features. */
+    /** the style provider that is used by add-features. */
     private IStyleProvider styleProvider;
+    /** the semantic provider that is used by create-features. */
+    private SemanticProvider semanticProvider;
     
     /**
      * Constructor.
@@ -93,6 +95,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
     public FeatureProvider(final IDiagramTypeProvider dtp) {
         super(dtp);
         styleProvider = new StyleProvider(dtp);
+        semanticProvider = new SemanticProvider(dtp);
     }
 
     /**
@@ -100,7 +103,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public ICreateFeature[] getCreateFeatures() {
-        return new ICreateFeature[] { new CreateEntityFeature(this),
+        return new ICreateFeature[] { new CreateEntityFeature(this, semanticProvider),
                 new CreatePortFeature(this),
                 new CreateRelationFeature(this) };
     }
@@ -152,9 +155,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
         Shape shape = context.getShape();
         Object ob = getBusinessObjectForPictogramElement(shape);
         if (ob instanceof Entity) {
-            return new MoveEntityFeature(this);
+            return new MoveEntityFeature(this, semanticProvider);
         } else if (ob instanceof Relation) {
-            return new MoveRelationFeature(this);
+            return new MoveRelationFeature(this, semanticProvider);
         }
         return super.getMoveShapeFeature(context);
     }
@@ -243,7 +246,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
-        return new ICreateConnectionFeature[] { new CreateLinkFeature(this) };
+        return new ICreateConnectionFeature[] { new CreateLinkFeature(this, semanticProvider) };
     }
 
     /**

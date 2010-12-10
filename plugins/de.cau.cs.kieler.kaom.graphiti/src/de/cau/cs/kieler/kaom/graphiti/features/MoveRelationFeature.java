@@ -28,6 +28,7 @@ import org.eclipse.graphiti.services.Graphiti;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
+import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
 
 /**
  * 
@@ -35,13 +36,17 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
  */
 public class MoveRelationFeature extends DefaultMoveShapeFeature {
 
+    /** the semantic provider used to fetch the top-level element of the current diagram. */
+    private SemanticProvider semanticProvider;
+    
     /**
      * 
      * @param fp
      *            Constructor
      */
-    public MoveRelationFeature(final IFeatureProvider fp) {
+    public MoveRelationFeature(final IFeatureProvider fp, final SemanticProvider sp) {
         super(fp);
+        this.semanticProvider = sp;
 
     }
 
@@ -88,8 +93,8 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
                 Relation relation = (Relation) getBusinessObjectForPictogramElement(shapeToMove);
                 oldContainerShape = context.getSourceContainer();
                 newContainerShape = context.getTargetContainer();
-                oldParentEntity = getParentEntity(oldContainerShape);
-                newParentEntity = getParentEntity(newContainerShape);
+                oldParentEntity = semanticProvider.fetchEntity(oldContainerShape);
+                newParentEntity = semanticProvider.fetchEntity(newContainerShape);
                 Collection<Shape> children = context.getTargetContainer().getChildren();
                 if (children != null) {
                     children.remove(shapeToMove);
@@ -105,8 +110,8 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
                 Relation relation = (Relation) getBusinessObjectForPictogramElement(shapeToMove);
                 oldContainerShape = context.getSourceContainer();
                 newContainerShape = context.getTargetContainer();
-                newParentEntity = getParentEntity(newContainerShape);
-                oldParentEntity = getParentEntity(oldContainerShape);
+                newParentEntity = semanticProvider.fetchEntity(newContainerShape);
+                oldParentEntity = semanticProvider.fetchEntity(oldContainerShape);
 
                 shapeToMove.setContainer(newContainerShape);
                 if (newParentEntity != null) {
@@ -158,17 +163,6 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
             // restore selection
             getDiagramEditor().setPictogramElementsForSelection(currentSelection);
         }
-    }
-    
-    /**
-     * Returns the parent entity for the given container.
-     * 
-     * @param container a container shape
-     * @return the parent entity
-     */
-    private Entity getParentEntity(final ContainerShape container) {
-        Entity entity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(container);
-        return entity;
     }
 
 }

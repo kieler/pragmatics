@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
 import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
-import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
+import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
 
 /**
  * Creates a link object and passes this object to the {@link AddLinkFeature}.
@@ -35,13 +35,18 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
  */
 public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
+    /** the semantic provider used to fetch the top-level element of the current diagram. */
+    private SemanticProvider semanticProvider;
+    
     /**
      * The constructor.
      * 
      * @param fp the feature provider
+     * @param sp the semantic provider
      */
-    public CreateLinkFeature(final IFeatureProvider fp) {
+    public CreateLinkFeature(final IFeatureProvider fp, final SemanticProvider sp) {
         super(fp, "Link", "Create Link");
+        this.semanticProvider = sp;
     }
 
     /**
@@ -93,7 +98,7 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
             Link link = KaomFactory.eINSTANCE.createLink();
             link.setSource((Linkable) source);
             link.setTarget((Linkable) target);
-            Entity topEntity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(getDiagram());
+            Entity topEntity = semanticProvider.fetchEntity(getDiagram());
             topEntity.getChildLinks().add(link);
             
             getFeatureProvider().getDirectEditingInfo().setActive(true);

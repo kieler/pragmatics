@@ -18,7 +18,6 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.Entity;
-import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;

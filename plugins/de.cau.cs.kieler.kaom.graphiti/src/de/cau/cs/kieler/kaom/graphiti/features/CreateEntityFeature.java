@@ -20,7 +20,7 @@ import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
-import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
+import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
 
 /**
  * Creates an entity object and passes this object to the {@link AddEntityFeature}.
@@ -29,13 +29,18 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
  */
 public class CreateEntityFeature extends AbstractCreateFeature {
 
+    /** the semantic provider used to fetch the top-level element of the current diagram. */
+    private SemanticProvider semanticProvider;
+    
     /**
      * The constructor.
      * 
      * @param fp the feature provider
+     * @param sp the semantic provider
      */
-    public CreateEntityFeature(final IFeatureProvider fp) {
+    public CreateEntityFeature(final IFeatureProvider fp, final SemanticProvider sp) {
         super(fp, "Entity", "Create Entity");
+        this.semanticProvider = sp;
     }
 
     /**
@@ -52,8 +57,7 @@ public class CreateEntityFeature extends AbstractCreateFeature {
     public Object[] create(final ICreateContext context) {
         Entity newEntity = KaomFactory.eINSTANCE.createEntity();
         
-        Entity parentEntity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(
-                context.getTargetContainer());
+        Entity parentEntity = semanticProvider.fetchEntity(context.getTargetContainer());
         parentEntity.getChildEntities().add(newEntity);
         
         addGraphicalRepresentation(context, newEntity);

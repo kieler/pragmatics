@@ -125,9 +125,9 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
      *            Adds the new RELATION formed to its container ENTITY
      */
     private void addToDiagram(final Relation newRelation, final IAddContext context) {
-        Entity entity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(
-                context.getTargetContainer());
-        entity.getChildRelations().add(newRelation);
+//        Entity entity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(
+//                context.getTargetContainer());
+//        entity.getChildRelations().add(newRelation);
     }
 
 }
