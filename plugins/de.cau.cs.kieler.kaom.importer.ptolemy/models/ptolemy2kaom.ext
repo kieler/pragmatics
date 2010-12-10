@@ -1,6 +1,21 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+
 import kaom;
 import annotations;
 import moml;
+
 extension org::eclipse::xtend::util::stdlib::io;          // debug printouts
 //extension org::eclipse:xtend:::util::stdlib::counter;   // usage of counters 
 extension org::eclipse::xtend::util::stdlib::crossref;    // find elements that reference others
@@ -12,491 +27,962 @@ extension org::eclipse::xtend::util::stdlib::cloning;     // copy model elements
 extension org::eclipse::xtend::util::stdlib::tracing;     // create map between transformed objects
 extension org::eclipse::xtend::util::stdlib::issues;      // pass messages back to java (e.g. to UI)
 
+
+//=============================================================================
+// Ptolemy - 2 - KAOM    TRANSFORMATION    
+//    @author: haf
+//=============================================================================
+//
+// Transforms a Ptolemy2 model to a KAOM model that can be displayed in
+// KIELER. The transformation is done in two steps.
+// 
+// First, all entities, relations and links are transformed. The transformed
+// objects are annotated to originate from a Ptolemy2 model. This is fairly
+// straightforward, except for the ports of actors. During the transformation,
+// actors must be instantiated using the KIELER Ptolemy library to find their
+// ports. The problem is that if an actor is not part of the official Ptolemy
+// actor library, the instantiation often fails, leaving us without properly
+// defined ports. In particular, we then cannot determine if a port is an
+// input port or an output port, which leads to problems when the direction
+// of links is set.
+// 
+// The second step is the optimization of the resulting model. In this step,
+// link directions are computed, (KAOM models have directed links, Ptolemy
+// models don't) relations that only connect two ports are replaced by a
+// single link, special annotations are replaced by entities, (the Ptolemy
+// director, text attributes, ...) and links of states are changed.
+// 
+//=============================================================================
+
+
 //-----------------------------------------------------------------------------
-//     Ptolemy - 2 - KAOM    TRANSFORMATION    
-//     @author: haf
+// TRANSFORMATIONS
 //-----------------------------------------------------------------------------
-  
-//Start Model Transformation here.
-create Entity this transform(DocumentRoot root):
- 	let entity = transform(root.entity) :
- 	this.childEntities.add(entity) ->
- 	this.optimize()
-;   
- 
-create Entity this transform(moml::EntityType entity):
-	let list = {}:
-	this.setName(entity.name) -> 
-	createTrace(this,entity,"ptolemy","kaom") ->
-	this.addAnnotation("language", "ptolemy") ->
-	this.addAnnotation("ptolemyClass",entity.class1) ->
-	addProperties(this, entity.property) ->
-	addChildPorts(this) ->
-	addChildEntities(this, entity.entity) ->
-	addChildRelations(this, entity.relation) ->
-	addChildLinks(this, entity.link) 
+
+/**
+ * Start the model transformation here.
+ * 
+ * @param root the DocumentRoot object to start the transformation on.
+ * @return the transformed KAOM entity.
+ */
+create Entity this transform(DocumentRoot root) :
+    // Transform all the root's child entities
+    let entity = transform(root.entity) :
+     
+    // Add the children to our model and optimize the result
+    this.childEntities.add(entity) ->
+    this.optimize()
 ;
 
-create Relation this transform(moml::RelationType relation):
-	this.setName(relation.name) ->
-	createTrace(this,relation,"ptolemy","kaom") ->
-	this.addAnnotation("language", "ptolemy") ->
-	addProperties(this, relation.property)
+/**
+ * Transform the given entity.
+ * 
+ * @param entity the entity to transform.
+ * @return the transformed KAOM entity.
+ */
+create Entity this transform(moml::EntityType entity) :
+    let list = {} :
+    
+    this.setName(entity.name) ->
+    
+    // Map the new KAOM element to the Ptolemy entity for later use
+    createTrace(this, entity, "ptolemy", "kaom") ->
+    
+    // Add annotations pointing to Ptolemy
+    this.addAnnotation("language", "ptolemy") ->
+    this.addAnnotation("ptolemyClass", entity.class1) ->
+    
+    // Add the entity's properties, ports, entities, relations and links
+    addProperties(this, entity.property) ->
+    addChildPorts(this) ->
+    addChildEntities(this, entity.entity) ->
+    addChildRelations(this, entity.relation) ->
+    addChildLinks(this, entity.link) 
 ;
 
-// create a new link in kaom from a Ptolemy link. The problem is that a ptolemy link
-// is (1) undirected and (2) has multiple possible attributes for head and tail, because
-// it can connect a port and a relation or two relations, e.g.
-// <link port="Ramp.output" relation="relation1"/>
-// <link relation1="relation20" relation2="relation21"/>
-create Link this transform(moml::LinkType link, Entity parent):
-	let relation = parent.getRelation(link.relation):
-	let relation1 = parent.getRelation(link.relation1):
-	let relation2 = parent.getRelation(link.relation2):
-	let port = if(link.port == null) then null else parent.getPort(link.port):
-	let linkables = {}:
-	createTrace(this,link,"ptolemy","kaom") ->
-	this.addAnnotation("language", "ptolemy") ->
-	(if(port != null) then (linkables.add(port)) else (null)) ->
-	(if(relation != null) then (linkables.add(relation)) else (null)) ->
-	(if(relation1 != null) then (linkables.add(relation1)) else (null)) ->
-	(if(relation2 != null) then (linkables.add(relation2)) else (null)) ->
-	(if(linkables.size == 2) then (this.setSource((Linkable)linkables.get(0)) -> this.setTarget((Linkable)linkables.get(1)))	else (null)) ->
-	// initially set all relations to be undirected
-	this.addUndirectedAnnotation()
+/**
+ * Create a new relation in KAOM from a Ptolemy relation.
+ * 
+ * @param relation the Ptolemy relation to transform.
+ * @return the transformed KAOM relation.
+ */
+create Relation this transform(moml::RelationType relation) :
+    // Map the new KAOM element to the Ptolemy entity for later use
+    createTrace(this, relation, "ptolemy", "kaom") ->
+    
+    // Set name and add Ptolemy annotation
+    this.setName(relation.name) ->
+    this.addAnnotation("language", "ptolemy") ->
+    
+    // Add the relation's properties
+    addProperties(this, relation.property)
 ;
 
-Void addChildEntities(Entity parent, List[EntityType] ptolemyEntities):
-	let ptolemyEntity = ptolemyEntities.first():
-	if(ptolemyEntities.isEmpty) then null else
-		parent.childEntities.add(transform(ptolemyEntity)) ->
-		addChildEntities(parent, ptolemyEntities.withoutFirst())
+/**
+ * Create a new link in KAOM from a Ptolemy link. The problem is that a
+ * Ptolemy link is (1) undirected and (2) has multiple possible attributes
+ * for head and tail, because it can connect a port and a relation or two
+ * relations, e.g.
+ *   <link port="Ramp.output" relation="relation1"/>
+ *   <link relation1="relation20" relation2="relation21"/>
+ * 
+ * @param link the link to transform.
+ * @param parent the link's parent entity.
+ * @return the transformed KAOM link.
+ */
+create Link this transform(moml::LinkType link, Entity parent) :
+    // Fetch the relations and ports this link connects
+    let relation = parent.getRelation(link.relation) :
+    let relation1 = parent.getRelation(link.relation1) :
+    let relation2 = parent.getRelation(link.relation2) :
+    let port = if (link.port == null)
+        then null
+        else parent.getPort(link.port) :
+    let linkables = {} :
+    
+    // Map the new KAOM element to the Ptolemy entity for later use
+    createTrace(this, link, "ptolemy", "kaom") ->
+    
+    // Add annotations pointing to Ptolemy
+    this.addAnnotation("language", "ptolemy") ->
+    
+    (
+        if(port != null)
+            then (linkables.add(port))
+            else (null)
+    ) -> (
+        if(relation != null)
+            then (linkables.add(relation))
+            else (null)
+    ) -> (
+        if(relation1 != null)
+            then (linkables.add(relation1))
+            else (null)
+    ) -> (
+        if(relation2 != null)
+            then (linkables.add(relation2))
+            else (null)
+    ) -> (
+        if(linkables.size == 2)
+            then (
+                this.setSource((Linkable)linkables.get(0)) ->
+                this.setTarget((Linkable)linkables.get(1))
+            )
+            else (null)) ->
+    
+    // Initially, set all relations to be undirected as we cannot derive
+    // meaningful directions at this point anyway; the directions will be
+    // figured out later
+    this.addUndirectedAnnotation()
 ;
 
-Void addChildRelations(Entity parent, List[RelationType] ptolemyRelations):
-	let ptolemyRelation = ptolemyRelations.first():
-	if(ptolemyRelations.isEmpty) then null else
-		parent.childRelations.add(transform(ptolemyRelation)) ->
-		addChildRelations(parent, ptolemyRelations.withoutFirst())
-;
-
-Void addChildLinks(Entity parent, List[LinkType] ptolemyLinks):
-	let ptolemyLink = ptolemyLinks.first():
-	if(ptolemyLinks.isEmpty) then null else
-		parent.childLinks.add(transform(ptolemyLink, parent)) ->
-		addChildLinks(parent, ptolemyLinks.withoutFirst())
-;
-
-Void addProperties(Annotatable annotatable, List[PropertyType] properties):
-	let property = properties.first():
-	let stringAnnotation = new StringAnnotation:
-	let classType = new StringAnnotation:
-	if(properties.isEmpty) then null else
-		stringAnnotation.setName(property.name) ->
-		stringAnnotation.setValue(property.value) ->
-		classType.setName("ptolemyClass") ->
-		classType.setValue(property.class) ->
-		stringAnnotation.annotations.add(classType) ->
-		annotatable.annotations.add(stringAnnotation)->
-		// recursively add nested annotations
-		stringAnnotation.addProperties(property.property) ->
-		// now add remaining properties
-		addProperties(annotatable, properties.withoutFirst())
+/**
+ * Create a new KAOM port from a Ptolemy port.
+ * 
+ * @param ptolemyPort the port to transform.
+ * @return the transformed KAOM port.
+ */
+create Port this transform(moml::PortType ptolemyPort) :
+    let language = new StringAnnotation :
+    
+    // Map the new KAOM element to the Ptolemy entity for later use
+    createTrace(this, ptolemyPort, "ptolemy", "kaom") ->
+    
+    // Set the port name and add the port's properties, which might add
+    // "input" / "output" annotations
+    this.setName(ptolemyPort.name) ->
+    addProperties(this, ptolemyPort.property)
 ;
 
 
+//-----------------------------------------------------------------------------
+// ADD CHILDREN AND PROPERTIES
+//-----------------------------------------------------------------------------
 
-// Ports are not necessarily explicit objects in a ptolemy model. Usually they are
-// created implicitly in an Actor's Java implementation. Hence to see what ports
-// an entity has, we need to instanciate that actor in Ptolemy. If the actor is not available
-// in KIELER's Ptolemy library, this might fail and will not set up the ports
-// correctly. Then the ports will be added when they are first referenced later on. However, then
-// specific attributes of the ports (e.g. input or output) will be unavailable.
-Void addChildPorts(Entity entity):
-	let ptolemyEntity = (EntityType)entity.getSingleTraceTarget("ptolemy"):
-	let entityList = {ptolemyEntity}:
-	let javaPorts = getPorts(entityList):
-	let explicitPorts = ptolemyEntity.port.transform():
-	let mergedPorts = mergePortAttributes(javaPorts,explicitPorts):
-	let annotatedPorts = addLanguageToPort(mergedPorts):
-	entity.childPorts.addAll(annotatedPorts)
+/**
+ * Transforms the given list of Ptolemy entities and adds them to the
+ * given parent.
+ * 
+ * @param parent the parent KAOM entity to add the transformed Ptolemy
+ *               entities to.
+ * @param ptolemyEntities list of Ptolemy entities to transform and add
+ *                        to the parent.
+ */
+Void addChildEntities(Entity parent, List[EntityType] ptolemyEntities) :
+    let ptolemyEntity = ptolemyEntities.first() :
+    
+    // If there are still entities left in the list, transform them, add
+    // them to the parent and recursively add the remaining entities
+    if (ptolemyEntities.isEmpty)
+        then null
+        else
+            parent.childEntities.add(transform(ptolemyEntity)) ->
+            addChildEntities(parent, ptolemyEntities.withoutFirst())
 ;
 
-//Add an annotation that idetifies them as a Ptolemy port to all ports.
-List[Port] addLanguageToPort(List[Port] ports):
-	ports.addAnnotation("language", "ptolemy") ->
-	ports
+/**
+ * Transforms the given list of Ptolemy relations and adds them to the
+ * given parent entity.
+ * 
+ * @param parent KAOM entity to add the transformed relations to.
+ * @param ptolemyRelations list of relations to transform and add to
+ *                         the parent.
+ */
+Void addChildRelations(Entity parent, List[RelationType] ptolemyRelations) :
+    let ptolemyRelation = ptolemyRelations.first() :
+    
+    // If there are still relations left in the list, transform them, add
+    // them to the parent and recursively add the remaining relations
+    if (ptolemyRelations.isEmpty)
+        then null
+        else
+            parent.childRelations.add(transform(ptolemyRelation)) ->
+            addChildRelations(parent, ptolemyRelations.withoutFirst())
 ;
 
-create Port this transform(moml::PortType ptolemyPort):
-	let language = new StringAnnotation:
-	this.setName(ptolemyPort.name) -> 
-	createTrace(this,ptolemyPort,"ptolemy","kaom") ->
-	addProperties(this,ptolemyPort.property) // this might add "input"/"output" annotations
+/**
+ * Transforms the given list of Ptolemy links and adds them to the given
+ * parent entity.
+ * 
+ * @param parent KAOM entity to add the transformed links to.
+ * @param ptolemyLinks list of links to transform and add to  the parent.
+ */
+Void addChildLinks(Entity parent, List[LinkType] ptolemyLinks) :
+    let ptolemyLink = ptolemyLinks.first() :
+    
+    // If there are still links left in the list, transform them, add
+    // them to the parent and recursively add the remaining links
+    if (ptolemyLinks.isEmpty)
+        then null
+        else
+            parent.childLinks.add(transform(ptolemyLink, parent)) ->
+            addChildLinks(parent, ptolemyLinks.withoutFirst())
 ;
 
-Relation getRelation(Entity parent,String relationName):
-	let relation = parent.childRelations.selectFirst(r|r.name == relationName):
-	relation
+/**
+ * Transforms the given list of Ptolemy properties to annotations and adds
+ * them to the given annotatable element.
+ * 
+ * @param annotatable KAOM object to add the properties to.
+ * @param properties list of properties to transform and add to the
+ *                   annotatable.
+ */
+Void addProperties(Annotatable annotatable, List[PropertyType] properties) :
+    let property = properties.first() :
+    let stringAnnotation = new StringAnnotation :
+    let classType = new StringAnnotation :
+    
+    // If there are still properties left in the list, transform them,
+    // add them to the annotatable and recursively add the property's
+    // properties and the remaining properties in the list
+    if(properties.isEmpty)
+        then null
+        else
+            // Ptolemy properties have types; we annotate the annotation
+            // with the Ptolemy class of the original property
+            classType.setName("ptolemyClass") ->
+            classType.setValue(property.class) ->
+            
+            // Save the name, value and class of the annotation
+            stringAnnotation.setName(property.name) ->
+            stringAnnotation.setValue(property.value) ->
+            stringAnnotation.annotations.add(classType) ->
+            
+            // Add the annotation
+            annotatable.annotations.add(stringAnnotation)->
+            
+            // Recursively add the property's properties
+            addProperties(stringAnnotation, property.property) ->
+            
+            // Recursively add the remaining properties in the list
+            addProperties(annotatable, properties.withoutFirst())
 ;
 
-// get a port with a name like "Ramp.output", where the first part is the actor in the
-// given parent and the second is the port name
-// search for such existing port. If it does not exist, create it and add it to the model.
-Port getPort(Entity parent, String portName):
-	let newPort = new Port:
-	let splitName = portName.split("\\."):
-	let actor = splitName.size > 0 ? parent.childEntities.selectFirst(a|a.name == splitName.get(0)): null:
-	let port = switch{
-		case splitName.size > 1 : actor.childPorts.selectFirst(p|p.name == splitName.get(1))
-		case splitName.size == 1: parent.childPorts.selectFirst(p|p.name == portName)
-		default: null
-	}:
-	switch{
-		case portName == null :  
-			(reportWarning("Port with no name requested for Entity "+parent.name)->
-			null)
-		case port != null : port
-		case actor == null :( 
-			reportWarning("Non-Existing Port referenced: "+portName+" for Entity "+parent.name) 
-			-> newPort.setName(portName)
-			-> parent.childPorts.add(newPort) 
-			-> newPort)
-		default: 
-			(reportWarning("Non-Existing Port referenced: "+portName) 
-			-> newPort.setName(splitName.size < 2? "null" : splitName.get(1)) 
-			-> actor.childPorts.add(newPort) 
-			-> newPort)
-	}
+/**
+ * Add the entity's child ports to the entity.
+ * 
+ * Ports are not necessarily explicit objects in a ptolemy model. Usually they
+ * are created implicitly in an Actor's Java implementation. Hence to see what
+ * ports an entity has, we need to instanciate that actor in Ptolemy. If the
+ * actor is not available in KIELER's Ptolemy library, this might fail and will
+ * not set up the ports correctly. Then the ports will be added when they are
+ * first referenced later on. However, then specific attributes of the ports
+ * (e.g. input or output) will be unavailable, which may cause links to have the
+ * wrong direction in the transformed model.
+ * 
+ * @param entity the KAOM entity whose ports to add.
+ */
+Void addChildPorts(Entity entity) :
+    // Find the corresponding Ptolemy entity type (we have mapped that to the
+    // given KAOM entity when we created the latter using the Trace facilities)
+    let ptolemyEntity = (EntityType) entity.getSingleTraceTarget("ptolemy") :
+    let entityList = {ptolemyEntity} :
+    
+    // Find entity's ports using KIELER's Ptolemy library and any ports
+    // explicitly declared in the model
+    let javaPorts = getPorts(entityList) :
+    let explicitPorts = ptolemyEntity.port.transform() :
+    
+    // Merge both port lists and annotate them with the language annotation
+    let mergedPorts = mergePortAttributes(javaPorts, explicitPorts) :
+    let annotatedPorts = addLanguageToPort(mergedPorts) :
+    
+    // Add all annotated ports to the KAOM entity
+    entity.childPorts.addAll(annotatedPorts)
 ;
 
-List[Port] mergePortAttributes(List[Port] newPorts, List[Port] existingPorts):
-	switch{
-		case newPorts == null || newPorts.size == 0: existingPorts
-		case existingPorts == null || existingPorts.size == 0: newPorts
-		default: newPorts.mergePortAttributesSingle(existingPorts)  
-	}
+
+//-----------------------------------------------------------------------------
+// Helper Methods
+//-----------------------------------------------------------------------------
+
+/**
+ * Adds an annotation to all ports that identifies them as a Ptolemy port.
+ * 
+ * @param ports list of KAOM ports.
+ * @return the same list, but with the ports annotated.
+ */
+List[Port] addLanguageToPort(List[Port] ports) :
+    ports.addAnnotation("language", "ptolemy") ->
+    ports
 ;
 
-Port mergePortAttributesSingle(Port newPort, List[Port] existingPorts):
-	let samePort = existingPorts.select(p|p.name == newPort.name).first():
-	if(samePort == null) then newPort else (samePort.annotations.addAll(newPort.annotations) -> samePort)
+/**
+ * Returns the relation with the given name from the child relations of the
+ * given parent entity.
+ * 
+ * @param parent the entity whose relations to search.
+ * @param relationName name of the relation to find.
+ * @return the relation with the given name.
+ */
+Relation getRelation(Entity parent,String relationName) :
+    let relation = parent.childRelations.selectFirst(r | r.name == relationName) :
+    
+    relation
 ;
 
-String getName(Object o):
-	if(NamedObject.isInstance(o)) then ((NamedObject)o).name else ""
+/**
+ * Look for a port with a name like "Ramp.output", where the first part is the actor
+ * in the given parent and the second is the port name. If such a port does not exist,
+ * create it and add it to the model.
+ * 
+ * The qualified port name is interpreted as follows. If the name consists of two
+ * components separated by a dot, the first component is interpreted as the name of
+ * an actor in the parent entity, while the second component is interpreted as the
+ * name of a port in the actor. If the name consists of only one component, that
+ * component is interpreted as the name of a port of the parent entity itself.
+ * 
+ * @param parent the entity to look for the actor and its port in.
+ * @param portName the qualified name of the port to look for.
+ * @return the existing port, or a new port added to the model.
+ */
+Port getPort(Entity parent, String portName) :
+    // The newly created port, if needed
+    let newPort = new Port :
+    
+    // Split the qualified name into Actor and Port portions
+    let splitName = portName.split("\\.") :
+    
+    // Try to find the actor and its port
+    let actor = splitName.size > 0
+        ? parent.childEntities.selectFirst(a | a.name == splitName.get(0))
+        : null :
+    let port = switch {
+        case splitName.size > 1 :
+            actor.childPorts.selectFirst(p | p.name == splitName.get(1))
+            
+        case splitName.size == 1 :
+            parent.childPorts.selectFirst(p | p.name == portName)
+            
+        default :
+            null
+    } :
+    
+    switch {
+        case portName == null :
+            // Empty port name; we can't find a corresponding port  
+            (
+                reportWarning("Port with no name requested for Entity " + parent.name) ->
+                null
+            )
+            
+        case port != null :
+            // If we have actually found an existing port, return that
+            port
+            
+        case actor == null :
+            // We haven't found an existing port. If no actor was found or specified
+            // either, add a new port with the given name to the parent entity and
+            // return that
+            (
+                reportWarning("Non-Existing Port referenced: "
+                    + portName + " for Entity " + parent.name) -> 
+                newPort.setName(portName) ->
+                parent.childPorts.add(newPort) -> 
+                newPort
+            )
+            
+        default :
+            // We haven't found an existing port, but an existing actor. Add a new
+            // port with the given name to the actor and return that 
+            (
+                reportWarning("Non-Existing Port referenced: " + portName) -> 
+                newPort.setName(splitName.size < 2 ? "null" : splitName.get(1)) -> 
+                actor.childPorts.add(newPort) -> 
+                newPort
+            )
+    }
 ;
 
-List getPorts(List[EntityType] entities) :
-  JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.getPorts(java.util.List) 
+/**
+ * Merges newPorts into existingPorts. Ports that don't already exist in
+ * existingPorts are added. Ports that do exist get their annotations merged.
+ * 
+ * @param newPorts list of ports.
+ * @param existingPorts list of ports.
+ * @return the two lists merged.
+ */
+List[Port] mergePortAttributes(List[Port] newPorts, List[Port] existingPorts) :
+    switch {
+        case newPorts == null || newPorts.size == 0 :
+            // newPorts is empty
+            existingPorts
+            
+        case existingPorts == null || existingPorts.size == 0 :
+            // existingPorts is empty
+            newPorts
+            
+        default :
+            // Both lists are non-empty, so merge and return the result
+            newPorts.mergePortAttributesSingle(existingPorts)  
+    }
 ;
 
-// --------------------------------------------------------------------------------------------
-//    OPTIMIZATION RULES
-// --------------------------------------------------------------------------------------------
-
-// entry points for optimizations
-Void optimize(Entity entity):
-	analyzeLinkDirections(entity) ->
-	// optimizeStates has to be before relation optimization because it fixes link directions
-	optimizeStates(entity) ->
-	optimizeSingleRelations(entity) ->
-	optimizeAnnotationRepresentation(entity)
-	
+/**
+ * Merges the new port into a list of existing ports.
+ * 
+ * @param newPort the new port.
+ * @param the list of existing ports.
+ * @return the new port if a port of the same name doesn't already exist,
+ *         or the existing port of the same name with the new port's
+ *         annotations added.
+ */
+Port mergePortAttributesSingle(Port newPort, List[Port] existingPorts) :
+    // Find the existing port with the same name
+    let existingPort = existingPorts.select(p | p.name == newPort.name).first() :
+    
+    if (existingPort == null)
+        then
+            // There is no existing port of the same name, so just add the
+            // new port to the list
+            newPort
+        else
+            (
+                // There is an existing port of the same name, so add the
+                // new port's annotations to the existing port and return
+                // that
+                existingPort.annotations.addAll(newPort.annotations) ->
+                existingPort
+            )
 ;
 
-// --------------------------------------------------------------------------------------------
-//    Analysis of Link directions (Ptolemy Links are undirected)
-// --------------------------------------------------------------------------------------------
+/**
+ * Returns the given object's name if it's a NamedObject, or the empty string
+ * otherwise.
+ * 
+ * @param o the object whose name to return.
+ * @return the object's name or the empty string.
+ */
+String getName(Object o) :
+    if (NamedObject.isInstance(o))
+        then ((NamedObject)o).name
+        else ""
+;
 
-Void analyzeLinkDirections(Entity entity):
-	entity.childEntities.analyzeLinkDirections() -> // depth first 
-	// set directions for links connected directly to inputs/outputs
-	analyzeLinkDirectionsForPorts(entity.childPorts) ->
-	// then analyze other links from the neighbor information
-	analyzeLinkDirectionsForLinksFixpoint(entity.childLinks)
+
+//-----------------------------------------------------------------------------
+// OPTIMIZATION RULES
+//-----------------------------------------------------------------------------
+
+/**
+ * Optimizes the given entity.
+ * 
+ * @param entity the entity to optimize.
+ */
+Void optimize(Entity entity) :
+    // TODO Call optimizeStates before inferLinkDirections?
+    // optimizeStates determines some link directions in the process that
+    // then wouldn't have to be inferred in the first place... right?
+    
+    // Try to infer the link directions
+    inferLinkDirections(entity) ->
+    
+    // optimizeStates has to be called before relation optimization because
+    // it fixes link directions
+    optimizeStates(entity) ->
+    optimizeSingleRelations(entity) ->
+    optimizeAnnotationRepresentation(entity)
+;
+
+
+//-----------------------------------------------------------------------------
+// Inference Of Link Directions
+//-----------------------------------------------------------------------------
+
+Void inferLinkDirections(Entity entity) :
+    entity.childEntities.inferLinkDirections() -> // depth first 
+    // set directions for links connected directly to inputs/outputs
+    inferLinkDirectionsForPorts(entity.childPorts) ->
+    // then analyze other links from the neighbor information
+    inferLinkDirectionsForLinksFixpoint(entity.childLinks)
 ;
 
 // Set Link directions for all connected Links to a List of Ports 
 // using the port input/output information
-Void analyzeLinkDirectionsForPorts(List[Port] ports):
-	if(ports.size <= 0) then null else ( 
-		analyzeLinkDirections(ports.first()) ->
-		analyzeLinkDirectionsForPorts(ports.withoutFirst()))
+Void inferLinkDirectionsForPorts(List[Port] ports):
+    if(ports.size <= 0) then null else ( 
+        inferLinkDirections(ports.first()) ->
+        inferLinkDirectionsForPorts(ports.withoutFirst()))
 ;
 
 // Set Link directions for all connected Links to a Port 
 // using the port input/output information
-Void analyzeLinkDirections(Port port):
-	let isInput = port.hasAnnotation("input"):
-	let isOutput = port.hasAnnotation("output"):
-	switch{
-		case isInput && isOutput : null
-		case isInput : 	port.getConnectedLinks().setLinkDirection(port, true)
-		case isOutput:  port.getConnectedLinks().setLinkDirection(port, false)
-		default: null
-	}
+Void inferLinkDirections(Port port):
+    let isInput = port.hasAnnotation("input"):
+    let isOutput = port.hasAnnotation("output"):
+    switch{
+        case isInput && isOutput : null
+        case isInput :     port.getConnectedLinks().setLinkDirection(port, true)
+        case isOutput:  port.getConnectedLinks().setLinkDirection(port, false)
+        default: null
+    }
 ;
 
 // Set directions of all links to a port which is known to be an input or output
 Void setLinkDirection(Link link, Port port, Boolean isInput):
-	switch{
-		case isInput == true  && link.eContainer == port.eContainer : link.swapSourceTo(port)
-		case isInput == false && link.eContainer == port.eContainer : link.swapTargetTo(port)
-		case isInput == true  && link.eContainer != port.eContainer : link.swapTargetTo(port)
-		case isInput == false && link.eContainer != port.eContainer : link.swapSourceTo(port)
-		default: null
-	}
+    switch{
+        case isInput == true  && link.eContainer == port.eContainer : link.swapSourceTo(port)
+        case isInput == false && link.eContainer == port.eContainer : link.swapTargetTo(port)
+        case isInput == true  && link.eContainer != port.eContainer : link.swapTargetTo(port)
+        case isInput == false && link.eContainer != port.eContainer : link.swapSourceTo(port)
+        default: null
+    }
 ;
 
 // Do a fixpoint iteration on a set of Links and try to deduce link directions from
 // neighbor edges
-Void analyzeLinkDirectionsForLinksFixpoint(List[Link] links):
-	let hasChanged = links.analyzeLinkDirectionForLink().exists(b|b==true):
-	if(hasChanged) then analyzeLinkDirectionsForLinksFixpoint(links) else null
+Void inferLinkDirectionsForLinksFixpoint(List[Link] links):
+    let hasChanged = links.analyzeLinkDirectionForLink().exists(b|b==true):
+    if(hasChanged) then inferLinkDirectionsForLinksFixpoint(links) else null
 ;
 
 // Given a link and up to two relations, deduce from neighbor links the link's direction
 Boolean analyzeLinkDirectionForLink(Link link):
-	let relations = {link.source, link.target}.typeSelect(kaom::Relation):
-	let switchedAtRel1 = if(relations.size <1) then false else analyzeLinkDirectionForLink(link,relations.get(0)):
-	let switchedAtRel2 = if(relations.size <2) then false else analyzeLinkDirectionForLink(link,relations.get(1)):
-	switchedAtRel1 || switchedAtRel2
+    let relations = {link.source, link.target}.typeSelect(kaom::Relation):
+    let switchedAtRel1 = if(relations.size <1) then false else analyzeLinkDirectionForLink(link,relations.get(0)):
+    let switchedAtRel2 = if(relations.size <2) then false else analyzeLinkDirectionForLink(link,relations.get(1)):
+    switchedAtRel1 || switchedAtRel2
 ;
 
 // Given a link and one relation, deduce from neighbor links the link's direction
 Boolean analyzeLinkDirectionForLink(Link link, Relation relation):
-	let neighborLinks = {} : 
-	if(link.isUndirected()) 
-		then  (neighborLinks.addAll(relation.outgoingLinks)
-		    -> neighborLinks.addAll(relation.incomingLinks) 
-			-> neighborLinks.analyzeLinkDirection(relation,link).exists(b|b==true))
-		else false
+    let neighborLinks = {} : 
+    if(link.isUndirected()) 
+        then  (neighborLinks.addAll(relation.outgoingLinks)
+            -> neighborLinks.addAll(relation.incomingLinks) 
+            -> neighborLinks.analyzeLinkDirection(relation,link).exists(b|b==true))
+        else false
 ;
 
 Boolean analyzeLinkDirection(Link neighborLink, Relation relation, Link link):
-	switch{
-		case (link.source == link.target) : false
-		case ( (neighborLink.target == relation) && (neighborLink.isUndirected())):
-			(link.swapSourceTo(relation) -> true)
-		case ( (neighborLink.source == relation) && (neighborLink.isUndirected())):
-			(link.swapTargetTo(relation) -> true)
-		default : false
-	}
+    switch{
+        case (link.source == link.target) : false
+        case ( (neighborLink.target == relation) && (neighborLink.isUndirected())):
+            (link.swapSourceTo(relation) -> true)
+        case ( (neighborLink.source == relation) && (neighborLink.isUndirected())):
+            (link.swapTargetTo(relation) -> true)
+        default : false
+    }
+;
+
+
+//-----------------------------------------------------------------------------
+// Optimization Of Single Relations
+//-----------------------------------------------------------------------------
+
+/**
+ * Optimizes relations that connect only two ports. Such relations have two
+ * links. The relation and one of the links is marked for removal, the other
+ * link is changed to replace the relation. The given entity's relations are
+ * optimized, then the entity's child entities are recursively treated.
+ * 
+ * @param entity entity whose child relations to optimize recursively.
+ */
+Void optimizeSingleRelations(Entity entity) :
+    // Optimize the entity's direct child relations; this may leave
+    // relations and links marked for removal
+    entity.childRelations.optimizeSingleRelation() ->
+    
+    // Remove the relations and links that can be removed (this is done in a
+    // second iteration to avoid concurrent modification exceptions)
+    entity.childLinks.select(a | a.getAnnotation("toBeRemoved") != null).remove() ->
+    entity.childRelations.select(a | a.getAnnotation("toBeRemoved") != null).remove() ->
+    
+    // Recursively optimize the relations of the entity's child entities
+    entity.childEntities.optimizeSingleRelations()
+;
+
+/**
+ * Replaces the given relation by a single link, if possible. If that is
+ * indeed possible, the relation is annotated with the text "toBeRemoved",
+ * as is one of the links involved.
+ * 
+ * @param relation the relation to be optimized.
+ */
+Void optimizeSingleRelation(Relation relation):
+    // Find the first of the relation's incoming and outgoing links 
+    let inLink  = relation.incomingLinks.first() :
+    let outLink = relation.outgoingLinks.first() :
+    
+    // If the relation has only one incoming and outgoing link, it can be
+    // optimized away
+    if ((relation.incomingLinks.size == 1) && (relation.outgoingLinks.size == 1))
+        then
+            (
+                inLink.setTarget(outLink.target) -> 
+                outLink.addAnnotation("toBeRemoved") ->
+                relation.addAnnotation("toBeRemoved")
+            )
+        else
+            null    
+;
+
+
+//-----------------------------------------------------------------------------
+// Transform Special Annotations To Visible Entities
+//-----------------------------------------------------------------------------
+
+/**
+ * Transforms special annotations of the given entity and, recursively, its
+ * children to visible entities.
+ * 
+ * @param the entity whose annotations to transform.
+ */
+Void optimizeAnnotationRepresentation(Entity entity) :
+    // Transform annotations
+    entity.annotations.optimizeAnnotationRepresentation() ->
+    
+    // Remove those annoations that were transformed (this is done in a
+    // second iteration to avoid concurrent modification exceptions)
+    entity.annotations.removeAll(
+        entity.annotations.select(a | a.getAnnotation("toBeRemoved") != null)) ->
+    
+    // Recursively treat child entities
+    entity.childEntities.optimizeAnnotationRepresentation()  
+;
+
+/**
+ * Try to transform the given annotation into a visible entity. If this is
+ * successful, the annotation is annotated with "toBeRemoved" and should
+ * be removed after executing this extension. This must be done in a
+ * separate step to avoid concurrent modification exceptions. Entities that
+ * result from transforming annotations are annotated with "annotationNode".
+ * 
+ * @param annotation the annotation to be transformed, if possible.
+ */
+Void optimizeAnnotationRepresentation(Annotation annotation) :
+    // Check, 
+    let isTopLevel = Entity.isInstance(annotation.eContainer) :
+    let topLevel = (Entity) annotation.eContainer :
+    
+    // If the annotation is transformed into a new entity, this will be it
+    let newEntity = new Entity :
+    
+    // Clone the attribute to avoid concurrent modification (remove while iterating)
+    let clonedAnnotation = annotation.clone() :
+    
+    // Annotations for the new entity and for the old annotation if the
+    // transformation is successful
+    let annotationNodeAnnotation = new Annotation :
+    let toBeRemovedAnnotation = new Annotation :
+    
+    switch {
+        case topLevel.getAnnotation("annotationNode") != null :
+            // If the entity already is an annotation representation, don't do anything
+            null
+            
+        case isTopLevel && annotation.getAnnotation("ptolemyClass").value.matches(".*Director") :
+            // The director is an annotation of the top level entity. Turn it
+            // into its own separate entity 
+            (
+                newEntity.setName(annotation.getName()) ->
+                
+                // Add an "annotationNode" annotation to the new entity
+                annotationNodeAnnotation.setName("annotationNode") ->
+                newEntity.annotations.add(annotationNodeAnnotation) ->
+                
+                // Annotate the new entity with a copy of the original
+                // annotation the new entity is the transformed result of
+                newEntity.annotations.add(clonedAnnotation) ->
+                
+                // Add the new entity to the top level
+                topLevel.childEntities.add(newEntity) ->
+                
+                // Mark the original annotation for removal
+                toBeRemovedAnnotation.setName("toBeRemoved") ->
+                annotation.annotations.add(toBeRemovedAnnotation)
+            )
+            
+        case isTopLevel && annotation.getAnnotation("ptolemyClass").value.matches(
+            "ptolemy.vergil.kernel.attributes.TextAttribute") :
+            // Comments / large text boxes are annotations of the top level
+            // entity. (Ptolemy calls these Annotations at the UI level) Turn
+            // them into their own entities.
+            // TODO We need a better way to display large amounts of text
+            (
+                newEntity.setName(annotation.getAnnotation("text").value) ->
+                
+                // Add an "annotationNode" annotation to the new entity
+                annotationNodeAnnotation.setName("annotationNode") ->
+                newEntity.annotations.add(annotationNodeAnnotation) ->
+                
+                // Annotate the new entity with a copy of the original
+                // annotation the new entity is the transformed result of
+                newEntity.annotations.add(clonedAnnotation) ->
+                
+                // Add the new entity to the top level
+                topLevel.childEntities.add(newEntity) ->
+                
+                // Mark the original annotation for removal
+                toBeRemovedAnnotation.setName("toBeRemoved") ->
+                annotation.annotations.add(toBeRemovedAnnotation)
+            )
+            
+        default :
+            null    
+    }
+;
+
+
+//-----------------------------------------------------------------------------
+// Transform Links Of States
+//-----------------------------------------------------------------------------
+
+/**
+ * Transform links of states into transitions that don't use ports. Then
+ * does the same recursively with the entity's child entities.
+ * 
+ * @param the entity whose links of states to transform.
+ */
+Void optimizeStates(Entity entity) :
+    // List of the entity's ports (this is used to iterate over the ports,
+    // removing them from the entity in the process -> avoids concurrent
+    // modification exception)
+    let ports = {} :
+    
+    // Add the entity's ports to the port list
+    ports.addAll(entity.childPorts) ->
+    
+    if (entity.getAnnotation("ptolemyClass").value == "ptolemy.domains.modal.kernel.State")
+        then
+            (
+                // The entity is indeed a state, so don't link its links
+                // with ports
+                reportWarning("state ports=" + ports) ->
+                ports.moveLinksUp()
+            )
+        else
+            null ->
+    
+    // Treat child entities recursively
+    entity.childEntities.optimizeStates()
+;
+
+/**
+ * Moves the links connected to the given port up to connect to the
+ * port's entity. (a state)
+ * 
+ * @param port the port whose links to move up.
+ */
+Void moveLinksUp(Port port) :
+    // Create new temp list to avoid concurrent modification exception
+    let list = {} :
+    
+    reportWarning("moveLinkUp " + port.eContainer.getName() + "." + port.name) ->
+    
+    // Add all of the ports incoming and outgoing links to the list
+    list.addAll(port.outgoingLinks) ->
+    list.addAll(port.incomingLinks) ->
+    
+    // Make sure the port's links point in the correct direction
+    ((List[Link]) list).fixLinkDirectionForState(port) ->
+    
+    // Actually do the work of moving the links up
+    ((List[Link]) list).moveLinkUp(port) ->
+    
+    // Remove the port from its state
+    port.remove()
+;
+
+/**
+ * Makes the link connected to the given port point in the right
+ * direction depending on the port's type. A Ptolemy State is an
+ * Entity with exactly one input and one output. They carry a name
+ * indicating the type of port, so that is used if the attribute
+ * cannot be found.
+ * 
+ * @param link the link whose direction to set.
+ * @param port the state's port connected to the link.
+ */
+Void fixLinkDirectionForState(Link link, Port port) :
+    if (port.hasAnnotation("input") || port.name == "incomingPort") 
+        then link.swapTargetTo(port)
+        else link.swapSourceTo(port)
+;
+
+/**
+ * Moves the link from its port up to the port's container. (a state)
+ * 
+ * @param link the link to move up.
+ * @param port the port the link is currently connected to.
+ */
+Void moveLinkUp(Link link, Port port) :
+    if (link.source == port) 
+        then link.setSource(port.eContainer)
+        else link.setTarget(port.eContainer)
+;
+
+
+//-----------------------------------------------------------------------------
+// HELPER FUNCTIONS
+//-----------------------------------------------------------------------------
+
+/**
+ * Removes the given relation from its container.
+ * 
+ * @param relation the relation to be removed.
+ */
+Void remove(Relation relation) :
+    ((Entity) relation.eContainer).childRelations.remove(relation)
+;
+
+/**
+ * Removes the given link from its container.
+ * 
+ * @param link the link to be removed.
+ */
+Void remove(Link link) :
+    link.setSource(null) -> 
+    link.setTarget(null) ->
+    ((Entity) link.eContainer).childLinks.remove(link) 
+;
+
+/**
+ * Remove the given port from its container.
+ * 
+ * @param port the port to be removed.
+ */
+Void remove(Port port) :
+    ((Entity) port.eContainer).childPorts.remove(port)
 ;
 
 Void swapSourceTo(Link link, Linkable linkable):
-	let source = link.source:
-	let target = link.target:
-	switch{
-		case source == target: null // check for selfloop
-		case target == linkable: link.setTarget(source)
-		default: null
-	}->
-	link.setSource(linkable) ->
-	link.removeUndirectedAnnotation()
+    let source = link.source:
+    let target = link.target:
+    switch{
+        case source == target: null // check for selfloop
+        case target == linkable: link.setTarget(source)
+        default: null
+    }->
+    link.setSource(linkable) ->
+    link.removeUndirectedAnnotation()
 ;
 
 Void swapTargetTo(Link link, Linkable linkable):
-	let source = link.source:
-	let target = link.target:
-	switch{
-		case source == target: null // check for selfloop
-		case source == linkable: link.setSource(target)
-		default: null
-	}->
-	link.setTarget(linkable) ->
-	link.removeUndirectedAnnotation()
+    let source = link.source:
+    let target = link.target:
+    switch{
+        case source == target: null // check for selfloop
+        case source == linkable: link.setSource(target)
+        default: null
+    }->
+    link.setTarget(linkable) ->
+    link.removeUndirectedAnnotation()
 ;
-
-
-// --------------------------------------------------------------------------------------------
-//    Optimization of single Relations (Ptolemy has always one relation)
-// --------------------------------------------------------------------------------------------
-
-Void optimizeSingleRelations(Entity entity):
-	entity.childRelations.optimizeSingleRelation() ->
-	// remove in a second iteration to avoid concurrent modification exceptions
-	entity.childLinks.select(a|a.getAnnotation("toBeRemoved")!=null).remove() ->
-	entity.childRelations.select(a|a.getAnnotation("toBeRemoved")!=null).remove() ->
-	entity.childEntities.optimizeSingleRelations()
-;
-
-Void optimizeSingleRelation(Relation relation):
-	let inLink  = relation.incomingLinks.first():
-	let outLink = relation.outgoingLinks.first():
-	if( (relation.incomingLinks.size == 1) && (relation.outgoingLinks.size == 1) ) then(
-		inLink.setTarget(outLink.target) -> 
-		outLink.addAnnotation("toBeRemoved") ->
-		relation.addAnnotation("toBeRemoved")
-	) else null	
-;
-
-Void remove(Relation relation):
-	((Entity)relation.eContainer).childRelations.remove(relation)
-;
-
-Void remove(Link link):
-	link.setSource(null) 
-	-> link.setTarget(null)
-	-> ((Entity)link.eContainer).childLinks.remove(link) 
-;
-
-Void remove(Port port):
-	((Entity)port.eContainer).childPorts.remove(port)
-;
-
-// --------------------------------------------------------------------------------------------
-//    Transform some special Annotations to visible Entities
-// --------------------------------------------------------------------------------------------
-
-Void optimizeAnnotationRepresentation(Entity entity):
-	entity.annotations.optimizeAnnotationRepresentation() ->
-	entity.annotations.removeAll(entity.annotations.select(a|a.getAnnotation("toBeRemoved")!=null)) ->
-	entity.childEntities.optimizeAnnotationRepresentation()  
-;
-
-// Marks an Annotation as "toBeRemoved". In another iteration it may be removed. This is
-// necessary to avoid concurrent modification exceptions during iteration of an annotation list.
-Void optimizeAnnotationRepresentation(Annotation annotation):
-	let isTopLevel = Entity.isInstance(annotation.eContainer) :
-	let topLevel = (Entity)annotation.eContainer :
-	let newEntity = new Entity: 
-	// need to clone the attribute to avoid concurrent modification (remove while iterating)
-	let clonedAnnotation = annotation.clone():
-	let marker = new Annotation:
-	let annoMarker = new Annotation:
-	switch{
-		// if the entity already is an annotation representation, don't do anything
-		case topLevel.getAnnotation("annotationNode") != null : null
-		case isTopLevel && annotation.getAnnotation("ptolemyClass").value.matches(".*Director") : (
-			newEntity.setName(annotation.getName()) ->
-			marker.setName("annotationNode") ->
-			newEntity.annotations.add(marker) ->
-			newEntity.annotations.add(clonedAnnotation) -> // move annotation to the new Entity
-			topLevel.childEntities.add(newEntity) ->
-			annoMarker.setName("toBeRemoved") ->
-			annotation.annotations.add(annoMarker)
-		) 
-		case isTopLevel && annotation.getAnnotation("ptolemyClass").value.matches("ptolemy.vergil.kernel.attributes.TextAttribute") : (
-			// TODO: stupid way to display a big text
-			newEntity.setName(annotation.getAnnotation("text").value) ->
-			marker.setName("annotationNode") ->
-			newEntity.annotations.add(marker) ->
-			newEntity.annotations.add(clonedAnnotation) -> // move annotation to the new Entity
-			topLevel.childEntities.add(newEntity) ->
-			annoMarker.setName("toBeRemoved") ->
-			annotation.annotations.add(annoMarker)
-		)
-		default: null	
-	}
-;
-
-// --------------------------------------------------------------------------------------------
-//    Transform links of states into transitions that dont use ports
-// --------------------------------------------------------------------------------------------
-
-Void optimizeStates(Entity entity):
-	// temp list for iteration
-	let ports = {}:
-	ports.addAll(entity.childPorts) ->
-	if(entity.getAnnotation("ptolemyClass").value == "ptolemy.domains.modal.kernel.State") then
-			(reportWarning("size="+ports)->ports.moveLinksUp())
-	else null ->
-	entity.childEntities.optimizeStates()
-;
-
-Void moveLinksUp(Port port):
-	// create new temp list to avoid concurrent modification exception
-	let list = {}:
-	reportWarning("moveLinkUp "+port.eContainer.getName() + "." + port.name) ->
-	list.addAll(port.outgoingLinks) ->
-	list.addAll(port.incomingLinks) ->
-	((List[Link])list).fixLinkDirectionForState(port) ->
-	((List[Link])list).moveLinkUp(port) ->
-	port.remove()
-;
-
-Void moveLinkUp(Link link, Port port):
-	//reportWarning("moveLinkUp "+port.eContainer.getName() + "." + port.name) ->
-	if(link.source == port) 
-	then link.setSource(port.eContainer)
-	else link.setTarget(port.eContainer)
-;
-
-// a Ptolemy State is an Entity with exactly one input and one output
-// they carry a name indicating the type of port, so use that if the attribute cannot
-// be found
-Void fixLinkDirectionForState(Link link, Port port):
-	if(port.hasAnnotation("input") || port.name == "incomingPort") 
-	then link.swapTargetTo(port)
-	else link.swapSourceTo(port)
-;
-
-// --------------------------------------------------------------------------------------------
-//    Helper functions
-// --------------------------------------------------------------------------------------------
 
 Boolean isBooleanAnnotation(Annotatable annotatable, String key):
-	let annotation = annotatable.getAnnotation(key):
-	switch {
-		case annotation == null: false
-		case BooleanAnnotation.isInstance(annotation) : ((BooleanAnnotation)annotation).value
-		default: false
-	}
+    let annotation = annotatable.getAnnotation(key):
+    switch {
+        case annotation == null: false
+        case BooleanAnnotation.isInstance(annotation) : ((BooleanAnnotation)annotation).value
+        default: false
+    }
 ;
 
 Void addBooleanAnnotation(Annotatable annotatable, String key, Boolean value):
-	let annotation = new BooleanAnnotation:
-	annotation.setName(key) ->
-	annotation.setValue(value) ->
-	annotatable.annotations.add(annotation)
+    let annotation = new BooleanAnnotation:
+    annotation.setName(key) ->
+    annotation.setValue(value) ->
+    annotatable.annotations.add(annotation)
 ;
 
 Boolean hasAnnotation(Annotatable annotatable, String key):
-	(annotatable.getAnnotation(key) !=  null)
+    (annotatable.getAnnotation(key) !=  null)
 ;
 
 Void addAnnotation(Annotatable annotatable, String key, String value):
-	let annotation = new StringAnnotation:
-	annotation.setName(key) ->
-	annotation.setValue(value) ->
-	annotatable.annotations.add(annotation)
+    let annotation = new StringAnnotation:
+    annotation.setName(key) ->
+    annotation.setValue(value) ->
+    annotatable.annotations.add(annotation)
 ;
 
 Void addAnnotation(Annotatable annotatable, String key):
-	let annotation = new Annotation:
-	annotation.setName(key) ->
-	annotatable.annotations.add(annotation)
+    let annotation = new Annotation:
+    annotation.setName(key) ->
+    annotatable.annotations.add(annotation)
 ;
 
 List[Link] getConnectedLinks(Port port):
-	let links = {}:
-	links.addAll(port.incomingLinks) ->
-	links.addAll(port.outgoingLinks) ->
-	links
+    let links = {}:
+    links.addAll(port.incomingLinks) ->
+    links.addAll(port.outgoingLinks) ->
+    links
 ;
 
 Void addUndirectedAnnotation(Link link):
-	let annotation = new Annotation:
-	annotation.setName("undirected") ->
-	link.annotations.add(annotation)
+    let annotation = new Annotation:
+    annotation.setName("undirected") ->
+    link.annotations.add(annotation)
 ;
 
 Boolean isUndirected(Link link):
-	(link.getAnnotation("undirected") != null)
+    (link.getAnnotation("undirected") != null)
 ;
 
 Void removeUndirectedAnnotation(Link link):
-	let annotation = link.getAnnotation("undirected"):
-	if(annotation != null) then link.annotations.remove(annotation) else null 
+    let annotation = link.getAnnotation("undirected"):
+    if(annotation != null) then link.annotations.remove(annotation) else null 
 ;
 
 List infoAndReturn(List input):
-	info(input) -> input
+    info(input) -> input
 ;
 
 List reportWarningAndReturn(List input):
-	reportWarning(""+input) -> input
+    reportWarning(""+input) -> input
 ;
 
+//-----------------------------------------------------------------------------
+// JAVA ESCAPE DECLARATIONS
+//-----------------------------------------------------------------------------
+
+/**
+ * Returns a list of all the ports of the given entity types.
+ * 
+ * @param entities list of Ptolemy entity types whose ports to return.
+ * @return list of KAOM ports.
+ */
+List getPorts(List[EntityType] entities) :
+    JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.getPorts(java.util.List) 
+;

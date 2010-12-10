@@ -258,7 +258,7 @@ public class ImportDiagramsFileSystemSourcesPage extends WizardResourceImportPag
         super(PAGE_NAME, selection);
         
         this.setTitle("Import from file system");
-        this.setMessage("Select the files to import from the local file system.");
+        this.setMessage("Select the Ptolemy2 .moml files to import from the local file system.");
     }
     
     /**

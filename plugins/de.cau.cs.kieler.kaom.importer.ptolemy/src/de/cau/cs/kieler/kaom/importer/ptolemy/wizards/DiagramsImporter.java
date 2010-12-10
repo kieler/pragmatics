@@ -296,20 +296,24 @@ class DiagramsImporter implements IRunnableWithProgress {
             }
             
             // Import (automatically advances the monitor)
-            doImportModelFile(
-                    sourceFile,
-                    targetFilesBaseName + "."
-                        + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION,
-                    new SubProgressMonitor(monitor, 1));
-            
-            // Possibly initialize diagram file
-            if (initializeDiagramFiles) {
-                doImportDiagramFile(
+            try {
+                doImportModelFile(
+                        sourceFile,
                         targetFilesBaseName + "."
                             + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION,
-                        targetFilesBaseName + "."
-                            + PtolemyImporterConstants.TARGET_DIAGRAM_FILE_EXTENSION);
-                monitor.worked(1);
+                        new SubProgressMonitor(monitor, 1));
+                
+                // Possibly initialize diagram file
+                if (initializeDiagramFiles) {
+                    doImportDiagramFile(
+                            targetFilesBaseName + "."
+                                + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION,
+                            targetFilesBaseName + "."
+                                + PtolemyImporterConstants.TARGET_DIAGRAM_FILE_EXTENSION);
+                    monitor.worked(1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         

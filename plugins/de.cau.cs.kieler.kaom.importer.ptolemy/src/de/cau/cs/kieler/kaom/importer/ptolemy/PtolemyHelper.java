@@ -66,9 +66,11 @@ public class PtolemyHelper implements IExecutionContextAware {
      */
     public List<Port> getPorts(final List<EntityType> entities) {
         List<Port> ports = new BasicEList<Port>();
+        
         for (EntityType entity : entities) {
             ports.addAll(getPorts(entity));
         }
+        
         return ports;
     }
 
@@ -80,6 +82,7 @@ public class PtolemyHelper implements IExecutionContextAware {
      */
     public List<Port> getPorts(final EntityType ptolemyEntity) {
         List<Port> kaomPorts = new LinkedList<Port>();
+        
         try {
             NamedObj actor = instantiatePtolemyEntity(ptolemyEntity);
 
@@ -88,7 +91,7 @@ public class PtolemyHelper implements IExecutionContextAware {
                     IOPort ptolemyPort = (IOPort) obj;
                     Port kaomPort = KaomFactory.eINSTANCE.createPort();
                     
-                    // find out whether it is an input or output (or both)
+                    // Find out whether it is an input or output (or both)
                     if (ptolemyPort.isInput()) {
                         Annotation isInput = AnnotationsFactory.eINSTANCE.createAnnotation();
                         isInput.setName("input");
@@ -101,7 +104,7 @@ public class PtolemyHelper implements IExecutionContextAware {
                         kaomPort.getAnnotations().add(isOutput);
                     }
                     
-                    // set the name
+                    // Set the name
                     kaomPort.setName(ptolemyPort.getName());
 
                     for (Object attribute : ptolemyPort.attributeList()) {
@@ -118,6 +121,7 @@ public class PtolemyHelper implements IExecutionContextAware {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
         return kaomPorts;
     }
 
@@ -235,6 +239,7 @@ public class PtolemyHelper implements IExecutionContextAware {
                 kaomAnnotation.getAnnotations().add(getAnnotation((Attribute) childAttribute));
             }
         }
+        
         return kaomAnnotation;
     }
 

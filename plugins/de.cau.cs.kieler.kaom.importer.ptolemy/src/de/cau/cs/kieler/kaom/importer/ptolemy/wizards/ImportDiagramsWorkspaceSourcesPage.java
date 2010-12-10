@@ -68,7 +68,7 @@ public class ImportDiagramsWorkspaceSourcesPage extends WizardExportResourcesPag
         super(PAGE_NAME, selection);
         
         this.setTitle("Import from workspace");
-        this.setMessage("Select the files to import from the workspace.");
+        this.setMessage("Select the Ptolemy2 .moml files to import from the workspace.");
     }
     
     
