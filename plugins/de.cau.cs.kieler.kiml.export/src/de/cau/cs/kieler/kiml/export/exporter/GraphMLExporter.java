@@ -84,13 +84,13 @@ public class GraphMLExporter extends AbstractExporter {
         try {
             XtendUtil.resetGenerators();
             ExportUtil.transformKGraph2Model(
-                    monitor.subTask(1),
                     XTEND_TRANSFORMATION_FILE,
                     XTEND_TRANSFORMATION,
                     null,
                     graph,
                     stream,
                     new GraphMLResourceFactoryImpl(),
+                    monitor.subTask(1),
                     "de.cau.cs.kieler.core.kgraph.KGraphPackage",
                     "org.graphdrawing.graphml.GraphMLPackage");
         } catch (IOException e) {

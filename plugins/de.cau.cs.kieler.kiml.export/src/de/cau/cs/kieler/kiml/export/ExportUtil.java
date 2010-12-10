@@ -98,8 +98,6 @@ public final class ExportUtil {
      * Transforms a kgraph into another model using a given Xtend transformation
      * file, and writes the model to the output stream.
      * 
-     * @param monitor
-     *            the progress monitor
      * @param xtendFile
      *            the xtend file containing the transformation
      * @param extension
@@ -115,6 +113,8 @@ public final class ExportUtil {
      *            to
      * @param resourceFactory
      *            the resource factory used to serialize the model
+     * @param monitor
+     *            the progress monitor
      * @param involvedMetamodels
      *            the metamodels involved in the transformation
      * @throws IOException
@@ -122,11 +122,11 @@ public final class ExportUtil {
      * @throws TransformationException
      *             thrown when the execution of the xtend transformation failed
      */
-    public static void transformKGraph2Model(
-            final IKielerProgressMonitor monitor, final String xtendFile,
+    public static void transformKGraph2Model(final String xtendFile,
             final String extension, final List<Object> parameters,
             final KNode node, final OutputStream outputStream,
             final Resource.Factory resourceFactory,
+            final IKielerProgressMonitor monitor,
             final String... involvedMetamodels) throws IOException,
             TransformationException {
         monitor.begin("KGraph Model2Model transformation",
@@ -176,8 +176,8 @@ public final class ExportUtil {
                         + FILE_EXT_DUMMY));
         resource.getContents().add(model);
         Map<String, Object> options = new HashMap<String, Object>();
-        //options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.FALSE);
-        //options.put(XMLResource.OPTION_ESCAPE_USING_CDATA, Boolean.TRUE);
+        // options.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.FALSE);
+        // options.put(XMLResource.OPTION_ESCAPE_USING_CDATA, Boolean.TRUE);
         options.put(XMLResource.OPTION_ENCODING, "UTF-8");
         options.put(XMLResource.OPTION_FORMATTED, true);
         // write to the stream

@@ -96,13 +96,13 @@ public class OGMLExporter extends AbstractExporter {
                     .add(options.getProperty(OPTION_LAYOUT_INFORMATION));
             XtendUtil.resetGenerators();
             ExportUtil.transformKGraph2Model(
-                    monitor.subTask(1),
                     XTEND_TRANSFORMATION_FILE,
                     XTEND_TRANSFORMATION,
                     parameters,
                     graph,
                     stream,
                     new OgmlResourceFactoryImpl(),
+                    monitor.subTask(1),
                     "de.cau.cs.kieler.core.kgraph.KGraphPackage",
                     "net.ogdf.ogml.OgmlPackage",
                     "de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage");
