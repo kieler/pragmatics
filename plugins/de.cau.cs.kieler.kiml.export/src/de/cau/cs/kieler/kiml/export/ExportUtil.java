@@ -133,7 +133,7 @@ public final class ExportUtil {
                 MONITOR_TRANSFORMATION_WORK);
 
         // find the xtend file
-        Bundle bundle = ExportActivator.getDefault().getBundle();
+        Bundle bundle = ExportPlugin.getDefault().getBundle();
         IPath path = new Path(xtendFile);
         URL url = FileLocator.find(bundle, path, null);
         String xtendFilePath = FileLocator.resolve(url).getFile();

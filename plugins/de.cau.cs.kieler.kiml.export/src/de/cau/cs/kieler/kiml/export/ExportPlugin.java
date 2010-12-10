@@ -27,18 +27,18 @@ import de.cau.cs.kieler.kiml.export.exporter.OGMLExporter;
  * 
  * @author mri
  */
-public class ExportActivator extends AbstractUIPlugin {
+public class ExportPlugin extends AbstractUIPlugin {
 
     /** the plug-in ID. */
     public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.export"; //$NON-NLS-1$
 
     /** the shared instance. */
-    private static ExportActivator plugin;
+    private static ExportPlugin plugin;
     
     /**
      * The constructor.
      */
-    public ExportActivator() {
+    public ExportPlugin() {
     }
 
     /**
@@ -70,7 +70,7 @@ public class ExportActivator extends AbstractUIPlugin {
      *
      * @return the shared instance
      */
-    public static ExportActivator getDefault() {
+    public static ExportPlugin getDefault() {
         return plugin;
     }
 

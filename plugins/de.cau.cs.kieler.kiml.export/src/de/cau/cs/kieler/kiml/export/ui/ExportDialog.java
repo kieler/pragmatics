@@ -51,7 +51,7 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
-import de.cau.cs.kieler.kiml.export.ExportActivator;
+import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.ExportManager;
 import de.cau.cs.kieler.kiml.export.ExporterOption;
 
@@ -145,7 +145,7 @@ public class ExportDialog extends Dialog {
         super(parent);
         setShellStyle(getShellStyle() | SWT.RESIZE);
         // receive the preference store
-        preferenceStore = ExportActivator.getDefault().getPreferenceStore();
+        preferenceStore = ExportPlugin.getDefault().getPreferenceStore();
         // check if there are any exporters registered
         noExporter = ExportManager.getInstance().getExporterNames().length == 0;
         // get dialog width and height from the preference store
