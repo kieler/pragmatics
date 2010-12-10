@@ -45,11 +45,11 @@ public class AddLinkFeature extends AbstractAddFeature {
      * The Constructor.
      * 
      * @param fp the feature provider
-     * @param thestyleProvider the style provider
+     * @param sp the style provider
      */
-    public AddLinkFeature(final IFeatureProvider fp, final IStyleProvider thestyleProvider) {
+    public AddLinkFeature(final IFeatureProvider fp, final IStyleProvider sp) {
         super(fp);
-        this.styleProvider = thestyleProvider;
+        this.styleProvider = sp;
     }
 
     /**
@@ -73,7 +73,6 @@ public class AddLinkFeature extends AbstractAddFeature {
      */
     public PictogramElement add(final IAddContext context) {
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
-
         Connection connection = peCreateService.createFreeFormConnection(getDiagram());
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
         connection.setStart(addConContext.getSourceAnchor());

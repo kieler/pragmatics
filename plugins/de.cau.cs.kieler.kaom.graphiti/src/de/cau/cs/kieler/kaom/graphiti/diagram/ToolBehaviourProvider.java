@@ -22,15 +22,12 @@ import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
-import org.eclipse.graphiti.features.context.IDoubleClickContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
-import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.services.Graphiti;
@@ -42,8 +39,6 @@ import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.graphiti.tb.IDecorator;
 
 import de.cau.cs.kieler.kaom.Entity;
-import de.cau.cs.kieler.kaom.graphiti.features.RenameEntityFeature;
-import de.cau.cs.kieler.kaom.graphiti.features.RenameLinkFeature;
 
 /**
  * Provides all the features to control the tool bar.
@@ -182,25 +177,6 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
         }
 
         return ret.toArray(new IPaletteCompartmentEntry[ret.size()]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ICustomFeature getDoubleClickFeature(final IDoubleClickContext context) {
-        ICustomFeature customFeature = null;
-        if (context.getInnerPictogramElement() instanceof ContainerShape) {
-            customFeature = new RenameEntityFeature(getFeatureProvider());
-        } else if (context.getInnerGraphicsAlgorithm() instanceof ConnectionDecorator) {
-           customFeature = new RenameLinkFeature(getFeatureProvider());
-        }
-        if (customFeature != null) {
-            if (customFeature.canExecute(context)) {
-                return customFeature;
-            }
-        }
-        return super.getDoubleClickFeature(context);
     }
 
     /**

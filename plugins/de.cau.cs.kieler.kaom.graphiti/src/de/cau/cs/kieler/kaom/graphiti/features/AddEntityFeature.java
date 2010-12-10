@@ -46,11 +46,11 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
      * The constructor.
      * 
      * @param fp the feature provider
-     * @param thestyleProvider the style provider
+     * @param sp the style provider
      */
-    public AddEntityFeature(final IFeatureProvider fp, final IStyleProvider thestyleProvider) {
+    public AddEntityFeature(final IFeatureProvider fp, final IStyleProvider sp) {
         super(fp);
-        this.styleProvider = thestyleProvider;
+        this.styleProvider = sp;
     }
 
     /**
@@ -74,8 +74,8 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
         // invisible rectangle created so that ports can be placed on the boundary
         IGaService gaService = Graphiti.getGaService();
         Rectangle portContainer = gaService.createInvisibleRectangle(entityShape);
-        int width = context.getWidth() <= 0 ? 0 : context.getWidth();
-        int height = context.getHeight() <= 0 ? 0 : context.getHeight();
+        int width = context.getWidth() <= 2 ? 2 : context.getWidth();
+        int height = context.getHeight() <= 2 ? 2 : context.getHeight();
         gaService.setLocationAndSize(portContainer,
                 context.getX() - AddPortFeature.PORT_SIZE,
                 context.getY() - AddPortFeature.PORT_SIZE,

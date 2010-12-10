@@ -17,117 +17,61 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
 import org.eclipse.graphiti.mm.algorithms.Polygon;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
-import org.eclipse.graphiti.util.ColorConstant;
-import org.eclipse.graphiti.util.IColorConstant;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
-import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Relation;
-import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
 import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
 /**
+ * Adds a new relation object.
  * 
- * @author atr Class adds a new relation object
+ * @author atr
  */
 public class AddRelationFeature extends AbstractAddShapeFeature {
 
     /** the style provider. */ 
     private IStyleProvider styleProvider;
-    private static final int[] VERTICES_POSITION = { -9, 0, 0, 12, 9, 0, 0, -12 };
-    private static final IColorConstant RELATION_BACKGROUND = new ColorConstant(70, 70, 70);
 
     /**
+     * The constructor.
      * 
-     * @param fp
-     *            Constructor.
+     * @param fp the feature provider
+     * @param sp the style provider
      */
-    public AddRelationFeature(final IFeatureProvider fp, final IStyleProvider thestyleProvider) {
+    public AddRelationFeature(final IFeatureProvider fp, final IStyleProvider sp) {
         super(fp);
-        this.styleProvider = thestyleProvider;
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    public PictogramElement add(final IAddContext context) {
-        Relation relation = (Relation) context.getNewObject();
-        IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        Diagram targetDiagram;
-        ContainerShape containerShape;
-        IGaService gaService = Graphiti.getGaService();
-        if (context.getTargetContainer() instanceof Diagram) {
-        //Target Container is the diagram
-            targetDiagram = (Diagram) context.getTargetContainer();
-            containerShape = peCreateService.createContainerShape(targetDiagram, true);
-
-            Polygon polygon = gaService.createPolygon(containerShape, VERTICES_POSITION);
-
-            polygon.setStyle(styleProvider.getStyle());
-            polygon.setBackground(manageColor(RELATION_BACKGROUND));
-            Graphiti.getGaService().setLocation(containerShape.getGraphicsAlgorithm(),
-                    context.getX(), context.getY(), false);
-
-            addToDiagram(relation, context);
-
-            peCreateService.createChopboxAnchor(containerShape);
-
-            link(containerShape, relation);
-
-        } else {
-            //Target Container is an Entity
-            containerShape = context.getTargetContainer();
-            ContainerShape childcontainershape = peCreateService.createContainerShape(
-                    containerShape, true);
-            Polygon polygon = gaService.createPolygon(childcontainershape, VERTICES_POSITION);
-
-            polygon.setStyle(styleProvider.getStyle());
-            polygon.setBackground(manageColor(RELATION_BACKGROUND));
-            Graphiti.getGaService().setLocation(childcontainershape.getGraphicsAlgorithm(),
-                    context.getX(), context.getY(), false);
-
-            addToDiagram(relation, context);
-
-            peCreateService.createChopboxAnchor(childcontainershape);
-
-            link(childcontainershape, relation);
-
-        }
-
-        return containerShape;
+        this.styleProvider = sp;
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean canAdd(final IAddContext context) {
-        
-        if (context.getNewObject() instanceof Relation) {
-
-            if (context.getTargetContainer() instanceof ContainerShape
-                    || context.getTargetContainer() instanceof Diagram) {
-                return true;
-            }
-        }
-        return false;
+        return (context.getNewObject() instanceof Relation);
     }
 
+    private static final int VERTEX_RADIUS = 8;
+
     /**
-     * @param newRelation
-     * @param context
-     *            Adds the new RELATION formed to its container ENTITY
+     * {@inheritDoc}
      */
-    private void addToDiagram(final Relation newRelation, final IAddContext context) {
-//        Entity entity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(
-//                context.getTargetContainer());
-//        entity.getChildRelations().add(newRelation);
+    public PictogramElement add(final IAddContext context) {
+        IPeCreateService peCreateService = Graphiti.getPeCreateService();
+        IGaService gaService = Graphiti.getGaService();
+        Shape relationShape = peCreateService.createShape(context.getTargetContainer(), true);
+        Polygon polygon = gaService.createPolygon(relationShape,
+                new int[] { -VERTEX_RADIUS, 0, 0, VERTEX_RADIUS, VERTEX_RADIUS, 0, 0, -VERTEX_RADIUS });
+        polygon.setStyle(styleProvider.getStyle(StyleProvider.SOLID_STYLE));
+        gaService.setLocation(polygon, context.getX(), context.getY(), false);
+        peCreateService.createChopboxAnchor(relationShape);
+
+        link(relationShape, context.getNewObject());
+        return relationShape;
     }
 
 }

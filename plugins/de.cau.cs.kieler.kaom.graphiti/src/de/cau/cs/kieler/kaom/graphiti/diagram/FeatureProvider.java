@@ -29,7 +29,6 @@ import org.eclipse.graphiti.features.IResizeShapeFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.ICopyContext;
-import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
@@ -39,12 +38,12 @@ import org.eclipse.graphiti.features.context.IPasteContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
-import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
@@ -56,13 +55,11 @@ import de.cau.cs.kieler.kaom.graphiti.features.AddEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.AddLinkFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.AddPortFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.AddRelationFeature;
-import de.cau.cs.kieler.kaom.graphiti.features.ChangeColorEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CopyEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreateEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreateLinkFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreatePortFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreateRelationFeature;
-import de.cau.cs.kieler.kaom.graphiti.features.DeleteFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditLinkFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.LayoutEntityFeature;
@@ -70,7 +67,6 @@ import de.cau.cs.kieler.kaom.graphiti.features.MoveAnchorFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.MoveEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.MoveRelationFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.PasteEntityFeature;
-import de.cau.cs.kieler.kaom.graphiti.features.RenameEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.ResizeEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateLinkFeature;
@@ -105,7 +101,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
     public ICreateFeature[] getCreateFeatures() {
         return new ICreateFeature[] { new CreateEntityFeature(this, semanticProvider),
                 new CreatePortFeature(this),
-                new CreateRelationFeature(this) };
+                new CreateRelationFeature(this, semanticProvider) };
     }
 
     /**
@@ -203,16 +199,6 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public ICustomFeature[] getCustomFeatures(final ICustomContext context) {
-        return new ICustomFeature[] { new RenameEntityFeature(this),
-                new ChangeColorEntityFeature(this, styleProvider, true),
-                new ChangeColorEntityFeature(this, styleProvider, false) };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public IDirectEditingFeature getDirectEditingFeature(final IDirectEditingContext context) {
         PictogramElement pe = context.getPictogramElement();
         Object ob = getBusinessObjectForPictogramElement(pe);
@@ -238,7 +224,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public IPasteFeature getPasteFeature(final IPasteContext context) {
-        return new PasteEntityFeature(this);
+        return new PasteEntityFeature(this, semanticProvider);
     }
 
     /**
@@ -265,7 +251,12 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public IDeleteFeature getDeleteFeature(final IDeleteContext context) {
-        return new DeleteFeature(this);
+        return new DefaultDeleteFeature(this) {
+            // override the user decision, so objects can be deleted without any dialog
+            protected boolean getUserDecision() {
+                return true;
+            }
+        };
     }
 
 }

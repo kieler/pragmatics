@@ -17,12 +17,11 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
 
-import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
-import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
@@ -30,7 +29,6 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
-import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
@@ -40,114 +38,93 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
  */
 public class AddPortFeature extends AbstractAddShapeFeature {
 
+    /** the default size of ports. */
+    public static final int PORT_SIZE = 8;
+
+    
     /** the style provider. */ 
     private IStyleProvider styleProvider;
-    
-    /**
-     * Port created at a distance.
-     */
-    public static final int PORT_SIZE = 6;
-    private static final int BOUNDARY_DISTANCE = 10;
 
     /**
+     * The constructor.
      * 
-     * @param fp
-     *            Constructor.
+     * @param fp the feature provider
+     * @param sp the style provider
      */
-    public AddPortFeature(final IFeatureProvider fp, final IStyleProvider thestyleProvider) {
+    public AddPortFeature(final IFeatureProvider fp, final IStyleProvider sp) {
         super(fp);
-        this.styleProvider = thestyleProvider;
+        this.styleProvider = sp;
     }
 
     /**
-     * 
-     * {@inheritDoc}
-     */
-    public PictogramElement add(final IAddContext context) {
-
-        ContainerShape containerShape = context.getTargetContainer();
-        IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        peCreateService.createChopboxAnchor(containerShape);
-
-        Port port = (Port) context.getNewObject();
-
-        float widthPercent;
-        float heightPercent;
-
-        BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
-        if (context.getX() < BOUNDARY_DISTANCE) {
-            widthPercent = (float) 0;
-        } else if (Math.abs(context.getX()
-                - (float) containerShape.getGraphicsAlgorithm().getWidth()) < BOUNDARY_DISTANCE) {
-            widthPercent = (float) 1;
-        } else {
-            widthPercent = ((float) context.getX())
-                    / containerShape.getGraphicsAlgorithm().getWidth();
-        }
-
-        if (Math.abs(context.getY() - (float) containerShape.getGraphicsAlgorithm().getHeight())
-                < BOUNDARY_DISTANCE) {
-            heightPercent = (float) 1;
-        } else {
-            heightPercent = ((float) context.getY())
-                    / containerShape.getGraphicsAlgorithm().getHeight();
-        }
-
-        boxAnchor.setRelativeWidth(widthPercent);
-        boxAnchor.setRelativeHeight(heightPercent);
-
-        boxAnchor.setActive(true);
-
-        IGaService gaService = Graphiti.getGaService();
-
-        PictogramElement pe = (PictogramElement) containerShape.getLink().getPictogramElement();
-
-        if (pe.getGraphicsAlgorithm() instanceof Rectangle) {
-            Rectangle invisibleRectangle = (Rectangle) pe.getGraphicsAlgorithm();
-            for (GraphicsAlgorithm ga : invisibleRectangle.getGraphicsAlgorithmChildren()) {
-
-                if (ga instanceof RoundedRectangle) {
-                    boxAnchor.setReferencedGraphicsAlgorithm((RoundedRectangle) ga);
-                }
-            }
-        }
-
-        Ellipse boxEllipse = gaService.createEllipse(boxAnchor);
-        boxEllipse.setFilled(true);
-        boxEllipse.setStyle(styleProvider.getStyle());
-
-        final int w = PORT_SIZE;
-        gaService.setLocationAndSize(boxEllipse, -w, -w, 2 * w, 2 * w);
-
-        Entity entity = (Entity) getBusinessObjectForPictogramElement(context.getTargetContainer());
-        entity.getChildPorts().add(port);
-
-        link(boxAnchor, port);
-        return containerShape;
-    }
-
-    /**
-     * 
      * {@inheritDoc}
      */
     public boolean canAdd(final IAddContext context) {
-        if (context.getNewObject() instanceof Port) {
-            if (context.getTargetContainer() instanceof ContainerShape) {
-                ContainerShape containerShape = context.getTargetContainer();
+        return (context.getNewObject() instanceof Port);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public PictogramElement add(final IAddContext context) {
+        PictogramElement newElement = null;
+        if (!(context.getTargetContainer() instanceof Diagram)) {
+            newElement = createBoundPort(context.getTargetContainer(),
+                    context.getX(), context.getY());
+            link(newElement, context.getNewObject());
+        }
+        return newElement;
+    }
+    
+    /**
+     * Create a port that is bound to an entity's boundary.
+     * 
+     * @param container the container shape of the parent entity
+     * @param xpos the x position
+     * @param ypos the y position
+     * @return a new pictogram element for the port
+     */
+    private PictogramElement createBoundPort(final ContainerShape container,
+            final int xpos, final int ypos) {
+        int nodeWidth = container.getGraphicsAlgorithm().getWidth();
+        int nodeHeight = container.getGraphicsAlgorithm().getHeight();
+        float widthPercent = (float) xpos / nodeWidth;
+        float heightPercent = (float) ypos / nodeHeight;
+        if (widthPercent + heightPercent <= 1 && widthPercent - heightPercent <= 0) {
+            // port is put to the left
+            widthPercent = 0;
+        } else if (widthPercent + heightPercent >= 1 && widthPercent - heightPercent >= 0) {
+            // port is put to the right
+            widthPercent = 1;
+        } else if (heightPercent < 1.0f / 2) {
+            // port is put to the top
+            heightPercent = 0;
+        } else {
+            // port is put to the bottom
+            heightPercent = 1;
+        }
 
-                if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
-                    if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm().getWidth())
-                            < BOUNDARY_DISTANCE
-                            || Math.abs(context.getY()
-                                    - containerShape.getGraphicsAlgorithm().getHeight()) 
-                                    < BOUNDARY_DISTANCE
-                            || context.getX() < BOUNDARY_DISTANCE) {
-                        return true;
-                    }
-                }
+        IPeCreateService peCreateService = Graphiti.getPeCreateService();
+        BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(container);
+        boxAnchor.setRelativeWidth(widthPercent);
+        boxAnchor.setRelativeHeight(heightPercent);
+        boxAnchor.setActive(true);
+
+        IGaService gaService = Graphiti.getGaService();
+        // look for the actual rectangle that represents the parent entity
+        for (GraphicsAlgorithm ga : container.getGraphicsAlgorithm().getGraphicsAlgorithmChildren()) {
+            if (ga instanceof Rectangle) {
+                boxAnchor.setReferencedGraphicsAlgorithm(ga);
+                break;
             }
         }
-        return false;
+
+        Rectangle rectangleShape = gaService.createRectangle(boxAnchor);
+        rectangleShape.setStyle(styleProvider.getStyle(StyleProvider.SOLID_STYLE));
+        gaService.setLocationAndSize(rectangleShape, -PORT_SIZE / 2, -PORT_SIZE / 2,
+                PORT_SIZE, PORT_SIZE);
+
+        return boxAnchor;
     }
 
 }

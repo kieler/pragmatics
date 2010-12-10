@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
@@ -24,66 +24,42 @@ import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 
 /**
+ * Creates a port object and passes it to the add port feature.
  * 
- * @author atr Creates a port object and passes it to the AddPortFeature
+ * @author atr
  */
 public class CreatePortFeature extends AbstractCreateFeature {
 
-    private static final int BOUNDARY_DISTANCE = 10;
-
     /**
+     * The constructor.
      * 
-     * @param fp
-     *            .
-     * @param name
-     *            .
-     * @param description
-     *            .
-     * 
-     *            Constructor.
+     * @param fp the feature provider
      */
     public CreatePortFeature(final IFeatureProvider fp) {
         super(fp,  "Port", "Create Port");
-
     }
 
     /**
-     * Checks if the port can be created.
-     * Note : Port can be created only on the edges of the entity.
      * {@inheritDoc}
      */
     public boolean canCreate(final ICreateContext context) {
-
-        if (context.getTargetContainer() instanceof ContainerShape) {
-            ContainerShape containerShape = context.getTargetContainer();
-            if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
-                if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm().getWidth())
-                        < BOUNDARY_DISTANCE || Math.abs(context.getY()
-                                - containerShape.getGraphicsAlgorithm().getHeight()) < BOUNDARY_DISTANCE
-                        || context.getX() < BOUNDARY_DISTANCE) {
-
-                    return true;
-                }
-            }
-        }
-        return false;
+        return (getBusinessObjectForPictogramElement(context.getTargetContainer()) instanceof Entity)
+                && !(context.getTargetContainer() instanceof Diagram);
     }
 
     /**
-     * Creates a port.
      * {@inheritDoc}
      */
     public Object[] create(final ICreateContext context) {
-
+        Entity entity = (Entity) getBusinessObjectForPictogramElement(context.getTargetContainer());
         Port port = KaomFactory.eINSTANCE.createPort();
+        entity.getChildPorts().add(port);
 
         addGraphicalRepresentation(context, port);
-
         return new Object[] { port };
     }
 
     /**
-     * Gets the image for the port.
      * {@inheritDoc}
      */
     @Override

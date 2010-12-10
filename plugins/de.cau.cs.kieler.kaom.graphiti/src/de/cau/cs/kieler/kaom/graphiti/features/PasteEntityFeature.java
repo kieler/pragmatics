@@ -13,38 +13,44 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IPasteContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.AbstractPasteFeature;
 
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
 
 /**
+ * Feature for pasting entities in the clip board into the graphical editor.
  * 
- * @author atr Class used to copy the Entity in the clip board to the graphical editor
+ * @author atr
  */
 public class PasteEntityFeature extends AbstractPasteFeature {
 
+    /** the semantic provider used to fetch the top-level element of the current diagram. */
+    private SemanticProvider semanticProvider;
+    
     /**
+     * The Constructor.
      * 
-     * @param fp
-     *            Constructor
+     * @param fp the feature provider
+     * @param sp the semantic provider
      */
-    public PasteEntityFeature(final IFeatureProvider fp) {
+    public PasteEntityFeature(final IFeatureProvider fp, final SemanticProvider sp) {
         super(fp);
+        this.semanticProvider = sp;
     }
 
     /**
-     * Gets the element form the clip board and pastes it on the diagram.
      * {@inheritDoc}
      */
     public boolean canPaste(final IPasteContext context) {
-
         PictogramElement[] pes = context.getPictogramElements();
-        if (pes.length != 1 || !(pes[0] instanceof Diagram)) {
+        if (pes.length != 1 || !(pes[0] instanceof ContainerShape)) {
             return false;
         }
 
@@ -56,26 +62,26 @@ public class PasteEntityFeature extends AbstractPasteFeature {
             if (!(object instanceof Entity)) {
                 return false;
             }
-
         }
         return true;
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public void paste(final IPasteContext context) {
-
-        PictogramElement[] pes = context.getPictogramElements();
-        Diagram diagram = (Diagram) pes[0];
-        Object[] objects = getFromClipboard();
-
-        for (Object object : objects) {
+        ContainerShape container = (ContainerShape) context.getPictogramElements()[0];
+        for (Object object : getFromClipboard()) {
+            // create a copy of the entity
+            Entity newEntity = EcoreUtil.copy((Entity) object);
+            Entity parentEntity = semanticProvider.fetchEntity(container);
+            parentEntity.getChildEntities().add(newEntity);
+            
             AddContext ac = new AddContext();
-            ac.setLocation(0, 0);
-            ac.setTargetContainer(diagram);
-            addGraphicalRepresentation(ac, object);
+            ac.setLocation(container.getGraphicsAlgorithm().getWidth() / 2,
+                    container.getGraphicsAlgorithm().getHeight() / 2);
+            ac.setTargetContainer(container);
+            addGraphicalRepresentation(ac, newEntity);
         }
     }
 }

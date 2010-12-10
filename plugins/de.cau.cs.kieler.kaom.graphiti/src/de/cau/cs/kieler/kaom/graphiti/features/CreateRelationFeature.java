@@ -16,63 +16,56 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 
+import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Relation;
 import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
+import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
 
 /**
+ * Creates a relation object and passes it to the add relation feature.
  * 
- * @author atr Creates a relation object and passes it to the AddRelationFeature.
+ * @author atr
  */
 public class CreateRelationFeature extends AbstractCreateFeature {
 
+    /** the semantic provider used to fetch the top-level element of the current diagram. */
+    private SemanticProvider semanticProvider;
+    
     /**
+     * The constructor.
      * 
-     * @param fp
-     *            .
-     * @param name
-     *            .
-     * @param description
-     *            . Constructor .
+     * @param fp the feature provider
+     * @param sp the semantic provider
      */
-    public CreateRelationFeature(final IFeatureProvider fp) {
+    public CreateRelationFeature(final IFeatureProvider fp, final SemanticProvider sp) {
         super(fp,  "Relation", "Create Relation");
-
+        this.semanticProvider = sp;
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public boolean canCreate(final ICreateContext context) {
-
-        if (context.getTargetContainer() instanceof ContainerShape
-                || context.getTargetContainer() instanceof Diagram) {
-
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
-     * Creates a relation object. {@inheritDoc}
+     * {@inheritDoc}
      */
     public Object[] create(final ICreateContext context) {
-
         KaomFactory kaomFactory = KaomFactory.eINSTANCE;
         Relation relation = kaomFactory.createRelation();
+        Entity parentEntity = semanticProvider.fetchEntity(context.getTargetContainer());
+        parentEntity.getChildRelations().add(relation);
 
         addGraphicalRepresentation(context, relation);
-
         return new Object[] { relation };
     }
 
     /**
-     * Gets the image for the Relation. {@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public String getCreateImageId() {

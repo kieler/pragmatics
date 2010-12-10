@@ -21,32 +21,30 @@ import org.eclipse.graphiti.ui.features.AbstractCopyFeature;
 import de.cau.cs.kieler.kaom.Entity;
 
 /**
+ * Feature for copying an entity to the clip board.
  * 
- * @author atr Class used to copy the Entity to the clip board
+ * @author atr
  */
 public class CopyEntityFeature extends AbstractCopyFeature {
 
     /**
-     * @param fp
-     *            Constructor.
+     * The constructor.
+     * 
+     * @param fp the feature provider
      */
     public CopyEntityFeature(final IFeatureProvider fp) {
         super(fp);
-        
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public boolean canCopy(final ICopyContext context) {
         final PictogramElement[] pes = context.getPictogramElements();
-
-        if (pes == null || pes.length == 0) { // nothing selected
+        if (pes == null || pes.length == 0) {
             return false;
         }
-
-        // return true, if all selected elements are a EClasses
+        // return true if all selected elements are entities
         for (PictogramElement pe : pes) {
             final Object bo = getBusinessObjectForPictogramElement(pe);
             if (!(bo instanceof Entity)) {
@@ -57,21 +55,17 @@ public class CopyEntityFeature extends AbstractCopyFeature {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public void copy(final ICopyContext context) {
-
         PictogramElement[] pes = context.getPictogramElements();
         Object[] bos = new Object[pes.length];
-
         for (int i = 0; i < pes.length; i++) {
             PictogramElement pe = pes[i];
             bos[i] = getBusinessObjectForPictogramElement(pe);
         }
 
         putToClipboard(bos);
-
     }
 
 }
