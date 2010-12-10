@@ -28,14 +28,15 @@ import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
-import org.eclipse.gmf.runtime.diagram.ui.internal.figures.BorderItemContainerFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
+import org.eclipse.gmf.runtime.notation.Bounds;
+import org.eclipse.gmf.runtime.notation.IdentityAnchor;
+import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.karma.AdvancedRenderingBorderedShapeEditPart;
 import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.SwitchableFigure;
@@ -82,7 +83,9 @@ public class AdvancedRenderingEditPartUtil {
     public void handleNotificationEvent(final Notification notification,
             final IFigure primaryShape, final EObject modelElement,
             final AbstractGraphicalEditPart editPart) {
-        if (!(notification.isTouch())) {
+        Object notifier = notification.getNotifier();
+        if (!(notification.isTouch()) && !(notifier instanceof Bounds) && !(notifier instanceof RelativeBendpoints)
+                && !(notifier instanceof IdentityAnchor)) {
             IFigure figure = primaryShape;
             if (figure != null) {
                 boolean changed = this.updateFigure(figure, modelElement, editPart, false);
@@ -96,7 +99,7 @@ public class AdvancedRenderingEditPartUtil {
             }
         }
     }
-
+    
     /**
      * Method to update a figure according to the conditions.
      * 

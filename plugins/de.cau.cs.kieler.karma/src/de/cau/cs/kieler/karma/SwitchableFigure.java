@@ -61,9 +61,9 @@ public class SwitchableFigure extends Shape {
         rectangle.setBackgroundColor(ColorConstants.white);
         return rectangle;
     }
-
+    
     @Override
-    public void paint(final Graphics graphics) {
+    public void paint(final Graphics graphics) {    
         if (currentFigure != null) {
             Rectangle newBounds = new Rectangle();
             newBounds.x = this.getBounds().x + 1;

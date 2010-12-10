@@ -233,7 +233,7 @@ public class KaomPortProvider implements IRenderingProvider {
                         for (Port port : ports) {
                             StringAnnotation cardinal = (StringAnnotation) port
                                     .getAnnotation("_cardinal");
-                            if (cardinal != null && cardinal.getValue().equals("NORTH")) {
+                            if (cardinal != null && cardinal.getValue() != null && cardinal.getValue().equals("NORTH")) {
                                 portsOfSide.add(port);
                             }
                         }
@@ -246,7 +246,7 @@ public class KaomPortProvider implements IRenderingProvider {
                             StringAnnotation cardinal = (StringAnnotation) port
                                     .getAnnotation("_cardinal");
                             Annotation output = port.getAnnotation("output");
-                            if ((cardinal != null && cardinal.getValue().equals("EAST"))
+                            if ((cardinal != null && cardinal.getValue() != null && cardinal.getValue().equals("EAST"))
                                     || output != null) {
                                 portsOfSide.add(port);
                             }
@@ -260,7 +260,7 @@ public class KaomPortProvider implements IRenderingProvider {
                             StringAnnotation cardinal = (StringAnnotation) port
                                     .getAnnotation("_cardinal");
                             Annotation output = port.getAnnotation("inputoutput");
-                            if ((cardinal != null && cardinal.getValue().equals("SOUTH"))
+                            if ((cardinal != null && cardinal.getValue() != null && cardinal.getValue().equals("SOUTH"))
                                     || output != null) {
                                 portsOfSide.add(port);
                             }
@@ -274,7 +274,7 @@ public class KaomPortProvider implements IRenderingProvider {
                             StringAnnotation cardinal = (StringAnnotation) port
                                     .getAnnotation("_cardinal");
                             Annotation output = port.getAnnotation("input");
-                            if ((cardinal != null && cardinal.getValue().equals("WEST"))
+                            if ((cardinal != null && cardinal.getValue() != null && cardinal.getValue().equals("WEST"))
                                     || output != null) {
                                 portsOfSide.add(port);
                             }

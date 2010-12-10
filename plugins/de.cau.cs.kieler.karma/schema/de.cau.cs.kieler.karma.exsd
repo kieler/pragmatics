@@ -80,6 +80,9 @@
                <documentation>
                   This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a figure according to this string.
                </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="borderItemParam" type="string">
@@ -139,6 +142,9 @@
                <documentation>
                   This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a figure according to this string.
                </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="layoutParam" type="string">
@@ -183,6 +189,9 @@
                <documentation>
                   This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a figure according to this string.
                </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="layoutParam" type="string">
@@ -231,6 +240,9 @@
                <documentation>
                   This string will be given to the rendering provider. The rendering provider should be able to handle the string and return a figure according to this string.
                </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="key" type="string">

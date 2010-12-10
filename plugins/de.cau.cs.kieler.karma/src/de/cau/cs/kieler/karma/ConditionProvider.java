@@ -159,6 +159,12 @@ public final class ConditionProvider {
                         Pair<Integer, Integer> figureSize = this.parseFigureSize(figureSizeString);
                         conditionElement.put("figureSize", figureSize);
 
+                        String nodePlateParam = condition.getAttribute("nodePlateParam");
+                        if (nodePlateParam == null) {
+                            nodePlateParam = "";
+                        }
+                        conditionElement.put("nodePlateParam", layoutParam);
+                        
                         ICondition<EObject> cond = getCondition(condition, packages);
                         if ((cond != null)) {
                             conditionElement.put("condition", cond);
