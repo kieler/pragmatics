@@ -28,7 +28,6 @@ import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
-import de.cau.cs.kieler.karma.util.CustomPortLocator;
 
 /**
  * @author ckru
@@ -98,33 +97,4 @@ public abstract class AdvancedRenderingBorderedShapeEditPart extends AbstractBor
             util.updateFigure(primaryShape, this.getModelElement(), this, true);
         }
     }
-    
-    // modified to use a custom BorderItemLocator for ptolemy port position purpose.
-    // No functionality lost to the normal BorderItemLocator and can be used the same. 
-    @Override
-    public void addBorderItem(IFigure borderItemContainer,
-            IBorderItemEditPart borderItemEditPart) {
-        borderItemContainer.add(borderItemEditPart.getFigure(),
-            new CustomPortLocator(getMainFigure()));
-    }
-    
-    protected NodeFigure createNodePlate() {
-        if (MyNodePlate == null) {
-            DefaultSizeNodeFigure result = new DefaultSizeNodeFigure(40, 40);
-            return result;
-        } else {
-            return MyNodePlate;
-        }
-    }
-    
-    public void setFigure(IFigure figure) {
-        super.setFigure(figure);
-    }
-    
-    public IFigure getPrimaryShape() {
-        return primaryShape;
-    }
-    
-    
-    
 }

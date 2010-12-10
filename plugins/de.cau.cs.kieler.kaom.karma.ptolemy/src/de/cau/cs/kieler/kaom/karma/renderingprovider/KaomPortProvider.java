@@ -44,7 +44,6 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper;
 import de.cau.cs.kieler.kaom.karma.ptolemy.PtolemyPortBorderItemLocator;
 import de.cau.cs.kieler.karma.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
-import de.cau.cs.kieler.karma.util.CustomPortLocator;
 
 /**
  * @author ckru
@@ -77,7 +76,7 @@ public class KaomPortProvider implements IRenderingProvider {
                     String ptolemyClassString = ((StringAnnotation) annotation).getValue();
                     try {
                         ptolemy.kernel.Entity entity = getPtolemyEntity(ptolemyClassString);
-                        
+
                         if (object instanceof Port) {
                             Port port = (Port) object;
                             String name = port.getName();
@@ -221,72 +220,64 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     public BorderItemLocator getBorderItemLocatorByString(final String input,
             final IFigure parentFigure, final Object locator, final EObject object) {
-        if (locator instanceof CustomPortLocator) {
-            CustomPortLocator borderItemLocator = (CustomPortLocator) locator;
-            if (borderItemLocator.getPublicConstraint().x == 0) {
-                EObject container = object.eContainer();
-                if (container instanceof Entity) {
-                    Entity parent = (Entity) container;
-                    EList<Port> ports = parent.getChildPorts();
-                    if (input.equals("NORTH")) {
-                        List<Port> portsOfSide = new LinkedList<Port>();
-                        for (Port port : ports) {
-                            StringAnnotation cardinal = (StringAnnotation) port
-                                    .getAnnotation("_cardinal");
-                            if (cardinal != null && cardinal.getValue() != null && cardinal.getValue().equals("NORTH")) {
-                                portsOfSide.add(port);
-                            }
-                        }
-                        BorderItemLocator newlocator = new PtolemyPortBorderItemLocator(
-                                parentFigure, PositionConstants.NORTH, portsOfSide, (Port) object);
-                        return newlocator;
-                    } else if (input.equals("EAST")) {
-                        List<Port> portsOfSide = new LinkedList<Port>();
-                        for (Port port : ports) {
-                            StringAnnotation cardinal = (StringAnnotation) port
-                                    .getAnnotation("_cardinal");
-                            Annotation output = port.getAnnotation("output");
-                            if ((cardinal != null && cardinal.getValue() != null && cardinal.getValue().equals("EAST"))
-                                    || output != null) {
-                                portsOfSide.add(port);
-                            }
-                        }
-                        BorderItemLocator newlocator = new PtolemyPortBorderItemLocator(
-                                parentFigure, PositionConstants.EAST, portsOfSide, (Port) object);
-                        return newlocator;
-                    } else if (input.equals("SOUTH")) {
-                        List<Port> portsOfSide = new LinkedList<Port>();
-                        for (Port port : ports) {
-                            StringAnnotation cardinal = (StringAnnotation) port
-                                    .getAnnotation("_cardinal");
-                            Annotation output = port.getAnnotation("inputoutput");
-                            if ((cardinal != null && cardinal.getValue() != null && cardinal.getValue().equals("SOUTH"))
-                                    || output != null) {
-                                portsOfSide.add(port);
-                            }
-                        }
-                        BorderItemLocator newlocator = new PtolemyPortBorderItemLocator(
-                                parentFigure, PositionConstants.SOUTH, portsOfSide, (Port) object);
-                        return newlocator;
-                    } else if (input.equals("WEST")) {
-                        List<Port> portsOfSide = new LinkedList<Port>();
-                        for (Port port : ports) {
-                            StringAnnotation cardinal = (StringAnnotation) port
-                                    .getAnnotation("_cardinal");
-                            Annotation output = port.getAnnotation("input");
-                            if ((cardinal != null && cardinal.getValue() != null && cardinal.getValue().equals("WEST"))
-                                    || output != null) {
-                                portsOfSide.add(port);
-                            }
-                        }
-                        BorderItemLocator newlocator = new PtolemyPortBorderItemLocator(
-                                parentFigure, PositionConstants.WEST, portsOfSide, (Port) object);
-                        return newlocator;
+        EObject container = object.eContainer();
+        if (container instanceof Entity) {
+            Entity parent = (Entity) container;
+            EList<Port> ports = parent.getChildPorts();
+            if (input.equals("NORTH")) {
+                List<Port> portsOfSide = new LinkedList<Port>();
+                for (Port port : ports) {
+                    StringAnnotation cardinal = (StringAnnotation) port.getAnnotation("_cardinal");
+                    if (cardinal != null && cardinal.getValue() != null
+                            && cardinal.getValue().equals("NORTH")) {
+                        portsOfSide.add(port);
                     }
                 }
-
+                BorderItemLocator newlocator = new PtolemyPortBorderItemLocator(parentFigure,
+                        PositionConstants.NORTH, portsOfSide, (Port) object);
+                return newlocator;
+            } else if (input.equals("EAST")) {
+                List<Port> portsOfSide = new LinkedList<Port>();
+                for (Port port : ports) {
+                    StringAnnotation cardinal = (StringAnnotation) port.getAnnotation("_cardinal");
+                    Annotation output = port.getAnnotation("output");
+                    if ((cardinal != null && cardinal.getValue() != null && cardinal.getValue()
+                            .equals("EAST")) || output != null) {
+                        portsOfSide.add(port);
+                    }
+                }
+                BorderItemLocator newlocator = new PtolemyPortBorderItemLocator(parentFigure,
+                        PositionConstants.EAST, portsOfSide, (Port) object);
+                return newlocator;
+            } else if (input.equals("SOUTH")) {
+                List<Port> portsOfSide = new LinkedList<Port>();
+                for (Port port : ports) {
+                    StringAnnotation cardinal = (StringAnnotation) port.getAnnotation("_cardinal");
+                    Annotation output = port.getAnnotation("inputoutput");
+                    if ((cardinal != null && cardinal.getValue() != null && cardinal.getValue()
+                            .equals("SOUTH")) || output != null) {
+                        portsOfSide.add(port);
+                    }
+                }
+                BorderItemLocator newlocator = new PtolemyPortBorderItemLocator(parentFigure,
+                        PositionConstants.SOUTH, portsOfSide, (Port) object);
+                return newlocator;
+            } else if (input.equals("WEST")) {
+                List<Port> portsOfSide = new LinkedList<Port>();
+                for (Port port : ports) {
+                    StringAnnotation cardinal = (StringAnnotation) port.getAnnotation("_cardinal");
+                    Annotation output = port.getAnnotation("input");
+                    if ((cardinal != null && cardinal.getValue() != null && cardinal.getValue()
+                            .equals("WEST")) || output != null) {
+                        portsOfSide.add(port);
+                    }
+                }
+                BorderItemLocator newlocator = new PtolemyPortBorderItemLocator(parentFigure,
+                        PositionConstants.WEST, portsOfSide, (Port) object);
+                return newlocator;
             }
         }
+
         return null;
     }
 
@@ -294,19 +285,20 @@ public class KaomPortProvider implements IRenderingProvider {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     /**
      * Loads the given Ptolemy entity.
      * 
-     * @param className the entity's class name.
+     * @param className
+     *            the entity's class name.
      * @return the loaded entity.
-     * @throws Exception various exceptions can occurr.
+     * @throws Exception
+     *             various exceptions can occurr.
      */
     private ptolemy.kernel.Entity getPtolemyEntity(final String className) throws Exception {
         try {
             Class<?> ptolemy = Class.forName(className);
-            Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class,
-                    String.class);
+            Constructor<?> constr = ptolemy.getConstructor(CompositeEntity.class, String.class);
             Object obj = constr.newInstance(new CompositeEntity(), "cache");
             ptolemy.kernel.Entity entity = (ptolemy.kernel.Entity) obj;
             return entity;
@@ -317,7 +309,7 @@ public class KaomPortProvider implements IRenderingProvider {
         // Use Ptolemy to load the actor
         PtolemyHelper ptolemyHelper = new PtolemyHelper();
         NamedObj nObj = ptolemyHelper.instantiatePtolemyEntity(className);
-        
+
         if (nObj instanceof ptolemy.kernel.Entity) {
             return (ptolemy.kernel.Entity) nObj;
         } else {

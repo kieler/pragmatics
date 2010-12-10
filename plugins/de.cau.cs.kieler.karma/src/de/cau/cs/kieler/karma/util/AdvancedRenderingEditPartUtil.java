@@ -141,29 +141,10 @@ public class AdvancedRenderingEditPartUtil {
                         String figureParam = (String) conditionElement.get("figureParam");
                         String layoutParam = (String) conditionElement.get("layoutParam");
                         String borderItemParam = (String) conditionElement.get("borderItemParam");
-                        //String nodePlateParam = (String) conditionElement.get("nodePlateParam");
-
-                        
+                      
                         IRenderingProvider renderingProvider = (IRenderingProvider) conditionElement
                                 .get("renderingProvider");
-                        /*
-                        if (editPart instanceof AdvancedRenderingBorderedShapeEditPart) {
-                            IFigure oldParent = editPart.getFigure().getParent();
-                            
-                            IFigure oldBicf = ((BorderedNodeFigure)editPart.getFigure()).getBorderItemContainer(); 
-                            List<?> borderItems = oldBicf.getChildren();
-                            this.setNodePlate(nodePlateParam, editPart, renderingProvider, modelElement);
-                            editPart.getFigure().setParent(oldParent);
-                            figure = ((AdvancedRenderingBorderedShapeEditPart) editPart).getPrimaryShape();
-                            IFigure newBicf = ((BorderedNodeFigure)editPart.getFigure()).getBorderItemContainer();
-                            for (Object item: borderItems) {
-                                ((AdvancedRenderingBorderedShapeEditPart) editPart).addBorderItem(newBicf, (IBorderItemEditPart)item);
-                            }
-                            //figure.setParent(oldParent);
-                            oldFigure = ((SwitchableFigure)figure).getCurrentFigure();
-                            
-                        }
-                        */
+                        
                         this.setFigure(renderingProvider, figureParam, oldFigure,
                                 modelElement, switchableFigure, editPart);
                         this.setLayoutManager(figure, renderingProvider, layoutParam, modelElement);
@@ -183,18 +164,6 @@ public class AdvancedRenderingEditPartUtil {
         }
         return false;
     }
-
-    /*
-    private void setNodePlate(String nodePlateParam, AbstractGraphicalEditPart editPart, IRenderingProvider renderingProvider, EObject modelElement ) {
-        if (editPart instanceof AdvancedRenderingBorderedShapeEditPart) {
-            NodeFigure newNodeFigure = renderingProvider.getNodePlateByString(nodePlateParam, modelElement);
-            if (newNodeFigure != null) {
-                ((AdvancedRenderingBorderedShapeEditPart) editPart).MyNodePlate = newNodeFigure;
-                ((AdvancedRenderingBorderedShapeEditPart) editPart).setFigure(null);
-            }
-        }      
-    }
-*/
     
     /**
      * method that gets a figure from the renderingProvider and sets it to the SwitchableFigure for display.
