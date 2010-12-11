@@ -537,14 +537,6 @@ Void inferLinkDirections(Entity entity) :
     inferLinkDirectionsForLinksFixpoint(entity.childLinks)
 ;
 
-// Set Link directions for all connected Links to a List of Ports 
-// using the port input/output information
-Void inferLinkDirectionsForPorts(List[Port] ports):
-    if(ports.size <= 0) then null else ( 
-        inferLinkDirections(ports.first()) ->
-        inferLinkDirectionsForPorts(ports.withoutFirst()))
-;
-
 // Set Link directions for all connected Links to a Port 
 // using the port input/output information
 Void inferLinkDirections(Port port):
@@ -556,6 +548,14 @@ Void inferLinkDirections(Port port):
         case isOutput:  port.getConnectedLinks().setLinkDirection(port, false)
         default: null
     }
+;
+
+// Set Link directions for all connected Links to a List of Ports 
+// using the port input/output information
+Void inferLinkDirectionsForPorts(List[Port] ports):
+    if(ports.size <= 0) then null else ( 
+        inferLinkDirections(ports.first()) ->
+        inferLinkDirectionsForPorts(ports.withoutFirst()))
 ;
 
 // Set directions of all links to a port which is known to be an input or output
@@ -886,92 +886,219 @@ Void remove(Port port) :
     ((Entity) port.eContainer).childPorts.remove(port)
 ;
 
-Void swapSourceTo(Link link, Linkable linkable):
-    let source = link.source:
-    let target = link.target:
-    switch{
-        case source == target: null // check for selfloop
-        case target == linkable: link.setTarget(source)
-        default: null
-    }->
+/**
+ * Swaps the link if the given linkable is its target. Otherwise, the link's source is
+ * just set to the given linkable.
+ * 
+ * @param link the link to swap.
+ * @param linkable the link's new source.
+ */
+Void swapSourceTo(Link link, Linkable linkable) :
+    let source = link.source :
+    let target = link.target :
+    
+    // Swap the link if the new source is the old target
+    switch {
+        case source == target :
+            null
+            
+        case target == linkable :
+            link.setTarget(source)
+            
+        default :
+            null
+    } ->
+    
+    // Set the source
     link.setSource(linkable) ->
     link.removeUndirectedAnnotation()
 ;
 
+/**
+ * Swaps the link if the given linkable is its source. Otherwise, the link's target is
+ * just set to the given linkable.
+ * 
+ * @param link the link to swap.
+ * @param linkable the link's new target.
+ */
 Void swapTargetTo(Link link, Linkable linkable):
-    let source = link.source:
-    let target = link.target:
-    switch{
-        case source == target: null // check for selfloop
-        case source == linkable: link.setSource(target)
-        default: null
-    }->
+    let source = link.source :
+    let target = link.target :
+    
+    // Swap the link if the new target is the old source
+    switch {
+        case source == target :
+            null
+            
+        case source == linkable :
+            link.setSource(target)
+            
+        default :
+            null
+    } ->
+    
+    // Set the target
     link.setTarget(linkable) ->
     link.removeUndirectedAnnotation()
 ;
 
-Boolean isBooleanAnnotation(Annotatable annotatable, String key):
-    let annotation = annotatable.getAnnotation(key):
-    switch {
-        case annotation == null: false
-        case BooleanAnnotation.isInstance(annotation) : ((BooleanAnnotation)annotation).value
-        default: false
-    }
-;
-
-Void addBooleanAnnotation(Annotatable annotatable, String key, Boolean value):
-    let annotation = new BooleanAnnotation:
-    annotation.setName(key) ->
-    annotation.setValue(value) ->
-    annotatable.annotations.add(annotation)
-;
-
-Boolean hasAnnotation(Annotatable annotatable, String key):
+/**
+ * Checks if the given element has an annotation with the given key.
+ * 
+ * @param annotatable element whose annotations to check.
+ * @param key the key of the annotation to look for.
+ * @return true if an annotation with the given key exists in the given
+ *         element, false otherwise.
+ */
+Boolean hasAnnotation(Annotatable annotatable, String key) :
     (annotatable.getAnnotation(key) !=  null)
 ;
 
-Void addAnnotation(Annotatable annotatable, String key, String value):
-    let annotation = new StringAnnotation:
+/**
+ * Add an annotation with the given key-value pair to the given element.
+ * 
+ * @param annotatable element to annotate.
+ * @param key the new annotation's key.
+ * @param value the new annotation's value.
+ */
+Void addAnnotation(Annotatable annotatable, String key, String value) :
+    let annotation = new StringAnnotation :
+    
     annotation.setName(key) ->
     annotation.setValue(value) ->
+    
     annotatable.annotations.add(annotation)
 ;
 
-Void addAnnotation(Annotatable annotatable, String key):
-    let annotation = new Annotation:
+
+/**
+ * Add an annotation with the given key to the given element.
+ * 
+ * @param annotatable element to annotate.
+ * @param key the new annotation's key.
+ */
+Void addAnnotation(Annotatable annotatable, String key) :
+    let annotation = new Annotation :
+    
     annotation.setName(key) ->
+    
     annotatable.annotations.add(annotation)
 ;
 
-List[Link] getConnectedLinks(Port port):
-    let links = {}:
+/**
+ * Returns the value of the annotation with the given key if it is a
+ * boolean annotation.
+ * 
+ * @param annotatable the element to search for the annotation in.
+ * @param key key of the annotation to look for.
+ * @return the annotation's value if it exists and is a boolean annotation,
+ *         false otherwise.
+ */
+Boolean isBooleanAnnotation(Annotatable annotatable, String key) :
+    let annotation = annotatable.getAnnotation(key) :
+    
+    switch {
+        case annotation == null :
+            false
+            
+        case BooleanAnnotation.isInstance(annotation) :
+            ((BooleanAnnotation)annotation).value
+            
+        default :
+            false
+    }
+;
+
+/**
+ * Adds a boolean annotation to the given element.
+ * 
+ * @param annotatable element to annotate.
+ * @param key key of the new annotation.
+ * @param value boolean value of the new annotation.
+ */
+Void addBooleanAnnotation(Annotatable annotatable, String key, Boolean value) :
+    let annotation = new BooleanAnnotation :
+    
+    annotation.setName(key) ->
+    annotation.setValue(value) ->
+    
+    annotatable.annotations.add(annotation)
+;
+
+/**
+ * Returns all links connected to the given port.
+ * 
+ * @param port the port whose connected links to return.
+ * @return list of links connected to the port.
+ */
+List[Link] getConnectedLinks(Port port) :
+    let links = {} :
+    
     links.addAll(port.incomingLinks) ->
     links.addAll(port.outgoingLinks) ->
+    
     links
 ;
 
+/**
+ * Marks the given link as being undirected. This is used to keep in mind the links
+ * whose direction hasn't been determined yet.
+ * 
+ * @param link the link to mark.
+ */
 Void addUndirectedAnnotation(Link link):
-    let annotation = new Annotation:
+    let annotation = new Annotation :
+    
     annotation.setName("undirected") ->
+    
     link.annotations.add(annotation)
 ;
 
-Boolean isUndirected(Link link):
+/**
+ * Marks the given link as being directed.
+ * 
+ * @param link the link to mark.
+ */
+Void removeUndirectedAnnotation(Link link) :
+    let annotation = link.getAnnotation("undirected") :
+    
+    if (annotation != null)
+        then link.annotations.remove(annotation)
+        else null 
+;
+
+/**
+ * Checks whether the given link is marked as being undirected.
+ * 
+ * @param link the link to check.
+ * @return true if the link is marked as being undirected, false otherwise.
+ */
+Boolean isUndirected(Link link) :
     (link.getAnnotation("undirected") != null)
 ;
 
-Void removeUndirectedAnnotation(Link link):
-    let annotation = link.getAnnotation("undirected"):
-    if(annotation != null) then link.annotations.remove(annotation) else null 
+/**
+ * Logs the given list at the INFO level and returns it.
+ * 
+ * @param input the list to print out.
+ * @return the list.
+ */
+List infoAndReturn(List input) :
+    info(input) ->
+    input
 ;
 
-List infoAndReturn(List input):
-    info(input) -> input
+/**
+ * Reports the given list as a WARNING to the workflow and returns the list.
+ * 
+ * @param input the list to report.
+ * @return the list.
+ */
+List reportWarningAndReturn(List input) :
+    reportWarning("" + input) ->
+    input
 ;
 
-List reportWarningAndReturn(List input):
-    reportWarning(""+input) -> input
-;
 
 //-----------------------------------------------------------------------------
 // JAVA ESCAPE DECLARATIONS
