@@ -43,14 +43,15 @@ extension org::eclipse::xtend::util::stdlib::issues;      // pass messages back 
 // ports. The problem is that if an actor is not part of the official Ptolemy
 // actor library, the instantiation often fails, leaving us without properly
 // defined ports. In particular, we then cannot determine if a port is an
-// input port or an output port, which leads to problems when the direction
-// of links is set.
+// input port or an output port, which leads to problems when the directions
+// of links are determined. (in Ptolemy, contrary to KAOM, links are
+// undirected)
 // 
 // The second step is the optimization of the resulting model. In this step,
-// link directions are computed, (KAOM models have directed links, Ptolemy
-// models don't) relations that only connect two ports are replaced by a
-// single link, special annotations are replaced by entities, (the Ptolemy
-// director, text attributes, ...) and links of states are changed.
+// link directions are computed, relations that only connect two ports are
+// replaced by a single link, special annotations are replaced by entities,
+// (the Ptolemy director, text attributes, ...) and links of states are
+// changed.
 // 
 //=============================================================================
 
@@ -165,8 +166,8 @@ create Link this transform(moml::LinkType link, Entity parent) :
     ) -> (
         if (linkables.size == 2)
             then (
-                this.setSource((Linkable)linkables.get(0)) ->
-                this.setTarget((Linkable)linkables.get(1))
+                this.setSource((Linkable) linkables.get(0)) ->
+                this.setTarget((Linkable) linkables.get(1))
             )
             else (null)
     ) ->
@@ -174,7 +175,7 @@ create Link this transform(moml::LinkType link, Entity parent) :
     // Initially, set all relations to be undirected as we cannot derive
     // meaningful directions at this point anyway; the directions will be
     // figured out later
-    this.addUndirectedAnnotation()
+    this.markAsUndirected(true)
 ;
 
 /**
@@ -216,9 +217,10 @@ Void addChildEntities(Entity parent, List[EntityType] ptolemyEntities) :
     // them to the parent and recursively add the remaining entities
     if (ptolemyEntities.isEmpty)
         then null
-        else
+        else (
             parent.childEntities.add(transform(ptolemyEntity)) ->
             addChildEntities(parent, ptolemyEntities.withoutFirst())
+        )
 ;
 
 /**
@@ -236,9 +238,10 @@ Void addChildRelations(Entity parent, List[RelationType] ptolemyRelations) :
     // them to the parent and recursively add the remaining relations
     if (ptolemyRelations.isEmpty)
         then null
-        else
+        else (
             parent.childRelations.add(transform(ptolemyRelation)) ->
             addChildRelations(parent, ptolemyRelations.withoutFirst())
+        )
 ;
 
 /**
@@ -255,9 +258,10 @@ Void addChildLinks(Entity parent, List[LinkType] ptolemyLinks) :
     // them to the parent and recursively add the remaining links
     if (ptolemyLinks.isEmpty)
         then null
-        else
+        else (
             parent.childLinks.add(transform(ptolemyLink, parent)) ->
             addChildLinks(parent, ptolemyLinks.withoutFirst())
+        )
 ;
 
 /**
@@ -278,7 +282,7 @@ Void addProperties(Annotatable annotatable, List[PropertyType] properties) :
     // properties and the remaining properties in the list
     if(properties.isEmpty)
         then null
-        else
+        else (
             // Ptolemy properties have types; we annotate the annotation
             // with the Ptolemy class of the original property
             classType.setName("ptolemyClass") ->
@@ -297,6 +301,7 @@ Void addProperties(Annotatable annotatable, List[PropertyType] properties) :
             
             // Recursively add the remaining properties in the list
             addProperties(annotatable, properties.withoutFirst())
+        )
 ;
 
 /**
@@ -402,9 +407,9 @@ Port getPort(Entity parent, String portName) :
     switch {
         case portName == null : (
             // Empty port name; we can't find a corresponding port
-                reportWarning("Port with no name requested for Entity " + parent.name) ->
-                null
-            )
+            reportWarning("Port with no name requested for Entity " + parent.name) ->
+            null
+        )
             
         case port != null :
             // If we have actually found an existing port, return that
@@ -414,21 +419,21 @@ Port getPort(Entity parent, String portName) :
             // We haven't found an existing port. If no actor was found or specified
             // either, add a new port with the given name to the parent entity and
             // return that
-                reportWarning("Non-Existing Port referenced: "
-                    + portName + " for Entity " + parent.name) -> 
-                newPort.setName(portName) ->
-                parent.childPorts.add(newPort) -> 
-                newPort
-            )
+            reportWarning("Non-Existing Port referenced: "
+                + portName + " for Entity " + parent.name) -> 
+            newPort.setName(portName) ->
+            parent.childPorts.add(newPort) -> 
+            newPort
+        )
             
         default : (
             // We haven't found an existing port, but an existing actor. Add a new
             // port with the given name to the actor and return that 
-                reportWarning("Non-Existing Port referenced: " + portName) -> 
-                newPort.setName(splitName.size < 2 ? "null" : splitName.get(1)) -> 
-                actor.childPorts.add(newPort) -> 
-                newPort
-            )
+            reportWarning("Non-Existing Port referenced: " + portName) -> 
+            newPort.setName(splitName.size < 2 ? "null" : splitName.get(1)) -> 
+            actor.childPorts.add(newPort) -> 
+            newPort
+        )
     }
 ;
 
@@ -526,23 +531,66 @@ Void optimize(Entity entity) :
 // Inference Of Link Directions
 //-----------------------------------------------------------------------------
 
+/**
+ * Infer the link directions of all links connecting all the children and
+ * grandchildren of the given entity.
+ * 
+ * First, all directions of links connected to ports with known type (input or
+ * output) are set. This is the easy part.
+ * 
+ * Then, the algorithm tries to find 
+ *
+ * @param entity the entity at the root of the hierarchy of entities whose
+ *               link directions to infer.
+ */
 Void inferLinkDirections(Entity entity) :
-    // Depth first
-    entity.childEntities.inferLinkDirections() ->
-     
-    // Set directions for links connected directly to inputs / outputs
-    inferLinkDirectionsForPorts(entity.childPorts) ->
+    // Set the direction of links connected to ports of known type
+    inferKnownPortLinkDirections(entity) ->
     
-    // Then analyze other links from the neighbor information
-    inferLinkDirectionsForLinksFixpoint(entity.childLinks)
+    // TODO Do the rest.
 ;
 
-// Set Link directions for all connected Links to a Port 
-// using the port input/output information
-Void inferLinkDirections(Port port) :
+/**
+ * Sets the direction of links connected to the entity's ports of known
+ * type, then recurses to its child entites.
+ * 
+ * @param entity the entity whose link directions to infer.
+ */
+Void inferKnownPortLinkDirections(Entity entity) :
+    // Infer the directions of links connected to ports of this entity
+    inferKnownPortLinkDirections(entity.childPorts) ->
+    
+    // Recurse
+    inferKnownPortLinkDirections(entity.childEntities)
+;
+
+/**
+ * Iterates through the list of ports and sets the direction of its
+ * connected links if the port has a known type. (input / output)
+ * 
+ * @param ports list of ports.
+ */
+Void inferKnownPortLinkDirections(List[Port] ports) :
+    if (ports.size() == 0)
+        then null
+        else (
+            inferKnownPortLinkDirections(ports.first()) :
+            inferKnownPortLinkDirections(ports.withoutFirst())
+        )
+;
+
+/**
+ * Sets the direction of links connected to the given port, if possible.
+ * This is possible if the port has exactly one of the annotations "input"
+ * and "output".
+ * 
+ * @param port the port whose links' directions to set.
+ */
+Void inferKnownPortLinkDirections(Port port) :
     let isInput = port.hasAnnotation("input") :
     let isOutput = port.hasAnnotation("output") :
     
+    // Set the link direction, if possible
     switch {
         case isInput && isOutput :
             // The port seems to be both an input port and an output port,
@@ -564,35 +612,26 @@ Void inferLinkDirections(Port port) :
     }
 ;
 
-// Set Link directions for all connected Links to a List of Ports 
-// using the port input/output information
-Void inferLinkDirectionsForPorts(List[Port] ports) :
-    if (ports.size <= 0)
-        then null
-        else (
-            inferLinkDirections(ports.first()) ->
-            inferLinkDirectionsForPorts(ports.withoutFirst())
-        )
-;
 
-// Set directions of all links to a port which is known to be an input or output
-Void setLinkDirection(Link link, Port port, Boolean isInput):
-    switch {
-        case isInput == true  && link.eContainer == port.eContainer :
-            link.swapSourceTo(port)
-            
-        case isInput == false && link.eContainer == port.eContainer :
-            link.swapTargetTo(port)
-            
-        case isInput == true  && link.eContainer != port.eContainer :
-            link.swapTargetTo(port)
-            
-        case isInput == false && link.eContainer != port.eContainer :
-            link.swapSourceTo(port)
-            
-        default :
-            null
-    }
+
+
+
+
+
+
+
+
+
+
+Void inferLinkDirections(Entity entity) :
+    // Depth first
+    entity.childEntities.inferLinkDirections() ->
+     
+    // Set directions for links connected directly to inputs / outputs
+    inferLinkDirectionsForPorts(entity.childPorts) ->
+    
+    // Then analyze other links from the neighbor information
+    inferLinkDirectionsForLinksFixpoint(entity.childLinks)
 ;
 
 // Do a fixpoint iteration on a set of Links and try to deduce link directions from
@@ -625,7 +664,7 @@ Boolean analyzeLinkDirectionForLink(Link link):
 Boolean analyzeLinkDirectionForLink(Link link, Relation relation):
     let neighborLinks = {} :
     
-    if (link.isUndirected()) 
+    if (link.isMarkedAsUndirected()) 
         then (
             neighborLinks.addAll(relation.outgoingLinks) ->
             neighborLinks.addAll(relation.incomingLinks) ->
@@ -639,12 +678,12 @@ Boolean analyzeLinkDirection(Link neighborLink, Relation relation, Link link):
         case (link.source == link.target) :
             false
             
-        case ((neighborLink.target == relation) && (neighborLink.isUndirected())) : (
+        case ((neighborLink.target == relation) && (neighborLink.isMarkedAsUndirected())) : (
             link.swapSourceTo(relation) ->
             true
         )
         
-        case ((neighborLink.source == relation) && (neighborLink.isUndirected())) : (
+        case ((neighborLink.source == relation) && (neighborLink.isMarkedAsUndirected())) : (
             link.swapTargetTo(relation) ->
             true
         )
@@ -932,6 +971,33 @@ Void remove(Port port) :
 ;
 
 /**
+ * Sets the direction of the given link. This will remove the link's
+ * "undirected" annotation.
+ * 
+ * @param link the link whose direction to set.
+ * @param port the port that will determine the link's direction.
+ * @param isInput whether the port is an input or an output port.
+ */
+Void setLinkDirection(Link link, Port port, Boolean isInput):
+    switch {
+        case isInput == true  && link.eContainer == port.eContainer :
+            link.swapSourceTo(port)
+            
+        case isInput == false && link.eContainer == port.eContainer :
+            link.swapTargetTo(port)
+            
+        case isInput == true  && link.eContainer != port.eContainer :
+            link.swapTargetTo(port)
+            
+        case isInput == false && link.eContainer != port.eContainer :
+            link.swapSourceTo(port)
+            
+        default :
+            null
+    }
+;
+
+/**
  * Swaps the link if the given linkable is its target. Otherwise, the link's source is
  * just set to the given linkable.
  * 
@@ -956,7 +1022,7 @@ Void swapSourceTo(Link link, Linkable linkable) :
     
     // Set the source
     link.setSource(linkable) ->
-    link.removeUndirectedAnnotation()
+    link.markAsUndirected(false)
 ;
 
 /**
@@ -984,8 +1050,50 @@ Void swapTargetTo(Link link, Linkable linkable):
     
     // Set the target
     link.setTarget(linkable) ->
-    link.removeUndirectedAnnotation()
+    link.markAsUndirected(false)
 ;
+
+/**
+ * Returns all links connected to the given port.
+ * 
+ * @param port the port whose connected links to return.
+ * @return list of links connected to the port.
+ */
+List[Link] getConnectedLinks(Port port) :
+    let links = {} :
+    
+    links.addAll(port.incomingLinks) ->
+    links.addAll(port.outgoingLinks) ->
+    
+    links
+;
+
+/**
+ * Logs the given list at the INFO level and returns it.
+ * 
+ * @param input the list to print out.
+ * @return the list.
+ */
+List infoAndReturn(List input) :
+    info(input) ->
+    input
+;
+
+/**
+ * Reports the given list as a WARNING to the workflow and returns the list.
+ * 
+ * @param input the list to report.
+ * @return the list.
+ */
+List reportWarningAndReturn(List input) :
+    reportWarning("" + input) ->
+    input
+;
+
+
+//-----------------------------------------------------------------------------
+// Annotations Management
+//-----------------------------------------------------------------------------
 
 /**
  * Checks if the given element has an annotation with the given key.
@@ -1000,7 +1108,8 @@ Boolean hasAnnotation(Annotatable annotatable, String key) :
 ;
 
 /**
- * Add an annotation with the given key-value pair to the given element.
+ * Add an annotation with the given key-value pair to the given element, if
+ * an annotation with the given key doesn't already exist.
  * 
  * @param annotatable element to annotate.
  * @param key the new annotation's key.
@@ -1009,15 +1118,20 @@ Boolean hasAnnotation(Annotatable annotatable, String key) :
 Void addAnnotation(Annotatable annotatable, String key, String value) :
     let annotation = new StringAnnotation :
     
-    annotation.setName(key) ->
-    annotation.setValue(value) ->
-    
-    annotatable.annotations.add(annotation)
+    if (annotatable.hasAnnotation(key))
+        then null
+        else (
+            annotation.setName(key) ->
+            annotation.setValue(value) ->
+            
+            annotatable.annotations.add(annotation)
+        )
 ;
 
 
 /**
- * Add an annotation with the given key to the given element.
+ * Add an annotation with the given key to the given element, if an annotation
+ * with that key doesn't already exist.
  * 
  * @param annotatable element to annotate.
  * @param key the new annotation's key.
@@ -1025,9 +1139,24 @@ Void addAnnotation(Annotatable annotatable, String key, String value) :
 Void addAnnotation(Annotatable annotatable, String key) :
     let annotation = new Annotation :
     
-    annotation.setName(key) ->
-    
-    annotatable.annotations.add(annotation)
+    if (annotatable.hasAnnotation(key))
+        then null
+        else (
+            annotation.setName(key) ->
+            
+            annotatable.annotations.add(annotation)
+        )
+;
+
+/**
+ * Removes the annotation with the given key from the given element, if it
+ * exists.
+ * 
+ * @param annotatable element to remove the annotation from.
+ * @param key the annotation's key.
+ */
+Void removeAnnotation(Annotatable annotatable, String key) :
+    annotatable.annotations.remove(key)
 ;
 
 /**
@@ -1055,7 +1184,8 @@ Boolean isBooleanAnnotation(Annotatable annotatable, String key) :
 ;
 
 /**
- * Adds a boolean annotation to the given element.
+ * Adds a boolean annotation to the given element, if an annotation with
+ * that key doesn't already exist.
  * 
  * @param annotatable element to annotate.
  * @param key key of the new annotation.
@@ -1064,53 +1194,20 @@ Boolean isBooleanAnnotation(Annotatable annotatable, String key) :
 Void addBooleanAnnotation(Annotatable annotatable, String key, Boolean value) :
     let annotation = new BooleanAnnotation :
     
-    annotation.setName(key) ->
-    annotation.setValue(value) ->
-    
-    annotatable.annotations.add(annotation)
+    if (annotatable.hasAnnotation(key))
+        then null
+        else (
+            annotation.setName(key) ->
+            annotation.setValue(value) ->
+            
+            annotatable.annotations.add(annotation)
+        )
 ;
 
-/**
- * Returns all links connected to the given port.
- * 
- * @param port the port whose connected links to return.
- * @return list of links connected to the port.
- */
-List[Link] getConnectedLinks(Port port) :
-    let links = {} :
-    
-    links.addAll(port.incomingLinks) ->
-    links.addAll(port.outgoingLinks) ->
-    
-    links
-;
 
-/**
- * Marks the given link as being undirected. This is used to keep in mind the links
- * whose direction hasn't been determined yet.
- * 
- * @param link the link to mark.
- */
-Void addUndirectedAnnotation(Link link):
-    let annotation = new Annotation :
-    
-    annotation.setName("undirected") ->
-    
-    link.annotations.add(annotation)
-;
-
-/**
- * Marks the given link as being directed.
- * 
- * @param link the link to mark.
- */
-Void removeUndirectedAnnotation(Link link) :
-    let annotation = link.getAnnotation("undirected") :
-    
-    if (annotation != null)
-        then link.annotations.remove(annotation)
-        else null 
-;
+//-----------------------------------------------------------------------------
+// Markings
+//-----------------------------------------------------------------------------
 
 /**
  * Checks whether the given link is marked as being undirected.
@@ -1118,30 +1215,22 @@ Void removeUndirectedAnnotation(Link link) :
  * @param link the link to check.
  * @return true if the link is marked as being undirected, false otherwise.
  */
-Boolean isUndirected(Link link) :
-    (link.getAnnotation("undirected") != null)
+Boolean isMarkedAsUndirected(Link link) :
+    link.hasAnnotation("undirected")
 ;
 
 /**
- * Logs the given list at the INFO level and returns it.
+ * Marks a link as being directed or undirected.
  * 
- * @param input the list to print out.
- * @return the list.
+ * @param link the link to mark.
+ * @param undirected true if the link should be undirected.
  */
-List infoAndReturn(List input) :
-    info(input) ->
-    input
-;
-
-/**
- * Reports the given list as a WARNING to the workflow and returns the list.
- * 
- * @param input the list to report.
- * @return the list.
- */
-List reportWarningAndReturn(List input) :
-    reportWarning("" + input) ->
-    input
+Void markAsUndirected(Link link, Boolean undirected) :
+    let existingAnnotation = link.getAnnotation("undirected") :
+    
+    if (undirected == true)
+        then link.addAnnotation("undirected")
+        else link.removeAnnotation("undirected")
 ;
 
 
