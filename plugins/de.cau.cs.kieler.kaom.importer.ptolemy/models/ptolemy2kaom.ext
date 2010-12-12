@@ -147,28 +147,29 @@ create Link this transform(moml::LinkType link, Entity parent) :
     this.addAnnotation("language", "ptolemy") ->
     
     (
-        if(port != null)
+        if (port != null)
             then (linkables.add(port))
             else (null)
     ) -> (
-        if(relation != null)
+        if (relation != null)
             then (linkables.add(relation))
             else (null)
     ) -> (
-        if(relation1 != null)
+        if (relation1 != null)
             then (linkables.add(relation1))
             else (null)
     ) -> (
-        if(relation2 != null)
+        if (relation2 != null)
             then (linkables.add(relation2))
             else (null)
     ) -> (
-        if(linkables.size == 2)
+        if (linkables.size == 2)
             then (
                 this.setSource((Linkable)linkables.get(0)) ->
                 this.setTarget((Linkable)linkables.get(1))
             )
-            else (null)) ->
+            else (null)
+    ) ->
     
     // Initially, set all relations to be undirected as we cannot derive
     // meaningful directions at this point anyway; the directions will be
@@ -399,9 +400,8 @@ Port getPort(Entity parent, String portName) :
     } :
     
     switch {
-        case portName == null :
-            // Empty port name; we can't find a corresponding port  
-            (
+        case portName == null : (
+            // Empty port name; we can't find a corresponding port
                 reportWarning("Port with no name requested for Entity " + parent.name) ->
                 null
             )
@@ -410,11 +410,10 @@ Port getPort(Entity parent, String portName) :
             // If we have actually found an existing port, return that
             port
             
-        case actor == null :
+        case actor == null : (
             // We haven't found an existing port. If no actor was found or specified
             // either, add a new port with the given name to the parent entity and
             // return that
-            (
                 reportWarning("Non-Existing Port referenced: "
                     + portName + " for Entity " + parent.name) -> 
                 newPort.setName(portName) ->
@@ -422,10 +421,9 @@ Port getPort(Entity parent, String portName) :
                 newPort
             )
             
-        default :
+        default : (
             // We haven't found an existing port, but an existing actor. Add a new
             // port with the given name to the actor and return that 
-            (
                 reportWarning("Non-Existing Port referenced: " + portName) -> 
                 newPort.setName(splitName.size < 2 ? "null" : splitName.get(1)) -> 
                 actor.childPorts.add(newPort) -> 
@@ -476,14 +474,13 @@ Port mergePortAttributesSingle(Port newPort, List[Port] existingPorts) :
             // There is no existing port of the same name, so just add the
             // new port to the list
             newPort
-        else
-            (
-                // There is an existing port of the same name, so add the
-                // new port's annotations to the existing port and return
-                // that
-                existingPort.annotations.addAll(newPort.annotations) ->
-                existingPort
-            )
+        else (
+            // There is an existing port of the same name, so add the
+            // new port's annotations to the existing port and return
+            // that
+            existingPort.annotations.addAll(newPort.annotations) ->
+            existingPort
+        )
 ;
 
 /**
@@ -530,78 +527,130 @@ Void optimize(Entity entity) :
 //-----------------------------------------------------------------------------
 
 Void inferLinkDirections(Entity entity) :
-    entity.childEntities.inferLinkDirections() -> // depth first 
-    // set directions for links connected directly to inputs/outputs
+    // Depth first
+    entity.childEntities.inferLinkDirections() ->
+     
+    // Set directions for links connected directly to inputs / outputs
     inferLinkDirectionsForPorts(entity.childPorts) ->
-    // then analyze other links from the neighbor information
+    
+    // Then analyze other links from the neighbor information
     inferLinkDirectionsForLinksFixpoint(entity.childLinks)
 ;
 
 // Set Link directions for all connected Links to a Port 
 // using the port input/output information
-Void inferLinkDirections(Port port):
-    let isInput = port.hasAnnotation("input"):
-    let isOutput = port.hasAnnotation("output"):
-    switch{
-        case isInput && isOutput : null
-        case isInput :     port.getConnectedLinks().setLinkDirection(port, true)
-        case isOutput:  port.getConnectedLinks().setLinkDirection(port, false)
-        default: null
+Void inferLinkDirections(Port port) :
+    let isInput = port.hasAnnotation("input") :
+    let isOutput = port.hasAnnotation("output") :
+    
+    switch {
+        case isInput && isOutput :
+            // The port seems to be both an input port and an output port,
+            // so we cannot derive any information from that
+            null
+            
+        case isInput :
+            // Input port
+            port.getConnectedLinks().setLinkDirection(port, true)
+            
+        case isOutput :
+            // Output port
+            port.getConnectedLinks().setLinkDirection(port, false)
+            
+        default :
+            // Neither input nor output, so we cannot derice any information
+            // from that
+            null
     }
 ;
 
 // Set Link directions for all connected Links to a List of Ports 
 // using the port input/output information
-Void inferLinkDirectionsForPorts(List[Port] ports):
-    if(ports.size <= 0) then null else ( 
-        inferLinkDirections(ports.first()) ->
-        inferLinkDirectionsForPorts(ports.withoutFirst()))
+Void inferLinkDirectionsForPorts(List[Port] ports) :
+    if (ports.size <= 0)
+        then null
+        else (
+            inferLinkDirections(ports.first()) ->
+            inferLinkDirectionsForPorts(ports.withoutFirst())
+        )
 ;
 
 // Set directions of all links to a port which is known to be an input or output
 Void setLinkDirection(Link link, Port port, Boolean isInput):
-    switch{
-        case isInput == true  && link.eContainer == port.eContainer : link.swapSourceTo(port)
-        case isInput == false && link.eContainer == port.eContainer : link.swapTargetTo(port)
-        case isInput == true  && link.eContainer != port.eContainer : link.swapTargetTo(port)
-        case isInput == false && link.eContainer != port.eContainer : link.swapSourceTo(port)
-        default: null
+    switch {
+        case isInput == true  && link.eContainer == port.eContainer :
+            link.swapSourceTo(port)
+            
+        case isInput == false && link.eContainer == port.eContainer :
+            link.swapTargetTo(port)
+            
+        case isInput == true  && link.eContainer != port.eContainer :
+            link.swapTargetTo(port)
+            
+        case isInput == false && link.eContainer != port.eContainer :
+            link.swapSourceTo(port)
+            
+        default :
+            null
     }
 ;
 
 // Do a fixpoint iteration on a set of Links and try to deduce link directions from
 // neighbor edges
 Void inferLinkDirectionsForLinksFixpoint(List[Link] links):
-    let hasChanged = links.analyzeLinkDirectionForLink().exists(b|b==true):
-    if(hasChanged) then inferLinkDirectionsForLinksFixpoint(links) else null
+    let hasChanged = links.analyzeLinkDirectionForLink().exists(b | b == true) :
+    
+    if (hasChanged)
+        then inferLinkDirectionsForLinksFixpoint(links)
+        else null
 ;
 
 // Given a link and up to two relations, deduce from neighbor links the link's direction
 Boolean analyzeLinkDirectionForLink(Link link):
-    let relations = {link.source, link.target}.typeSelect(kaom::Relation):
-    let switchedAtRel1 = if(relations.size <1) then false else analyzeLinkDirectionForLink(link,relations.get(0)):
-    let switchedAtRel2 = if(relations.size <2) then false else analyzeLinkDirectionForLink(link,relations.get(1)):
+    let relations = {
+        link.source,
+        link.target
+    }.typeSelect(kaom::Relation) :
+    let switchedAtRel1 = if (relations.size < 1)
+        then false
+        else analyzeLinkDirectionForLink(link, relations.get(0)) :
+    let switchedAtRel2 = if (relations.size < 2)
+        then false
+        else analyzeLinkDirectionForLink(link, relations.get(1)) :
+    
     switchedAtRel1 || switchedAtRel2
 ;
 
 // Given a link and one relation, deduce from neighbor links the link's direction
 Boolean analyzeLinkDirectionForLink(Link link, Relation relation):
-    let neighborLinks = {} : 
-    if(link.isUndirected()) 
-        then  (neighborLinks.addAll(relation.outgoingLinks)
-            -> neighborLinks.addAll(relation.incomingLinks) 
-            -> neighborLinks.analyzeLinkDirection(relation,link).exists(b|b==true))
+    let neighborLinks = {} :
+    
+    if (link.isUndirected()) 
+        then (
+            neighborLinks.addAll(relation.outgoingLinks) ->
+            neighborLinks.addAll(relation.incomingLinks) ->
+            neighborLinks.analyzeLinkDirection(relation, link).exists(b | b == true)
+        )
         else false
 ;
 
 Boolean analyzeLinkDirection(Link neighborLink, Relation relation, Link link):
-    switch{
-        case (link.source == link.target) : false
-        case ( (neighborLink.target == relation) && (neighborLink.isUndirected())):
-            (link.swapSourceTo(relation) -> true)
-        case ( (neighborLink.source == relation) && (neighborLink.isUndirected())):
-            (link.swapTargetTo(relation) -> true)
-        default : false
+    switch {
+        case (link.source == link.target) :
+            false
+            
+        case ((neighborLink.target == relation) && (neighborLink.isUndirected())) : (
+            link.swapSourceTo(relation) ->
+            true
+        )
+        
+        case ((neighborLink.source == relation) && (neighborLink.isUndirected())) : (
+            link.swapTargetTo(relation) ->
+            true
+        )
+        
+        default :
+            false
     }
 ;
 
@@ -647,12 +696,11 @@ Void optimizeSingleRelation(Relation relation):
     // If the relation has only one incoming and outgoing link, it can be
     // optimized away
     if ((relation.incomingLinks.size == 1) && (relation.outgoingLinks.size == 1))
-        then
-            (
-                inLink.setTarget(outLink.target) -> 
-                outLink.addAnnotation("toBeRemoved") ->
-                relation.addAnnotation("toBeRemoved")
-            )
+        then (
+            inLink.setTarget(outLink.target) -> 
+            outLink.addAnnotation("toBeRemoved") ->
+            relation.addAnnotation("toBeRemoved")
+        )
         else
             null    
 ;
@@ -711,52 +759,50 @@ Void optimizeAnnotationRepresentation(Annotation annotation) :
             // If the entity already is an annotation representation, don't do anything
             null
             
-        case isTopLevel && annotation.getAnnotation("ptolemyClass").value.matches(".*Director") :
+        case isTopLevel && annotation.getAnnotation("ptolemyClass").value.matches(".*Director") : (
             // The director is an annotation of the top level entity. Turn it
             // into its own separate entity 
-            (
-                newEntity.setName(annotation.getName()) ->
-                
-                // Add an "annotationNode" annotation to the new entity
-                annotationNodeAnnotation.setName("annotationNode") ->
-                newEntity.annotations.add(annotationNodeAnnotation) ->
-                
-                // Annotate the new entity with a copy of the original
-                // annotation the new entity is the transformed result of
-                newEntity.annotations.add(clonedAnnotation) ->
-                
-                // Add the new entity to the top level
-                topLevel.childEntities.add(newEntity) ->
-                
-                // Mark the original annotation for removal
-                toBeRemovedAnnotation.setName("toBeRemoved") ->
-                annotation.annotations.add(toBeRemovedAnnotation)
-            )
+            newEntity.setName(annotation.getName()) ->
+            
+            // Add an "annotationNode" annotation to the new entity
+            annotationNodeAnnotation.setName("annotationNode") ->
+            newEntity.annotations.add(annotationNodeAnnotation) ->
+            
+            // Annotate the new entity with a copy of the original
+            // annotation the new entity is the transformed result of
+            newEntity.annotations.add(clonedAnnotation) ->
+            
+            // Add the new entity to the top level
+            topLevel.childEntities.add(newEntity) ->
+            
+            // Mark the original annotation for removal
+            toBeRemovedAnnotation.setName("toBeRemoved") ->
+            annotation.annotations.add(toBeRemovedAnnotation)
+        )
             
         case isTopLevel && annotation.getAnnotation("ptolemyClass").value.matches(
-            "ptolemy.vergil.kernel.attributes.TextAttribute") :
+            "ptolemy.vergil.kernel.attributes.TextAttribute") : (
             // Comments / large text boxes are annotations of the top level
             // entity. (Ptolemy calls these Annotations at the UI level) Turn
             // them into their own entities.
             // TODO We need a better way to display large amounts of text
-            (
-                newEntity.setName(annotation.getAnnotation("text").value) ->
-                
-                // Add an "annotationNode" annotation to the new entity
-                annotationNodeAnnotation.setName("annotationNode") ->
-                newEntity.annotations.add(annotationNodeAnnotation) ->
-                
-                // Annotate the new entity with a copy of the original
-                // annotation the new entity is the transformed result of
-                newEntity.annotations.add(clonedAnnotation) ->
-                
-                // Add the new entity to the top level
-                topLevel.childEntities.add(newEntity) ->
-                
-                // Mark the original annotation for removal
-                toBeRemovedAnnotation.setName("toBeRemoved") ->
-                annotation.annotations.add(toBeRemovedAnnotation)
-            )
+            newEntity.setName(annotation.getAnnotation("text").value) ->
+            
+            // Add an "annotationNode" annotation to the new entity
+            annotationNodeAnnotation.setName("annotationNode") ->
+            newEntity.annotations.add(annotationNodeAnnotation) ->
+            
+            // Annotate the new entity with a copy of the original
+            // annotation the new entity is the transformed result of
+            newEntity.annotations.add(clonedAnnotation) ->
+            
+            // Add the new entity to the top level
+            topLevel.childEntities.add(newEntity) ->
+            
+            // Mark the original annotation for removal
+            toBeRemovedAnnotation.setName("toBeRemoved") ->
+            annotation.annotations.add(toBeRemovedAnnotation)
+        )
             
         default :
             null    
@@ -784,13 +830,12 @@ Void optimizeStates(Entity entity) :
     ports.addAll(entity.childPorts) ->
     
     if (entity.getAnnotation("ptolemyClass").value == "ptolemy.domains.modal.kernel.State")
-        then
-            (
-                // The entity is indeed a state, so don't link its links
-                // with ports
-                reportWarning("state ports=" + ports) ->
-                ports.moveLinksUp()
-            )
+        then (
+            // The entity is indeed a state, so don't link its links
+            // with ports
+            reportWarning("state ports=" + ports) ->
+            ports.moveLinksUp()
+        )
         else
             null ->
     
