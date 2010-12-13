@@ -53,15 +53,13 @@ public final class ConditionProvider {
      * HashTable for caching condition pairs so that the ExtensionPoint is parsed only once per edit
      * part.
      */
-    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = 
-        new HashMap<String, List<HashMap<String, Object>>>();
+    private HashMap<String, List<HashMap<String, Object>>> hashTableConditions = new HashMap<String, List<HashMap<String, Object>>>();
 
     /**
      * HashTable for caching the relevant features and feature ids. Not yet used, will probably
      * removed again.
      */
-    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = 
-        new HashMap<Integer, EStructuralFeature>();
+    private HashMap<Integer, EStructuralFeature> hashTableRelevantFeatures = new HashMap<Integer, EStructuralFeature>();
 
     /**
      * Constructor set to private to ensure usage of singleton instance.
@@ -158,7 +156,7 @@ public final class ConditionProvider {
                         String figureSizeString = condition.getAttribute("figureSize");
                         Pair<Integer, Integer> figureSize = this.parseFigureSize(figureSizeString);
                         conditionElement.put("figureSize", figureSize);
-                        
+
                         ICondition<EObject> cond = getCondition(condition, packages);
                         if ((cond != null)) {
                             conditionElement.put("condition", cond);
@@ -245,10 +243,9 @@ public final class ConditionProvider {
                 String value = condition.getAttribute("value");
                 if (customConditionObject instanceof ICustomCondition<?>) {
                     @SuppressWarnings("unchecked")
-                    ICustomCondition<EObject> customCondition = 
-                        (ICustomCondition<EObject>) customConditionObject;
+                    ICustomCondition<EObject> customCondition = (ICustomCondition<EObject>) customConditionObject;
                     customCondition.initialize(key, value);
-                    return customCondition;                    
+                    return customCondition;
                 }
             } catch (CoreException e) {
                 throw new RuntimeException("customCondition failed to load.");
@@ -366,7 +363,7 @@ public final class ConditionProvider {
     }
 
     private Pair<Integer, Integer> parseFigureSize(final String input) {
-        if ((input != null) && !(input.isEmpty())) {
+        if ((input != null) && !(input.equals(""))) {
             String[] xandy = input.split(",");
             if (xandy.length == 2) {
                 try {
@@ -387,9 +384,9 @@ public final class ConditionProvider {
     /**
      * 
      * @author ckru
-     *
-     * Comparator for sorting the list of condition extensions by priority.  
-     *
+     * 
+     *         Comparator for sorting the list of condition extensions by priority.
+     * 
      */
     private class ConditionElementComparator implements Comparator<HashMap<String, Object>> {
 

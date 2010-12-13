@@ -74,8 +74,6 @@ public interface IRenderingProvider {
     IBorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parentFigure,
             final Object locator, final EObject object);
 
-    
-    //NodeFigure getNodePlateByString(final String input, final EObject object);
 
     
 }
