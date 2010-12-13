@@ -31,6 +31,7 @@ extension org::eclipse::xtend::util::stdlib::issues;      // pass messages back 
 //=============================================================================
 // Ptolemy - 2 - KAOM    TRANSFORMATION    
 //    @author: haf
+//    @author: cds
 //=============================================================================
 //
 // Transforms a Ptolemy2 model to a KAOM model that can be displayed in
@@ -518,132 +519,209 @@ Void optimize(Entity entity) :
 // Inference Of Link Directions
 //-----------------------------------------------------------------------------
 
+/**
+ * Infers the direction of the links in the model tree rooted at the given
+ * entity.
+ * 
+ * First, an attempt is made to infer the type of ports of yet unknown type.
+ * This succeeds if the port is connected to a link whose direction is known.
+ * 
+ * Second, the directions of undirected links connected to ports of known
+ * type are inferred.
+ * 
+ * Third, all relations are traversed, looking for a relation with only
+ * incoming or only outgoing links and just one undirected link. If such
+ * a relation is found, the direction of its undirected link is inferred.
+ * If no such relation is found, a random undirected link's direction is
+ * fixed.
+ * 
+ * This process is repeated until no undirected links are left.
+ * 
+ * @param entity root of the tree.
+ */
 Void inferLinkDirections(Entity entity) :
-    // Depth first
-    entity.childEntities.inferLinkDirections() ->
-     
-    // Set directions for links connected directly to inputs / outputs
-    inferLinkDirectionsForPorts(entity.childPorts) ->
+    let portsChanged = inferPorts(entity) :
+    let linksChanged = inferLinks(entity) :
+    //let relationsChanged = inferRelations(entity) :
     
-    // Then analyze other links from the neighbor information
-    inferLinkDirectionsForLinksFixpoint(entity.childLinks)
-;
-
-// Set Link directions for all connected Links to a Port 
-// using the port input/output information
-Void inferLinkDirections(Port port) :
-    let isInput = port.hasAnnotation("input") :
-    let isOutput = port.hasAnnotation("output") :
-    
-    switch {
-        case isInput && isOutput :
-            // The port seems to be both an input port and an output port,
-            // so we cannot derive any information from that
-            null
-            
-        case isInput :
-            // Input port
-            port.getConnectedLinks().setLinkDirection(port, true)
-            
-        case isOutput :
-            // Output port
-            port.getConnectedLinks().setLinkDirection(port, false)
-            
-        default :
-            // Neither input nor output, so we cannot derice any information
-            // from that
-            null
-    }
-;
-
-// Set Link directions for all connected Links to a List of Ports 
-// using the port input/output information
-Void inferLinkDirectionsForPorts(List[Port] ports) :
-    if (ports.size <= 0)
-        then null
-        else (
-            inferLinkDirections(ports.first()) ->
-            inferLinkDirectionsForPorts(ports.withoutFirst())
-        )
-;
-
-// Set directions of all links to a port which is known to be an input or output
-Void setLinkDirection(Link link, Port port, Boolean isInput):
-    switch {
-        case isInput == true  && link.eContainer == port.eContainer :
-            link.swapSourceTo(port)
-            
-        case isInput == false && link.eContainer == port.eContainer :
-            link.swapTargetTo(port)
-            
-        case isInput == true  && link.eContainer != port.eContainer :
-            link.swapTargetTo(port)
-            
-        case isInput == false && link.eContainer != port.eContainer :
-            link.swapSourceTo(port)
-            
-        default :
-            null
-    }
-;
-
-// Do a fixpoint iteration on a set of Links and try to deduce link directions from
-// neighbor edges
-Void inferLinkDirectionsForLinksFixpoint(List[Link] links):
-    let hasChanged = links.analyzeLinkDirectionForLink().exists(b | b == true) :
-    
-    if (hasChanged)
-        then inferLinkDirectionsForLinksFixpoint(links)
+    if (portsChanged || linksChanged/* || relationsChanged*/)
+        then inferLinkDirections(entity)
         else null
 ;
 
-// Given a link and up to two relations, deduce from neighbor links the link's direction
-Boolean analyzeLinkDirectionForLink(Link link):
-    let relations = {
-        link.source,
-        link.target
-    }.typeSelect(kaom::Relation) :
-    let switchedAtRel1 = if (relations.size < 1)
-        then false
-        else analyzeLinkDirectionForLink(link, relations.get(0)) :
-    let switchedAtRel2 = if (relations.size < 2)
-        then false
-        else analyzeLinkDirectionForLink(link, relations.get(1)) :
+
+//------------------
+// Infer Port Types
+//------------------
+
+/**
+ * Traverses the ports in the tree rooted at the given element and tries
+ * to infer their types, if unknown.
+ * 
+ * @param entity root of the tree of entities to traverse.
+ * @return true if some port's type has changed, false otherwise.
+ */
+Boolean inferPorts(Entity entity) :
+    let ownPortsChanged = _inferPorts(entity.childPorts) :
+    let otherPortsChanged = entity.childEntities.inferPorts().exists(e | e == true) :
     
-    switchedAtRel1 || switchedAtRel2
+    ownPortsChanged || otherPortsChanged
 ;
 
-// Given a link and one relation, deduce from neighbor links the link's direction
-Boolean analyzeLinkDirectionForLink(Link link, Relation relation):
-    let neighborLinks = {} :
+/**
+ * Go through the list of ports and try to infer their type.
+ * 
+ * @param ports list of ports.
+ * @return true if some port's type has changed, false otherwise.
+ */
+Boolean _inferPorts(List[Port] ports) :
+    if (ports.size == 0)
+        then false
+        else (
+            _inferPort(ports.first()) || _inferPorts(ports.withoutFirst())
+        )
+;
+
+/**
+ * Tries to infer the type of the given port, if unknown.
+ * 
+ * @param port the port whose type to infer.
+ * @return true if the port's type has changed, false otherwise.
+ */
+Boolean _inferPort(Port port) :
+    // Find any connected undirected links
+    let connectedLinks = getConnectedLinks(port).select(l | !isMarkedAsUndirected(l)) :
     
-    if (link.isMarkedAsUndirected()) 
+    if (isMarkedAsInputPort(port) || isMarkedAsOutputPort(port))
         then (
-            neighborLinks.addAll(relation.outgoingLinks) ->
-            neighborLinks.addAll(relation.incomingLinks) ->
-            neighborLinks.analyzeLinkDirection(relation, link).exists(b | b == true)
+            // The port's type is known; our work here is done
+            false
+        )
+        else (
+            // The port's type is unknown. Try to find a directed link
+            if (hasDirectedIncomingLink(port, connectedLinks))
+                then (
+                    // There is a directed link going into the port, so
+                    // it must be an input port! Heureka!
+                    markAsInputPort(port) ->
+                    true
+                )
+                else (
+                    if (hasDirectedOutgoingLink(port, connectedLinks))
+                        then (
+		                    // There is a directed link coming out of the
+		                    // port, so it must be an output port! Hurray!
+		                    markAsOutputPort(port) ->
+		                    true
+                        )
+                        else (
+                            // We could not infer the port's type
+                            false
+                        )
+                )
+        )
+;
+
+/**
+ * Checks if one of the links in the list has the port as its target.
+ * 
+ * @param port the port.
+ * @param links list of directed links to look through.
+ * @return true if one of the links has the port as its target.
+ */
+Boolean hasDirectedIncomingLink(Port port, List[Link] links) :
+    let link = links.first() :
+    
+    // Check if the link is directed and goes into the port
+    if (link != null)
+        then (
+		    if (link.target == port)
+		        then true
+		        else hasDirectedIncomingLink(port, links.withoutFirst())
         )
         else false
 ;
 
-Boolean analyzeLinkDirection(Link neighborLink, Relation relation, Link link):
-    switch {
-        case (link.source == link.target) :
-            false
-            
-        case ((neighborLink.target == relation) && (neighborLink.isMarkedAsUndirected())) : (
-            link.swapSourceTo(relation) ->
-            true
+/**
+ * Checks if one of the links in the list has the port as its source.
+ * 
+ * @param port the port.
+ * @param links list of directed links to look through.
+ * @return true if one of the links has the port as its source.
+ */
+Boolean hasDirectedOutgoingLink(Port port, List[Link] links) :
+    let link = links.first() :
+    
+    // Check if the link is directed and goes out of the port
+    if (link != null)
+        then (
+            if (link.source == port)
+                then true
+                else hasDirectedOutgoingLink(port, links.withoutFirst())
         )
-        
-        case ((neighborLink.source == relation) && (neighborLink.isMarkedAsUndirected())) : (
-            link.swapTargetTo(relation) ->
-            true
+        else false
+;
+
+
+//-----------------------
+// Infer Link Directions
+//-----------------------
+
+/**
+ * Traverses the links in the tree rooted at the given element and tries
+ * to infer their direction, if unknown.
+ * 
+ * @param entity root of the tree of entities to traverse.
+ * @return true if some link's direction has been inferred, false
+ *         otherwise.
+ */
+Boolean inferLinks(Entity entity) :
+    let ownLinksChanged = _inferLinks(entity.childLinks) :
+    let otherLinksChanged = entity.childEntities.inferLinks().exists(e | e == true) :
+    
+    ownLinksChanged || otherLinksChanged
+;
+
+/**
+ * Go through the list of links and try to infer their direction.
+ * 
+ * @param links list of links.
+ * @return true if some link's direction was inferred, false otherwise.
+ */
+Boolean _inferLinks(List[Link] links) :
+    if (links.size == 0)
+        then false
+        else (
+            _inferLink(links.first()) || _inferLinks(links.withoutFirst())
         )
-        
-        default :
-            false
-    }
+;
+
+/**
+ * Tries to infer the given link's direction by looking at the port it
+ * is connected to, if any.
+ * 
+ * @param link the link whose direction to infer.
+ * @return true if the link's direction was inferred, false otherwise.
+ */
+Boolean _inferLink(Link link) :
+    // This list will have at most one entry
+    let endPorts = {
+        link.source,
+        link.target
+    }.typeSelect(kaom::Port) :
+    
+    // If the link's direction is unknown and it is connected to a port...
+    if (endPorts.size > 0 && isMarkedAsUndirected(link))
+        then (
+            // If the port type is known, set the link's direction
+            if (isPortTypeKnown(endPorts.get(0)))
+                then (
+                    setLinkDirection(link, endPorts.get(0)) ->
+                    true
+                )
+                else false
+        )
+        else false
 ;
 
 
@@ -934,6 +1012,39 @@ Void remove(Port port) :
 ;
 
 /**
+ * Sets the direction of a link connected to a given port according to that
+ * port's type. If the port type is unknown, nothing is done.
+ * 
+ * @param link the link whose direction to set.
+ * @param port the port connected to the link.
+ */
+Void setLinkDirection(Link link, Port port) :
+    let isPortTypeKnown = isPortTypeKnown(port) :
+    let isInputPort = isMarkedAsInputPort(port) :
+    
+    if (!isPortTypeKnown)
+        then null
+        else (
+		    switch {
+		        case isInputPort == true  && link.eContainer == port.eContainer :
+		            link.swapSourceTo(port)
+		            
+		        case isInputPort == false && link.eContainer == port.eContainer :
+		            link.swapTargetTo(port)
+		            
+		        case isInputPort == true  && link.eContainer != port.eContainer :
+		            link.swapTargetTo(port)
+		            
+		        case isInputPort == false && link.eContainer != port.eContainer :
+		            link.swapSourceTo(port)
+		            
+		        default :
+		            null
+		    }
+        )
+;
+
+/**
  * Swaps the link if the given linkable is its target. Otherwise, the link's source is
  * just set to the given linkable.
  * 
@@ -1152,6 +1263,60 @@ Void unmarkAsUndirected(Link link) :
  */
 Boolean isMarkedAsUndirected(Link link) :
     hasAnnotation(link, "undirected")
+;
+
+/**
+ * Marks the given port as being an input port. Although it shouldn't be
+ * necessary, any output port markings are removed.
+ * 
+ * @param port the port to be marked as input port.
+ */
+Void markAsInputPort(Port port) :
+    removeAnnotation(port, "output") ->
+    addAnnotation(port, "input")
+;
+
+/**
+ * Checks whether the given port is marked as being an input port.
+ * 
+ * @param port the port to check.
+ * @return true if the port is an input port, false otherwise.
+ */
+Boolean isMarkedAsInputPort(Port port) :
+    hasAnnotation(port, "input")
+;
+
+
+/**
+ * Marks the given port as being an output port. Although it shouldn't be
+ * necessary, any input port markings are removed.
+ * 
+ * @param port the port to be marked as output port.
+ */
+Void markAsOutputPort(Port port) :
+    removeAnnotation(port, "input") ->
+    addAnnotation(port, "output")
+;
+
+/**
+ * Checks whether the given port is marked as being an output port.
+ * 
+ * @param port the port to check.
+ * @return true if the port is an output port, false otherwise.
+ */
+Boolean isMarkedAsOutputPort(Port port) :
+    hasAnnotation(port, "output")
+;
+
+/**
+ * Checks if the port's type is known.
+ * 
+ * @param port the port to check.
+ * @return true if the port is marked as being either an input port or
+ *         an output port.
+ */
+Boolean isPortTypeKnown(Port port) :
+    isMarkedAsInputPort(port) || isMarkedAsOutputPort(port)
 ;
 
 /**
