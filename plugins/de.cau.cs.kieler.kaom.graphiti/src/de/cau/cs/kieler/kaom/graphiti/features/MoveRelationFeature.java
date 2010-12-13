@@ -27,12 +27,12 @@ import org.eclipse.graphiti.services.Graphiti;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Relation;
-import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
 import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
 
 /**
+ * Feature for moving relations.
  * 
- * @author atr Constructor to move relation ana make changes accordibgly
+ * @author atr
  */
 public class MoveRelationFeature extends DefaultMoveShapeFeature {
 
@@ -40,31 +40,25 @@ public class MoveRelationFeature extends DefaultMoveShapeFeature {
     private SemanticProvider semanticProvider;
     
     /**
+     * The constructor.
      * 
-     * @param fp
-     *            Constructor
+     * @param fp the feature provider
+     * @param sp the semantic provider
      */
     public MoveRelationFeature(final IFeatureProvider fp, final SemanticProvider sp) {
         super(fp);
         this.semanticProvider = sp;
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
     public boolean canMoveShape(final IMoveShapeContext context) {
-        boolean canMove = context.getSourceContainer() != null;
-        if (canMove) {
-            canMove = context.getTargetContainer() != null;
-        }
-        return canMove;
+        return (context.getSourceContainer() != null && context.getTargetContainer() != null);
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override

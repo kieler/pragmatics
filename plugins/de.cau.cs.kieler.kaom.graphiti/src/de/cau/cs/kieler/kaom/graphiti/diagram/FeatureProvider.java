@@ -38,6 +38,7 @@ import org.eclipse.graphiti.features.context.IPasteContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -67,7 +68,6 @@ import de.cau.cs.kieler.kaom.graphiti.features.MoveAnchorFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.MoveEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.MoveRelationFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.PasteEntityFeature;
-import de.cau.cs.kieler.kaom.graphiti.features.ResizeEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateLinkFeature;
 
@@ -177,9 +177,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
         Shape shape = context.getShape();
         Object ob = getBusinessObjectForPictogramElement(shape);
         if (ob instanceof Entity) {
-            return new ResizeEntityFeature(this);
+            return new DefaultResizeShapeFeature(this);
         }
-        return super.getResizeShapeFeature(context);
+        return null;
     }
 
     /**

@@ -33,15 +33,19 @@ import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
- * @author atr Class used to construct the property view.
+ * Section for construction of the property view.
+ * 
+ * @author atr
  */
-public class EntitySection extends GFPropertySection implements ITabbedPropertyConstants {
+public class KaomPropertySection extends GFPropertySection implements ITabbedPropertyConstants {
 
+    /** the text widget for editing the name. */
     private Text nameText;
 
-    // Listener used when focus is lost from the text field
-    // it updates the name of the element selected
-    private FocusListener listener = new FocusListener() {
+    /** Listener used when focus is lost from the text field.
+      * It updates the name of the selected element.
+      */
+    private class KaomFocusListener implements FocusListener {
 
         public void focusGained(final FocusEvent e) {
         }
@@ -78,12 +82,11 @@ public class EntitySection extends GFPropertySection implements ITabbedPropertyC
     };
 
     /**
-     * Used to create controls and add them to the property view {@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public void createControls(final Composite parent,
             final TabbedPropertySheetPage tabbedPropertySheetPage) {
-
         super.createControls(parent, tabbedPropertySheetPage);
         TabbedPropertySheetWidgetFactory factory = getWidgetFactory();
         Composite composite = factory.createFlatFormComposite(parent);
@@ -97,7 +100,7 @@ public class EntitySection extends GFPropertySection implements ITabbedPropertyC
 
         // Layouts the nameText field and adds the listener
         nameText.setLayoutData(data);
-        nameText.addFocusListener(listener);
+        nameText.addFocusListener(new KaomFocusListener());
         CLabel valueLabel = factory.createCLabel(composite, "Name:");
 
         data = new FormData();
@@ -105,31 +108,21 @@ public class EntitySection extends GFPropertySection implements ITabbedPropertyC
         data.right = new FormAttachment(nameText, -HSPACE);
         data.top = new FormAttachment(nameText, 0, SWT.CENTER);
         valueLabel.setLayoutData(data);
-
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
     public void refresh() {
-
         PictogramElement pe = getSelectedPictogramElement();
         if (pe != null) {
-
             Object bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
-
-            if (bo == null) {
-                return;
-            }
-
             if (bo instanceof NamedObject) {
                 String name = ((NamedObject) bo).getName();
                 nameText.setText(name == null ? "" : name);
             }
         }
-
     }
 
 }

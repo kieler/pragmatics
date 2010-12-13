@@ -84,4 +84,5 @@ public class PasteEntityFeature extends AbstractPasteFeature {
             addGraphicalRepresentation(ac, newEntity);
         }
     }
+    
 }

@@ -26,14 +26,16 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import de.cau.cs.kieler.kaom.Link;
 
 /**
+ * Updates any changes made to a link.
+ * 
  * @author atr
- * Updates any changes made to a Link
  */
 public class UpdateLinkFeature extends AbstractUpdateFeature {
 
     /**
-     * @param fp
-     *            Constructor.
+     * The constructor.
+     * 
+     * @param fp the feature provider
      */
     public UpdateLinkFeature(final IFeatureProvider fp) {
         super(fp);
@@ -48,7 +50,6 @@ public class UpdateLinkFeature extends AbstractUpdateFeature {
     }
 
     /**
-     * Checks if the name has been modified and returns a reason accordingly.
      * {@inheritDoc}
      */
     public IReason updateNeeded(final IUpdateContext context) {
@@ -76,15 +77,14 @@ public class UpdateLinkFeature extends AbstractUpdateFeature {
                 || (!(pictogramName == null) && !pictogramName.equals(businessName))) {
             updateRequired = true;
         }
-//        if (updateRequired) {
-//            return Reason.createTrueReason("Name is out of Date");
-//        } else {
+        if (updateRequired) {
+            return Reason.createTrueReason("Name is out of Date");
+        } else {
             return Reason.createFalseReason();
-//        }
+        }
     }
 
     /**
-     * Updates the link.
      * {@inheritDoc}
      */
     public boolean update(final IUpdateContext context) {

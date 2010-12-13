@@ -56,8 +56,8 @@
       <propertySections
             contributorId="de.cau.cs.kieler.kaom.graphiti">
          <propertySection
-               class="de.cau.cs.kieler.kaom.graphiti.features.EntitySection"
-               filter="de.cau.cs.kieler.kaom.graphiti.features.EntityFilter"
+               class="de.cau.cs.kieler.kaom.graphiti.features.KaomPropertySection"
+               filter="de.cau.cs.kieler.kaom.graphiti.features.KaomPropertyFilter"
                id="de.cau.cs.kieler.kaom.graphiti.core"
                tab="de.cau.cs.kieler.kaom.graphiti.core">
          </propertySection>

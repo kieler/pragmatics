@@ -24,38 +24,51 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import de.cau.cs.kieler.kaom.Link;
 
 /**
+ * Feature for enabling direct editing of the name of links.
+ * 
  * @author atr
- * Class used to enable direct edit of the name of the link
  */
 public class DirectEditLinkFeature extends AbstractDirectEditingFeature {
 
     /**
-     * @param fp
-     *            Constructor.
+     * The constructor.
+     * 
+     * @param fp the feature provider
      */
     public DirectEditLinkFeature(final IFeatureProvider fp) {
         super(fp);
     }
 
     /**
-     *  Used to select the UI to be shown where editing will take place.
      * {@inheritDoc}
      */
     public int getEditingType() {
-        // TODO Auto-generated method stub
         return TYPE_TEXT;
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getInitialValue(final IDirectEditingContext context) {
-        PictogramElement pe = context.getPictogramElement();
-        return ((Link) getBusinessObjectForPictogramElement(pe)).getName();
+    @Override
+    public boolean canDirectEdit(final IDirectEditingContext context) {
+        Object bo = getBusinessObjectForPictogramElement(context.getPictogramElement());
+        GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
+        return (bo instanceof Link && ga instanceof Text);
     }
 
     /**
-     * Sets the new value written.
+     * {@inheritDoc}
+     */
+    public String getInitialValue(final IDirectEditingContext context) {
+        Object object = getBusinessObjectForPictogramElement(context.getPictogramElement());
+        if (object instanceof Link) {
+            return ((Link) object).getName();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void setValue(final String value, final IDirectEditingContext context) {
@@ -64,43 +77,8 @@ public class DirectEditLinkFeature extends AbstractDirectEditingFeature {
         if (obj instanceof Link) {
             Link link = (Link) obj;
             link.setName(value);
+            updatePictogramElement(((ConnectionDecorator) pe).getContainer());
         }
-        updatePictogramElement(((ConnectionDecorator) pe).getContainer());
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean canDirectEdit(final IDirectEditingContext context) {
-        PictogramElement pe = context.getPictogramElement();
-        Object bo = getBusinessObjectForPictogramElement(pe);
-        GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-        // support direct editing, if it is a EClass, and the user clicked
-        // directly on the text and not somewhere else in the rectangle
-        if (bo instanceof Link && ga instanceof Text) {
-            return true;
-        }
-        // direct editing not supported in all other cases
-        return false;
-
     }
     
-    /**
-     * Used to keep a check on the new value entered.
-     * {@inheritDoc}
-     */
-    @Override
-    public String checkValueValid(final String value, final IDirectEditingContext context) {
-        if (value.length() < 1) {
-          return "Please enter any text as entity name.";
-        }
-        if (value.contains("\n")) {
-            return "Line breakes are not allowed in class names.";
-        }
-        // null means, that the value is valid
-        return null;
-
-    }
 }

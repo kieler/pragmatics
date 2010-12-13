@@ -26,22 +26,22 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import de.cau.cs.kieler.kaom.Entity;
 
 /**
+ * Update any changes made to an entity.
  * 
- * @author atr Update any changes made to Entity
+ * @author atr
  */
 public class UpdateEntityFeature extends AbstractUpdateFeature {
 
     /**
+     * The constructor.
      * 
-     * @param fp
-     *            Constructor.
+     * @param fp the feature provider
      */
     public UpdateEntityFeature(final IFeatureProvider fp) {
         super(fp);
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public boolean canUpdate(final IUpdateContext context) {
@@ -50,37 +50,32 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     public boolean update(final IUpdateContext context) {
-        String businessName = null;
         PictogramElement pictogramElement = context.getPictogramElement();
         Object obj = getBusinessObjectForPictogramElement(pictogramElement);
         if (obj instanceof Entity) {
-            businessName = ((Entity) obj).getName();
-        }
-        //updating the name of the pictogram element
-        if (pictogramElement instanceof ContainerShape) {
-            ContainerShape cs = (ContainerShape) pictogramElement;
-            for (Shape shape : cs.getChildren()) {
+            String businessName = ((Entity) obj).getName();
+            // updating the name of the pictogram element
+            if (pictogramElement instanceof ContainerShape) {
+                ContainerShape cs = (ContainerShape) pictogramElement;
+                for (Shape shape : cs.getChildren()) {
+                    if (shape.getGraphicsAlgorithm() instanceof Text) {
+                        ((Text) shape.getGraphicsAlgorithm()).setValue(businessName);
 
-                if (shape.getGraphicsAlgorithm() instanceof Text) {
-                    ((Text) shape.getGraphicsAlgorithm()).setValue(businessName);
-
-                    return true;
+                        return true;
+                    }
                 }
-            }
 
+            }
         }
 
         return false;
     }
 
     /**
-     * 
      * {@inheritDoc}
-     * Checks if the name has been modified and returns a reason accordingly.
      */
     public IReason updateNeeded(final IUpdateContext context) {
         String pictogramName = null;

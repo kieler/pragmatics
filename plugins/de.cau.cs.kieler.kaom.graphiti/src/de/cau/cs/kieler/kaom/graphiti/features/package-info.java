@@ -13,7 +13,7 @@
  */
 
 /**
- * Features that are added to the feature provider of the Graphiti KAOM editor.
+ * Features that are added by the feature provider of the Graphiti KAOM editor.
  * Each feature generally extends an abstract or default feature.
  * Each feature class has a method like {@code canMove}, {@code canCreate} which checks if the
  * operation is possible. 

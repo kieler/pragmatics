@@ -28,34 +28,32 @@ import org.eclipse.graphiti.services.Graphiti;
 import de.cau.cs.kieler.kaom.Entity;
 
 /**
+ * Feature for moving ports.
+ * 
  * @author atr
- * Class used to move the Port
  */
 public class MoveAnchorFeature extends DefaultMoveAnchorFeature {
 
     private static final int BOUNDARY_DISTANCE = 10;
     private static final int ADJUSTMENT_FACTOR = 10;
+    
     /**
-     * @param fp
-     *                  Constructor.
+     * The constructor.
+     * 
+     * @param fp the feature provider
      */
     public MoveAnchorFeature(final IFeatureProvider fp) {
         super(fp);
-
     }
 
    /**
-    * 
     * {@inheritDoc}
     */
     @Override
     public boolean canMoveAnchor(final IMoveAnchorContext context) {
-
         if (context.getTargetContainer() instanceof ContainerShape) {
             ContainerShape containerShape = (ContainerShape) context.getTargetContainer();
-
             if (getBusinessObjectForPictogramElement(containerShape) instanceof Entity) {
-               
                 if (Math.abs(context.getX() - containerShape.getGraphicsAlgorithm()
                         .getWidth()) < (BOUNDARY_DISTANCE + ADJUSTMENT_FACTOR)
                         || Math.abs(context.getY()
@@ -67,11 +65,9 @@ public class MoveAnchorFeature extends DefaultMoveAnchorFeature {
             }
         }
         return false;
-
     }
 
     /**
-     * Used to move the Port.
      * {@inheritDoc}
      */
     @Override

@@ -13,24 +13,21 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
-import java.util.Collection;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 
 import de.cau.cs.kieler.kaom.Entity;
-import de.cau.cs.kieler.kaom.Relation;
-import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
 import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
 
 /**
+ * Feature for moving  entities.
  * 
- * @author atr Class used to move the entity and adjust the XML code accordingly
+ * @author atr
  */
 public class MoveEntityFeature extends DefaultMoveShapeFeature {
 
@@ -38,9 +35,10 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
     private SemanticProvider semanticProvider;
     
     /**
+     * The constructor.
      * 
-     * @param fp
-     *            Constructor
+     * @param fp the feature provider
+     * @param sp the semantic provider
      */
     public MoveEntityFeature(final IFeatureProvider fp, final SemanticProvider sp) {
         super(fp);
@@ -48,22 +46,16 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
     }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
     public boolean canMoveShape(final IMoveShapeContext context) {
-        boolean canMove = context.getSourceContainer() != null;
-        if (canMove
-                && !(getBusinessObjectForPictogramElement(context.getTargetContainer()) 
-                        instanceof Relation)) {
-            canMove = true;
-        }
-        return canMove;
+        return (context.getSourceContainer() != null
+                && (getBusinessObjectForPictogramElement(context.getTargetContainer()) 
+                        instanceof Entity));
     }
 
     /**
-     * Method used to move the entity and also adjust the XML code accordingly.
      *  {@inheritDoc}
      */
     @Override
@@ -78,8 +70,13 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
         int x = context.getX();
         int y = context.getY();
 
-        if (oldContainerShape != newContainerShape) {
-
+        if (oldContainerShape == newContainerShape) {
+            // move within the same container
+            if (shapeToMove.getGraphicsAlgorithm() != null) {
+                Graphiti.getGaService().setLocation(shapeToMove.getGraphicsAlgorithm(), x, y,
+                        avoidNegativeCoordinates());
+            }
+        } else {
             // check if the source container is the diagram and get the parent Entity
             // in which this element is contained
             oldParentEntity = semanticProvider.fetchEntity(oldContainerShape);
@@ -93,12 +90,9 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
             // removes the element from the diagram and the XML code
             PictogramElement[] currentSelection = getDiagramEditor().getSelectedPictogramElements();
             if (oldContainerShape != null) {
-                Collection<Shape> children = oldContainerShape.getChildren();
-                if (children != null) {
-                    children.remove(shapeToMove);
-                    if (oldParentEntity != null) {
-                        oldParentEntity.getChildEntities().remove(en);
-                    }
+                oldContainerShape.getChildren().remove(shapeToMove);
+                if (oldParentEntity != null) {
+                    oldParentEntity.getChildEntities().remove(en);
                 }
             }
 
@@ -113,11 +107,6 @@ public class MoveEntityFeature extends DefaultMoveShapeFeature {
             }
             // restore selection
             getDiagramEditor().setPictogramElementsForSelection(currentSelection);
-        } else { // move within the same container
-            if (shapeToMove.getGraphicsAlgorithm() != null) {
-                Graphiti.getGaService().setLocation(shapeToMove.getGraphicsAlgorithm(), x, y,
-                        avoidNegativeCoordinates());
-            }
         }
     }
 

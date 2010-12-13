@@ -21,14 +21,16 @@ import org.eclipse.graphiti.features.impl.AbstractUpdateFeature;
 import de.cau.cs.kieler.kaom.Relation;
 
 /**
+ * Updates any changes made to a relation.
+ * 
  * @author atr
- * Updates any changes made to a Relation
  */
 public class UpdateRelationFeature extends AbstractUpdateFeature {
 
     /**
-     * @param fp
-     *            Constructor.
+     * The constructor.
+     * 
+     * @param fp the feature provider
      */
     public UpdateRelationFeature(final IFeatureProvider fp) {
         super(fp);
