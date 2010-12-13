@@ -90,8 +90,8 @@ create Entity this transform(moml::EntityType entity) :
     createTrace(this, entity, "ptolemy", "kaom") ->
     
     // Add annotations pointing to Ptolemy
-    this.addAnnotation("language", "ptolemy") ->
-    this.addAnnotation("ptolemyClass", entity.class1) ->
+    this.addStringAnnotation("language", "ptolemy") ->
+    this.addStringAnnotation("ptolemyClass", entity.class1) ->
     
     // Add the entity's properties, ports, entities, relations and links
     addProperties(this, entity.property) ->
@@ -113,7 +113,7 @@ create Relation this transform(moml::RelationType relation) :
     
     // Set name and add Ptolemy annotation
     this.setName(relation.name) ->
-    this.addAnnotation("language", "ptolemy") ->
+    this.addStringAnnotation("language", "ptolemy") ->
     
     // Add the relation's properties
     addProperties(this, relation.property)
@@ -145,7 +145,7 @@ create Link this transform(moml::LinkType link, Entity parent) :
     createTrace(this, link, "ptolemy", "kaom") ->
     
     // Add annotations pointing to Ptolemy
-    this.addAnnotation("language", "ptolemy") ->
+    this.addStringAnnotation("language", "ptolemy") ->
     
     (
         if (port != null)
@@ -175,7 +175,7 @@ create Link this transform(moml::LinkType link, Entity parent) :
     // Initially, set all relations to be undirected as we cannot derive
     // meaningful directions at this point anyway; the directions will be
     // figured out later
-    this.markAsUndirected(true)
+    this.markAsUndirected()
 ;
 
 /**
@@ -349,7 +349,7 @@ Void addChildPorts(Entity entity) :
  * @return the same list, but with the ports annotated.
  */
 List[Port] addLanguageToPort(List[Port] ports) :
-    ports.addAnnotation("language", "ptolemy") ->
+    ports.addStringAnnotation("language", "ptolemy") ->
     ports
 ;
 
@@ -488,19 +488,6 @@ Port mergePortAttributesSingle(Port newPort, List[Port] existingPorts) :
         )
 ;
 
-/**
- * Returns the given object's name if it's a NamedObject, or the empty string
- * otherwise.
- * 
- * @param o the object whose name to return.
- * @return the object's name or the empty string.
- */
-String getName(Object o) :
-    if (NamedObject.isInstance(o))
-        then ((NamedObject)o).name
-        else ""
-;
-
 
 //-----------------------------------------------------------------------------
 // OPTIMIZATION RULES
@@ -531,66 +518,23 @@ Void optimize(Entity entity) :
 // Inference Of Link Directions
 //-----------------------------------------------------------------------------
 
-/**
- * Infer the link directions of all links connecting all the children and
- * grandchildren of the given entity.
- * 
- * First, all directions of links connected to ports with known type (input or
- * output) are set. This is the easy part.
- * 
- * Then, the algorithm tries to find 
- *
- * @param entity the entity at the root of the hierarchy of entities whose
- *               link directions to infer.
- */
 Void inferLinkDirections(Entity entity) :
-    // Set the direction of links connected to ports of known type
-    inferKnownPortLinkDirections(entity) ->
+    // Depth first
+    entity.childEntities.inferLinkDirections() ->
+     
+    // Set directions for links connected directly to inputs / outputs
+    inferLinkDirectionsForPorts(entity.childPorts) ->
     
-    // TODO Do the rest.
+    // Then analyze other links from the neighbor information
+    inferLinkDirectionsForLinksFixpoint(entity.childLinks)
 ;
 
-/**
- * Sets the direction of links connected to the entity's ports of known
- * type, then recurses to its child entites.
- * 
- * @param entity the entity whose link directions to infer.
- */
-Void inferKnownPortLinkDirections(Entity entity) :
-    // Infer the directions of links connected to ports of this entity
-    inferKnownPortLinkDirections(entity.childPorts) ->
-    
-    // Recurse
-    inferKnownPortLinkDirections(entity.childEntities)
-;
-
-/**
- * Iterates through the list of ports and sets the direction of its
- * connected links if the port has a known type. (input / output)
- * 
- * @param ports list of ports.
- */
-Void inferKnownPortLinkDirections(List[Port] ports) :
-    if (ports.size() == 0)
-        then null
-        else (
-            inferKnownPortLinkDirections(ports.first()) :
-            inferKnownPortLinkDirections(ports.withoutFirst())
-        )
-;
-
-/**
- * Sets the direction of links connected to the given port, if possible.
- * This is possible if the port has exactly one of the annotations "input"
- * and "output".
- * 
- * @param port the port whose links' directions to set.
- */
-Void inferKnownPortLinkDirections(Port port) :
+// Set Link directions for all connected Links to a Port 
+// using the port input/output information
+Void inferLinkDirections(Port port) :
     let isInput = port.hasAnnotation("input") :
     let isOutput = port.hasAnnotation("output") :
     
-    // Set the link direction, if possible
     switch {
         case isInput && isOutput :
             // The port seems to be both an input port and an output port,
@@ -612,26 +556,35 @@ Void inferKnownPortLinkDirections(Port port) :
     }
 ;
 
+// Set Link directions for all connected Links to a List of Ports 
+// using the port input/output information
+Void inferLinkDirectionsForPorts(List[Port] ports) :
+    if (ports.size <= 0)
+        then null
+        else (
+            inferLinkDirections(ports.first()) ->
+            inferLinkDirectionsForPorts(ports.withoutFirst())
+        )
+;
 
-
-
-
-
-
-
-
-
-
-
-Void inferLinkDirections(Entity entity) :
-    // Depth first
-    entity.childEntities.inferLinkDirections() ->
-     
-    // Set directions for links connected directly to inputs / outputs
-    inferLinkDirectionsForPorts(entity.childPorts) ->
-    
-    // Then analyze other links from the neighbor information
-    inferLinkDirectionsForLinksFixpoint(entity.childLinks)
+// Set directions of all links to a port which is known to be an input or output
+Void setLinkDirection(Link link, Port port, Boolean isInput):
+    switch {
+        case isInput == true  && link.eContainer == port.eContainer :
+            link.swapSourceTo(port)
+            
+        case isInput == false && link.eContainer == port.eContainer :
+            link.swapTargetTo(port)
+            
+        case isInput == true  && link.eContainer != port.eContainer :
+            link.swapTargetTo(port)
+            
+        case isInput == false && link.eContainer != port.eContainer :
+            link.swapSourceTo(port)
+            
+        default :
+            null
+    }
 ;
 
 // Do a fixpoint iteration on a set of Links and try to deduce link directions from
@@ -713,8 +666,8 @@ Void optimizeSingleRelations(Entity entity) :
     
     // Remove the relations and links that can be removed (this is done in a
     // second iteration to avoid concurrent modification exceptions)
-    entity.childLinks.select(a | a.getAnnotation("toBeRemoved") != null).remove() ->
-    entity.childRelations.select(a | a.getAnnotation("toBeRemoved") != null).remove() ->
+    entity.childLinks.select(a | a.isMarkedAsRemovable()).remove() ->
+    entity.childRelations.select(a | a.isMarkedAsRemovable()).remove() ->
     
     // Recursively optimize the relations of the entity's child entities
     entity.childEntities.optimizeSingleRelations()
@@ -722,8 +675,8 @@ Void optimizeSingleRelations(Entity entity) :
 
 /**
  * Replaces the given relation by a single link, if possible. If that is
- * indeed possible, the relation is annotated with the text "toBeRemoved",
- * as is one of the links involved.
+ * indeed possible, the relation is marked as being removable, as is one
+ * of the links involved.
  * 
  * @param relation the relation to be optimized.
  */
@@ -737,8 +690,8 @@ Void optimizeSingleRelation(Relation relation):
     if ((relation.incomingLinks.size == 1) && (relation.outgoingLinks.size == 1))
         then (
             inLink.setTarget(outLink.target) -> 
-            outLink.addAnnotation("toBeRemoved") ->
-            relation.addAnnotation("toBeRemoved")
+            outLink.markAsRemovable() ->
+            relation.markAsRemovable()
         )
         else
             null    
@@ -762,7 +715,7 @@ Void optimizeAnnotationRepresentation(Entity entity) :
     // Remove those annoations that were transformed (this is done in a
     // second iteration to avoid concurrent modification exceptions)
     entity.annotations.removeAll(
-        entity.annotations.select(a | a.getAnnotation("toBeRemoved") != null)) ->
+        entity.annotations.select(a | a.isMarkedAsRemovable() != null)) ->
     
     // Recursively treat child entities
     entity.childEntities.optimizeAnnotationRepresentation()  
@@ -770,8 +723,8 @@ Void optimizeAnnotationRepresentation(Entity entity) :
 
 /**
  * Try to transform the given annotation into a visible entity. If this is
- * successful, the annotation is annotated with "toBeRemoved" and should
- * be removed after executing this extension. This must be done in a
+ * successful, the annotation is annotated as being ready for removal and
+ * should be removed after executing this extension. This must be done in a
  * separate step to avoid concurrent modification exceptions. Entities that
  * result from transforming annotations are annotated with "annotationNode".
  * 
@@ -791,7 +744,6 @@ Void optimizeAnnotationRepresentation(Annotation annotation) :
     // Annotations for the new entity and for the old annotation if the
     // transformation is successful
     let annotationNodeAnnotation = new Annotation :
-    let toBeRemovedAnnotation = new Annotation :
     
     switch {
         case topLevel.getAnnotation("annotationNode") != null :
@@ -815,8 +767,7 @@ Void optimizeAnnotationRepresentation(Annotation annotation) :
             topLevel.childEntities.add(newEntity) ->
             
             // Mark the original annotation for removal
-            toBeRemovedAnnotation.setName("toBeRemoved") ->
-            annotation.annotations.add(toBeRemovedAnnotation)
+            annotation.markAsRemovable()
         )
             
         case isTopLevel && annotation.getAnnotation("ptolemyClass").value.matches(
@@ -839,8 +790,7 @@ Void optimizeAnnotationRepresentation(Annotation annotation) :
             topLevel.childEntities.add(newEntity) ->
             
             // Mark the original annotation for removal
-            toBeRemovedAnnotation.setName("toBeRemoved") ->
-            annotation.annotations.add(toBeRemovedAnnotation)
+            annotation.markAsRemovable()
         )
             
         default :
@@ -942,6 +892,19 @@ Void moveLinkUp(Link link, Port port) :
 //-----------------------------------------------------------------------------
 
 /**
+ * Returns the given object's name if it's a NamedObject, or the empty string
+ * otherwise.
+ * 
+ * @param o the object whose name to return.
+ * @return the object's name or the empty string.
+ */
+String getName(Object o) :
+    if (NamedObject.isInstance(o))
+        then ((NamedObject)o).name
+        else ""
+;
+
+/**
  * Removes the given relation from its container.
  * 
  * @param relation the relation to be removed.
@@ -971,33 +934,6 @@ Void remove(Port port) :
 ;
 
 /**
- * Sets the direction of the given link. This will remove the link's
- * "undirected" annotation.
- * 
- * @param link the link whose direction to set.
- * @param port the port that will determine the link's direction.
- * @param isInput whether the port is an input or an output port.
- */
-Void setLinkDirection(Link link, Port port, Boolean isInput):
-    switch {
-        case isInput == true  && link.eContainer == port.eContainer :
-            link.swapSourceTo(port)
-            
-        case isInput == false && link.eContainer == port.eContainer :
-            link.swapTargetTo(port)
-            
-        case isInput == true  && link.eContainer != port.eContainer :
-            link.swapTargetTo(port)
-            
-        case isInput == false && link.eContainer != port.eContainer :
-            link.swapSourceTo(port)
-            
-        default :
-            null
-    }
-;
-
-/**
  * Swaps the link if the given linkable is its target. Otherwise, the link's source is
  * just set to the given linkable.
  * 
@@ -1022,7 +958,7 @@ Void swapSourceTo(Link link, Linkable linkable) :
     
     // Set the source
     link.setSource(linkable) ->
-    link.markAsUndirected(false)
+    link.unmarkAsUndirected()
 ;
 
 /**
@@ -1050,7 +986,7 @@ Void swapTargetTo(Link link, Linkable linkable):
     
     // Set the target
     link.setTarget(linkable) ->
-    link.markAsUndirected(false)
+    link.unmarkAsUndirected()
 ;
 
 /**
@@ -1068,31 +1004,9 @@ List[Link] getConnectedLinks(Port port) :
     links
 ;
 
-/**
- * Logs the given list at the INFO level and returns it.
- * 
- * @param input the list to print out.
- * @return the list.
- */
-List infoAndReturn(List input) :
-    info(input) ->
-    input
-;
-
-/**
- * Reports the given list as a WARNING to the workflow and returns the list.
- * 
- * @param input the list to report.
- * @return the list.
- */
-List reportWarningAndReturn(List input) :
-    reportWarning("" + input) ->
-    input
-;
-
 
 //-----------------------------------------------------------------------------
-// Annotations Management
+// Annotations
 //-----------------------------------------------------------------------------
 
 /**
@@ -1105,58 +1019,6 @@ List reportWarningAndReturn(List input) :
  */
 Boolean hasAnnotation(Annotatable annotatable, String key) :
     (annotatable.getAnnotation(key) !=  null)
-;
-
-/**
- * Add an annotation with the given key-value pair to the given element, if
- * an annotation with the given key doesn't already exist.
- * 
- * @param annotatable element to annotate.
- * @param key the new annotation's key.
- * @param value the new annotation's value.
- */
-Void addAnnotation(Annotatable annotatable, String key, String value) :
-    let annotation = new StringAnnotation :
-    
-    if (annotatable.hasAnnotation(key))
-        then null
-        else (
-            annotation.setName(key) ->
-            annotation.setValue(value) ->
-            
-            annotatable.annotations.add(annotation)
-        )
-;
-
-
-/**
- * Add an annotation with the given key to the given element, if an annotation
- * with that key doesn't already exist.
- * 
- * @param annotatable element to annotate.
- * @param key the new annotation's key.
- */
-Void addAnnotation(Annotatable annotatable, String key) :
-    let annotation = new Annotation :
-    
-    if (annotatable.hasAnnotation(key))
-        then null
-        else (
-            annotation.setName(key) ->
-            
-            annotatable.annotations.add(annotation)
-        )
-;
-
-/**
- * Removes the annotation with the given key from the given element, if it
- * exists.
- * 
- * @param annotatable element to remove the annotation from.
- * @param key the annotation's key.
- */
-Void removeAnnotation(Annotatable annotatable, String key) :
-    annotatable.annotations.remove(key)
 ;
 
 /**
@@ -1184,8 +1046,48 @@ Boolean isBooleanAnnotation(Annotatable annotatable, String key) :
 ;
 
 /**
- * Adds a boolean annotation to the given element, if an annotation with
- * that key doesn't already exist.
+ * Add an annotation with the given key to the given element, if an annotation
+ * with that key doesn't already exist.
+ * 
+ * @param annotatable element to annotate.
+ * @param key the new annotation's key.
+ */
+Void addAnnotation(Annotatable annotatable, String key) :
+    let annotation = new Annotation :
+    
+    if (hasAnnotation(annotatable, key) == false)
+        then (
+		    annotation.setName(key) ->
+		    
+		    annotatable.annotations.add(annotation)
+        )
+        else null
+;
+
+/**
+ * Add an annotation with the given key-value pair to the given element, if
+ * an annotation with that key doesn't already exist.
+ * 
+ * @param annotatable element to annotate.
+ * @param key the new annotation's key.
+ * @param value the new annotation's value.
+ */
+Void addStringAnnotation(Annotatable annotatable, String key, String value) :
+    let annotation = new StringAnnotation :
+    
+    if (hasAnnotation(annotatable, key) == false)
+        then (
+		    annotation.setName(key) ->
+		    annotation.setValue(value) ->
+		    
+		    annotatable.annotations.add(annotation)
+        )
+        else null
+;
+
+/**
+ * Adds a boolean annotation to the given element, if an annotation
+ * with that key doesn't already exist.
  * 
  * @param annotatable element to annotate.
  * @param key key of the new annotation.
@@ -1194,14 +1096,28 @@ Boolean isBooleanAnnotation(Annotatable annotatable, String key) :
 Void addBooleanAnnotation(Annotatable annotatable, String key, Boolean value) :
     let annotation = new BooleanAnnotation :
     
-    if (annotatable.hasAnnotation(key))
-        then null
-        else (
-            annotation.setName(key) ->
-            annotation.setValue(value) ->
-            
-            annotatable.annotations.add(annotation)
+    if (hasAnnotation(annotatable, key) == false)
+        then (
+		    annotation.setName(key) ->
+		    annotation.setValue(value) ->
+		    
+		    annotatable.annotations.add(annotation)
         )
+        else null
+;
+
+/**
+ * Removes the annotation with the given key, if any.
+ * 
+ * @param annotatable element to remove the annotation from.
+ * @param key key of the annotation.
+ */
+Void removeAnnotation(Annotatable annotatable, String key) :
+    let annotation = annotatable.getAnnotation(key) :
+    
+    if (annotation != null)
+        then annotatable.annotations.remove(annotation)
+        else null
 ;
 
 
@@ -1210,27 +1126,79 @@ Void addBooleanAnnotation(Annotatable annotatable, String key, Boolean value) :
 //-----------------------------------------------------------------------------
 
 /**
+ * Marks the given link as being undirected. This is used to keep in mind the links
+ * whose direction hasn't been determined yet.
+ * 
+ * @param link the link to mark.
+ */
+Void markAsUndirected(Link link) :
+    addAnnotation(link, "undirected")
+;
+
+/**
+ * Marks the given link as being directed.
+ * 
+ * @param link the link to mark.
+ */
+Void unmarkAsUndirected(Link link) :
+    removeAnnotation(link, "undirected")
+;
+
+/**
  * Checks whether the given link is marked as being undirected.
  * 
  * @param link the link to check.
  * @return true if the link is marked as being undirected, false otherwise.
  */
 Boolean isMarkedAsUndirected(Link link) :
-    link.hasAnnotation("undirected")
+    hasAnnotation(link, "undirected")
 ;
 
 /**
- * Marks a link as being directed or undirected.
+ * Marks the given object as being ready for removal.
  * 
- * @param link the link to mark.
- * @param undirected true if the link should be undirected.
+ * @param annotatable the object to mark.
  */
-Void markAsUndirected(Link link, Boolean undirected) :
-    let existingAnnotation = link.getAnnotation("undirected") :
-    
-    if (undirected == true)
-        then link.addAnnotation("undirected")
-        else link.removeAnnotation("undirected")
+Void markAsRemovable(Annotatable annotatable) :
+    addAnnotation(annotatable, "toBeRemoved")
+;
+
+/**
+ * Checks whether the given object is marked as being ready for removal.
+ * 
+ * @param annotatable the object to check.
+ * @return true if the object is marked as being ready for removal, false
+ *         otherwise.
+ */
+Boolean isMarkedAsRemovable(Annotatable annotatable) :
+    hasAnnotation(annotatable, "toBeRemoved")
+;
+
+
+//-----------------------------------------------------------------------------
+// Logging
+//-----------------------------------------------------------------------------
+
+/**
+ * Logs the given list at the INFO level and returns it.
+ * 
+ * @param input the list to print out.
+ * @return the list.
+ */
+List infoAndReturn(List input) :
+    info(input) ->
+    input
+;
+
+/**
+ * Reports the given list as a WARNING to the workflow and returns the list.
+ * 
+ * @param input the list to report.
+ * @return the list.
+ */
+List reportWarningAndReturn(List input) :
+    reportWarning("" + input) ->
+    input
 ;
 
 
