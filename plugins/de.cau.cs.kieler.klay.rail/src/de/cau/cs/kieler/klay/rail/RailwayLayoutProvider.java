@@ -145,8 +145,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         validateRailwayGraph(nodes);
         System.out.println("Redirecting ...");
         redirectEdges(nodes);
-        System.out.println("Preprocessing ...");
-        preprocess(nodes);
+        //System.out.println("Preprocessing ...");
+        //preprocess(nodes);
         System.out.println("Ready to start layout.");
 
         // phase 1: cycle breaking
@@ -270,7 +270,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                 LPort port = ports.get(0);
                 port.setSide(PortSide.EAST);
                 port.getPos().x = port.getNode().getSize().x;
-                port.getPos().y = port.getNode().getSize().y / 5;
+                port.getPos().y = port.getNode().getSize().y / 2;
             } else if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.BREACH_OR_CLOSE)) {
                 List<LPort> ports = lNode.getPorts();
                 // same as above
@@ -285,7 +285,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                     throw new IllegalArgumentException(
                             "Railway layout doesn't allow undefined ports.");
                 }
-                port.getPos().y = port.getNode().getSize().y / 5;
+                port.getPos().y = port.getNode().getSize().y / 2;
             } else if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)) {
                 List<LPort> ports = lNode.getPorts();
                 // same as above

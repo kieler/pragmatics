@@ -219,7 +219,7 @@ public class KRailGraphImporter implements IGraphImporter {
                         edge.id = -1;
                     }
                 }
-                for (LPort port : lnode.getPorts()) {
+                /*for (LPort port : lnode.getPorts()) {
                     Object original = port.getProperty(Properties.ORIGIN);
                     if (original instanceof KPort) {
                         KPort kport = (KPort) original;
@@ -227,7 +227,7 @@ public class KRailGraphImporter implements IGraphImporter {
                         portLayout.setXpos((float) (port.getPos().x + offset.x));
                         portLayout.setYpos((float) (port.getPos().y + offset.y));
                     }
-                }
+                }*/
             }
         }
 
