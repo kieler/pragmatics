@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.platform.AbstractPropertySectionFilter;
@@ -32,8 +33,14 @@ public class KaomPropertyFilter extends AbstractPropertySectionFilter {
      */
     @Override
     protected boolean accept(final PictogramElement pictogramElement) {
-        EObject eObject = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(
-                pictogramElement);
+        EObject eObject;
+        if (pictogramElement instanceof ConnectionDecorator) {
+            eObject = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(
+                    ((ConnectionDecorator) pictogramElement).getConnection());
+        } else {
+            eObject = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(
+                    pictogramElement);
+        }
 
         return eObject instanceof NamedObject;
     }

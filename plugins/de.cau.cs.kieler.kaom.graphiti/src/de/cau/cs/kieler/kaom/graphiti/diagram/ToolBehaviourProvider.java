@@ -16,16 +16,15 @@ package de.cau.cs.kieler.kaom.graphiti.diagram;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
-import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -47,6 +46,9 @@ import de.cau.cs.kieler.kaom.Entity;
  */
 public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
+    /** the identifier of the property contibutor. */
+    public static final String PROPERTY_CONTRIBUTOR_ID = "de.cau.cs.kieler.kaom.graphiti";
+    
     /**
      * Constructor.
      * 
@@ -54,14 +56,6 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
      */
     public ToolBehaviourProvider(final IDiagramTypeProvider diagramTypeProvider) {
         super(diagramTypeProvider);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected boolean isContextMenuApplicable(final IFeature feature) {
-        boolean ret = (feature instanceof ICustomFeature);
-        return ret;
     }
 
     /**
@@ -75,9 +69,10 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
         Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
         if (obj instanceof Entity) {
             GraphicsAlgorithm invisible = pe.getGraphicsAlgorithm();
-            if (invisible.getGraphicsAlgorithmChildren().size() != 0) {
-                GraphicsAlgorithm rectangle = invisible.getGraphicsAlgorithmChildren().get(0);
-                return new GraphicsAlgorithm[] { rectangle };
+            for (GraphicsAlgorithm algo : invisible.getGraphicsAlgorithmChildren()) {
+                if (algo instanceof Rectangle) {
+                    return new GraphicsAlgorithm[] { algo };
+                }
             }
         }
         return super.getClickArea(pe);
@@ -95,11 +90,10 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
         if (obj instanceof Entity) {
             GraphicsAlgorithm invisible = pe.getGraphicsAlgorithm();
-            EList<GraphicsAlgorithm> graphicsAlgorithmChildren = invisible
-                    .getGraphicsAlgorithmChildren();
-
-            if (!graphicsAlgorithmChildren.isEmpty()) {
-                return graphicsAlgorithmChildren.get(0);
+            for (GraphicsAlgorithm algo : invisible.getGraphicsAlgorithmChildren()) {
+                if (algo instanceof Rectangle) {
+                    return algo;
+                }
             }
         }
 
@@ -186,6 +180,14 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
     public IDecorator[] getDecorators(final PictogramElement pe) {
         // TODO add validation mechanism here
         return super.getDecorators(pe);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getContributorId() {
+        return PROPERTY_CONTRIBUTOR_ID;
     }
     
 }

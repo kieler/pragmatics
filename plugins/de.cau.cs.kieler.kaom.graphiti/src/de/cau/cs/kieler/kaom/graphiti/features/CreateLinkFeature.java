@@ -101,11 +101,12 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
             Entity topEntity = semanticProvider.fetchEntity(getDiagram());
             topEntity.getChildLinks().add(link);
             
-            getFeatureProvider().getDirectEditingInfo().setActive(true);
             AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(),
                     context.getTargetAnchor());
             addContext.setNewObject(link);
-            return (Connection) getFeatureProvider().addIfPossible(addContext);
+            Connection connection = (Connection) getFeatureProvider().addIfPossible(addContext);
+            getFeatureProvider().getDirectEditingInfo().setActive(true);
+            return connection;
         }
 
         return null;

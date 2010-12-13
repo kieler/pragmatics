@@ -18,10 +18,10 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
-import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
@@ -83,27 +83,22 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
                 height + 2 * AddPortFeature.PORT_SIZE);
         // rectangle added to port container
         Rectangle rectangleShape = gaService.createRectangle(portContainer);
-        rectangleShape.setStyle(styleProvider.getStyle());
-
-        // a separator line for the entity label
-        Shape shape = peCreateService.createShape(entityShape, false);
-        Polyline polyline = gaService.createPolyline(shape);
-        polyline.setStyle(styleProvider.getStyle());
+        rectangleShape.setStyle(styleProvider.getStyle(StyleProvider.ENTITY_STYLE));
 
         // the entity label
-        shape = peCreateService.createShape(entityShape, false);
-        Text text = gaService.createDefaultText(shape, entity.getName());
+        Shape labelShape = peCreateService.createShape(entityShape, false);
+        Text text = gaService.createDefaultText(labelShape, entity.getName());
         text.setStyle(styleProvider.getStyle());
         text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
         text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
-        link(shape, entity);
+        link(labelShape, entity);
 
         // set container shape for direct editing after object creation
         IDirectEditingInfo directEditingInfo = getFeatureProvider().getDirectEditingInfo();
         directEditingInfo.setMainPictogramElement(entityShape);
         // set shape and graphics algorithm where the editor for
         // direct editing shall be opened after object creation
-        directEditingInfo.setPictogramElement(shape);
+        directEditingInfo.setPictogramElement(labelShape);
         directEditingInfo.setGraphicsAlgorithm(text);
 
         layoutPictogramElement(entityShape);

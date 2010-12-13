@@ -96,10 +96,11 @@ public class UpdateEntityFeature extends AbstractUpdateFeature {
             businessName = ((Entity) obj).getName();
         }
 
-        boolean updateRequired = false;
-        if ((pictogramName == null && !(businessName == null))
-                || (!(pictogramName == null) && !pictogramName.equals(businessName))) {
-            updateRequired = true;
+        boolean updateRequired;
+        if (businessName == null || businessName.length() == 0) {
+            updateRequired = pictogramName != null && pictogramName.length() > 0;
+        } else {
+            updateRequired = !businessName.equals(pictogramName);
         }
         if (updateRequired) {
             return Reason.createTrueReason("Name is out of Date");

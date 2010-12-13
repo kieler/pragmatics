@@ -58,10 +58,10 @@ public class UpdateLinkFeature extends AbstractUpdateFeature {
         if (pictogramElement instanceof Connection) {
             Connection con = (Connection) pictogramElement;
             for (ConnectionDecorator cd : con.getConnectionDecorators()) {
-
                 if (cd.getGraphicsAlgorithm() instanceof Text) {
                     Text text = (Text) cd.getGraphicsAlgorithm();
                     pictogramName = text.getValue();
+                    break;
                 }
             }
         }
@@ -72,10 +72,11 @@ public class UpdateLinkFeature extends AbstractUpdateFeature {
             businessName = ((Link) obj).getName();
         }
 
-        boolean updateRequired = false;
-        if ((pictogramName == null && !(businessName == null))
-                || (!(pictogramName == null) && !pictogramName.equals(businessName))) {
-            updateRequired = true;
+        boolean updateRequired;
+        if (businessName == null || businessName.length() == 0) {
+            updateRequired = pictogramName != null && pictogramName.length() > 0;
+        } else {
+            updateRequired = !businessName.equals(pictogramName);
         }
         if (updateRequired) {
             return Reason.createTrueReason("Name is out of Date");
@@ -95,7 +96,7 @@ public class UpdateLinkFeature extends AbstractUpdateFeature {
             businessName = ((Link) obj).getName();
         }
         
-        //sets the text to the businessname
+        // sets the text to the business name
         if (pictogramElement instanceof Connection) {
             Connection cs = (Connection) pictogramElement;
             for (ConnectionDecorator cd : cs.getConnectionDecorators()) {

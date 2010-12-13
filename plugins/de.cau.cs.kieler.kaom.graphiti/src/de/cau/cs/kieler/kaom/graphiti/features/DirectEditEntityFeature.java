@@ -18,10 +18,7 @@ import de.cau.cs.kieler.kaom.Entity;
 
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.impl.AbstractDirectEditingFeature;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Shape;
 
 /**
  * Feature for enabling direct editing of the name of entities.
@@ -52,8 +49,7 @@ public class DirectEditEntityFeature extends AbstractDirectEditingFeature {
     @Override
     public boolean canDirectEdit(final IDirectEditingContext context) {
         Object bo = getBusinessObjectForPictogramElement(context.getPictogramElement());
-        GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-        return (bo instanceof Entity && ga instanceof Text);
+        return bo instanceof Entity;
     }
 
     /**
@@ -77,7 +73,7 @@ public class DirectEditEntityFeature extends AbstractDirectEditingFeature {
         if (obj instanceof Entity) {
             Entity entity = (Entity) obj;
             entity.setName(value);
-            updatePictogramElement(((Shape) pe).getContainer());
+            updatePictogramElement(pe);
         }
     } 
 

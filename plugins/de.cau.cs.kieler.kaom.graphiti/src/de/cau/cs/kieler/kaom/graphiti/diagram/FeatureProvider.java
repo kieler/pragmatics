@@ -20,7 +20,6 @@ import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IDirectEditingFeature;
-import org.eclipse.graphiti.features.IFeature;
 import org.eclipse.graphiti.features.ILayoutFeature;
 import org.eclipse.graphiti.features.IMoveAnchorFeature;
 import org.eclipse.graphiti.features.IMoveShapeFeature;
@@ -35,12 +34,11 @@ import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveAnchorContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IPasteContext;
-import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -64,12 +62,13 @@ import de.cau.cs.kieler.kaom.graphiti.features.CreateRelationFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditLinkFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.LayoutEntityFeature;
-import de.cau.cs.kieler.kaom.graphiti.features.MoveAnchorFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.MovePortFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.MoveEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.MoveRelationFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.PasteEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateLinkFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.UpdateRelationFeature;
 
 /**
  * Provides and initializes all features for the Graphiti KAOM editor.
@@ -131,6 +130,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
             Object obj = getBusinessObjectForPictogramElement(context.getPictogramElement());
             if (obj instanceof Entity) {
                 return new UpdateEntityFeature(this);
+            } else if (obj instanceof Relation) {
+                return new UpdateRelationFeature(this);
             }
         } else if (context.getPictogramElement() instanceof Connection) {
             Object obj = getBusinessObjectForPictogramElement(context.getPictogramElement());
@@ -164,7 +165,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public IMoveAnchorFeature getMoveAnchorFeature(final IMoveAnchorContext context) {
         if (getBusinessObjectForPictogramElement(context.getAnchor()) instanceof Port) {
-            return new MoveAnchorFeature(this);
+            return new MovePortFeature(this);
         }
         return super.getMoveAnchorFeature(context);
     }
@@ -201,11 +202,16 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public IDirectEditingFeature getDirectEditingFeature(final IDirectEditingContext context) {
         PictogramElement pe = context.getPictogramElement();
-        Object ob = getBusinessObjectForPictogramElement(pe);
+        Object obj;
+        if (pe instanceof ConnectionDecorator) {
+            obj = getBusinessObjectForPictogramElement(((ConnectionDecorator) pe).getConnection());
+        } else {
+            obj = getBusinessObjectForPictogramElement(pe);
+        }
 
-        if (ob instanceof Entity) {
+        if (obj instanceof Entity) {
             return new DirectEditEntityFeature(this);
-        } else if (ob instanceof Link) {
+        } else if (obj instanceof Link) {
             return new DirectEditLinkFeature(this);
         }
         return super.getDirectEditingFeature(context);
@@ -216,6 +222,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public ICopyFeature getCopyFeature(final ICopyContext context) {
+        // TODO generalize this to copy everything
         return new CopyEntityFeature(this);
     }
 
@@ -224,6 +231,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public IPasteFeature getPasteFeature(final IPasteContext context) {
+        // TODO generalize this to paste everything
         return new PasteEntityFeature(this, semanticProvider);
     }
 
@@ -233,17 +241,6 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
         return new ICreateConnectionFeature[] { new CreateLinkFeature(this, semanticProvider) };
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IFeature[] getDragAndDropFeatures(final IPictogramElementContext context) {
-        if (context.getPictogramElement() instanceof Anchor) {
-            return getCreateConnectionFeatures();
-        }
-        return null;
     }
 
     /**

@@ -16,8 +16,6 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.impl.AbstractDirectEditingFeature;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
@@ -51,16 +49,27 @@ public class DirectEditLinkFeature extends AbstractDirectEditingFeature {
      */
     @Override
     public boolean canDirectEdit(final IDirectEditingContext context) {
-        Object bo = getBusinessObjectForPictogramElement(context.getPictogramElement());
-        GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
-        return (bo instanceof Link && ga instanceof Text);
+        if (context.getPictogramElement() instanceof ConnectionDecorator) {
+            Object bo = getBusinessObjectForPictogramElement(
+                    ((ConnectionDecorator) context.getPictogramElement()).getConnection());
+            return bo instanceof Link;
+        } else {
+            Object bo = getBusinessObjectForPictogramElement(context.getPictogramElement());
+            return bo instanceof Link;
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public String getInitialValue(final IDirectEditingContext context) {
-        Object object = getBusinessObjectForPictogramElement(context.getPictogramElement());
+        Object object;
+        if (context.getPictogramElement() instanceof ConnectionDecorator) {
+            object = getBusinessObjectForPictogramElement(
+                    ((ConnectionDecorator) context.getPictogramElement()).getConnection());
+        } else {
+            object = getBusinessObjectForPictogramElement(context.getPictogramElement());
+        }
         if (object instanceof Link) {
             return ((Link) object).getName();
         } else {
@@ -73,11 +82,16 @@ public class DirectEditLinkFeature extends AbstractDirectEditingFeature {
      */
     public void setValue(final String value, final IDirectEditingContext context) {
         PictogramElement pe = context.getPictogramElement();
-        Object obj = getBusinessObjectForPictogramElement(pe);
-        if (obj instanceof Link) {
-            Link link = (Link) obj;
+        Object object;
+        if (pe instanceof ConnectionDecorator) {
+            object = getBusinessObjectForPictogramElement(((ConnectionDecorator) pe).getConnection());
+        } else {
+            object = getBusinessObjectForPictogramElement(pe);
+        }
+        if (object instanceof Link) {
+            Link link = (Link) object;
             link.setName(value);
-            updatePictogramElement(((ConnectionDecorator) pe).getContainer());
+            updatePictogramElement(pe);
         }
     }
     

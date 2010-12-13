@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kaom.graphiti.features;
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
@@ -52,8 +53,11 @@ public class KaomPropertySection extends GFPropertySection implements ITabbedPro
 
         public void focusLost(final FocusEvent e) {
             PictogramElement pe = getSelectedPictogramElement();
+            if (pe instanceof ConnectionDecorator) {
+                pe = ((ConnectionDecorator) pe).getConnection();
+            }
             if (pe != null) {
-                Object bo = Graphiti.getLinkService()
+                final Object bo = Graphiti.getLinkService()
                         .getBusinessObjectForLinkedPictogramElement(pe);
                 if (bo instanceof NamedObject) {
                     DiagramEditor diagramEditor = (DiagramEditor) getDiagramEditor();
@@ -61,12 +65,6 @@ public class KaomPropertySection extends GFPropertySection implements ITabbedPro
 
                     KimlUiUtil.runModelChange(new Runnable() {
                         public void run() {
-                            Object bo = Graphiti.getLinkService()
-                                    .getBusinessObjectForLinkedPictogramElement(
-                                            getSelectedPictogramElement());
-                            if (bo == null) {
-                                return;
-                            }
                             String name = nameText.getText();
                             if (name != null) {
                                 if (bo instanceof NamedObject) {
@@ -116,6 +114,9 @@ public class KaomPropertySection extends GFPropertySection implements ITabbedPro
     @Override
     public void refresh() {
         PictogramElement pe = getSelectedPictogramElement();
+        if (pe instanceof ConnectionDecorator) {
+            pe = ((ConnectionDecorator) pe).getConnection();
+        }
         if (pe != null) {
             Object bo = Graphiti.getLinkService().getBusinessObjectForLinkedPictogramElement(pe);
             if (bo instanceof NamedObject) {

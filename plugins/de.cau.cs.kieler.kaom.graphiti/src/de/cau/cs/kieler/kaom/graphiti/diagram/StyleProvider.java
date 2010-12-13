@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.mm.StyleContainer;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
@@ -58,15 +59,31 @@ public class StyleProvider implements IStyleProvider {
      */
     public Style getStyle(final String id) {
         Diagram diagram = diagramTypeProvider.getDiagram();
+        Style style = getStyle(diagram, id);
+        if (style == null) {
+            style = createStyle(diagram, id);
+        }
+        return style;
+    }
+    
+    /**
+     * Look recursively for an appropriate style.
+     * 
+     * @param container a style container
+     * @param id the style identifier
+     * @return a style instance, or {@code null} if the style could not be found
+     */
+    private Style getStyle(final StyleContainer container, final String id) {
         Style style = null;
-        for (Style diagramStyle : diagram.getStyles()) {
+        for (Style diagramStyle : container.getStyles()) {
             if (id.equals(diagramStyle.getId())) {
                  style = diagramStyle;
                  break;
             }
-        }
-        if (style == null) {
-            style = createStyle(diagram, id);
+            style = getStyle(diagramStyle, id);
+            if (style != null) {
+                break;
+            }
         }
         return style;
     }
@@ -75,6 +92,11 @@ public class StyleProvider implements IStyleProvider {
     public static final String DEFAULT_STYLE = "default";
     /** style id for items with solid color fill. */
     public static final String SOLID_STYLE = "solid";
+    /** style id for entities. */
+    public static final String ENTITY_STYLE = "entity";
+    
+    /** the lightness value for entity background. */
+    private static final int ENTITY_VALUE = 245;
     
     /**
      * Create the style with given identifier.
@@ -85,17 +107,23 @@ public class StyleProvider implements IStyleProvider {
      */
     private Style createStyle(final Diagram diagram, final String id) {
         IGaService gaService = Graphiti.getGaService();
+        Style style = null;
         if (DEFAULT_STYLE.equals(id)) {
-            Style style = gaService.createStyle(diagram, id);
+            style = gaService.createStyle(diagram, id);
             style.setForeground(gaService.manageColor(diagram, ColorConstant.BLACK));
             style.setBackground(gaService.manageColor(diagram, ColorConstant.WHITE));
-            return style;
         } else if (SOLID_STYLE.equals(id)) {
             Style defaultStyle = getStyle(DEFAULT_STYLE);
-            Style style = gaService.createStyle(defaultStyle, id);
+            style = gaService.createStyle(defaultStyle, id);
+            style.setBackground(gaService.manageColor(diagram, ColorConstant.BLACK));
             style.setFilled(true);
+        } else if (ENTITY_STYLE.equals(id)) {
+            Style defaultStyle = getStyle(DEFAULT_STYLE);
+            style = gaService.createStyle(defaultStyle, id);
+            style.setBackground(gaService.manageColor(diagram,
+                    ENTITY_VALUE, ENTITY_VALUE, ENTITY_VALUE));
         }
-        return null;
+        return style;
     }
     
 }

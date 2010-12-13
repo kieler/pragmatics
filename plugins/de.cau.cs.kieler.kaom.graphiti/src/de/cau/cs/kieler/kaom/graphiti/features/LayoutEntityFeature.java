@@ -16,16 +16,12 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 import de.cau.cs.kieler.core.model.graphiti.GraphitiUtil;
 import de.cau.cs.kieler.kaom.Entity;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.impl.AbstractLayoutFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
 /**
@@ -35,17 +31,19 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
  */
 public class LayoutEntityFeature extends AbstractLayoutFeature {
 
+    /** the fixed height of the entity name. */
+    public static final int TEXT_HEIGHT = 10;
+    /** the fixed distance of the entity name. */
+    public static final int TEXT_DIST = 2;
     /** minimal width for entities. */
-    public static final int MIN_WIDTH = 30;
+    public static final int MIN_WIDTH = 25;
     /** minimal width for the port container shapes. */
     public static final int MIN_CONTAINER_WIDTH = MIN_WIDTH + 2 * AddPortFeature.PORT_SIZE;
     /** minimal height for entities. */
-    public static final int MIN_HEIGHT = 30;
+    public static final int MIN_HEIGHT = 25;
     /** minimal height for the port container shapes. */
-    public static final int MIN_CONTAINER_HEIGHT = MIN_HEIGHT + 2 * AddPortFeature.PORT_SIZE;
-
-    /** the distance of the separator line from the top margin. */
-    private static final int SEPARATOR_DIST = 20;
+    public static final int MIN_CONTAINER_HEIGHT = MIN_HEIGHT + AddPortFeature.PORT_SIZE
+            + TEXT_DIST + TEXT_HEIGHT;
     
     /**
      * The constructor.
@@ -60,12 +58,8 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
      * {@inheritDoc}
      */
     public boolean canLayout(final ILayoutContext context) {
-        PictogramElement pe = context.getPictogramElement();
-        if (pe instanceof ContainerShape) {
-            EList<EObject> ob = pe.getLink().getBusinessObjects();
-            return ob.size() == 1 && (ob.get(0) instanceof Entity);
-        }
-        return false;
+        Object object = getBusinessObjectForPictogramElement(context.getPictogramElement());
+        return object instanceof Entity;
     }
 
     /**
@@ -88,7 +82,8 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
         // container width initially of the invisible rectangle
         // now adjusted to the width of the normal inner rectangle
         int entityWidth = containerGa.getWidth() - 2 * AddPortFeature.PORT_SIZE;
-        int entityHeight = containerGa.getHeight() - 2 * AddPortFeature.PORT_SIZE;
+        int entityHeight = containerGa.getHeight()
+                - (AddPortFeature.PORT_SIZE + TEXT_DIST + TEXT_HEIGHT);
         for (GraphicsAlgorithm child : containerGa.getGraphicsAlgorithmChildren()) {
             changed |= GraphitiUtil.setBounds(child, AddPortFeature.PORT_SIZE, AddPortFeature.PORT_SIZE,
                     entityWidth, entityHeight);
@@ -97,16 +92,10 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
         // position of each child shape of the entity adjusted
         for (Shape shape : containerShape.getChildren()) {
             GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
-            if (ga instanceof Polyline) {
-                int[] points = new int[] {
-                        AddPortFeature.PORT_SIZE, AddPortFeature.PORT_SIZE + SEPARATOR_DIST,
-                        AddPortFeature.PORT_SIZE + entityWidth,
-                        AddPortFeature.PORT_SIZE + SEPARATOR_DIST
-                };
-                changed |= GraphitiUtil.setPoints((Polyline) ga, points);
-            } else if (ga instanceof Text) {
-                changed |= GraphitiUtil.setBounds(ga, AddPortFeature.PORT_SIZE,
-                        AddPortFeature.PORT_SIZE, entityWidth, SEPARATOR_DIST); 
+            if (ga instanceof Text) {
+                changed |= GraphitiUtil.setBounds(ga, 0,
+                        AddPortFeature.PORT_SIZE + entityHeight + TEXT_DIST,
+                        containerGa.getWidth(), TEXT_HEIGHT); 
             }
         }
         
