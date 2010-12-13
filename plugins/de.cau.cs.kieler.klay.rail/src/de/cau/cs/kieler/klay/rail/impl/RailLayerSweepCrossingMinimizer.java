@@ -16,6 +16,9 @@ package de.cau.cs.kieler.klay.rail.impl;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
@@ -59,6 +62,26 @@ public class RailLayerSweepCrossingMinimizer extends AbstractAlgorithm implement
             getMonitor().done();
             return;
         }
+        
+        /*LNode[][] order = new LNode[layerCount][];
+        int currentLayer = 0;
+        for (Layer layer : layeredGraph.getLayers()) {
+            order[currentLayer] = new LNode[layer.getNodes().size()];
+            List<LNode> placed = new LinkedList<LNode>();
+            int currentPosition = 0;
+            for (LNode node : layer.getNodes()) {
+                for (LPort port : node.getPorts(PortType.INPUT)) {
+                    LPort srcPort = port.getEdges().get(0).getSource();
+                    if (srcPort.getPos().y < (srcPort.getNode().getSize().y / 2)) {
+                        //this originates from upper port
+                        order[currentLayer][currentPosition] = node;
+                        placed.add(node);
+                        currentPosition++;
+                    }
+                }
+            }
+            currentLayer++;
+        }*/
         
         // determine the total number of nodes and ports in the graph, collect nodes
         LNode[][] bestRun = new LNode[layerCount][], curRun = new LNode[layerCount][],
