@@ -84,7 +84,8 @@ public class AdvancedRenderingEditPartUtil {
             final IFigure primaryShape, final EObject modelElement,
             final AbstractGraphicalEditPart editPart) {
         Object notifier = notification.getNotifier();
-        if (!(notification.isTouch()) && !(notifier instanceof Bounds) && !(notifier instanceof RelativeBendpoints)
+        if (!(notification.isTouch()) && !(notifier instanceof Bounds)
+                && !(notifier instanceof RelativeBendpoints)
                 && !(notifier instanceof IdentityAnchor)) {
             IFigure figure = primaryShape;
             if (figure != null) {
@@ -99,7 +100,7 @@ public class AdvancedRenderingEditPartUtil {
             }
         }
     }
-    
+
     /**
      * Method to update a figure according to the conditions.
      * 
@@ -109,13 +110,13 @@ public class AdvancedRenderingEditPartUtil {
      *            the modelelement the figure belongs to.
      * @param editPart
      *            the edit part of the model element
-     * @param forceUpdate 
-     *            if true the update will be done even if the same conditions 
-     *            have been in place before.
+     * @param forceUpdate
+     *            if true the update will be done even if the same conditions have been in place
+     *            before.
      * @return true if the figure actually changed, false else.
      */
-    public boolean updateFigure(IFigure figure, final EObject modelElement,
-            final AbstractGraphicalEditPart editPart, Boolean forceUpdate) {
+    public boolean updateFigure(final IFigure figure, final EObject modelElement,
+            final AbstractGraphicalEditPart editPart, final Boolean forceUpdate) {
         if (conditions != null) {
             IFigure oldFigure;
             SwitchableFigure switchableFigure = null;
@@ -141,16 +142,16 @@ public class AdvancedRenderingEditPartUtil {
                         String figureParam = (String) conditionElement.get("figureParam");
                         String layoutParam = (String) conditionElement.get("layoutParam");
                         String borderItemParam = (String) conditionElement.get("borderItemParam");
-                      
+
                         IRenderingProvider renderingProvider = (IRenderingProvider) conditionElement
                                 .get("renderingProvider");
-                        
-                        this.setFigure(renderingProvider, figureParam, oldFigure,
-                                modelElement, switchableFigure, editPart);
+
+                        this.setFigure(renderingProvider, figureParam, oldFigure, modelElement,
+                                switchableFigure, editPart);
                         this.setLayoutManager(figure, renderingProvider, layoutParam, modelElement);
                         this.setBorderItemLocator(editPart, renderingProvider, borderItemParam,
                                 modelElement, figure);
-                                                 
+
                         // setting a fixed node size
                         if (((figureSize.getFirst() >= 0) && (figureSize.getSecond() >= 0))
                                 && switchableFigure != null) {
@@ -164,20 +165,28 @@ public class AdvancedRenderingEditPartUtil {
         }
         return false;
     }
-    
+
     /**
-     * method that gets a figure from the renderingProvider and sets it to the SwitchableFigure for display.
-     * @param renderingProvider the renderingProvider to get the new figure from.
-     * @param figureParam the string representation of the new figure to be given to the renderingProvider.
-     * @param oldFigure the old figure.
-     * @param modelElement the modelElement whose graphical representation should be changed 
-     * @param switchableFigure the enclosing SwitchableFigure
+     * method that gets a figure from the renderingProvider and sets it to the SwitchableFigure for
+     * display.
+     * 
+     * @param renderingProvider
+     *            the renderingProvider to get the new figure from.
+     * @param figureParam
+     *            the string representation of the new figure to be given to the renderingProvider.
+     * @param oldFigure
+     *            the old figure.
+     * @param modelElement
+     *            the modelElement whose graphical representation should be changed
+     * @param switchableFigure
+     *            the enclosing SwitchableFigure
      */
-    private void setFigure(final IRenderingProvider renderingProvider,
-            final String figureParam, final IFigure oldFigure, final EObject modelElement,
-            final SwitchableFigure switchableFigure, EditPart part) {
+    private void setFigure(final IRenderingProvider renderingProvider, final String figureParam,
+            final IFigure oldFigure, final EObject modelElement,
+            final SwitchableFigure switchableFigure, final EditPart part) {
         // setting the new figure
-        IFigure newFigure = renderingProvider.getFigureByString(figureParam, oldFigure, modelElement, part);
+        IFigure newFigure = renderingProvider.getFigureByString(figureParam, oldFigure,
+                modelElement, part);
         if (newFigure != null) {
             if (switchableFigure != null) {
                 switchableFigure.setCurrentFigure(newFigure);
@@ -187,10 +196,15 @@ public class AdvancedRenderingEditPartUtil {
 
     /**
      * Method to get a new LayoutManager from the RenderingProvider and set it.
-     * @param figure the figure whose LayoutManager should be changed.
-     * @param renderingProvider the RenderingProvider.
-     * @param layoutParam the string representation of the layout to be given to the RenderingProvider.
-     * @param modelElement the ModelElement whose figures LayoutManager should be changed.
+     * 
+     * @param figure
+     *            the figure whose LayoutManager should be changed.
+     * @param renderingProvider
+     *            the RenderingProvider.
+     * @param layoutParam
+     *            the string representation of the layout to be given to the RenderingProvider.
+     * @param modelElement
+     *            the ModelElement whose figures LayoutManager should be changed.
      */
     private void setLayoutManager(final IFigure figure, final IRenderingProvider renderingProvider,
             final String layoutParam, final EObject modelElement) {
@@ -205,16 +219,23 @@ public class AdvancedRenderingEditPartUtil {
     }
 
     /**
-     * Method to get a new BorderItemLocator from the RenderingProvider and setting it to the BorderItem.
-     * @param editPart the EditPart of the BorderItem.
-     * @param renderingProvider the RenderingProvider.
-     * @param borderItemParam the string representation of the new BorderItemLocator.
-     * @param modelElement the ModelElement of the BorderItem
-     * @param figure the Figure of the BorderItem
+     * Method to get a new BorderItemLocator from the RenderingProvider and setting it to the
+     * BorderItem.
+     * 
+     * @param editPart
+     *            the EditPart of the BorderItem.
+     * @param renderingProvider
+     *            the RenderingProvider.
+     * @param borderItemParam
+     *            the string representation of the new BorderItemLocator.
+     * @param modelElement
+     *            the ModelElement of the BorderItem
+     * @param figure
+     *            the Figure of the BorderItem
      */
     private void setBorderItemLocator(final AbstractGraphicalEditPart editPart,
-            final IRenderingProvider renderingProvider, final String borderItemParam, final EObject modelElement,
-            final IFigure figure) {
+            final IRenderingProvider renderingProvider, final String borderItemParam,
+            final EObject modelElement, final IFigure figure) {
         // sets the new BoderItemLocator
         if (editPart instanceof IBorderItemEditPart) {
             if (editPart.getParent() instanceof AbstractBorderedShapeEditPart) {
