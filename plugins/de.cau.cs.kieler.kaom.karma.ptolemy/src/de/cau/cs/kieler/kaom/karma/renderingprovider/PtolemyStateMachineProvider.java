@@ -123,7 +123,7 @@ public class PtolemyStateMachineProvider implements IRenderingProvider {
         return figure;
     }
 
-    private static int STATE_SIZE = 30;
+    private static final int STATE_SIZE = 30;
 
     /**
      * Apply the normal state properties to a rounded rectangle figure.

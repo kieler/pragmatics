@@ -62,7 +62,6 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
-import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.Routing;
 import org.eclipse.gmf.runtime.notation.RoutingStyle;
@@ -106,12 +105,12 @@ public class KaomFigureProvider implements IRenderingProvider {
     /**
      * Width of connection line.
      */
-    private static float LINE_WIDTH = 1.5f;
+    private static final float LINE_WIDTH = 1.5f;
     
     /**
      * Radius of the rounded edges. 
      */
-    private static int ROUNDED_BENDPOINTS_RADIUS = 10;
+    private static final int ROUNDED_BENDPOINTS_RADIUS = 10;
     
     /**
      * {@inheritDoc}
@@ -608,31 +607,6 @@ public class KaomFigureProvider implements IRenderingProvider {
     }
 
     /**
-     * creates a figure representing a constant.
-     * 
-     * @param object
-     *            the model element
-     * @return the constant figure
-     */
-    /*
-     * private IFigure createConstFigure(final EObject object) { IFigure constFigure =
-     * getDefaultFigure(); if (object instanceof Annotatable) { Annotation valueAnn = ((Annotatable)
-     * object).getAnnotation("value"); if (valueAnn instanceof StringAnnotation) { String value =
-     * ((StringAnnotation) valueAnn).getValue(); Label valueLabel = new Label();
-     * valueLabel.setText(value); valueLabel.setBounds(new Rectangle(LABELLOCATION_X,
-     * LABELLOCATION_Y, LABELSIZE_WIDTH, LABELSIZE_HEIGHT)); constFigure.setLayoutManager(new
-     * BorderLayout()); constFigure.add(valueLabel); } } return constFigure; }
-     * 
-     * private IFigure createValuesFigure(final EObject object) { IFigure constFigure =
-     * getDefaultFigure(); if (object instanceof Annotatable) { Annotation valueAnn = ((Annotatable)
-     * object).getAnnotation("values"); if (valueAnn instanceof StringAnnotation) { String value =
-     * ((StringAnnotation) valueAnn).getValue(); Label valueLabel = new Label();
-     * valueLabel.setText(value); valueLabel.setBounds(new Rectangle(LABELLOCATION_X,
-     * LABELLOCATION_Y, LABELSIZE_WIDTH, LABELSIZE_HEIGHT)); constFigure.setLayoutManager(new
-     * BorderLayout()); constFigure.add(valueLabel); } } return constFigure; }
-     */
-
-    /**
      * creates an appropriate figure according to the _IconDescription attribute of a ptolemy actor.
      * 
      * @param object
@@ -762,11 +736,6 @@ public class KaomFigureProvider implements IRenderingProvider {
             figure.paint(graphics);
             return image;
         }
-    }
-
-    public NodeFigure getNodePlateByString(String input, EObject object) {
-        // return new DefaultSizeNodeFigure(50,70);
-        return null;
     }
 
 }

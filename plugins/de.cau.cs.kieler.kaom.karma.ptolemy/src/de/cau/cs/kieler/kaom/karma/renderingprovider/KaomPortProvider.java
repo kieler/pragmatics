@@ -30,7 +30,6 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
-import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.NamedObj;
@@ -58,14 +57,19 @@ public class KaomPortProvider implements IRenderingProvider {
         EditPart parentPart = part.getParent();
 
         // /// make port name invisible. not working yet.
-        /*
-         * Object partChild = part.getChildren().get(0); if (partChild instanceof PortNameEditPart)
-         * { PortNameEditPart portNameEditPart = (PortNameEditPart) partChild;
-         * portNameEditPart.getFigure().setVisible(false); portNameEditPart.getFigure().setSize(0,
-         * 0);
-         * 
-         * }
-         */
+/*
+        Object partChild = part.getChildren().get(0);
+        if (partChild instanceof PortNameEditPart) {
+            PortNameEditPart portNameEditPart = (PortNameEditPart) partChild;
+            if (portNameEditPart.getFigure() instanceof PortNameFigure) {
+                PortNameFigure pnf = (PortNameFigure) portNameEditPart.getFigure();
+                pnf.setText("");
+            }
+            // portNameEditPart.getFigure().setVisible(false);
+            // portNameEditPart.getFigure().setSize(0, 0);
+            // portNameEditPart.getFigure().setOpaque(false);
+        }
+*/
         // ///
         if (parentPart instanceof IAdvancedRenderingEditPart) {
             EObject parentObject = ((IAdvancedRenderingEditPart) parentPart).getModelElement();
@@ -278,11 +282,6 @@ public class KaomPortProvider implements IRenderingProvider {
             }
         }
 
-        return null;
-    }
-
-    public NodeFigure getNodePlateByString(String input, EObject object) {
-        // TODO Auto-generated method stub
         return null;
     }
 
