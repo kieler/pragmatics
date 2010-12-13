@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
@@ -33,15 +34,15 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
-import de.cau.cs.kieler.klay.layered.impl.LayerSweepCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer;
-import de.cau.cs.kieler.klay.layered.impl.SimpleSplineEdgeRouter;
 import de.cau.cs.kieler.klay.layered.modules.ICrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.modules.ICycleBreaker;
 import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
+import de.cau.cs.kieler.klay.rail.impl.RailLayerSweepCrossingMinimizer;
+import de.cau.cs.kieler.klay.rail.impl.RailwayEdgeRouter;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 
 /**
@@ -62,11 +63,11 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     /** phase 2: layering module. */
     private ILayerer layerer = new NetworkSimplexLayerer();
     /** phase 3: crossing minimization module. */
-    private ICrossingMinimizer crossingMinimizer = new LayerSweepCrossingMinimizer();
+    private ICrossingMinimizer crossingMinimizer = new RailLayerSweepCrossingMinimizer();
     /** phase 4: node placement module. */
     private INodePlacer nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
-    private IEdgeRouter edgeRouter = new SimpleSplineEdgeRouter();
+    private IEdgeRouter edgeRouter = new RailwayEdgeRouter();
 
     private static final int SWITCH_PORTS = 3;
 
@@ -121,7 +122,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         if (borSpacing >= 0) {
             layeredGraph.setProperty(Properties.BOR_SPACING, borSpacing);
         }
-
+        
+        layeredGraph.setProperty(Properties.RANDOM, new Random(1));
     }
 
     /**
@@ -157,8 +159,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         layerer.layer(nodes, layeredGraph);
         layeredGraph.splitEdges();
         // phase 3: crossing minimization
-        // crossingMinimizer.reset(monitor.subTask(1));
-        // crossingMinimizer.minimizeCrossings(layeredGraph);
+        crossingMinimizer.reset(monitor.subTask(1));
+        crossingMinimizer.minimizeCrossings(layeredGraph);
         // phase 4: node placement
         nodePlacer.reset(monitor.subTask(1));
         nodePlacer.placeNodes(layeredGraph);
