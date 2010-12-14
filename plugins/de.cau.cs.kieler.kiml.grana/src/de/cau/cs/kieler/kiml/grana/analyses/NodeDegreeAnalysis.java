@@ -22,7 +22,6 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.grana.MinAvgMaxResult;
 
 /**
  * A graph analysis that computes the min/avg/max node degree of the given
@@ -35,7 +34,8 @@ public class NodeDegreeAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
+    public Object doAnalysis(final KNode parentNode,
+            final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Number of Edges analysis", 1);
@@ -78,11 +78,11 @@ public class NodeDegreeAnalysis implements IAnalysis {
         progressMonitor.done();
 
         if (numberOfNodes > 0) {
-            return new MinAvgMaxResult<Integer, Float>(minNodeDegree,
+            return new Object[] { minNodeDegree,
                     (float) overallNodeDegree / (float) numberOfNodes,
-                    maxNodeDegree);
+                    maxNodeDegree };
         } else {
-            return new MinAvgMaxResult<Integer, Float>(0, 0.0f, 0);
+            return new Object[] { 0, 0.0f, 0 };
         }
     }
 }

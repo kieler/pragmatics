@@ -51,29 +51,11 @@
 
    <element name="type">
       <complexType>
-         <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="dependency"/>
-         </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="dependency">
-      <complexType>
-         <attribute name="type" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kiml.grana.resultVisualizers/type/@name"/>
-               </appinfo>
             </annotation>
          </attribute>
       </complexType>

@@ -21,13 +21,13 @@ import java.util.Map;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
- * An analysis for the number of horizontal and vertical layers. Returns a pair of integers.
- *
+ * An analysis for the number of horizontal and vertical layers. Returns a pair
+ * of integers.
+ * 
  * @author msp
  */
 public class LayersAnalysis implements IAnalysis {
@@ -36,20 +36,25 @@ public class LayersAnalysis implements IAnalysis {
     private static final class Layer {
         private float start;
         private float end;
+
         private Layer(final float thestart, final float theend) {
             this.start = thestart;
             this.end = theend;
         }
     }
-    
+
     /**
      * Insert a new segment into the given list of layers.
      * 
-     * @param layers a list of layers
-     * @param start the start position of the new segment
-     * @param end the end position of the new segment
+     * @param layers
+     *            a list of layers
+     * @param start
+     *            the start position of the new segment
+     * @param end
+     *            the end position of the new segment
      */
-    private static void insert(final List<Layer> layers, final float start, final float end) {
+    private static void insert(final List<Layer> layers, final float start,
+            final float end) {
         Layer insertLayer = null;
         Iterator<Layer> layerIter = layers.iterator();
         while (layerIter.hasNext()) {
@@ -61,8 +66,10 @@ public class LayersAnalysis implements IAnalysis {
                     insertLayer.end = Math.max(insertLayer.end, end);
                 } else {
                     layerIter.remove();
-                    insertLayer.start = Math.min(insertLayer.start, currentLayer.start);
-                    insertLayer.end = Math.max(insertLayer.end, currentLayer.end);
+                    insertLayer.start =
+                            Math.min(insertLayer.start, currentLayer.start);
+                    insertLayer.end =
+                            Math.max(insertLayer.end, currentLayer.end);
                 }
             }
         }
@@ -71,12 +78,14 @@ public class LayersAnalysis implements IAnalysis {
             layers.add(newLayer);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor) throws KielerException {
+    public Object doAnalysis(final KNode parentNode,
+            final Map<String, Object> results,
+            final IKielerProgressMonitor progressMonitor)
+            throws KielerException {
         progressMonitor.begin("Layers Analysis", 1);
         // analyze horizontal layers
         List<Layer> horizontalLayers = new LinkedList<Layer>();
@@ -86,7 +95,7 @@ public class LayersAnalysis implements IAnalysis {
             float end = start + nodeLayout.getHeight();
             insert(horizontalLayers, start, end);
         }
-        
+
         // analyze vertical layers
         List<Layer> verticalLayers = new LinkedList<Layer>();
         for (KNode node : parentNode.getChildren()) {
@@ -95,9 +104,9 @@ public class LayersAnalysis implements IAnalysis {
             float end = start + nodeLayout.getWidth();
             insert(verticalLayers, start, end);
         }
-        
+
         progressMonitor.done();
-        return new Pair<Integer, Integer>(horizontalLayers.size(), verticalLayers.size());
+        return new Object[] { horizontalLayers.size(), verticalLayers.size() };
     }
 
 }

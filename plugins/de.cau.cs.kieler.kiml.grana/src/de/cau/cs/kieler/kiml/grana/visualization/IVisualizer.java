@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualization;
 
-import java.util.Map;
+import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 
 /**
  * The interface for all analysis result visualizer.
@@ -37,20 +37,18 @@ public interface IVisualizer<S, T> {
     boolean canVisualize(final Object result);
 
     /**
-     * Visualizes the given result by modifying the given parameter and/or
-     * returning an object that represents the visualization, if
+     * Visualizes the given analysis result by modifying the given parameter
+     * and/or returning an object that represents the visualization, if
      * {@code canVisualize} returns true for the given result.
      * 
+     * @param analysis
+     *            the analysis
      * @param result
      *            the result to visualize
-     * @param dependencies
-     *            the dependencies
      * @param parameter
      *            the parameter
      * @return an object that represents the visualization or null if not
      *         applicable
      */
-    S visualize(final Object result,
-            final Map<String, Visualization> dependencies,
-            final T parameter);
+    S visualize(final AbstractInfoAnalysis analysis, final Object result, final T parameter);
 }

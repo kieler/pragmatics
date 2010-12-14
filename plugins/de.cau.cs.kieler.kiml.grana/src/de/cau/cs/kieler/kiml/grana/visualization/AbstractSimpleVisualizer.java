@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualization;
 
-import java.util.Map;
+import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 
 /**
  * An abstract base class for result visualizers. It provides a simpler
@@ -30,19 +30,22 @@ public abstract class AbstractSimpleVisualizer<S> implements
     /**
      * {@inheritDoc}
      */
-    public S visualize(final Object result,
-            final Map<String, Visualization> dependencies,
-            final Object parameter) {
-        return visualize(result);
+    public S visualize(final AbstractInfoAnalysis analysis,
+            final Object result, final Object parameter) {
+        return visualize(analysis, result);
     }
 
     /**
-     * Visualizes the given result by returning an object that represents the
-     * visualization, if {@code canVisualize} returns true for the given result.
+     * Visualizes the given analysis result by returning an object that
+     * represents the visualization, if {@code canVisualize} returns true for
+     * the given result.
      * 
+     * @param analysis
+     *            the analysis
      * @param result
      *            the analysis result
      * @return the visualization result
      */
-    public abstract S visualize(final Object result);
+    public abstract S visualize(final AbstractInfoAnalysis analysis,
+            final Object result);
 }

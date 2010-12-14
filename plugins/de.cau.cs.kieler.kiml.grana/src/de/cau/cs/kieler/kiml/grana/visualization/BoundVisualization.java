@@ -55,7 +55,7 @@ public class BoundVisualization {
      * @return the visualization result
      */
     public <S> S get() {
-        return visualization.get(result);
+        return visualization.get(analysis, result);
     }
 
     /**
@@ -69,7 +69,7 @@ public class BoundVisualization {
      * @return the visualization result
      */
     public <S> S apply(final Object parameter) {
-        return visualization.apply(result, parameter);
+        return visualization.apply(analysis, result, parameter);
     }
 
     /**

@@ -32,6 +32,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
 
@@ -209,7 +210,23 @@ public class AnalysisSelectionViewer extends Composite implements
 
             if (element instanceof AbstractInfoAnalysis) {
                 AbstractInfoAnalysis analysis = (AbstractInfoAnalysis) element;
-                return analysis.getName();
+                if (analysis.getComponents().size() > 0) {
+                    String label = analysis.getName() + " (";
+                    boolean first = true;
+                    for (Pair<String, String> component : analysis
+                            .getComponents()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            label += ", ";
+                        }
+                        label += component.getFirst();
+                    }
+                    label += ")";
+                    return label;
+                } else {
+                    return analysis.getName();
+                }
             } else if (element instanceof AnalysisCategory) {
                 AnalysisCategory category = (AnalysisCategory) element;
                 return category.getName();

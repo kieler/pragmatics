@@ -13,10 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.grana;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.util.Dependency;
 import de.cau.cs.kieler.core.util.IDepending;
+import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * Analyses that derive from this class are required to provide an id, name and
@@ -56,7 +58,7 @@ public abstract class AbstractInfoAnalysis implements IAnalysis,
     public boolean isHelper() {
         return false;
     }
-    
+
     /**
      * Returns the analysis category.
      * 
@@ -67,12 +69,22 @@ public abstract class AbstractInfoAnalysis implements IAnalysis,
     }
 
     /**
+     * Returns the components, in the form of name/abbreviation pairs, the
+     * results of this analysis consist of.
+     * 
+     * @return the components
+     */
+    public List<Pair<String, String>> getComponents() {
+        return new LinkedList<Pair<String, String>>();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public List<Dependency<String>> getDependencies() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -27,7 +27,9 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 public interface IAnalysis {
 
     /**
-     * Performs the actual analysis process and returns the results.
+     * Performs the actual analysis process and returns the results. If more
+     * than one component have been specified for the analysis in the extension
+     * the method is expected to return an array.
      * 
      * @param parentNode
      *            the parent node which the analysis is performed on

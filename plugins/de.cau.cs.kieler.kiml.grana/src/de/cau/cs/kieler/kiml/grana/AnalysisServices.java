@@ -33,6 +33,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Dependency;
 import de.cau.cs.kieler.core.util.DependencyGraph;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
 
 /**
@@ -53,6 +54,8 @@ public final class AnalysisServices implements IBundleChangedListener {
     public static final String ELEMENT_ANALYSIS_CATEGORY = "category";
     /** name of the 'dependency' element. */
     public static final String ELEMENT_ANALYSIS_DEPENDENCY = "dependency";
+    /** name of the 'component' element. */
+    public static final String ELEMENT_ANALYSIS_COMPONENT = "component";
     /** name of the 'analysis' attribute in the extension points. */
     public static final String ATTRIBUTE_ANALYSIS = "analysis";
     /** name of the 'category' attribute in the extension points. */
@@ -65,6 +68,8 @@ public final class AnalysisServices implements IBundleChangedListener {
     public static final String ATTRIBUTE_ID = "id";
     /** name of the 'name' attribute in the extension points. */
     public static final String ATTRIBUTE_NAME = "name";
+    /** name of the 'abbreviation' attribute in the extension points. */
+    public static final String ATTRIBUTE_ABBREVIATION = "abbreviation";
     /** name of the 'weak' attribute in the extension point. */
     private static final String ATTRIBUTE_WEAK = "weak";
     /** name of the 'helper' attribute in the extension point. */
@@ -239,6 +244,27 @@ public final class AnalysisServices implements IBundleChangedListener {
                                         infoAnalysis.getDependencies().add(
                                                 new Dependency<String>(
                                                         analysisId, weak));
+                                    }
+                                } else if (ELEMENT_ANALYSIS_COMPONENT
+                                        .equals(child.getName())) {
+                                    String componentName =
+                                            child.getAttribute(ATTRIBUTE_NAME);
+                                    String componentAbbreviation =
+                                            child.getAttribute(ATTRIBUTE_ABBREVIATION);
+                                    if (componentName == null
+                                            || componentName.length() == 0) {
+                                        reportError(EXTP_ID_ANALYSIS_PROVIDERS,
+                                                child, ATTRIBUTE_NAME, null);
+                                    } else if (componentAbbreviation == null
+                                            || componentAbbreviation.length() == 0) {
+                                        reportError(EXTP_ID_ANALYSIS_PROVIDERS,
+                                                child, ATTRIBUTE_ABBREVIATION,
+                                                null);
+                                    } else {
+                                        infoAnalysis.getComponents().add(
+                                                new Pair<String, String>(
+                                                        componentName,
+                                                        componentAbbreviation));
                                     }
                                 }
                             }
@@ -467,6 +493,9 @@ public final class AnalysisServices implements IBundleChangedListener {
         private final String analysisCategory;
         /** is the analysis a helper analysis? */
         private final boolean analysisHelper;
+        /** the components. */
+        private List<Pair<String, String>> components =
+                new LinkedList<Pair<String, String>>();
         /** the analysis dependencies. */
         private final List<Dependency<String>> dependencies =
                 new LinkedList<Dependency<String>>();
@@ -534,6 +563,14 @@ public final class AnalysisServices implements IBundleChangedListener {
         @Override
         public boolean isHelper() {
             return analysisHelper;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public List<Pair<String, String>> getComponents() {
+            return components;
         }
 
         /**

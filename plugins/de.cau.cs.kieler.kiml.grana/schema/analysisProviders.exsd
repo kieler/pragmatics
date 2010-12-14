@@ -53,6 +53,7 @@
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="dependency"/>
+            <element ref="component"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -191,6 +192,25 @@
             </annotation>
          </attribute>
          <attribute name="weak" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="component">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="abbreviation" type="string">
             <annotation>
                <documentation>
                   

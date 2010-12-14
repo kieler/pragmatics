@@ -14,22 +14,20 @@
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
-import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.visualization.AbstractSimpleVisualizer;
 
 /**
- * The html visualizer for failed analyses.
+ * A special visualizer for arrays.
  * 
  * @author mri
  */
-public class AnalysisFailedHtmlVisualizer extends
-        AbstractSimpleVisualizer<String> {
+public class ArrayResultVisualizer extends AbstractSimpleVisualizer<String> {
 
     /**
      * {@inheritDoc}
      */
     public boolean canVisualize(final Object result) {
-        return result instanceof AnalysisFailed;
+        return (result instanceof Object[]);
     }
 
     /**
@@ -37,18 +35,22 @@ public class AnalysisFailedHtmlVisualizer extends
      */
     public String visualize(final AbstractInfoAnalysis analysis,
             final Object result) {
-        if (result instanceof AnalysisFailed) {
-            AnalysisFailed analysisFailed = (AnalysisFailed) result;
-            switch (analysisFailed.getType()) {
-            case Dependency:
-                return "<font color='blue'>" + result.toString() + "</font>";
-            case Canceled:
-                return "<font color='orange'>" + result.toString() + "</font>";
-            case Failed:
-            default:
-                return "<font color='red'>" + result.toString() + "</font>";
+        if (result instanceof Object[]) {
+            Object[] objects = (Object[]) result;
+            String vis = "(";
+            boolean first = true;
+            for (Object object : objects) {
+                if (first) {
+                    first = false;
+                } else {
+                    vis += ", ";
+                }
+                vis += object.toString();
             }
+            vis += ")";
+            return vis;
+        } else {
+            return result.toString();
         }
-        return null;
     }
 }

@@ -18,6 +18,7 @@ import java.io.OutputStreamWriter;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.visualization.Visualization;
 import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
@@ -30,7 +31,7 @@ import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
 public class CSVResultSerializer implements IBatchResultSerializer {
 
     /** the visualization type used in the serialization. */
-    private static final String VISUALIZATION_TYPE = "text";
+    private static final String VISUALIZATION_TYPE = "csv";
 
     /**
      * {@inheritDoc}
@@ -45,7 +46,14 @@ public class CSVResultSerializer implements IBatchResultSerializer {
         // write the header
         writer.write("File");
         for (AbstractInfoAnalysis analysis : batchResult.getAnalyses()) {
-            writer.write(";" + analysis.getId());
+            if (analysis.getComponents().size() > 0) {
+                for (Pair<String, String> component : analysis.getComponents()) {
+                    writer.write(";" + analysis.getName() + " ("
+                            + component.getFirst() + ")");
+                }
+            } else {
+                writer.write(";" + analysis.getName());
+            }
         }
         writer.write("\n");
         // write the job results
@@ -57,7 +65,7 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 Visualization visualization =
                         VisualizationServices.getInstance().getVisualization(
                                 VISUALIZATION_TYPE, result);
-                String s = visualization.get(result);
+                String s = visualization.get(analysis, result);
                 writer.write(";" + s);
             }
             writer.write("\n");

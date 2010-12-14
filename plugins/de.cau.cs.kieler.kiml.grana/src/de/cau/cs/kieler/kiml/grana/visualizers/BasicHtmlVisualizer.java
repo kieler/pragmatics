@@ -13,10 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualizers;
 
-import java.util.Map;
-
+import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.visualization.IVisualizer;
 import de.cau.cs.kieler.kiml.grana.visualization.Visualization;
+import de.cau.cs.kieler.kiml.grana.visualization.VisualizationServices;
 
 /**
  * The html visualizer which simply uses the text visualization as it is.
@@ -35,14 +35,15 @@ public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
     /**
      * {@inheritDoc}
      */
-    public String visualize(final Object result,
-            final Map<String, Visualization> dependencies, final Object parameter) {
-        Visualization textVisualization = dependencies.get("text");
+    public String visualize(final AbstractInfoAnalysis analysis,
+            final Object result, final Object parameter) {
+        Visualization textVisualization =
+                VisualizationServices.getInstance().getVisualization("text",
+                        result);
         if (textVisualization == null) {
             return result.toString();
         }
-        return textVisualization.get(result);
+        return textVisualization.get(analysis, result);
     }
 
-    
 }

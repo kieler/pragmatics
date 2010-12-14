@@ -13,20 +13,15 @@
  */
 package de.cau.cs.kieler.kiml.grana.visualization;
 
-import java.util.HashMap;
-import java.util.Map;
+import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 
 /**
- * This class represents a concrete visualization including the necessary
- * dependencies.
+ * This class represents a concrete visualization.
  * 
  * @author mri
  */
 public class Visualization {
 
-    /** the selected dependencies for the visualization. */
-    private Map<String, Visualization> dependencies =
-            new HashMap<String, Visualization>();
     /** the visualizer in this visualization. */
     private IVisualizer<Object, Object> visualizer;
 
@@ -46,13 +41,15 @@ public class Visualization {
      * 
      * @param <S>
      *            the result type
+     * @param analysis
+     *            the analysis
      * @param result
      *            the analysis result
      * @return the visualization result
      */
     @SuppressWarnings("unchecked")
-    public <S> S get(final Object result) {
-        return (S) visualizer.visualize(result, dependencies, null);
+    public <S> S get(final AbstractInfoAnalysis analysis, final Object result) {
+        return (S) visualizer.visualize(analysis, result, null);
     }
 
     /**
@@ -61,6 +58,8 @@ public class Visualization {
      * 
      * @param <S>
      *            the result type
+     * @param analysis
+     *            the analysis
      * @param result
      *            the analysis result
      * @param parameter
@@ -68,20 +67,8 @@ public class Visualization {
      * @return the visualization result
      */
     @SuppressWarnings("unchecked")
-    public <S> S apply(final Object result, final Object parameter) {
-        return (S) visualizer.visualize(result, dependencies, parameter);
-    }
-
-    /**
-     * Adds a dependency for the given type. There can only be one dependency
-     * for a given type.
-     * 
-     * @param type
-     *            the type
-     * @param dependency
-     *            the dependency
-     */
-    public void addDependency(final String type, final Visualization dependency) {
-        dependencies.put(type, dependency);
+    public <S> S apply(final AbstractInfoAnalysis analysis,
+            final Object result, final Object parameter) {
+        return (S) visualizer.visualize(analysis, result, parameter);
     }
 }

@@ -109,6 +109,18 @@
             description="The minimum, average and maximum node degree of all nodes including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.averageNodeDegree"
             name="Node Degree">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.basic"
@@ -137,6 +149,18 @@
             description="The minimum, average and maximum edge length."
             id="de.cau.cs.kieler.kiml.grana.edgeLength"
             name="Edge Length">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
@@ -157,7 +181,15 @@
             class="de.cau.cs.kieler.kiml.grana.analyses.LayersAnalysis"
             description="Counts the number of horizontal and vertical layers in which the nodes are arranged."
             id="de.cau.cs.kieler.kiml.grana.layers"
-            name="Horizontal / Vertical Layers">
+            name="Number of Layers">
+         <component
+               abbreviation="Hor"
+               name="Horizontal">
+         </component>
+         <component
+               abbreviation="Ver"
+               name="Vertical">
+         </component>
       </provider>
    </extension>
    <extension
@@ -167,9 +199,9 @@
       </type>
       <type
             name="html">
-         <dependency
-               type="text">
-         </dependency>
+      </type>
+      <type
+            name="csv">
       </type>
       <visualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.ToStringVisualizer"
@@ -177,19 +209,9 @@
             type="text">
       </visualizer>
       <visualizer
-            class="de.cau.cs.kieler.kiml.grana.visualizers.PairResultVisualizer"
+            class="de.cau.cs.kieler.kiml.grana.visualizers.ArrayResultVisualizer"
             priority="10"
             type="text">
-      </visualizer>
-      <visualizer
-            class="de.cau.cs.kieler.kiml.grana.visualizers.MinAvgMaxVisualizer"
-            priority="10"
-            type="text">
-      </visualizer>
-      <visualizer
-            class="de.cau.cs.kieler.kiml.grana.visualizers.MinAvgMaxHtmlVisualizer"
-            priority="10"
-            type="html">
       </visualizer>
       <visualizer
             class="de.cau.cs.kieler.kiml.grana.visualizers.AnalysisFailedHtmlVisualizer"
@@ -200,6 +222,11 @@
             class="de.cau.cs.kieler.kiml.grana.visualizers.BasicHtmlVisualizer"
             priority="1"
             type="html">
+      </visualizer>
+      <visualizer
+            class="de.cau.cs.kieler.kiml.grana.visualizers.BasicCSVVisualizer"
+            priority="1"
+            type="csv">
       </visualizer>
       <visualizationMethod
             class="de.cau.cs.kieler.kiml.grana.ui.DialogVisualizationMethod"

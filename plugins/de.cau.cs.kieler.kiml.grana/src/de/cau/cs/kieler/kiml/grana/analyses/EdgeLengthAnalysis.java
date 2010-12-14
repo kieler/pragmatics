@@ -22,7 +22,6 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.grana.MinAvgMaxResult;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 
@@ -95,10 +94,10 @@ public class EdgeLengthAnalysis implements IAnalysis {
         progressMonitor.done();
 
         if (numberOfEdges > 0) {
-            return new MinAvgMaxResult<Float, Float>(minEdgeLength,
-                    overallEdgeLength / (float) numberOfEdges, maxEdgeLength);
+            return new Object[] { minEdgeLength,
+                    overallEdgeLength / (float) numberOfEdges, maxEdgeLength };
         } else {
-            return new MinAvgMaxResult<Integer, Float>(0, 0.0f, 0);
+            return new Object[] { 0, 0.0f, 0 };
         }
     }
 

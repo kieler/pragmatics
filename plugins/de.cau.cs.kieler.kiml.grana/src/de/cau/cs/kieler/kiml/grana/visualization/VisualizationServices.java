@@ -27,11 +27,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.util.Dependency;
-import de.cau.cs.kieler.core.util.DependencyGraph;
-import de.cau.cs.kieler.core.util.IDependencyGraph;
-import de.cau.cs.kieler.core.util.IDepending;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.plugin.GranaPlugin;
 
@@ -47,8 +42,6 @@ public final class VisualizationServices {
             "de.cau.cs.kieler.kiml.grana.resultVisualizers";
     /** name of the 'type' element. */
     private static final String ELEMENT_TYPE = "type";
-    /** name of the 'dependency' element. */
-    private static final String ELEMENT_DEPENDENCY = "dependency";
     /** name of the 'visualizer' element. */
     private static final String ELEMENT_VISUALIZER = "visualizer";
     /** name of the 'visualizationMethod' element. */
@@ -67,12 +60,6 @@ public final class VisualizationServices {
 
     /** the singleton instance. */
     private static VisualizationServices instance = new VisualizationServices();
-    /** the dependency graph for visualization types. */
-    private IDependencyGraph<String, VisualizationType> dependencyGraph =
-            new DependencyGraph<String, VisualizationType>();
-    /** the visualization type names mapped on the type. */
-    private Map<String, VisualizationType> nameTypeMapping =
-            new HashMap<String, VisualizationType>();
     /** the visualization types mapped on the appropriate visualizers. */
     private Map<String, LinkedList<IVisualizer<Object, Object>>> typeVisualizersMapping =
             new HashMap<String, LinkedList<IVisualizer<Object, Object>>>();
@@ -145,10 +132,7 @@ public final class VisualizationServices {
         IConfigurationElement[] extensions =
                 Platform.getExtensionRegistry().getConfigurationElementsFor(
                         EXTP_ID_RESULT_VISUALIZERS);
-        List<VisualizationType> visualizationTypes =
-                new LinkedList<VisualizationType>();
-        List<Pair<InfoVisualizationMethod, String>> visualizationMethodTypes =
-                new LinkedList<Pair<InfoVisualizationMethod, String>>();
+        List<String> visualizationTypes = new LinkedList<String>();
         // iterate through all extension elements
         for (IConfigurationElement element : extensions) {
             if (ELEMENT_TYPE.equals(element.getName())) {
@@ -157,22 +141,9 @@ public final class VisualizationServices {
                     reportError(EXTP_ID_RESULT_VISUALIZERS, element,
                             ATTRIBUTE_NAME, null);
                 } else {
-                    VisualizationType type = new VisualizationType(name);
-                    for (IConfigurationElement child : element.getChildren()) {
-                        if (ELEMENT_DEPENDENCY.equals(child.getName())) {
-                            String dependency =
-                                    child.getAttribute(ATTRIBUTE_TYPE);
-                            if (dependency == null || dependency.length() == 0) {
-                                reportError(EXTP_ID_RESULT_VISUALIZERS, child,
-                                        ATTRIBUTE_TYPE, null);
-                            } else {
-                                type.addTypeDependency(dependency);
-                            }
-                        }
-                    }
-                    visualizationTypes.add(type);
+                    visualizationTypes.add(name);
                     LinkedList<IVisualizer<Object, Object>> visualizers =
-                            typeVisualizersMapping.get(type);
+                            typeVisualizersMapping.get(name);
                     if (visualizers == null) {
                         visualizers =
                                 new LinkedList<IVisualizer<Object, Object>>();
@@ -226,10 +197,8 @@ public final class VisualizationServices {
                             InfoVisualizationMethod infoVisualizationMethod =
                                     new InfoVisualizationMethod(
                                             visualizationMethod, silent);
+                            infoVisualizationMethod.setType(type);
                             visualizationMethods.add(infoVisualizationMethod);
-                            visualizationMethodTypes
-                                    .add(new Pair<InfoVisualizationMethod, String>(
-                                            infoVisualizationMethod, type));
                         }
                     }
                 } catch (CoreException exception) {
@@ -238,36 +207,15 @@ public final class VisualizationServices {
                 }
             }
         }
-        // add the types to the dependency graph and remove types which
-        // had unresolved or cyclic dependencies
-        List<VisualizationType> unresolvedTypes =
-                dependencyGraph.addAll(visualizationTypes);
-        visualizationTypes.removeAll(unresolvedTypes);
-        for (VisualizationType type : unresolvedTypes) {
-            typeVisualizersMapping.remove(type.getId());
-            // display a warning
-            String message =
-                    "VisualizationType "
-                            + type.getId()
-                            + " is missing a dependency or is part of a dependency cycle.";
-            IStatus status =
-                    new Status(IStatus.WARNING, GranaPlugin.PLUGIN_ID, 0,
-                            message, null);
-            StatusManager.getManager().handle(status);
-        }
-        // create the visualization type mapping
-        for (VisualizationType visualizationType : visualizationTypes) {
-            nameTypeMapping.put(visualizationType.getId(), visualizationType);
-        }
         // resolve visualization method types
-        for (Pair<InfoVisualizationMethod, String> pair : visualizationMethodTypes) {
-            VisualizationType type = nameTypeMapping.get(pair.getSecond());
-            if (type != null) {
-                pair.getFirst().setType(type);
-            } else {
-                visualizationMethods.remove(pair.getFirst());
+        List<InfoVisualizationMethod> invalidVisualizationMethods =
+                new LinkedList<InfoVisualizationMethod>();
+        for (InfoVisualizationMethod method : visualizationMethods) {
+            if (!visualizationTypes.contains(method.getType())) {
+                invalidVisualizationMethods.add(method);
             }
         }
+        visualizationMethods.removeAll(invalidVisualizationMethods);
         // sort visualizers by their priority
         for (List<IVisualizer<Object, Object>> visualizers : typeVisualizersMapping
                 .values()) {
@@ -289,12 +237,17 @@ public final class VisualizationServices {
      */
     public Visualization getVisualization(final String visualizationType,
             final Object object) {
-        VisualizationType type = nameTypeMapping.get(visualizationType);
-        if (type == null) {
+        List<IVisualizer<Object, Object>> visualizers =
+                typeVisualizersMapping.get(visualizationType);
+        if (visualizers == null) {
             return null;
         }
-        return dependencyGraph.deriveObject(type,
-                new VisualizationDerivationDetail(object));
+        for (IVisualizer<Object, Object> visualizer : visualizers) {
+            if (visualizer.canVisualize(object)) {
+                return new Visualization(visualizer);
+            }
+        }
+        return null;
     }
 
     /**
@@ -310,8 +263,8 @@ public final class VisualizationServices {
      */
     public void visualize(final List<AbstractInfoAnalysis> analyses,
             final Map<String, Object> results, final boolean silent) {
-        Map<VisualizationType, List<BoundVisualization>> typeBoundVisualizationsMap =
-                new HashMap<VisualizationType, List<BoundVisualization>>();
+        Map<String, List<BoundVisualization>> typeBoundVisualizationsMap =
+                new HashMap<String, List<BoundVisualization>>();
         for (InfoVisualizationMethod method : visualizationMethods) {
             if (!silent || method.isSilent()) {
                 List<BoundVisualization> boundVisualizations =
@@ -323,63 +276,16 @@ public final class VisualizationServices {
                     for (AbstractInfoAnalysis analysis : analyses) {
                         Object result = results.get(analysis.getId());
                         Visualization visualization =
-                                dependencyGraph.deriveObject(method.getType(),
-                                        new VisualizationDerivationDetail(
-                                                result));
-                        boundVisualizations.add(new BoundVisualization(
-                                analysis, result, visualization));
+                                getVisualization(method.getType(), result);
+                        if (visualization != null) {
+                            boundVisualizations.add(new BoundVisualization(
+                                    analysis, result, visualization));
+                        }
                     }
                 }
 
-                method.visualize(method.getType().getId(), boundVisualizations);
+                method.visualize(method.getType(), boundVisualizations);
             }
-        }
-    }
-
-    /**
-     * The class that represents a visualization type.
-     */
-    private static class VisualizationType implements IDepending<String> {
-
-        /** the type name. */
-        private String name;
-        /** the dependencies. */
-        private List<Dependency<String>> dependencies =
-                new LinkedList<Dependency<String>>();
-
-        /**
-         * Constructs the VisualizationType.
-         * 
-         * @param theName
-         *            the type name
-         */
-        public VisualizationType(final String theName) {
-            name = theName;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public String getId() {
-            return name;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public List<Dependency<String>> getDependencies() {
-            return dependencies;
-        }
-
-        /**
-         * Adds a type to the dependencies.
-         * 
-         * @param type
-         *            the type dependency
-         */
-        public void addTypeDependency(final String type) {
-            Dependency<String> dep = new Dependency<String>(type);
-            dependencies.add(dep);
         }
     }
 
@@ -390,7 +296,7 @@ public final class VisualizationServices {
             IVisualizationMethod {
 
         /** the visualization type. */
-        private VisualizationType type;
+        private String type;
         /** the wrapped visualization method. */
         private IVisualizationMethod method;
         /** is the visualization method silent? */
@@ -415,7 +321,7 @@ public final class VisualizationServices {
          * 
          * @return the visualization type
          */
-        public VisualizationType getType() {
+        public String getType() {
             return type;
         }
 
@@ -425,7 +331,7 @@ public final class VisualizationServices {
          * @param theType
          *            the visualization type
          */
-        public void setType(final VisualizationType theType) {
+        public void setType(final String theType) {
             type = theType;
         }
 
@@ -479,58 +385,5 @@ public final class VisualizationServices {
                     - (visualizationMethod1.isSilent() ? 1 : 0);
         }
 
-    }
-
-    /**
-     * The implementation of the derivation detail interface for deriving a
-     * visualization from the dependency graph.
-     * 
-     * @author mri
-     */
-    private class VisualizationDerivationDetail implements
-            IDependencyGraph.DerivationDetail<VisualizationType, Visualization> {
-
-        /** the result that has to be visualized. */
-        private Object result;
-
-        /**
-         * Constructs a VisualizationDerivationDetail.
-         * 
-         * @param theResult
-         *            the result that has to be visualized
-         */
-        public VisualizationDerivationDetail(final Object theResult) {
-            result = theResult;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Visualization derive(final VisualizationType object) {
-            IVisualizer<Object, Object> visualizer = null;
-            // search for an appropriate visualizer
-            for (IVisualizer<Object, Object> candidate : typeVisualizersMapping
-                    .get(object.getId())) {
-                if (candidate.canVisualize(result)) {
-                    visualizer = candidate;
-                    break;
-                }
-            }
-            // no visualizer found?
-            if (visualizer == null) {
-                return null;
-            }
-            // create the visualization object
-            return new Visualization(visualizer);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void makeDependent(final Visualization object,
-                final Visualization dependency,
-                final VisualizationType dependencyObject) {
-            object.addDependency(dependencyObject.getId(), dependency);
-        }
     }
 }
