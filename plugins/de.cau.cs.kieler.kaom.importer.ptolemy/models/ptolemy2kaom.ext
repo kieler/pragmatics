@@ -535,16 +535,21 @@ Void optimize(Entity entity) :
  * If no such relation is found, a random undirected link's direction is
  * fixed.
  * 
- * This process is repeated until no undirected links are left.
+ * Repeat.
+ * 
+ * At this point, either all link directions have been inferred or there are
+ * some links left whose direction cannot be inferred with the information
+ * available. These links are left untouched, since we might as well leave
+ * them in the direction they currently have.
  * 
  * @param entity root of the tree.
  */
 Void inferLinkDirections(Entity entity) :
     let portsChanged = inferPorts(entity) :
     let linksChanged = inferLinks(entity) :
-    //let relationsChanged = inferRelations(entity) :
+    let relationsChanged = inferRelations(entity) :
     
-    if (portsChanged || linksChanged/* || relationsChanged*/)
+    if (portsChanged || linksChanged || relationsChanged)
         then inferLinkDirections(entity)
         else null
 ;
@@ -720,6 +725,87 @@ Boolean _inferLink(Link link) :
                     true
                 )
                 else false
+        )
+        else false
+;
+
+
+//-----------------
+// Infer Relations
+//-----------------
+
+/**
+ * Tries to infer the direction of single undirected links connected to
+ * relations with only incoming or only outgoing links.
+ * 
+ * @param entity root of the tree whose relations to traverse.
+ * @return true if at least one previously undirected link is now directed.
+ */
+Boolean inferRelations(Entity entity) :
+    let ownRelationsChanged = _inferRelations(entity.childRelations) :
+    let otherRelationsChanged = entity.childEntities.inferRelations().exists(e | e == true) :
+    
+    ownRelationsChanged || otherRelationsChanged
+;
+
+/**
+ * Tries to infer the direction of single undirected links connected to
+ * the given list of relations.
+ * 
+ * @param relations the relations to traverse.
+ * @return true if at least one previously undirected link is now directed.
+ */
+Boolean _inferRelations(List[Relation] relations) :
+    let relation = relations.first() :
+    
+    if (relation != null)
+        then (
+            if (_inferRelation(relation))
+                then (
+                    _inferRelations(relations.withoutFirst()) ->
+                    true
+                )
+                else _inferRelations(relations.withoutFirst())
+        )
+        else false
+;
+
+/**
+ * Tries to infer the direction of single undirected links connected to
+ * the given relation.
+ * 
+ * @param relations the relation.
+ * @return true if a previously undirected link is now directed.
+ */
+Boolean _inferRelation(Relation relation) :
+    // Get the incoming and outgoing directed links
+    let incoming = relation.incomingLinks.select(e | !isMarkedAsUndirected(e)) :
+    let outgoing = relation.outgoingLinks.select(e | !isMarkedAsUndirected(e)) :
+    
+    // Get the list of connected undirected links
+    let undirected = getConnectedLinks(relation).select(e | isMarkedAsUndirected(e)) :
+    
+    if (undirected.size == 1)
+        then (
+            // There is exactly one undirected link connected to this relation 
+		    switch {
+		        case incoming.size == 0 && outgoing.size > 0 : (
+		            // There are only outgoing links, so the undirected link
+		            // must be incoming
+		            swapTargetTo(undirected.first(), relation) ->
+		            true
+	            )
+		            
+                case incoming.size > 0 && outgoing.size == 0 : (
+                    // There are only incoming links, so the undirected link
+                    // must be outgoing
+                    swapSourceTo(undirected.first(), relation) ->
+                    true
+                )
+                    
+                default :
+                    false
+            }
         )
         else false
 ;
@@ -1101,16 +1187,16 @@ Void swapTargetTo(Link link, Linkable linkable):
 ;
 
 /**
- * Returns all links connected to the given port.
+ * Returns all links connected to the given linkable object.
  * 
- * @param port the port whose connected links to return.
+ * @param linkable the linkable whose connected links to return.
  * @return list of links connected to the port.
  */
-List[Link] getConnectedLinks(Port port) :
+List[Link] getConnectedLinks(Linkable linkable) :
     let links = {} :
     
-    links.addAll(port.incomingLinks) ->
-    links.addAll(port.outgoingLinks) ->
+    links.addAll(linkable.incomingLinks) ->
+    links.addAll(linkable.outgoingLinks) ->
     
     links
 ;
