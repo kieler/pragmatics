@@ -25,6 +25,7 @@ import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.kaom.importer.ptolemy.DiagramsImporter;
 import de.cau.cs.kieler.kaom.importer.ptolemy.KaomImporterPtolemyPlugin;
 
 

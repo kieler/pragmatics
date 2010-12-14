@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.kaom.importer.ptolemy.wizards;
+package de.cau.cs.kieler.kaom.importer.ptolemy;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,9 +61,8 @@ import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorUtil;
-import de.cau.cs.kieler.kaom.importer.ptolemy.KaomImporterPtolemyPlugin;
-import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
 import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
+import de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard;
 
 
 /**
