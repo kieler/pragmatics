@@ -114,6 +114,16 @@ create Entity this transform(moml::EntityType entity) :
     addChildLinks(this, entity.link) 
 ;
 
+/**
+ * Transforms the given class type.
+ * 
+ * Assumption: a ClassType node can only occur at the top level. If this
+ * assumption doesn't hold, we need to overload quite a bunch of methods
+ * to cope.
+ * 
+ * @param entity the class type to transform.
+ * @return the transformed KAOM entity.
+ */
 create Entity this transform(moml::ClassType entity) :
     let list = {} :
     
