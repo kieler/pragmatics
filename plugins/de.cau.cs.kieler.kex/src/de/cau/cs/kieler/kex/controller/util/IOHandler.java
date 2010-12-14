@@ -181,8 +181,7 @@ public final class IOHandler {
         for (File file : sourceDir.listFiles()) {
             if (fileName.equals(file.getName())) {
                 resultList.add(file);
-            }
-            if (file.isDirectory()) {
+            } else if (file.isDirectory()) {
                 collectFiles(file, fileName, resultList);
             }
         }
@@ -226,7 +225,7 @@ public final class IOHandler {
         }
         if (fileCount > 1) {
             throw new KielerException(new StringBuffer()
-                    .append("There are more than one file with name \"" + source + "\" in")
+                    .append("There are more than one file with name \"" + searchName + "\" in")
                     .append(source.getPath()).toString());
         }
         return foundFiles.get(0);

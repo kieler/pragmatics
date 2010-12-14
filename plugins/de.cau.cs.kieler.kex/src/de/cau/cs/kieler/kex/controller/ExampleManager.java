@@ -45,7 +45,7 @@ import de.cau.cs.kieler.kex.model.plugin.PluginExampleCreator;
  */
 public final class ExampleManager {
 
-    private static ExampleManager instance;
+    private static ExampleManager instance = new ExampleManager();
 
     /**
      * set true, if examples has been loaded, otherwise false.
@@ -69,9 +69,6 @@ public final class ExampleManager {
      * @return {@link ExampleManager}
      */
     public static synchronized ExampleManager get() {
-        if (instance == null) {
-            instance = new ExampleManager();
-        }
         return instance;
     }
 
