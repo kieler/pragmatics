@@ -70,7 +70,7 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard;
  * 
  * @author cds
  */
-class DiagramsImporter implements IRunnableWithProgress {
+public class DiagramsImporter implements IRunnableWithProgress {
     /**
      * The wizard that uses this importer.
      */
