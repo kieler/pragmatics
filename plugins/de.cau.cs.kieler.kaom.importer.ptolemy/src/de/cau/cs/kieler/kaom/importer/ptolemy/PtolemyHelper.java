@@ -18,8 +18,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend.expression.ExecutionContext;
 import org.eclipse.xtend.expression.IExecutionContextAware;
+import org.ptolemy.moml.ClassType;
 import org.ptolemy.moml.EntityType;
 
 import ptolemy.actor.IOPort;
@@ -59,33 +61,57 @@ public class PtolemyHelper implements IExecutionContextAware {
 
     
     /**
-     * Returns a list of all the ports of the given entity types.
+     * Returns a list of all the ports of the given entity types or class types.
      * 
-     * @param entities the entity types whose ports to return.
+     * @param entities the entity or class types whose ports to return.
      * @return list of ports.
      */
-    public List<Port> getPorts(final List<EntityType> entities) {
+    public List<Port> getPorts(final List<EObject> entities) {
         List<Port> ports = new BasicEList<Port>();
         
-        for (EntityType entity : entities) {
-            ports.addAll(getPorts(entity));
+        for (EObject o : entities) {
+            NamedObj actor = null;
+            
+            // Check what kind of object this is
+            if (o instanceof EntityType) {
+                try {
+                    actor = instantiatePtolemyEntity((EntityType) o);
+                } catch (XmlException xe) {
+                    System.out.println("Could not instanciate entity: " + xe.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (o instanceof ClassType) {
+                try {
+                    actor = instantiatePtolemyEntity((ClassType) o);
+                } catch (XmlException xe) {
+                    System.out.println("Could not instanciate entity: " + xe.getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            
+            // If the actor could be instantiated, add its ports to the list
+            if (actor != null) {
+                ports.addAll(getPorts(actor));
+            }
         }
         
         return ports;
     }
 
     /**
-     * Returns a list of ports of the given entity type.
+     * Returns a list of ports of the given actor. To obtain an actor instance
+     * from an entity type, class type or a simple class name, use one of the
+     * {@code instantiatePtolemyEntity(...)} methods.
      * 
-     * @param ptolemyEntity the entity type whose ports to return.
+     * @param actor the actor whose ports to return.
      * @return list of ports.
      */
-    public List<Port> getPorts(final EntityType ptolemyEntity) {
+    public List<Port> getPorts(final NamedObj actor) {
         List<Port> kaomPorts = new LinkedList<Port>();
         
         try {
-            NamedObj actor = instantiatePtolemyEntity(ptolemyEntity);
-
             for (Object obj : ((Entity) actor).portList()) {
                 if (obj instanceof IOPort) {
                     IOPort ptolemyPort = (IOPort) obj;
@@ -116,8 +142,6 @@ public class PtolemyHelper implements IExecutionContextAware {
                     kaomPorts.add(kaomPort);
                 }
             }
-        } catch (XmlException xe) {
-            System.out.println("Could not instanciate entity: " + xe.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,6 +164,23 @@ public class PtolemyHelper implements IExecutionContextAware {
         }
         
         return instantiatePtolemyActor(entity.getClass1(), entity.getName());
+    }
+
+    /**
+     * Instanciate a Ptolemy Entity for a given ClassType model object.
+     * 
+     * @param classType given EMF ClassType model object
+     * @return corresponding Ptolemy object
+     * @throws Exception may throw different Exceptions during parsing
+     */
+    public NamedObj instantiatePtolemyEntity(final ClassType classType) throws Exception {
+        String classname = classType.getExtends();
+        
+        if (classname.equals("ptolemy.domains.modal.kernel.State")) {
+            return instantiatePtolemyState(classType.getExtends(), classType.getName());
+        }
+        
+        return instantiatePtolemyActor(classType.getExtends(), classType.getName());
     }
     
     /**

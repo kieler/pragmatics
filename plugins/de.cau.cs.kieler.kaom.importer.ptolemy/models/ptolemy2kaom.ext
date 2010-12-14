@@ -69,10 +69,22 @@ extension org::eclipse::xtend::util::stdlib::issues;      // pass messages back 
  */
 create Entity this transform(DocumentRoot root) :
     // Transform all the root's child entities
-    let entity = transform(root.entity) :
-     
-    // Add the children to our model and optimize the result
-    this.childEntities.add(entity) ->
+    let entity = (root.entity != null ? transform(root.entity) : null) :
+    let class = (root.class != null ? transform(root.class) : null) :
+    
+    // Add the children to our model
+    switch {
+        case entity != null :
+            this.childEntities.add(entity)
+        
+        case class != null :
+            this.childEntities.add(class)
+        
+        default :
+            null
+    } ->
+    
+    // Optimize the resulting model
     this.optimize()
 ;
 
@@ -100,6 +112,26 @@ create Entity this transform(moml::EntityType entity) :
     addChildEntities(this, entity.entity) ->
     addChildRelations(this, entity.relation) ->
     addChildLinks(this, entity.link) 
+;
+
+create Entity this transform(moml::ClassType entity) :
+    let list = {} :
+    
+    this.setName(entity.name) ->
+    
+    // Map the new KAOM element to the Ptolemy entity for later use
+    createTrace(this, entity, "ptolemy", "kaom") ->
+    
+    // Add annotations pointing to Ptolemy
+    this.addStringAnnotation("language", "ptolemy") ->
+    this.addStringAnnotation("ptolemyClass", entity.extends) ->
+    
+    // Add the entity's properties, ports, entities, relations and links
+    addProperties(this, entity.property) ->
+    addChildPorts(this) ->
+    addChildEntities(this, entity.entity) ->
+    addChildRelations(this, entity.relation) ->
+    addChildLinks(this, entity.link)
 ;
 
 /**
