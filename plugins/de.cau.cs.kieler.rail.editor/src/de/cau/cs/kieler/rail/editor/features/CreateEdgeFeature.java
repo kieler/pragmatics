@@ -11,16 +11,12 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 
-import de.cau.cs.kieler.kaom.Entity;
-import de.cau.cs.kieler.kaom.KaomFactory;
-import de.cau.cs.kieler.kaom.Link;
-import de.cau.cs.kieler.kaom.Linkable;
-import de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor;
-import de.cau.cs.kieler.rail.Topologie.TopologieFactory;
+import de.cau.cs.kieler.rail.Topologie.Model;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.BasegraphFactory;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
+import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.SpecializedVerticesFactory;
+import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
 
 public class CreateEdgeFeature extends
        AbstractCreateConnectionFeature {
@@ -46,8 +42,8 @@ public class CreateEdgeFeature extends
         }
         
         //TODO What instead of Linkable
-        return (sourceAnchor == null || source instanceof Edge)
-        	&& (targetAnchor == null || target instanceof Edge);
+        return (sourceAnchor == null || source instanceof Vertex)
+        	&& (targetAnchor == null || target instanceof Vertex);
     }
  
     public boolean canStartConnection(ICreateConnectionContext context) {
@@ -60,13 +56,13 @@ public class CreateEdgeFeature extends
     	Anchor sourceAnchor = context.getSourceAnchor();
  
         // get Vertex which should be connected
-        Vertex source = (Vertex) getEClass(context.getSourceAnchor());
-        Vertex target = (Vertex) getEClass(context.getTargetAnchor());
+        Object source = null;
+        Object target=null;
  
         if (sourceAnchor instanceof BoxRelativeAnchor) {
-            source = (Vertex) getBusinessObjectForPictogramElement(context.getSourceAnchor());
+            source =  getBusinessObjectForPictogramElement(context.getSourceAnchor());
         } else if (sourceAnchor != null) {
-            source = (Vertex) getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent());
+            source = getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent());
         }
         
         Anchor targetAnchor = context.getTargetAnchor();
@@ -77,12 +73,25 @@ public class CreateEdgeFeature extends
         }
         
         
-        if (source instanceof Linkable && target instanceof Edge) {
-        	Edge link = de.cau.cs.kieler.rail.Topologie.Basegraph.
-            link.setSource((Edge) source);
-            link.setTarget((Edge) target);
-            Entity topEntity = ((KaomDiagramEditor) getDiagramEditor()).fetchEntity(getDiagram());
-            topEntity.getChildLinks().add(link);
+        if (source instanceof Vertex && target instanceof Vertex) {
+        	Edge link = BasegraphFactory.eINSTANCE.createEdge();
+        	//Port link = BasegraphFactory.eINSTANCE.createPort();
+        	Port sourcePort =  BasegraphFactory.eINSTANCE.createPort();
+        	sourcePort.setVertex((Vertex) source);
+        	
+        	Port targetPort =  BasegraphFactory.eINSTANCE.createPort();
+        	targetPort.setVertex((Vertex) target);
+        	
+        	
+            link.setBegin(sourcePort);
+            link.setEnd(targetPort);
+            targetPort.setEdge(link);
+            sourcePort.setEdge(link);
+            
+            Model topModel = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(getDiagram());
+            
+            //TODO Make the linkt
+            //topModel.get
             
             getFeatureProvider().getDirectEditingInfo().setActive(true);
             AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(),
@@ -106,7 +115,7 @@ public class CreateEdgeFeature extends
         }
        
         return newConnection;*/
-        reurn null;
+        return null;
     }
  
     /**

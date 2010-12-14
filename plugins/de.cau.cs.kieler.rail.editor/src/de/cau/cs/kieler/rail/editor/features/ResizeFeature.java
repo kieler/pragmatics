@@ -39,6 +39,7 @@ public class ResizeFeature extends DefaultResizeShapeFeature {
             Object bo = getBusinessObjectForPictogramElement(shape);
             if (isInstanceof(bo)) {  //TODO Don't know if his is correct.
                 Vertex c = (Vertex) bo;
+                //TODO How does it work?
                 if (c.getName() != null && c.getName().length() == 1) {
                     canResize = false;
                 }

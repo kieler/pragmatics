@@ -3,14 +3,18 @@
  */
 package de.cau.cs.kieler.rail.editor.features;
 
+import javax.swing.JOptionPane;
+
+import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
+import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
-import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -22,11 +26,11 @@ import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
+
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.impl.WeichenknotenImpl;
 
 /**
  * @author hdw
@@ -75,17 +79,23 @@ public class AddFeature extends AbstractAddFeature {
 	 * @see org.eclipse.graphiti.func.IAdd#add(org.eclipse.graphiti.features.context.IAddContext)
 	 */
 	public  PictogramElement add(IAddContext context){
+		PictogramElement pe=null;
 		switch (type){
 		case BREANCH:
-			return addBreach(context);
+			pe = addBreach(context);
+			break;
 		case DEADENDVERTEX:
-			return addDeadEndVertex(context);
+			pe = addDeadEndVertex(context);
+			break;
 		case SWITCHVERTEX_LEFT:
-			return addSwitchVertex(context,EOrientation.LINKS);
+			pe = addSwitchVertex(context,EOrientation.LINKS);
+			break;
 		case SWITCHVERTEX_RIGHT:
-			return addSwitchVertex(context,EOrientation.RECHTS);
+			pe = addSwitchVertex(context,EOrientation.RECHTS);
+			break;
 		}
-		return null;
+		layoutPictogramElement(pe);
+		return pe;
 	}
 
 	public boolean isInstanceof(Object object){
@@ -151,7 +161,10 @@ public class AddFeature extends AbstractAddFeature {
             Shape shape = peCreateService.createShape(containerShape, false);
  
             // create and set text graphics algorithm
-            addedClass.setName("test");  //TODO ???
+            //Compromise only
+            String ans;
+            ans = JOptionPane.showInputDialog(null, "Enter Label");
+            addedClass.setName(ans);  //TODO ???
             Text text = gaService.createDefaultText(shape, addedClass.getName()); //addedClass.getName()
             text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
@@ -177,19 +190,28 @@ public class AddFeature extends AbstractAddFeature {
  
         // CONTAINER SHAPE WITH ROUNDED RECTANGLE
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        ContainerShape containerShape =
-             peCreateService.createContainerShape(targetDiagram, true);
- 
+        ContainerShape containerShape =peCreateService.createContainerShape(targetDiagram, true);
+        peCreateService.createChopboxAnchor(containerShape);
+        
+        
      // define a default size for the shape
-        int width = 50;
-        int height = 50; 
+        int width = context.getWidth() <= 50 ? 50 : context.getWidth();
+        int height = context.getHeight() <= 50 ? 50 : context.getHeight();
         IGaService gaService = Graphiti.getGaService();
  
+        Rectangle portContainer = gaService.createInvisibleRectangle(containerShape);
+        
+        gaService.setLocationAndSize(portContainer,
+                context.getX() ,
+                context.getY() ,
+                width ,
+                height) ;
         {
-            
+        	
+        	Rectangle rectangleShape = gaService.createRectangle(portContainer);
             
  
-            // if added Clas has no resource we add it to the resource 
+            // if added Class has no resource we add it to the resource 
             // of the diagram
             // in a real scenario the business model would have its own resource
             if (addedClass.eResource() == null) {
@@ -199,9 +221,7 @@ public class AddFeature extends AbstractAddFeature {
             link(containerShape, addedClass);
         }
  
-        
-        
-        
+       /* 
         // SHAPE WITH LINE
         {
             // create shape for line
@@ -217,25 +237,30 @@ public class AddFeature extends AbstractAddFeature {
             polyline.setX(width/2);
             polyline.setY(0);
             gaService.setLocationAndSize(polyline,width/2, 0, width/2, height);
-        }
-        
+        }*/
         
      // triangle through points: top-middle, bottom-right, bottom-left
         //50, 0, 100, 100, 0, 100
+        
+        
         {
-        int xy[] = new int[] { width/2, 0, width/2, height };
-		//IGaService gaService = Graphiti.getGaService();
-        Polyline p = gaService.createPolyline(containerShape, xy);
+	        int xy[] = new int[] { width/2, 0, width/2, height,0,0 };
+			//IGaService gaService = Graphiti.getGaService();
+	        Polyline p = gaService.createPolyline(containerShape, xy);
+	        //Polygon p = gaService.createPolygon(containerShape,xy);
+	        p.setForeground(manageColor(255,0,0));
+	        p.setBackground(manageColor(255,0,0));
         }
+        
  
         // SHAPE WITH TEXT
         {
             // create shape for text
-            Shape shape = peCreateService.createShape(containerShape, false);
+            Shape shapeLabel = peCreateService.createShape(containerShape, false);
  
             // create and set text graphics algorithm
             addedClass.setName("Test");
-            Text text = gaService.createDefaultText(shape, addedClass.getName());
+            Text text = gaService.createDefaultText(shapeLabel, addedClass.getName());
             text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
@@ -243,7 +268,19 @@ public class AddFeature extends AbstractAddFeature {
             gaService.setLocationAndSize(text, 0, 0, width, 20);
  
             // create link and wire it
-            link(shape, addedClass);
+            link(shapeLabel, addedClass);
+            
+            
+            
+         // set container shape for direct editing after object creation
+            IDirectEditingInfo directEditingInfo = getFeatureProvider().getDirectEditingInfo();
+            directEditingInfo.setMainPictogramElement(containerShape);
+            // set shape and graphics algorithm where the editor for
+            // direct editing shall be opened after object creation
+            directEditingInfo.setPictogramElement(shapeLabel);
+            directEditingInfo.setGraphicsAlgorithm(text);
+            
+            
         }
         
         // add a chopbox anchor to the shape

@@ -8,10 +8,12 @@ import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IDirectEditingFeature;
+import org.eclipse.graphiti.features.ILayoutFeature;
 import org.eclipse.graphiti.features.IResizeShapeFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
+import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -33,6 +35,7 @@ import de.cau.cs.kieler.rail.editor.features.AddFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateFeature;
 import de.cau.cs.kieler.rail.editor.features.DirectEditBreachFeatures;
+import de.cau.cs.kieler.rail.editor.features.LayoutFeature;
 import de.cau.cs.kieler.rail.editor.features.ResizeFeature;
 import de.cau.cs.kieler.rail.editor.features.TypeFeatures;
 import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
@@ -131,4 +134,25 @@ public class FeatureProvider extends DefaultFeatureProvider {
         }
         return super.getResizeShapeFeature(context);
     }
+    
+    @Override
+    public ILayoutFeature getLayoutFeature(ILayoutContext context) {
+        PictogramElement pictogramElement = context.getPictogramElement();
+        Object bo = getBusinessObjectForPictogramElement(pictogramElement);
+        if (bo instanceof Einbruchsknoten) {
+            return new LayoutFeature(this,TypeFeatures.BREANCH);
+        } else if (bo instanceof Stumpfgleisknoten) {
+        	return new LayoutFeature(this,TypeFeatures.DEADENDVERTEX);
+        } else if (bo instanceof Weichenknoten) {
+        	EOrientation E = ((Weichenknoten)(bo)).getAbzweigendeLage();
+        	switch (E){
+        	case LINKS:
+        		return new LayoutFeature(this,TypeFeatures.SWITCHVERTEX_LEFT);
+        	case RECHTS:
+        		return new LayoutFeature(this,TypeFeatures.SWITCHVERTEX_RIGHT);
+        	}
+        }
+        return super.getLayoutFeature(context);
+    }
+    
 }

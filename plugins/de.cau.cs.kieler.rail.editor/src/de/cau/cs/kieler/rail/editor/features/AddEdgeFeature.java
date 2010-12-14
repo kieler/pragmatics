@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.rail.editor.features;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -33,7 +34,7 @@ public class AddEdgeFeature extends AbstractAddFeature {
     	IPeCreateService peCreateService = Graphiti.getPeCreateService();
     	
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
-        EReference addedEReference = (EReference) context.getNewObject();
+        //Edge addedEdge = (Edge) context.getNewObject();
         
        
         // CONNECTION WITH POLYLINE
@@ -43,12 +44,17 @@ public class AddEdgeFeature extends AbstractAddFeature {
         connection.setEnd(addConContext.getTargetAnchor());
  
         IGaService gaService = Graphiti.getGaService();
+        //TODO Do it with the Style Provider
         Polyline polyline = gaService.createPolyline(connection);
         polyline.setLineWidth(2);
         polyline.setForeground(manageColor(IColorConstant.BLACK));
  
         // create link and wire it
-        link(connection, addedEReference);
+        //TODO make to run.
+        if (((EObject) context.getNewObject()).eResource() == null) {
+            getDiagram().eResource().getContents().add((EObject) context.getNewObject());
+        }
+        link(connection, context.getNewObject());
  
         //NEW
         

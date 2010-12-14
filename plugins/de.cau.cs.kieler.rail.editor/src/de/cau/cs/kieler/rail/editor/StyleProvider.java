@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.rail.editor;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.mm.StyleContainer;
 import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
@@ -58,15 +59,31 @@ public class StyleProvider implements IStyleProvider {
      */
     public Style getStyle(final String id) {
         Diagram diagram = diagramTypeProvider.getDiagram();
+        Style style = getStyle(diagram, id);
+        if (style == null) {
+            style = createStyle(diagram, id);
+        }
+        return style;
+    }
+    
+    /**
+     * Look recursively for an appropriate style.
+     * 
+     * @param container a style container
+     * @param id the style identifier
+     * @return a style instance, or {@code null} if the style could not be found
+     */
+    private Style getStyle(final StyleContainer container, final String id) {
         Style style = null;
-        for (Style diagramStyle : diagram.getStyles()) {
+        for (Style diagramStyle : container.getStyles()) {
             if (id.equals(diagramStyle.getId())) {
                  style = diagramStyle;
                  break;
             }
-        }
-        if (style == null) {
-            style = createStyle(diagram, id);
+            style = getStyle(diagramStyle, id);
+            if (style != null) {
+                break;
+            }
         }
         return style;
     }
@@ -97,6 +114,7 @@ public class StyleProvider implements IStyleProvider {
             Style defaultStyle = getStyle(DEFAULT_STYLE);
             Style style = gaService.createStyle(defaultStyle, id);
             style.setFilled(true);
+            return style;
         } else if (BREACH.equals(id)){  //TODO strage. I think??
         	Style style = gaService.createStyle(diagram, id);
         	//TODO has to fix.
