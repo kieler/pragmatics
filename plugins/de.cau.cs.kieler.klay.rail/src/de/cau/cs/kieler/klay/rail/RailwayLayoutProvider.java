@@ -40,8 +40,8 @@ import de.cau.cs.kieler.klay.layered.modules.ICycleBreaker;
 import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
 import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
-import de.cau.cs.kieler.klay.rail.impl.RailLayerSweepCrossingMinimizer;
-import de.cau.cs.kieler.klay.rail.impl.RailLinearSegmentsNodePlacer;
+import de.cau.cs.kieler.klay.rail.impl.RailwayCrossingMinimizer;
+import de.cau.cs.kieler.klay.rail.impl.RailwayNodePlacer;
 import de.cau.cs.kieler.klay.rail.impl.RailwayEdgeRouter;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 
@@ -63,9 +63,9 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     /** phase 2: layering module. */
     private ILayerer layerer = new NetworkSimplexLayerer();
     /** phase 3: crossing minimization module. */
-    private ICrossingMinimizer crossingMinimizer = new RailLayerSweepCrossingMinimizer();
+    private ICrossingMinimizer crossingMinimizer = new RailwayCrossingMinimizer();
     /** phase 4: node placement module. */
-    private INodePlacer nodePlacer = new RailLinearSegmentsNodePlacer();
+    private INodePlacer nodePlacer = new RailwayNodePlacer();
     /** phase 5: Edge routing module. */
     private IEdgeRouter edgeRouter = new RailwayEdgeRouter();
 

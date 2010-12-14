@@ -37,6 +37,10 @@ public final class Properties {
     public static final IProperty<Boolean> REVERSED = new Property<Boolean>("reversed", false);
     /** random number generator for the algorithm. */
     public static final IProperty<Random> RANDOM = new Property<Random>("random");
+    /** option identifier for thoroughness. */
+    public static final String THOROUGHNESS_ID = "de.cau.cs.kieler.klay.layered.thoroughness";
+    /** property that determines how much effort should be spent. */
+    public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(THOROUGHNESS_ID, 5);
     
     /** port constraints. */
     public static final Property<PortConstraints> PORT_CONS = new Property<PortConstraints>(
