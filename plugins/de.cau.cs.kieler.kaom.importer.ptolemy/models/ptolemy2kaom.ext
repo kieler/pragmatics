@@ -817,20 +817,18 @@ Boolean _inferRelation(Relation relation) :
 
 /**
  * Optimizes relations that connect only two ports. Such relations have two
- * links. The relation and one of the links is marked for removal, the other
- * link is changed to replace the relation. The given entity's relations are
+ * links, one incoming and one outgoing. The given entity's relations are
  * optimized, then the entity's child entities are recursively treated.
  * 
  * @param entity entity whose child relations to optimize recursively.
  */
 Void optimizeSingleRelations(Entity entity) :
     // Optimize the entity's direct child relations; this may leave
-    // relations and links marked for removal
+    // relations marked for removal
     entity.childRelations.optimizeSingleRelation() ->
     
-    // Remove the relations and links that can be removed (this is done in a
+    // Remove the relations that can be removed (this is done in a
     // second iteration to avoid concurrent modification exceptions)
-    entity.childLinks.select(a | a.isMarkedAsRemovable()).remove() ->
     entity.childRelations.select(a | a.isMarkedAsRemovable()).remove() ->
     
     // Recursively optimize the relations of the entity's child entities
@@ -839,8 +837,8 @@ Void optimizeSingleRelations(Entity entity) :
 
 /**
  * Replaces the given relation by a single link, if possible. If that is
- * indeed possible, the relation is marked as being removable, as is one
- * of the links involved.
+ * indeed possible, the relation is marked as being removable, and one of
+ * the links is removed.
  * 
  * @param relation the relation to be optimized.
  */
@@ -854,8 +852,8 @@ Void optimizeSingleRelation(Relation relation):
     if ((relation.incomingLinks.size == 1) && (relation.outgoingLinks.size == 1))
         then (
             inLink.setTarget(outLink.target) -> 
-            outLink.markAsRemovable() ->
-            relation.markAsRemovable()
+            relation.markAsRemovable() ->
+            remove(outLink)
         )
         else
             null    
