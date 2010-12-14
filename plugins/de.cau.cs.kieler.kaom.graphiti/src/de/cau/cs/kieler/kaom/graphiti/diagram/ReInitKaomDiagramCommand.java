@@ -14,13 +14,9 @@
 package de.cau.cs.kieler.kaom.graphiti.diagram;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
-import org.eclipse.graphiti.mm.pictograms.PictogramLink;
-import org.eclipse.graphiti.mm.pictograms.PictogramsFactory;
 
 import de.cau.cs.kieler.core.model.graphiti.ui.AbstractReInitGraphitiDiagramCommand;
-import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.Link;
 
 /**
  * @author soh
@@ -48,29 +44,6 @@ public class ReInitKaomDiagramCommand extends
      * {@inheritDoc}
      */
     @Override
-    protected void linkModelToDiagram(final EObject modelRoot,
-            final Diagram diagram, final Resource diagramResource) {
-        PictogramLink link = PictogramsFactory.eINSTANCE.createPictogramLink();
-        link.setPictogramElement(diagram);
-        link.getBusinessObjects().add(modelRoot);
-        diagramResource.getContents().add(diagram);
-        for (EObject eObj : modelRoot.eContents()) {
-            // WTB: pattern matching...
-            if (eObj instanceof Entity) {
-                linkModelToDiagram((Entity) eObj, diagramResource);
-            }
-        }
-    }
-
-    private void linkModelToDiagram(final Entity obj,
-            final Resource diagramResource) {
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected String getDiagramExtension() {
         return KaomDiagramEditor.DIAGRAM_FILE_EXTENSION;
     }
@@ -81,6 +54,41 @@ public class ReInitKaomDiagramCommand extends
     @Override
     protected String getModelExtension() {
         return KaomDiagramEditor.MODEL_FILE_EXTENSION;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean isConnection(final EObject eObj) {
+        if (eObj instanceof Link) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected EObject getConnectionSource(final EObject connection) {
+        if (connection instanceof Link) {
+            Link link = (Link) connection;
+            return link.getSource();
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected EObject getConnectionTarget(final EObject connection) {
+        if (connection instanceof Link) {
+            Link link = (Link) connection;
+            return link.getTarget();
+        }
+        return null;
     }
 
 }
