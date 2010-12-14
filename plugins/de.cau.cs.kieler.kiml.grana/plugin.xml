@@ -62,6 +62,12 @@
                commandId="de.cau.cs.kieler.kiml.grana.command.setupBatch"
                label="Setup Analysis Batch..."
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="de.cau.cs.kieler.kiml.grana.canSetupBatch">
+               </reference>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
@@ -248,6 +254,22 @@
             description="Perform automatic graph analysis after a layout has been calculated"
             name="Analysis after Layout">
       </combination>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="de.cau.cs.kieler.kiml.grana.canSetupBatch">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="and">
+               <instanceof
+                     value="org.eclipse.core.resources.IFile">
+               </instanceof>
+            </iterate>
+         </with>
+      </definition>
    </extension>
 
 </plugin>
