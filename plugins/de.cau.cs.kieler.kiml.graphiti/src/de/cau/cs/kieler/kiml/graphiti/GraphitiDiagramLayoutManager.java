@@ -22,9 +22,12 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
+import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
@@ -41,6 +44,7 @@ import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.util.Pair;
@@ -226,14 +230,25 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                             layoutConfig);
 
                     shapeLayout.setProperty(LayoutOptions.FIXED_SIZE, state);
-                    // }
+
+                    for (Shape child : cs.getChildren()) {
+                        GraphicsAlgorithm ga = child.getGraphicsAlgorithm();
+                        if (ga instanceof Text) {
+                            Text text = (Text) ga;
+                            String labelText = text.getValue();
+                            KLabel label = childnode.getLabel();
+                            label.setText(labelText);
+                            break;
+                        }
+                    }
+
                     if (cs.getAnchors().size() != 0) {
                         EList<Anchor> childAnchors = cs.getAnchors();
                         for (Anchor anchor : childAnchors) {
                             if (anchor.getReferencedGraphicsAlgorithm() != null) {
                                 KPort port = KimlUtil.createInitializedPort();
                                 pictElem2GraphElemMap.put(anchor, port);
-                                port.setNode(topNode);
+                                port.setNode(childnode);
                                 KShapeLayout portLayout = port
                                         .getData(KShapeLayout.class);
                                 portLayout.setXpos(anchor
@@ -490,6 +505,18 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             KNode sourceNode = null, targetNode = null;
             KPort sourcePort = null, targetPort = null;
 
+            for (ConnectionDecorator decorator : connection
+                    .getConnectionDecorators()) {
+                GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
+                if (ga instanceof Text) {
+                    Text text = (Text) ga;
+                    String labelText = text.getValue();
+                    KLabel label = KimlUtil.createInitializedLabel(edge);
+                    label.setText(labelText);
+                    edge.getLabels().add(label);
+                }
+            }
+
             if (connection.getEnd().getReferencedGraphicsAlgorithm() == null) {
 
                 if (pictElem2GraphElemMap.containsKey(connection.getEnd()
@@ -503,6 +530,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     targetPort = (KPort) pictElem2GraphElemMap.get(connection
                             .getEnd());
                     edge.setTargetPort(targetPort);
+                    List<KEdge> targetPortEdges = targetPort.getEdges();
+                    targetPortEdges.add(edge);
+                    targetNode = targetPort.getNode();
                     edge.setTarget(targetNode);
                 }
             }
@@ -521,6 +551,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     sourcePort = (KPort) pictElem2GraphElemMap.get(connection
                             .getStart());
                     edge.setSourcePort(sourcePort);
+                    List<KEdge> sourcePortEdges = sourcePort.getEdges();
+                    sourcePortEdges.add(edge);
+                    sourceNode = sourcePort.getNode();
                     edge.setSource(sourceNode);
                 }
             }
@@ -531,15 +564,23 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     .getBendpoints();
 
             KPoint sourcePoint = edgeLayout.getSourcePoint();
-            GraphicsAlgorithm ga = connection.getStart().getParent()
+            Anchor start = connection.getStart();
+            AnchorContainer startParent = start.getParent();
+            GraphicsAlgorithm startParentGa = startParent
                     .getGraphicsAlgorithm();
-            sourcePoint.setX(ga.getX() + ga.getWidth() / 2);
-            sourcePoint.setY(ga.getY() + ga.getHeight() / 2);
+            GraphicsAlgorithm startGa = start.getGraphicsAlgorithm();
+            sourcePoint.setX(startParentGa.getX() + startParentGa.getWidth()
+                    / 2);
+            sourcePoint.setY(startParentGa.getY() + startParentGa.getHeight()
+                    / 2);
 
             KPoint targetPoint = edgeLayout.getTargetPoint();
-            ga = connection.getEnd().getParent().getGraphicsAlgorithm();
-            targetPoint.setX(ga.getX() + ga.getWidth() / 2);
-            targetPoint.setY(ga.getY() + ga.getHeight() / 2);
+            Anchor end = connection.getEnd();
+            AnchorContainer endParent = end.getParent();
+            GraphicsAlgorithm endParentGa = endParent.getGraphicsAlgorithm();
+            GraphicsAlgorithm endGa = end.getGraphicsAlgorithm();
+            targetPoint.setX(endParentGa.getX() + endParentGa.getWidth() / 2);
+            targetPoint.setY(endParentGa.getY() + endParentGa.getHeight() / 2);
 
             for (Point point : pointList) {
 
