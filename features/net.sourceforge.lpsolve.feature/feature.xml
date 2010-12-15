@@ -3,9 +3,7 @@
       id="net.sourceforge.lpsolve"
       label="Lpsolve Feature"
       version="5.5.2.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel"
-      os="linux,macosx,win32"
-      arch="x86,x86_64">
+      provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://lpsolve.sourceforge.net/">
       lp_solve is a Mixed Integer Linear Programming (MILP) solver.
@@ -607,6 +605,8 @@ That&apos;s all there is to it!
 
    <plugin
          id="net.sourceforge.lpsolve"
+         os="linux,macosx,win32"
+         arch="x86,x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
