@@ -26,6 +26,7 @@ import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
+import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -568,19 +569,47 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             AnchorContainer startParent = start.getParent();
             GraphicsAlgorithm startParentGa = startParent
                     .getGraphicsAlgorithm();
-            GraphicsAlgorithm startGa = start.getGraphicsAlgorithm();
-            sourcePoint.setX(startParentGa.getX() + startParentGa.getWidth()
-                    / 2);
-            sourcePoint.setY(startParentGa.getY() + startParentGa.getHeight()
-                    / 2);
+
+            if (start instanceof BoxRelativeAnchor) {
+                BoxRelativeAnchor startPort = (BoxRelativeAnchor) start;
+                double height = startPort.getRelativeHeight();
+                double width = startPort.getRelativeWidth();
+
+                float x = (float) (startParentGa.getX() + startParentGa
+                        .getWidth() * width);
+                sourcePoint.setX(x);
+                float y = (float) (startParentGa.getY() + startParentGa
+                        .getHeight() * height);
+                sourcePoint.setY(y);
+            } else {
+                sourcePoint.setX(startParentGa.getX()
+                        + startParentGa.getWidth() / 2);
+                sourcePoint.setY(startParentGa.getY()
+                        + startParentGa.getHeight() / 2);
+            }
 
             KPoint targetPoint = edgeLayout.getTargetPoint();
             Anchor end = connection.getEnd();
             AnchorContainer endParent = end.getParent();
             GraphicsAlgorithm endParentGa = endParent.getGraphicsAlgorithm();
-            GraphicsAlgorithm endGa = end.getGraphicsAlgorithm();
-            targetPoint.setX(endParentGa.getX() + endParentGa.getWidth() / 2);
-            targetPoint.setY(endParentGa.getY() + endParentGa.getHeight() / 2);
+
+            if (end instanceof BoxRelativeAnchor) {
+                BoxRelativeAnchor endPort = (BoxRelativeAnchor) end;
+                double height = endPort.getRelativeHeight();
+                double width = endPort.getRelativeWidth();
+
+                float x = (float) (endParentGa.getX() + endParentGa.getWidth()
+                        * width);
+                targetPoint.setX(x);
+                float y = (float) (endParentGa.getY() + endParentGa.getHeight()
+                        * height);
+                targetPoint.setY(y);
+            } else {
+                targetPoint.setX(endParentGa.getX() + endParentGa.getWidth()
+                        / 2);
+                targetPoint.setY(endParentGa.getY() + endParentGa.getHeight()
+                        / 2);
+            }
 
             for (Point point : pointList) {
 
