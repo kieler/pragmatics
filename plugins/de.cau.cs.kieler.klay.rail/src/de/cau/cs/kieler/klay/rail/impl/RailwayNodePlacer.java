@@ -98,7 +98,6 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
             for (int j = 0; j < layeredGraph.getLayers().get(i).getNodes().size(); j++) {
                 LNode currentNode = layeredGraph.getLayers().get(i).getNodes().get(j);
                 if (currentNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)) {
-                    //TODO: move twig up and push rest down
                     Iterator<LPort> theTwoPorts = currentNode.getPorts(PortType.OUTPUT).iterator();
                     LPort port = theTwoPorts.next();
                     LPort port2 = theTwoPorts.next();
@@ -121,10 +120,27 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                     if (Math.abs(moveUp) > maximalMoveUp) {
                         maximalMoveUp = moveUp;
                     }
-                    //fitAncestors(currentNode, currentNode.getPos().y);
                 } else if (currentNode.getProperty(Properties.NODE_TYPE).equals(
                         NodeType.SWITCH_RIGHT)) {
-                    // TODO: case for switch right and cases for turned switches
+                    Iterator<LPort> theTwoPorts = currentNode.getPorts(PortType.OUTPUT).iterator();
+                    LPort port = theTwoPorts.next();
+                    LPort port2 = theTwoPorts.next();
+                    double moveDown = 0;
+                    if (port.getPos().y < port2.getPos().y) {
+                        port.getEdges().get(0).getTarget().getNode().getPos().y = currentNode
+                                .getPos().y;
+                        moveDown = currentNode.getPos().y
+                                + port.getEdges().get(0).getTarget().getNode().getSize().y
+                                + spacing;
+                        port2.getEdges().get(0).getTarget().getNode().getPos().y = moveDown;
+                    } else {
+                        port2.getEdges().get(0).getTarget().getNode().getPos().y = currentNode
+                                .getPos().y;
+                        moveDown = currentNode.getPos().y
+                                + port2.getEdges().get(0).getTarget().getNode().getSize().y
+                                + spacing;
+                        port.getEdges().get(0).getTarget().getNode().getPos().y = moveDown;
+                    }
                 } else {
                     if (currentNode.getPorts().get(0).getType().equals(PortType.OUTPUT)) {
                         currentNode.getPorts().get(0).getEdges().get(0).getTarget().getNode()

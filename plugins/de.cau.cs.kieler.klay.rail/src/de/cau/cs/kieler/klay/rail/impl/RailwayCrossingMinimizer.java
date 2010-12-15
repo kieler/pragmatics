@@ -27,14 +27,12 @@ import de.cau.cs.kieler.klay.rail.Properties;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 
 /**
- * Simple crossing removal for railway layout.
- * Since railway plans are crossing-free by contract, this tries to find
- * an arrangement which is in fact free of crossings.
+ * Simple crossing removal for railway layout. Since railway plans are crossing-free by contract,
+ * this tries to find an arrangement which is in fact free of crossings.
  * 
  * @author jjc
  */
-public class RailwayCrossingMinimizer extends AbstractAlgorithm implements
-        ICrossingMinimizer {
+public class RailwayCrossingMinimizer extends AbstractAlgorithm implements ICrossingMinimizer {
 
     /**
      * {@inheritDoc}
@@ -73,8 +71,23 @@ public class RailwayCrossingMinimizer extends AbstractAlgorithm implements
                                 .getTarget().getNode();
                     }
                     currentPosition += 2;
-                } else if (currentNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_RIGHT)){
-                    //TODO: case for switch right and cases for turned switches
+                } else if (currentNode.getProperty(Properties.NODE_TYPE).equals(
+                        NodeType.SWITCH_RIGHT)) {
+                    Iterator<LPort> theTwoPorts = currentNode.getPorts(PortType.OUTPUT).iterator();
+                    LPort port = theTwoPorts.next();
+                    LPort port2 = theTwoPorts.next();
+                    if (port.getPos().y < port2.getPos().y) {
+                        order[currentLayer + 1][currentPosition] = port2.getEdges().get(0)
+                                .getTarget().getNode();
+                        order[currentLayer + 1][currentPosition + 1] = port.getEdges().get(0)
+                                .getTarget().getNode();
+                    } else {
+                        order[currentLayer + 1][currentPosition] = port.getEdges().get(0)
+                                .getTarget().getNode();
+                        order[currentLayer + 1][currentPosition + 1] = port2.getEdges().get(0)
+                                .getTarget().getNode();
+                    }
+                    currentPosition += 2;
                 } else {
                     if (currentNode.getPorts().get(0).getType().equals(PortType.OUTPUT)) {
                         order[currentLayer + 1][currentPosition] = currentNode.getPorts().get(0)
@@ -85,7 +98,7 @@ public class RailwayCrossingMinimizer extends AbstractAlgorithm implements
             }
             currentLayer++;
         }
-        
+
         // apply the ordering to the original layered graph
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
