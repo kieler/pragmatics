@@ -35,7 +35,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
 
     private float spacing;
     /** the bounds of a line's slope in which it is not bent. */
-    public static final double SLOPE_TOLERANCE = 0.1f;
+    public static final double SLOPE_TOLERANCE = 0.01f;
     /** the desired bend angle. will be converted to radians later. might be a layout option. */
     public static final double BEND_ANGLE = 30;
 
@@ -62,8 +62,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
                         } else {
                             m = Double.POSITIVE_INFINITY;
                         }
-
-                        //System.out.println("m is " + m);
+                        
                         // can't draw edge straight (or nearly straight)?
                         if (!(-SLOPE_TOLERANCE < m && m < SLOPE_TOLERANCE)) {
                             // this point creates an orthogonal triangle with p0 and p1

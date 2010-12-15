@@ -84,15 +84,27 @@ public class RailwayCrossingMinimizer extends AbstractAlgorithm implements ICros
                     if (theTwoPorts.hasNext()) {
                         LPort port2 = theTwoPorts.next();
                         if (port.getPos().y < port2.getPos().y) {
-                            order[currentLayer + 1][currentPosition] = port2.getEdges().get(0)
-                                    .getTarget().getNode();
-                            order[currentLayer + 1][currentPosition + 1] = port.getEdges().get(0)
-                                    .getTarget().getNode();
+                            if (!port.getEdges().get(0).getTarget().getNode()
+                                    .equals(port2.getEdges().get(0).getTarget().getNode())) {
+                                order[currentLayer + 1][currentPosition] = port2.getEdges().get(0)
+                                        .getTarget().getNode();
+                                order[currentLayer + 1][currentPosition + 1] = port.getEdges()
+                                        .get(0).getTarget().getNode();
+                            } else {
+                                order[currentLayer + 1][currentPosition] = port2.getEdges().get(0)
+                                        .getTarget().getNode();
+                            }
                         } else {
-                            order[currentLayer + 1][currentPosition] = port.getEdges().get(0)
-                                    .getTarget().getNode();
-                            order[currentLayer + 1][currentPosition + 1] = port2.getEdges().get(0)
-                                    .getTarget().getNode();
+                            if (!port.getEdges().get(0).getTarget().getNode()
+                                    .equals(port2.getEdges().get(0).getTarget().getNode())) {
+                                order[currentLayer + 1][currentPosition] = port.getEdges().get(0)
+                                        .getTarget().getNode();
+                                order[currentLayer + 1][currentPosition + 1] = port2.getEdges()
+                                        .get(0).getTarget().getNode();
+                            } else {
+                                order[currentLayer + 1][currentPosition] = port.getEdges().get(0)
+                                        .getTarget().getNode();
+                            }
                         }
                         currentPosition += 2;
                     } else {
