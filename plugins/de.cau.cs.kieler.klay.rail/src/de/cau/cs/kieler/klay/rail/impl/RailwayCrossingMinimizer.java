@@ -58,36 +58,48 @@ public class RailwayCrossingMinimizer extends AbstractAlgorithm implements ICros
                 if (currentNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)) {
                     Iterator<LPort> theTwoPorts = currentNode.getPorts(PortType.OUTPUT).iterator();
                     LPort port = theTwoPorts.next();
-                    LPort port2 = theTwoPorts.next();
-                    if (port.getPos().y < port2.getPos().y) {
+                    if (theTwoPorts.hasNext()) {
+                        LPort port2 = theTwoPorts.next();
+                        if (port.getPos().y < port2.getPos().y) {
+                            order[currentLayer + 1][currentPosition] = port.getEdges().get(0)
+                                    .getTarget().getNode();
+                            order[currentLayer + 1][currentPosition + 1] = port2.getEdges().get(0)
+                                    .getTarget().getNode();
+                        } else {
+                            order[currentLayer + 1][currentPosition] = port2.getEdges().get(0)
+                                    .getTarget().getNode();
+                            order[currentLayer + 1][currentPosition + 1] = port.getEdges().get(0)
+                                    .getTarget().getNode();
+                        }
+                        currentPosition += 2;
+                    } else {
                         order[currentLayer + 1][currentPosition] = port.getEdges().get(0)
                                 .getTarget().getNode();
-                        order[currentLayer + 1][currentPosition + 1] = port2.getEdges().get(0)
-                                .getTarget().getNode();
-                    } else {
-                        order[currentLayer + 1][currentPosition] = port2.getEdges().get(0)
-                                .getTarget().getNode();
-                        order[currentLayer + 1][currentPosition + 1] = port.getEdges().get(0)
-                                .getTarget().getNode();
+                        currentPosition++;
                     }
-                    currentPosition += 2;
                 } else if (currentNode.getProperty(Properties.NODE_TYPE).equals(
                         NodeType.SWITCH_RIGHT)) {
                     Iterator<LPort> theTwoPorts = currentNode.getPorts(PortType.OUTPUT).iterator();
                     LPort port = theTwoPorts.next();
-                    LPort port2 = theTwoPorts.next();
-                    if (port.getPos().y < port2.getPos().y) {
-                        order[currentLayer + 1][currentPosition] = port2.getEdges().get(0)
-                                .getTarget().getNode();
-                        order[currentLayer + 1][currentPosition + 1] = port.getEdges().get(0)
-                                .getTarget().getNode();
+                    if (theTwoPorts.hasNext()) {
+                        LPort port2 = theTwoPorts.next();
+                        if (port.getPos().y < port2.getPos().y) {
+                            order[currentLayer + 1][currentPosition] = port2.getEdges().get(0)
+                                    .getTarget().getNode();
+                            order[currentLayer + 1][currentPosition + 1] = port.getEdges().get(0)
+                                    .getTarget().getNode();
+                        } else {
+                            order[currentLayer + 1][currentPosition] = port.getEdges().get(0)
+                                    .getTarget().getNode();
+                            order[currentLayer + 1][currentPosition + 1] = port2.getEdges().get(0)
+                                    .getTarget().getNode();
+                        }
+                        currentPosition += 2;
                     } else {
                         order[currentLayer + 1][currentPosition] = port.getEdges().get(0)
                                 .getTarget().getNode();
-                        order[currentLayer + 1][currentPosition + 1] = port2.getEdges().get(0)
-                                .getTarget().getNode();
+                        currentPosition++;
                     }
-                    currentPosition += 2;
                 } else {
                     if (currentNode.getPorts().get(0).getType().equals(PortType.OUTPUT)) {
                         order[currentLayer + 1][currentPosition] = currentNode.getPorts().get(0)
