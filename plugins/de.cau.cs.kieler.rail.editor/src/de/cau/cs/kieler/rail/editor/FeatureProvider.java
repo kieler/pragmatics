@@ -24,6 +24,7 @@ import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
+import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
@@ -32,8 +33,10 @@ import de.cau.cs.kieler.rail.editor.features.AddBreachFeature;
 import de.cau.cs.kieler.rail.editor.features.AddDeadEndVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.AddFeature;
+import de.cau.cs.kieler.rail.editor.features.AddPortFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateFeature;
+import de.cau.cs.kieler.rail.editor.features.CreatePortFeature;
 import de.cau.cs.kieler.rail.editor.features.DirectEditBreachFeatures;
 import de.cau.cs.kieler.rail.editor.features.LayoutFeature;
 import de.cau.cs.kieler.rail.editor.features.ResizeFeature;
@@ -69,6 +72,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
         	case RECHTS:
         		return new AddFeature(this,this.styleProvider,TypeFeatures.SWITCHVERTEX_RIGHT);
         	}
+        } else if (context.getNewObject() instanceof Port)
+        {
+        	return new AddPortFeature(this, styleProvider);
         }
         else if (context.getNewObject() instanceof Edge) {
             return new AddEdgeFeature(this,styleProvider);
@@ -81,7 +87,12 @@ public class FeatureProvider extends DefaultFeatureProvider {
     public ICreateFeature[] getCreateFeatures() {
     	//, new CreateDeadEndVertexFeature(this)
     	
-    	return new ICreateFeature[] { new CreateFeature(this,TypeFeatures.BREANCH ),new CreateFeature(this,TypeFeatures.DEADENDVERTEX ), new CreateFeature(this,TypeFeatures.SWITCHVERTEX_LEFT),new CreateFeature(this,TypeFeatures.SWITCHVERTEX_RIGHT)};
+    	return new ICreateFeature[] { new CreateFeature(this,TypeFeatures.BREANCH ),
+    			new CreateFeature(this,TypeFeatures.DEADENDVERTEX ), 
+    			new CreateFeature(this,TypeFeatures.SWITCHVERTEX_LEFT),
+    			new CreateFeature(this,TypeFeatures.SWITCHVERTEX_RIGHT),
+    			new CreatePortFeature(this)
+    		};
     }
     
     @Override
@@ -140,16 +151,16 @@ public class FeatureProvider extends DefaultFeatureProvider {
         PictogramElement pictogramElement = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pictogramElement);
         if (bo instanceof Einbruchsknoten) {
-            return new LayoutFeature(this,TypeFeatures.BREANCH);
+            return new LayoutFeature(this,TypeFeatures.BREANCH,50,50);
         } else if (bo instanceof Stumpfgleisknoten) {
-        	return new LayoutFeature(this,TypeFeatures.DEADENDVERTEX);
+        	return new LayoutFeature(this,TypeFeatures.DEADENDVERTEX,50,50);
         } else if (bo instanceof Weichenknoten) {
         	EOrientation E = ((Weichenknoten)(bo)).getAbzweigendeLage();
         	switch (E){
         	case LINKS:
-        		return new LayoutFeature(this,TypeFeatures.SWITCHVERTEX_LEFT);
+        		return new LayoutFeature(this,TypeFeatures.SWITCHVERTEX_LEFT,50,50);
         	case RECHTS:
-        		return new LayoutFeature(this,TypeFeatures.SWITCHVERTEX_RIGHT);
+        		return new LayoutFeature(this,TypeFeatures.SWITCHVERTEX_RIGHT,50,50);
         	}
         }
         return super.getLayoutFeature(context);

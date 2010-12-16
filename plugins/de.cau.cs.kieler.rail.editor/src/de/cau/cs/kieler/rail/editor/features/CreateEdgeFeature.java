@@ -91,7 +91,7 @@ public class CreateEdgeFeature extends
             Model topModel = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(getDiagram());
             
             //TODO Make the linkt
-            //topModel.get
+            topModel.getEdges().add(link);
             
             getFeatureProvider().getDirectEditingInfo().setActive(true);
             AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(),

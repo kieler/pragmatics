@@ -30,15 +30,21 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
  */
 public class LayoutFeature extends AbstractLayoutFeature {
  
-    private static final int MIN_HEIGHT = 30;
+    private static final int MIN_HEIGHT = 50;
  
     private static final int MIN_WIDTH = 50;
     
+    
+    private int height = 50;
+    private int width = 50;
+    
     TypeFeatures type;
  
-    public LayoutFeature(IFeatureProvider fp ,TypeFeatures type) {
+    public LayoutFeature(IFeatureProvider fp ,TypeFeatures type, int height, int width) {
         super(fp);
         this.type = type;
+        this.height = height;
+        this.width = width;
     }
  
     public boolean canLayout(ILayoutContext context) {
@@ -47,6 +53,10 @@ public class LayoutFeature extends AbstractLayoutFeature {
        if (!(pe instanceof ContainerShape))
            return false;
        EList<EObject> businessObjects = pe.getLink().getBusinessObjects();
+       
+       //((ContainerShape)pe).getGraphicsAlgorithm().setHeight(50);
+       //((ContainerShape)pe).getGraphicsAlgorithm().setWidth(50);
+       
        return businessObjects.size() == 1
               && isInstanceof(businessObjects.get(0));
     }
@@ -58,14 +68,14 @@ public class LayoutFeature extends AbstractLayoutFeature {
         GraphicsAlgorithm containerGa = containerShape.getGraphicsAlgorithm();
  
         // height
-        if (containerGa.getHeight() < MIN_HEIGHT) {
-            containerGa.setHeight(MIN_HEIGHT);
+        if (containerGa.getHeight() != height) {
+            containerGa.setHeight(height);
             anythingChanged = true;
         }
  
         // width
-        if (containerGa.getWidth() < MIN_WIDTH) {
-            containerGa.setWidth(MIN_WIDTH);
+        if (containerGa.getWidth() != width) {
+            containerGa.setWidth(width);
             anythingChanged = true;
         }
  
