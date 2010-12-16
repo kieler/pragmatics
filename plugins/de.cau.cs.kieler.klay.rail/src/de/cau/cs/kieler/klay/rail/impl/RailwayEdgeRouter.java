@@ -39,7 +39,6 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
     /** the desired bend angle. will be converted to radians later. might be a layout option. */
     public static final double BEND_ANGLE = 30;
 
-    @Override
     /**
      * {@inheritDoc}
      */
