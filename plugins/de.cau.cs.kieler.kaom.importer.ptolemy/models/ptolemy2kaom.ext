@@ -542,10 +542,6 @@ Port mergePortAttributesSingle(Port newPort, List[Port] existingPorts) :
  * @param entity the entity to optimize.
  */
 Void optimize(Entity entity) :
-    // TODO Call optimizeStates before inferLinkDirections?
-    // optimizeStates determines some link directions in the process that
-    // then wouldn't have to be inferred in the first place... right?
-    
     // Try to infer the link directions
     inferLinkDirections(entity) ->
     
@@ -590,10 +586,23 @@ Void inferLinkDirections(Entity entity) :
     let portsChanged = inferPorts(entity) :
     let linksChanged = inferLinks(entity) :
     let relationsChanged = inferRelations(entity) :
+    let entityList = {entity} :
     
-    if (portsChanged || linksChanged || relationsChanged)
-        then inferLinkDirections(entity)
-        else null
+    switch {
+        case portsChanged || linksChanged || relationsChanged :
+            // Something was changed, so repeat the three-step process
+            // until nothing changes anymore
+            inferLinkDirections(entity)
+        
+        case randomizeLink(entityList) :
+            // A link that can be randomly set was found. So, restart
+            // the whole process
+            inferLinkDirections(entity)
+        
+        default :
+            // No link was changed, so stop
+            null
+    }
 ;
 
 
@@ -639,34 +648,29 @@ Boolean _inferPort(Port port) :
     // Find any connected undirected links
     let connectedLinks = getConnectedLinks(port).select(l | !isMarkedAsUndirected(l)) :
     
-    if (isMarkedAsInputPort(port) || isMarkedAsOutputPort(port))
-        then (
+    switch {
+        case isMarkedAsInputPort(port) || isMarkedAsOutputPort(port) :
             // The port's type is known; our work here is done
             false
+        
+        case hasDirectedIncomingLink(port, connectedLinks) : (
+            // There is a directed link going into the port, so
+            // it must be an input port! Heureka!
+            markAsInputPort(port) ->
+            true
         )
-        else (
-            // The port's type is unknown. Try to find a directed link
-            if (hasDirectedIncomingLink(port, connectedLinks))
-                then (
-                    // There is a directed link going into the port, so
-                    // it must be an input port! Heureka!
-                    markAsInputPort(port) ->
-                    true
-                )
-                else (
-                    if (hasDirectedOutgoingLink(port, connectedLinks))
-                        then (
-		                    // There is a directed link coming out of the
-		                    // port, so it must be an output port! Hurray!
-		                    markAsOutputPort(port) ->
-		                    true
-                        )
-                        else (
-                            // We could not infer the port's type
-                            false
-                        )
-                )
+        
+        case hasDirectedOutgoingLink(port, connectedLinks) : (
+            // There is a directed link coming out of the port, so
+            // it must be an output port! Hurray!
+            markAsOutputPort(port) ->
+            true
         )
+        
+        default :
+            // We couldn't infer the port's type
+            false
+    }
 ;
 
 /**
@@ -850,6 +854,97 @@ Boolean _inferRelation(Relation relation) :
             }
         )
         else false
+;
+
+
+//-----------------
+// Fix Random Link
+//-----------------
+
+/**
+ * Looks for an undirected link that can be made directed. This can be done if there
+ * is a relation with directed and undirected links whose directed links are either
+ * all incoming or all outgoing. Then one of the undirected links is made either
+ * outgoing or incoming, respectively. Only one link is fixed this way.
+ * 
+ * @param entities list of entities to traverse.
+ * @return true if a link was fixed, false otherwise.
+ */
+Boolean randomizeLink(List[Entity] entities) :
+    let entity = entities.first() :
+    
+    info("randomizeLink!" + entity.name) ->
+    
+    if (entity == null)
+        then false
+        else (
+            if (randomizeLinkInRelations(entity.childRelations))
+                then true
+                else (
+                    if (randomizeLink(entity.childEntities))
+                        then true
+                        else randomizeLink(entities.withoutFirst())
+                )
+        )
+;
+
+/**
+ * Looks through the given list of relations, looking for an undirected link that
+ * can be made directed.
+ * 
+ * @param relations list of relations.
+ * @return true if a link was fixed, false otherwise.
+ */
+Boolean randomizeLinkInRelations(List[Relation] relations) :
+    let relation = relations.first() :
+    
+    if (relation == null)
+        then false
+        else (
+            if (randomizeLinkInRelation(relation))
+                then true
+                else randomizeLinkInRelations(relations.withoutFirst())
+        )
+;
+
+/**
+ * Checks if the given relation has both undirected and directed links and if
+ * the directed links are either all incoming or all outgoing. If this is the
+ * case, one of the undirected links is fixed to be outgoing or incoming,
+ * respectively.
+ * 
+ * @param relation the relation whose links to look at.
+ * @return true if a link was fixed, false otherwise.
+ */
+Boolean randomizeLinkInRelation(Relation relation) :
+    let incomingLinks = relation.incomingLinks.select(l | !isMarkedAsUndirected(l)) :
+    let outgoingLinks = relation.outgoingLinks.select(l | !isMarkedAsUndirected(l)) :
+    let undirectedLinks = getConnectedLinks(relation).select(l | isMarkedAsUndirected(l)) :
+    
+    if (undirectedLinks.size == 0)
+        then (
+            // There are no undirected links, so we cannot set a direction of one
+            false
+        )
+        else (
+            switch {
+		        case incomingLinks.size > 0 && outgoingLinks.size == 0 : (
+		            // There's only incoming links, so make an undirected link outgoing
+		            swapSourceTo(undirectedLinks.first(), relation) ->
+		            true
+	            )
+	            
+	            case incomingLinks.size == 0 && outgoingLinks.size > 0 : (
+	                // There's only outgoing links, so make an undirected link incoming
+	                swapTargetTo(undirectedLinks.first(), relation) ->
+	                true
+                )
+                
+                default :
+                    // There's both / neither incoming and / nor outgoing links
+                    false
+            }
+        )
 ;
 
 
