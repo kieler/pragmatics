@@ -19,7 +19,6 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.grana.MinAvgMaxResult;
 
 /**
  * A layout metric that computes the edge length uniformity of the graph layout.
@@ -51,14 +50,14 @@ public class EdgeUniformityMetric implements IAnalysis {
         try {
             Object edgeLengthResult = results.get(GRANA_EDGE_LENGTH);
 
-            if (!(edgeLengthResult instanceof MinAvgMaxResult<?, ?>)) {
+            if (!(edgeLengthResult instanceof Object[])) {
                 throw new KielerException("Edge length uniformity analysis failed.");
             }
 
-            MinAvgMaxResult<?, ?> mmr = (MinAvgMaxResult<?, ?>) edgeLengthResult;
-            Float min = (Float) mmr.getMin();
-            Float max = (Float) mmr.getMax();
-            Float avg = (Float) mmr.getAvg();
+            Object[] mmr = (Object[]) edgeLengthResult;
+            Float min = (Float) mmr[0];
+            Float avg = (Float) mmr[1];
+            Float max = (Float) mmr[2];
 
             float range = max - min;
 
