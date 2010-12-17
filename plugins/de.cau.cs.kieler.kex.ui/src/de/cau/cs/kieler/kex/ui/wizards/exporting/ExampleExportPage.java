@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -63,6 +64,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
     private static final String WORKSPACE_DIR = ResourcesPlugin.getWorkspace().getRoot()
             .getLocation().toOSString();
+
+    private Button revertTree;
 
     /**
      * contstructor for {@link ExampleExportPage}.
@@ -159,7 +162,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
         final FileDialog picDialog = new FileDialog(bottomGroup.getShell());
         // ResourcesPlugin.getWorkspace().getRoot(), "Search a picture!"
         picDialog.setFilterPath(WORKSPACE_DIR);
-        String[] extensions = { "*.png", "*.jpg", "*.gif", "*.PNG", "*.bmp" };
+        String[] extensions = { "*.png;*.jpg;*.gif" };
         picDialog.setFilterExtensions(extensions);
         Label label = new Label(bottomGroup, SWT.NONE);
         label.setText("Set Picture:");
@@ -218,18 +221,22 @@ public class ExampleExportPage extends WizardResourceImportPage {
                     TreeItem item = new TreeItem(categoryTree, SWT.NONE);
                     item.setText(value);
                     creatableCategories.add(value);
+                    revertTree.setEnabled(checkedCategories.size() > 0
+                            || creatableCategories.size() > 0);
                 }
             }
         });
 
-        Button revertTree = new Button(buttonCompo, SWT.NONE);
+        revertTree = new Button(buttonCompo, SWT.NONE);
         revertTree.setText("Revert");
+        revertTree.setEnabled(false);
         revertTree.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 categoryTree.removeAll();
                 fillTree(categoryTree);
                 creatableCategories.clear();
+                revertTree.setEnabled(false);
                 super.widgetSelected(e);
             }
         });
@@ -273,7 +280,18 @@ public class ExampleExportPage extends WizardResourceImportPage {
                     }
                 }
             }
+        });
+        categoryTree.addSelectionListener(new SelectionListener() {
 
+            public void widgetSelected(SelectionEvent e) {
+                revertTree.setEnabled(checkedCategories.size() > 0
+                        || creatableCategories.size() > 0);
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+                revertTree.setEnabled(checkedCategories.size() > 0
+                        || creatableCategories.size() > 0);
+            }
         });
         fillTree(categoryTree);
     }
