@@ -445,11 +445,19 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
             EList<KPoint> points = edgeLayout.getBendPoints();
 
+            Point src = Graphiti.getGaService().createPoint(
+                    (int) edgeLayout.getSourcePoint().getX(),
+                    (int) edgeLayout.getSourcePoint().getY());
+            pointList.add(src);
             for (KPoint pnt : points) {
                 Point point = Graphiti.getGaService().createPoint(
                         (int) pnt.getX(), (int) pnt.getY());
                 pointList.add(point);
             }
+            Point target = Graphiti.getGaService().createPoint(
+                    (int) edgeLayout.getTargetPoint().getX(),
+                    (int) edgeLayout.getTargetPoint().getY());
+            pointList.add(target);
 
         }
 
