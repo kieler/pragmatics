@@ -252,10 +252,30 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                                 port.setNode(childnode);
                                 KShapeLayout portLayout = port
                                         .getData(KShapeLayout.class);
-                                portLayout.setXpos(anchor
-                                        .getGraphicsAlgorithm().getX());
-                                portLayout.setYpos(anchor
-                                        .getGraphicsAlgorithm().getY());
+
+                                if (anchor instanceof BoxRelativeAnchor) {
+                                    BoxRelativeAnchor bra = (BoxRelativeAnchor) anchor;
+                                    Double relWidth = bra.getRelativeWidth();
+                                    Double relHeight = bra.getRelativeHeight();
+                                    int width = anchor.getGraphicsAlgorithm()
+                                            .getWidth();
+                                    int height = anchor.getGraphicsAlgorithm()
+                                            .getHeight();
+                                    float x = (float) (relWidth
+                                            * shape.getGraphicsAlgorithm()
+                                                    .getWidth() - (width / 2));
+                                    float y = (float) (relHeight
+                                            * shape.getGraphicsAlgorithm()
+                                                    .getHeight() - (height / 2));
+                                    portLayout.setXpos(x);
+                                    portLayout.setYpos(y);
+                                } else {
+                                    portLayout.setXpos(anchor
+                                            .getGraphicsAlgorithm().getX());
+                                    portLayout.setYpos(anchor
+                                            .getGraphicsAlgorithm().getY());
+                                }
+
                                 portLayout.setWidth(anchor
                                         .getGraphicsAlgorithm().getWidth());
                                 portLayout.setHeight(anchor
@@ -264,7 +284,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                                         .getOutgoingConnections();
                                 for (Connection connection : conn) {
                                     connections.add(connection);
-
                                 }
                             } else {
                                 EList<Connection> conn = anchor
@@ -369,8 +388,23 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             PictogramElement pelem = entry.getKey();
             KGraphElement kelem = entry.getValue();
             KShapeLayout shapeLayout = kelem.getData(KShapeLayout.class);
-            pelem.getGraphicsAlgorithm().setX((int) shapeLayout.getXpos());
-            pelem.getGraphicsAlgorithm().setY((int) shapeLayout.getYpos());
+            if (pelem instanceof BoxRelativeAnchor) {
+                BoxRelativeAnchor anchor = (BoxRelativeAnchor) pelem;
+                double x = shapeLayout.getXpos();
+                double y = shapeLayout.getYpos();
+                KNode container = (KNode) kelem.eContainer();
+                KShapeLayout containerLayout = container
+                        .getData(KShapeLayout.class);
+                double relWidth = ((x + (shapeLayout.getWidth() / 2)) / containerLayout
+                        .getWidth());
+                double relHeight = ((y + (shapeLayout.getHeight() / 2)) / containerLayout
+                        .getHeight());
+                anchor.setRelativeWidth(relWidth);
+                anchor.setRelativeHeight(relHeight);
+            } else {
+                pelem.getGraphicsAlgorithm().setX((int) shapeLayout.getXpos());
+                pelem.getGraphicsAlgorithm().setY((int) shapeLayout.getYpos());
+            }
             pelem.getGraphicsAlgorithm().setHeight(
                     (int) shapeLayout.getHeight());
             pelem.getGraphicsAlgorithm().setWidth((int) shapeLayout.getWidth());
@@ -410,6 +444,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             pointList.clear();
 
             EList<KPoint> points = edgeLayout.getBendPoints();
+
             for (KPoint pnt : points) {
                 Point point = Graphiti.getGaService().createPoint(
                         (int) pnt.getX(), (int) pnt.getY());
@@ -519,7 +554,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             }
 
             if (connection.getEnd().getReferencedGraphicsAlgorithm() == null) {
-
                 if (pictElem2GraphElemMap.containsKey(connection.getEnd()
                         .getParent())) {
                     targetNode = (KNode) pictElem2GraphElemMap.get(connection
@@ -539,7 +573,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             }
 
             if (connection.getStart().getReferencedGraphicsAlgorithm() == null) {
-
                 if (pictElem2GraphElemMap.containsKey(connection.getStart()
                         .getParent())) {
                     sourceNode = (KNode) pictElem2GraphElemMap.get(connection
@@ -570,46 +603,14 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             GraphicsAlgorithm startParentGa = startParent
                     .getGraphicsAlgorithm();
 
-            if (start instanceof BoxRelativeAnchor) {
-                BoxRelativeAnchor startPort = (BoxRelativeAnchor) start;
-                double height = startPort.getRelativeHeight();
-                double width = startPort.getRelativeWidth();
-
-                float x = (float) (startParentGa.getX() + startParentGa
-                        .getWidth() * width);
-                sourcePoint.setX(x);
-                float y = (float) (startParentGa.getY() + startParentGa
-                        .getHeight() * height);
-                sourcePoint.setY(y);
-            } else {
-                sourcePoint.setX(startParentGa.getX()
-                        + startParentGa.getWidth() / 2);
-                sourcePoint.setY(startParentGa.getY()
-                        + startParentGa.getHeight() / 2);
-            }
+            calculateAnchorEnds(sourcePoint, start, startParentGa);
 
             KPoint targetPoint = edgeLayout.getTargetPoint();
             Anchor end = connection.getEnd();
             AnchorContainer endParent = end.getParent();
             GraphicsAlgorithm endParentGa = endParent.getGraphicsAlgorithm();
 
-            if (end instanceof BoxRelativeAnchor) {
-                BoxRelativeAnchor endPort = (BoxRelativeAnchor) end;
-                double height = endPort.getRelativeHeight();
-                double width = endPort.getRelativeWidth();
-
-                float x = (float) (endParentGa.getX() + endParentGa.getWidth()
-                        * width);
-                targetPoint.setX(x);
-                float y = (float) (endParentGa.getY() + endParentGa.getHeight()
-                        * height);
-                targetPoint.setY(y);
-            } else {
-                targetPoint.setX(endParentGa.getX() + endParentGa.getWidth()
-                        / 2);
-                targetPoint.setY(endParentGa.getY() + endParentGa.getHeight()
-                        / 2);
-            }
+            calculateAnchorEnds(targetPoint, end, endParentGa);
 
             for (Point point : pointList) {
 
@@ -626,6 +627,28 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
         }
 
+    }
+
+    /**
+     * @param point
+     * @param anchor
+     * @param parentGa
+     */
+    private void calculateAnchorEnds(final KPoint point, final Anchor anchor,
+            final GraphicsAlgorithm parentGa) {
+        if (anchor instanceof BoxRelativeAnchor) {
+            BoxRelativeAnchor port = (BoxRelativeAnchor) anchor;
+            double height = port.getRelativeHeight();
+            double width = port.getRelativeWidth();
+
+            float x = (float) (parentGa.getX() + parentGa.getWidth() * width);
+            point.setX(x);
+            float y = (float) (parentGa.getY() + parentGa.getHeight() * height);
+            point.setY(y);
+        } else {
+            point.setX(parentGa.getX() + parentGa.getWidth() / 2);
+            point.setY(parentGa.getY() + parentGa.getHeight() / 2);
+        }
     }
 
     /**
