@@ -34,14 +34,16 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
  */
 public class AddRelationFeature extends AbstractAddShapeFeature {
 
-    /** the style provider. */ 
+    /** the style provider. */
     private IStyleProvider styleProvider;
 
     /**
      * The constructor.
      * 
-     * @param fp the feature provider
-     * @param sp the style provider
+     * @param fp
+     *            the feature provider
+     * @param sp
+     *            the style provider
      */
     public AddRelationFeature(final IFeatureProvider fp, final IStyleProvider sp) {
         super(fp);
@@ -63,9 +65,11 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
     public PictogramElement add(final IAddContext context) {
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         IGaService gaService = Graphiti.getGaService();
-        Shape relationShape = peCreateService.createShape(context.getTargetContainer(), true);
-        Polygon polygon = gaService.createPolygon(relationShape,
-                new int[] { -VERTEX_RADIUS, 0, 0, VERTEX_RADIUS, VERTEX_RADIUS, 0, 0, -VERTEX_RADIUS });
+        Shape relationShape = peCreateService.createShape(
+                context.getTargetContainer(), true);
+        Polygon polygon = gaService.createPolygon(relationShape, new int[] { 0,
+                VERTEX_RADIUS, VERTEX_RADIUS, 2 * VERTEX_RADIUS,
+                2 * VERTEX_RADIUS, VERTEX_RADIUS, VERTEX_RADIUS, 0 });
         polygon.setStyle(styleProvider.getStyle(StyleProvider.SOLID_STYLE));
         gaService.setLocation(polygon, context.getX(), context.getY(), false);
         peCreateService.createChopboxAnchor(relationShape);
