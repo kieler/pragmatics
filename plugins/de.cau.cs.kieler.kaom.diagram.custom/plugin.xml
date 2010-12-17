@@ -16,7 +16,7 @@
             defaultHandler="de.cau.cs.kieler.kaom.diagram.custom.commands.ReInitKaomDiagramCommand"
             description="Reinitialize the diagram for the selected kaom file overwriting the olds kaod file."
             id="de.cau.cs.kieler.kaom.ui.reinitDiagram"
-            name="Reinitialize diagram from model">
+            name="Reinitialize and save kaod diagram from model">
       </command>
          </extension>
             <extension
@@ -30,7 +30,7 @@
                mnemonic="K">
             <command
                   commandId="de.cau.cs.kieler.kaom.ui.reinitDiagram"
-                  label="Reinitialize diagram from model"
+                  label="Reinitialize and save kaod diagram from model"
                   style="push"
                   tooltip="Reinitialize the diagram for the selected kaom file overwriting the olds kaod file.">
                <visibleWhen

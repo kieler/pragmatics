@@ -21,7 +21,7 @@
       <diagramType
             description="Graphiti diagram for KAOM models"
             id="de.cau.cs.kieler.kaom.diagramType"
-            name="KAOM Diagram"
+            name="Actor Oriented Modeling(KAOM) Graphiti Diagram"
             type="KAOM">
       </diagramType>
    </extension>
@@ -81,7 +81,7 @@
             class="de.cau.cs.kieler.kaom.graphiti.diagram.KaomNewWizard"
             icon="icons/KaomDiagramFile.gif"
             id="de.cau.cs.kieler.kaom.graphiti.wizard"
-            name="KAOM Diagram (Graphiti)">
+            name="Actor Oriented Modeling(KAOM) Graphiti Diagram">
       </wizard>
    </extension>
    <extension
