@@ -40,19 +40,6 @@
       </editpolicyProvider>
    </extension>
    <extension
-         point="org.eclipse.ui.importWizards">
-      <wizard
-            category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.keg.wizards.ImportGraphWizard"
-            icon="icons/importdiagram.gif"
-            id="de.cau.cs.kieler.keg.importWizard"
-            name="Import Graph">
-         <description>
-            Import a graph from the local filesystem.
-         </description>
-      </wizard>
-   </extension>
-   <extension
          point="de.cau.cs.kieler.karma">
       <configuration
             RenderingProvider="de.cau.cs.kieler.keg.custom.KEGFigureProvider">
