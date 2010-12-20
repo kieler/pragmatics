@@ -32,7 +32,8 @@ public interface IPropertyHolder {
     void setProperty(IProperty<?> property, final Object value);
     
     /**
-     * Retrieves a property value.
+     * Retrieves a property value. If the property is not set, its default value shall be taken,
+     * which is taken from the given property instance.
      * 
      * @param <T> type of property
      * @param property the property to get

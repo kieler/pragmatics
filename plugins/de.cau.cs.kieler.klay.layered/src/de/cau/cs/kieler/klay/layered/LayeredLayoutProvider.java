@@ -81,17 +81,16 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Layered layout", 1);
-        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
 
         // update the modules depending on user options
-        updateModules(parentLayout);
+        updateModules(layoutNode.getData(KShapeLayout.class));
 
         // transform the input graph
         IGraphImporter graphImporter = new KGraphImporter(layoutNode);
         LayeredGraph layeredGraph = graphImporter.getGraph();
 
-        // set layout options
-        setOptions(layeredGraph, layoutNode, parentLayout);
+        // set special properties for the layered graph
+        setOptions(layeredGraph, layoutNode);
 
         // perform the actual layout
         layout(graphImporter, progressMonitor.subTask(1));
@@ -172,41 +171,14 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     }
     
     /**
-     * Set layout options for the layered graph.
+     * Set special layout options for the layered graph.
      * 
      * @param layeredGraph a new layered graph
      * @param parent the original parent node
-     * @param parentLayout the layout data for the parent node
      */
-    private void setOptions(final LayeredGraph layeredGraph, final KNode parent,
-            final KShapeLayout parentLayout) {
-        // set object spacing option
-        float objSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
-        if (objSpacing >= 0) {
-            layeredGraph.setProperty(Properties.OBJ_SPACING, objSpacing);
-        }
-        // set thoroughness option
-        int thoroughness = parentLayout.getProperty(Properties.THOROUGHNESS);
-        if (thoroughness > 0) {
-            layeredGraph.setProperty(Properties.THOROUGHNESS, thoroughness);
-        }
-        // add information for LinearSegmentsNodePlacer
-        layeredGraph.setProperty(Properties.STRAIGHT_EDGES,
-                parentLayout.getProperty(Properties.STRAIGHT_EDGES));
-        // add information for LinearSegmentsNodePlacer
-        layeredGraph.setProperty(Properties.DISTRIBUTE_NODES,
-                parentLayout.getProperty(Properties.DISTRIBUTE_NODES));
-        // set minimal edge angle
-        layeredGraph.setProperty(Properties.MIN_EDGE_ANGLE,
-                parentLayout.getProperty(Properties.MIN_EDGE_ANGLE));
-        // add information for the layering algorithm
-        layeredGraph.setProperty(Properties.SEGMENTATE_LAYERING,
-                parentLayout.getProperty(Properties.SEGMENTATE_LAYERING));
-        layeredGraph.setProperty(Properties.ENHANCE_LAYERING,
-                parentLayout.getProperty(Properties.ENHANCE_LAYERING));
-        
-        // set the random seed
-        Integer randomSeed = parentLayout.getProperty(LayoutOptions.RANDOM_SEED);
+    private void setOptions(final LayeredGraph layeredGraph, final KNode parent) {
+        // set the random number generator based on the random seed option
+        Integer randomSeed = layeredGraph.getProperty(LayoutOptions.RANDOM_SEED);
         if (randomSeed != null) {
             int val = randomSeed;
             if (val == 0) {
@@ -218,18 +190,13 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             layeredGraph.setProperty(Properties.RANDOM, new Random(1));
         }
 
-        // set debug mode option
-        Boolean debugMode = parentLayout.getProperty(LayoutOptions.DEBUG_MODE);
+        // set the debug canvas based on the debug mode option
+        Boolean debugMode = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
         if (debugMode) {
-            // get debug canvas and clear
             IDebugCanvas debugCanvas = getDebugCanvas();
-            layeredGraph.setProperty(LayoutOptions.DEBUG_MODE, true);
             layeredGraph.setProperty(Properties.DEBUG_CANVAS, debugCanvas);
-            float borderspacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
-            if (borderspacing < 0) {
-                borderspacing = Properties.DEF_SPACING;
-            }
-            debugCanvas.setOffset(parent, borderspacing, borderspacing);
+            float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
+            debugCanvas.setOffset(parent, borderSpacing, borderSpacing);
         }
     }
 

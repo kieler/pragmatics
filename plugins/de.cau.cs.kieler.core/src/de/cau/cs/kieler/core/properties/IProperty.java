@@ -27,9 +27,25 @@ public interface IProperty<T> {
     /**
      * Returns the default value of this property.
      * 
-     * @return the default value
+     * @return the default value, or {@code null} if the property has no default value
      */
     T getDefault();
+    
+    /**
+     * Returns the lower bound of this property. If there is no lower bound, a
+     * comparable is returned that is smaller than everything else.
+     * 
+     * @return the lower bound
+     */
+    Comparable<T> getLowerBound();
+    
+    /**
+     * Returns the upper bound of this property. If there is no upper bound, a
+     * comparable is returned that is greater than everything else.
+     * 
+     * @return the upper bound
+     */
+    Comparable<T> getUpperBound();
     
     /**
      * Returns an object that can be used as identifier for this property.

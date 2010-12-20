@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.IDataObject;
 
 /**
@@ -552,6 +553,22 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
      */
     public T getDefault() {
         return defaultValue;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public Comparable<T> getLowerBound() {
+        return (Comparable<T>) Property.MINUS_INFINITY;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public Comparable<T> getUpperBound() {
+        return (Comparable<T>) Property.INFINITY;
     }
     
     /**

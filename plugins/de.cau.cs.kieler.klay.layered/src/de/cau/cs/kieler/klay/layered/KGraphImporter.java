@@ -61,9 +61,9 @@ public class KGraphImporter implements IGraphImporter {
      * @param knode the top level node of the KGraph
      */
     public KGraphImporter(final KNode knode) {
-        importedNodes = transformGraph(knode);
         layeredGraph = new LayeredGraph();
         layeredGraph.setProperty(Properties.ORIGIN, knode);
+        importedNodes = transformGraph(knode);
     }
 
     /**
@@ -83,11 +83,14 @@ public class KGraphImporter implements IGraphImporter {
     /**
      * Transform the given KGraph to a layered graph.
      * 
-     * @param layoutNode
-     *            parent node of the KGraph
+     * @param layoutNode parent node of the KGraph
      * @return a list of nodes for a layered graph
      */
     private List<LNode> transformGraph(final KNode layoutNode) {
+        // copy the properties of the KGraph to the layered graph
+        layeredGraph.copyProperties(layoutNode.getData(KShapeLayout.class));
+        layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.THOROUGHNESS,
+                LayoutOptions.BORDER_SPACING);
         List<LNode> layeredNodes = new LinkedList<LNode>();
 
         // transform nodes and ports

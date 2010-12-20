@@ -58,18 +58,12 @@ public abstract class MapPropertyHolder implements IPropertyHolder {
     /**
      * {@inheritDoc}
      */
-    public void copyProperties(final IPropertyHolder holder) {
-        if (holder instanceof MapPropertyHolder) {
-            MapPropertyHolder other = (MapPropertyHolder) holder;
-            if (other.propertyMap != null) {
-                if (this.propertyMap == null) {
-                    propertyMap = new HashMap<IProperty<?>, Object>(other.propertyMap);
-                } else {
-                    this.propertyMap.putAll(other.propertyMap);
-                }
-            }
+    public void copyProperties(final IPropertyHolder other) {
+        Map<IProperty<?>, Object> otherMap = other.getAllProperties();
+        if (this.propertyMap == null) {
+            propertyMap = new HashMap<IProperty<?>, Object>(otherMap);
         } else {
-            this.propertyMap.putAll(holder.getAllProperties());
+            this.propertyMap.putAll(otherMap);
         }
     }
     
@@ -81,6 +75,27 @@ public abstract class MapPropertyHolder implements IPropertyHolder {
             return Collections.emptyMap();
         } else {
             return propertyMap;
+        }
+    }
+    
+    /**
+     * Check for upper and lower bounds. If a property value does not fit into the bounds,
+     * it is reset to the default value.
+     * 
+     * @param newProperties the properties that shall be checked
+     */
+    public void checkProperties(final IProperty<?> ... newProperties) {
+        for (IProperty<?> property : newProperties) {
+            Object value = propertyMap.get(property);
+            if (value != null) {
+                @SuppressWarnings("unchecked")
+                Comparable<Object> lowbo = (Comparable<Object>) property.getLowerBound();
+                @SuppressWarnings("unchecked")
+                Comparable<Object> uppbo = (Comparable<Object>) property.getUpperBound();
+                if (lowbo.compareTo(value) > 0 || uppbo.compareTo(value) < 0) {
+                    propertyMap.remove(property);
+                }
+            }
         }
     }
     

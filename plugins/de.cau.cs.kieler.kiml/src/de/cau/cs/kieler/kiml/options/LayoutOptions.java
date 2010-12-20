@@ -119,7 +119,7 @@ public final class LayoutOptions {
     public static final String BORDER_SPACING_ID = "de.cau.cs.kieler.layout.options.borderSpacing";
     /** border spacing property. */
     public static final IProperty<Float> BORDER_SPACING = new Property<Float>(
-            BORDER_SPACING_ID, -1.0f);
+            BORDER_SPACING_ID, -1.0f, 0.0f);
     
     /** layout option key: debug mode (boolean). */
     public static final String DEBUG_MODE_ID = "de.cau.cs.kieler.layout.options.debugMode";
@@ -174,7 +174,7 @@ public final class LayoutOptions {
     /** layout option key: minimal distance between elements (float). */
     public static final String OBJ_SPACING_ID = "de.cau.cs.kieler.layout.options.minSpacing";    
     /** object spacing property. */
-    public static final IProperty<Float> OBJ_SPACING = new Property<Float>(OBJ_SPACING_ID, -1.0f);
+    public static final IProperty<Float> OBJ_SPACING = new Property<Float>(OBJ_SPACING_ID, -1.0f, 0.0f);
 
     /** layout option key: constraints for port positions (enum). */
     public static final String PORT_CONSTRAINTS_ID = "de.cau.cs.kieler.layout.options.portConstraints";

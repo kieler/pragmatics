@@ -21,10 +21,29 @@ package de.cau.cs.kieler.core.properties;
  */
 public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
     
+    /** the default lower bound, which is smaller than everything else. */
+    public static final Comparable<?> MINUS_INFINITY = new Comparable<Object>() {
+        public int compareTo(final Object other) {
+            return -1;
+        }
+    };
+    /** the default upper bound, which is greater than everything else. */
+    public static final Comparable<?> INFINITY = new Comparable<Object>() {
+        public int compareTo(final Object other) {
+            return 1;
+        }
+    };
+    
     /** identifier of this property. */
     private String id;
     /** the default value of this property. */
     private T defaultValue;
+    /** the lower bound of this property. */
+    @SuppressWarnings("unchecked")
+    private Comparable<T> lowerBound = (Comparable<T>) MINUS_INFINITY;
+    /** the upper bound of this property. */
+    @SuppressWarnings("unchecked")
+    private Comparable<T> upperBound = (Comparable<T>) INFINITY;
     
     /**
      * Creates a property with given identifier and {@code null} as default value.
@@ -33,7 +52,6 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
      */
     public Property(final String theid) {
         this.id = theid;
-        this.defaultValue = null;
     }
     
     /**
@@ -43,8 +61,38 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
      * @param thedefaultValue the default value
      */
     public Property(final String theid, final T thedefaultValue) {
-        this.id = theid;
+        this(theid);
         this.defaultValue = thedefaultValue;
+    }
+    
+    /**
+     * Creates a property with given identifier, default value, and lower bound.
+     * 
+     * @param theid the identifier
+     * @param thedefaultValue the default value
+     * @param thelowerBound the lower bound
+     */
+    public Property(final String theid, final T thedefaultValue, final Comparable<T> thelowerBound) {
+        this(theid, thedefaultValue);
+        if (thelowerBound != null) {
+            this.lowerBound = thelowerBound;
+        }
+    }
+    
+    /**
+     * Creates a property with given identifier, default value, and lower and upper bound.
+     * 
+     * @param theid the identifier
+     * @param thedefaultValue the default value
+     * @param thelowerBound the lower bound, or {@code null} if the default lower bound shall be taken
+     * @param theupperBound the upper bound
+     */
+    public Property(final String theid, final T thedefaultValue, final Comparable<T> thelowerBound,
+            final Comparable<T> theupperBound) {
+        this(theid, thedefaultValue, thelowerBound);
+        if (theupperBound != null) {
+            this.upperBound = theupperBound;
+        }
     }
     
     /**
@@ -55,8 +103,35 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
      * @param thedefaultValue the new default value
      */
     public Property(final IProperty<T> other, final T thedefaultValue) {
-        this.id = other.getIdentifier().toString();
-        this.defaultValue = thedefaultValue;
+        this(other.getIdentifier().toString(), thedefaultValue, other.getLowerBound(),
+                other.getUpperBound());
+    }
+    
+    /**
+     * Creates a property using another property as identifier, but changing the
+     * default value and lower bound.
+     * 
+     * @param other another property
+     * @param thedefaultValue the new default value
+     * @param thelowerBound the new lower bound
+     */
+    public Property(final IProperty<T> other, final T thedefaultValue,
+            final Comparable<T> thelowerBound) {
+        this(other.getIdentifier().toString(), thedefaultValue, thelowerBound, other.getUpperBound());
+    }
+    
+    /**
+     * Creates a property using another property as identifier, but changing the
+     * default value, lower bound, and upper bound.
+     * 
+     * @param other another property
+     * @param thedefaultValue the new default value
+     * @param thelowerBound the new lower bound
+     * @param theupperBound the new upper bound
+     */
+    public Property(final IProperty<T> other, final T thedefaultValue,
+            final Comparable<T> thelowerBound, final Comparable<T> theupperBound) {
+        this(other.getIdentifier().toString(), thedefaultValue, thelowerBound, theupperBound);
     }
     
     /**
@@ -93,6 +168,20 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
      */
     public T getDefault() {
         return defaultValue;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Comparable<T> getLowerBound() {
+        return lowerBound;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Comparable<T> getUpperBound() {
+        return upperBound;
     }
 
     /**
