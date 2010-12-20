@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.klodd"
       label="KIELER Dataflow Layout"
-      version="0.3.0"
+      version="0.4.0"
       provider-name="Christian-Albrechts-University of Kiel">
 
    <description url="http://rtsys.informatik.uni-kiel.de/trac/kieler/wiki/Projects/KLoDD">
@@ -112,30 +112,30 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="de.cau.cs.kieler.core"
-         download-size="47"
-         install-size="47"
-         version="0.1.2"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.layout"
-         download-size="80"
-         install-size="80"
-         version="0.3.0"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.cau.cs.kieler.klodd.hierarchical"
          download-size="89"
          install-size="89"
-         version="0.3.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.cau.cs.kieler.core.kgraph"
-         download-size="40"
-         install-size="40"
-         version="0.2.0"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
