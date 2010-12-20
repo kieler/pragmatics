@@ -41,7 +41,7 @@ public class EdgeLengthAnalysis implements IAnalysis {
      *            the edge
      * @return the length
      */
-    private float computeEdgeLength(final KEdge edge) {
+    private static float computeEdgeLength(final KEdge edge) {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         float edgeLength = 0;
         KPoint current = edgeLayout.getSourcePoint();
@@ -69,11 +69,11 @@ public class EdgeLengthAnalysis implements IAnalysis {
         float overallEdgeLength = 0;
         float minEdgeLength = Float.MAX_VALUE;
         float maxEdgeLength = 0;
-        List<KNode> nodes = new LinkedList<KNode>();
-        nodes.add(parentNode);
-        while (nodes.size() > 0) {
+        List<KNode> nodeQueue = new LinkedList<KNode>();
+        nodeQueue.add(parentNode);
+        while (nodeQueue.size() > 0) {
             // pop first element
-            KNode node = nodes.remove(0);
+            KNode node = nodeQueue.remove(0);
             // compute edge length for all outgoing edges
             numberOfEdges += node.getOutgoingEdges().size();
             for (KEdge edge : node.getOutgoingEdges()) {
@@ -88,14 +88,14 @@ public class EdgeLengthAnalysis implements IAnalysis {
                     maxEdgeLength = edgeLength;
                 }
             }
-            nodes.addAll(node.getChildren());
+            nodeQueue.addAll(node.getChildren());
         }
 
         progressMonitor.done();
 
         if (numberOfEdges > 0) {
             return new Object[] { minEdgeLength,
-                    overallEdgeLength / (float) numberOfEdges, maxEdgeLength };
+                    overallEdgeLength / numberOfEdges, maxEdgeLength };
         } else {
             return new Object[] { 0, 0.0f, 0 };
         }

@@ -66,44 +66,49 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
     }
 
     /**
-     * Computes the number of crossings between edges from the first and edges
-     * from the second node.
+     * Computes the number of crossings between two edges.
      * 
-     * @param node1
-     *            the first node
-     * @param node2
-     *            the second node
+     * @param edge1 the first edge
+     * @param edge2 the second edge
      * @return the number of crossings
      */
-    private int computeNumberOfCrossings(final KEdge edge1, final KEdge edge2) {
+    private static int computeNumberOfCrossings(final KEdge edge1, final KEdge edge2) {
         int numberOfCrossings = 0;
         KEdgeLayout edge1Layout = edge1.getData(KEdgeLayout.class);
-        KEdgeLayout edge2Layout = edge2.getData(KEdgeLayout.class);
         KPoint p1 = edge1Layout.getSourcePoint();
         for (KPoint p2 : edge1Layout.getBendPoints()) {
-            KPoint q1 = edge2Layout.getSourcePoint();
-            for (KPoint q2 : edge2Layout.getBendPoints()) {
-                numberOfCrossings += hasIntersection(p1, p2, q1, q2) ? 1 : 0;
-                q1 = q2;
-            }
-            // target point has to be handled separately
-            KPoint q2 = edge2Layout.getTargetPoint();
-
-            numberOfCrossings += hasIntersection(p1, p2, q1, q2) ? 1 : 0;
-
+            numberOfCrossings += computeNumberOfCrossings(p1, p2, edge2);
             p1 = p2;
         }
+        
         // target point has to be handled separately
         KPoint p2 = edge1Layout.getTargetPoint();
-
+        numberOfCrossings += computeNumberOfCrossings(p1, p2, edge2);
+        return numberOfCrossings;
+    }
+    
+    /**
+     * Computes the number of crossings of a line and an edge.
+     * 
+     * @param p1 start point of the line
+     * @param p2 end point of the line
+     * @param edge2 an edge
+     * @return the number of crossings
+     */
+    private static int computeNumberOfCrossings(final KPoint p1, final KPoint p2, final KEdge edge2) {
+        int numberOfCrossings = 0;
+        KEdgeLayout edge2Layout = edge2.getData(KEdgeLayout.class);
+        
         KPoint q1 = edge2Layout.getSourcePoint();
         for (KPoint q2 : edge2Layout.getBendPoints()) {
             numberOfCrossings += hasIntersection(p1, p2, q1, q2) ? 1 : 0;
             q1 = q2;
         }
+        
         // target point has to be handled separately
         KPoint q2 = edge2Layout.getTargetPoint();
         numberOfCrossings += hasIntersection(p1, p2, q1, q2) ? 1 : 0;
+        
         return numberOfCrossings;
     }
 
@@ -115,7 +120,6 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Edge Crossings analysis", 1);
-        int numberOfCrossings = 0;
         LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
         List<KEdge> edges = new LinkedList<KEdge>();
         nodeQueue.offer(parentNode);
@@ -130,6 +134,7 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
         
         // count the number of crossings between all edges of the compound graph
         ListIterator<KEdge> iter1 = edges.listIterator();
+        int numberOfCrossings = 0;
         while (iter1.hasNext()) {
             KEdge edge1 = iter1.next();
             ListIterator<KEdge> iter2 = edges.listIterator(iter1.nextIndex());

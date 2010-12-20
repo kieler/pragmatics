@@ -43,12 +43,12 @@ public class NodeDegreeAnalysis implements IAnalysis {
         int overallNodeDegree = 0;
         int minNodeDegree = Integer.MAX_VALUE;
         int maxNodeDegree = 0;
-        List<KNode> nodes = new LinkedList<KNode>();
+        List<KNode> nodeQueue = new LinkedList<KNode>();
         numberOfNodes += parentNode.getChildren().size();
-        nodes.addAll(parentNode.getChildren());
-        while (nodes.size() > 0) {
+        nodeQueue.addAll(parentNode.getChildren());
+        while (nodeQueue.size() > 0) {
             // pop first element
-            KNode node = nodes.remove(0);
+            KNode node = nodeQueue.remove(0);
             int nodeDegree = 0;
             // node degree outgoing
             for (KEdge edge : node.getOutgoingEdges()) {
@@ -72,7 +72,7 @@ public class NodeDegreeAnalysis implements IAnalysis {
             }
             overallNodeDegree += nodeDegree;
             numberOfNodes += node.getChildren().size();
-            nodes.addAll(node.getChildren());
+            nodeQueue.addAll(node.getChildren());
         }
 
         progressMonitor.done();

@@ -87,6 +87,20 @@ public class LayersAnalysis implements IAnalysis {
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Layers Analysis", 1);
+
+        int[] count = countLayers(parentNode);
+
+        progressMonitor.done();
+        return new Object[] { count[0], count[1] };
+    }
+    
+    /**
+     * Count the number of layers in the given graph and its nested subgraphs.
+     * 
+     * @param parentNode the parent node
+     * @return the number of horizontal / vertical layers, respectively
+     */
+    public int[] countLayers(final KNode parentNode) {
         // analyze horizontal layers
         List<Layer> horizontalLayers = new LinkedList<Layer>();
         for (KNode node : parentNode.getChildren()) {
@@ -104,9 +118,15 @@ public class LayersAnalysis implements IAnalysis {
             float end = start + nodeLayout.getWidth();
             insert(verticalLayers, start, end);
         }
-
-        progressMonitor.done();
-        return new Object[] { horizontalLayers.size(), verticalLayers.size() };
+        
+        // count the number of layers in the nested subgraphs
+        int[] count = new int[] { horizontalLayers.size(), verticalLayers.size() };
+        for (KNode child : parentNode.getChildren()) {
+            int[] childResult = countLayers(child);
+            count[0] += childResult[0];
+            count[1] += childResult[1];
+        }
+        return count;
     }
 
 }

@@ -37,14 +37,14 @@ public class EdgeCountAnalysis implements IAnalysis {
             throws KielerException {
         progressMonitor.begin("Number of Edges analysis", 1);
         Integer numberOfEdges = 0;
-        List<KNode> nodes = new LinkedList<KNode>();
-        nodes.add(parentNode);
-        while (nodes.size() > 0) {
+        List<KNode> nodeQueue = new LinkedList<KNode>();
+        nodeQueue.add(parentNode);
+        while (nodeQueue.size() > 0) {
             // pop first element
-            KNode node = nodes.remove(0);
+            KNode node = nodeQueue.remove(0);
             numberOfEdges += node.getOutgoingEdges().size();
             
-            nodes.addAll(node.getChildren());
+            nodeQueue.addAll(node.getChildren());
         }
 
         progressMonitor.done();
