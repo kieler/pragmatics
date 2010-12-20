@@ -5,8 +5,14 @@
          point="org.eclipse.ui.intro.configExtension">
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="de.cau.cs.kieler.keg.examples.configExtension1">
+            content="intro/introContent.xml">
       </configExtension>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.kex">
+      <category
+            id="de.cau.cs.kieler.keg">
+      </category>
    </extension>
 
 </plugin>
