@@ -9,6 +9,7 @@ import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
+import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
@@ -31,6 +32,7 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
+import de.cau.cs.kieler.rail.editor.StyleProvider;
 
 /**
  * @author hdw
@@ -293,6 +295,60 @@ public class AddFeature extends AbstractAddFeature {
         return containerShape;
     }
 	
+	private PictogramElement addSwitchVertex(IAddContext context, EOrientation orientatin){
+		//create Switch from source
+		Weichenknoten switchVertex = (Weichenknoten) context.getNewObject();
+		switchVertex.setAbzweigendeLage(orientatin);
+		
+		Diagram targetDiagram = (Diagram) context.getTargetContainer();
+		
+		// CONTAINER SHAPE
+		IPeCreateService peCreateService = Graphiti.getPeCreateService();
+		ContainerShape containerShape =
+            peCreateService.createContainerShape(targetDiagram, true);
+		
+		IGaService gaService = Graphiti.getGaService();
+		
+		//virtual Rectangle
+		Rectangle R = gaService.createRectangle(containerShape);
+		R.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+		R.setForeground(manageColor(255, 255, 255));
+		
+		//Line (straight line)
+		Shape shapep=peCreateService.createShape(containerShape, false);
+		Polyline polyline = gaService.createPolyline(shapep,new int[]{0,25,25,25});
+		
+		
+		//Line (30°)
+		Shape shapep30=peCreateService.createShape(containerShape, false);
+		Polyline polyline30 = gaService.createPolyline(shapep30,new int[]{20,25,0,(int) (25*0.577350269)});
+		
+		
+		
+		
+		//Polygon 
+		Shape shapePG = peCreateService.createShape(containerShape, false);
+		Polygon polygon = gaService.createPolygon(shapePG,new int[]{20,25,21,25});
+		polygon.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+		polygon.setForeground(manageColor(255, 0, 0));
+		polygon.setFilled(true);
+		
+		//link(shapePG, switchVertex);
+		//0.577350269
+		//Text
+		Shape shape = peCreateService.createShape(containerShape, false);
+		
+		switchVertex.setName("Bla");
+		Text text = gaService.createDefaultText(shape, switchVertex.getName());
+		text.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+		text.setX(context.getX());
+		text.setY(context.getY());
+		
+		link(containerShape, switchVertex);
+		
+		return containerShape;
+	}
+	/*
 	private PictogramElement addSwitchVertex(IAddContext context, EOrientation orientatin) {
 		Weichenknoten addedClass = (Weichenknoten) context.getNewObject();
 		addedClass.setAbzweigendeLage(orientatin);
@@ -304,17 +360,22 @@ public class AddFeature extends AbstractAddFeature {
              peCreateService.createContainerShape(targetDiagram, true);
  
      // define a default size for the shape
-        int width = 50;
-        int height = 50;
+        int width = context.getWidth() <= 0 ? 50 : context.getWidth();
+        int height = context.getHeight() <= 0 ? 50 : context.getHeight();
         IGaService gaService = Graphiti.getGaService();
         
         System.out.println(context.getHeight());
         System.out.println(context.getWidth());
         
         {
-            
-            
- 
+			Rectangle R = gaService.createRectangle(containerShape);
+			R.setBackground(manageColor(255,255,255));
+			R.setForeground(manageColor(255,255,255));
+			R.setHeight(height);
+            R.setWidth(width);
+            R.setX(context.getX());
+            R.setY(context.getY());
+			
             // if added Clas has no resource we add it to the resource 
             // of the diagram
             // in a real scenario the business model would have its own resource
@@ -340,8 +401,8 @@ public class AddFeature extends AbstractAddFeature {
             polyline.setLineWidth(2);
             polyline.setHeight(height);
             polyline.setWidth(width);
-            polyline.setX(width/2);
-            polyline.setY(0);
+            polyline.setX(context.getX());
+            polyline.setY(context.getY());
             gaService.setLocationAndSize(polyline,width/2, 0, width/2, height);
         }
         
@@ -387,5 +448,5 @@ public class AddFeature extends AbstractAddFeature {
         
  
         return containerShape;
-	}
+	}*/
 }

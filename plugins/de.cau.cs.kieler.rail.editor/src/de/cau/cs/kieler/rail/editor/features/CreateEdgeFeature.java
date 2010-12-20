@@ -30,20 +30,24 @@ public class CreateEdgeFeature extends
         // return true if both anchors belong to an EClass
         // and those EClasses are not identical
         //TODO Vertex or Object???
-    	Vertex source = null;//getEClass(context.getSourceAnchor());
-        Vertex target = null;//getEClass(context.getTargetAnchor());
+    	Object source = null;//getEClass(context.getSourceAnchor());
+        Object target = null;//getEClass(context.getTargetAnchor());
         Anchor sourceAnchor = context.getSourceAnchor();
         if (sourceAnchor != null){
-        	source = (Vertex) getBusinessObjectForPictogramElement(sourceAnchor.getParent());
+        	source = getBusinessObjectForPictogramElement(sourceAnchor.getParent());
         }
         Anchor targetAnchor = context.getTargetAnchor();
         if (targetAnchor != null) {
-            target = (Vertex) getBusinessObjectForPictogramElement(targetAnchor.getParent());
+            target =  getBusinessObjectForPictogramElement(targetAnchor.getParent());
+        }
+        
+        if(source instanceof Port || target instanceof Port){
+        	source=source;
         }
         
         //TODO What instead of Linkable
-        return (sourceAnchor == null || source instanceof Vertex)
-        	&& (targetAnchor == null || target instanceof Vertex);
+        return (sourceAnchor == null || source instanceof Port)
+        	&& (targetAnchor == null || target instanceof Port);
     }
  
     public boolean canStartConnection(ICreateConnectionContext context) {
@@ -73,20 +77,20 @@ public class CreateEdgeFeature extends
         }
         
         
-        if (source instanceof Vertex && target instanceof Vertex) {
+        if (source instanceof Port && target instanceof Port) {
         	Edge link = BasegraphFactory.eINSTANCE.createEdge();
         	//Port link = BasegraphFactory.eINSTANCE.createPort();
-        	Port sourcePort =  BasegraphFactory.eINSTANCE.createPort();
-        	sourcePort.setVertex((Vertex) source);
+        	//Port sourcePort =  BasegraphFactory.eINSTANCE.createPort();
+        	//source.setVertex((Vertex) source);
         	
-        	Port targetPort =  BasegraphFactory.eINSTANCE.createPort();
-        	targetPort.setVertex((Vertex) target);
+        	//Port targetPort =  BasegraphFactory.eINSTANCE.createPort();
+        	//targetPort.setVertex((Vertex) target);
         	
         	
-            link.setBegin(sourcePort);
-            link.setEnd(targetPort);
-            targetPort.setEdge(link);
-            sourcePort.setEdge(link);
+            //link.setBegin(source);
+            //link.setEnd(target);
+        	link.setBegin((Port) source);
+        	link.setEnd((Port) target);
             
             Model topModel = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(getDiagram());
             

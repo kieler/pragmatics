@@ -48,7 +48,9 @@ import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
  *
  */
 public class FeatureProvider extends DefaultFeatureProvider {
-    /** the style provider that is used by the features. */
+    private static final int BREANCH_HEIGHT = 50;
+	private static final int BREANCH_WIDTH = 50;
+	/** the style provider that is used by the features. */
     private IStyleProvider styleProvider;
 	/**
 	 * 
@@ -151,7 +153,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
         PictogramElement pictogramElement = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pictogramElement);
         if (bo instanceof Einbruchsknoten) {
-            return new LayoutFeature(this,TypeFeatures.BREANCH,50,50);
+            return new LayoutFeature(this,TypeFeatures.BREANCH,BREANCH_HEIGHT, BREANCH_WIDTH);
         } else if (bo instanceof Stumpfgleisknoten) {
         	return new LayoutFeature(this,TypeFeatures.DEADENDVERTEX,50,50);
         } else if (bo instanceof Weichenknoten) {

@@ -8,7 +8,11 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.BasegraphFactory;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
-
+/**
+ *  Creates a port object and passes it to the add port feature.
+ * @author hdw
+ *
+ */
 public class CreatePortFeature extends AbstractCreateFeature {
     /**
      * The constructor.

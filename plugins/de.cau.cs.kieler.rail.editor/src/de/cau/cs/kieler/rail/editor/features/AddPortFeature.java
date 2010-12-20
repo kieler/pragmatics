@@ -47,13 +47,13 @@ public class AddPortFeature extends AbstractAddShapeFeature{
      * {@inheritDoc}
      */
     public PictogramElement add(final IAddContext context) {
-        PictogramElement newElement = null;
+        PictogramElement newPort = null;
         if (!(context.getTargetContainer() instanceof Diagram)) {
-            newElement = createBoundPort(context.getTargetContainer(),
+            newPort = createBoundPort(context.getTargetContainer(),
                     context.getX(), context.getY());
-            link(newElement, context.getNewObject());
+            link(newPort, context.getNewObject());
         }
-        return newElement;
+        return newPort;
     }
     
     /**
@@ -62,7 +62,7 @@ public class AddPortFeature extends AbstractAddShapeFeature{
      * @param container the container shape of the parent entity
      * @param x the x position
      * @param y the y position
-     * @return a new pictogram element for the port
+     * @return a new PictogramElement for the port
      */
     private PictogramElement createBoundPort(final ContainerShape container,
             final int x, final int y) {
@@ -86,8 +86,8 @@ public class AddPortFeature extends AbstractAddShapeFeature{
 
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(container);
-        boxAnchor.setRelativeWidth(widthPercent);
-        boxAnchor.setRelativeHeight(heightPercent);
+        boxAnchor.setRelativeWidth(0.5);//(widthPercent);
+        boxAnchor.setRelativeHeight(0.5);//(heightPercent);
         boxAnchor.setActive(true);
 
         IGaService gaService = Graphiti.getGaService();
