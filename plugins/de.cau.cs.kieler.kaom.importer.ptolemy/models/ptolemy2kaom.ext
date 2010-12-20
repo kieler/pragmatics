@@ -639,7 +639,10 @@ Boolean _inferPorts(List[Port] ports) :
 ;
 
 /**
- * Tries to infer the type of the given port, if unknown.
+ * Tries to infer the type of the given port, if unknown. A port's type can be inferred
+ * if there's a directed link going into it, if there's a directed link going out of it
+ * or if its name is "in", "input", "out" or "output". The list might later be extended
+ * to include other known port names.
  * 
  * @param port the port whose type to infer.
  * @return true if the port's type has changed, false otherwise.
@@ -663,6 +666,18 @@ Boolean _inferPort(Port port) :
         case hasDirectedOutgoingLink(port, connectedLinks) : (
             // There is a directed link coming out of the port, so
             // it must be an output port! Hurray!
+            markAsOutputPort(port) ->
+            true
+        )
+        
+        case port.name.compareTo("in") == 0 || port.name.compareTo("input") == 0 : (
+            // This will most probably be an input port
+            markAsInputPort(port) ->
+            true
+        )
+        
+        case port.name.compareTo("out") == 0 || port.name.compareTo("output") == 0 : (
+            // This will most probably be an output port
             markAsOutputPort(port) ->
             true
         )
@@ -872,8 +887,6 @@ Boolean _inferRelation(Relation relation) :
  */
 Boolean randomizeLink(List[Entity] entities) :
     let entity = entities.first() :
-    
-    info("randomizeLink!" + entity.name) ->
     
     if (entity == null)
         then false
