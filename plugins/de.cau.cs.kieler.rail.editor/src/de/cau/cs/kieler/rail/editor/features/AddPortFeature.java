@@ -57,7 +57,7 @@ public class AddPortFeature extends AbstractAddShapeFeature{
     }
     
     /**
-     * Create a port that is bound to an entity's boundary.
+     * Create a port that is bound to an vertex's boundary.
      * 
      * @param container the container shape of the parent entity
      * @param x the x position

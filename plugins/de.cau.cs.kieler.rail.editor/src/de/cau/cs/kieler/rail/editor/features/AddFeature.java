@@ -323,15 +323,15 @@ public class AddFeature extends AbstractAddFeature {
 		Shape shapep30=peCreateService.createShape(containerShape, false);
 		Polyline polyline30 = gaService.createPolyline(shapep30,new int[]{20,25,0,(int) (25*0.577350269)});
 		
-		
-		
-		
+		//TODO draw small triangle
 		//Polygon 
+		/*
 		Shape shapePG = peCreateService.createShape(containerShape, false);
-		Polygon polygon = gaService.createPolygon(shapePG,new int[]{20,25,21,25});
+		Polygon polygon = gaService.createPolygon(shapePG,new int[]{20,25,10,(int) (30*0.577350269),50,25});
 		polygon.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
 		polygon.setForeground(manageColor(255, 0, 0));
 		polygon.setFilled(true);
+		*/
 		
 		//link(shapePG, switchVertex);
 		//0.577350269

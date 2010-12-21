@@ -18,6 +18,16 @@ import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
 import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
 
+
+/**
+ * 1.   canStartConnection
+ * 1.2  create
+ * 2.   canCreate
+ * 2.1  create
+ * @author hdw
+ *
+ */
+
 public class CreateEdgeFeature extends
        AbstractCreateConnectionFeature {
  
@@ -29,6 +39,7 @@ public class CreateEdgeFeature extends
     public boolean canCreate(ICreateConnectionContext context) {
         // return true if both anchors belong to an EClass
         // and those EClasses are not identical
+    	
         //TODO Vertex or Object???
     	Object source = null;//getEClass(context.getSourceAnchor());
         Object target = null;//getEClass(context.getTargetAnchor());
@@ -41,13 +52,22 @@ public class CreateEdgeFeature extends
             target =  getBusinessObjectForPictogramElement(targetAnchor.getParent());
         }
         
-        if(source instanceof Port || target instanceof Port){
+        if(source != null && target != null){
         	source=source;
         }
         
         //TODO What instead of Linkable
-        return (sourceAnchor == null || source instanceof Port)
-        	&& (targetAnchor == null || target instanceof Port);
+        
+        System.out.println("Source: " + source);
+        System.out.println("sourceAnchor: " + sourceAnchor);
+        System.out.println("target:" + target);
+        System.out.println("targetAnchor:" + targetAnchor);
+        
+        System.out.println((sourceAnchor != null || source instanceof Vertex)
+        	&& (targetAnchor != null || target instanceof Vertex));
+        
+        return (sourceAnchor != null || source instanceof Vertex)
+        	&& (targetAnchor != null || target instanceof Vertex);
     }
  
     public boolean canStartConnection(ICreateConnectionContext context) {
@@ -57,6 +77,7 @@ public class CreateEdgeFeature extends
     }
  
     public Connection create(ICreateConnectionContext context) {
+    	System.out.println("create");
     	Anchor sourceAnchor = context.getSourceAnchor();
  
         // get Vertex which should be connected
@@ -67,13 +88,16 @@ public class CreateEdgeFeature extends
             source =  getBusinessObjectForPictogramElement(context.getSourceAnchor());
         } else if (sourceAnchor != null) {
             source = getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent());
+
         }
         
         Anchor targetAnchor = context.getTargetAnchor();
         if (targetAnchor instanceof BoxRelativeAnchor) {
-            target = (Vertex) getBusinessObjectForPictogramElement(context.getTargetAnchor());
+            target = getBusinessObjectForPictogramElement(context.getTargetAnchor());
+            
         } else if (targetAnchor != null) {
-            target = (Vertex) getBusinessObjectForPictogramElement(context.getTargetAnchor().getParent());
+            target = getBusinessObjectForPictogramElement(context.getTargetAnchor().getParent());
+            
         }
         
         

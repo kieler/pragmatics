@@ -9,11 +9,13 @@ import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IDirectEditingFeature;
 import org.eclipse.graphiti.features.ILayoutFeature;
+import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IResizeShapeFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
+import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -39,6 +41,7 @@ import de.cau.cs.kieler.rail.editor.features.CreateFeature;
 import de.cau.cs.kieler.rail.editor.features.CreatePortFeature;
 import de.cau.cs.kieler.rail.editor.features.DirectEditBreachFeatures;
 import de.cau.cs.kieler.rail.editor.features.LayoutFeature;
+import de.cau.cs.kieler.rail.editor.features.MovePortFeature;
 import de.cau.cs.kieler.rail.editor.features.ResizeFeature;
 import de.cau.cs.kieler.rail.editor.features.TypeFeatures;
 import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
@@ -166,6 +169,17 @@ public class FeatureProvider extends DefaultFeatureProvider {
         	}
         }
         return super.getLayoutFeature(context);
+    }
+    
+    
+    @Override
+    public IMoveShapeFeature getMoveShapeFeature(IMoveShapeContext context) {
+        Shape shape = context.getShape();
+        Object bo = getBusinessObjectForPictogramElement(shape);
+        if (bo instanceof Port) {
+            return new MovePortFeature(this);
+        }
+        return super.getMoveShapeFeature(context);
     }
     
 }
