@@ -301,7 +301,7 @@ public class AddFeature extends AbstractAddFeature {
 		//virtual Rectangle
 		Rectangle R = gaService.createRectangle(containerShape);
 		R.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-		R.setForeground(manageColor(255, 255, 255));
+		R.setForeground(manageColor(0, 0, 0));
 		
 		//Line (straight line)
 		Shape shapep=peCreateService.createShape(containerShape, false);

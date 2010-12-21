@@ -55,13 +55,13 @@ public class MovePortFeature extends DefaultMoveAnchorFeature {
             float heightPercent = (float) posY / nodeHeight;
             if (widthPercent + heightPercent <= 1 && widthPercent - heightPercent <= 0) {
                 // port is put to the left
-                widthPercent = 0;
+                widthPercent = 0.2f;
             } else if (widthPercent + heightPercent >= 1 && widthPercent - heightPercent >= 0) {
                 // port is put to the right
                 widthPercent = 1;
             } else if (heightPercent < 1.0f / 2) {
                 // port is put to the top
-                heightPercent = 0;
+                heightPercent = 0.2f;
             } else {
                 // port is put to the bottom
                 heightPercent = 1;
