@@ -70,6 +70,14 @@ public class AddPortFeature extends AbstractAddShapeFeature{
         int nodeHeight = container.getGraphicsAlgorithm().getHeight();
         float widthPercent = (float) x / nodeWidth;
         float heightPercent = (float) y / nodeHeight;
+        
+        //TODO DEBUG
+        System.out.println(widthPercent);
+        System.out.println(nodeWidth);
+        System.out.println(heightPercent);
+        System.out.println(nodeHeight);
+        
+        
         if (widthPercent + heightPercent <= 1 && widthPercent - heightPercent <= 0) {
             // port is put to the left
             widthPercent = 0;
@@ -84,10 +92,14 @@ public class AddPortFeature extends AbstractAddShapeFeature{
             heightPercent = 1;
         }
 
+        //TODO DEBUG
+        heightPercent = 1;
+        heightPercent = 1;
+        
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(container);
-        boxAnchor.setRelativeWidth(0.5);//(widthPercent);
-        boxAnchor.setRelativeHeight(0.5);//(heightPercent);
+        boxAnchor.setRelativeWidth(widthPercent);
+        boxAnchor.setRelativeHeight(heightPercent);
         boxAnchor.setActive(true);
 
         IGaService gaService = Graphiti.getGaService();

@@ -197,8 +197,9 @@ public class AddFeature extends AbstractAddFeature {
         
         
      // define a default size for the shape
-        int width = context.getWidth() <= 50 ? 50 : context.getWidth();
-        int height = context.getHeight() <= 50 ? 50 : context.getHeight();
+        //TODO make constants (50)
+        int width = context.getWidth() != 50 ? 50 : context.getWidth();
+        int height = context.getHeight() != 50 ? 50 : context.getHeight();
         IGaService gaService = Graphiti.getGaService();
  
         Rectangle portContainer = gaService.createInvisibleRectangle(containerShape);
@@ -220,10 +221,10 @@ public class AddFeature extends AbstractAddFeature {
                      getDiagram().eResource().getContents().add(addedClass);
             }
             // create link and wire it
-            link(containerShape, addedClass);
+            //link(containerShape, addedClass);
         }
  
-       /* 
+       
         // SHAPE WITH LINE
         {
             // create shape for line
@@ -232,26 +233,8 @@ public class AddFeature extends AbstractAddFeature {
             // create and set graphics algorithm
             Polyline polyline =
                 gaService.createPolyline(shape, new int[] { width/2, 0, width/2, height });
-            polyline.setForeground(manageColor(100,0,100));
-            polyline.setLineWidth(2);
-            polyline.setHeight(height);
-            polyline.setWidth(width);
-            polyline.setX(width/2);
-            polyline.setY(0);
-            gaService.setLocationAndSize(polyline,width/2, 0, width/2, height);
-        }*/
-        
-     // triangle through points: top-middle, bottom-right, bottom-left
-        //50, 0, 100, 100, 0, 100
-        
-        
-        {
-	        int xy[] = new int[] { width/2, 0, width/2, height,0,0 };
-			//IGaService gaService = Graphiti.getGaService();
-	        Polyline p = gaService.createPolyline(containerShape, xy);
-	        //Polygon p = gaService.createPolygon(containerShape,xy);
-	        p.setForeground(manageColor(255,0,0));
-	        p.setBackground(manageColor(255,0,0));
+            polyline.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+            //gaService.setLocationAndSize(polyline,width/2, 0, width/2, height);
         }
         
  
@@ -272,8 +255,10 @@ public class AddFeature extends AbstractAddFeature {
             // create link and wire it
             link(shapeLabel, addedClass);
             
-            
-            
+            /*
+
+
+            //TODO ???? don't know if this is necessary 
          // set container shape for direct editing after object creation
             IDirectEditingInfo directEditingInfo = getFeatureProvider().getDirectEditingInfo();
             directEditingInfo.setMainPictogramElement(containerShape);
@@ -282,12 +267,16 @@ public class AddFeature extends AbstractAddFeature {
             directEditingInfo.setPictogramElement(shapeLabel);
             directEditingInfo.setGraphicsAlgorithm(text);
             
+            */
+            
             
         }
         
+        //TODO maybe to delete (at the other places maybe too)
         // add a chopbox anchor to the shape
         peCreateService.createChopboxAnchor(containerShape);
   
+        //TODO maybe kick out
         // call the layout feature
         layoutPictogramElement(containerShape);
         

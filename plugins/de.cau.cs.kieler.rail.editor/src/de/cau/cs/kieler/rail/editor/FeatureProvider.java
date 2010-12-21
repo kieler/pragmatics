@@ -9,12 +9,14 @@ import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.ICreateFeature;
 import org.eclipse.graphiti.features.IDirectEditingFeature;
 import org.eclipse.graphiti.features.ILayoutFeature;
+import org.eclipse.graphiti.features.IMoveAnchorFeature;
 import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IResizeShapeFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
+import org.eclipse.graphiti.features.context.IMoveAnchorContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
@@ -172,14 +174,15 @@ public class FeatureProvider extends DefaultFeatureProvider {
     }
     
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public IMoveShapeFeature getMoveShapeFeature(IMoveShapeContext context) {
-        Shape shape = context.getShape();
-        Object bo = getBusinessObjectForPictogramElement(shape);
-        if (bo instanceof Port) {
+    public IMoveAnchorFeature getMoveAnchorFeature(final IMoveAnchorContext context) {
+        if (getBusinessObjectForPictogramElement(context.getAnchor()) instanceof Port) {
             return new MovePortFeature(this);
         }
-        return super.getMoveShapeFeature(context);
+        return super.getMoveAnchorFeature(context);
     }
     
 }
