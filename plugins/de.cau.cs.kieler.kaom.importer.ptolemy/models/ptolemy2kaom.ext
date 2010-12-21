@@ -95,8 +95,6 @@ create Entity this transform(DocumentRoot root) :
  * @return the transformed KAOM entity.
  */
 create Entity this transform(moml::EntityType entity) :
-    let list = {} :
-    
     this.setName(entity.name) ->
     
     // Map the new KAOM element to the Ptolemy entity for later use
@@ -125,8 +123,6 @@ create Entity this transform(moml::EntityType entity) :
  * @return the transformed KAOM entity.
  */
 create Entity this transform(moml::ClassType entity) :
-    let list = {} :
-    
     this.setName(entity.name) ->
     
     // Map the new KAOM element to the Ptolemy entity for later use
