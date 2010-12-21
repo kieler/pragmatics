@@ -1023,7 +1023,7 @@ Void optimizeAnnotationRepresentation(Entity entity) :
     // Remove those annoations that were transformed (this is done in a
     // second iteration to avoid concurrent modification exceptions)
     entity.annotations.removeAll(
-        entity.annotations.select(a | a.isMarkedAsRemovable() != null)) ->
+        entity.annotations.select(a | a.isMarkedAsRemovable())) ->
     
     // Recursively treat child entities
     entity.childEntities.optimizeAnnotationRepresentation()  
@@ -1416,15 +1416,12 @@ Void addAnnotation(Annotatable annotatable, String key) :
 Void addStringAnnotation(Annotatable annotatable, String key, String value) :
     let annotation = new StringAnnotation :
     
-    info("Adding annotation " + key + " -> " + value) ->
     if (hasAnnotation(annotatable, key) == false)
         then (
 		    annotation.setName(key) ->
 		    annotation.setValue(value) ->
 		    
-		    annotatable.annotations.add(annotation) ->
-		    
-		    info("Annotation " + key + " -> " + value + " added")
+		    annotatable.annotations.add(annotation)
         )
         else null
 ;
