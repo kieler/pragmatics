@@ -101,8 +101,8 @@ create Entity this transform(moml::EntityType entity) :
     createTrace(this, entity, "ptolemy", "kaom") ->
     
     // Add annotations pointing to Ptolemy
-    this.addStringAnnotation("language", "ptolemy") ->
-    this.addStringAnnotation("ptolemyClass", entity.class1) ->
+    this.addAnnotation("language", "ptolemy") ->
+    this.addAnnotation("ptolemyClass", entity.class1) ->
     
     // Add the entity's properties, ports, entities, relations and links
     addProperties(this, entity.property) ->
@@ -129,8 +129,8 @@ create Entity this transform(moml::ClassType entity) :
     createTrace(this, entity, "ptolemy", "kaom") ->
     
     // Add annotations pointing to Ptolemy
-    this.addStringAnnotation("language", "ptolemy") ->
-    this.addStringAnnotation("ptolemyClass", entity.extends) ->
+    this.addAnnotation("language", "ptolemy") ->
+    this.addAnnotation("ptolemyClass", entity.extends) ->
     
     // Add the entity's properties, ports, entities, relations and links
     addProperties(this, entity.property) ->
@@ -152,7 +152,7 @@ create Relation this transform(moml::RelationType relation) :
     
     // Set name and add Ptolemy annotation
     this.setName(relation.name) ->
-    this.addStringAnnotation("language", "ptolemy") ->
+    this.addAnnotation("language", "ptolemy") ->
     
     // Add the relation's properties
     addProperties(this, relation.property)
@@ -184,7 +184,7 @@ create Link this transform(moml::LinkType link, Entity parent) :
     createTrace(this, link, "ptolemy", "kaom") ->
     
     // Add annotations pointing to Ptolemy
-    this.addStringAnnotation("language", "ptolemy") ->
+    this.addAnnotation("language", "ptolemy") ->
     
     (
         if (port != null)
@@ -388,7 +388,7 @@ Void addChildPorts(Entity entity) :
  * @return the same list, but with the ports annotated.
  */
 List[Port] addLanguageToPort(List[Port] ports) :
-    ports.addStringAnnotation("language", "ptolemy") ->
+    ports.addAnnotation("language", "ptolemy") ->
     ports
 ;
 
@@ -1359,7 +1359,7 @@ List[Link] getConnectedLinks(Linkable linkable) :
  *         element, false otherwise.
  */
 Boolean hasAnnotation(Annotatable annotatable, String key) :
-    (annotatable.getAnnotation(key) !=  null)
+    (annotatable.getAnnotation(key) != null)
 ;
 
 /**
@@ -1413,15 +1413,18 @@ Void addAnnotation(Annotatable annotatable, String key) :
  * @param key the new annotation's key.
  * @param value the new annotation's value.
  */
-Void addStringAnnotation(Annotatable annotatable, String key, String value) :
+Void addAnnotation(Annotatable annotatable, String key, String value) :
     let annotation = new StringAnnotation :
     
+    info("Adding annotation " + key + " -> " + value) ->
     if (hasAnnotation(annotatable, key) == false)
         then (
 		    annotation.setName(key) ->
 		    annotation.setValue(value) ->
 		    
-		    annotatable.annotations.add(annotation)
+		    annotatable.annotations.add(annotation) ->
+		    
+		    info("Annotation " + key + " -> " + value + " added")
         )
         else null
 ;
