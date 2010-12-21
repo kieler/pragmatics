@@ -25,12 +25,11 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 
 import de.cau.cs.kieler.kaom.Port;
 
-
 /**
  * BorderItemLocator for determining the correct locations of ports in a kaom ptolemy diagram.
  * 
  * @author ckru
- *
+ * 
  */
 public class PtolemyPortBorderItemLocator extends BorderItemLocator {
 
@@ -118,54 +117,67 @@ public class PtolemyPortBorderItemLocator extends BorderItemLocator {
             location.y = parentBorder.y + parentBorder.height - offset.height;
             distributePortsHorizontal(location);
         }
-
-        /*
-         * IFigure figure = this.getConflictingBorderItemFigure(location.getTopLeft(), borderItem);
-         * if (figure != null) { //figure.getBounds().y += 3; location.y +=10; }
-         */
     }
-    
+
+    private static final int OFFSET_UP = 4;
+    private static final int OFFSET_DOWN = 5;
+
+    /**
+     * Shift the port position according to the number of ports so that all ports are distributed
+     * evenly on one side.
+     * 
+     * @param location
+     *            the location without offset
+     */
     private void distributePortsVertical(final Rectangle location) {
         if (numberOfPorts == 1) {
-            
+            // do nothing, if there is only one port it is already in the middle where he belongs
         } else if ((numberOfPorts % 2) == 1) {
             if (this.index == (numberOfPorts + 1) / 2) {
-
+                // do nothing, the port in the middle of an odd number of ports is already where it
+                // belongs
             } else if (this.index < numberOfPorts / 2) {
-                location.y -= ((location.height / 2 + 4) * ((numberOfPorts / 2) - index));
+                location.y -= ((location.height / 2 + OFFSET_UP) * ((numberOfPorts / 2) - index));
             } else if (index >= numberOfPorts / 2) {
-                location.y += (location.height / 2 + 5) + (location.height / 2 + 5)
-                        * (index - numberOfPorts / 2);
+                location.y += (location.height / 2 + OFFSET_DOWN)
+                        + (location.height / 2 + OFFSET_DOWN) * (index - numberOfPorts / 2);
             }
         } else {
-
-        if (this.index < numberOfPorts / 2) {
-            location.y -= ((location.height / 2 + 4) * ((numberOfPorts / 2) - index));
-        } else if (index >= numberOfPorts / 2) {
-            location.y += (location.height / 2 + 5) + (location.height / 2 + 5)
-                    * (index - numberOfPorts / 2);
-        }
+            if (this.index < numberOfPorts / 2) {
+                location.y -= ((location.height / 2 + OFFSET_UP) * ((numberOfPorts / 2) - index));
+            } else if (index >= numberOfPorts / 2) {
+                location.y += (location.height / 2 + OFFSET_DOWN)
+                        + (location.height / 2 + OFFSET_DOWN) * (index - numberOfPorts / 2);
+            }
         }
     }
-    
+
+    /**
+     * Shift the port position according to the number of ports so that all ports are distributed
+     * evenly on one side.
+     * 
+     * @param location
+     *            the location without offset
+     */
     private void distributePortsHorizontal(final Rectangle location) {
         if (numberOfPorts == 1) {
+            // do nothing, if there is only one port it is already in the middle where he belongs
         } else if ((numberOfPorts % 2) == 1) {
             if (this.index == (numberOfPorts + 1) / 2) {
-
+                // do nothing, the port in the middle of an odd number of ports is already where it
+                // belongs
             } else if (this.index < numberOfPorts / 2) {
-                location.x -= ((location.width / 2 + 4) * ((numberOfPorts / 2) - index));
+                location.x -= ((location.width / 2 + OFFSET_UP) * ((numberOfPorts / 2) - index));
             } else if (index >= numberOfPorts / 2) {
-                location.x += (location.width / 2 + 5) + (location.width / 2 + 5)
-                        * (index - numberOfPorts / 2);
+                location.x += (location.width / 2 + OFFSET_DOWN)
+                        + (location.width / 2 + OFFSET_DOWN) * (index - numberOfPorts / 2);
             }
         } else {
-
             if (this.index < numberOfPorts / 2) {
-                location.x -= ((location.width / 2 + 4) * ((numberOfPorts / 2) - index));
+                location.x -= ((location.width / 2 + OFFSET_UP) * ((numberOfPorts / 2) - index));
             } else if (index >= numberOfPorts / 2) {
-                location.x += (location.width / 2 + 5) + (location.width / 2 + 5)
-                        * (index - numberOfPorts / 2);
+                location.x += (location.width / 2 + OFFSET_DOWN)
+                        + (location.width / 2 + OFFSET_DOWN) * (index - numberOfPorts / 2);
             }
         }
     }

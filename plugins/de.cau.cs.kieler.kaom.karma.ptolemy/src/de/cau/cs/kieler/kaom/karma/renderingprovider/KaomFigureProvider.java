@@ -542,7 +542,9 @@ public class KaomFigureProvider implements IRenderingProvider {
     }
 
     private static final int DEFAULT_WIDTH = 90;
+    private static final int DEFAULT_HEIGHT = 30;
     private static final int LABELSIZE_HEIGHT = 12;
+    private static final int LABELSIZE_WIDTH = 80;
     private static final int LABELLOCATION_X = 5;
     private static final int LABELLOCATION_Y = 8;
 
@@ -563,7 +565,7 @@ public class KaomFigureProvider implements IRenderingProvider {
             } else {
                 width = DEFAULT_WIDTH;
             }
-            Dimension dim = new Dimension(width, 30);
+            Dimension dim = new Dimension(width, DEFAULT_HEIGHT);
             constFigure.getBounds().setSize(dim);
             constFigure.setMaximumSize(dim.getCopy());
             constFigure.setMinimumSize(dim.getCopy());
@@ -575,7 +577,7 @@ public class KaomFigureProvider implements IRenderingProvider {
                 Label valueLabel = new Label();
                 valueLabel.setText(value);
                 valueLabel.setBounds(new Rectangle(LABELLOCATION_X, LABELLOCATION_Y,
-                /* width -5 */80, LABELSIZE_HEIGHT));
+                /* width -5 */LABELSIZE_WIDTH, LABELSIZE_HEIGHT));
                 constFigure.setLayoutManager(new BorderLayout());
                 constFigure.add(valueLabel);
             }
@@ -621,7 +623,6 @@ public class KaomFigureProvider implements IRenderingProvider {
             try {
                 til.loadIconForClass(nObj.getClassName(), nObj);
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             List<EditorIcon> icons = nObj.attributeList(EditorIcon.class);
@@ -647,9 +648,9 @@ public class KaomFigureProvider implements IRenderingProvider {
                         RenderingHints.VALUE_RENDER_QUALITY);
                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
-                ScalableImageFigure fig = new ScalableImageFigure(
-                        new org.eclipse.swt.graphics.Image(Display.getCurrent(),
-                                CoreUiUtil.convertAWTImageToSWT(resizedImage)));
+                org.eclipse.swt.graphics.Image image = new org.eclipse.swt.graphics.Image(Display.getCurrent(),
+                        CoreUiUtil.convertAWTImageToSWT(resizedImage));
+                ScalableImageFigure fig = new ScalableImageFigure(image);
                 return fig;
             }
             svg = repairSvg(svg);
@@ -729,7 +730,6 @@ public class KaomFigureProvider implements IRenderingProvider {
 
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-
             graphics.setBackground(new Color(255, 255, 255, 255));
             graphics.clearRect(0, 0, (int) figure.getBounds().getWidth(), (int) figure.getBounds()
                     .getHeight());
