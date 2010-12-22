@@ -31,7 +31,6 @@ import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
-import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -82,8 +81,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
     /** map of Connection to Kedge. */
     private Map<Connection, KEdge> reference2EdgeMap = new HashMap<Connection, KEdge>();
-    /** map of PictogramElement and its coordinates. */
-    private Map<PictogramElement, int[]> graphElemHeightWidth = new HashMap<PictogramElement, int[]>();
 
     /** Link list of all connections present in the diagram. */
     private LinkedList<Connection> connections = new LinkedList<Connection>();
@@ -143,9 +140,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                             .getWidth());
 
                     pictElem2GraphElemMap.put(element, topNode);
-                    graphElemHeightWidth.put(element, new int[] {
-                            element.getGraphicsAlgorithm().getHeight(),
-                            element.getGraphicsAlgorithm().getWidth() });
                     layoutGraph = topNode;
 
                     GraphitiLayoutConfig layoutConfig;
@@ -182,7 +176,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      *            the currently analyzed element
      * @param layoutConfig
      *            the layout config
-     * @return returns true if current pictogram element has further children
+     * @return returns true if current pictogram element has no further children
      */
     private boolean buildLayoutGraphRecursively(
             final PictogramElement currentElement, final KNode topNode,
@@ -191,16 +185,17 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         boolean returnstate = true;
 
         if (topNode != null) {
-            if (currentElement instanceof Diagram) {
-                list = ((Diagram) currentElement).getChildren();
-            } else if (currentElement instanceof ContainerShape) {
+            if (currentElement instanceof ContainerShape) {
                 list = ((ContainerShape) currentElement).getChildren();
             } else {
+                // no more children
                 return true;
             }
 
             for (Shape shape : list) {
                 boolean relevantShape = false;
+                // all relevant shapes have to be layouted not just containers
+                // e.g. KAOM Relations
                 for (Anchor a : shape.getAnchors()) {
                     if (a instanceof ChopboxAnchor) {
                         relevantShape = true;
@@ -208,114 +203,102 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     }
                 }
                 if (relevantShape) {
-                    Shape cs = shape;
-                    GraphicsAlgorithm containerGa = cs.getGraphicsAlgorithm();
+                    GraphicsAlgorithm containerGa = shape
+                            .getGraphicsAlgorithm();
 
                     KNode childnode = KimlUtil.createInitializedNode();
-                    returnstate = !(cs instanceof ContainerShape);
-
+                    returnstate = !(shape instanceof ContainerShape);
                     childnode.setParent(topNode);
                     KShapeLayout shapeLayout = childnode
                             .getData(KShapeLayout.class);
-                    shapeLayout.setXpos(containerGa.getX());
-                    shapeLayout.setYpos(containerGa.getY());
-                    shapeLayout.setHeight(containerGa.getHeight());
-                    shapeLayout.setWidth(containerGa.getWidth());
+                    float containerGaX = containerGa.getX();
+                    shapeLayout.setXpos(containerGaX);
+                    float containerGaY = containerGa.getY();
+                    shapeLayout.setYpos(containerGaY);
+                    float containerGaHeight = containerGa.getHeight();
+                    shapeLayout.setHeight(containerGaHeight);
+                    float containerGaWidth = containerGa.getWidth();
+                    shapeLayout.setWidth(containerGaWidth);
 
                     // TODO how to get minimal size of the shape
-                    shapeLayout.setProperty(LayoutOptions.MIN_WIDTH, 20.0f);
-                    shapeLayout.setProperty(LayoutOptions.MIN_HEIGHT, 20.0f);
+                    shapeLayout.setProperty(LayoutOptions.MIN_WIDTH, 40.0f);
+                    shapeLayout.setProperty(LayoutOptions.MIN_HEIGHT, 40.0f);
 
                     // set user defined layout options
                     layoutConfig.setFocus(diagramEditor
-                            .getEditPartForPictogramElement(cs));
+                            .getEditPartForPictogramElement(shape));
                     shapeLayout.copyProperties(layoutConfig);
 
-                    pictElem2GraphElemMap.put(cs, childnode);
-                    graphElemHeightWidth.put(
-                            cs,
-                            new int[] { containerGa.getHeight(),
-                                    containerGa.getWidth() });
+                    pictElem2GraphElemMap.put(shape, childnode);
 
                     boolean state = true;
-                    if (cs instanceof ContainerShape) {
-                        state = buildLayoutGraphRecursively(cs, childnode,
+                    if (shape instanceof ContainerShape) {
+                        state = buildLayoutGraphRecursively(shape, childnode,
                                 layoutConfig);
-                    }
 
-                    shapeLayout.setProperty(LayoutOptions.FIXED_SIZE, state);
-
-                    if (cs instanceof ContainerShape) {
-                        for (Shape child : ((ContainerShape) cs).getChildren()) {
+                        // find a label for the container shape
+                        for (Shape child : ((ContainerShape) shape)
+                                .getChildren()) {
                             GraphicsAlgorithm ga = child.getGraphicsAlgorithm();
                             if (ga instanceof Text) {
                                 Text text = (Text) ga;
                                 String labelText = text.getValue();
                                 KLabel label = childnode.getLabel();
                                 label.setText(labelText);
+                                shapeLayout.setProperty(
+                                        LayoutOptions.MIN_WIDTH,
+                                        text.getWidth());
+                                shapeLayout.setProperty(
+                                        LayoutOptions.MIN_HEIGHT,
+                                        text.getWidth());
                                 break;
                             }
                         }
                     }
 
-                    if (cs.getAnchors().size() != 0) {
-                        EList<Anchor> childAnchors = cs.getAnchors();
+                    // set fixed size = true if there are no further children
+                    shapeLayout.setProperty(LayoutOptions.FIXED_SIZE, state);
+
+                    if (shape.getAnchors().size() != 0) {
+                        EList<Anchor> childAnchors = shape.getAnchors();
                         for (Anchor anchor : childAnchors) {
-                            if (anchor.getReferencedGraphicsAlgorithm() != null) {
+                            if (anchor instanceof BoxRelativeAnchor) {
                                 KPort port = KimlUtil.createInitializedPort();
                                 pictElem2GraphElemMap.put(anchor, port);
                                 port.setNode(childnode);
                                 KShapeLayout portLayout = port
                                         .getData(KShapeLayout.class);
 
-                                if (anchor instanceof BoxRelativeAnchor) {
-                                    BoxRelativeAnchor bra = (BoxRelativeAnchor) anchor;
-                                    Double relWidth = bra.getRelativeWidth();
-                                    Double relHeight = bra.getRelativeHeight();
-                                    int width = anchor.getGraphicsAlgorithm()
-                                            .getX();
-                                    int height = anchor.getGraphicsAlgorithm()
-                                            .getY();
-                                    float x = (float) (relWidth
-                                            * shape.getGraphicsAlgorithm()
-                                                    .getWidth() + width);
-                                    float y = (float) (relHeight
-                                            * shape.getGraphicsAlgorithm()
-                                                    .getHeight() + height);
-                                    portLayout.setXpos(x);
-                                    portLayout.setYpos(y);
-                                } else {
-                                    portLayout.setXpos(anchor
-                                            .getGraphicsAlgorithm().getX());
-                                    portLayout.setYpos(anchor
-                                            .getGraphicsAlgorithm().getY());
-                                }
+                                BoxRelativeAnchor bra = (BoxRelativeAnchor) anchor;
+                                double relWidth = bra.getRelativeWidth();
+                                double relHeight = bra.getRelativeHeight();
+                                double portWidth = anchor
+                                        .getGraphicsAlgorithm().getX();
+                                double portHeight = anchor
+                                        .getGraphicsAlgorithm().getY();
+                                double parentWidth = shapeLayout.getWidth();
+                                double parentHeight = shapeLayout.getHeight();
+                                float x = (float) (relWidth * parentWidth + portWidth);
+                                float y = (float) (relHeight * parentHeight + portHeight);
+                                portLayout.setXpos(x);
+                                portLayout.setYpos(y);
 
                                 portLayout.setWidth(anchor
                                         .getGraphicsAlgorithm().getWidth());
                                 portLayout.setHeight(anchor
                                         .getGraphicsAlgorithm().getHeight());
-                                EList<Connection> conn = anchor
-                                        .getOutgoingConnections();
-                                for (Connection connection : conn) {
-                                    connections.add(connection);
-                                }
-                            } else {
-                                EList<Connection> conn = anchor
-                                        .getOutgoingConnections();
-                                for (Connection connection : conn) {
-                                    connections.add(connection);
-                                }
                             }
-
+                            EList<Connection> conn = anchor
+                                    .getOutgoingConnections();
+                            for (Connection connection : conn) {
+                                connections.add(connection);
+                            }
                         }
-
                     }
                 }
             }
         }
         return returnstate;
-
     }
 
     /**
@@ -347,7 +330,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (editPart.getParent() == null) {
             EditPartViewer viewer = editPart.getViewer();
             if (viewer instanceof GraphitiScrollingGraphicalViewer) {
-                GraphitiScrollingGraphicalViewer graphitiViewer = (GraphitiScrollingGraphicalViewer) viewer;
+                GraphitiScrollingGraphicalViewer graphitiViewer = null;
+                graphitiViewer = (GraphitiScrollingGraphicalViewer) viewer;
                 EditPart contents = graphitiViewer.getContents();
                 if (contents instanceof DiagramEditPart) {
                     return contents;
@@ -402,44 +386,57 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 .entrySet()) {
             PictogramElement pelem = entry.getKey();
             KGraphElement kelem = entry.getValue();
-            KShapeLayout shapeLayout = kelem.getData(KShapeLayout.class);
-            if (pelem instanceof BoxRelativeAnchor) {
-                BoxRelativeAnchor anchor = (BoxRelativeAnchor) pelem;
-                double x = shapeLayout.getXpos();
-                double y = shapeLayout.getYpos();
-                KNode container = (KNode) kelem.eContainer();
-                KShapeLayout containerLayout = container
-                        .getData(KShapeLayout.class);
-                double relWidth = ((x - anchor.getGraphicsAlgorithm().getX()) / containerLayout
-                        .getWidth());
-                double relHeight = ((y - anchor.getGraphicsAlgorithm().getY()) / containerLayout
-                        .getHeight());
-                anchor.setRelativeWidth(relWidth);
-                anchor.setRelativeHeight(relHeight);
-            } else {
-                pelem.getGraphicsAlgorithm().setX((int) shapeLayout.getXpos());
-                pelem.getGraphicsAlgorithm().setY((int) shapeLayout.getYpos());
-            }
-            pelem.getGraphicsAlgorithm().setHeight(
-                    (int) shapeLayout.getHeight());
-            pelem.getGraphicsAlgorithm().setWidth((int) shapeLayout.getWidth());
-
-            if (pelem instanceof ContainerShape || pelem instanceof Diagram) {
-                if (graphElemHeightWidth.containsKey(pelem)) {
-                    int[] olddimension = graphElemHeightWidth.get(pelem);
-                    if (olddimension[0] != pelem.getGraphicsAlgorithm()
-                            .getHeight()
-                            || olddimension[1] != pelem.getGraphicsAlgorithm()
-                                    .getWidth()) {
-
-                        diagramEditor.getDiagramTypeProvider()
-                                .getFeatureProvider()
-                                .layoutIfPossible(new LayoutContext(pelem));
-
-                    }
-                }
-            }
+            kShape2Diag(pelem, kelem);
         }
+    }
+
+    /**
+     * 
+     * @param pelem
+     * @param kelem
+     */
+    private void kShape2Diag(final PictogramElement pelem,
+            final KGraphElement kelem) {
+        KShapeLayout shapeLayout = kelem.getData(KShapeLayout.class);
+        GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
+
+        if (pelem instanceof BoxRelativeAnchor) {
+            BoxRelativeAnchor anchor = (BoxRelativeAnchor) pelem;
+            double x = shapeLayout.getXpos();
+            double y = shapeLayout.getYpos();
+            KNode knode = (KNode) pictElem2GraphElemMap.get(anchor.getParent());
+            KShapeLayout parentLayout = knode.getData(KShapeLayout.class);
+
+            double portWidth = anchor.getGraphicsAlgorithm().getX();
+            double portHeight = anchor.getGraphicsAlgorithm().getY();
+
+            double parentWidth = parentLayout.getWidth();
+            double parentHeight = parentLayout.getHeight();
+
+            double relWidth = ((x - portWidth) / parentWidth);
+            double relHeight = ((y - portHeight) / parentHeight);
+
+            anchor.setRelativeWidth(relWidth);
+            anchor.setRelativeHeight(relHeight);
+        } else {
+            ga.setX((int) shapeLayout.getXpos());
+            ga.setY((int) shapeLayout.getYpos());
+        }
+        ga.setHeight((int) shapeLayout.getHeight());
+        ga.setWidth((int) shapeLayout.getWidth());
+
+        // if (pelem instanceof ContainerShape || pelem instanceof Diagram) {
+        // if (graphElemHeightWidth.containsKey(pelem)) {
+        // int[] olddimension = graphElemHeightWidth.get(pelem);
+        // if (olddimension[0] != pelem.getGraphicsAlgorithm().getHeight()
+        // || olddimension[1] != pelem.getGraphicsAlgorithm()
+        // .getWidth()) {
+
+        diagramEditor.getDiagramTypeProvider().getFeatureProvider()
+                .layoutIfPossible(new LayoutContext(pelem));
+        // }
+        // }
+        // }
     }
 
     /**
@@ -459,53 +456,69 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             pointList.clear();
 
             EList<KPoint> points = edgeLayout.getBendPoints();
+            List<KPoint> allPoints = new LinkedList<KPoint>();
 
-            int xOffset = 0;
-            int yOffset = 0;
+            int startXOffset = 0;
+            int startYOffset = 0;
             if (conn.getStart() instanceof BoxRelativeAnchor) {
                 if (conn.getStart().getParent().eContents()
                         .contains(conn.getEnd().getParent())) {
-                    xOffset = conn.getStart().getParent()
+                    // special rule for connections inside of the node
+                    startXOffset = conn.getStart().getParent()
                             .getGraphicsAlgorithm().getX();
-                    yOffset = conn.getStart().getParent()
+                    startYOffset = conn.getStart().getParent()
                             .getGraphicsAlgorithm().getY();
                 }
             }
+            Pair<Integer, Integer> coords = accumulateCoordOffset(conn
+                    .getStart().getParent().getGraphicsAlgorithm());
+            int xOffset = coords.getFirst();
+            int yOffset = coords.getSecond();
 
-            int sourceX = (int) edgeLayout.getSourcePoint().getX() + xOffset;
-            int sourceY = (int) edgeLayout.getSourcePoint().getY() + yOffset;
-            int targetX = (int) edgeLayout.getTargetPoint().getX();
-            int targetY = (int) edgeLayout.getTargetPoint().getY();
-            if (conn.getStart() instanceof ChopboxAnchor) {
-                int nextX = (int) (points.isEmpty() ? targetX : points.get(0)
-                        .getX());
-                int nextY = (int) (points.isEmpty() ? targetY : points.get(0)
-                        .getY());
-                AnchorContainer parent = conn.getStart().getParent();
-                GraphicsAlgorithm ga = parent.getGraphicsAlgorithm();
-                if (nextX > ga.getX() && nextX < ga.getX() + ga.getWidth()) {
-                    int offset = nextY < ga.getY() ? -1 : +1;
-                    sourceY = sourceY + (ga.getHeight() / 2) * offset;
-                }
-                if (nextY > ga.getY() && nextY < ga.getY() + ga.getHeight()) {
-                    int offset = nextX < ga.getX() ? -1 : +1;
-                    sourceX = sourceX + (ga.getWidth() / 2) * offset;
-                }
+            KPoint source = edgeLayout.getSourcePoint();
+            KPoint target = edgeLayout.getTargetPoint();
+            allPoints.add(source);
+            allPoints.addAll(points);
+            if (conn.getEnd() instanceof ChopboxAnchor) {
+                allPoints.add(target);
             }
-            // Point src = Graphiti.getGaService().createPoint(sourceX,
-            // sourceY);
-            // pointList.add(src);
-            for (KPoint pnt : points) {
+            removeRedundantBendpoints(allPoints);
+
+            for (KPoint pnt : allPoints) {
                 Point point = Graphiti.getGaService().createPoint(
-                        (int) pnt.getX() + xOffset, (int) pnt.getY() + yOffset);
+                        (int) pnt.getX() + startXOffset + xOffset,
+                        (int) pnt.getY() + startYOffset + yOffset);
                 pointList.add(point);
             }
-            // Point target = Graphiti.getGaService()
-            // .createPoint(targetX, targetY);
-            // pointList.add(target);
-
         }
+    }
 
+    /**
+     * @param allPoints
+     */
+    private void removeRedundantBendpoints(final List<KPoint> allPoints) {
+        if (allPoints.size() > 2) {
+            List<KPoint> removable = new LinkedList<KPoint>();
+
+            KPoint vOld = allPoints.get(0);
+            KPoint old = allPoints.get(1);
+            for (int i = 2; i < allPoints.size(); i++) {
+                KPoint newPoint = allPoints.get(i);
+                Double oldDif = (double) ((vOld.getY() - old.getY()) / (vOld
+                        .getX() - old.getX()));
+                Double newDif = (double) ((old.getY() - newPoint.getY()) / (old
+                        .getX() - newPoint.getX()));
+                if (oldDif.equals(newDif)) {
+                    removable.add(old);
+                } else {
+                    vOld = old;
+                }
+                old = newPoint;
+            }
+            for (KPoint rem : removable) {
+                allPoints.remove(rem);
+            }
+        }
     }
 
     /**
@@ -594,6 +607,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             KNode sourceNode = null, targetNode = null;
             KPort sourcePort = null, targetPort = null;
 
+            // find labels for the connection
             for (ConnectionDecorator decorator : connection
                     .getConnectionDecorators()) {
                 GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
@@ -633,7 +647,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     edge.setSource(sourceNode);
                 }
             } else {
-
                 if (pictElem2GraphElemMap.containsKey(connection.getStart())) {
                     sourcePort = (KPort) pictElem2GraphElemMap.get(connection
                             .getStart());
@@ -647,36 +660,25 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
 
-            EList<Point> pointList = ((FreeFormConnection) connection)
-                    .getBendpoints();
-
             KPoint sourcePoint = edgeLayout.getSourcePoint();
             Anchor start = connection.getStart();
             AnchorContainer startParent = start.getParent();
-            GraphicsAlgorithm startParentGa = startParent
-                    .getGraphicsAlgorithm();
+
             KPoint targetPoint = edgeLayout.getTargetPoint();
             Anchor end = connection.getEnd();
             AnchorContainer endParent = end.getParent();
-            GraphicsAlgorithm endParentGa = endParent.getGraphicsAlgorithm();
 
             boolean ignoreXY = false;
             if (start instanceof BoxRelativeAnchor) {
+                // special rule for connections leaving a port towards the
+                // inside of the node
                 if (startParent.eContents().contains(endParent)) {
                     ignoreXY = true;
                 }
             }
 
-            calculateAnchorEnds(sourcePoint, start, startParentGa, ignoreXY);
-            calculateAnchorEnds(targetPoint, end, endParentGa, false);
-
-            // for (Point point : pointList) {
-            //
-            // KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-            // kpoint.setX(point.getX());
-            // kpoint.setY(point.getY());
-            // edgeLayout.getBendPoints().add(kpoint);
-            // }
+            calculateAnchorEnds(sourcePoint, start, ignoreXY);
+            calculateAnchorEnds(targetPoint, end, false);
 
             // set user defined layout options for the edge
             layoutConfig.setFocus(diagramEditor
@@ -695,22 +697,49 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      * @param ignoreXY
      */
     private void calculateAnchorEnds(final KPoint point, final Anchor anchor,
-            final GraphicsAlgorithm parentGa, final boolean ignoreXY) {
-        int xCoord = ignoreXY ? 0 : parentGa.getX();
-        int yCoord = ignoreXY ? 0 : parentGa.getY();
+            final boolean ignoreXY) {
         if (anchor instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor port = (BoxRelativeAnchor) anchor;
-            double height = port.getRelativeHeight();
-            double width = port.getRelativeWidth();
-
-            float x = (float) (xCoord + parentGa.getWidth() * width);
+            KPort kPort = (KPort) pictElem2GraphElemMap.get(port);
+            KNode kNode = kPort.getNode();
+            KShapeLayout portLayout = kPort.getData(KShapeLayout.class);
+            KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
+            float x = portLayout.getXpos()
+                    + (ignoreXY ? 0 : nodeLayout.getXpos())
+                    + portLayout.getWidth() / 2;
+            float y = portLayout.getYpos()
+                    + (ignoreXY ? 0 : nodeLayout.getYpos())
+                    + portLayout.getHeight() / 2;
             point.setX(x);
-            float y = (float) (yCoord + parentGa.getHeight() * height);
             point.setY(y);
-        } else {
-            point.setX(xCoord + parentGa.getWidth() / 2);
-            point.setY(yCoord + parentGa.getHeight() / 2);
+        } else if (anchor instanceof ChopboxAnchor) {
+            KNode kNode = (KNode) pictElem2GraphElemMap.get(anchor.getParent());
+            KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
+            point.setX(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
+            point.setY(nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
         }
+        // TODO: FixPointAnchors
+    }
+
+    /**
+     * Accumulate offsets from the invisible parent to the visible children.
+     * 
+     * @param parent
+     *            the parent
+     * @return (x,y) - Offsets
+     */
+    private Pair<Integer, Integer> accumulateCoordOffset(
+            final GraphicsAlgorithm parent) {
+        Pair<Integer, Integer> result = new Pair<Integer, Integer>(0, 0);
+        if (!parent.getGraphicsAlgorithmChildren().isEmpty()) {
+            GraphicsAlgorithm childGa = parent.getGraphicsAlgorithmChildren()
+                    .get(0);
+            result = new Pair<Integer, Integer>(childGa.getX(), childGa.getY());
+            Pair<Integer, Integer> child = accumulateCoordOffset(childGa);
+            result.setFirst(result.getFirst() + child.getFirst());
+            result.setSecond(result.getSecond() + child.getSecond());
+        }
+        return result;
     }
 
     /**
