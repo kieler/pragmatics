@@ -33,4 +33,15 @@
             category="de.cau.cs.kieler.core.kivi">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="toolbar:de.cau.cs.kieler">
+         <dynamic
+               class="de.cau.cs.kieler.core.kivi.internal.KiviContributionItem"
+               id="de.cau.cs.kieler.kivi.dynamic">
+         </dynamic>
+      </menuContribution>
+   </extension>
 </plugin>
