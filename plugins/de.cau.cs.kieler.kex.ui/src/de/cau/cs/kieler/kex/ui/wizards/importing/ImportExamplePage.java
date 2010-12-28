@@ -16,16 +16,11 @@ package de.cau.cs.kieler.kex.ui.wizards.importing;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -46,15 +41,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
@@ -68,7 +60,7 @@ import de.cau.cs.kieler.kex.model.Example;
  * @author pkl
  * 
  */
-public class ImportExamplePage extends WizardResourceImportPage {
+public class ImportExamplePage extends WizardPage {
 
     private static final int IMAGE_MAX_WIDTH = 800;
     private static final int IMAGE_MAX_HEIGHT = 600;
@@ -87,7 +79,6 @@ public class ImportExamplePage extends WizardResourceImportPage {
 
     private static final int IMG_PADDINGS_WIDTH = 40;
     private static final int IMG_PADDINGS_HEIGHT = 120;
-    private static final String INIT_PROJECT = "kieler_examples";
 
     private Text exampleDescription;
 
@@ -109,61 +100,20 @@ public class ImportExamplePage extends WizardResourceImportPage {
      * @param selection
      *            , the selected resource will be set as default as import location.
      */
-    protected ImportExamplePage(final String name, final IStructuredSelection selection) {
-        super(name, selection);
-        setTitle(name);
-        super.setDescription("Choose examples to import and set destination location.");
+
+    public ImportExamplePage(final String name, final IStructuredSelection selection) {
+        super(name);
+        setDescription(" Set destination location for imported examples.");
     }
 
-    @Override
-    public void createControl(final Composite parent) {
+    public void createControl(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         setControl(composite);
-        createTopGroup(composite);
-        createMiddleComponent(composite);
-        createBottomComponent(composite);
+        createTop(composite);
+        createMiddle(composite);
         getShell().setMinimumSize(540, 600);
-
-        if (super.getContainerFullPath() == null) {
-            super.setContainerFieldValue(INIT_PROJECT);
-            super.setPageComplete(true);
-        }
-    }
-
-    @Override
-    protected void createOptionsGroup(final Composite parent) {
-        // no options
-    }
-
-    @Override
-    protected void createSourceGroup(final Composite parent) {
-        // no sourceGroup
-    }
-
-    @Override
-    protected ITreeContentProvider getFileProvider() {
-        return null;
-    }
-
-    @Override
-    protected ITreeContentProvider getFolderProvider() {
-        return null;
-    }
-
-    /**
-     * Creates the import location group with label, textfield and button.
-     * 
-     * @param parent
-     *            , {@link Composite}
-     */
-    private void createTopGroup(final Composite parent) {
-        Group topGroup = new Group(parent, SWT.NONE);
-        topGroup.setLayout(new GridLayout());
-        topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        topGroup.setText("Set Destination");
-        super.createControl(topGroup);
 
     }
 
@@ -172,7 +122,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
      * 
      * @param parent
      */
-    private void createMiddleComponent(final Composite parent) {
+    private void createTop(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FormLayout());
         Control createTreeComposite = createTreeComposite(composite);
@@ -185,7 +135,7 @@ public class ImportExamplePage extends WizardResourceImportPage {
      * 
      * @param parent
      */
-    private void createBottomComponent(final Composite parent) {
+    private void createMiddle(final Composite parent) {
         Label descriptionLabel = new Label(parent, SWT.NONE);
         descriptionLabel.setText("Example Description");
 
@@ -461,74 +411,6 @@ public class ImportExamplePage extends WizardResourceImportPage {
         getExampleDescription().setText(sb.toString());
     }
 
-    @Override
-    protected boolean determinePageCompletion() {
-        boolean complete = validateSourceGroup() && myValidateDestinationGroup()
-                && validateOptionsGroup();
-
-        // Avoid draw flicker by not clearing the error
-        // message unless all is valid.
-        if (complete) {
-            setErrorMessage(null);
-        }
-
-        return complete;
-    }
-
-    private boolean myValidateDestinationGroup() {
-        IPath containerPath = getContainerFullPath();
-        if (containerPath == null) {
-            setMessage(IDEWorkbenchMessages.WizardImportPage_specifyFolder);
-            return false;
-        }
-
-        // If the container exist, validate it
-        IContainer container = getSpecifiedContainer();
-        if (container == null) {
-            // If it exists but is not valid then abort
-            if (IDEWorkbenchPlugin.getPluginWorkspace().getRoot().exists(getContainerFullPath())) {
-                return false;
-            }
-
-            // if it is does not exist be sure the project does
-            IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
-            IPath projectPath = containerPath.removeLastSegments(containerPath.segmentCount() - 1);
-
-            if (workspace.getRoot().exists(projectPath)) {
-                return true;
-            }
-            setMessage(IDEWorkbenchMessages.WizardImportPage_projectNotExist,
-                    IMessageProvider.WARNING);
-            return false;
-        }
-        if (!container.isAccessible()) {
-            setMessage(IDEWorkbenchMessages.WizardImportPage_folderMustExist,
-                    IMessageProvider.WARNING);
-            return false;
-        }
-        if (container.getLocationURI() == null) {
-            if (container.isLinked()) {
-                setErrorMessage(IDEWorkbenchMessages.WizardImportPage_undefinedPathVariable);
-            } else {
-                setErrorMessage(IDEWorkbenchMessages.WizardImportPage_containerNotExist);
-            }
-            return false;
-        }
-
-        if (sourceConflictsWithDestination(containerPath)) {
-            setErrorMessage(getSourceConflictMessage());
-            return false;
-        }
-
-        if (container instanceof IWorkspaceRoot) {
-            setMessage(IDEWorkbenchMessages.WizardImportPage_specifyProject,
-                    IMessageProvider.WARNING);
-            return false;
-        }
-        return true;
-
-    }
-
     // TODO falls ein image nicht richtig geladen wird wegen format fehler oder
     // so muss auf jeden fall eine meldung kommen... am besten schon beim export
     // darauf reagieren.
@@ -580,16 +462,6 @@ public class ImportExamplePage extends WizardResourceImportPage {
      */
     public Text getExampleDescription() {
         return exampleDescription;
-    }
-
-    /**
-     * getter for resource path.
-     * 
-     * @return {@link IPath}
-     */
-    @Override
-    public IPath getResourcePath() {
-        return super.getResourcePath();
     }
 
 }

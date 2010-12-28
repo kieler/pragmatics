@@ -35,6 +35,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -50,11 +51,14 @@ import de.cau.cs.kieler.kex.model.Example;
  */
 public class ExampleImportWizard extends Wizard implements IImportWizard {
 
-    private ImportExamplePage mainPage;
-
-    private boolean checkDuplicate;
-
+    private static final String INIT_PROJECT = "kieler_examples";
     private static final String ERROR_TITLE = "Could not complete Import";
+
+    private ImportExamplePage mainPage;
+    private WizardResourceImportPage destinationPage;
+
+    private IPath destinationLocation;
+    private boolean checkDuplicate;
 
     /**
      * Constructor for {@link ExampleImportWizard}.
@@ -72,7 +76,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
      *            , {@link IStructuredSelection}
      */
     public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-        setWindowTitle("Kieler Example Import");
+        setWindowTitle("KIELER Examples Import");
         setNeedsProgressMonitor(true);
         this.checkDuplicate = false;
         try {
@@ -81,29 +85,33 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             MessageDialog.openError(this.getShell(), "Can't initialize existing example pool.",
                     e.getLocalizedMessage());
         }
-        mainPage = new ImportExamplePage("Import Example", selection);
+        mainPage = new ImportExamplePage("Choose Examples", selection);
+        destinationPage = new ImportDestPage("Location", selection);
     }
 
     @Override
     public final void addPages() {
         super.addPages();
         addPage(mainPage);
+        addPage(destinationPage);
+
     }
 
     @Override
     public final boolean performFinish() {
         List<String> directOpens = null;
         try {
-            IPath projectPath = mainPage.getResourcePath();
             List<Example> checkedExamples = mainPage.getCheckedExamples();
+            // TODO warning if more examples selected than 5.
             if (checkedExamples.isEmpty()) {
                 throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
             }
-            if (projectPath == null || projectPath.isEmpty()) {
-                throw new KielerException("No import location has be selected.");
+            // TODO check if projectPath is empty when deletes the import location.
+            if (destinationLocation == null || destinationLocation.isEmpty()) {
+                throw new KielerException("No import location has been set.");
             }
-            ExampleManager.get().generateProject(projectPath);
-            directOpens = ExampleManager.get().importExamples(projectPath, checkedExamples,
+            ExampleManager.get().generateProject(destinationLocation);
+            directOpens = ExampleManager.get().importExamples(destinationLocation, checkedExamples,
                     checkDuplicate);
         } catch (KielerException e) {
             if (e.getLocalizedMessage().equals(ErrorMessage.DUPLICATE_EXAMPLE)) {
