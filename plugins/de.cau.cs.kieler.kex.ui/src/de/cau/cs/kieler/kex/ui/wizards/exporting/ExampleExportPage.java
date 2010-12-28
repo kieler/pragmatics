@@ -21,6 +21,15 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.mylyn.internal.tasks.ui.TasksUiPlugin;
+import org.eclipse.mylyn.internal.tasks.ui.wizards.NewAttachmentWizardDialog;
+import org.eclipse.mylyn.internal.tasks.ui.wizards.TaskAttachmentWizard;
+import org.eclipse.mylyn.internal.tasks.ui.wizards.TaskAttachmentWizard.Mode;
+import org.eclipse.mylyn.tasks.core.ITask;
+import org.eclipse.mylyn.tasks.core.TaskRepository;
+import org.eclipse.mylyn.tasks.core.data.TaskAttributeMapper;
+import org.eclipse.mylyn.tasks.core.data.TaskData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -67,6 +76,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
     private Button revertTree;
 
+    private final IWizard parentWizard;
+
     /**
      * contstructor for {@link ExampleExportPage}.
      * 
@@ -75,11 +86,13 @@ public class ExampleExportPage extends WizardResourceImportPage {
      * @param selection
      *            , String
      */
-    protected ExampleExportPage(final String name, final IStructuredSelection selection) {
+    protected ExampleExportPage(IWizard wizard, final String name,
+            final IStructuredSelection selection) {
         super(name, selection);
         setTitle(name);
         setDescription("Set destination and preview picture "
                 + "for exported example and determine example categories.");
+        this.parentWizard = wizard;
         checkedCategories = new ArrayList<String>();
         creatableCategories = new ArrayList<String>();
     }
@@ -139,7 +152,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
             @Override
             public void widgetSelected(final SelectionEvent event) {
                 DirectoryDialog dirDiag = new DirectoryDialog(composite.getShell());
-
                 dirDiag.setText("Choose destination directory");
                 dirDiag.setMessage("Select a directory in a java plugin project.");
                 dirDiag.setFilterPath(WORKSPACE_DIR);
@@ -182,7 +194,26 @@ public class ExampleExportPage extends WizardResourceImportPage {
             }
 
         });
-
+        final Button testButton = new Button(bottomGroup, SWT.NONE);
+        testButton.setText("mylyn adapter");
+        testButton.addSelectionListener(new SelectionAdapter() {
+            @SuppressWarnings("restriction")
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                super.widgetSelected(e);
+                TaskRepository taskRepository = new TaskRepository("local", "http://127.0.0.1");
+                ITask task = TasksUiPlugin.getRepositoryModel()
+                        .createTask(taskRepository, "myTask");
+                TaskAttributeMapper mapper = new TaskAttributeMapper(taskRepository);
+                TaskData data = new TaskData(mapper, "local", "http://127.0.0.1", "myTask");
+                TaskAttachmentWizard taskAttachmentWizard = new TaskAttachmentWizard(
+                        taskRepository, task, data.getRoot());
+                taskAttachmentWizard.getModel().setAttachContext(true);
+                taskAttachmentWizard.setMode(Mode.SCREENSHOT);
+                new NewAttachmentWizardDialog(testButton.getShell(), taskAttachmentWizard, true)
+                        .open();
+            }
+        });
     }
 
     private void createButtonComposite(final Group middleGroup) {
