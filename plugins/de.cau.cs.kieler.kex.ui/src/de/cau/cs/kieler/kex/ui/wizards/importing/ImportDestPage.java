@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
@@ -33,6 +34,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public class ImportDestPage extends WizardResourceImportPage {
 
     private static final String INIT_PROJECT = "kieler_examples";
+
+    private Button openImports;
 
     protected ImportDestPage(String name, IStructuredSelection selection) {
         super(name, selection);
@@ -60,8 +63,10 @@ public class ImportDestPage extends WizardResourceImportPage {
     }
 
     @Override
-    protected void createOptionsGroup(Composite parent) {
-        // no option group
+    protected void createOptionsGroupButtons(Group optionsGroup) {
+        openImports = new Button(optionsGroup, SWT.CHECK);
+        openImports.setText("Open examples after import.");
+        openImports.setEnabled(true);
     }
 
     /**
@@ -162,4 +167,7 @@ public class ImportDestPage extends WizardResourceImportPage {
 
     }
 
+    public boolean openImports() {
+        return openImports.isEnabled();
+    }
 }
