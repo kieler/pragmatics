@@ -35,7 +35,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.eclipse.ui.part.FileEditorInput;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -51,11 +50,10 @@ import de.cau.cs.kieler.kex.model.Example;
  */
 public class ExampleImportWizard extends Wizard implements IImportWizard {
 
-    private static final String INIT_PROJECT = "kieler_examples";
     private static final String ERROR_TITLE = "Could not complete Import";
 
     private ImportExamplePage mainPage;
-    private WizardResourceImportPage destinationPage;
+    private ImportDestPage destinationPage;
 
     private IPath destinationLocation;
     private boolean checkDuplicate;
@@ -137,7 +135,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         }
 
         // open direct opens
-        if (directOpens != null) {
+        if (directOpens != null && destinationPage.openImports()) {
             IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
             IWorkbenchPage page = win.getActivePage();
             for (String path : directOpens) {
