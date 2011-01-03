@@ -80,6 +80,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
     public static final String VIEW_ID = "de.cau.cs.kieler.kiml.views.layout";
     /** preference identifier for enabling categories. */
     public static final String PREF_CATEGORIES = "view.categories";
+    /** preference identifier for enabling advanced options. */
+    public static final String PREF_ADVANCED = "view.advanced";
     
     /** default layout provider array, which is empty. */
     private static final LayoutProviderData[] DEFAULT_PROVIDER_DATA = new LayoutProviderData[0];
@@ -204,17 +206,25 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
         // add actions to the toolbar, view menu, and context menu
         IActionBars actionBars = getViewSite().getActionBars();
         page.setActionBars(actionBars);
+        addPopupActions(page.getControl().getMenu());
+        IMenuManager menuManager = actionBars.getMenuManager();
+        menuManager.add(new RemoveOptionsAction(this, Messages.getString("kiml.ui.30")));
+        IToolBarManager toolBarManager = actionBars.getToolBarManager();
+        toolBarManager.add(new SelectionInfoAction(this, Messages.getString("kiml.ui.37")));
+        // set the stored value of the categories button
         ActionContributionItem categoriesItem = (ActionContributionItem) actionBars
                 .getToolBarManager().find("categories");
         if (categoriesItem != null) {
             categoriesItem.getAction().setChecked(preferenceStore.getBoolean(PREF_CATEGORIES));
             categoriesItem.getAction().run();
         }
-        addPopupActions(page.getControl().getMenu());
-        IMenuManager menuManager = actionBars.getMenuManager();
-        menuManager.add(new RemoveOptionsAction(this, Messages.getString("kiml.ui.30")));
-        IToolBarManager toolBarManager = actionBars.getToolBarManager();
-        toolBarManager.add(new SelectionInfoAction(this, Messages.getString("kiml.ui.37")));
+        // set the stored value of the advanced button
+        ActionContributionItem advancedItem = (ActionContributionItem) actionBars
+                .getToolBarManager().find("filter");
+        if (advancedItem != null) {
+            advancedItem.getAction().setChecked(preferenceStore.getBoolean(PREF_ADVANCED));
+            advancedItem.getAction().run();
+        }
         
         IWorkbenchWindow workbenchWindow = getSite().getWorkbenchWindow();
         IWorkbenchPage activePage = workbenchWindow.getActivePage();
@@ -273,6 +283,13 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
         if (categoriesItem != null) {
             KimlUiPlugin.getDefault().getPreferenceStore().setValue(PREF_CATEGORIES,
                     categoriesItem.getAction().isChecked());
+        }
+        // store the current status of the advanced button
+        ActionContributionItem advancedItem = (ActionContributionItem) getViewSite()
+                .getActionBars().getToolBarManager().find("filter");
+        if (advancedItem != null) {
+            KimlUiPlugin.getDefault().getPreferenceStore().setValue(PREF_ADVANCED,
+                    advancedItem.getAction().isChecked());
         }
         // dispose the view part
         super.dispose();

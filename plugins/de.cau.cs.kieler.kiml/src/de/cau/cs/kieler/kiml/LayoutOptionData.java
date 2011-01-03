@@ -136,6 +136,8 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
     private Class<?> clazz;
     /** cached value of the available choices. */
     private String[] choices;
+    /** whether the option should be shown in advanced mode only. */
+    private boolean advanced;
 
     /**
      * Checks whether the enumeration class is set correctly. This method must
@@ -603,6 +605,24 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
      */
     public void setOptionClass(final Class<?> theclazz) {
         this.clazz = theclazz;
+    }
+
+    /**
+     * Whether the option should be shown in advanced mode only.
+     * 
+     * @return true if the option is advanced
+     */
+    public boolean isAdvanced() {
+        return advanced;
+    }
+
+    /**
+     * Sets the advanced property of the layout option.
+     * 
+     * @param theadvanced true if the option is advanced
+     */
+    public void setAdvanced(final boolean theadvanced) {
+        this.advanced = theadvanced;
     }
 
 }

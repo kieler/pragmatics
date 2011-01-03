@@ -241,6 +241,13 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="advanced" type="boolean">
+            <annotation>
+               <documentation>
+                  Whether the option should only be shown in advanced mode; default is false.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

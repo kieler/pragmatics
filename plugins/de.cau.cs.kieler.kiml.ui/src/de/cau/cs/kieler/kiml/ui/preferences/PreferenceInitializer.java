@@ -37,6 +37,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         
         preferenceStore.setDefault(EclipseLayoutServices.PREF_OBLIQUE_ROUTE, true);
         preferenceStore.setDefault(LayoutViewPart.PREF_CATEGORIES, true);
+        preferenceStore.setDefault(LayoutViewPart.PREF_ADVANCED, false);
     }
 
 }

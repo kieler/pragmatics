@@ -23,6 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
@@ -201,6 +202,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * {@inheritDoc}
      */
     public String[] getFilterFlags() {
+        if (optionData.isAdvanced()) {
+            return new String[] { IPropertySheetEntry.FILTER_ID_EXPERT };
+        }
         return null;
     }
 

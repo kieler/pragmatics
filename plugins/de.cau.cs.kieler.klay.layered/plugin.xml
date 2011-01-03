@@ -73,6 +73,7 @@
             type="boolean">
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             default="0"
             description="Defines the minimal angle that short edges may have."
@@ -107,6 +108,7 @@
             type="enum">
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             default="false"
             description="Segmentates the Layering, if wide nodes are existing"
@@ -115,6 +117,7 @@
             type="boolean">
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             default="false"
             id="de.cau.cs.kieler.klay.layered.enhanceLayering"
@@ -122,6 +125,7 @@
             type="boolean">
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             default="5"
             description="How much effort should be spent to produce a nice layout"
