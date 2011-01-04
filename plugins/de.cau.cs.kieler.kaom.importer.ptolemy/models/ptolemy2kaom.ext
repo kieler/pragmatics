@@ -313,8 +313,7 @@ Void addChildLinks(Entity parent, List[LinkType] ptolemyLinks) :
  */
 Void addProperties(Annotatable annotatable, List[PropertyType] properties) :
     let property = properties.first() :
-    let stringAnnotation = new StringAnnotation :
-    let classType = new StringAnnotation :
+    let typedAnnotation = new TypedStringAnnotation :
     
     // If there are still properties left in the list, transform them,
     // add them to the annotatable and recursively add the property's
@@ -322,21 +321,16 @@ Void addProperties(Annotatable annotatable, List[PropertyType] properties) :
     if(properties.isEmpty)
         then null
         else (
-            // Ptolemy properties have types; we annotate the annotation
-            // with the Ptolemy class of the original property
-            classType.setName("ptolemyClass") ->
-            classType.setValue(property.class) ->
-            
             // Save the name, value and class of the annotation
-            stringAnnotation.setName(property.name) ->
-            stringAnnotation.setValue(property.value) ->
-            stringAnnotation.annotations.add(classType) ->
+            typedAnnotation.setName(property.name) ->
+            typedAnnotation.setValue(property.value) ->
+            typedAnnotation.setType(property.class) ->
             
             // Add the annotation
-            annotatable.annotations.add(stringAnnotation)->
+            annotatable.annotations.add(typedAnnotation)->
             
             // Recursively add the property's properties
-            addProperties(stringAnnotation, property.property) ->
+            addProperties(typedAnnotation, property.property) ->
             
             // Recursively add the remaining properties in the list
             addProperties(annotatable, properties.withoutFirst())

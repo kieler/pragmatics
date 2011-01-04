@@ -37,7 +37,7 @@ import com.microstar.xml.XmlException;
 
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
-import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.core.annotations.TypedStringAnnotation;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Port;
 
@@ -267,13 +267,11 @@ public class PtolemyHelper implements IExecutionContextAware {
      * @return the created KAOM Annotation
      */
     private static Annotation getAnnotation(final Attribute ptolemyAttribute) {
-        StringAnnotation kaomAnnotation = AnnotationsFactory.eINSTANCE.createStringAnnotation();
-        StringAnnotation classAnnotation = AnnotationsFactory.eINSTANCE.createStringAnnotation();
+        TypedStringAnnotation kaomAnnotation = AnnotationsFactory.eINSTANCE
+                .createTypedStringAnnotation();
 
         kaomAnnotation.setName(ptolemyAttribute.getName());
-        classAnnotation.setName("ptolemyClass");
-        classAnnotation.setValue(ptolemyAttribute.getClassName());
-        kaomAnnotation.getAnnotations().add(classAnnotation);
+        kaomAnnotation.setType(ptolemyAttribute.getClassName());
 
         for (Object childAttribute : ptolemyAttribute.attributeList()) {
             if (childAttribute instanceof Attribute) {
