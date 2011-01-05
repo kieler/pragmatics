@@ -1,0 +1,61 @@
+import keg;
+import kgraph;
+
+Void transferKGraphNode(KNode node, Node kegNode):
+	JAVA de.cau.cs.kieler.keg.importer.util.XtendUtil.transferKGraphNode(de.cau.cs.kieler.core.kgraph.KNode, de.cau.cs.kieler.keg.Node)
+;
+
+Void transferKGraphEdge(KEdge edge, Edge kegEdge):
+	JAVA de.cau.cs.kieler.keg.importer.util.XtendUtil.transferKGraphEdge(de.cau.cs.kieler.core.kgraph.KEdge, de.cau.cs.kieler.keg.Edge)
+;
+
+Void transferKGraphPort(KPort port, Port kegPort):
+	JAVA de.cau.cs.kieler.keg.importer.util.XtendUtil.transferKGraphPort(de.cau.cs.kieler.core.kgraph.KPort, de.cau.cs.kieler.keg.Port)
+;
+
+Node transform(KNode node, Boolean directed):
+	let graph = new Node:
+	node.transferKGraphNode(graph) ->
+	node.children.transformNode(graph, directed) ->
+	graph
+;
+
+Void transformNode(KNode node, Node parent, Boolean directed):
+	let kegNode = getNode(node):
+	parent.children.add(kegNode) ->
+	node.children.transformNode(kegNode, directed) ->
+	node.outgoingEdges.transformEdge(directed) ->
+	node.ports.transformPort(kegNode)
+;
+
+Void transformEdge(KEdge edge, Boolean directed):
+	let kegEdge = new Edge:
+	let source = getNode(edge.source):
+	let target = getNode(edge.target):
+	source.outgoingEdges.add(kegEdge) ->
+	kegEdge.setTarget(target) ->
+	edge.transferKGraphEdge(kegEdge) ->
+	(if directed then kegEdge.setDirected(true)) ->
+	(if edge.sourcePort != null then kegEdge.setSourcePort(getPort(edge.sourcePort))) ->
+	(if edge.targetPort != null then kegEdge.setTargetPort(getPort(edge.targetPort))) ->
+	(if edge.sourcePort != null
+			 	then (if edge.targetPort != null
+			 			then kegEdge.setType(keg::EdgeType::Port2Port)
+			 			else kegEdge.setType(keg::EdgeType::Port2Node))
+			 	else (if edge.targetPort != null
+			 			then kegEdge.setType(keg::EdgeType::Node2Port)
+			 			else kegEdge.setType(keg::EdgeType::Node2Node)))
+;
+
+Void transformPort(KPort port, Node node):
+	let kegPort = getPort(port):
+	node.ports.add(kegPort)
+;
+
+create Node getNode(KNode node):
+	node.transferKGraphNode(this)
+;
+
+create Port getPort(KPort port):
+	port.transferKGraphPort(this)
+;

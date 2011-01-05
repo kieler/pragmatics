@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.keg.importer.handlers.ImportHandler"
+            id="de.cau.cs.kieler.keg.importer.importGraph"
+            name="Import Graph">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.cau.cs.kieler">
+         <command
+               commandId="de.cau.cs.kieler.keg.importer.importGraph"
+               icon="icons/menu16/importdiagram.gif"
+               label="Import Graph"
+               mnemonic="I"
+               style="push"
+               tooltip="Import a graph from common file formats to the KEG format.">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="de.cau.cs.kieler.keg.importer.canImport">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="de.cau.cs.kieler.keg.importer.canImport">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false"
+                  operator="and">
+               <and>
+                  <instanceof
+                        value="org.eclipse.core.resources.IFile">
+                  </instanceof>
+                  <or>
+                     <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.name"
+                           value="*.kgraph">
+                     </test>
+                     <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.name"
+                           value="*.graphml">
+                     </test>
+                  </or>
+               </and>
+            </iterate>
+         </with>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.keg.importer.wizards.ImportGraphWizard"
+            icon="icons/menu16/importdiagram.gif"
+            id="de.cau.cs.kieler.keg.importer.graphImportWizard"
+            name="Import Graph">
+      </wizard>
+   </extension>
+
+</plugin>

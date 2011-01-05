@@ -1,0 +1,120 @@
+import keg;
+import graphml;
+
+Node transform(graphml::DocumentRoot doc):
+	transformGraphML(doc.graphml)
+;
+
+Node transformGraphML(graphml::GraphmlType graphml):
+	switch (graphml.graph.size) {
+	case 0:
+		(let parent = new Node:
+		parent)
+	case 1:
+		(let parent = new Node:
+		transformGraph(graphml.graph.get(0), parent) ->
+		transformGraphEdges(graphml.graph.get(0)) ->
+		transformGraphHyperedges(graphml.graph.get(0), parent) ->
+		parent)
+	default:
+		(let parent = new Node:
+		graphml.graph.transformGraphNew(parent) ->
+		graphml.graph.transformGraphEdges() ->
+		graphml.graph.transformGraphHyperedges(parent) ->
+		parent)
+	}
+;
+
+Void transformGraph(graphml::GraphType graph, Node parent):
+	graph.node.transformNode(parent)
+;
+
+Void transformGraphNew(graphml::GraphType graph, Node parent):
+	let newNode = new Node:
+	newNode.setNodeLabel(graph.id) ->
+	parent.children.add(newNode) ->
+	graph.node.transformNode(newNode)
+;
+
+Void transformGraphEdges(graphml::GraphType graph):
+	graph.edge.transformEdge(graph.edgedefault == graphml::GraphEdgedefaultType::directed) ->
+	graph.node.transformNestedGraphEdges()
+;
+
+Void transformNestedGraphEdges(graphml::NodeType node):
+	if node.graph != null then transformGraphEdges(node.graph)
+;
+
+Void transformEdge(graphml::EdgeType edge, boolean directed):
+	let source = getNode(edge.source):
+	let target = getNode(edge.target):
+	let newEdge = new Edge:
+	newEdge.setMidLabel(edge.id) ->
+	newEdge.setDirected(directed || edge.directed) ->
+	newEdge.setSource(source) ->
+	newEdge.setTarget(target) ->
+	(if edge.sourceport != null then newEdge.setSourcePort(getPort(edge.sourceport, source))) ->
+	(if edge.targetport != null then newEdge.setTargetPort(getPort(edge.targetport, target))) ->
+	(if edge.sourceport != null
+			 	then (if edge.targetport != null
+			 			then newEdge.setType(keg::EdgeType::Port2Port)
+			 			else newEdge.setType(keg::EdgeType::Port2Node))
+			 	else (if edge.targetport != null
+			 			then newEdge.setType(keg::EdgeType::Node2Port)
+			 			else newEdge.setType(keg::EdgeType::Node2Node)))
+;
+
+Void transformGraphHyperedges(graphml::GraphType graph, Node parent):
+	graph.hyperedge.transformHyperedge(parent) ->
+	graph.node.transformNestedGraphHyperedges()
+;
+
+Void transformNestedGraphHyperedges(graphml::NodeType node):
+	if node.graph != null then transformGraphHyperedges(node.graph, getNode(node.id))
+;
+
+Void transformHyperedge(graphml::HyperedgeType hyperedge, Node parent):
+	let hypernode = new Node:
+	hypernode.setHypernode(true) ->
+	parent.children.add(hypernode) ->
+	hyperedge.endpoint.connectEndpointToHypernode(hypernode)
+;
+
+Void connectEndpointToHypernode(graphml::EndpointType endpoint, Node hypernode):
+	let target = getNode(endpoint.node):
+	let newEdge = new Edge:
+	newEdge.setMidLabel(endpoint.id) ->
+	newEdge.setDirected(false) ->
+	newEdge.setSource(hypernode) ->
+	newEdge.setTarget(target) ->
+	(if endpoint.port != null then newEdge.setTargetPort(getPort(endpoint.port, target))) ->
+	(if endpoint.port != null
+		then newEdge.setType(keg::EdgeType::Node2Port)
+		else newEdge.setType(keg::EdgeType::Node2Node))
+;
+
+Void transformNode(graphml::NodeType node, Node parent):
+	let newNode = getNode(node.id):
+	parent.children.add(newNode) ->
+	node.port.transformPort(newNode) ->
+	(if node.graph != null then transformGraph(node.graph, newNode))
+;
+
+Void transformPort(graphml::PortType port, Node node):
+	getPort(port.name, node)
+;
+
+Node getNode(String id):
+	let node = id == null ? new Node : getNodeHelper(id):
+	node
+;
+
+create Node getNodeHelper(String id):
+	this.setNodeLabel(id)
+;
+
+
+create Port getPort(String name, Node node):
+	this.setNode(node) ->
+	this.setPortLabel(name)
+;
