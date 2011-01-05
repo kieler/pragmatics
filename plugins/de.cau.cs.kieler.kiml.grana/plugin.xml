@@ -151,6 +151,32 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.AspectRatioAnalysis"
+            description="The aspect ratio of the area a graph drawing occupies. (width / height)"
+            id="de.cau.cs.kieler.kiml.grana.aspectRatio"
+            name="Aspect Ratio">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.area"
+               weak="false">
+         </dependency>
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.AreaAnalysis"
+            description="The area a graph drawing occupies."
+            id="de.cau.cs.kieler.kiml.grana.area"
+            name="Area">
+         <component
+               abbreviation="W"
+               name="Width">
+         </component>
+         <component
+               abbreviation="H"
+               name="Height">
+         </component>
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.EdgeLengthAnalysis"
             description="The minimum, average and maximum edge length."
             id="de.cau.cs.kieler.kiml.grana.edgeLength"
