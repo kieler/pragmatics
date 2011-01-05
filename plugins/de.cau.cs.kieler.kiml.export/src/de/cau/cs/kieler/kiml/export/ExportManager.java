@@ -25,6 +25,10 @@ public final class ExportManager {
 
     /** the singleton instance. */
     private static ExportManager instance = new ExportManager();
+    
+    /** the registered exporters. */
+    private List<AbstractExporter> exporters =
+            new LinkedList<AbstractExporter>();
 
     /**
      * A private constructor to make this class a singleton.
@@ -42,10 +46,6 @@ public final class ExportManager {
         return instance;
     }
 
-    /** the registered exporters. */
-    private List<AbstractExporter> exporters =
-            new LinkedList<AbstractExporter>();
-
     /**
      * Registers a graph exporter.
      * 
@@ -54,16 +54,6 @@ public final class ExportManager {
      */
     public void addExporter(final AbstractExporter exp) {
         exporters.add(exp);
-    }
-
-    /**
-     * Unregisters a graph exporter.
-     * 
-     * @param exp
-     *            the exporter
-     */
-    public void removeExporter(final AbstractExporter exp) {
-        exporters.remove(exp);
     }
 
     /**

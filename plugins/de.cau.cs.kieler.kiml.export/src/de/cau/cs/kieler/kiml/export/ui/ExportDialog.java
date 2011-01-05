@@ -378,10 +378,14 @@ public class ExportDialog extends Dialog {
                 radio.setSelection(true);
                 found = true;
             }
-            // set default selection
-            if (!found && constant.equals(option.getDefault())) {
-                radio.setSelection(true);
-                found = true;
+        }
+        // set default selection
+        if (!found) {
+            for (Button button : buttons) {
+                if (button.getText().equals(option.getDefault())) {
+                    button.setSelection(true);
+                    break;
+                }
             }
         }
         optionInputs.put(option, buttons);
