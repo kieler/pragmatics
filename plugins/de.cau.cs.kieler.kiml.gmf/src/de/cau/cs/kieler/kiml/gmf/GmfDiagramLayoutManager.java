@@ -359,7 +359,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // execute the command
         commandStack.execute(applyLayoutCommand);
 
-        // refresh the labels and border items in the diagram
+        // refresh the border items in the diagram
         refreshDiagram(diagramEditorPart, layoutRootPart);
     }
 
@@ -955,8 +955,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
-     * Refreshes all labels and ports in the diagram. This is necessary in order to prevent edge
-     * labels from vanishing and to correctly move ports, which does not work due to GMF bugs.
+     * Refreshes all ports in the diagram. This is necessary in order correctly move ports,
+     * which does not work due to GMF bugs. See Eclipse bug #291484.
      * 
      * @param editor the diagram editor
      * @param rootPart the root edit part
@@ -968,9 +968,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             editPart = editor.getDiagramEditPart();
         }
         for (Object obj : editPart.getViewer().getEditPartRegistry().values()) {
-            if (obj instanceof LabelEditPart) {
-                ((LabelEditPart) obj).refresh();
-            } else if (obj instanceof ShapeNodeEditPart) {
+            if (obj instanceof ShapeNodeEditPart) {
                 IFigure figure = ((ShapeNodeEditPart) obj).getFigure();
                 if (figure instanceof BorderedNodeFigure) {
                     IFigure portContainer = ((BorderedNodeFigure) figure)
