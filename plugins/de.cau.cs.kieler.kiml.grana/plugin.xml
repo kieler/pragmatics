@@ -167,11 +167,9 @@
             id="de.cau.cs.kieler.kiml.grana.area"
             name="Area">
          <component
-               abbreviation="W"
                name="Width">
          </component>
          <component
-               abbreviation="H"
                name="Height">
          </component>
       </provider>
