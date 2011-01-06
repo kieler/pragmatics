@@ -277,7 +277,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         Point newLocation = new Point(labelLayout.getXpos(), labelLayout.getYpos());
         sourceFigure.translateToAbsolute(newLocation);
         newLocation.scale(1 / zoomLevel);
-        Rectangle targetBounds = labelEditPart.getFigure().getBounds();
+        Rectangle targetBounds = new Rectangle(labelEditPart.getFigure().getBounds());
         targetBounds.x = newLocation.x;
         targetBounds.y = newLocation.y;
 
@@ -413,40 +413,45 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             int index = PointListUtilities.findNearestLineSegIndexOfPoint(points, refPoint);
             @SuppressWarnings("rawtypes")
             List segmentsList = PointListUtilities.getLineSegments(points);
-            LineSeg segment = index < segmentsList.size() ? (LineSeg) segmentsList.get(
-                    index > 0 ? index - 1 : 0) : null;
-            if (segment != null) {
-                Point normalOffset = null;
-                if (segment.isHorizontal()) {
-                    if (segment.getOrigin().x > segment.getTerminus().x) {
-                        normalOffset = offset.getNegated();
-                        return normalOffset;
-                    } else {
-                        normalOffset = offset;
-                        return normalOffset;
-                    }
-                } else if (segment.isVertical()) {
-                    if (segment.getOrigin().y < segment.getTerminus().y) {
-                        normalOffset = offset.scale(-1, 1).transpose();
-                        return normalOffset;
-                    } else {
-                        normalOffset = offset.scale(1, -1).transpose();
-                        return normalOffset;
-                    }
+            int segIndex = index;
+            if (segIndex <= 0) {
+                segIndex = 0;
+            } else if (segIndex > segmentsList.size()) {
+                segIndex = segmentsList.size() - 1;
+            } else {
+                segIndex--;
+            }
+            LineSeg segment = (LineSeg) segmentsList.get(segIndex);
+            Point normalOffset = null;
+            if (segment.isHorizontal()) {
+                if (segment.getOrigin().x > segment.getTerminus().x) {
+                    normalOffset = offset.getNegated();
+                    return normalOffset;
                 } else {
-                    Point offsetRefPoint = refPoint.getTranslated(offset);
-                    LineSeg parallelSeg = segment.getParallelLineSegThroughPoint(offsetRefPoint);
-                    Point p1 = parallelSeg.perpIntersect(refPoint.x, refPoint.y);
-                    double dx = p1.getDistance(offsetRefPoint)
-                            * ((p1.x > offsetRefPoint.x) ? -1 : 1);
-                    double dy = p1.getDistance(refPoint) * ((p1.y < refPoint.y) ? -1 : 1);
-                    Point orth = new Point(dx, dy);
-                    // reflection in the y axis
-                    if (segment.getOrigin().x > segment.getTerminus().x) {
-                        orth = orth.scale(-1, -1);
-                    }
-                    return orth;
+                    normalOffset = offset;
+                    return normalOffset;
                 }
+            } else if (segment.isVertical()) {
+                if (segment.getOrigin().y < segment.getTerminus().y) {
+                    normalOffset = offset.scale(-1, 1).transpose();
+                    return normalOffset;
+                } else {
+                    normalOffset = offset.scale(1, -1).transpose();
+                    return normalOffset;
+                }
+            } else {
+                Point offsetRefPoint = refPoint.getTranslated(offset);
+                LineSeg parallelSeg = segment.getParallelLineSegThroughPoint(offsetRefPoint);
+                Point p1 = parallelSeg.perpIntersect(refPoint.x, refPoint.y);
+                double dx = p1.getDistance(offsetRefPoint)
+                        * ((p1.x > offsetRefPoint.x) ? -1 : 1);
+                double dy = p1.getDistance(refPoint) * ((p1.y < refPoint.y) ? -1 : 1);
+                Point orth = new Point(dx, dy);
+                // reflection in the y axis
+                if (segment.getOrigin().x > segment.getTerminus().x) {
+                    orth = orth.scale(-1, -1);
+                }
+                return orth;
             }
         }
         return null;

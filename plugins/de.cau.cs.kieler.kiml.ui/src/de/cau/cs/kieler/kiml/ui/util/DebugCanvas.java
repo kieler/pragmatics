@@ -298,6 +298,7 @@ public class DebugCanvas implements IDebugCanvas {
                     figureBuffer.clear();
                 }
             });
+            isDirty = true;
         }
     }
 

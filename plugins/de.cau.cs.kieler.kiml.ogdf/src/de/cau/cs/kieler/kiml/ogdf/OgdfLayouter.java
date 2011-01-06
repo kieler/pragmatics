@@ -36,6 +36,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeType;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
  * The base wrapper class for all OGDF layouters.
@@ -67,7 +68,19 @@ public abstract class OgdfLayouter {
     
     /** the minimal distance between the source point and the first bend point. */
     private static final float SOURCE_POINT_FIRST_BEND_DISTANCE = 4;
+    
+    /** the debug canvas, which can be used to debug the OGDF wrapper. */
+    private IDebugCanvas debugCanvas;
 
+    /**
+     * Set the debug canvas.
+     * 
+     * @param thecanvas the debug canvas
+     */
+    public void setDebugCanvas(final IDebugCanvas thecanvas) {
+        this.debugCanvas = thecanvas;
+    }
+    
     /**
      * Initialize the default values for the layout provider. Subclasses should extend
      * this method with their own default values.
