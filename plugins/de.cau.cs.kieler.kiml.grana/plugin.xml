@@ -151,6 +151,25 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.EdgeDirectionAnalysis"
+            description="The number of edges going in each of the four directions."
+            id="de.cau.cs.kieler.kiml.grana.edgeDirections"
+            name="Edge Directions">
+         <component
+               name="Top">
+         </component>
+         <component
+               name="Left">
+         </component>
+         <component
+               name="Bottom">
+         </component>
+         <component
+               name="Right">
+         </component>
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.AspectRatioAnalysis"
             description="The aspect ratio of the area a graph drawing occupies. (width / height)"
             id="de.cau.cs.kieler.kiml.grana.aspectRatio"
@@ -172,6 +191,43 @@
          <component
                name="Height">
          </component>
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.NodeSizeAnalysis"
+            description="The minimum, average and maximum node size."
+            id="de.cau.cs.kieler.kiml.grana.nodeSize"
+            name="Node Size">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
+         <component
+               name="Nodes">
+         </component>
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.CoverageAnalysis"
+            description="Percentage of area covered with nodes and taken up by insets."
+            id="de.cau.cs.kieler.kiml.grana.coverage"
+            name="Coverage">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.nodeSize"
+               weak="false">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.area"
+               weak="false">
+         </dependency>
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"

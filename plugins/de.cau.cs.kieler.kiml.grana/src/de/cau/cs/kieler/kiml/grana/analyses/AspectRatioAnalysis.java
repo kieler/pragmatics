@@ -25,7 +25,8 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 /**
  * An analysis that computes the aspect ratio of the area a graph drawing occupies. This
- * analysis depends on the {@link AreaAnalysis} results.
+ * analysis depends on the {@link AreaAnalysis} results. Returns a single-component
+ * result {@code (double ratio)}.
  * 
  * @author cds
  */
@@ -49,8 +50,8 @@ public class AspectRatioAnalysis implements IAnalysis {
         
         // Compute the aspect ratio
         Object[] areaResults = (Object[]) o;
-        int width = (Integer) areaResults[0];
-        int height = (Integer) areaResults[1];
+        int width = (Integer) areaResults[AreaAnalysis.INDEX_WIDTH];
+        int height = (Integer) areaResults[AreaAnalysis.INDEX_HEIGHT];
         
         double aspect = (double) width / (double) height;
         
