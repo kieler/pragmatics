@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.emf.common.command.CommandStack;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
@@ -94,8 +95,13 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
 
                 @Override
                 protected void doExecute() {
-                    EList<Property> prop = focusEditPart.getPictogramElement()
-                            .getProperties();
+                    clearPropertiesRecursively(focusEditPart
+                            .getPictogramElement());
+                }
+
+                private void clearPropertiesRecursively(
+                        final PictogramElement pictogramElement) {
+                    EList<Property> prop = pictogramElement.getProperties();
 
                     Iterator<Property> iter = prop.iterator();
 
@@ -105,6 +111,12 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                         if (p.getKey().startsWith(PREFIX)
                                 || p.getKey().startsWith(DIAG_PREFIX)) {
                             iter.remove();
+                        }
+                    }
+
+                    for (EObject pe : pictogramElement.eContents()) {
+                        if (pe instanceof PictogramElement) {
+                            clearPropertiesRecursively((PictogramElement) pe);
                         }
                     }
                 }

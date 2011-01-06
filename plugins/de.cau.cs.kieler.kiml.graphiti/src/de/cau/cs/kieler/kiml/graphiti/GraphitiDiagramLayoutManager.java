@@ -489,16 +489,18 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             KPoint source = edgeLayout.getSourcePoint();
             KPoint target = edgeLayout.getTargetPoint();
             allPoints.add(source);
-            if (conn.getStart() instanceof ChopboxAnchor) {
-                moveBendPointOutofBox(edge.getSource(), source);
-            }
             allPoints.addAll(points);
-
             allPoints.add(target);
-            if (conn.getEnd() instanceof ChopboxAnchor) {
-                moveBendPointOutofBox(edge.getTarget(), target);
+            if (conn.getStart() instanceof ChopboxAnchor) {
+                moveBendPointOutofNode(edge.getSource(), allPoints.get(0),
+                        allPoints.get(1));
             }
-            removeRedundantBendpoints(allPoints);
+            if (conn.getEnd() instanceof ChopboxAnchor) {
+                int size = allPoints.size();
+                moveBendPointOutofNode(edge.getTarget(),
+                        allPoints.get(size - 1), allPoints.get(size - 2));
+            }
+            // removeRedundantBendpoints(allPoints);
 
             for (KPoint pnt : allPoints) {
                 Point point = Graphiti.getGaService().createPoint(
@@ -510,25 +512,24 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
-     * @param edge
+     * 
+     * @param node
      * @param point
+     * @param target
      */
-    private void moveBendPointOutofBox(final KNode node, final KPoint point) {
-
-        KShapeLayout startNodeLayout = node.getData(KShapeLayout.class);
-        if (point.getX() > startNodeLayout.getXpos()
-                && point.getX() < (startNodeLayout.getXpos() + startNodeLayout
-                        .getWidth())) {
-            double offset = point.getY() < startNodeLayout.getYpos() ? 0
-                    : startNodeLayout.getHeight();
-            point.setY((float) (startNodeLayout.getYpos() + offset));
+    private void moveBendPointOutofNode(final KNode node, final KPoint point,
+            final KPoint target) {
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        if (target.getX() < nodeLayout.getXpos()) {
+            point.setX(nodeLayout.getXpos());
+        } else if (target.getX() > nodeLayout.getXpos() + nodeLayout.getWidth()) {
+            point.setX(nodeLayout.getXpos() + nodeLayout.getWidth());
         }
-        if (point.getY() > startNodeLayout.getYpos()
-                && point.getY() < (startNodeLayout.getYpos() + startNodeLayout
-                        .getHeight())) {
-            double offset = point.getX() < startNodeLayout.getXpos() ? 0
-                    : startNodeLayout.getWidth();
-            point.setX((float) (startNodeLayout.getXpos() + offset));
+        if (target.getY() < nodeLayout.getYpos()) {
+            point.setY(nodeLayout.getYpos());
+        } else if (target.getY() > nodeLayout.getYpos()
+                + nodeLayout.getHeight()) {
+            point.setY(nodeLayout.getYpos() + nodeLayout.getHeight());
         }
     }
 
