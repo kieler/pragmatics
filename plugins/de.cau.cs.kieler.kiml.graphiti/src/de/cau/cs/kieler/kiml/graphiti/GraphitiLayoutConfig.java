@@ -102,7 +102,8 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                     while (iter.hasNext()) {
                         Property p = iter.next();
 
-                        if (p.getKey().startsWith(PREFIX)) {
+                        if (p.getKey().startsWith(PREFIX)
+                                || p.getKey().startsWith(DIAG_PREFIX)) {
                             iter.remove();
                         }
                     }
@@ -480,9 +481,23 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      */
     public static List<Property> getProperties(
             final IPictogramElementEditPart editPart, final String prefix) {
+        return getProperties(editPart.getPictogramElement(), prefix);
+    }
+
+    /**
+     * Get the layout properties from the given PictogramElement.
+     * 
+     * @param pe
+     *            the pictogram element
+     * @param prefix
+     *            the prefix to search for
+     * @return the list of properties
+     */
+    public static List<Property> getProperties(final PictogramElement pe,
+            final String prefix) {
         List<Property> result = new LinkedList<Property>();
 
-        EList<Property> prop = editPart.getPictogramElement().getProperties();
+        EList<Property> prop = pe.getProperties();
 
         for (Property p : prop) {
             if (p.getKey().startsWith(prefix)) {
@@ -510,6 +525,8 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         if (part instanceof IPictogramElementEditPart) {
             // add user defined global layout options
             IPictogramElementEditPart editPart = (IPictogramElementEditPart) part;
+            Diagram diag = editPart.getConfigurationProvider().getDiagram();
+            addOptions(options, true, getProperties(diag, DIAG_PREFIX));
             addOptions(options, false, getProperties(editPart, PREFIX));
         }
     }

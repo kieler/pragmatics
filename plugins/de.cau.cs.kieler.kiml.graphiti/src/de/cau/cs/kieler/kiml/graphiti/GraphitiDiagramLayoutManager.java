@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartViewer;
@@ -54,6 +55,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
@@ -78,6 +80,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
     /** map of pictogram Element to KGraph Element. */
     private Map<PictogramElement, KGraphElement> pictElem2GraphElemMap = new HashMap<PictogramElement, KGraphElement>();
+    /** map of KGraph Element to pictogram element. */
+    private Map<KGraphElement, PictogramElement> graphElem2PictElemMap = new HashMap<KGraphElement, PictogramElement>();
 
     /** map of Connection to Kedge. */
     private Map<Connection, KEdge> reference2EdgeMap = new HashMap<Connection, KEdge>();
@@ -119,6 +123,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         connections.clear();
         reference2EdgeMap.clear();
         pictElem2GraphElemMap.clear();
+        graphElem2PictElemMap.clear();
 
         if (editorPart instanceof DiagramEditor) {
             diagramEditor = (DiagramEditor) editorPart;
@@ -140,6 +145,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                             .getWidth());
 
                     pictElem2GraphElemMap.put(element, topNode);
+                    graphElem2PictElemMap.put(topNode, element);
                     layoutGraph = topNode;
 
                     GraphitiLayoutConfig layoutConfig;
@@ -187,6 +193,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (topNode != null) {
             if (currentElement instanceof ContainerShape) {
                 list = ((ContainerShape) currentElement).getChildren();
+                returnstate = list.isEmpty();
             } else {
                 // no more children
                 return true;
@@ -207,7 +214,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                             .getGraphicsAlgorithm();
 
                     KNode childnode = KimlUtil.createInitializedNode();
-                    returnstate = !(shape instanceof ContainerShape);
+
                     childnode.setParent(topNode);
                     KShapeLayout shapeLayout = childnode
                             .getData(KShapeLayout.class);
@@ -224,17 +231,19 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     shapeLayout.setProperty(LayoutOptions.MIN_WIDTH, 40.0f);
                     shapeLayout.setProperty(LayoutOptions.MIN_HEIGHT, 40.0f);
 
-                    // set user defined layout options
-                    layoutConfig.setFocus(diagramEditor
-                            .getEditPartForPictogramElement(shape));
-                    shapeLayout.copyProperties(layoutConfig);
-
                     pictElem2GraphElemMap.put(shape, childnode);
+                    graphElem2PictElemMap.put(childnode, shape);
 
                     boolean state = true;
                     if (shape instanceof ContainerShape) {
                         state = buildLayoutGraphRecursively(shape, childnode,
                                 layoutConfig);
+
+                        if (state) {
+                            shapeLayout.setProperty(
+                                    LayoutOptions.PORT_CONSTRAINTS,
+                                    PortConstraints.FIXED_POS);
+                        }
 
                         // find a label for the container shape
                         for (Shape child : ((ContainerShape) shape)
@@ -243,6 +252,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                             if (ga instanceof Text) {
                                 Text text = (Text) ga;
                                 String labelText = text.getValue();
+
                                 KLabel label = childnode.getLabel();
                                 label.setText(labelText);
                                 shapeLayout.setProperty(
@@ -256,6 +266,11 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                         }
                     }
 
+                    // set user defined layout options
+                    layoutConfig.setFocus(diagramEditor
+                            .getEditPartForPictogramElement(shape));
+                    shapeLayout.copyProperties(layoutConfig);
+
                     // set fixed size = true if there are no further children
                     shapeLayout.setProperty(LayoutOptions.FIXED_SIZE, state);
 
@@ -265,6 +280,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                             if (anchor instanceof BoxRelativeAnchor) {
                                 KPort port = KimlUtil.createInitializedPort();
                                 pictElem2GraphElemMap.put(anchor, port);
+                                graphElem2PictElemMap.put(port, anchor);
                                 port.setNode(childnode);
                                 KShapeLayout portLayout = port
                                         .getData(KShapeLayout.class);
@@ -371,7 +387,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 .getEditingDomain();
         KimlUiUtil.runModelChange(new Runnable() {
             public void run() {
-                kShape2Diag();
+                kShape2Diag(layoutGraph);
                 kEdge2Conn();
             }
         }, editingDomain, "Automatic Layout");
@@ -380,13 +396,19 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     /**
      * Replaces the new coordinates calculated by the layout algorithm back to
      * the pictogram element.
+     * 
+     * @param root
+     *            the topNode
      */
-    private void kShape2Diag() {
-        for (Map.Entry<PictogramElement, KGraphElement> entry : pictElem2GraphElemMap
-                .entrySet()) {
-            PictogramElement pelem = entry.getKey();
-            KGraphElement kelem = entry.getValue();
-            kShape2Diag(pelem, kelem);
+    private void kShape2Diag(final KNode root) {
+        for (KNode node : root.getChildren()) {
+            kShape2Diag(node);
+        }
+        PictogramElement pelem = graphElem2PictElemMap.get(root);
+        kShape2Diag(pelem, root);
+        for (KPort port : root.getPorts()) {
+            pelem = graphElem2PictElemMap.get(port);
+            kShape2Diag(pelem, port);
         }
     }
 
@@ -425,18 +447,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         ga.setHeight((int) shapeLayout.getHeight());
         ga.setWidth((int) shapeLayout.getWidth());
 
-        // if (pelem instanceof ContainerShape || pelem instanceof Diagram) {
-        // if (graphElemHeightWidth.containsKey(pelem)) {
-        // int[] olddimension = graphElemHeightWidth.get(pelem);
-        // if (olddimension[0] != pelem.getGraphicsAlgorithm().getHeight()
-        // || olddimension[1] != pelem.getGraphicsAlgorithm()
-        // .getWidth()) {
-
         diagramEditor.getDiagramTypeProvider().getFeatureProvider()
                 .layoutIfPossible(new LayoutContext(pelem));
-        // }
-        // }
-        // }
     }
 
     /**
@@ -470,17 +482,21 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                             .getGraphicsAlgorithm().getY();
                 }
             }
-            Pair<Integer, Integer> coords = accumulateCoordOffset(conn
-                    .getStart().getParent().getGraphicsAlgorithm());
+            Pair<Integer, Integer> coords = calcCoordOffset(conn);
             int xOffset = coords.getFirst();
             int yOffset = coords.getSecond();
 
             KPoint source = edgeLayout.getSourcePoint();
             KPoint target = edgeLayout.getTargetPoint();
             allPoints.add(source);
+            if (conn.getStart() instanceof ChopboxAnchor) {
+                moveBendPointOutofBox(edge.getSource(), source);
+            }
             allPoints.addAll(points);
+
+            allPoints.add(target);
             if (conn.getEnd() instanceof ChopboxAnchor) {
-                allPoints.add(target);
+                moveBendPointOutofBox(edge.getTarget(), target);
             }
             removeRedundantBendpoints(allPoints);
 
@@ -490,6 +506,29 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                         (int) pnt.getY() + startYOffset + yOffset);
                 pointList.add(point);
             }
+        }
+    }
+
+    /**
+     * @param edge
+     * @param point
+     */
+    private void moveBendPointOutofBox(final KNode node, final KPoint point) {
+
+        KShapeLayout startNodeLayout = node.getData(KShapeLayout.class);
+        if (point.getX() > startNodeLayout.getXpos()
+                && point.getX() < (startNodeLayout.getXpos() + startNodeLayout
+                        .getWidth())) {
+            double offset = point.getY() < startNodeLayout.getYpos() ? 0
+                    : startNodeLayout.getHeight();
+            point.setY((float) (startNodeLayout.getYpos() + offset));
+        }
+        if (point.getY() > startNodeLayout.getYpos()
+                && point.getY() < (startNodeLayout.getYpos() + startNodeLayout
+                        .getHeight())) {
+            double offset = point.getX() < startNodeLayout.getXpos() ? 0
+                    : startNodeLayout.getWidth();
+            point.setX((float) (startNodeLayout.getXpos() + offset));
         }
     }
 
@@ -722,22 +761,23 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
-     * Accumulate offsets from the invisible parent to the visible children.
+     * Accumulate offsets from the connection start to the root canvas.
      * 
-     * @param parent
-     *            the parent
+     * @param conn
+     *            the connection
      * @return (x,y) - Offsets
      */
-    private Pair<Integer, Integer> accumulateCoordOffset(
-            final GraphicsAlgorithm parent) {
+    private Pair<Integer, Integer> calcCoordOffset(final Connection conn) {
         Pair<Integer, Integer> result = new Pair<Integer, Integer>(0, 0);
-        if (!parent.getGraphicsAlgorithmChildren().isEmpty()) {
-            GraphicsAlgorithm childGa = parent.getGraphicsAlgorithmChildren()
-                    .get(0);
-            result = new Pair<Integer, Integer>(childGa.getX(), childGa.getY());
-            Pair<Integer, Integer> child = accumulateCoordOffset(childGa);
-            result.setFirst(result.getFirst() + child.getFirst());
-            result.setSecond(result.getSecond() + child.getSecond());
+        Anchor start = conn.getStart();
+        AnchorContainer container = start.getParent();
+        EObject parent = container.eContainer();
+        while (parent != null && parent instanceof ContainerShape) {
+            ContainerShape cs = (ContainerShape) parent;
+            GraphicsAlgorithm ga = cs.getGraphicsAlgorithm();
+            result.setFirst(result.getFirst() + ga.getX());
+            result.setSecond(result.getSecond() + ga.getY());
+            parent = parent.eContainer();
         }
         return result;
     }
