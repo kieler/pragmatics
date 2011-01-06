@@ -200,7 +200,7 @@ public final class AnalysisServices implements IBundleChangedListener {
                                 element.getAttribute(ATTRIBUTE_CATEGORY);
                         String helperString =
                                 element.getAttribute(ATTRIBUTE_HELPER);
-                        // if the weak string is invalid the
+                        // if the helper string is invalid the
                         // parser returns false, which handles
                         // the case correctly
                         boolean helper = Boolean.parseBoolean(helperString);
@@ -255,12 +255,11 @@ public final class AnalysisServices implements IBundleChangedListener {
                                             || componentName.length() == 0) {
                                         reportError(EXTP_ID_ANALYSIS_PROVIDERS,
                                                 child, ATTRIBUTE_NAME, null);
-                                    } else if (componentAbbreviation == null
-                                            || componentAbbreviation.length() == 0) {
-                                        reportError(EXTP_ID_ANALYSIS_PROVIDERS,
-                                                child, ATTRIBUTE_ABBREVIATION,
-                                                null);
-                                    } else {
+                                    } else  {
+                                        if (componentAbbreviation == null
+                                                || componentAbbreviation.length() == 0) {
+                                            componentAbbreviation = componentName;
+                                        }
                                         infoAnalysis.getComponents().add(
                                                 new Pair<String, String>(
                                                         componentName,
