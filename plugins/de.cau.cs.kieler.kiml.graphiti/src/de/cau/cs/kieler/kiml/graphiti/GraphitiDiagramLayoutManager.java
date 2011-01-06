@@ -193,7 +193,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (topNode != null) {
             if (currentElement instanceof ContainerShape) {
                 list = ((ContainerShape) currentElement).getChildren();
-                returnstate = list.isEmpty();
             } else {
                 // no more children
                 return true;
@@ -206,6 +205,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 for (Anchor a : shape.getAnchors()) {
                     if (a instanceof ChopboxAnchor) {
                         relevantShape = true;
+                        returnstate = false;
                         break;
                     }
                 }
@@ -488,19 +488,19 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
             KPoint source = edgeLayout.getSourcePoint();
             KPoint target = edgeLayout.getTargetPoint();
-            allPoints.add(source);
+            // allPoints.add(source);
             allPoints.addAll(points);
-            allPoints.add(target);
-            if (conn.getStart() instanceof ChopboxAnchor) {
-                moveBendPointOutofNode(edge.getSource(), allPoints.get(0),
-                        allPoints.get(1));
-            }
-            if (conn.getEnd() instanceof ChopboxAnchor) {
-                int size = allPoints.size();
-                moveBendPointOutofNode(edge.getTarget(),
-                        allPoints.get(size - 1), allPoints.get(size - 2));
-            }
-            // removeRedundantBendpoints(allPoints);
+            // allPoints.add(target);
+            // if (conn.getStart() instanceof ChopboxAnchor) {
+            // moveBendPointOutofNode(edge.getSource(), allPoints.get(0),
+            // allPoints.get(1));
+            // }
+            // if (conn.getEnd() instanceof ChopboxAnchor) {
+            // int size = allPoints.size();
+            // moveBendPointOutofNode(edge.getTarget(),
+            // allPoints.get(size - 1), allPoints.get(size - 2));
+            // }
+            removeRedundantBendpoints(allPoints);
 
             for (KPoint pnt : allPoints) {
                 Point point = Graphiti.getGaService().createPoint(
