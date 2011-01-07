@@ -56,7 +56,7 @@ public class BasicCSVVisualizer extends AbstractSimpleVisualizer<String> {
                             VisualizationServices.getInstance()
                                     .getVisualization("text", results[i]);
                     if (visualization == null) {
-                        str += result.toString();
+                        str += results[i].toString();
                     } else {
                         str += visualization.get(analysis, results[i]);
                     }
