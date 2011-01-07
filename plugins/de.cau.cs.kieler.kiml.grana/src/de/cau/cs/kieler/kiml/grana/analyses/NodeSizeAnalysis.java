@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kiml.grana.analyses;
 
+import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
@@ -134,44 +135,71 @@ public class NodeSizeAnalysis implements IAnalysis {
         EList<KNode> children = node.getChildren();
         
         if (children.isEmpty()) {
-            // Account for this node
-            float nodeWidth = 0.0f;
-            float nodeHeight = 0.0f;
-            float nodeSize = 0.0f;
+            // Compute the node size
+            Rectangle2D.Float nodeRect = computeNodeRect(node, true, true, true);
+            float nodeSize = nodeRect.width * nodeRect.height;
             
-            float nodeTopLeftX = 0.0f;
-            float nodeTopLeftY = 0.0f;
-            float nodeBottomRightX = 0.0f;
-            float nodeBottomRightY = 0.0f;
-            
-            // Get the node's layout data, and the layout data of the node's label, if any
-            KShapeLayout layoutData = node.getData(KShapeLayout.class);
-            
-            // Compute the node's minimum top left and maximum bottom right coordinates.
-            // At first, this is done relative to the top left point of the node.
-            // This effectively computes the top left and bottom right coordinates of a
-            // bounding box around the node, taking into account node labels and ports
-            // and their labels.
-            
-            // First, the size of the node itself
-            nodeBottomRightX = layoutData.getWidth();
-            nodeBottomRightY = layoutData.getHeight();
-            
-            // Take the label into account, if any
-            if (node.getLabel() != null) {
-                KShapeLayout labelLayoutData = node.getLabel().getData(KShapeLayout.class);
-                
-                if (labelLayoutData != null) {
-                    nodeTopLeftX = Math.min(nodeTopLeftX, labelLayoutData.getXpos());
-                    nodeTopLeftY = Math.min(nodeTopLeftY, labelLayoutData.getYpos());
-                    nodeBottomRightX = Math.max(nodeBottomRightX,
-                            labelLayoutData.getXpos() + labelLayoutData.getWidth());
-                    nodeBottomRightY = Math.max(nodeBottomRightY,
-                            labelLayoutData.getYpos() + labelLayoutData.getHeight());
-                }
+            // Update analysis state
+            state.nodes++;
+            state.minSize = Math.min(state.minSize, nodeSize);
+            state.maxSize = Math.max(state.maxSize, nodeSize);
+            state.sumOfSize += nodeSize;
+        } else {
+            // Analyse the children
+            for (KNode child : children) {
+                computeNodeSizes(child, state);
             }
+        }
+    }
+    
+    /**
+     * Computes the bounding box of the given node. Optionally includes the node's
+     * label and ports, if any.
+     * 
+     * @param node the node whose bounding box to compute.
+     * @param includeLabel {@code true} if the node's label should be included in the bounding box.
+     * @param includePorts {@code true} if the node's ports should be included in the bounding box.
+     * @param includePortLabels {@code true} if the labels of ports should be included in the
+     *                          bounding box.
+     * @return the bounding box.
+     */
+    public static Rectangle2D.Float computeNodeRect(final KNode node, final boolean includeLabel,
+            final boolean includePorts, final boolean includePortLabels) {
+        
+        float nodeTopLeftX = 0.0f;
+        float nodeTopLeftY = 0.0f;
+        float nodeBottomRightX = 0.0f;
+        float nodeBottomRightY = 0.0f;
+        
+        // Get the node's layout data, and the layout data of the node's label, if any
+        KShapeLayout layoutData = node.getData(KShapeLayout.class);
+        
+        // Compute the node's minimum top left and maximum bottom right coordinates.
+        // At first, this is done relative to the top left point of the node.
+        // This effectively computes the top left and bottom right coordinates of a
+        // bounding box around the node, taking into account node labels and ports
+        // and their labels.
+        
+        // First, the size of the node itself
+        nodeBottomRightX = layoutData.getWidth();
+        nodeBottomRightY = layoutData.getHeight();
+        
+        // Take the label into account, if any
+        if (includeLabel && node.getLabel() != null) {
+            KShapeLayout labelLayoutData = node.getLabel().getData(KShapeLayout.class);
             
-            // Iterate through the ports
+            if (labelLayoutData != null) {
+                nodeTopLeftX = Math.min(nodeTopLeftX, labelLayoutData.getXpos());
+                nodeTopLeftY = Math.min(nodeTopLeftY, labelLayoutData.getYpos());
+                nodeBottomRightX = Math.max(nodeBottomRightX,
+                        labelLayoutData.getXpos() + labelLayoutData.getWidth());
+                nodeBottomRightY = Math.max(nodeBottomRightY,
+                        labelLayoutData.getYpos() + labelLayoutData.getHeight());
+            }
+        }
+        
+        // Iterate through the ports
+        if (includePorts) {
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayoutData = port.getData(KShapeLayout.class);
                 
@@ -183,7 +211,7 @@ public class NodeSizeAnalysis implements IAnalysis {
                         portLayoutData.getYpos() + portLayoutData.getHeight());
                 
                 // Take the port label into account, if any
-                if (port.getLabel() != null) {
+                if (includePortLabels && port.getLabel() != null) {
                     KShapeLayout labelLayoutData = port.getLabel().getData(KShapeLayout.class);
                     
                     if (labelLayoutData != null) {
@@ -200,22 +228,13 @@ public class NodeSizeAnalysis implements IAnalysis {
                     }
                 }
             }
-            
-            // Offset coordinates by the node's actual position
-            nodeWidth = nodeBottomRightX - nodeTopLeftX;
-            nodeHeight = nodeBottomRightY - nodeTopLeftY;
-            nodeSize = nodeWidth * nodeHeight;
-            
-            // Update analysis state
-            state.nodes++;
-            state.minSize = Math.min(state.minSize, nodeSize);
-            state.maxSize = Math.max(state.maxSize, nodeSize);
-            state.sumOfSize += nodeSize;
-        } else {
-            // Analyse the children
-            for (KNode child : children) {
-                computeNodeSizes(child, state);
-            }
         }
+        
+        // Offset coordinates by the node's actual position
+        return new Rectangle2D.Float(
+                nodeTopLeftX + layoutData.getXpos(),
+                nodeTopLeftY + layoutData.getYpos(),
+                nodeBottomRightX - nodeTopLeftX,
+                nodeBottomRightY - nodeTopLeftY);
     }
 }

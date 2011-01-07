@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kiml.grana.analyses;
 
+import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
@@ -23,6 +24,9 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 
 /**
@@ -30,6 +34,9 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
  * and insets. The higher this value is to 1.0, the more effectively packed the layout is.
  * This analysis depends on {@link AreaAnalysis} and {@link NodeSizeAnalysis}. Returns a
  * single-component result {@code (float coverage)}.
+ * 
+ * The result of this analysis is currently only correct if there is no overlapping going
+ * on between nodes.
  * 
  * @author cds
  */
@@ -81,18 +88,40 @@ public class CoverageAnalysis implements IAnalysis {
      * @return the area taken up by insets.
      */
     private float computeCompoundArea(final KNode parentNode) {
-        float insetsArea = 0.0f;
+        float compoundArea = 0.0f;
         EList<KNode> children = parentNode.getChildren();
         
         if (!children.isEmpty()) {
-            // TODO The node is a compound node; compute its space requirements
+            // Compound node; get layout data and insets and compute the node's bounding box
+            KShapeLayout layoutData = parentNode.getData(KShapeLayout.class);
+            KInsets insets = layoutData.getProperty(LayoutOptions.INSETS);
+            Rectangle2D.Float nodeRect = NodeSizeAnalysis.computeNodeRect(
+                    parentNode, true, true, true);
+            
+            // Now, each side of the node has an inset which must be added to the
+            // insets area; afterwards, four rectangles were counted twice and
+            // have to be subtracted once
+            float insetsArea = 0.0f;
+            insetsArea += layoutData.getWidth() * (insets.getTop() + insets.getBottom());
+            insetsArea += layoutData.getHeight() * (insets.getLeft() + insets.getRight());
+            insetsArea -= insets.getTop() * (insets.getLeft() + insets.getRight())
+                        + insets.getBottom() * (insets.getLeft() + insets.getRight());
+            
+            System.out.printf("Insets: %f, %f, %f, %f\n",
+                    insets.getTop(), insets.getLeft(), insets.getBottom(), insets.getRight());
+            
+            // The area covered by this node is its bounding box minus the inner area,
+            // which is this node's height and width (without ports and labels) minus
+            // the insets area
+            compoundArea = nodeRect.width * nodeRect.height
+                - (layoutData.getWidth() * layoutData.getHeight() - insetsArea);
             
             // Iterate through the children
             for (KNode child : children) {
-                insetsArea += computeCompoundArea(child);
+                compoundArea += computeCompoundArea(child);
             }
         }
         
-        return insetsArea;
+        return compoundArea;
     }
 }

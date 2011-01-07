@@ -15,14 +15,13 @@
 package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 
 /**
@@ -82,79 +81,14 @@ public class AreaAnalysis implements IAnalysis {
         
         // Iterate through the parent node's children
         for (KNode child : parentNode.getChildren()) {
-            float nodeTopLeftX = 0.0f;
-            float nodeTopLeftY = 0.0f;
-            float nodeBottomRightX = 0.0f;
-            float nodeBottomRightY = 0.0f;
-            
-            // Get the node's layout data, and the layout data of the node's label, if any
-            KShapeLayout layoutData = child.getData(KShapeLayout.class);
-            
-            // Compute the node's minimum top left and maximum bottom right coordinates.
-            // At first, this is done relative to the top left point of the node.
-            // This effectively computes the top left and bottom right coordinates of a
-            // bounding box around the node, taking into account node labels and ports
-            // and their labels.
-            
-            // First, the size of the node itself
-            nodeBottomRightX = layoutData.getWidth();
-            nodeBottomRightY = layoutData.getHeight();
-            
-            // Take the label into account, if any
-            if (child.getLabel() != null) {
-                KShapeLayout labelLayoutData = child.getLabel().getData(KShapeLayout.class);
-                
-                if (labelLayoutData != null) {
-                    nodeTopLeftX = Math.min(nodeTopLeftX, labelLayoutData.getXpos());
-                    nodeTopLeftY = Math.min(nodeTopLeftY, labelLayoutData.getYpos());
-                    nodeBottomRightX = Math.max(nodeBottomRightX,
-                            labelLayoutData.getXpos() + labelLayoutData.getWidth());
-                    nodeBottomRightY = Math.max(nodeBottomRightY,
-                            labelLayoutData.getYpos() + labelLayoutData.getHeight());
-                }
-            }
-            
-            // Iterate through the ports
-            for (KPort port : child.getPorts()) {
-                KShapeLayout portLayoutData = port.getData(KShapeLayout.class);
-                
-                nodeTopLeftX = Math.min(nodeTopLeftX, portLayoutData.getXpos());
-                nodeTopLeftY = Math.min(nodeTopLeftY, portLayoutData.getYpos());
-                nodeBottomRightX = Math.max(nodeBottomRightX,
-                        portLayoutData.getXpos() + portLayoutData.getWidth());
-                nodeBottomRightY = Math.max(nodeBottomRightY,
-                        portLayoutData.getYpos() + portLayoutData.getHeight());
-                
-                // Take the port label into account, if any
-                if (port.getLabel() != null) {
-                    KShapeLayout labelLayoutData = port.getLabel().getData(KShapeLayout.class);
-                    
-                    if (labelLayoutData != null) {
-                        nodeTopLeftX = Math.min(nodeTopLeftX,
-                                portLayoutData.getXpos() + labelLayoutData.getXpos());
-                        nodeTopLeftY = Math.min(nodeTopLeftY,
-                                portLayoutData.getYpos() + labelLayoutData.getYpos());
-                        nodeBottomRightX = Math.max(nodeBottomRightX,
-                                portLayoutData.getXpos() + labelLayoutData.getXpos()
-                                    + labelLayoutData.getWidth());
-                        nodeBottomRightY = Math.max(nodeBottomRightY,
-                                portLayoutData.getYpos() + labelLayoutData.getYpos()
-                                    + labelLayoutData.getHeight());
-                    }
-                }
-            }
-            
-            // Offset coordinates by the node's actual position
-            nodeTopLeftX += layoutData.getXpos();
-            nodeTopLeftY += layoutData.getYpos();
-            nodeBottomRightX += layoutData.getXpos();
-            nodeBottomRightY += layoutData.getYpos();
+            Rectangle2D.Float nodeRect = NodeSizeAnalysis.computeNodeRect(
+                    child, true, true, true);
             
             // Compute the new bounds of the drawing area
-            minX = Math.min(minX, nodeTopLeftX);
-            minY = Math.min(minY, nodeTopLeftY);
-            maxX = Math.max(maxX, nodeBottomRightX);
-            maxY = Math.max(maxY, nodeBottomRightY);
+            minX = Math.min(minX, nodeRect.x);
+            minY = Math.min(minY, nodeRect.y);
+            maxX = Math.max(maxX, nodeRect.x + nodeRect.width);
+            maxY = Math.max(maxY, nodeRect.y + nodeRect.height);
         }
         
         return new Point2D.Float(maxX - minX, maxY - minY);
