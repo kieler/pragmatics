@@ -73,7 +73,7 @@ public final class HtmlResultGenerator {
             empty = false;
             html += "<TR><TD VALIGN='TOP'><b>";
             html += visualization.getAnalysis().getName();
-            html += "</b></TD><TD>";
+            html += "</b></TD><TD VALIGN='TOP'>";
             html += visualization.get();
             html += "</TD></TR>";
         }

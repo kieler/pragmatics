@@ -20,20 +20,17 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 
 /**
- * A graph analysis that gives the number of self loops in the graph. Returns a
- * single-component result {@code (int selfLoops)}.
- * 
- * This analysis does not yet take into account indirect self loops, e.g. paths
- * from a node to itself that only contain hyper nodes. It is not clear if these
- * kinds of self loops should be included or not.
+ * A graph analysis that finds the number of connected components in a graph. Returns
+ * a single-component result {@code (int components)}.
  * 
  * @author cds
  */
-public class SelfLoopAnalysis implements IAnalysis {
+public class ConnectedComponentsAnalysis implements IAnalysis {
 
     /**
      * {@inheritDoc}
@@ -41,35 +38,26 @@ public class SelfLoopAnalysis implements IAnalysis {
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor) throws KielerException {
         
-        progressMonitor.begin("Self Loop Analysis", 1);
-        int selfLoops = countSelfLoops(parentNode);
-        progressMonitor.done();
+        progressMonitor.begin("Connected Components Analysis", 1);
         
-        return selfLoops;
+        traverse(parentNode);
+        
+        progressMonitor.done();
+        return new AnalysisFailed(AnalysisFailed.Type.Failed);
     }
     
-    /**
-     * Recursively goes through the graph, counting the number of self loops.
-     * 
-     * @param node the graph's root node.
-     * @return the number of self loops found.
-     */
-    private int countSelfLoops(final KNode node) {
-        int selfLoops = 0;
+    private void traverse(final KNode node) {
+        System.out.println("Node " + (node.getLabel() != null ? node.getLabel().getText() : ""));
         
-        // Count this node's self loops
         for (KEdge edge : node.getOutgoingEdges()) {
-            if (edge.getTarget().equals(node)) {
-                selfLoops++;
-            }
+            System.out.println("  >>> " + (edge.getTarget().getLabel() != null
+                    ? edge.getTarget().getLabel().getText()
+                    : ""));
         }
         
-        // Recursively count the childrens' self loops
         for (KNode child : node.getChildren()) {
-            selfLoops += countSelfLoops(child);
+            traverse(child);
         }
-        
-        return selfLoops;
     }
 
 }
