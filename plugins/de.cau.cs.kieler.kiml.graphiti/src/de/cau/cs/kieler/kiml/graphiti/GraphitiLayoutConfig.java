@@ -36,6 +36,7 @@ import org.eclipse.graphiti.ui.internal.editor.DiagramEditorInternal;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
 import de.cau.cs.kieler.kiml.LayoutServices;
@@ -54,6 +55,22 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     /** Prefix for diagram defaults stored in the top-level editPart. */
     public static final String DIAG_PREFIX = "diagramDefaultLayout:";
 
+    /**
+     * Creates a layout configuration for Graphiti.
+     */
+    public GraphitiLayoutConfig() {
+        super();
+    }
+    
+    /**
+     * Creates a layout configuration for Graphiti using an external configuration.
+     * 
+     * @param externalConfig an external layout configuration
+     */
+    public GraphitiLayoutConfig(final ILayoutConfig externalConfig) {
+        super(externalConfig);
+    }
+    
     /**
      * Custom property that allow assigning key, value in the constructor.
      * 
