@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 
 
 /**
- * An analysis that counts the number of edges going in each of the four directions.
+ * A drawing analysis that counts the number of edges going in each of the four directions.
  * (top, left, bottom, right) An edge can go in two directions. Returns a four-component
  * result {@code (int top, int left, int bottom, int right)}.
  * 

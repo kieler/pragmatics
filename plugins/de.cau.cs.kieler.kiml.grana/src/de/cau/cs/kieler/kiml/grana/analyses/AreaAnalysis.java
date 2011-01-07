@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 
 /**
- * An analysis that computes the size of the area a graph drawing occupies. Returns
+ * A drawing analysis that computes the size of the area a graph drawing occupies. Returns
  * a two-component result {@code (int width, int height)}.
  * 
  * @author cds

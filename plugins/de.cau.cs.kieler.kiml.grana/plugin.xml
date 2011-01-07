@@ -143,6 +143,20 @@
             name="Node Count">
       </provider>
       <provider
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.grana.analyses.CompoundNodeCountAnalysis"
+            description="The number of compound nodes including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.compoundNodeCount"
+            name="Compound Node Count">
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.grana.analyses.SelfLoopAnalysis"
+            description="The number of self loops."
+            id="de.cau.cs.kieler.kiml.grana.selfLoops"
+            name="Self Loops">
+      </provider>
+      <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.BendsAnalysis"
             description="The number of bendpoints in the graph including hierarchies."

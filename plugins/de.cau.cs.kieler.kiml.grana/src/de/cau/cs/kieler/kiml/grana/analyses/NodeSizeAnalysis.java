@@ -28,10 +28,11 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 
 /**
- * An analysis that computes the minimum, maximum and average node size of nodes that are
- * not compound nodes. (that is, that don't contain other nodes) Returns a four-component
- * result {@code (int min, float avg, int max, int nodes)}, where {@code nodes} denotes
- * the number of nodes that were actually included in the analysis.
+ * A drawing analysis that computes the minimum, maximum and average node size of nodes
+ * that are not compound nodes. (that is, that don't contain other nodes) Returns a
+ * four-component result {@code (int min, float avg, int max, int nodes)}, where
+ * {@code nodes} denotes the number of nodes that were actually included in the
+ * analysis.
  * 
  * @author cds
  */

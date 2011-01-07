@@ -30,9 +30,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 
 /**
- * An analysis that computes the percentage of the drawing area that is covered by nodes
- * and insets. The higher this value is to 1.0, the more effectively packed the layout is.
- * This analysis depends on {@link AreaAnalysis} and {@link NodeSizeAnalysis}. Returns a
+ * A drawing analysis that computes the percentage of the drawing area that is covered by
+ * nodes and insets. The higher this value is to 1.0, the more effectively packed the layout
+ * is. This analysis depends on {@link AreaAnalysis} and {@link NodeSizeAnalysis}. Returns a
  * single-component result {@code (float coverage)}.
  * 
  * The result of this analysis is currently only correct if there is no overlapping going
@@ -106,9 +106,6 @@ public class CoverageAnalysis implements IAnalysis {
             insetsArea += layoutData.getHeight() * (insets.getLeft() + insets.getRight());
             insetsArea -= insets.getTop() * (insets.getLeft() + insets.getRight())
                         + insets.getBottom() * (insets.getLeft() + insets.getRight());
-            
-            System.out.printf("Insets: %f, %f, %f, %f\n",
-                    insets.getTop(), insets.getLeft(), insets.getBottom(), insets.getRight());
             
             // The area covered by this node is its bounding box minus the inner area,
             // which is this node's height and width (without ports and labels) minus

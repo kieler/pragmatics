@@ -24,8 +24,8 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
 
 /**
- * An analysis that computes the aspect ratio of the area a graph drawing occupies. This
- * analysis depends on the {@link AreaAnalysis} results. Returns a single-component
+ * A drawing analysis that computes the aspect ratio of the area a graph drawing occupies.
+ * This analysis depends on the {@link AreaAnalysis} results. Returns a single-component
  * result {@code (double ratio)}.
  * 
  * @author cds
