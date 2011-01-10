@@ -26,10 +26,10 @@ import de.cau.cs.kieler.core.kgraph.KGraphFactory;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
@@ -110,44 +110,6 @@ public final class KimlUtil {
                 }
             }
         }
-    }
-
-    /**
-     * Returns shape layout data for a given graph element. If there is no
-     * registered shape layout for the element, a new shape layout is created
-     * and registered.
-     * 
-     * @param graphElement the graph element
-     * @return related shape layout data
-     * @deprecated use {@code graphElement.getData(KShapeLayout.class)} instead
-     */
-    public static KShapeLayout getShapeLayout(final KGraphElement graphElement) {
-        KShapeLayout layoutData = (KShapeLayout) graphElement.getData(KLayoutDataPackage.eINSTANCE
-                .getKShapeLayout());
-        if (layoutData == null) {
-            layoutData = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
-            graphElement.getData().add(layoutData);
-        }
-        return layoutData;
-    }
-
-    /**
-     * Returns edge layout data for a given graph element. If there is no
-     * registered edge layout for the element, a new edge layout is created and
-     * registered.
-     * 
-     * @param graphElement the graph element
-     * @return related edge layout data
-     * @deprecated use {@code graphElement.getData(KEdgeLayout.class)} instead
-     */
-    public static KEdgeLayout getEdgeLayout(final KGraphElement graphElement) {
-        KEdgeLayout layoutData = (KEdgeLayout) graphElement.getData(KLayoutDataPackage.eINSTANCE
-                .getKEdgeLayout());
-        if (layoutData == null) {
-            layoutData = KLayoutDataFactory.eINSTANCE.createKEdgeLayout();
-            graphElement.getData().add(layoutData);
-        }
-        return layoutData;
     }
 
     /**
@@ -630,6 +592,38 @@ public final class KimlUtil {
             }
         }
         return false;
+    }
+    
+    /**
+     * Converts the given relative point to an absolute location.
+     * 
+     * @param point a relative point
+     * @param parent the parent node to which the point is relative to
+     */
+    public static void toAbsolute(final KVector point, final KNode parent) {
+        KNode node = parent;
+        while (node != null) {
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            point.x += nodeLayout.getXpos();
+            point.y += nodeLayout.getYpos();
+            node = node.getParent();
+        }
+    }
+    
+    /**
+     * Converts the given absolute point to a relative location.
+     * 
+     * @param point an absolute point
+     * @param parent the parent node to which the point shall be made relative to
+     */
+    public static void toRelative(final KVector point, final KNode parent) {
+        KNode node = parent;
+        while (node != null) {
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            point.x -= nodeLayout.getXpos();
+            point.y -= nodeLayout.getYpos();
+            node = node.getParent();
+        }
     }
     
     /**
