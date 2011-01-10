@@ -18,21 +18,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.command.CommandStack;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.graphiti.mm.MmFactory;
 import org.eclipse.graphiti.mm.Property;
-import org.eclipse.graphiti.mm.impl.PropertyImpl;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.ui.internal.editor.DiagramEditorInternal;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -44,7 +40,10 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 
 /**
+ * Layout option configuration for Graphiti.
+ * 
  * @author soh
+ * @author msp
  */
 @SuppressWarnings("restriction")
 public class GraphitiLayoutConfig extends EclipseLayoutConfig {
@@ -52,8 +51,8 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     /** Prefix for all layout options. */
     public static final String PREFIX = "layout:";
 
-    /** Prefix for diagram defaults stored in the top-level editPart. */
-    public static final String DIAG_PREFIX = "diagramDefaultLayout:";
+    /** Prefix for diagram defaults stored in the top-level edit part. */
+    public static final String DIAG_PREFIX = "defaultLayout:";
 
     /**
      * Creates a layout configuration for Graphiti.
@@ -70,104 +69,58 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     public GraphitiLayoutConfig(final ILayoutConfig externalConfig) {
         super(externalConfig);
     }
-    
-    /**
-     * Custom property that allow assigning key, value in the constructor.
-     * 
-     * @author soh
-     */
-    public static class GraphitiLayoutProperty extends PropertyImpl implements
-            Property {
-
-        /**
-         * 
-         * Creates a new GraphitiLayoutProperty.
-         * 
-         * @param keyParam
-         *            the key
-         * @param valueParam
-         *            the value
-         */
-        public GraphitiLayoutProperty(final String keyParam,
-                final String valueParam) {
-            super.setKey(keyParam);
-            super.setValue(valueParam);
-        }
-    }
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
     public void clearProperties() {
         EditPart part = getEditPart();
         if (part instanceof IPictogramElementEditPart) {
-            final IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) part;
-            GraphitiLayoutInspector li = new GraphitiLayoutInspector(
-                    focusEditPart);
-            final TransactionalEditingDomain ed = li.getEditingDomain();
-            CommandStack cs = ed.getCommandStack();
-            cs.execute(new RecordingCommand(ed) {
+            IPictogramElementEditPart pePart = (IPictogramElementEditPart) part;
+            Diagram diagram = pePart.getConfigurationProvider().getDiagram();
+            clearPropertiesRecursively(diagram);
+        }
+    }
+    
+    /**
+     * Clear all layout options from the given pictogram element.
+     * 
+     * @param pictogramElement a pictogram element
+     */
+    private static void clearPropertiesRecursively(final PictogramElement pictogramElement) {
+        Iterator<Property> iter = pictogramElement.getProperties().iterator();
 
-                @Override
-                protected void doExecute() {
-                    clearPropertiesRecursively(focusEditPart
-                            .getPictogramElement());
-                }
+        while (iter.hasNext()) {
+            Property p = iter.next();
+            if (p.getKey().startsWith(PREFIX)
+                    || p.getKey().startsWith(DIAG_PREFIX)) {
+                iter.remove();
+            }
+        }
 
-                private void clearPropertiesRecursively(
-                        final PictogramElement pictogramElement) {
-                    EList<Property> prop = pictogramElement.getProperties();
-
-                    Iterator<Property> iter = prop.iterator();
-
-                    while (iter.hasNext()) {
-                        Property p = iter.next();
-
-                        if (p.getKey().startsWith(PREFIX)
-                                || p.getKey().startsWith(DIAG_PREFIX)) {
-                            iter.remove();
-                        }
-                    }
-
-                    for (EObject pe : pictogramElement.eContents()) {
-                        if (pe instanceof PictogramElement) {
-                            clearPropertiesRecursively((PictogramElement) pe);
-                        }
-                    }
-                }
-            });
+        for (EObject pe : pictogramElement.eContents()) {
+            if (pe instanceof PictogramElement) {
+                clearPropertiesRecursively((PictogramElement) pe);
+            }
         }
     }
 
     /**
-     * Determines whether the given layout option is already stored in the
-     * notation view of the selected element. This requires
-     * {@link #initialize(IGraphicalEditPart) initialize} to be called first in
-     * order to work properly.
-     * 
-     * @param optionData
-     *            a layout option
-     * @return whether the option has its default value or not
+     * {@inheritDoc}
      */
     @Override
     public boolean isDefault(final LayoutOptionData<?> optionData) {
         EditPart ed = getEditPart();
         IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) ed;
-        EList<Property> prop = focusEditPart.getPictogramElement()
-                .getProperties();
         // check option value from notation model
-        for (Property property : prop) {
+        for (Property property : focusEditPart.getPictogramElement().getProperties()) {
             String key = property.getKey();
             if (key.startsWith(PREFIX)) {
-                key = key.replaceFirst(PREFIX, "");
-                if (key.equals(optionData.getId())) {
+                if (key.substring(PREFIX.length()).equals(optionData.getId())) {
                     String value = property.getValue();
-                    if (value != null) {
-                        if (optionData.parseValue(value) != null) {
-                            return false;
-                        }
+                    if (optionData.parseValue(value) != null) {
+                        return false;
                     }
                 }
             }
@@ -176,183 +129,98 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     }
 
     /**
-     * Stores the given value in the notation view of the selected element. This
-     * requires {@link #initialize(IGraphicalEditPart) initialize} to be called
-     * first in order to work properly.
-     * 
-     * @param property
-     *            a layout option
-     * @param value
-     *            an option value
+     * {@inheritDoc}
      */
     @Override
     public void setProperty(final IProperty<?> property, final Object value) {
         if (property instanceof LayoutOptionData<?>) {
             LayoutOptionData<?> optionData = (LayoutOptionData<?>) property;
-            doSetProperty(optionData, value, PREFIX);
+            setOption(optionData, value, PREFIX, getEditPart());
         } else {
             super.setProperty(property, value);
         }
     }
 
     /**
-     * Set the property with the given prefix. If the value is null remove it.
+     * Set the option for the given edit part.
      * 
-     * @param optionData
-     *            a layout option
-     * @param value
-     *            an option value
-     * @param prefix
-     *            the prefix under which the property is stored
+     * @param optionData layout option data
+     * @param value the value
+     * @param prefix the prefix for storage
+     * @param editPart the edit part
      */
-    private void doSetProperty(final LayoutOptionData<?> optionData,
-            final Object value, final String prefix) {
+    private void setOption(final LayoutOptionData<?> optionData, final Object value,
+            final String prefix, final EditPart editPart) {
+        if (editPart instanceof IPictogramElementEditPart) {
+            setOption(optionData, value, prefix,
+                    ((IPictogramElementEditPart) editPart).getPictogramElement());
+        }
+    }
+    
+    /**
+     * Set the option for the given pictogram element. Adds a new property to the property
+     * list unless the given key already exists.
+     * 
+     * @param optionData layout option data
+     * @param value the value
+     * @param prefix the prefix for storage
+     * @param pictogramElement the pictogram element
+     */
+    private void setOption(final LayoutOptionData<?> optionData, final Object value,
+            final String prefix, final PictogramElement pictogramElement) {
         if (value == null) {
-            removeOption(optionData.getId(), prefix);
+            removeOption(optionData, prefix, pictogramElement);
         } else {
-            setOption(optionData.getId(), value.toString(), prefix);
-        }
-    }
-
-    /**
-     * Set the option. Adds a new property to the property list unless the given
-     * key already exists.
-     * 
-     * @param id
-     *            the id of the property
-     * @param value
-     *            the value.
-     * @param prefix
-     *            the prefix for the storage
-     */
-    private void setOption(final String id, final String value,
-            final String prefix) {
-        EditPart part = getEditPart();
-        if (part instanceof IPictogramElementEditPart) {
-            final IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) part;
-            GraphitiLayoutInspector li = new GraphitiLayoutInspector(
-                    focusEditPart);
-            final TransactionalEditingDomain ed = li.getEditingDomain();
-            CommandStack cs = ed.getCommandStack();
-            cs.execute(new RecordingCommand(ed) {
-
-                @Override
-                protected void doExecute() {
-                    EList<Property> prop = focusEditPart.getPictogramElement()
-                            .getProperties();
-
-                    Iterator<Property> iter = prop.iterator();
-
-                    while (iter.hasNext()) {
-                        Property p = iter.next();
-
-                        String key = p.getKey();
-                        if (key.startsWith(prefix)) {
-                            key = key.replaceFirst(prefix, "");
-                            if (key.equals(id)) {
-                                p.setValue(value);
-                                return;
-                            }
-                        }
-                    }
-                    prop.add(new GraphitiLayoutProperty(prefix + id, value));
+            for (Property p : pictogramElement.getProperties()) {
+                String key = p.getKey();
+                if (key.startsWith(prefix)
+                        && key.substring(prefix.length()).equals(optionData.getId())) {
+                    p.setValue(value.toString());
+                    return;
                 }
-            });
+            }
+            
+            Property p = MmFactory.eINSTANCE.createProperty();
+            p.setKey(prefix + optionData.getId());
+            p.setValue(value.toString());
+            pictogramElement.getProperties().add(p);
         }
     }
 
     /**
-     * Remove an option from this EditPart.
+     * Remove an option from the given pictogram element.
      * 
-     * @param id
-     *            the id for the option
-     * @param prefix
-     *            the prefix for the option
+     * @param optionData layout option data
+     * @param prefix the prefix for storage
+     * @param pictogramElement the pictogram element
      */
-    private void removeOption(final String id, final String prefix) {
-        EditPart part = getEditPart();
-        removeOption(part, id, prefix);
-    }
+    private void removeOption(final LayoutOptionData<?> optionData, final String prefix,
+            final PictogramElement pictogramElement) {
+        Iterator<Property> iter = pictogramElement.getProperties().iterator();
+        while (iter.hasNext()) {
+            Property p = iter.next();
 
-    /**
-     * Remove the option from this EditPart and all its children.
-     * 
-     * @param id
-     *            the id for the option
-     * @param prefix
-     *            the prefix for the option
-     */
-    private void removeOptionRecursively(final String id, final String prefix) {
-        removeOptionRecursively(getEditPart(), id, prefix);
-    }
-
-    /**
-     * Recursively remove the given option from the given EditPart and all its
-     * children.
-     * 
-     * @param part
-     *            the EditPart
-     * @param id
-     *            the id for the option
-     * @param prefix
-     *            the prefix for the option
-     */
-    private static void removeOptionRecursively(final EditPart part,
-            final String id, final String prefix) {
-        removeOption(part, id, prefix);
-        if (part instanceof IPictogramElementEditPart) {
-            IPictogramElementEditPart picto = (IPictogramElementEditPart) part;
-            List<PictogramElement> children = picto.getModelChildren();
-            DiagramEditorInternal editor = picto.getConfigurationProvider()
-                    .getDiagramEditor();
-            for (PictogramElement child : children) {
-                GraphicalEditPart childPart = editor
-                        .getEditPartForPictogramElement(child);
-                removeOptionRecursively(childPart, id, prefix);
+            String key = p.getKey();
+            if (key.startsWith(prefix) && key.substring(prefix.length()).equals(optionData.getId())) {
+                iter.remove();
             }
         }
     }
 
     /**
-     * Remove an option from the given EditPart.
+     * Recursively remove the given option from the given pictogram element and all its children.
      * 
-     * @param part
-     *            the EditPart
-     * @param id
-     *            the id for the option
-     * @param prefix
-     *            the prefix for the option
+     * @param optionData layout option data
+     * @param prefix the prefix for storage
+     * @param pictogramElement the pictogram element
      */
-    private static void removeOption(final EditPart part, final String id,
-            final String prefix) {
-        if (part instanceof IPictogramElementEditPart) {
-            final IPictogramElementEditPart focusEditPart = (IPictogramElementEditPart) part;
-            GraphitiLayoutInspector li = new GraphitiLayoutInspector(
-                    focusEditPart);
-            final TransactionalEditingDomain ed = li.getEditingDomain();
-            CommandStack cs = ed.getCommandStack();
-            cs.execute(new RecordingCommand(ed) {
-
-                @Override
-                protected void doExecute() {
-                    EList<Property> prop = focusEditPart.getPictogramElement()
-                            .getProperties();
-
-                    Iterator<Property> iter = prop.iterator();
-
-                    while (iter.hasNext()) {
-                        Property p = iter.next();
-
-                        String key = p.getKey();
-                        if (key.startsWith(prefix)) {
-                            key = key.replaceFirst(prefix, "");
-                            if (key.equals(id)) {
-                                iter.remove();
-                            }
-                        }
-                    }
-                }
-            });
+    private void removeOptionRecursively(final LayoutOptionData<?> optionData,
+            final String prefix, final PictogramElement pictogramElement) {
+        removeOption(optionData, prefix, pictogramElement);
+        if (pictogramElement instanceof ContainerShape) {
+            for (Shape shape : ((ContainerShape) pictogramElement).getChildren()) {
+                removeOptionRecursively(optionData, prefix, shape);
+            }
         }
     }
 
@@ -368,7 +236,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      */
     @Override
     protected <T> T doGetProperty(final LayoutOptionData<T> optionData) {
-        T result = getProperty(optionData, PREFIX);
+        T result = getOption(optionData, PREFIX, getEditPart());
         if (result != null) {
             return result;
         }
@@ -384,7 +252,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     }
 
     /**
-     * Get the property with the given prefix from this editPart.
+     * Get a property from the given edit part.
      * 
      * @param <T>
      *            the type of the value of the option
@@ -392,30 +260,36 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      *            the layout option
      * @param prefix
      *            the prefix
-     * @return the value or null
+     * @param editPart an edit part
+     * @return the value of the option, or {@code null}
      */
-    private <T> T getProperty(final LayoutOptionData<T> optionData,
-            final String prefix) {
-        T result;
-        // check option value from notation model
-        if (super.getEditPart() instanceof IPictogramElementEditPart) {
-            // add user defined global layout options
-            IPictogramElementEditPart editPart = (IPictogramElementEditPart) super
-                    .getEditPart();
-
-            for (Property p : editPart.getPictogramElement().getProperties()) {
-                String key = p.getKey();
-                if (key.startsWith(prefix)) {
-                    key = key.replaceFirst(prefix, "");
-                    if (key.equals(optionData.getId())) {
-                        String value = p.getValue();
-                        if (value != null) {
-                            result = optionData.parseValue(value);
-                            if (result != null) {
-                                return result;
-                            }
-                        }
-                    }
+    private <T> T getOption(final LayoutOptionData<T> optionData, final String prefix,
+            final EditPart editPart) {
+        if (editPart instanceof IPictogramElementEditPart) {
+            return getOption(optionData, prefix, ((IPictogramElementEditPart) editPart)
+                    .getPictogramElement());
+        }
+        return null;
+    }
+    
+    /**
+     * Get a property from the given pictogram element.
+     * 
+     * @param <T> the type of the value of the option
+     * @param optionData the layout option
+     * @param prefix the prefix
+     * @param pictogramElement a pictogram element
+     * @return the value of the option, or {@code null}
+     */
+    private <T> T getOption(final LayoutOptionData<T> optionData, final String prefix,
+            final PictogramElement pictogramElement) {
+        for (Property p : pictogramElement.getProperties()) {
+            String key = p.getKey();
+            if (key.startsWith(prefix)
+                    && key.substring(prefix.length()).equals(optionData.getId())) {
+                T result = optionData.parseValue(p.getValue());
+                if (result != null) {
+                    return result;
                 }
             }
         }
@@ -429,88 +303,54 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      *            an edit part
      */
     public final void initialize(final IPictogramElementEditPart editPart) {
-        // find an appropriate property source and set the layout option targets
-        final IPictogramElementEditPart focusEditPart = editPart;
-
-        setFocus(focusEditPart);
-
-        String layoutHint = getLayoutHint();
-
+        setFocus(editPart);
         PictogramElement pe = editPart.getPictogramElement();
+        EditPart ep = (EditPart) editPart;
         if (pe instanceof Diagram) {
-            super.initialize(Target.PARENTS, getEditPart(), layoutHint);
-        } else if (pe instanceof ContainerShape) {
-            super.initialize(Target.NODES, getEditPart(), layoutHint);
-            List<PictogramElement> children = editPart.getModelChildren();
-            boolean hasPorts = false;
+            super.initialize(Target.PARENTS, ep, getLayoutHint(pe));
+        } else if (pe instanceof Shape) {
+            super.initialize(Target.NODES, ep, getLayoutHint(((Shape) pe).getContainer()));
             boolean hasChildren = false;
-            for (PictogramElement pe1 : children) {
-                if (pe1 instanceof Anchor) {
-                    hasPorts = true;
-                } else {
-                    hasChildren = true;
+            if (pe instanceof ContainerShape) {
+                // the same check for relevant children as in the layout manager must be made here
+                for (Shape child : ((ContainerShape) pe).getChildren()) {
+                    for (Anchor anchor : ((Shape) child).getAnchors()) {
+                        if (anchor instanceof ChopboxAnchor) {
+                            hasChildren = true;
+                            break;
+                        }
+                    }
                 }
             }
             if (hasChildren) {
-                super.initialize(Target.EDGES, getEditPart(), layoutHint);
-                super.initialize(Target.PARENTS, getEditPart(), layoutHint);
+                super.initialize(Target.PARENTS, ep, getLayoutHint(pe));
             }
-            if (hasPorts) {
-                super.initialize(Target.PORTS, getEditPart(), layoutHint);
-            }
-
         } else if (pe instanceof Connection) {
-            super.initialize(Target.EDGES, getEditPart(), layoutHint);
+            ContainerShape parent = ((Shape) ((Connection) pe).getStart().getParent()).getContainer();
+            super.initialize(Target.EDGES, ep, getLayoutHint(parent));
         } else if (pe instanceof Anchor) {
-            super.initialize(Target.PORTS, getEditPart(), layoutHint);
+            ContainerShape parent = ((Shape) ((Anchor) pe).getParent()).getContainer();
+            super.initialize(Target.PORTS, ep, getLayoutHint(parent));
         }
     }
 
     /**
-     * Get the layout hint either from this EditPart or the diagram default.
+     * Get the layout hint either from the given pictogram element or the diagram default.
      * 
-     * @return the layout hint or null
+     * @return the layout hint or {@code null}
      */
-    private String getLayoutHint() {
-        String result = getPropertyValue(LayoutOptions.LAYOUTER_HINT_ID, PREFIX);
-        if (result == null) {
-            result = getDiagramDefault(LayoutOptions.LAYOUTER_HINT_ID);
+    private String getLayoutHint(final PictogramElement pictogramElement) {
+        LayoutOptionData<?> layoutHintData = LayoutServices.getInstance()
+                .getLayoutOptionData(LayoutOptions.LAYOUTER_HINT_ID);
+        String result = (String) getOption(layoutHintData, PREFIX, pictogramElement);
+        if (result == null && pictogramElement instanceof Shape) {
+            Shape container = (Shape) pictogramElement;
+            while (!(container instanceof Diagram)) {
+                container = container.getContainer();
+            }
+            result = (String) getOption(layoutHintData, DIAG_PREFIX, container);
         }
         return result;
-    }
-
-    /**
-     * Get a property value from this editpart.
-     * 
-     * @param key
-     *            the key
-     * @param prefix
-     *            the prefix
-     * @return the value or null
-     */
-    private String getPropertyValue(final String key, final String prefix) {
-        List<Property> list = getProperties(
-                (IPictogramElementEditPart) getEditPart(), prefix);
-        for (Property p : list) {
-            if (p.getKey().equals(key)) {
-                return p.getValue();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Get the layout properties from the given EditPart.
-     * 
-     * @param editPart
-     *            the edit part
-     * @param prefix
-     *            the prefix to search for
-     * @return the list of properties
-     */
-    public static List<Property> getProperties(
-            final IPictogramElementEditPart editPart, final String prefix) {
-        return getProperties(editPart.getPictogramElement(), prefix);
     }
 
     /**
@@ -525,15 +365,15 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     public static List<Property> getProperties(final PictogramElement pe,
             final String prefix) {
         List<Property> result = new LinkedList<Property>();
-
-        EList<Property> prop = pe.getProperties();
-
-        for (Property p : prop) {
+        for (Property p : pe.getProperties()) {
             if (p.getKey().startsWith(prefix)) {
-                String key = p.getKey().replaceFirst(prefix, "");
+                String key = p.getKey().substring(prefix.length());
                 String value = p.getValue();
 
-                result.add(new GraphitiLayoutProperty(key, value));
+                Property p2 = MmFactory.eINSTANCE.createProperty();
+                p2.setKey(key);
+                p2.setValue(value);
+                result.add(p2);
             }
         }
         return result;
@@ -549,14 +389,13 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     protected void addProperties(final Map<IProperty<?>, Object> options) {
         super.addProperties(options);
 
-        EditPart part = super.getEditPart();
-
+        EditPart part = getEditPart();
         if (part instanceof IPictogramElementEditPart) {
             // add user defined global layout options
-            IPictogramElementEditPart editPart = (IPictogramElementEditPart) part;
-            Diagram diag = editPart.getConfigurationProvider().getDiagram();
-            addOptions(options, true, getProperties(diag, DIAG_PREFIX));
-            addOptions(options, false, getProperties(editPart, PREFIX));
+            IPictogramElementEditPart pePart = (IPictogramElementEditPart) part;
+            addOptions(options, getProperties(pePart.getConfigurationProvider().getDiagram(),
+                    DIAG_PREFIX));
+            addOptions(options, getProperties(pePart.getPictogramElement(), PREFIX));
         }
     }
 
@@ -565,13 +404,11 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      * 
      * @param options
      *            map to add the options to
-     * @param onlyDefault
-     *            true if only defaults should be added
      * @param props
      *            the list of properties
      */
     private static void addOptions(final Map<IProperty<?>, Object> options,
-            final boolean onlyDefault, final List<Property> props) {
+            final List<Property> props) {
         LayoutServices layoutServices = LayoutServices.getInstance();
         for (Property option : props) {
             LayoutOptionData<?> optionData = layoutServices
@@ -585,74 +422,36 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDiagramDefault(final LayoutOptionData<?> optionData,
             final Object value) {
-        removeOptionRecursively(optionData.getId(), PREFIX);
-        doSetProperty(optionData, value, DIAG_PREFIX);
+        EditPart part = getEditPart();
+        if (part instanceof IPictogramElementEditPart) {
+            IPictogramElementEditPart pePart = (IPictogramElementEditPart) part;
+            Diagram diagram = pePart.getConfigurationProvider().getDiagram();
+            removeOptionRecursively(optionData, PREFIX, diagram);
+            setOption(optionData, value, DIAG_PREFIX, diagram);
+        }
     }
 
     /**
      * Returns the default value for the selected diagram.
      * 
-     * @param <T>
-     *            type of option
-     * @param optionData
-     *            a layout option
-     * @return the current diagram-default value
+     * @param <T> type of option
+     * @param optionData layout option data
+     * @return the current diagram-default value, or {@code null}
      */
     public <T> T getDiagramDefault(final LayoutOptionData<T> optionData) {
-        T result;
         EditPart part = getEditPart();
         if (part instanceof IPictogramElementEditPart) {
-            IPictogramElementEditPart picto = (IPictogramElementEditPart) part;
-            List<Property> props = picto.getConfigurationProvider()
-                    .getDiagram().getProperties();
-            for (Property p : props) {
-                String key = p.getKey();
-                if (key.startsWith(DIAG_PREFIX)) {
-                    key = key.replaceFirst(DIAG_PREFIX, "");
-                    if (key.equals(optionData.getId())) {
-                        String value = p.getValue();
-                        if (value != null) {
-                            result = optionData.parseValue(value);
-                            if (result != null) {
-                                return result;
-                            }
-                        }
-                    }
-                }
-            }
+            IPictogramElementEditPart pePart = (IPictogramElementEditPart) part;
+            Diagram diagram = pePart.getConfigurationProvider().getDiagram();
+            return getOption(optionData, DIAG_PREFIX, diagram);
         }
         return null;
     }
-
-    /**
-     * Get the diagram default for the given key.
-     * 
-     * @param id
-     *            the id of the option
-     * @return the diagram default.
-     */
-    public String getDiagramDefault(final String id) {
-        EditPart part = getEditPart();
-        if (part instanceof IPictogramElementEditPart) {
-            IPictogramElementEditPart picto = (IPictogramElementEditPart) part;
-            List<Property> props = picto.getConfigurationProvider()
-                    .getDiagram().getProperties();
-            for (Property p : props) {
-                String key = p.getKey();
-                if (key.startsWith(DIAG_PREFIX)) {
-                    key = key.replaceFirst(DIAG_PREFIX, "");
-                    if (key.equals(id)) {
-                        String value = p.getValue();
-                        if (value != null) {
-                            return value;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
+    
 }

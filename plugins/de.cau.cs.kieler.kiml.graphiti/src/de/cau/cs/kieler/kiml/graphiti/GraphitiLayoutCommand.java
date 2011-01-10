@@ -110,12 +110,12 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             KShapeLayout parentLayout = kport.getNode().getData(KShapeLayout.class);
             double parentWidth = parentLayout.getWidth();
             double parentHeight = parentLayout.getHeight();
-            double offetx = anchor.getGraphicsAlgorithm().getX();
+            double offsetx = anchor.getGraphicsAlgorithm().getX();
             double offsety = anchor.getGraphicsAlgorithm().getY();
             double x = shapeLayout.getXpos();
             double y = shapeLayout.getYpos();
-            double relWidth = ((x - offetx) / parentWidth);
-            double relHeight = ((y - offsety) / parentHeight);
+            double relWidth = (x - offsetx) / parentWidth;
+            double relHeight = (y - offsety) / parentHeight;
 
             anchor.setRelativeWidth(relWidth);
             anchor.setRelativeHeight(relHeight);
