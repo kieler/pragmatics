@@ -18,12 +18,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.graphiti.mm.MmFactory;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -314,7 +314,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
             if (pe instanceof ContainerShape) {
                 // the same check for relevant children as in the layout manager must be made here
                 for (Shape child : ((ContainerShape) pe).getChildren()) {
-                    for (Anchor anchor : ((Shape) child).getAnchors()) {
+                    for (Anchor anchor : child.getAnchors()) {
                         if (anchor instanceof ChopboxAnchor) {
                             hasChildren = true;
                             break;

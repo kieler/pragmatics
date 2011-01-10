@@ -49,6 +49,7 @@ import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
@@ -271,6 +272,11 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         return parentHasChildren;
     }
 
+    /** minimal value for the relative location of head labels. */
+    private static final double HEAD_LOCATION = 0.7;
+    /** maximal value for the relative location of tail labels. */
+    private static final double TAIL_LOCATION = 0.3;
+    
     /**
      * Creates new edges and takes care of the labels for each connection
      * identified in the {@code buildLayoutGraphRecursively} method.
@@ -323,6 +329,18 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     label.setText(labelText);
                     edge.getLabels().add(label);
                     graphElem2PictElemMap.put(label, decorator);
+                    
+                    // set label placement
+                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                    EdgeLabelPlacement placement = EdgeLabelPlacement.CENTER;
+                    if (decorator.isLocationRelative()) {
+                        if (decorator.getLocation() >= HEAD_LOCATION) {
+                            placement = EdgeLabelPlacement.HEAD;
+                        } else if (decorator.getLocation() <= TAIL_LOCATION) {
+                            placement = EdgeLabelPlacement.TAIL;
+                        }
+                    }
+                    labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
                 }
             }
 

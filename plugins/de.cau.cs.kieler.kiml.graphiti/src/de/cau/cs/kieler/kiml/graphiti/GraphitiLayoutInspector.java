@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.graphiti;
 
+import java.util.List;
+
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -51,7 +53,12 @@ public class GraphitiLayoutInspector implements ILayoutInspector {
      * {@inheritDoc}
      */
     public EObject getFocusModel() {
-        return focusEditPart.getPictogramElement();
+        List<EObject> businessObjects = focusEditPart.getPictogramElement().getLink()
+                .getBusinessObjects();
+        if (!businessObjects.isEmpty()) {
+            return businessObjects.get(0);
+        }
+        return null;
     }
 
     /**
