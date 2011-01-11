@@ -14,8 +14,10 @@
 package de.cau.cs.kieler.kiml.graphiti;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.emf.transaction.RecordingCommand;
@@ -54,6 +56,8 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             = new LinkedList<Pair<KGraphElement, PictogramElement>>();
     /** the feature provider for layout support. */
     private IFeatureProvider featureProvider;
+    /** map of edge layouts to corresponding vector chains. */
+    private Map<KEdgeLayout, KVectorChain> bendpointsMap = new HashMap<KEdgeLayout, KVectorChain>();
 
     /**
      * Creates a Graphiti layout command.
@@ -94,6 +98,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                 applyEdgeLabelLayout((KLabel) element, entry.getSecond());
             }
         }
+        bendpointsMap.clear();
     }
 
     /**
@@ -219,7 +224,16 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
         ConnectionDecorator decorator = (ConnectionDecorator) pelem;
         KEdge kedge = (KEdge) klabel.getParent();
-        KVectorChain bendPoints = KimlUtil.toVectorChain(kedge.getData(KEdgeLayout.class));
+        
+        // get vector chain for the bend points of the edge
+        KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+        KVectorChain bendPoints = bendpointsMap.get(edgeLayout);
+        if (bendPoints == null) {
+            bendPoints = KimlUtil.toVectorChain(edgeLayout);
+            bendpointsMap.put(edgeLayout, bendPoints);
+        }
+        
+        // calculate reference point for the label
         KVector referencePoint;
         if (decorator.isLocationRelative()) {
             referencePoint = bendPoints.getPointOnLine(decorator.getLocation()
@@ -228,17 +242,9 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             referencePoint = bendPoints.getPointOnLine(decorator.getLocation());
         }
         
-        // get absolute location of the label
-        KNode parent = kedge.getSource();
-        if (!KimlUtil.isDescendant(kedge.getTarget(), parent)) {
-            parent = parent.getParent();
-        }
         KShapeLayout shapeLayout = klabel.getData(KShapeLayout.class);
-        KVector location = new KVector(shapeLayout.getXpos(), shapeLayout.getYpos());
-        KimlUtil.toAbsolute(location, parent);
-        
-        ga.setX((int) Math.round(location.x - referencePoint.x));
-        ga.setY((int) Math.round(location.y - referencePoint.y));
+        ga.setX((int) Math.round(shapeLayout.getXpos() - referencePoint.x));
+        ga.setY((int) Math.round(shapeLayout.getYpos() - referencePoint.y));
     }
 
 }
