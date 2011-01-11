@@ -212,10 +212,9 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
                 && sourcePY > sourceY - sourceHeight && sourcePY < sourceY + sourceHeight) {
             sourcePX = sourceX + sourceWidth;
         }
-        KPoint sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+        KPoint sourcePoint = edgeLayout.getSourcePoint();
         sourcePoint.setX(sourcePX);
         sourcePoint.setY(sourcePY);
-        edgeLayout.setSourcePoint(sourcePoint);
         
         float targetPX = sourceX;
         if (sourceX > targetY + targetWidth) {
@@ -233,10 +232,9 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
                 && targetPY > targetY - targetHeight && targetPY < targetY + targetHeight) {
             targetPY = targetY + targetHeight;
         }
-        KPoint targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+        KPoint targetPoint = edgeLayout.getTargetPoint();
         targetPoint.setX(targetPX);
         targetPoint.setY(targetPY);
-        edgeLayout.setTargetPoint(targetPoint);
         
         edgeLayout.getBendPoints().clear();
         int bendsNum = random.nextInt(MAX_BENDS);

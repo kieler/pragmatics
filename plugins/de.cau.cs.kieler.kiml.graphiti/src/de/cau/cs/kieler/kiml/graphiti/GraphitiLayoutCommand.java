@@ -28,7 +28,6 @@ import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.FreeFormConnection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.ui.internal.services.GraphitiUiInternal;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -36,6 +35,7 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -47,7 +47,6 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  *
  * @author msp
  */
-@SuppressWarnings("restriction")
 public class GraphitiLayoutCommand extends RecordingCommand {
     
     /** list of graph elements and pictogram elements to layout. */
@@ -219,17 +218,17 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     private void applyEdgeLabelLayout(final KLabel klabel, final PictogramElement pelem) {
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
         ConnectionDecorator decorator = (ConnectionDecorator) pelem;
-        org.eclipse.draw2d.geometry.Point referencePoint;
+        KEdge kedge = (KEdge) klabel.getParent();
+        KVectorChain bendPoints = KimlUtil.toVectorChain(kedge.getData(KEdgeLayout.class));
+        KVector referencePoint;
         if (decorator.isLocationRelative()) {
-                referencePoint = GraphitiUiInternal.getGefService().getConnectionPointAt(
-                        decorator.getConnection(), decorator.getLocation());
+            referencePoint = bendPoints.getPointOnLine(decorator.getLocation()
+                    * bendPoints.getLength());
         } else {
-                referencePoint = GraphitiUiInternal.getGefService().getAbsolutePointOnConnection(
-                        decorator.getConnection(), decorator.getLocation());
+            referencePoint = bendPoints.getPointOnLine(decorator.getLocation());
         }
         
         // get absolute location of the label
-        KEdge kedge = (KEdge) klabel.getParent();
         KNode parent = kedge.getSource();
         if (!KimlUtil.isDescendant(kedge.getTarget(), parent)) {
             parent = parent.getParent();
@@ -238,8 +237,8 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         KVector location = new KVector(shapeLayout.getXpos(), shapeLayout.getYpos());
         KimlUtil.toAbsolute(location, parent);
         
-        ga.setX((int) location.x - referencePoint.x);
-        ga.setY((int) location.y - referencePoint.y);        
+        ga.setX((int) Math.round(location.x - referencePoint.x));
+        ga.setY((int) Math.round(location.y - referencePoint.y));
     }
 
 }

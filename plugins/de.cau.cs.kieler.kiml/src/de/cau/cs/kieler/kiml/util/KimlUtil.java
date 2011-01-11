@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -27,6 +28,7 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
@@ -738,6 +740,52 @@ public final class KimlUtil {
             }
             addDummyEdgesForInterlevelConnections(child);
         }
+    }
+    
+    /**
+     * Create a vector chain from the given edge layout.
+     * 
+     * @param edgeLayout an edge layout
+     * @return a vector chain with source point, bend points, and target point
+     */
+    public static KVectorChain toVectorChain(final KEdgeLayout edgeLayout) {
+        KVectorChain vectorChain = new KVectorChain();
+        KPoint sourcePoint = edgeLayout.getSourcePoint();
+        vectorChain.add(sourcePoint.getX(), sourcePoint.getY());
+        for (KPoint bendPoint : edgeLayout.getBendPoints()) {
+            vectorChain.add(bendPoint.getX(), bendPoint.getY());
+        }
+        KPoint targetPoint = edgeLayout.getTargetPoint();
+        vectorChain.add(targetPoint.getX(), targetPoint.getY());        
+        return vectorChain;
+    }
+    
+    /**
+     * Apply the points of a vector chain to the given edge layout.
+     * 
+     * @param edgeLayout an edge layout
+     * @param vectorChain a vector chain with source point, bend points, and target point
+     */
+    public static void applyVectorChain(final KEdgeLayout edgeLayout, final KVectorChain vectorChain) {
+        KPoint sourcePoint = edgeLayout.getSourcePoint();
+        KVector firstPoint = vectorChain.getFirst();
+        sourcePoint.setX((float) firstPoint.x);
+        sourcePoint.setY((float) firstPoint.y);
+        
+        edgeLayout.getBendPoints().clear();
+        ListIterator<KVector> pointIter = vectorChain.listIterator(1);
+        while (pointIter.nextIndex() < vectorChain.size() - 1) {
+            KPoint bendPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+            KVector nextPoint = pointIter.next();
+            bendPoint.setX((float) nextPoint.x);
+            bendPoint.setY((float) nextPoint.y);
+            edgeLayout.getBendPoints().add(bendPoint);
+        }
+        
+        KPoint targetPoint = edgeLayout.getTargetPoint();
+        KVector lastPoint = vectorChain.getLast();
+        targetPoint.setX((float) lastPoint.x);
+        targetPoint.setY((float) lastPoint.y);
     }
 
 }

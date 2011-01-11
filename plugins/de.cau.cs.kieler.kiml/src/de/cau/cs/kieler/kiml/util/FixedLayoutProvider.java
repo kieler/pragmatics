@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.util;
 
-import java.util.ListIterator;
-
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -25,8 +23,6 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -108,27 +104,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         if (bendPoints == null || bendPoints.size() < 2) {
             edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
         } else {
-            KPoint sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-            KVector firstPoint = bendPoints.getFirst();
-            sourcePoint.setX((float) firstPoint.x);
-            sourcePoint.setY((float) firstPoint.y);
-            edgeLayout.setSourcePoint(sourcePoint);
-            
-            edgeLayout.getBendPoints().clear();
-            ListIterator<KVector> pointIter = bendPoints.listIterator(1);
-            while (pointIter.nextIndex() < bendPoints.size() - 1) {
-                KPoint bendPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                KVector nextPoint = pointIter.next();
-                bendPoint.setX((float) nextPoint.x);
-                bendPoint.setY((float) nextPoint.y);
-                edgeLayout.getBendPoints().add(bendPoint);
-            }
-            
-            KPoint targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-            KVector lastPoint = bendPoints.getLast();
-            targetPoint.setX((float) lastPoint.x);
-            targetPoint.setY((float) lastPoint.y);
-            edgeLayout.setTargetPoint(targetPoint);
+            KimlUtil.applyVectorChain(edgeLayout, bendPoints);
         }
         
         for (KLabel label : edge.getLabels()) {
