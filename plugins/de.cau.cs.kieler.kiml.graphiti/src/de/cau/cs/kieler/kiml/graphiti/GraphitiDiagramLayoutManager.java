@@ -34,7 +34,6 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.editor.GraphitiScrollingGraphicalViewer;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.ui.IEditorPart;
 
@@ -44,6 +43,8 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.model.graphiti.GraphitiEditingProvider;
+import de.cau.cs.kieler.core.ui.IEditingProvider;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -55,7 +56,6 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -89,14 +89,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    public EditPart getCurrentEditPart() {
-        return layoutRootPart;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected boolean supports(final IEditorPart editorPart) {
         return editorPart instanceof DiagramEditor;
     }
@@ -107,6 +99,34 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     @Override
     protected boolean supports(final EditPart editPart) {
         return editPart instanceof IPictogramElementEditPart;
+    }
+    
+    /** the editing provider for this layout manager. */
+    private GraphitiEditingProvider editingProvider = new GraphitiEditingProvider();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IEditingProvider getProvider() {
+        return editingProvider;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ILayoutConfig getLayoutConfig(final EditPart editPart) {
+        GraphitiLayoutConfig config = new GraphitiLayoutConfig();
+        if (editPart instanceof IPictogramElementEditPart) {
+            config.initialize((IPictogramElementEditPart) editPart);
+        } else {
+            IPictogramElementEditPart rootPart = getEditPartFromDiagramEditorInternal2(editPart);
+            if (rootPart != null) {
+                config.initialize(rootPart);
+            }
+        }
+        return config;
     }
 
     /**
@@ -380,50 +400,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ILayoutInspector getInspector(final EditPart editPart) {
-        if (editPart instanceof IPictogramElementEditPart) {
-            return new GraphitiLayoutInspector((IPictogramElementEditPart) editPart);
-        }
-        IPictogramElementEditPart content = getEditPartFromDiagramEditorInternal2(editPart);
-        if (content != null) {
-            return new GraphitiLayoutInspector(content);
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ILayoutInspector getInspector(final IEditorPart editorPart) {
-        if (editorPart instanceof DiagramEditor) {
-            DiagramEditor ed = (DiagramEditor) editorPart;
-            return getInspector(ed.getGraphicalViewer().getRootEditPart());
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ILayoutConfig getLayoutConfig(final EditPart editPart) {
-        GraphitiLayoutConfig config = new GraphitiLayoutConfig();
-        if (editPart instanceof IPictogramElementEditPart) {
-            config.initialize((IPictogramElementEditPart) editPart);
-        } else {
-            IPictogramElementEditPart rootPart = getEditPartFromDiagramEditorInternal2(editPart);
-            if (rootPart != null) {
-                config.initialize(rootPart);
-            }
-        }
-        return config;
-    }
-
-    /**
      * In some cases the EditPart passed to the methods is the mysterious
      * DiagramEditorInternal$2. This method tries to get the root edit part from
      * the corresponding diagram.
@@ -522,17 +498,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                         .removeSelectionChangedListener(pair.getSecond());
             }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ISelection getSelection(final IEditorPart editorPart) {
-        if (editorPart instanceof DiagramEditor) {
-            return ((DiagramEditor) editorPart).getGraphicalViewer().getSelection();
-        }
-        return null;
     }
 
 }

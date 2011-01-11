@@ -40,7 +40,6 @@ import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -164,8 +163,7 @@ public class SelectionInfoAction extends Action {
         if (editPart != null) {
             builder.append("<b>Edit part class</b><ul><li>"
                     + editPart.getClass().getName() + "</li></ul>");
-            ILayoutInspector inspector = manager.getInspector(editPart);
-            EObject model = inspector.getFocusModel();
+            EObject model = manager.getProvider().getElement(editPart);
             if (model != null) {
                 builder.append("<b>Domain model class</b><ul><li>"
                         + model.eClass().getInstanceTypeName() + "</li></ul>");

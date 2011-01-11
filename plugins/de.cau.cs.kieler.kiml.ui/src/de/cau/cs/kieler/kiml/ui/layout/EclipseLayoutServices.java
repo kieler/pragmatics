@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorPart;
@@ -34,6 +35,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.ui.IEditingProvider;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
@@ -176,16 +178,16 @@ public class EclipseLayoutServices extends LayoutServices {
     }
 
     /**
-     * Retrieve an inspector for the given edit part using the most suitable
+     * Retrieve an editing provider for the given edit part using the most suitable
      * layout manager.
      * 
-     * @param editPart the edit part for which the inspector should be fetched
-     * @return an inspector for the edit part, or {@code null}
+     * @param editPart the edit part for which the editing provider should be fetched
+     * @return an editing provider for the edit part, or {@code null}
      */
-    public ILayoutInspector getInspector(final EditPart editPart) {
+    public IEditingProvider getEditingProvider(final EditPart editPart) {
         DiagramLayoutManager manager = getManager(null, editPart);
         if (manager != null) {
-            return manager.getInspector(editPart);
+            return manager.getProvider();
         }
         return null;
     }
@@ -200,8 +202,8 @@ public class EclipseLayoutServices extends LayoutServices {
     public ILayoutConfig getLayoutConfig(final IEditorPart editorPart) {
         DiagramLayoutManager manager = getManager(editorPart, null);
         if (manager != null) {
-            ILayoutInspector inspector = manager.getInspector(editorPart);
-            return manager.getLayoutConfig(inspector.getFocusPart());
+            EditPart diagramEditPart = manager.getProvider().getEditPart(editorPart);
+            return manager.getLayoutConfig(diagramEditPart);
         }
         return null;
     }
@@ -385,15 +387,17 @@ public class EclipseLayoutServices extends LayoutServices {
     public void storeOption(final EditPart editPart, final LayoutOptionData<?> optionData,
             final String valueString, final boolean storeDomainModel) {
         Object value = optionData.parseValue(valueString);
-        if (value != null) {
-            ILayoutInspector inspector = getInspector(editPart);
-            if (inspector != null) {
-                String clazzName;
-                if (storeDomainModel) {
-                    clazzName = inspector.getFocusModel().eClass().getInstanceTypeName();
-                } else {
-                    clazzName = inspector.getFocusPart().getClass().getName();
-                }
+        IEditingProvider editingProvider = getEditingProvider(editPart);
+        if (value != null && editingProvider != null) {
+            String clazzName;
+            if (storeDomainModel) {
+                EObject model = editingProvider.getElement(editPart);
+                clazzName = model == null ? null : model.eClass().getInstanceTypeName();
+            } else {
+                EditPart relevantPart = editingProvider.getEditPart(editPart);
+                clazzName = relevantPart == null ? null : relevantPart.getClass().getName();
+            }
+            if (clazzName != null) {
                 registry().addOption(clazzName, optionData.getId(), value);
                 registeredElements.add(clazzName);
                 IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();

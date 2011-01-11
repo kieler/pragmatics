@@ -43,7 +43,6 @@ import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.gmf.GmfLayoutConfig;
-import de.cau.cs.kieler.kiml.gmf.GmfLayoutInspector;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;

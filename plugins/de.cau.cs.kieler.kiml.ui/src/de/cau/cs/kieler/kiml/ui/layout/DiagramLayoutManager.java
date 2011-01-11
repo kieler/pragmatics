@@ -21,12 +21,12 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.ZoomManager;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.ui.IEditingProvider;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
@@ -217,8 +217,7 @@ public abstract class DiagramLayoutManager {
     public final void applyAndZoom(final int nodeCount, final boolean animate,
             final boolean cacheLayout) {
         // determine pre- or post-layout zoom
-        ILayoutInspector inspector = getInspector(getCurrentEditPart());
-        final ZoomManager zoomManager = inspector.getZoomManager();
+        final ZoomManager zoomManager = getProvider().getZoomManager(getEditPart(getLayoutGraph()));
         KNode parentNode = getLayoutGraph();
         while (parentNode.getParent() != null) {
             parentNode = parentNode.getParent();
@@ -373,15 +372,6 @@ public abstract class DiagramLayoutManager {
     
     /*-------------------------------------------------------------------------------------------*/
     /*------------------- Abstract methods to be implemented by subclasses ----------------------*/
-    // FIXME which methods could go to ILayoutInspector?
-    
-    /**
-     * Returns the currently processed top level edit part. This is only valid after
-     * {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was called.
-     * 
-     * @return the currently processed edit part
-     */
-    public abstract EditPart getCurrentEditPart();
 
     /**
      * Determines whether this layout manager is able to perform layout for the
@@ -423,22 +413,12 @@ public abstract class DiagramLayoutManager {
             EditPart editPart, boolean layoutAncestors);
     
     /**
-     * Returns a layout inspector for the given edit part.
+     * Returns an editing provider for this layout manager.
      * 
-     * @param editPart an edit part
-     * @return a layout inspector for the edit part, or {@code null} if the edit part
-     *     is not supported
+     * @return an editing provider that is suitable for diagrams that are managed by
+     *     this layout manager
      */
-    public abstract ILayoutInspector getInspector(EditPart editPart);
-    
-    /**
-     * Returns a layout inspector for the given editor part.
-     * 
-     * @param editorPart an editor part
-     * @return a layout inspector for the editor part, or {@code null} if the editor part
-     *     is not supported
-     */
-    public abstract ILayoutInspector getInspector(IEditorPart editorPart);
+    public abstract IEditingProvider getProvider();
     
     /**
      * Returns a layout configuration for the given edit part. If {@code editPart} is
@@ -496,14 +476,5 @@ public abstract class DiagramLayoutManager {
      * @param listener listener to remove
      */
     public abstract void removeChangeListener(IEditorChangeListener listener);
-    
-    /**
-     * Returns the current selection for the given editor part.
-     * 
-     * @param editorPart an editor part
-     * @return the current selection, or {@code null} if the selection cannot
-     *     be determined
-     */
-    public abstract ISelection getSelection(IEditorPart editorPart);
     
 }

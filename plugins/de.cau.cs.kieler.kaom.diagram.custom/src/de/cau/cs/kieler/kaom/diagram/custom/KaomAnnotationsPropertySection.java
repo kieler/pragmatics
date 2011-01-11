@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.kaom.diagram.custom;
 
 import de.cau.cs.kieler.core.annotations.ui.properties.AnnotationsPropertySection;
-import de.cau.cs.kieler.core.model.GmfDomainProvider;
+import de.cau.cs.kieler.core.model.GmfEditingProvider;
 
 /**
  * A property section implementation to display annotations of KAOM diagrams.
@@ -27,7 +27,7 @@ public class KaomAnnotationsPropertySection extends AnnotationsPropertySection {
      * Creates a property section for KAOM annotations.
      */
     public KaomAnnotationsPropertySection() {
-        super(new GmfDomainProvider());
+        super(new GmfEditingProvider());
     }
 
 }

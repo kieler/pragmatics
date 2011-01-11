@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.action.Action;
@@ -26,7 +27,6 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -69,10 +69,11 @@ public class DiagramDefaultAction extends Action {
             EditPart diagram = (EditPart) graphEditor.getAdapter(EditPart.class);
             DiagramLayoutManager manager = layoutView.getCurrentManager();
             if (manager != null) {
-                ILayoutInspector inspector = manager.getInspector(diagram);
+                TransactionalEditingDomain editingDomain = manager.getProvider()
+                        .getEditingDomain(diagram);
                 ILayoutConfig config = manager.getLayoutConfig(diagram);
                 for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                    applyOption(inspector, config, entry);
+                    applyOption(editingDomain, config, entry);
                 }
             }
         }
@@ -82,11 +83,11 @@ public class DiagramDefaultAction extends Action {
      * Sets the layout option of the given property sheet entry as default for the whole
      * diagram.
      * 
-     * @param inspector a layout inspector
+     * @param editingDomain the editing domain
      * @param config a layout configuration
      * @param entry a property sheet entry
      */
-    private void applyOption(final ILayoutInspector inspector,
+    private void applyOption(final TransactionalEditingDomain editingDomain,
             final ILayoutConfig config, final IPropertySheetEntry entry) {
         final LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(
                 layoutView.getCurrentProviderData(), entry.getDisplayName());
@@ -106,7 +107,7 @@ public class DiagramDefaultAction extends Action {
                     config.setDiagramDefault(optionData, value);
                 }
             };
-            KimlUiUtil.runModelChange(modelChange, inspector.getEditingDomain(),
+            KimlUiUtil.runModelChange(modelChange, editingDomain,
                     Messages.getString("kiml.ui.13"));
         }
     }

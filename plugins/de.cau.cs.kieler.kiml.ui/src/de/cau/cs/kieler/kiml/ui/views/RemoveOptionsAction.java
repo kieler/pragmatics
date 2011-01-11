@@ -71,7 +71,7 @@ public class RemoveOptionsAction extends Action {
                         }
                     };
                     KimlUiUtil.runModelChange(runnable,
-                            manager.getInspector(diagram).getEditingDomain(),
+                            manager.getProvider().getEditingDomain(diagram),
                             Messages.getString("kiml.ui.30"));
                 }
             }

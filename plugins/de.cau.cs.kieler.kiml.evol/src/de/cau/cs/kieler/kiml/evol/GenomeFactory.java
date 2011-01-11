@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
@@ -49,7 +50,6 @@ import de.cau.cs.kieler.kiml.evol.genetic.UniversalNumberGene;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 
 /**
@@ -664,8 +664,9 @@ final class GenomeFactory {
         for (final ILayoutConfig config : configs) {
             if (config instanceof EclipseLayoutConfig) {
                 EditPart editPart = ((EclipseLayoutConfig) config).getEditPart();
-                ILayoutInspector inspector = layoutServices.getInspector(editPart);
-                LayoutPropertySource source = new LayoutPropertySource(config, inspector);
+                TransactionalEditingDomain editingDomain = layoutServices.getEditingProvider(editPart)
+                        .getEditingDomain(editPart);
+                LayoutPropertySource source = new LayoutPropertySource(config, editingDomain);
                 IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();
 
                 for (final IPropertyDescriptor pd : propertyDescriptors) {

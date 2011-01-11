@@ -77,10 +77,10 @@ public class SetOptionsEffect extends AbstractEffect {
         final EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
         DiagramLayoutManager manager = layoutServices.getManager(null, editPart.get());
         if (manager != null) {
-            ILayoutInspector layoutInspector = manager.getInspector(editPart.get());
             final ILayoutConfig layoutConfig = manager.getLayoutConfig(editPart.get());
-            if (layoutInspector != null && layoutConfig != null) {
-                TransactionalEditingDomain editingDomain = layoutInspector.getEditingDomain();
+            if (layoutConfig != null) {
+                TransactionalEditingDomain editingDomain = manager.getProvider()
+                        .getEditingDomain(editPart.get());
                 KimlUiUtil.runModelChange(new Runnable() {
                     public void run() {
                         for (Map.Entry<String, Object> entry : optionMap.entrySet()) {

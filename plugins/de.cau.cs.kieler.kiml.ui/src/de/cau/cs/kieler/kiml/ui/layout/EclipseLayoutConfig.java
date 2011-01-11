@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.ui.IEditingProvider;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -44,9 +45,11 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * @return the current value for the given option, or {@code null}
      */
     public static Object getOption(final EditPart editPart, final String optionId) {
-        ILayoutInspector inspector = EclipseLayoutServices.getInstance().getInspector(editPart);
-        if (inspector != null) {
-            return getOption(inspector.getFocusPart(), inspector.getFocusModel(), optionId);
+        IEditingProvider editingProvider = EclipseLayoutServices.getInstance()
+                .getEditingProvider(editPart);
+        if (editingProvider != null) {
+            return getOption(editingProvider.getEditPart(editPart),
+                    editingProvider.getElement(editPart), optionId);
         }
         return null;
     }

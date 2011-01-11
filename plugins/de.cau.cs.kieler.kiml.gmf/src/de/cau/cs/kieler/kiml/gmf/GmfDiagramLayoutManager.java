@@ -47,7 +47,6 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorPart;
@@ -57,6 +56,8 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.model.GmfEditingProvider;
+import de.cau.cs.kieler.core.ui.IEditingProvider;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -71,7 +72,6 @@ import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -213,43 +213,15 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         }
     }
 
+    /** the editing provider for this layout manager. */
+    private GmfEditingProvider editingProvider = new GmfEditingProvider();
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public ISelection getSelection(final IEditorPart editorPart) {
-        if (editorPart instanceof DiagramEditor) {
-            return ((DiagramEditor) editorPart).getDiagramGraphicalViewer().getSelection();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ILayoutInspector getInspector(final EditPart editPart) {
-        if (editPart instanceof IGraphicalEditPart) {
-            return new GmfLayoutInspector((IGraphicalEditPart) editPart);
-        } else if (editPart instanceof DiagramRootEditPart) {
-            return new GmfLayoutInspector(
-                (IGraphicalEditPart) ((DiagramRootEditPart) editPart).getContents());
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ILayoutInspector getInspector(final IEditorPart editorPart) {
-        if (editorPart instanceof DiagramEditor) {
-            return new GmfLayoutInspector(((DiagramEditor) editorPart).getDiagramEditPart());
-        } else {
-            return null;
-        }
+    public IEditingProvider getProvider() {
+        return editingProvider;
     }
 
     /**
@@ -309,7 +281,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         }
 
         // find the diagram edit part
-        diagramEditPart = GmfLayoutInspector.getDiagramEditPart(layoutRootPart);
+        diagramEditPart = GmfEditingProvider.getDiagramEditPart(layoutRootPart);
 
         layoutGraph = doBuildLayoutGraph(layoutRootPart);
 
@@ -377,14 +349,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     @Override
     protected ICachedLayout getCachedLayout() {
         return cachedLayout;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public EditPart getCurrentEditPart() {
-        return layoutRootPart;
     }
 
     /**

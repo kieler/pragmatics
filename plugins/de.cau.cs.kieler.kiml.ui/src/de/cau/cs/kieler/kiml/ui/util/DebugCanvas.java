@@ -24,12 +24,12 @@ import org.eclipse.draw2d.Polyline;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.EditPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
@@ -60,8 +60,8 @@ public class DebugCanvas implements IDebugCanvas {
      */
     public void setManager(final DiagramLayoutManager layoutManager) {
         clear();
-        ILayoutInspector inspector = layoutManager.getInspector(layoutManager.getCurrentEditPart());
-        layer = inspector.getDrawingLayer();
+        EditPart editPart = layoutManager.getEditPart(layoutManager.getLayoutGraph());
+        layer = layoutManager.getProvider().getDrawingLayer(editPart);
     }
 
     /**

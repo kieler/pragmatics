@@ -30,6 +30,7 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.Style;
 import org.eclipse.gmf.runtime.notation.View;
 
+import de.cau.cs.kieler.core.model.GmfEditingProvider;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
@@ -186,7 +187,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         IGraphicalEditPart containerEditPart = targetEditParts.getSecond();
 
         if (partTarget != null) {
-            DiagramEditPart diagramEditPart = GmfLayoutInspector.getDiagramEditPart(focusEditPart);
+            DiagramEditPart diagramEditPart = GmfEditingProvider.getDiagramEditPart(focusEditPart);
             // get default options from the notation view
             optionStyle = (LayoutOptionStyle) focusEditPart.getNotationView()
                     .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
@@ -442,7 +443,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * @return the current diagram-default value
      */
     public <T> T getDiagramDefault(final LayoutOptionData<T> optionData) {
-        IGraphicalEditPart diagramEditPart = GmfLayoutInspector.getDiagramEditPart(getEditPart());
+        IGraphicalEditPart diagramEditPart = GmfEditingProvider.getDiagramEditPart(getEditPart());
         if (diagramEditPart != null) {
             LayoutOptionStyle style = (LayoutOptionStyle) diagramEditPart.getNotationView()
                     .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());
@@ -556,7 +557,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         if (super.getEditPart() instanceof IGraphicalEditPart) {
             // add user defined global layout options
             IGraphicalEditPart editPart = (IGraphicalEditPart) super.getEditPart();
-            DiagramEditPart diagramEditPart = GmfLayoutInspector.getDiagramEditPart(editPart);
+            DiagramEditPart diagramEditPart = GmfEditingProvider.getDiagramEditPart(editPart);
             if (diagramEditPart != editPart && diagramEditPart != null) {
                 LayoutOptionStyle style = (LayoutOptionStyle) diagramEditPart.getNotationView()
                         .getStyle(LayoutOptionsPackage.eINSTANCE.getLayoutOptionStyle());

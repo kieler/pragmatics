@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -31,7 +32,6 @@ import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.layout.ILayoutInspector;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 
 /**
@@ -51,8 +51,8 @@ public class LayoutPropertySource implements IPropertySource {
     
     /** the layout configuration for this property source. */
     private ILayoutConfig layoutConfig;
-    /** the layout inspector that is used for model changes. */
-    private ILayoutInspector layoutInspector;
+    /** the editing domain that is used for model changes. */
+    private TransactionalEditingDomain editingDomain;
     /** array of property descriptors for the option data. */
     private IPropertyDescriptor[] propertyDescriptors;
 
@@ -60,11 +60,12 @@ public class LayoutPropertySource implements IPropertySource {
      * Creates a layout property source for the given layout configuration.
      * 
      * @param config a layout configuration
-     * @param inspector a layout inspector
+     * @param theeditingDomain the editing domain
      */
-    public LayoutPropertySource(final ILayoutConfig config, final ILayoutInspector inspector) {
+    public LayoutPropertySource(final ILayoutConfig config,
+            final TransactionalEditingDomain theeditingDomain) {
         this.layoutConfig = config;
-        this.layoutInspector = inspector;
+        this.editingDomain = theeditingDomain;
     }
 
     /**
@@ -174,8 +175,7 @@ public class LayoutPropertySource implements IPropertySource {
                 }
             }
         };
-        KimlUiUtil.runModelChange(modelChange, layoutInspector.getEditingDomain(),
-                Messages.getString("kiml.ui.11"));
+        KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.11"));
     }
     
     /**
@@ -204,8 +204,7 @@ public class LayoutPropertySource implements IPropertySource {
                 layoutConfig.setProperty(optionData, null);
             }
         };
-        KimlUiUtil.runModelChange(modelChange, layoutInspector.getEditingDomain(),
-                Messages.getString("kiml.ui.12"));
+        KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));
         if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())
                 || optionData.getType() == LayoutOptionData.Type.BOOLEAN
                 || optionData.getType() == LayoutOptionData.Type.ENUM) {
