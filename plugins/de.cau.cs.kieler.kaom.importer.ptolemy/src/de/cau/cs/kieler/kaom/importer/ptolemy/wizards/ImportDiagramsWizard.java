@@ -152,7 +152,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         IPath targetContainerPath = null;
         
         if (importFromFileSystem) {
-            sourceFiles = fileSystemSourcesPage.getSourceFiles();
+            sourceFiles = fileSystemSourcesPage.getFiles(null);
             targetContainerPath = fileSystemSourcesPage.getTargetContainerPath();
         } else {
             sourceFiles = workspaceSourcesPage.getSourceFiles();
