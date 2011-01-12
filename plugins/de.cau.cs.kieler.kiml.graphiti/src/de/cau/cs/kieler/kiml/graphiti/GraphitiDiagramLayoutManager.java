@@ -33,6 +33,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.editor.GraphitiScrollingGraphicalViewer;
+import org.eclipse.graphiti.ui.internal.parts.DiagramEditPart;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.ui.IEditorPart;
@@ -500,4 +501,15 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         }
     }
 
+    /**
+     * Returns the edit part associated with the given layout node. This is only valid after
+     * {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was called.
+     * 
+     * @param knode a node from the layout graph
+     * @return the corresponding edit part, or {@code null}
+     */
+    public EditPart getEditPart(final KNode knode) {
+    	PictogramElement pe = graphElem2PictElemMap.get(knode);
+        return diagramEditor.getEditPartForPictogramElement(pe);
+    }
 }
