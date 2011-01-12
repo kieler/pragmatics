@@ -35,7 +35,7 @@ public class CreatePortFeature extends AbstractCreateFeature {
      * {@inheritDoc}
      */
     public Object[] create(final ICreateContext context) {
-        Vertex vertex = (Vertex) getBusinessObjectForPictogramElement(context.getTargetContainer());
+    	Vertex vertex = (Vertex) getBusinessObjectForPictogramElement(context.getTargetContainer());
         Port port = BasegraphFactory.eINSTANCE.createPort();
         //TODO allow only 2 or 3.
         vertex.getPorts().add(port);

@@ -36,6 +36,8 @@ public class AddEdgeFeature extends AbstractAddFeature {
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
         //Edge addedEdge = (Edge) context.getNewObject();
         
+        System.out.println("AddEdgeFeature#add");
+        
        
         // CONNECTION WITH POLYLINE
         Connection connection = peCreateService

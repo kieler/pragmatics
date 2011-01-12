@@ -11,11 +11,13 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
+import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -52,6 +54,8 @@ public class AddFeature extends AbstractAddFeature {
  
     protected static final IColorConstant CLASS_BACKGROUND =
         new ColorConstant(255, 204, 153);
+
+	private static final int PORT_SIZE = 10;
     
     TypeFeatures type;
     
@@ -333,6 +337,40 @@ public class AddFeature extends AbstractAddFeature {
 		text.setX(context.getX());
 		text.setY(context.getY());
 		
+		//peCreateService.createChopboxAnchor(containerShape);
+		//
+		
+		//Shape anchor = peCreateService.createShape(containerShape, false);
+		
+		
+		//peCreateService.createBoxRelativeAnchor(containerShape);
+		
+		final BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
+		boxAnchor.setActive(true);
+		boxAnchor.setRelativeWidth(0.5);
+	    boxAnchor.setRelativeHeight(0.5);
+	    boxAnchor.setReferencedGraphicsAlgorithm(R);
+	    
+	    Rectangle rec = gaService.createRectangle(boxAnchor);
+	    rec.setFilled(true);
+	    rec.setBackground(manageColor(0,0,0));
+	    gaService.setLocationAndSize(rec, 5, 5, 10, 10);
+	    
+	    final BoxRelativeAnchor boxAnchor2 = peCreateService.createBoxRelativeAnchor(containerShape);
+	    boxAnchor2.setActive(true);
+		boxAnchor2.setRelativeWidth(0.7);
+	    boxAnchor2.setRelativeHeight(0.7);
+	    boxAnchor2.setReferencedGraphicsAlgorithm(R);
+	    
+	    Rectangle rec2 = gaService.createRectangle(boxAnchor2);
+	    rec2.setFilled(true);
+	    rec2.setBackground(manageColor(0,0,0));
+	    gaService.setLocationAndSize(rec2, 7, 7, 10, 10);
+	    
+		
+		//
+	    layoutPictogramElement(containerShape);
+		
 		link(containerShape, switchVertex);
 		
 		return containerShape;
@@ -438,4 +476,66 @@ public class AddFeature extends AbstractAddFeature {
  
         return containerShape;
 	}*/
+    /**
+     * Create a port that is bound to an vertex's boundary.
+     * 
+     * @param container the container shape of the parent entity
+     * @param x the x position
+     * @param y the y position
+     * @return a new PictogramElement for the port
+     */
+    private PictogramElement createBoundPort(final ContainerShape container,
+            final int x, final int y) {
+        int nodeWidth = container.getGraphicsAlgorithm().getWidth();
+        int nodeHeight = container.getGraphicsAlgorithm().getHeight();
+        float widthPercent = (float) x / nodeWidth;
+        float heightPercent = (float) y / nodeHeight;
+        
+        //TODO DEBUG
+        System.out.println(widthPercent);
+        System.out.println(nodeWidth);
+        System.out.println(heightPercent);
+        System.out.println(nodeHeight);
+        
+        
+        if (widthPercent + heightPercent <= 1 && widthPercent - heightPercent <= 0) {
+            // port is put to the left
+            widthPercent = 0;
+        } else if (widthPercent + heightPercent >= 1 && widthPercent - heightPercent >= 0) {
+            // port is put to the right
+            widthPercent = 1;
+        } else if (heightPercent < 1.0f / 2) {
+            // port is put to the top
+            heightPercent = 0;
+        } else {
+            // port is put to the bottom
+            heightPercent = 1;
+        }
+
+        //TODO DEBUG
+        heightPercent = 1;
+        heightPercent = 1;
+        
+        IPeCreateService peCreateService = Graphiti.getPeCreateService();
+        BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(container);
+        boxAnchor.setRelativeWidth(widthPercent);
+        boxAnchor.setRelativeHeight(heightPercent);
+        boxAnchor.setActive(true);
+
+        IGaService gaService = Graphiti.getGaService();
+        // look for the actual rectangle that represents the parent entity
+        for (GraphicsAlgorithm ga : container.getGraphicsAlgorithm().getGraphicsAlgorithmChildren()) {
+            if (ga instanceof Rectangle) {
+                boxAnchor.setReferencedGraphicsAlgorithm(ga);
+                break;
+            }
+        }
+
+        Rectangle rectangleShape = gaService.createRectangle(boxAnchor);
+        rectangleShape.setStyle(styleProvider.getStyle(StyleProvider.SOLID_STYLE));
+        gaService.setLocationAndSize(rectangleShape, -PORT_SIZE , -PORT_SIZE,
+                PORT_SIZE, PORT_SIZE);
+
+        return boxAnchor;
+    }
 }

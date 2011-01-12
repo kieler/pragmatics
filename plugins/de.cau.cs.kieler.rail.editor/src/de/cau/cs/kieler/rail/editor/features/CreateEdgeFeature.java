@@ -57,20 +57,34 @@ public class CreateEdgeFeature extends
         }
         
         //TODO What instead of Linkable
-        
-        System.out.println("Source: " + source);
-        System.out.println("sourceAnchor: " + sourceAnchor);
-        System.out.println("target:" + target);
-        System.out.println("targetAnchor:" + targetAnchor);
+        /*
+        System.out.println("### canCreate ###");
+        System.out.println("canCreate Source: " + source);
+        System.out.println("canCreate sourceAnchor: " + sourceAnchor);
+        System.out.println("canCreate target:" + target);
+        System.out.println("canCreate targetAnchor:" + targetAnchor);
         
         System.out.println((sourceAnchor != null || source instanceof Vertex)
         	&& (targetAnchor != null || target instanceof Vertex));
         
+        System.out.println("### canCreate ###");
+        */
         return (sourceAnchor != null || source instanceof Vertex)
         	&& (targetAnchor != null || target instanceof Vertex);
     }
  
     public boolean canStartConnection(ICreateConnectionContext context) {
+    	System.out.println("##canStartConnection##");
+    	System.out.println(context.getSourceAnchor());
+    	
+    	if(context.getSourceAnchor() != null){
+    		System.out.println(getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent()));
+    	}
+    	else{
+    		System.out.println(getBusinessObjectForPictogramElement(
+                    context.getSourceAnchor()));
+    	}
+    	System.out.println("##canStartConnection##");
     	return (context.getSourceAnchor() != null
                 && getBusinessObjectForPictogramElement(
                 context.getSourceAnchor().getParent()) != null);
@@ -84,6 +98,13 @@ public class CreateEdgeFeature extends
         Object source = null;
         Object target=null;
  
+        System.out.println("#create#");
+        System.out.println(context.getSourceAnchor());
+        System.out.println(getBusinessObjectForPictogramElement(context.getSourceAnchor()));
+        System.out.println(context.getTargetAnchor());
+        System.out.println(getBusinessObjectForPictogramElement(context.getTargetAnchor()));
+        System.out.println("#create#");
+        
         if (sourceAnchor instanceof BoxRelativeAnchor) {
             source =  getBusinessObjectForPictogramElement(context.getSourceAnchor());
         } else if (sourceAnchor != null) {

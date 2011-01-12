@@ -4,9 +4,13 @@ import org.eclipse.graphiti.features.context.ICreateContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateFeature;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 import de.cau.cs.kieler.rail.Topologie.Model;
 
+import de.cau.cs.kieler.rail.Topologie.Basegraph.BasegraphFactory;
+import de.cau.cs.kieler.rail.Topologie.Basegraph.EPort;
+import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.SpecializedVerticesFactory;
@@ -35,22 +39,49 @@ public class CreateFeature extends AbstractCreateFeature  {
         // ask user for Einbruchsknoten name
         //Einbruchsknoten vertex = SpecializedVerticesFactory.eINSTANCE.createEinbruchsknoten();
     	Vertex vertex = getVertex();
-        
+    	
+    	//Ports will be create.
+    	Port abzweig = BasegraphFactory.eINSTANCE.createPort();
+    	abzweig.setName(EPort.ABZWEIG);
+    	Port stamm = BasegraphFactory.eINSTANCE.createPort();
+    	stamm.setName(EPort.STAMM);
+    	Port spitze = BasegraphFactory.eINSTANCE.createPort();
+    	spitze.setName(EPort.SPITZE);
+    	
+    	vertex.getPorts().add(abzweig);
+    	vertex.getPorts().add(stamm);
+    	vertex.getPorts().add(spitze);
+    	
+    	//PictogramElement v = addGraphicalRepresentation(context, vertex);
+    	
+    	PictogramElement ab = addGraphicalRepresentation(context, abzweig);
+    	addGraphicalRepresentation(context, stamm);
+    	addGraphicalRepresentation(context, spitze);
+    	
         KrailDiagramEditor kde = ((KrailDiagramEditor) getDiagramEditor());
         ContainerShape tc = context.getTargetContainer();
         Model model = kde.fetchModel(tc);
         
         //Model model = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(context.getTargetContainer());
         
-        
-        model.getVertices().add(vertex);    
+        model.getVertices().add(vertex);  
         
         // do the add
-        addGraphicalRepresentation(context, vertex);
+        PictogramElement v = addGraphicalRepresentation(context, vertex);
  
         // return newly created business object(s)
         return new Object[] { vertex };
     }
+    /*
+    public Object[] create(final ICreateContext context) {
+        Vertex vertex = (Vertex) getBusinessObjectForPictogramElement(context.getTargetContainer());
+        Port port = BasegraphFactory.eINSTANCE.createPort();
+        //TODO allow only 2 or 3.
+        vertex.getPorts().add(port);
+
+        addGraphicalRepresentation(context, port);
+        return new Object[] { port };
+    }*/
     
     
     private Vertex getVertex()
