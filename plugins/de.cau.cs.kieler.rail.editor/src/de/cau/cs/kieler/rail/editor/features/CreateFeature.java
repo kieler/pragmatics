@@ -54,9 +54,8 @@ public class CreateFeature extends AbstractCreateFeature  {
     	
     	//PictogramElement v = addGraphicalRepresentation(context, vertex);
     	
-    	PictogramElement ab = addGraphicalRepresentation(context, abzweig);
-    	addGraphicalRepresentation(context, stamm);
-    	addGraphicalRepresentation(context, spitze);
+    	
+    	
     	
         KrailDiagramEditor kde = ((KrailDiagramEditor) getDiagramEditor());
         ContainerShape tc = context.getTargetContainer();
@@ -67,8 +66,15 @@ public class CreateFeature extends AbstractCreateFeature  {
         model.getVertices().add(vertex);  
         
         // do the add
+        
         PictogramElement v = addGraphicalRepresentation(context, vertex);
  
+        PictogramElement ab = addGraphicalRepresentation(context, abzweig);
+    	//not call with context instated something else    nicht mit context, sondern mit was anderem Aufrufen
+        
+        addGraphicalRepresentation(context, stamm);
+    	addGraphicalRepresentation(context, spitze);
+        
         // return newly created business object(s)
         return new Object[] { vertex };
     }
