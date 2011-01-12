@@ -69,6 +69,26 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     public GraphitiLayoutConfig(final ILayoutConfig externalConfig) {
         super(externalConfig);
     }
+    
+    /**
+     * Set the focus of the layout configuration on a specific edit part. The domain model element
+     * of the edit part is passed to the super-class as well.
+     * This can be done without initializing the layout configuration in order to use
+     * {@link #getAllProperties()} efficiently, since the same configuration instance can
+     * be reused multiple times.
+     * 
+     * @param element an instance of {@link IGraphicalEditPart}
+     */
+    @Override
+    public void setFocus(final Object element) {
+        super.setFocus(element);
+        if (element instanceof IPictogramElementEditPart) {
+            PictogramElement pe = ((IPictogramElementEditPart) element).getPictogramElement();
+            if (pe.getLink().getBusinessObjects().size() > 0) {
+                super.setFocus(pe.getLink().getBusinessObjects().get(0));
+            }
+        }
+    }
 
     /**
      * {@inheritDoc}
