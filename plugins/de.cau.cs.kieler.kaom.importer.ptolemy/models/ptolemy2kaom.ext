@@ -1054,6 +1054,9 @@ Void optimizeAnnotationRepresentation(Annotation annotation) :
             // into its own separate entity 
             newEntity.setName(annotation.getName()) ->
             
+            newEntity.addStringAnnotation("language", "ptolemy") ->
+            newEntity.addAnnotation("Director") ->
+            
             // Add an "annotationNode" annotation to the new entity
             annotationNodeAnnotation.setName("annotationNode") ->
             newEntity.annotations.add(annotationNodeAnnotation) ->

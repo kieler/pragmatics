@@ -131,6 +131,24 @@
             Priority="3"
             RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomFigureProvider">
          <conditions>
+            <compoundCondition
+                  figureParam="Director"
+                  figureSize="102,32"
+                  layoutParam="Director">
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationExistsCondition"
+                     figureParam="Director"
+                     figureSize="102,32"
+                     key="Director"
+                     layoutParam="Director"
+                     value="Director">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
             <customCondition
                   condition="de.cau.cs.kieler.karma.RecursiveAnnotationCondition"
                   figureParam="Director"
