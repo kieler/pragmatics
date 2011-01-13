@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.PlatformUI;
@@ -79,8 +80,7 @@ public class SetOptionsEffect extends AbstractEffect {
         if (manager != null) {
             final ILayoutConfig layoutConfig = manager.getLayoutConfig(editPart.get());
             if (layoutConfig != null) {
-                TransactionalEditingDomain editingDomain = manager.getProvider()
-                        .getEditingDomain(editPart.get());
+                EditingDomain editingDomain = manager.getBridge().getEditingDomain(editPart.get());
                 KimlUiUtil.runModelChange(new Runnable() {
                     public void run() {
                         for (Map.Entry<String, Object> entry : optionMap.entrySet()) {
@@ -89,7 +89,7 @@ public class SetOptionsEffect extends AbstractEffect {
                             layoutConfig.setProperty(optionData, entry.getValue());
                         }
                     }
-                } , editingDomain, Messages.getString("kiml.ui.40"));
+                } , (TransactionalEditingDomain) editingDomain, Messages.getString("kiml.ui.40"));
             }
         }
     }

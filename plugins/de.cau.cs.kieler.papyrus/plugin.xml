@@ -111,5 +111,12 @@
             priority="-1">
       </manager>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.core.ui.graphicalFrameworkBridges">
+      <bridge
+            class="de.cau.cs.kieler.papyrus.PapyrusFrameworkBridge"
+            priority="-1">
+      </bridge>
+   </extension>
 
 </plugin>

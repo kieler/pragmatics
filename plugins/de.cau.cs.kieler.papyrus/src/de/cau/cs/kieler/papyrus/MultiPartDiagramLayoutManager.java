@@ -20,13 +20,11 @@ import java.util.Map;
 
 import org.eclipse.papyrus.core.editor.IMultiDiagramEditor;
 import org.eclipse.gef.EditPart;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.GmfEditingProvider;
-import de.cau.cs.kieler.core.ui.IEditingProvider;
+import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.gmf.GmfDiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
@@ -131,21 +129,15 @@ public class MultiPartDiagramLayoutManager extends GmfDiagramLayoutManager {
         super.removeChangeListener(editorListener);
     }
 
+    /** the framework bridge for this layout manager. */
+    private PapyrusFrameworkBridge papyrusBridge = new PapyrusFrameworkBridge();
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public IEditingProvider getProvider() {
-        return new GmfEditingProvider() {
-            @Override
-            public ISelection getSelection(final IEditorPart editorPart) {
-                if (editorPart instanceof IMultiDiagramEditor) {
-                    return super.getSelection(((IMultiDiagramEditor) editorPart).getActiveEditor());
-                } else {
-                    return super.getSelection(editorPart);
-                }
-            }
-        };
+    public IGraphicalFrameworkBridge getBridge() {
+        return papyrusBridge;
     }
 
 }

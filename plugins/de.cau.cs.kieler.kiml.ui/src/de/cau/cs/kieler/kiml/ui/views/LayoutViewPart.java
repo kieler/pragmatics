@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -56,7 +57,7 @@ import org.eclipse.ui.views.properties.IPropertySourceProvider;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
-import de.cau.cs.kieler.core.ui.IEditingProvider;
+import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
@@ -146,10 +147,9 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
         public IPropertySource getPropertySource(final Object object) {
             if (object instanceof EditPart) {
                 ILayoutConfig layoutConfig = currentManager.getLayoutConfig((EditPart) object);
-                TransactionalEditingDomain editingDomain = currentManager.getProvider()
-                        .getEditingDomain(object);
-                if (layoutConfig != null && editingDomain != null) {
-                    currentEditPart = currentManager.getProvider().getEditPart(object);
+                EditingDomain editingDomain = currentManager.getBridge().getEditingDomain(object);
+                if (layoutConfig != null && editingDomain instanceof TransactionalEditingDomain) {
+                    currentEditPart = currentManager.getBridge().getEditPart(object);
                     LayoutProviderData contentProvider = layoutConfig.getContentLayouterData();
                     LayoutProviderData containerProvider = layoutConfig.getContainerLayouterData();
                     if (contentProvider == null && containerProvider == null) {
@@ -162,7 +162,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                         currentProviderData = new LayoutProviderData[] {
                                 contentProvider, containerProvider };
                     }
-                    return new LayoutPropertySource(layoutConfig, editingDomain);
+                    return new LayoutPropertySource(layoutConfig,
+                            (TransactionalEditingDomain) editingDomain);
                 }
             }
             return null;
@@ -355,7 +356,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
      */
     public void editorChanged() {
         if (currentManager != null) {
-            ISelection selection = currentManager.getProvider().getSelection(currentEditor);
+            ISelection selection = currentManager.getBridge().getSelection(currentEditor);
             if (selection instanceof IStructuredSelection) {
                 page.selectionChanged(currentEditor, selection);
                 setPartText();
@@ -473,7 +474,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                 }
                 // add the "set as default for diagram type" action
                 LayoutServices layoutServices = LayoutServices.getInstance();
-                IEditingProvider editingProvider = currentManager.getProvider();
+                IGraphicalFrameworkBridge editingProvider = currentManager.getBridge();
                 String diagramType = (String) EclipseLayoutConfig.getOption(
                         currentEditPart, editingProvider.getElement(currentEditPart),
                         LayoutOptions.DIAGRAM_TYPE_ID);
@@ -516,7 +517,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
             return "";
         }
         
-        EObject model = currentManager.getProvider().getElement(currentEditPart);
+        EObject model = currentManager.getBridge().getElement(currentEditPart);
         String clazzName = model == null ? null : model.eClass().getInstanceTypeName();
         if (clazzName == null) {
             if (plural || currentEditPart == null) {
@@ -593,7 +594,7 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
             if (name != null) {
                 textBuffer.append(name);
             }
-            EObject model = currentManager.getProvider().getElement(currentEditPart);
+            EObject model = currentManager.getBridge().getElement(currentEditPart);
             if (model != null) {
                 String modelName = getProperty(model, "Name");
                 if (modelName == null) {

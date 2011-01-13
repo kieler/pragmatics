@@ -61,7 +61,7 @@ public class DebugCanvas implements IDebugCanvas {
     public void setManager(final DiagramLayoutManager layoutManager) {
         clear();
         EditPart editPart = layoutManager.getEditPart(layoutManager.getLayoutGraph());
-        layer = layoutManager.getProvider().getDrawingLayer(editPart);
+        layer = layoutManager.getBridge().getDrawingLayer(editPart);
     }
 
     /**

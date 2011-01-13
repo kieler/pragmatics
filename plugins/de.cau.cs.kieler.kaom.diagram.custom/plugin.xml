@@ -139,7 +139,7 @@
          <propertySections
                contributorId="de.cau.cs.kieler.kaom.diagram">
             <propertySection
-                  class="de.cau.cs.kieler.kaom.diagram.custom.KaomAnnotationsPropertySection"
+                  class="de.cau.cs.kieler.core.annotations.ui.properties.AnnotationsPropertySection"
                   id="property.section.annotations"
                   tab="property.tab.annotations">
                <input type="org.eclipse.gmf.runtime.notation.View"/>

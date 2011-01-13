@@ -43,8 +43,8 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.model.graphiti.GraphitiEditingProvider;
-import de.cau.cs.kieler.core.ui.IEditingProvider;
+import de.cau.cs.kieler.core.model.graphiti.GraphitiFrameworkBridge;
+import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -77,9 +77,11 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     private Command applyLayoutCommand;
 
     /** map of pictogram elements to KGraph elements. */
-    private Map<PictogramElement, KGraphElement> pictElem2GraphElemMap = new HashMap<PictogramElement, KGraphElement>();
+    private Map<PictogramElement, KGraphElement> pictElem2GraphElemMap
+            = new HashMap<PictogramElement, KGraphElement>();
     /** map of KGraph elements to pictogram elements. */
-    private Map<KGraphElement, PictogramElement> graphElem2PictElemMap = new HashMap<KGraphElement, PictogramElement>();
+    private Map<KGraphElement, PictogramElement> graphElem2PictElemMap
+            = new HashMap<KGraphElement, PictogramElement>();
     /** list of all connections in the diagram. */
     private List<Connection> connections = new LinkedList<Connection>();
 
@@ -99,15 +101,15 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         return editPart instanceof IPictogramElementEditPart;
     }
 
-    /** the editing provider for this layout manager. */
-    private GraphitiEditingProvider editingProvider = new GraphitiEditingProvider();
+    /** the framework bridge for this layout manager. */
+    private GraphitiFrameworkBridge graphitiBridge = new GraphitiFrameworkBridge();
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IEditingProvider getProvider() {
-        return editingProvider;
+    public IGraphicalFrameworkBridge getBridge() {
+        return graphitiBridge;
     }
 
     /**

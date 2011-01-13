@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -664,9 +665,10 @@ final class GenomeFactory {
         for (final ILayoutConfig config : configs) {
             if (config instanceof EclipseLayoutConfig) {
                 EditPart editPart = ((EclipseLayoutConfig) config).getEditPart();
-                TransactionalEditingDomain editingDomain = layoutServices.getEditingProvider(editPart)
+                EditingDomain editingDomain = layoutServices.getFrameworkBridge(editPart)
                         .getEditingDomain(editPart);
-                LayoutPropertySource source = new LayoutPropertySource(config, editingDomain);
+                LayoutPropertySource source = new LayoutPropertySource(config,
+                        (TransactionalEditingDomain) editingDomain);
                 IPropertyDescriptor[] propertyDescriptors = source.getPropertyDescriptors();
 
                 for (final IPropertyDescriptor pd : propertyDescriptors) {

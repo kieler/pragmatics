@@ -26,7 +26,7 @@ import org.eclipse.ui.IEditorPart;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.ui.IEditingProvider;
+import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
@@ -217,7 +217,7 @@ public abstract class DiagramLayoutManager {
     public final void applyAndZoom(final int nodeCount, final boolean animate,
             final boolean cacheLayout) {
         // determine pre- or post-layout zoom
-        final ZoomManager zoomManager = getProvider().getZoomManager(getEditPart(getLayoutGraph()));
+        final ZoomManager zoomManager = getBridge().getZoomManager(getEditPart(getLayoutGraph()));
         KNode parentNode = getLayoutGraph();
         while (parentNode.getParent() != null) {
             parentNode = parentNode.getParent();
@@ -413,12 +413,12 @@ public abstract class DiagramLayoutManager {
             EditPart editPart, boolean layoutAncestors);
     
     /**
-     * Returns an editing provider for this layout manager.
+     * Returns the graphical framework bridge for this layout manager.
      * 
-     * @return an editing provider that is suitable for diagrams that are managed by
+     * @return a framework bridge that is suitable for diagrams that are managed by
      *     this layout manager
      */
-    public abstract IEditingProvider getProvider();
+    public abstract IGraphicalFrameworkBridge getBridge();
     
     /**
      * Returns a layout configuration for the given edit part. If {@code editPart} is

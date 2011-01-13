@@ -35,7 +35,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.core.ui.IEditingProvider;
+import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
@@ -178,16 +178,16 @@ public class EclipseLayoutServices extends LayoutServices {
     }
 
     /**
-     * Retrieve an editing provider for the given edit part using the most suitable
+     * Retrieve an editing framework bridge for the given edit part using the most suitable
      * layout manager.
      * 
-     * @param editPart the edit part for which the editing provider should be fetched
-     * @return an editing provider for the edit part, or {@code null}
+     * @param editPart the edit part for which the bridge should be fetched
+     * @return an editing framework bridge for the edit part, or {@code null}
      */
-    public IEditingProvider getEditingProvider(final EditPart editPart) {
+    public IGraphicalFrameworkBridge getFrameworkBridge(final EditPart editPart) {
         DiagramLayoutManager manager = getManager(null, editPart);
         if (manager != null) {
-            return manager.getProvider();
+            return manager.getBridge();
         }
         return null;
     }
@@ -202,7 +202,7 @@ public class EclipseLayoutServices extends LayoutServices {
     public ILayoutConfig getLayoutConfig(final IEditorPart editorPart) {
         DiagramLayoutManager manager = getManager(editorPart, null);
         if (manager != null) {
-            EditPart diagramEditPart = manager.getProvider().getEditPart(editorPart);
+            EditPart diagramEditPart = manager.getBridge().getEditPart(editorPart);
             return manager.getLayoutConfig(diagramEditPart);
         }
         return null;
@@ -387,14 +387,14 @@ public class EclipseLayoutServices extends LayoutServices {
     public void storeOption(final EditPart editPart, final LayoutOptionData<?> optionData,
             final String valueString, final boolean storeDomainModel) {
         Object value = optionData.parseValue(valueString);
-        IEditingProvider editingProvider = getEditingProvider(editPart);
-        if (value != null && editingProvider != null) {
+        IGraphicalFrameworkBridge bridge = getFrameworkBridge(editPart);
+        if (value != null && bridge != null) {
             String clazzName;
             if (storeDomainModel) {
-                EObject model = editingProvider.getElement(editPart);
+                EObject model = bridge.getElement(editPart);
                 clazzName = model == null ? null : model.eClass().getInstanceTypeName();
             } else {
-                EditPart relevantPart = editingProvider.getEditPart(editPart);
+                EditPart relevantPart = bridge.getEditPart(editPart);
                 clazzName = relevantPart == null ? null : relevantPart.getClass().getName();
             }
             if (clazzName != null) {

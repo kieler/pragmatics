@@ -163,7 +163,7 @@ public class SelectionInfoAction extends Action {
         if (editPart != null) {
             builder.append("<b>Edit part class</b><ul><li>"
                     + editPart.getClass().getName() + "</li></ul>");
-            EObject model = manager.getProvider().getElement(editPart);
+            EObject model = manager.getBridge().getElement(editPart);
             if (model != null) {
                 builder.append("<b>Domain model class</b><ul><li>"
                         + model.eClass().getInstanceTypeName() + "</li></ul>");

@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
+import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.action.Action;
@@ -70,8 +72,9 @@ public class RemoveOptionsAction extends Action {
                             LayoutViewPart.findView().refresh();
                         }
                     };
+                    EditingDomain editingDomain = manager.getBridge().getEditingDomain(diagram);
                     KimlUiUtil.runModelChange(runnable,
-                            manager.getProvider().getEditingDomain(diagram),
+                            (TransactionalEditingDomain) editingDomain,
                             Messages.getString("kiml.ui.30"));
                 }
             }

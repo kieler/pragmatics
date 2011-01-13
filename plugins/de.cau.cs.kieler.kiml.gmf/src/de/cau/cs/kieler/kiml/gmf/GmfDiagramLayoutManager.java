@@ -56,8 +56,8 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.model.GmfEditingProvider;
-import de.cau.cs.kieler.core.ui.IEditingProvider;
+import de.cau.cs.kieler.core.model.GmfFrameworkBridge;
+import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -214,14 +214,14 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /** the editing provider for this layout manager. */
-    private GmfEditingProvider editingProvider = new GmfEditingProvider();
+    private GmfFrameworkBridge gmfBridge = new GmfFrameworkBridge();
     
     /**
      * {@inheritDoc}
      */
     @Override
-    public IEditingProvider getProvider() {
-        return editingProvider;
+    public IGraphicalFrameworkBridge getBridge() {
+        return gmfBridge;
     }
 
     /**
@@ -281,7 +281,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         }
 
         // find the diagram edit part
-        diagramEditPart = GmfEditingProvider.getDiagramEditPart(layoutRootPart);
+        diagramEditPart = GmfFrameworkBridge.getDiagramEditPart(layoutRootPart);
 
         layoutGraph = doBuildLayoutGraph(layoutRootPart);
 
