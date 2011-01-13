@@ -16,6 +16,7 @@ package de.cau.cs.kieler.core.properties;
 /**
  * A property that uses a string for identification.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @param <T> type of the property
  * @author msp
  */

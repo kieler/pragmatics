@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 /**
  * A layout configuration for extension point configurations and user preferences.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public class EclipseLayoutConfig extends DefaultLayoutConfig {

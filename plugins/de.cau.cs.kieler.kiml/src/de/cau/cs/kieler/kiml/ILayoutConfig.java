@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.properties.IPropertyHolder;
  * {@link IPropertyHolder#setProperty(IProperty, Object) setProperty()}
  * is used to change the stored option value.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public interface ILayoutConfig extends IPropertyHolder {

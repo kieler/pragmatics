@@ -31,6 +31,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 /**
  * Layout provider that computes random layouts.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public class RandomLayoutProvider extends AbstractLayoutProvider {

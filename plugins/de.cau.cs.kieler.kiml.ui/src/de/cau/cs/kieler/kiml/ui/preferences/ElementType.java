@@ -18,6 +18,7 @@ import de.cau.cs.kieler.kiml.ui.Messages;
 /**
  * Enumeration of element types that can receive default options.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public enum ElementType {

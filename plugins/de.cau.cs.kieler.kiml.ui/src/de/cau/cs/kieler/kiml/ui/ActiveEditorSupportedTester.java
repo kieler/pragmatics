@@ -21,6 +21,7 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 /**
  * Tester class for checking whether the active editor is supported by KIML.
  * 
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author jjc
  */
 public class ActiveEditorSupportedTester extends PropertyTester {

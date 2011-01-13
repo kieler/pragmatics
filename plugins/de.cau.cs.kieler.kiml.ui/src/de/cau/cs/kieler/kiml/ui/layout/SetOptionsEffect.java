@@ -33,6 +33,7 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 /**
  * An effect that sets layout options for a specific element.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public class SetOptionsEffect extends AbstractEffect {

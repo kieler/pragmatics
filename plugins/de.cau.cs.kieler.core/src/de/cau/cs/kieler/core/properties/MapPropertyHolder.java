@@ -20,6 +20,7 @@ import java.util.Map;
 /**
  * An abstract holder class for properties that uses a hash map.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public abstract class MapPropertyHolder implements IPropertyHolder {

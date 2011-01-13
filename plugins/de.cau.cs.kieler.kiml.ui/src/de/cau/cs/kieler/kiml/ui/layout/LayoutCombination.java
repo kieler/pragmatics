@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 /**
  * Performs automatic layout when the button or key combination is pressed.
  * 
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author mmu
  */
 public class LayoutCombination extends AbstractCombination {

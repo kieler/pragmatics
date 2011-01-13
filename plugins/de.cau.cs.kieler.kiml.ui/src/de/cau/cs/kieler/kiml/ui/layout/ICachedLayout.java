@@ -18,6 +18,7 @@ import org.eclipse.ui.IEditorPart;
 /**
  * Interface for cached layouts that can be applied repeatedly.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public interface ICachedLayout {

@@ -32,6 +32,7 @@ import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
 /**
  * Performs automatic layout on a diagram editor for a given selection.
  * 
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author mmu
  * @author msp
  */

@@ -18,6 +18,7 @@ import java.util.Map;
 /**
  * Interface for holders of property values.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public interface IPropertyHolder {

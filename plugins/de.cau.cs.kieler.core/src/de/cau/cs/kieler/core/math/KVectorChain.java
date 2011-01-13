@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.util.IDataObject;
 /**
  * A chain of vectors. Can be used to describe polylines or similar constructs.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public class KVectorChain extends LinkedList<KVector> implements IDataObject {

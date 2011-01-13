@@ -26,6 +26,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 /**
  * A helper class to compute hash values from a layout graph.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public class KGraphHash implements Comparable<KGraphHash>, Comparator<KNode> {

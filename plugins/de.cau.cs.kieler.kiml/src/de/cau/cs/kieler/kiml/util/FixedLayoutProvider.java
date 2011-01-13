@@ -30,6 +30,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * A layout provider that sets fixed positions for all elements. Elements that have no position
  * option attached just stay where they are.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public class FixedLayoutProvider extends AbstractLayoutProvider {

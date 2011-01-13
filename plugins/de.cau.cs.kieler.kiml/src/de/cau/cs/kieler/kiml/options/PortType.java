@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.options;
 /**
  * Definition of port types.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public enum PortType {

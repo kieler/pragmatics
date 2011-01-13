@@ -28,6 +28,7 @@ import de.cau.cs.kieler.core.util.Pair;
 /**
  * A layout configuration that can be used to generate on-the-fly layout options.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public class VolatileLayoutConfig implements ILayoutConfig {

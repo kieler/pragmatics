@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 /**
  * A canvas for drawing debug information on the active diagram.
  * 
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author mri
  */
 public class DebugCanvas implements IDebugCanvas {

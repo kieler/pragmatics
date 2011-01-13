@@ -46,6 +46,7 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 /**
  * A layout configuration that stores layout options in the notation model of GMF diagrams.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public class GmfLayoutConfig extends EclipseLayoutConfig {

@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 /**
  * Listener for change of the active editor or active selection.
  * 
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author jjc
  */
 public interface IEditorChangeListener extends ISelectionChangedListener {

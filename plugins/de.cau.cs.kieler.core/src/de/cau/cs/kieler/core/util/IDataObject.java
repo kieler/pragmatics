@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.KielerException;
  * parsable using {@link #parse(String)}. The default constructor should always be
  * accessible and create an instance with default content.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public interface IDataObject {

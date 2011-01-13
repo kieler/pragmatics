@@ -18,6 +18,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 /**
  * Interface for debug canvas.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public interface IDebugCanvas {

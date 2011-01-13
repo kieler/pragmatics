@@ -45,6 +45,7 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 /**
  * An action that displays useful information about the current selection.
  *
+ * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public class SelectionInfoAction extends Action {
