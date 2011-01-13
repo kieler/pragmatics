@@ -26,6 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
 import de.cau.cs.kieler.klay.rail.Properties;
+import de.cau.cs.kieler.klay.rail.graph.RailLayer;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 
 /**
@@ -53,7 +54,20 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
         float borspacing = layeredGraph.getProperty(Properties.BOR_SPACING);
         int layerCount = layeredGraph.getLayers().size();
         double maximalMoveUp = Double.NEGATIVE_INFINITY;
-        for (int i = 0; i < layerCount - 1; i++) {
+        
+        for (Layer layer : layeredGraph.getLayers()) {
+            if (layer instanceof RailLayer) {
+                System.out.println("Raillayer");
+                RailLayer rl = (RailLayer) layer;
+                int i = 0;
+                for (LNode node : rl.getNodes()) {
+                    rl.getRowList().addNodeAtPosition(node, i);
+                    i++;
+                }
+                gridToAbsolutePosition(rl);
+            }
+        }
+        /*for (int i = 0; i < layerCount - 1; i++) {
             List<KVector> occupiedSpots;
             for (int j = 0; j < layeredGraph.getLayers().get(i).getNodes().size(); j++) {
                 LNode currentNode = layeredGraph.getLayers().get(i).getNodes().get(j);
@@ -132,8 +146,19 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
         KVector graphSize = layeredGraph.getSize();
         for (Layer layer : layeredGraph.getLayers()) {
             graphSize.y = Math.max(graphSize.y, layer.getSize().y);
-        }
+        }*/
         getMonitor().done();
+    }
+    
+    private void gridToAbsolutePosition(final RailLayer layer) {
+        float spacing = layer.getGraph().getProperty(Properties.OBJ_SPACING);
+        float borspacing = layer.getGraph().getProperty(Properties.BOR_SPACING);
+        float value = borspacing;
+        for (LNode node : layer.getRowList().getNodesOrderedByPosition()) {
+            node.getPos().y = value;
+            System.out.println("Setting y of " + node.toString() + " to " + value);
+            value += spacing + node.getSize().y;
+        }
     }
 
 }

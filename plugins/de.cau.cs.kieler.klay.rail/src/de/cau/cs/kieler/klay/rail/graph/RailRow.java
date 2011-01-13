@@ -13,7 +13,12 @@
  */
 package de.cau.cs.kieler.klay.rail.graph;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
@@ -23,13 +28,40 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 public class RailRow {
 
-    HashMap<Integer, LNode> rowNodes = new HashMap<Integer, LNode>();
+    private HashMap<Integer, LNode> rowNodes = new HashMap<Integer, LNode>();
+    private HashMap<LNode, Integer> nodeRows = new HashMap<LNode, Integer>();
 
     public RailRow() {
     }
 
-    public boolean addNodeRelativeTo(final LNode otherNode, final int offset, final LNode node) {
-        //rowNodes.
-        return true;
+    public int getPosition(LNode node) {
+        return nodeRows.get(node);
+    }
+    
+    public boolean isPositionOccupied(int position) {
+        return rowNodes.containsKey(position);
+    }
+    
+    public void addNodeAtPosition(LNode node, int position) {
+        if (rowNodes.containsKey(position)) {
+            throw new IllegalArgumentException("Position is already occupied.");
+        }
+        if (nodeRows.containsKey(node)) {
+            throw new IllegalArgumentException("Node is already in grid.");
+        }
+        rowNodes.put(position, node);
+        nodeRows.put(node, position);
+    }
+    
+    public List<LNode> getNodesOrderedByPosition() {
+        Set<Integer> keySet = rowNodes.keySet();
+        List<Integer> keyList = new LinkedList<Integer>(keySet);
+        Collections.sort(keyList);
+        List<LNode> result = new ArrayList<LNode>(rowNodes.size());
+        for (int i : keyList) {
+            result.add(rowNodes.get(i));
+        }
+        return result;
     }
 }
+

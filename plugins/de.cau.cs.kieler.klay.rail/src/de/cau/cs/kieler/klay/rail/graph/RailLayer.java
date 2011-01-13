@@ -34,7 +34,7 @@ public class RailLayer extends Layer {
      * A list representing the vertical order of the nodes. May contain null for a dummy empty space
      * in some rows. The front of the list is to be placed at the top of the page.
      */
-    private List<LNode> rows = new LinkedList<LNode>();
+    private RailRow row = new RailRow();
 
     /**
      * Constructor similar to the one of the original layer.
@@ -53,8 +53,8 @@ public class RailLayer extends Layer {
      * 
      * @return the row list as described above
      */
-    public List<LNode> getRowList() {
-        return rows;
+    public RailRow getRowList() {
+        return row;
     }
 
 }
