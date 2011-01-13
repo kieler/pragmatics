@@ -21,6 +21,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.rail.entryPoint">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.rail.portType">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="nodes"
@@ -38,6 +41,15 @@
             id="de.cau.cs.kieler.klay.rail.entryPoint"
             name="Entry Point"
             type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="ports"
+            class="de.cau.cs.kieler.klay.rail.options.PortType"
+            default="STUMP"
+            description="Which port is this. Can be left default on breaches or closes."
+            id="de.cau.cs.kieler.klay.rail.portType"
+            name="Port Type"
+            type="enum">
       </layoutOption>
    </extension>
 

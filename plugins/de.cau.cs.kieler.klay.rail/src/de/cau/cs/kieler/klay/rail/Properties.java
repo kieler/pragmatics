@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
+import de.cau.cs.kieler.klay.rail.options.PortType;
 
 /**
  * Container for property definitions.
@@ -68,6 +69,12 @@ public final class Properties {
     public static final String ENTRY_POINT_ID = "de.cau.cs.kieler.klay.rail.entryPoint";
     /** determines the entry point of a connected component. can only have one. */
     public static final IProperty<Boolean> ENTRY_POINT = new Property<Boolean>(ENTRY_POINT_ID, false);
+    
+    /** option identifier for the port type. */
+    public static final String PORT_TYPE_ID = "de.cau.cs.kieler.klay.rail.portType";
+    /** determines of which railway element kind the port is. */
+    public static final IProperty<PortType> PORT_TYPE = new Property<PortType>(PORT_TYPE_ID,
+            PortType.STUMP);
 
     /** Hidden default constructor. */
     private Properties() {
