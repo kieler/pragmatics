@@ -8,7 +8,7 @@
             allowMultiple="false"
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kiml.evol.ui.EvolView"
-            icon="icons/gazelle.png"
+            icon="icons/gazelle16.png"
             id="de.cau.cs.kieler.kiml.evol.evolView"
             name="Evolution"
             restorable="true">
