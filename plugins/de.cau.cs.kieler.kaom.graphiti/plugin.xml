@@ -67,6 +67,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="de.cau.cs.kieler.kaom.graphiti.diagram.KaomDiagramEditor"
+            contributorClass="de.cau.cs.kieler.kaom.graphiti.diagram.KaomEditorActionBarContributor"
             default="true"
             extensions="kaog"
             icon="icons/KaomDiagramFile.gif"
