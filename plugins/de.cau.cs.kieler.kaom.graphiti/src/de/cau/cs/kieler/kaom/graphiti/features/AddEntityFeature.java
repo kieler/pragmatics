@@ -15,11 +15,6 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 
 import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
-
-import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
-import de.cau.cs.kieler.kaom.Entity;
-import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
-
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
@@ -32,6 +27,10 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 
+import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
+import de.cau.cs.kieler.kaom.Entity;
+import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
+
 /**
  * Adds a new entity, which is contained within the parent entity.
  * 
@@ -39,14 +38,16 @@ import org.eclipse.graphiti.services.IPeCreateService;
  */
 public class AddEntityFeature extends AbstractAddShapeFeature {
 
-    /** the style provider. */ 
+    /** the style provider. */
     private IStyleProvider styleProvider;
-    
+
     /**
      * The constructor.
      * 
-     * @param fp the feature provider
-     * @param sp the style provider
+     * @param fp
+     *            the feature provider
+     * @param sp
+     *            the style provider
      */
     public AddEntityFeature(final IFeatureProvider fp, final IStyleProvider sp) {
         super(fp);
@@ -66,24 +67,27 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
     public PictogramElement add(final IAddContext context) {
         ContainerShape parentContainerShape = context.getTargetContainer();
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        ContainerShape entityShape = peCreateService.createContainerShape(parentContainerShape, true);
+        ContainerShape entityShape = peCreateService.createContainerShape(
+                parentContainerShape, true);
         peCreateService.createChopboxAnchor(entityShape);
         Entity entity = (Entity) context.getNewObject();
         link(entityShape, entity);
-        
-        // invisible rectangle created so that ports can be placed on the boundary
+
+        // invisible rectangle created so that ports can be placed on the
+        // boundary
         IGaService gaService = Graphiti.getGaService();
-        Rectangle portContainer = gaService.createInvisibleRectangle(entityShape);
+        Rectangle portContainer = gaService
+                .createInvisibleRectangle(entityShape);
         int width = context.getWidth() <= 2 ? 2 : context.getWidth();
         int height = context.getHeight() <= 2 ? 2 : context.getHeight();
-        gaService.setLocationAndSize(portContainer,
-                context.getX() - AddPortFeature.PORT_SIZE,
-                context.getY() - AddPortFeature.PORT_SIZE,
-                width + 2 * AddPortFeature.PORT_SIZE,
-                height + 2 * AddPortFeature.PORT_SIZE);
+        gaService.setLocationAndSize(portContainer, context.getX()
+                - (AddPortFeature.PORT_SIZE / 2), context.getY()
+                - (AddPortFeature.PORT_SIZE / 2), width
+                + AddPortFeature.PORT_SIZE, height + AddPortFeature.PORT_SIZE);
         // rectangle added to port container
         Rectangle rectangleShape = gaService.createRectangle(portContainer);
-        rectangleShape.setStyle(styleProvider.getStyle(StyleProvider.ENTITY_STYLE));
+        rectangleShape.setStyle(styleProvider
+                .getStyle(StyleProvider.ENTITY_STYLE));
 
         // the entity label
         Shape labelShape = peCreateService.createShape(entityShape, false);
@@ -94,7 +98,8 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
         link(labelShape, entity);
 
         // set container shape for direct editing after object creation
-        IDirectEditingInfo directEditingInfo = getFeatureProvider().getDirectEditingInfo();
+        IDirectEditingInfo directEditingInfo = getFeatureProvider()
+                .getDirectEditingInfo();
         directEditingInfo.setMainPictogramElement(entityShape);
         // set shape and graphics algorithm where the editor for
         // direct editing shall be opened after object creation

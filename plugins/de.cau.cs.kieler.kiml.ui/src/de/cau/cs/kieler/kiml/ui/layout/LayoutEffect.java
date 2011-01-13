@@ -58,8 +58,10 @@ public class LayoutEffect extends AbstractEffect {
     /**
      * Create a new layout effect for the given diagram editor and EObject.
      * 
-     * @param editor the diagram editor containing the diagram to layout
-     * @param object the domain model object to layout
+     * @param editor
+     *            the diagram editor containing the diagram to layout
+     * @param object
+     *            the domain model object to layout
      */
     public LayoutEffect(final IEditorPart editor, final EObject object) {
         this.diagramEditor = editor;
@@ -69,11 +71,15 @@ public class LayoutEffect extends AbstractEffect {
     /**
      * Create a new layout effect for the given diagram editor and EObject.
      * 
-     * @param editor the diagram editor containing the diagram to layout
-     * @param object the domain model object to layout
-     * @param zoomToFit whether zoom to fit shall be performed
+     * @param editor
+     *            the diagram editor containing the diagram to layout
+     * @param object
+     *            the domain model object to layout
+     * @param zoomToFit
+     *            whether zoom to fit shall be performed
      */
-    public LayoutEffect(final IEditorPart editor, final EObject object, final boolean zoomToFit) {
+    public LayoutEffect(final IEditorPart editor, final EObject object,
+            final boolean zoomToFit) {
         this(editor, object);
         this.doZoom = zoomToFit;
     }
@@ -81,64 +87,86 @@ public class LayoutEffect extends AbstractEffect {
     /**
      * Create a new layout effect for the given diagram editor and EObject.
      * 
-     * @param editor the diagram editor containing the diagram to layout
-     * @param object the domain model object to layout
-     * @param zoomToFit whether zoom to fit shall be performed
-     * @param progressBar whether a progress bar shall be displayed
+     * @param editor
+     *            the diagram editor containing the diagram to layout
+     * @param object
+     *            the domain model object to layout
+     * @param zoomToFit
+     *            whether zoom to fit shall be performed
+     * @param progressBar
+     *            whether a progress bar shall be displayed
      */
-    public LayoutEffect(final IEditorPart editor, final EObject object, final boolean zoomToFit,
-            final boolean progressBar) {
+    public LayoutEffect(final IEditorPart editor, final EObject object,
+            final boolean zoomToFit, final boolean progressBar) {
         this(editor, object);
         this.doZoom = zoomToFit;
         this.useProgMonitor = progressBar;
     }
-    
+
     /**
      * Create a new layout effect for the given diagram editor and EObject.
      * 
-     * @param editor the diagram editor containing the diagram to layout
-     * @param object the domain model object to layout
-     * @param zoomToFit whether zoom to fit shall be performed
-     * @param progressBar whether a progress bar shall be displayed
-     * @param ancestors whether to include the ancestors in the layout process
+     * @param editor
+     *            the diagram editor containing the diagram to layout
+     * @param object
+     *            the domain model object to layout
+     * @param zoomToFit
+     *            whether zoom to fit shall be performed
+     * @param progressBar
+     *            whether a progress bar shall be displayed
+     * @param ancestors
+     *            whether to include the ancestors in the layout process
      */
-    public LayoutEffect(final IEditorPart editor, final EObject object, final boolean zoomToFit,
-            final boolean progressBar, final boolean ancestors) {
+    public LayoutEffect(final IEditorPart editor, final EObject object,
+            final boolean zoomToFit, final boolean progressBar,
+            final boolean ancestors) {
         this(editor, object);
         this.doZoom = zoomToFit;
         this.useProgMonitor = progressBar;
         this.layoutAncestors = ancestors;
     }
-    
+
     /**
      * Create a new layout effect for the given diagram editor and EObject.
      * 
-     * @param editor the diagram editor containing the diagram to layout
-     * @param object the domain model element to layout
-     * @param zoomToFit whether zoom to fit shall be performed
-     * @param progressBar whether a progress bar shall be displayed
-     * @param ancestors whether to include the ancestors in the layout process
-     * @param animation whether the layout shall be animated
+     * @param editor
+     *            the diagram editor containing the diagram to layout
+     * @param object
+     *            the domain model element to layout
+     * @param zoomToFit
+     *            whether zoom to fit shall be performed
+     * @param progressBar
+     *            whether a progress bar shall be displayed
+     * @param ancestors
+     *            whether to include the ancestors in the layout process
+     * @param animation
+     *            whether the layout shall be animated
      */
-    public LayoutEffect(final IEditorPart editor, final EObject object, final boolean zoomToFit,
-            final boolean progressBar, final boolean ancestors, final boolean animation) {
+    public LayoutEffect(final IEditorPart editor, final EObject object,
+            final boolean zoomToFit, final boolean progressBar,
+            final boolean ancestors, final boolean animation) {
         this(editor, object);
         this.doZoom = zoomToFit;
         this.useProgMonitor = progressBar;
         this.layoutAncestors = ancestors;
         this.doAnimate = animation;
     }
-    
+
     /**
-     * Set a layout option value for this layout effect. The value is only applied for this layout
-     * run and is thrown away afterwards.
+     * Set a layout option value for this layout effect. The value is only
+     * applied for this layout run and is thrown away afterwards.
      * 
-     * @param object the domain model element for which the option shall be set
-     * @param option the layout option to set
-     *     (see {@link de.cau.cs.kieler.kiml.options.LayoutOptions LayoutOptions})
-     * @param value the value for the layout option
+     * @param object
+     *            the domain model element for which the option shall be set
+     * @param option
+     *            the layout option to set (see
+     *            {@link de.cau.cs.kieler.kiml.options.LayoutOptions
+     *            LayoutOptions})
+     * @param value
+     *            the value for the layout option
      */
-    public void setOption(final EObject object, final IProperty<?> option, final Object value) {
+    public void setOption(final EObject object, final IProperty<?> option,
+            final Object value) {
         if (layoutConfig == null) {
             layoutConfig = new VolatileLayoutConfig();
         }
@@ -150,25 +178,28 @@ public class LayoutEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        manager = EclipseLayoutServices.getInstance().getManager(diagramEditor, editPart);
+        manager = EclipseLayoutServices.getInstance().getManager(diagramEditor,
+                editPart);
         if (manager != null) {
             List<EditPart> zoomToList = null;
             /*
              * haf: trying to add a semantical zoom that zooms to a given list of elements. does not yet work
              */
-            if(editPart != null){
+            if (editPart != null) {
                 zoomToList = Collections.singletonList(editPart);
+                System.out.println("Layout: "
+                        + ((View) editPart.getModel()).getElement());
+
             }
-            System.out.println("Layout: "+((View) editPart.getModel()).getElement());
             manager.setLayoutConfig(layoutConfig);
-            manager.layout(diagramEditor, editPart, doAnimate, useProgMonitor, layoutAncestors,
-                    false, doZoom/*, zoomToList*/);
+            manager.layout(diagramEditor, editPart, doAnimate, useProgMonitor,
+                    layoutAncestors, false, doZoom/*, zoomToList*/);
         }
     }
-    
+
     /**
-     * Returns the diagram layout manager that was used for this layout effect, or
-     * {@code null} if the effect has not been executed yet.
+     * Returns the diagram layout manager that was used for this layout effect,
+     * or {@code null} if the effect has not been executed yet.
      * 
      * @return the diagram layout manager
      */
@@ -209,8 +240,10 @@ public class LayoutEffect extends AbstractEffect {
     /**
      * Find the first common ancestor of two edit parts.
      * 
-     * @param a first edit part
-     * @param b second edit part
+     * @param a
+     *            first edit part
+     * @param b
+     *            second edit part
      * @return the first common ancestor
      */
     private EditPart commonAncestor(final EditPart a, final EditPart b) {
@@ -247,5 +280,5 @@ public class LayoutEffect extends AbstractEffect {
         } while (!(aParent == null && bParent == null));
         return null;
     }
-    
+
 }
