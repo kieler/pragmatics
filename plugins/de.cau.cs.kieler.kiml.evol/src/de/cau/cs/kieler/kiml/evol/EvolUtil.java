@@ -610,8 +610,8 @@ public final class EvolUtil {
         }
 
         /**
-         * Layouts the given individual in the given editors and calculates
-         * automatic ratings for it.
+         * Calculates layouts and automatic ratings for the given individual in
+         * the given editors.
          *
          * @param editors
          *            Specifies the editors in which the individual shall be
@@ -1130,7 +1130,7 @@ public final class EvolUtil {
         return editors;
     }
 
-    /** Hidden constructor to avoid instantiation. **/
+    /** Hidden constructor to avoid instantiation. */
     private EvolUtil() {
         // nothing
     }
@@ -1157,7 +1157,7 @@ public final class EvolUtil {
 
                 Genome genome = model.getCurrentIndividual();
 
-                String newLine = System.getProperty("line.separator");
+                String newLine = EvolPlugin.LINE_DELIMITER;
 
                 for (final IGene<?> gene : genome) {
                     writer.append(gene.getId() + ";" + gene.getValue() + newLine);

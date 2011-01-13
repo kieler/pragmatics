@@ -154,13 +154,13 @@ public class Genome extends ArrayList<IGene<?>> {
                 final IGene<?> newGene = oldGene.recombineWith(otherGenes);
                 result.add(newGene);
             }
-            // determine the rating
+            // Use the average of the genomes' ratings as the new rating.
             double ratingSum = 0;
             for (final Genome genome : genomes) {
                 ratingSum += genome.hasUserRating() ? genome.getUserRating() : 0.0;
             }
             double average = ratingSum / genomes.length;
-            result.setUserRating(Double.valueOf(average));
+            result.setUserRating(average);
         }
         return result;
     }
@@ -248,6 +248,7 @@ public class Genome extends ArrayList<IGene<?>> {
      *         was no mapping for key.
      */
     public Object addFeature(final String key, final Object value) {
+        // TODO: limit size of features map
         if (key == null) {
             throw new IllegalArgumentException();
         }
@@ -264,7 +265,7 @@ public class Genome extends ArrayList<IGene<?>> {
      * discarding it completely. This can be used for outdated ratings.
      */
     public void fadeUserRating() {
-        // TODO: implement more sophisticated fading of ratings
+        // Nice to have: implement more sophisticated fading of ratings
         if (hasUserRating()) {
             final double scalingFactor = .90;
             this.userRating = this.userRating * scalingFactor;

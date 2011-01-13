@@ -567,9 +567,9 @@ final class GenomeFactory {
      */
     private static Map<String, Object> collectPropertyValues(
             final List<ILayoutConfig> configs) {
-        final int expectedNumberOfPropsPerInspector = 10;
+        final int expectedNumberOfPropsPerConfig = 10;
         HashMap<String, Object> propertyId2ValueMap =
-                new HashMap<String, Object>(configs.size() * expectedNumberOfPropsPerInspector);
+                new HashMap<String, Object>(configs.size() * expectedNumberOfPropsPerConfig);
 
         // Iterate the layout inspectors.
         for (final ILayoutConfig config : configs) {

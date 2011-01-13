@@ -78,7 +78,8 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
     @Override
     protected void createFieldEditors() {
         Composite parent = getFieldEditorParent();
-        // evolution parameters
+        
+        // parameters for evolution
         Group algorithmGroup = new Group(parent, SWT.NONE);
         algorithmGroup.setText("Evolution parameters");
         IntegerFieldEditor popSizeEditor =
@@ -88,7 +89,7 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
         popSizeEditor.setValidRange(1, EvolPlugin.MAX_POPULATION_SIZE);
         addField(popSizeEditor);
 
-        // miscellaneous parameters
+        // other parameters (miscellaneous)
         this.miscGroup = new Group(parent, SWT.NONE);
         this.miscGroup.setText("Misc parameters");
         // final RadioGroupFieldEditor editorsEditor =
@@ -131,7 +132,7 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
 
     /** Number of columns. */
     private static final int NUM_COLUMNS = 2;
-    
+
     /** Default text limit to use. */
     private static final int TEXT_LIMIT = 30;
 }

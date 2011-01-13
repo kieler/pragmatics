@@ -50,6 +50,8 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
 
         // is value within bounds?
         if (!theTypeInfo.isValueWithinBounds(theValue)) {
+            // discuss: OutOfBoundsException extends IllegalArgumentException to
+            // provide type info?
             throw new IllegalArgumentException("value out of bounds: " + theValue);
         }
 
@@ -134,10 +136,10 @@ public abstract class AbstractGene<T extends Comparable<? super T>> implements I
         assert this.mutationInfo != null;
         return this.mutationInfo;
     }
-    
+
     /**
      * Return the random generator instance that is used by the gene.
-     * 
+     *
      * @return the random generator.
      */
     protected Random getRandomGenerator() {
