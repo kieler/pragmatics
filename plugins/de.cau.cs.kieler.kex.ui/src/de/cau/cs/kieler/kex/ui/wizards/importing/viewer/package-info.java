@@ -10,16 +10,11 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
+ * 
  */
-package de.cau.cs.kieler.kex.controller;
 
 /**
- * This enumeration contains a lot of example element values.
- * 
- * @author pkl
+ * Classes that contain all elements for the kex ui import example viewer.
  */
-public enum ExampleElement {
+package de.cau.cs.kieler.kex.ui.wizards.importing.viewer;
 
-    DESCRIPTION, VERSION, DEST_LOCATION, CONTACT, SOURCETYPE, RESOURCES, CATEGORIES, CREATE_CATEGORIES, OVERVIEW_PIC, TITLE, AUTHOR, ID;
-
-}

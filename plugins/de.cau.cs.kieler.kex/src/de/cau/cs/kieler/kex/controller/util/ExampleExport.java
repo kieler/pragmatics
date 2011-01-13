@@ -212,7 +212,8 @@ public final class ExampleExport {
      */
     @SuppressWarnings("unchecked")
     public static Example mapToExample(final Map<ExampleElement, Object> properties) {
-        Example result = new Example((String) properties.get(ExampleElement.TITLE),
+        Example result = new Example((String) properties.get(ExampleElement.ID),
+                (String) properties.get(ExampleElement.TITLE),
                 (SourceType) properties.get(ExampleElement.SOURCETYPE));
         result.setDescription((String) properties.get(ExampleElement.DESCRIPTION));
         result.setContact((String) properties.get(ExampleElement.CONTACT));

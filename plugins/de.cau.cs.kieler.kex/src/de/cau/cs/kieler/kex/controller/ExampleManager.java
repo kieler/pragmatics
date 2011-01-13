@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kex.controller;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -252,6 +253,18 @@ public final class ExampleManager {
                 // TODO think about error handling
             }
         }
+    }
+
+    public Collection<? extends String> getNonEmptyCategories() {
+        List<String> result = new ArrayList<String>();
+        for (Example example : getExamples().values()) {
+            for (String category : example.getCategories()) {
+                if (!result.contains(category)) {
+                    result.add(category);
+                }
+            }
+        }
+        return result;
     }
 
 }

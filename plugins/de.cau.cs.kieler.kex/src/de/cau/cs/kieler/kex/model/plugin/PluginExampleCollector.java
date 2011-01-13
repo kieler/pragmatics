@@ -169,9 +169,10 @@ public class PluginExampleCollector extends ExampleCollector {
      */
     public static Example toExample(final IConfigurationElement exampleElement) {
 
+        String idAttr = exampleElement.getAttribute(PluginConstants.ID);
         String titleAttr = exampleElement.getAttribute(PluginConstants.TITLE);
         // ein freier string, min. default besser noch regex.
-        Example example = new Example(titleAttr, SourceType.KIELER);
+        Example example = new Example(idAttr, titleAttr, SourceType.KIELER);
         example.setDescription(exampleElement.getAttribute(PluginConstants.DESCRIPTION));
         example.setContact(exampleElement.getAttribute(PluginConstants.CONTACT));
         example.setAuthor(exampleElement.getAttribute(PluginConstants.AUTHOR));

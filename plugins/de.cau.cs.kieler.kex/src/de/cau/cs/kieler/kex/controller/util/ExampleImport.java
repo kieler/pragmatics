@@ -177,7 +177,7 @@ public final class ExampleImport {
      */
     public static InputStream loadOverviewPic(final Example example) throws KielerException {
         Bundle bundle = Platform.getBundle(example.getNamespaceId());
-        URL entry = bundle.getEntry(example.getOverviewPic());
+        URL entry = bundle.getEntry(example.getPreviewPic());
         try {
             return entry.openStream();
         } catch (IOException e) {

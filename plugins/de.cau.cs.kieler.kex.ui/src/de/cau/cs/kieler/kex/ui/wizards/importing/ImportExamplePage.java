@@ -19,7 +19,14 @@ import java.util.List;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -72,7 +79,7 @@ public class ImportExamplePage extends WizardPage {
     private static final int DESC_MIN_HEIGHT = 80;
 
     private static final int EXTREE_WIDTH = 190;
-    private static final int EXTREE_HEIGHT = 100;
+    private static final int EXTREE_HEIGHT = 300;
 
     private static final int OFFSET = 5;
     private static final int PREVIEW_OFFSET = 20;
@@ -103,47 +110,45 @@ public class ImportExamplePage extends WizardPage {
 
     public ImportExamplePage(final String name, final IStructuredSelection selection) {
         super(name);
-        setDescription(" Set destination location for imported examples.");
+        setDescription("Choose examples to import.");
     }
 
     public void createControl(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout());
+        GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 2;
+        composite.setLayout(gridLayout);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         setControl(composite);
-        createTop(composite);
-        createMiddle(composite);
+        Control exampleTreeControl = createLeft(composite);
+        // createRight(composite, exampleTreeControl);
         getShell().setMinimumSize(540, 600);
-
     }
 
-    /**
-     * There is the example tree and the preview picture in the middle of the page.
-     * 
-     * @param parent
-     */
-    private void createTop(final Composite parent) {
+    private Control createLeft(Composite parent) {
+        return createTreeComposite(parent);
+    }
+
+    private void createRight(Composite parent, Control control) {
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new FormLayout());
-        Control createTreeComposite = createTreeComposite(composite);
-        createPreviewComp(composite, createTreeComposite);
-        composite.getShell().redraw();
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(SWT.NONE));
+        createPreviewComp(composite, control);
+        createDescriptionComp(composite, control);
     }
 
-    /**
-     * the bottom component contains the description field.
-     * 
-     * @param parent
-     */
-    private void createMiddle(final Composite parent) {
-        Label descriptionLabel = new Label(parent, SWT.NONE);
+    private void createDescriptionComp(Composite composite, Control control) {
+
+        Label descriptionLabel = new Label(composite, SWT.NONE);
         descriptionLabel.setText("Example Description");
 
-        this.exampleDescription = new Text(parent, SWT.NONE | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+        this.exampleDescription = new Text(composite, SWT.NONE | SWT.MULTI | SWT.V_SCROLL
+                | SWT.BORDER);
         GridData descData = new GridData(GridData.FILL_HORIZONTAL);
         descData.heightHint = DESC_HEIGHT_HINT;
         descData.minimumHeight = DESC_MIN_HEIGHT;
         this.exampleDescription.setLayoutData(descData);
+
     }
 
     /**
@@ -154,14 +159,64 @@ public class ImportExamplePage extends WizardPage {
      */
     private Control createTreeComposite(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new FormLayout());
-        FormData formData = new FormData();
-        composite.setLayoutData(formData);
-        Label treeDesc = new Label(composite, SWT.NONE);
-        FormData labelData = new FormData();
-        treeDesc.setLayoutData(labelData);
-        treeDesc.setText("Choose Examples");
-        createTree(composite, treeDesc);
+        GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 3;
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+        Composite treeComposite = new Composite(composite, SWT.NONE);
+        TreeColumnLayout treeColumnLayout = new TreeColumnLayout();
+        treeComposite.setLayout(treeColumnLayout);
+
+        TreeViewer treeViewer = new TreeViewer(treeComposite, SWT.BORDER | SWT.FULL_SELECTION);
+        // createTree(treeComposite);
+        // new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION);
+
+        Tree tree = treeViewer.getTree();
+
+        List<String> categories = ExampleManager.get().getCategories();
+        if (categories.size() == 0) {
+            MessageDialog.openError(getShell(), "Could not start example import wizard",
+                    "There are no examples to import. Please check installed features!");
+        }
+
+        for (int i = 0; i < categories.size(); i++) {
+            TreeItem iItem = new TreeItem(tree, SWT.CHECK);
+            iItem.setText(categories.get(i));
+            addExamplesToItem(categories.get(i), iItem);
+        }
+
+        // Spaltenköpfe und Zeilenbegrenzungen sichtbar machen
+        tree.setHeaderVisible(true);
+        tree.setLinesVisible(true);
+
+        // treeViewer = new TreeViewer(parent);
+        // treeViewer.setContentProvider(new MovingBoxContentProvider());
+        // treeViewer.setLabelProvider(new MovingBoxLabelProvider());
+        // treeViewer.setInput(getInitalInput());
+        // treeViewer.expandAll();
+
+        // ArrayContentProvider kann verwendet werden, da Input-Objekt eine Java Collection ist
+        treeViewer.setContentProvider(ArrayContentProvider.getInstance());
+
+        // Für jede Spalte ein TableViewerColumn erzeugen
+        TreeViewerColumn viewerNameColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
+        viewerNameColumn.getColumn().setText("Examples");
+        viewerNameColumn.getColumn().setWidth(140);
+
+        // LabelProvider für jede Spalte setzen
+        viewerNameColumn.setLabelProvider(new CellLabelProvider() {
+            @Override
+            public void update(ViewerCell cell) {
+                cell.setText(((Example) cell.getElement()).getTitle());
+            }
+        });
+
+        treeColumnLayout.setColumnData(viewerNameColumn.getColumn(), new ColumnWeightData(50, 20,
+                true));
+        // List<SomeObject> als Input-Objekt setzen
+        // treeViewer.setInput(ExampleManager.get().getExamples().values());
+
         return composite;
     }
 
@@ -172,11 +227,9 @@ public class ImportExamplePage extends WizardPage {
      * @param topControl
      * @return exampleTree
      */
-    private Control createTree(final Composite composite, final Control topControl) {
-        exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL);
-        FormData formData = new FormData(EXTREE_WIDTH, EXTREE_HEIGHT);
-        formData.top = new FormAttachment(topControl, OFFSET);
-        exampleTree.setLayoutData(formData);
+    private Tree createTree(final Composite composite) {
+        exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL
+                | SWT.FULL_SELECTION);
         exampleTree.addSelectionListener(new SelectionListener() {
             public void widgetSelected(final SelectionEvent e) {
                 updateElements(e);
@@ -381,7 +434,7 @@ public class ImportExamplePage extends WizardPage {
      * @return
      */
     private Image loadImage(final double imageWidth, final double imageHeight) {
-        final String previewPicPath = selectedExample.getOverviewPic();
+        final String previewPicPath = selectedExample.getPreviewPic();
         if (previewPicPath != null && previewPicPath.length() > 1) {
             try {
                 ImageData imgData = new ImageData(ExampleManager.get().loadOverviewPic(

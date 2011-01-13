@@ -52,10 +52,8 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 
     private static final String ERROR_TITLE = "Could not complete Import";
 
-    private ImportExamplePage mainPage;
+    private NewImportMainPage newPage;
     private ImportDestPage destinationPage;
-
-    private IPath destinationLocation;
     private boolean checkDuplicate;
 
     /**
@@ -83,28 +81,29 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             MessageDialog.openError(this.getShell(), "Can't initialize existing example pool.",
                     e.getLocalizedMessage());
         }
-        mainPage = new ImportExamplePage("Choose Examples", selection);
+        newPage = new NewImportMainPage("Special Import Mechanism");
         destinationPage = new ImportDestPage("Location", selection);
     }
 
     @Override
     public final void addPages() {
         super.addPages();
-        addPage(mainPage);
+        // addPage(mainPage);
+        addPage(newPage);
         addPage(destinationPage);
-
     }
 
     @Override
     public final boolean performFinish() {
         List<String> directOpens = null;
         try {
-            List<Example> checkedExamples = mainPage.getCheckedExamples();
+            List<Example> checkedExamples = newPage.getExamples();
             // TODO warning if more examples selected than 5.
             if (checkedExamples.isEmpty()) {
                 throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
             }
             // TODO check if projectPath is empty when deletes the import location.
+            IPath destinationLocation = destinationPage.getResourcePath();
             if (destinationLocation == null || destinationLocation.isEmpty()) {
                 throw new KielerException("No import location has been set.");
             }

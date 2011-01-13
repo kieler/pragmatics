@@ -65,8 +65,8 @@ public class ImportDestPage extends WizardResourceImportPage {
     @Override
     protected void createOptionsGroupButtons(Group optionsGroup) {
         openImports = new Button(optionsGroup, SWT.CHECK);
-        openImports.setText("Open examples after import.");
-        openImports.setEnabled(true);
+        openImports.setText("Open examples after import");
+        openImports.setSelection(true);
     }
 
     /**
@@ -168,6 +168,6 @@ public class ImportDestPage extends WizardResourceImportPage {
     }
 
     public boolean openImports() {
-        return openImports.isEnabled();
+        return openImports.getSelection();
     }
 }

@@ -14,7 +14,7 @@
  */
 
 /**
- * Classes that contain all elements for the kex ui export.
+ * Classes that contain all elements for the kex ui import.
  */
 package de.cau.cs.kieler.kex.ui.wizards.importing;
 

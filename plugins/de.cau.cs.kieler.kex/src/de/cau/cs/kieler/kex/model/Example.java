@@ -26,9 +26,8 @@ import java.util.List;
  */
 public class Example {
 
-    /**
-     * unique field.
-     */
+    private final String id;
+
     private final String title;
 
     private final List<ExampleResource> resources;
@@ -61,7 +60,8 @@ public class Example {
      * @param sourceTypeParam
      *            , {@link SourceType}
      */
-    public Example(final String titleParam, final SourceType sourceTypeParam) {
+    public Example(final String idParam, final String titleParam, final SourceType sourceTypeParam) {
+        this.id = idParam;
         this.title = titleParam;
         this.sourceType = sourceTypeParam;
         this.resources = new ArrayList<ExampleResource>();
@@ -269,7 +269,7 @@ public class Example {
      * 
      * @return {@link String}
      */
-    public String getOverviewPic() {
+    public String getPreviewPic() {
         return overviewPic;
     }
 

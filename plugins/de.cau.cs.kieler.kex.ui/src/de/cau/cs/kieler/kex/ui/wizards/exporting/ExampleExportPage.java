@@ -22,14 +22,6 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.mylyn.internal.tasks.ui.TasksUiPlugin;
-import org.eclipse.mylyn.internal.tasks.ui.wizards.NewAttachmentWizardDialog;
-import org.eclipse.mylyn.internal.tasks.ui.wizards.TaskAttachmentWizard;
-import org.eclipse.mylyn.internal.tasks.ui.wizards.TaskAttachmentWizard.Mode;
-import org.eclipse.mylyn.tasks.core.ITask;
-import org.eclipse.mylyn.tasks.core.TaskRepository;
-import org.eclipse.mylyn.tasks.core.data.TaskAttributeMapper;
-import org.eclipse.mylyn.tasks.core.data.TaskData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -201,17 +193,18 @@ public class ExampleExportPage extends WizardResourceImportPage {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 super.widgetSelected(e);
-                TaskRepository taskRepository = new TaskRepository("local", "http://127.0.0.1");
-                ITask task = TasksUiPlugin.getRepositoryModel()
-                        .createTask(taskRepository, "myTask");
-                TaskAttributeMapper mapper = new TaskAttributeMapper(taskRepository);
-                TaskData data = new TaskData(mapper, "local", "http://127.0.0.1", "myTask");
-                TaskAttachmentWizard taskAttachmentWizard = new TaskAttachmentWizard(
-                        taskRepository, task, data.getRoot());
-                taskAttachmentWizard.getModel().setAttachContext(true);
-                taskAttachmentWizard.setMode(Mode.SCREENSHOT);
-                new NewAttachmentWizardDialog(testButton.getShell(), taskAttachmentWizard, true)
-                        .open();
+                // TODO Mylyn picture cutter
+                // TaskRepository taskRepository = new TaskRepository("local", "http://127.0.0.1");
+                // ITask task = TasksUiPlugin.getRepositoryModel()
+                // .createTask(taskRepository, "myTask");
+                // TaskAttributeMapper mapper = new TaskAttributeMapper(taskRepository);
+                // TaskData data = new TaskData(mapper, "local", "http://127.0.0.1", "myTask");
+                // TaskAttachmentWizard taskAttachmentWizard = new TaskAttachmentWizard(
+                // taskRepository, task, data.getRoot());
+                // taskAttachmentWizard.getModel().setAttachContext(true);
+                // taskAttachmentWizard.setMode(Mode.SCREENSHOT);
+                // new NewAttachmentWizardDialog(testButton.getShell(), taskAttachmentWizard, true)
+                // .open();
             }
         });
     }
