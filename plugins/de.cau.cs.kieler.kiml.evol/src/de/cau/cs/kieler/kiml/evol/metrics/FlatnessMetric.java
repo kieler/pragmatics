@@ -72,13 +72,13 @@ public class FlatnessMetric implements IAnalysis {
             final float half = 0.5f;
             if (widthToHeightRatio < 1.0f) {
                 // narrow
-                result = (widthToHeightRatio * half);
+                result = widthToHeightRatio * half;
             } else {
                 // wide
-                result = (1.0f - (heightToWidthRatio * half));
+                result = 1.0f - (heightToWidthRatio * half);
             }
 
-            assert ((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f)) : "Metric result out of bounds: "
+            assert (0.0f <= result) && (result <= 1.0f) : "Metric result out of bounds: "
                     + result;
 
         } finally {

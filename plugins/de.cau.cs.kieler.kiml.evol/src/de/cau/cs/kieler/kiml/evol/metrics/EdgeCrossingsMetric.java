@@ -58,9 +58,9 @@ public class EdgeCrossingsMetric implements IAnalysis {
             Object crossingsResult = results.get(GRANA_EDGE_CROSSINGS_COUNT);
             Object edgesResult = results.get(GRANA_EDGE_COUNT);
             Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
-            int edgesCount = ((Integer) edgesResult);
-            int bendsCount = ((Integer) bendsResult);
-            int crossingsCount = ((Integer) crossingsResult);
+            int edgesCount = (Integer) edgesResult;
+            int bendsCount = (Integer) bendsResult;
+            int crossingsCount = (Integer) crossingsResult;
 
             int edgesAuxCount = edgesCount + bendsCount;
 
@@ -85,7 +85,7 @@ public class EdgeCrossingsMetric implements IAnalysis {
             int maxCrossingsCount =
                     (edgesAuxCount * (edgesAuxCount - 1)) / 2 - impossibleCrossingsCount;
 
-            assert (crossingsCount <= maxCrossingsCount);
+            assert crossingsCount <= maxCrossingsCount;
 
             if (crossingsCount > maxCrossingsCount) {
                 result = Float.valueOf(0.0f);
@@ -96,7 +96,7 @@ public class EdgeCrossingsMetric implements IAnalysis {
                 result = 1.0f;
             }
 
-            assert ((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f)) : "Metric result out of bounds: "
+            assert (0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f) : "Metric result out of bounds: "
                     + result;
 
         } finally {

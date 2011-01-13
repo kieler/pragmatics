@@ -296,7 +296,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         Object value = gene.getValue();
         Object id = gene.getId();
 
-        assert (!LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id));
+        assert !LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id);
 
         // a normal string option
         targetGraphData.setProperty(data, value.toString());

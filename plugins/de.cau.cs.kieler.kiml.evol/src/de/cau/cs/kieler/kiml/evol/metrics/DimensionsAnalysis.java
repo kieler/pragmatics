@@ -54,7 +54,7 @@ public class DimensionsAnalysis implements IAnalysis {
                 KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
                 float xpos = nodeLayout.getXpos();
                 float ypos = nodeLayout.getYpos();
-                assert ((xpos >= 0.0f) && (ypos >= 0.0f)) : "negative node positions";
+                assert (xpos >= 0.0f) && (ypos >= 0.0f) : "negative node positions";
                 if (xpos > xmax) {
                     xmax = xpos;
                 }
@@ -71,7 +71,7 @@ public class DimensionsAnalysis implements IAnalysis {
             float xdim = xmax - xmin;
             float ydim = ymax - ymin;
             final float epsilon = 0.1f;
-            assert ((xdim >= epsilon) || (ydim >= epsilon)) : "Very small dimension.";
+            assert (xdim >= epsilon) || (ydim >= epsilon) : "Very small dimension.";
             result = new Pair<Float, Float>(xdim, ydim);
 
         } finally {

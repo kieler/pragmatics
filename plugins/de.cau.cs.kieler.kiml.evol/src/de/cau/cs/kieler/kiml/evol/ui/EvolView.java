@@ -118,9 +118,13 @@ public class EvolView extends ViewPart {
         }
 
         /**
-         *
+         * Synchronously sets the specified population as input for the
+         * specified table viewer.
+         * 
          * @param pop
+         *            the population
          * @param tv
+         *            the table viewer
          */
         void populationChange(final Population pop, final SelectorTableViewer tv) {
             if (pop != null) {
@@ -139,10 +143,11 @@ public class EvolView extends ViewPart {
          * {@inheritDoc}
          */
         public void afterChange(final EvolModel source, final ModelChangeType cause) {
+            if (source == null) {
+                throw new IllegalArgumentException("Argument must not be null.");
+            }
 
             EvolPlugin.logStatus("afterChange: " + cause);
-
-            assert (source != null);
 
             if (EvolUtil.getCurrentEditor() == null) {
                 System.err.println("There is no current editor: " + cause);
@@ -174,7 +179,7 @@ public class EvolView extends ViewPart {
 
             final int row = source.getPosition();
             if (cause == ModelChangeType.RESET) {
-                assert (row == 0);
+                assert row == 0;
             }
 
             // synchronously

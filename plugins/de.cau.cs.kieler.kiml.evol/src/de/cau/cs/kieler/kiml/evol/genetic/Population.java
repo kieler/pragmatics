@@ -19,6 +19,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.ICondition;
+import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.IFilterable;
 
 /**
@@ -90,7 +91,7 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
      * @return a string containing detailed information about the population.
      */
     public String getDetails() {
-        String newLine = System.getProperty("line.separator");
+        String newLine = EvolPlugin.LINE_DELIMITER;
         final int expectedLengthPerEntry = 70;
         StringBuilder result = new StringBuilder(this.size() * expectedLengthPerEntry);
 
@@ -139,8 +140,9 @@ public class Population extends ArrayList<Genome> implements IFilterable<Populat
 
     @Override
     public String toString() {
-        String newLine = System.getProperty("line.separator");
+        String newLine = EvolPlugin.LINE_DELIMITER;
         StringBuilder result = new StringBuilder();
+
         int i = 0;
         for (final Genome ind : this) {
             result.append("#" + ++i + ": " + ind.toString() + newLine);

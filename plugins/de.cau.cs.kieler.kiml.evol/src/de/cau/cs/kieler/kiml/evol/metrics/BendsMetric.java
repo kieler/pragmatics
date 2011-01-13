@@ -51,8 +51,8 @@ public class BendsMetric implements IAnalysis {
             // load numbers from analyses
             Object edgesResult = results.get(GRANA_EDGE_COUNT);
             Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
-            int edgesCount = ((Integer) edgesResult).intValue();
-            int bendsCount = ((Integer) bendsResult).intValue();
+            int edgesCount = (Integer) edgesResult;
+            int bendsCount = (Integer) bendsResult;
 
             // FIXME: For some reason, the bends count in the layout graph may
             // be reduced after the layout is applied. This means the result
@@ -66,7 +66,7 @@ public class BendsMetric implements IAnalysis {
             } else {
                 result = 1.0f;
             }
-            assert ((0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f)) : "Metric result out of bounds: "
+            assert (0.0f <= result.floatValue()) && (result.floatValue() <= 1.0f) : "Metric result out of bounds: "
                     + result;
 
         } finally {

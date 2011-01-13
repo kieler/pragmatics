@@ -30,6 +30,9 @@ public class EvolPlugin extends AbstractUIPlugin {
      */
     public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.evol";
 
+    /** String that is used as line delimiter. */
+    public static final String LINE_DELIMITER = System.getProperty("line.separator");
+
     // Preference constants and default values.
     /**
      * Preference constant for population size.

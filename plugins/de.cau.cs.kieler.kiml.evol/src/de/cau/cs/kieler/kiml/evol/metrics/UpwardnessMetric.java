@@ -82,7 +82,7 @@ public class UpwardnessMetric implements IAnalysis {
                 nodes.addAll(current.getChildren());
             }
 
-            result = ((float) upwardEdges.size() / totalEdges.size());
+            result = (float) upwardEdges.size() / totalEdges.size();
 
         } finally {
             // We must close the monitor.
