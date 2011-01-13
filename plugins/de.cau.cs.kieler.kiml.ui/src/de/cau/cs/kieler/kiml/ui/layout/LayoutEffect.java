@@ -14,10 +14,12 @@
 package de.cau.cs.kieler.kiml.ui.layout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
@@ -149,9 +151,17 @@ public class LayoutEffect extends AbstractEffect {
     public void execute() {
         manager = EclipseLayoutServices.getInstance().getManager(diagramEditor, editPart);
         if (manager != null) {
+            List<EditPart> zoomToList = null;
+            /*
+             * haf: trying to add a semantical zoom that zooms to a given list of elements. does not yet work
+             */
+            if(editPart != null){
+                zoomToList = Collections.singletonList(editPart);
+            }
+            System.out.println("Layout: "+((View) editPart.getModel()).getElement());
             manager.setLayoutConfig(layoutConfig);
             manager.layout(diagramEditor, editPart, doAnimate, useProgMonitor, layoutAncestors,
-                    false, doZoom);
+                    false, doZoom/*, zoomToList*/);
         }
     }
     

@@ -13,13 +13,18 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.Animation;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Viewport;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.ui.IEditorPart;
 
@@ -31,7 +36,9 @@ import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -244,6 +251,116 @@ public abstract class DiagramLayoutManager {
         }
     }
 
+    /**
+     * Apply layout with animation and zoom and scroll such that the given elements are visible.
+     * Currently experimental, does not yet zoom correctly.
+     * @author haf
+     * 
+     * @param elements
+     *            list of EditParts to which to zoom and scroll to
+     * @param animate
+     *            if true, activate Draw2D animation
+     * @param cacheLayout
+     *            if true, the layout result is cached for the underlying model
+     * @param nodeCount
+     *            the number of nodes in the layouted diagram
+     */
+    public final void applyAndZoomToElements(final List<EditPart> elements, final int nodeCount,
+            final boolean animate, final boolean cacheLayout) {
+        if (elements == null || elements.isEmpty()) {
+            // fallback to normal zoom-to-fit
+            applyAndZoom(nodeCount, animate, cacheLayout);
+            return;
+        }
+
+        // calculate the bounding box for a set of edit parts
+        float x1 = Float.NEGATIVE_INFINITY;
+        float y1 = Float.NEGATIVE_INFINITY;
+        float x2 = Float.NEGATIVE_INFINITY;
+        float y2 = Float.NEGATIVE_INFINITY;
+
+        for (EditPart editPart : elements) {
+            //System.out.println("Figure Bounds: "+((GraphicalEditPart)editPart).getFigure().getBounds());
+            KNode node = getLayoutNode(editPart);
+            KShapeLayout layout = node.getData(KShapeLayout.class);
+            // calculate absolute coordinates
+            float x = layout.getXpos(), y = layout.getYpos();
+            float w = layout.getWidth(), h = layout.getHeight();
+            while (node.getParent() != null) {
+                node = node.getParent();
+                layout = node.getData(KShapeLayout.class);
+                x += layout.getXpos();
+                y += layout.getYpos();
+                KInsets insets = layout.getProperty(LayoutOptions.INSETS);
+                x += layout.getXpos() + insets.getLeft();
+                y += layout.getYpos() + insets.getTop();
+            }
+            if (x > x1) {
+                x1 = x;
+            }
+            if (y > y1) {
+                y1 = y;
+            }
+            if (x + layout.getWidth() > x2) {
+                x2 = x + w;
+            }
+            if (y + layout.getHeight() > y2) {
+                y2 = y + h;
+            }
+        }
+
+        // determine pre- or post-layout zoom
+        final ZoomManager zoomManager = getBridge().getZoomManager(getEditPart(getLayoutGraph()));
+        Dimension available = zoomManager.getViewport().getClientArea().getSize();
+        float desiredWidth = x2 - x1;
+        float desiredHeight = y2 - y1;
+        double scaleX = Math.min(available.width / desiredWidth, zoomManager.getMaxZoom());
+        double scaleY = Math.min(available.height / desiredHeight, zoomManager.getMaxZoom());
+        final double scale = Math.min(scaleX, scaleY);
+        final double oldScale = zoomManager.getZoom();
+
+        System.out.println("Bounding box: " + x1 + " " + y1 + " " + x2 + " " + y2 + " New Scale: "
+                + scale + " availaible: " + available);
+        Point newLocation = new Point(x1, y1);
+        //newLocation.scale(1 / scale);
+//        RectangleFigure rect = new RectangleFigure();
+//        rect.setBounds(new Rectangle((int)newLocation.x,(int)newLocation.y,(int)(desiredWidth*scale),(int)(desiredHeight*scale)));
+//        //rect.setBounds(new Rectangle(39,248,100,100));
+//        rect.setLineWidth(5);
+//        rect.setForegroundColor(ColorConstants.red);
+//        rect.setFill(false);
+//        rect.setVisible(true);
+        
+        Viewport vp = zoomManager.getViewport();
+        // find the top-level Viewport
+        EditPart oneElement = elements.get(0); // we already know that elements is not empty
+        if(oneElement instanceof GraphicalEditPart){
+            IFigure oneFigure = ((GraphicalEditPart) oneElement).getFigure();
+            IFigure parent = oneFigure.getParent();
+            while(parent != null){
+                if(parent instanceof Viewport){
+                    vp = (Viewport)parent;
+                }
+                parent = parent.getParent();
+            }
+        }
+        
+        System.out.println("VP and zoomManager VP the same: "+(zoomManager.getViewport() == vp));
+        
+        if (scale <= oldScale) {
+            zoomManager.setViewLocation(newLocation);
+            //zoomManager.setZoom(scale);
+            zoomManager.setViewLocation(newLocation);
+        }
+        applyAnimatedLayout(animate, cacheLayout, nodeCount);
+        if (scale > oldScale) {
+            zoomManager.setViewLocation(newLocation);
+            //zoomManager.setZoom(scale);
+            zoomManager.setViewLocation(newLocation);
+        }
+        //zoomManager.setViewLocation(new Point(39,248));
+    }
+    
     /**
      * Apply layout with or without animation.
      * 
