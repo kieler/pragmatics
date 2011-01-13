@@ -2,7 +2,6 @@ package de.cau.cs.kieler.kex.ui.wizards.importing.viewer;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,10 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
@@ -27,11 +24,11 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.mylyn.internal.provisional.commons.ui.CommonImages;
-import org.eclipse.mylyn.internal.provisional.commons.ui.CommonThemes;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -90,8 +87,7 @@ import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.ui.ExampleImages;
-import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
+import de.cau.cs.kieler.kex.ui.KEXUIImages;
 import de.cau.cs.kieler.kex.ui.wizards.importing.Messages;
 
 public class ExampleViewer {
@@ -274,6 +270,10 @@ public class ExampleViewer {
 
     private static final String COLOR_DARK_GRAY = "DarkGray"; //$NON-NLS-1$
 
+    private static final String GRADIENT_START = "GradientStartGray"; //$NON-NLS-1$
+
+    private static final String GRADIENT_END = "GradientEndGray"; //$NON-NLS-1$
+
     private static Boolean useNativeSearchField;
 
     private final List<Example> installableExamples = new ArrayList<Example>();
@@ -330,6 +330,8 @@ public class ExampleViewer {
 
     private final IShellProvider shellProvider;
 
+    private final SelectionProviderAdapter selectionProvider;
+
     private Control control;
 
     private List<Example> allExamples;
@@ -341,10 +343,15 @@ public class ExampleViewer {
     public ExampleViewer(IShellProvider shellProvider, IRunnableContext context) {
         this.shellProvider = shellProvider;
         this.context = context;
+        this.selectionProvider = new SelectionProviderAdapter();
         this.allExamples = Collections.emptyList();
         this.disposables = new ArrayList<Resource>();
         setMinimumHeight(MINIMUM_HEIGHT);
         setComplete(false);
+    }
+
+    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+        selectionProvider.addSelectionChangedListener(listener);
     }
 
     private void clearDisposables() {
@@ -379,31 +386,12 @@ public class ExampleViewer {
         return null;
     }
 
-    private IStatus computeStatus(InvocationTargetException e, String message) {
-        Throwable cause = e.getCause();
-        IStatus statusCause;
-        if (cause instanceof CoreException) {
-            statusCause = ((CoreException) cause).getStatus();
-        } else {
-            statusCause = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID, cause.getMessage(),
-                    cause);
-        }
-        if (statusCause.getMessage() != null) {
-            message = NLS.bind(
-                    de.cau.cs.kieler.kex.ui.wizards.importing.Messages.Message_with_cause, message,
-                    statusCause.getMessage());
-        }
-        IStatus status = new MultiStatus(KEXUIPlugin.PLUGIN_ID, 0, new IStatus[] { statusCause },
-                message, cause);
-        return status;
-    }
-
-    private void configureLook(Control control, Color background) {
+    private void configureLook(final Control control, Color background) {
         control.setBackground(background);
     }
 
     /**
-     * cause the UI to respond to a change in visibility filters
+     * cause the UI to respond to a change in visibility filters.
      * 
      */
     public void exampleDescriptorKindVisibilityUpdated() {
@@ -449,7 +437,7 @@ public class ExampleViewer {
 
         bodyScrolledComposite.addControlListener(new ControlAdapter() {
             @Override
-            public void controlResized(ControlEvent e) {
+            public void controlResized(final ControlEvent e) {
                 // XXX small offset in case list has a scroll bar
                 Point size = scrolledContents.computeSize(body.getSize().x - 20, SWT.DEFAULT, true);
                 scrolledContents.setSize(size);
@@ -464,9 +452,10 @@ public class ExampleViewer {
         body.layout(true);
     }
 
-    private Label createClearFilterTextControl(Composite filterContainer, final Text filterText) {
-        final Image inactiveImage = CommonImages.FIND_CLEAR_DISABLED.createImage();
-        final Image activeImage = CommonImages.FIND_CLEAR.createImage();
+    private Label createClearFilterTextControl(final Composite filterContainer,
+            final Text filterText) {
+        final Image inactiveImage = KEXUIImages.FIND_CLEAR_DISABLED.createImage();
+        final Image activeImage = KEXUIImages.FIND_CLEAR.createImage();
         final Image pressedImage = new Image(filterContainer.getDisplay(), activeImage,
                 SWT.IMAGE_GRAY);
 
@@ -480,18 +469,18 @@ public class ExampleViewer {
         clearButton.addMouseListener(new MouseAdapter() {
             private MouseMoveListener fMoveListener;
 
-            private boolean isMouseInButton(MouseEvent e) {
+            private boolean isMouseInButton(final MouseEvent e) {
                 Point buttonSize = clearButton.getSize();
                 return 0 <= e.x && e.x < buttonSize.x && 0 <= e.y && e.y < buttonSize.y;
             }
 
             @Override
-            public void mouseDown(MouseEvent e) {
+            public void mouseDown(final MouseEvent e) {
                 clearButton.setImage(pressedImage);
                 fMoveListener = new MouseMoveListener() {
                     private boolean fMouseInButton = true;
 
-                    public void mouseMove(MouseEvent e) {
+                    public void mouseMove(final MouseEvent e) {
                         boolean mouseInButton = isMouseInButton(e);
                         if (mouseInButton != fMouseInButton) {
                             fMouseInButton = mouseInButton;
@@ -555,7 +544,7 @@ public class ExampleViewer {
 
         Composite container = new Composite(parent, SWT.NULL);
         container.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e) {
+            public void widgetDisposed(final DisposeEvent e) {
                 refreshJob.cancel();
                 if (disposables != null) {
                     for (Resource resource : disposables) {
@@ -602,14 +591,14 @@ public class ExampleViewer {
             }
 
             filterText.addModifyListener(new ModifyListener() {
-                public void modifyText(ModifyEvent e) {
+                public void modifyText(final ModifyEvent e) {
                     filterTextChanged();
                 }
             });
             if (nativeSearch) {
                 filterText.addSelectionListener(new SelectionAdapter() {
                     @Override
-                    public void widgetDefaultSelected(SelectionEvent e) {
+                    public void widgetDefaultSelected(final SelectionEvent e) {
                         if (e.detail == ICON_CANCEL) {
                             clearFilterText();
                         }
@@ -631,7 +620,7 @@ public class ExampleViewer {
                 checkbox.setSelection(isVisible(kind));
                 checkbox.setText(getFilterLabel(kind));
                 checkbox.addSelectionListener(new SelectionListener() {
-                    public void widgetDefaultSelected(SelectionEvent e) {
+                    public void widgetDefaultSelected(final SelectionEvent e) {
                         widgetSelected(e);
                     }
 
@@ -667,7 +656,7 @@ public class ExampleViewer {
         return MINIMUM_HEIGHT;
     }
 
-    private void createExampleContents(Composite container) {
+    private void createExampleContents(final Composite container) {
 
         Color background = container.getBackground();
         GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).applyTo(container);
@@ -730,11 +719,11 @@ public class ExampleViewer {
                 // } else {
                 new Label(categoryHeaderContainer, SWT.NULL).setText(" "); //$NON-NLS-1$
                 // }
-                // Label description = new Label(categoryHeaderContainer, SWT.WRAP);
-                // GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
-                // .hint(100, SWT.DEFAULT).applyTo(description);
-                // description.setBackground(null);
-                // description.setText(category.getDescription());
+                Label description = new Label(categoryHeaderContainer, SWT.WRAP);
+                GridDataFactory.fillDefaults().grab(true, false).span(2, 1).hint(100, SWT.DEFAULT)
+                        .applyTo(description);
+                description.setBackground(null);
+                description.setText(category);
             }
 
             categoryChildrenContainer = new Composite(container, SWT.NULL);
@@ -838,6 +827,10 @@ public class ExampleViewer {
         return installableExamples;
     }
 
+    public IStructuredSelection getSelection() {
+        return (IStructuredSelection) selectionProvider.getSelection();
+    }
+
     private Shell getShell() {
         return shellProvider.getShell();
     }
@@ -915,26 +908,37 @@ public class ExampleViewer {
     }
 
     private void initializeColors() {
-        IThemeManager themeManager = PlatformUI.getWorkbench().getThemeManager();
+        ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         if (colorWhite == null) {
-            ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
             if (!colorRegistry.hasValueFor(COLOR_WHITE)) {
                 colorRegistry.put(COLOR_WHITE, new RGB(255, 255, 255));
             }
             colorWhite = colorRegistry.get(COLOR_WHITE);
         }
         if (colorDisabled == null) {
-            ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+
             if (!colorRegistry.hasValueFor(COLOR_DARK_GRAY)) {
                 colorRegistry.put(COLOR_DARK_GRAY, new RGB(0x69, 0x69, 0x69));
             }
             colorDisabled = colorRegistry.get(COLOR_DARK_GRAY);
         }
+        // if (colorCategoryGradientStart == null) {
+        // if (!colorRegistry.hasValueFor(GRADIENT_START)) {
+        // colorRegistry.put(GRADIENT_START, new RGB(240, 240, 240));
+        // }
+        // colorCategoryGradientStart = colorRegistry.get(GRADIENT_START);
+        // if (!colorRegistry.hasValueFor(GRADIENT_END)) {
+        // colorRegistry.put(GRADIENT_END, new RGB(220, 220, 220));
+        // }
+        // colorCategoryGradientStart = colorRegistry.get(GRADIENT_END);
+        // }
+        // TODO generate colors self not with mylyn.
+        IThemeManager themeManager = PlatformUI.getWorkbench().getThemeManager();
         if (colorCategoryGradientStart == null) {
             colorCategoryGradientStart = themeManager.getCurrentTheme().getColorRegistry()
-                    .get(CommonThemes.COLOR_CATEGORY_GRADIENT_START);
+                    .get("org.eclipse.mylyn.tasks.ui.colors.category.gradient.start");
             colorCategoryGradientEnd = themeManager.getCurrentTheme().getColorRegistry()
-                    .get(CommonThemes.COLOR_CATEGORY_GRADIENT_END);
+                    .get("org.eclipse.mylyn.tasks.ui.colors.category.gradient.start");
         }
     }
 
@@ -974,7 +978,7 @@ public class ExampleViewer {
 
     private void initializeImages() {
         if (infoImage == null) {
-            infoImage = ExampleImages.MESSAGE_INFO.createImage();
+            infoImage = KEXUIImages.MESSAGE_INFO.createImage();
             disposables.add(infoImage);
         }
     }
@@ -1024,7 +1028,7 @@ public class ExampleViewer {
         updateState();
     }
 
-    private void modifySelectionInternal(final Example example, boolean selected) {
+    private void modifySelectionInternal(final Example example, final boolean selected) {
         if (selected) {
             installableExamples.add(example);
         } else {
@@ -1032,16 +1036,20 @@ public class ExampleViewer {
         }
     }
 
-    public void setComplete(boolean complete) {
-        this.complete = complete;
+    public void setComplete(final boolean completeParam) {
+        this.complete = completeParam;
     }
 
-    protected void setControl(Control control) {
-        this.control = control;
+    protected void setControl(final Control controlParam) {
+        this.control = controlParam;
     }
 
-    public void setVerifyUpdateSiteAvailability(boolean verifyUpdateSiteAvailability) {
-        this.verifyUpdateSiteAvailability = verifyUpdateSiteAvailability;
+    public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+        selectionProvider.removeSelectionChangedListener(listener);
+    }
+
+    public void setVerifyUpdateSiteAvailability(final boolean verifyUpdateSiteAvailabilityParam) {
+        this.verifyUpdateSiteAvailability = verifyUpdateSiteAvailabilityParam;
     }
 
     /**
@@ -1054,12 +1062,14 @@ public class ExampleViewer {
         exampleDescriptorKindToVisibility.put(kind, visible);
     }
 
-    public void updateDiscovery() {
+    public void updateContents() {
+        selectionProvider.setSelection(StructuredSelection.EMPTY);
         createBodyContents();
     }
 
     private void updateState() {
         setComplete(!installableExamples.isEmpty());
+        selectionProvider.setSelection(new StructuredSelection(getInstallableExamples()));
     }
 
 }

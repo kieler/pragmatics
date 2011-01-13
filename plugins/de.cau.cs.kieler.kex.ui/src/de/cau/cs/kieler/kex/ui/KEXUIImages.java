@@ -9,7 +9,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * @author pkl
  */
-public class ExampleImages {
+public class KEXUIImages {
 
     private static final URL baseURL = Platform.getBundle(KEXUIPlugin.PLUGIN_ID)
             .getEntry("/icons/"); //$NON-NLS-1$
@@ -18,7 +18,11 @@ public class ExampleImages {
 
     public static final ImageDescriptor MESSAGE_INFO = create("message_info.gif"); //$NON-NLS-1$
 
-    private static ImageDescriptor create(String name) {
+    public static final ImageDescriptor FIND_CLEAR = create("find-clear.gif"); //$NON-NLS-1$
+
+    public static final ImageDescriptor FIND_CLEAR_DISABLED = create("finde-clear-disabled.gif"); //$NON-NLS-1$
+
+    private static ImageDescriptor create(final String name) {
         try {
             if (baseURL == null) {
                 throw new MalformedURLException();

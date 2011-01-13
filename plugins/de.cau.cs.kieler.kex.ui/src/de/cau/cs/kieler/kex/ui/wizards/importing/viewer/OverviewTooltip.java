@@ -8,15 +8,11 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.ToolTip;
-import org.eclipse.mylyn.internal.provisional.commons.ui.GradientToolTip;
-import org.eclipse.mylyn.internal.provisional.commons.ui.WorkbenchUtil;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -27,7 +23,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.kex.model.Example;
@@ -153,15 +148,15 @@ class OverviewToolTip extends GradientToolTip {
             link.setText(Messages.ToolTip_detailsLink);
             link.setBackground(null);
             link.setToolTipText(NLS.bind(Messages.ToolTip_detailsLink_tooltip, source.getContact()));
-            link.addSelectionListener(new SelectionListener() {
-                public void widgetSelected(SelectionEvent e) {
-                    WorkbenchUtil.openUrl(source.getContact(), IWorkbenchBrowserSupport.AS_EXTERNAL);
-                }
-
-                public void widgetDefaultSelected(SelectionEvent e) {
-                    widgetSelected(e);
-                }
-            });
+            // link.addSelectionListener(new SelectionListener() {
+            // public void widgetSelected(SelectionEvent e) {
+            // WorkbenchUtil.openUrl(source.getContact(), IWorkbenchBrowserSupport.AS_EXTERNAL);
+            // }
+            //
+            // public void widgetDefaultSelected(SelectionEvent e) {
+            // widgetSelected(e);
+            // }
+            // });
         }
         if (image == null) {
             // prevent overviews with no image from providing unlimited text.

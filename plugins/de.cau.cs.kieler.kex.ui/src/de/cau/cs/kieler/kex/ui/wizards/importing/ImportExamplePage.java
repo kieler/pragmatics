@@ -186,7 +186,7 @@ public class ImportExamplePage extends WizardPage {
             addExamplesToItem(categories.get(i), iItem);
         }
 
-        // Spaltenköpfe und Zeilenbegrenzungen sichtbar machen
+        // Spaltenkï¿½pfe und Zeilenbegrenzungen sichtbar machen
         tree.setHeaderVisible(true);
         tree.setLinesVisible(true);
 
@@ -199,12 +199,12 @@ public class ImportExamplePage extends WizardPage {
         // ArrayContentProvider kann verwendet werden, da Input-Objekt eine Java Collection ist
         treeViewer.setContentProvider(ArrayContentProvider.getInstance());
 
-        // Für jede Spalte ein TableViewerColumn erzeugen
+        // Fï¿½r jede Spalte ein TableViewerColumn erzeugen
         TreeViewerColumn viewerNameColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
         viewerNameColumn.getColumn().setText("Examples");
         viewerNameColumn.getColumn().setWidth(140);
 
-        // LabelProvider für jede Spalte setzen
+        // LabelProvider fï¿½r jede Spalte setzen
         viewerNameColumn.setLabelProvider(new CellLabelProvider() {
             @Override
             public void update(ViewerCell cell) {

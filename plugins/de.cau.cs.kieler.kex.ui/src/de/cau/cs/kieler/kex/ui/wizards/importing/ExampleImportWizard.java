@@ -52,7 +52,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 
     private static final String ERROR_TITLE = "Could not complete Import";
 
-    private NewImportMainPage newPage;
+    private ImportMainPage mainPage;
     private ImportDestPage destinationPage;
     private boolean checkDuplicate;
 
@@ -74,6 +74,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
     public void init(final IWorkbench workbench, final IStructuredSelection selection) {
         setWindowTitle("KIELER Examples Import");
         setNeedsProgressMonitor(true);
+
         this.checkDuplicate = false;
         try {
             ExampleManager.get().load(true);
@@ -81,15 +82,14 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             MessageDialog.openError(this.getShell(), "Can't initialize existing example pool.",
                     e.getLocalizedMessage());
         }
-        newPage = new NewImportMainPage("Special Import Mechanism");
+        mainPage = new ImportMainPage("Import Examples");
         destinationPage = new ImportDestPage("Location", selection);
     }
 
     @Override
     public final void addPages() {
         super.addPages();
-        // addPage(mainPage);
-        addPage(newPage);
+        addPage(mainPage);
         addPage(destinationPage);
     }
 
@@ -97,7 +97,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
     public final boolean performFinish() {
         List<String> directOpens = null;
         try {
-            List<Example> checkedExamples = newPage.getExamples();
+            List<Example> checkedExamples = mainPage.getExamples();
             // TODO warning if more examples selected than 5.
             if (checkedExamples.isEmpty()) {
                 throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
