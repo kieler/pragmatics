@@ -48,11 +48,12 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
 
     /** the identifier of the property contibutor. */
     public static final String PROPERTY_CONTRIBUTOR_ID = "de.cau.cs.kieler.kaom.graphiti";
-    
+
     /**
      * Constructor.
      * 
-     * @param diagramTypeProvider the diagram type provider
+     * @param diagramTypeProvider
+     *            the diagram type provider
      */
     public ToolBehaviourProvider(final IDiagramTypeProvider diagramTypeProvider) {
         super(diagramTypeProvider);
@@ -63,13 +64,15 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
      */
     @Override
     public GraphicsAlgorithm[] getClickArea(final PictogramElement pe) {
-        // This method basically selects the inner pictogram element, i.e. the rounded rectangle
+        // This method basically selects the inner pictogram element, i.e. the
+        // rounded rectangle
         // inside the outside invisible rectangle
         IFeatureProvider featureProvider = getFeatureProvider();
         Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
         if (obj instanceof Entity) {
             GraphicsAlgorithm invisible = pe.getGraphicsAlgorithm();
-            for (GraphicsAlgorithm algo : invisible.getGraphicsAlgorithmChildren()) {
+            for (GraphicsAlgorithm algo : invisible
+                    .getGraphicsAlgorithmChildren()) {
                 if (algo instanceof Rectangle) {
                     return new GraphicsAlgorithm[] { algo };
                 }
@@ -83,19 +86,21 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
      */
     @Override
     public GraphicsAlgorithm getSelectionBorder(final PictogramElement pe) {
-        // This method is used to select the Graphics Algorithm of the above selected
+        // This method is used to select the Graphics Algorithm of the above
+        // selected
         // inner Pictogram Element
         IFeatureProvider featureProvider = getFeatureProvider();
         Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
 
-        if (obj instanceof Entity) {
-            GraphicsAlgorithm invisible = pe.getGraphicsAlgorithm();
-            for (GraphicsAlgorithm algo : invisible.getGraphicsAlgorithmChildren()) {
-                if (algo instanceof Rectangle) {
-                    return algo;
-                }
-            }
-        }
+        // if (obj instanceof Entity) {
+        // GraphicsAlgorithm invisible = pe.getGraphicsAlgorithm();
+        // for (GraphicsAlgorithm algo :
+        // invisible.getGraphicsAlgorithmChildren()) {
+        // if (algo instanceof Rectangle) {
+        // return algo;
+        // }
+        // }
+        // }
 
         return super.getSelectionBorder(pe);
     }
@@ -104,7 +109,8 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
      * {@inheritDoc}
      */
     @Override
-    public IContextButtonPadData getContextButtonPad(final IPictogramElementContext context) {
+    public IContextButtonPadData getContextButtonPad(
+            final IPictogramElementContext context) {
         IContextButtonPadData data = super.getContextButtonPad(context);
         PictogramElement pe = context.getPictogramElement();
 
@@ -116,14 +122,16 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
         if (pe instanceof Anchor) {
             anchor = (Anchor) pe;
         } else if (pe instanceof AnchorContainer) {
-            anchor = Graphiti.getPeService().getChopboxAnchor((AnchorContainer) pe);
+            anchor = Graphiti.getPeService().getChopboxAnchor(
+                    (AnchorContainer) pe);
         }
         ccc.setSourceAnchor(anchor);
 
         ContextButtonEntry button = new ContextButtonEntry(null, context);
         button.setText("Create Connection");
         button.setIconId(ImageProvider.IMAGE_LINK);
-        ICreateConnectionFeature[] features = getFeatureProvider().getCreateConnectionFeatures();
+        ICreateConnectionFeature[] features = getFeatureProvider()
+                .getCreateConnectionFeatures();
         for (ICreateConnectionFeature feature : features) {
             if (feature.isAvailable(ccc) && feature.canStartConnection(ccc)) {
                 button.addDragAndDropFeature(feature);
@@ -147,10 +155,12 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
         subMenu.setDescription("Custom feature submenu");
         subMenu.setSubmenu(true);
 
-        ICustomFeature[] customFeatures = getFeatureProvider().getCustomFeatures(context);
+        ICustomFeature[] customFeatures = getFeatureProvider()
+                .getCustomFeatures(context);
         for (ICustomFeature customFeature : customFeatures) {
             if (customFeature.isAvailable(context)) {
-                ContextMenuEntry menuEntry = new ContextMenuEntry(customFeature, context);
+                ContextMenuEntry menuEntry = new ContextMenuEntry(
+                        customFeature, context);
                 subMenu.add(menuEntry);
             }
         }
@@ -181,7 +191,7 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
         // TODO add validation mechanism here
         return super.getDecorators(pe);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -189,5 +199,5 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
     public String getContributorId() {
         return PROPERTY_CONTRIBUTOR_ID;
     }
-    
+
 }

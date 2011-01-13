@@ -31,22 +31,24 @@ import de.cau.cs.kieler.kaom.Entity;
  * @author atr
  */
 public class MovePortFeature extends DefaultMoveAnchorFeature {
-    
+
     /**
      * The constructor.
      * 
-     * @param fp the feature provider
+     * @param fp
+     *            the feature provider
      */
     public MovePortFeature(final IFeatureProvider fp) {
         super(fp);
     }
 
-   /**
-    * {@inheritDoc}
-    */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean canMoveAnchor(final IMoveAnchorContext context) {
-        return (getBusinessObjectForPictogramElement(context.getTargetContainer()) instanceof Entity)
+        return (getBusinessObjectForPictogramElement(context
+                .getTargetContainer()) instanceof Entity)
                 && !(context.getTargetContainer() instanceof Diagram);
     }
 
@@ -54,28 +56,30 @@ public class MovePortFeature extends DefaultMoveAnchorFeature {
      * {@inheritDoc}
      */
     @Override
-    protected void moveAnchor(final Anchor anchor, final int posX, final int posY) {
+    protected void moveAnchor(final Anchor anchor, final int posX,
+            final int posY) {
         if (anchor instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor boxAnchor = (BoxRelativeAnchor) anchor;
-            GraphicsAlgorithm anchorContainerGa = boxAnchor.getParent().getGraphicsAlgorithm();
-            IDimension nodeSize = Graphiti.getGaService().calculateSize(anchorContainerGa, false);
+            GraphicsAlgorithm anchorContainerGa = boxAnchor.getParent()
+                    .getGraphicsAlgorithm();
+            anchorContainerGa = anchorContainerGa
+                    .getGraphicsAlgorithmChildren().get(0);
+            IDimension nodeSize = Graphiti.getGaService().calculateSize(
+                    anchorContainerGa, false);
+
             int nodeWidth = nodeSize.getWidth();
             int nodeHeight = nodeSize.getHeight();
 
-            float widthPercent = (float) posX / nodeWidth;
-            float heightPercent = (float) posY / nodeHeight;
-            if (widthPercent + heightPercent <= 1 && widthPercent - heightPercent <= 0) {
-                // port is put to the left
-                widthPercent = 0;
-            } else if (widthPercent + heightPercent >= 1 && widthPercent - heightPercent >= 0) {
-                // port is put to the right
-                widthPercent = 1;
-            } else if (heightPercent < 1.0f / 2) {
-                // port is put to the top
-                heightPercent = 0;
+            float widthPercent = (float) (posX - 2) / nodeWidth;
+            float heightPercent = (float) (posY - 2) / nodeHeight;
+            float deltaY = heightPercent < (1.0f / 2.0f) ? heightPercent
+                    : 1 - heightPercent;
+            float deltaX = widthPercent < (1.0f / 2.0f) ? widthPercent
+                    : 1 - widthPercent;
+            if (deltaY < deltaX) {
+                heightPercent = Math.round(heightPercent);
             } else {
-                // port is put to the bottom
-                heightPercent = 1;
+                widthPercent = Math.round(widthPercent);
             }
 
             boxAnchor.setRelativeWidth(widthPercent);
