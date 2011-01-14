@@ -72,10 +72,8 @@ public class PortEditPart extends BorderedBorderItemEditPart implements KEGPort
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE,
-                getPrimaryDragEditPolicy());
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new PortItemSemanticEditPolicy());
+        installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, getPrimaryDragEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new PortItemSemanticEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
         // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
         // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -85,40 +83,36 @@ public class PortEditPart extends BorderedBorderItemEditPart implements KEGPort
      * @generated
      */
     protected LayoutEditPolicy createLayoutEditPolicy() {
-        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep =
-                new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
+        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep = new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
 
-                    protected EditPolicy createChildEditPolicy(EditPart child) {
-                        View childView = (View) child.getModel();
-                        switch (GraphsVisualIDRegistry.getVisualID(childView)) {
-                        case PortPortLabelEditPart.VISUAL_ID:
-                            return new BorderItemSelectionEditPolicy() {
+            protected EditPolicy createChildEditPolicy(EditPart child) {
+                View childView = (View) child.getModel();
+                switch (GraphsVisualIDRegistry.getVisualID(childView)) {
+                case PortPortLabelEditPart.VISUAL_ID:
+                    return new BorderItemSelectionEditPolicy() {
 
-                                protected List createSelectionHandles() {
-                                    MoveHandle mh =
-                                            new MoveHandle(
-                                                    (GraphicalEditPart) getHost());
-                                    mh.setBorder(null);
-                                    return Collections.singletonList(mh);
-                                }
-                            };
+                        protected List createSelectionHandles() {
+                            MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
+                            mh.setBorder(null);
+                            return Collections.singletonList(mh);
                         }
-                        EditPolicy result =
-                                child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
-                        if (result == null) {
-                            result = new NonResizableEditPolicy();
-                        }
-                        return result;
-                    }
+                    };
+                }
+                EditPolicy result = child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (result == null) {
+                    result = new NonResizableEditPolicy();
+                }
+                return result;
+            }
 
-                    protected Command getMoveChildrenCommand(Request request) {
-                        return null;
-                    }
+            protected Command getMoveChildrenCommand(Request request) {
+                return null;
+            }
 
-                    protected Command getCreateCommand(CreateRequest request) {
-                        return null;
-                    }
-                };
+            protected Command getCreateCommand(CreateRequest request) {
+                return null;
+            }
+        };
         return lep;
     }
 
@@ -140,12 +134,10 @@ public class PortEditPart extends BorderedBorderItemEditPart implements KEGPort
     /**
      * @generated
      */
-    protected void addBorderItem(IFigure borderItemContainer,
-            IBorderItemEditPart borderItemEditPart) {
+    protected void addBorderItem(IFigure borderItemContainer, IBorderItemEditPart borderItemEditPart) {
         if (borderItemEditPart instanceof PortPortLabelEditPart) {
-            BorderItemLocator locator =
-                    new BorderItemLocator(getMainFigure(),
-                            PositionConstants.SOUTH);
+            BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
+                    PositionConstants.SOUTH);
             locator.setBorderItemOffset(new Dimension(-20, -20));
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
         } else {
@@ -272,8 +264,7 @@ public class PortEditPart extends BorderedBorderItemEditPart implements KEGPort
     /**
      * @generated
      */
-    public List<IElementType> getMARelTypesOnSourceAndTarget(
-            IGraphicalEditPart targetEditPart) {
+    public List<IElementType> getMARelTypesOnSourceAndTarget(IGraphicalEditPart targetEditPart) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (targetEditPart instanceof de.cau.cs.kieler.keg.diagram.edit.parts.PortEditPart) {
             types.add(GraphsElementTypes.Edge_4003);
@@ -377,8 +368,7 @@ public class PortEditPart extends BorderedBorderItemEditPart implements KEGPort
         public PortFigure() {
             this.setForegroundColor(THIS_FORE);
             this.setBackgroundColor(THIS_BACK);
-            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(8),
-                    getMapMode().DPtoLP(8)));
+            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(8), getMapMode().DPtoLP(8)));
         }
 
     }

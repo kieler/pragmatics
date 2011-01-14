@@ -40,8 +40,7 @@ public class GraphsDiagramEditorPlugin extends AbstractUIPlugin {
     /**
      * @generated
      */
-    public static final PreferencesHint DIAGRAM_PREFERENCES_HINT =
-            new PreferencesHint(ID);
+    public static final PreferencesHint DIAGRAM_PREFERENCES_HINT = new PreferencesHint(ID);
 
     /**
      * @generated
@@ -85,8 +84,7 @@ public class GraphsDiagramEditorPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         instance = this;
-        PreferencesHint.registerPreferenceStore(DIAGRAM_PREFERENCES_HINT,
-                getPreferenceStore());
+        PreferencesHint.registerPreferenceStore(DIAGRAM_PREFERENCES_HINT, getPreferenceStore());
         adapterFactory = createAdapterFactory();
     }
 
@@ -141,9 +139,8 @@ public class GraphsDiagramEditorPlugin extends AbstractUIPlugin {
      * @generated
      */
     public ImageDescriptor getItemImageDescriptor(Object item) {
-        IItemLabelProvider labelProvider =
-                (IItemLabelProvider) adapterFactory.adapt(item,
-                        IItemLabelProvider.class);
+        IItemLabelProvider labelProvider = (IItemLabelProvider) adapterFactory.adapt(item,
+                IItemLabelProvider.class);
         if (labelProvider != null) {
             return ExtendedImageRegistry.getInstance().getImageDescriptor(
                     labelProvider.getImage(item));
@@ -228,8 +225,7 @@ public class GraphsDiagramEditorPlugin extends AbstractUIPlugin {
     /**
      * @generated
      */
-    public void setLinkConstraints(
-            GraphsBaseItemSemanticEditPolicy.LinkConstraints lc) {
+    public void setLinkConstraints(GraphsBaseItemSemanticEditPolicy.LinkConstraints lc) {
         this.linkConstraints = lc;
     }
 
@@ -276,8 +272,8 @@ public class GraphsDiagramEditorPlugin extends AbstractUIPlugin {
             error = throwable.getMessage();
         }
         getLog().log(
-                new Status(IStatus.ERROR, GraphsDiagramEditorPlugin.ID,
-                        IStatus.OK, error, throwable));
+                new Status(IStatus.ERROR, GraphsDiagramEditorPlugin.ID, IStatus.OK, error,
+                        throwable));
         debug(error, throwable);
     }
 
@@ -296,8 +292,8 @@ public class GraphsDiagramEditorPlugin extends AbstractUIPlugin {
             message = throwable.getMessage();
         }
         getLog().log(
-                new Status(IStatus.INFO, GraphsDiagramEditorPlugin.ID,
-                        IStatus.OK, message, throwable));
+                new Status(IStatus.INFO, GraphsDiagramEditorPlugin.ID, IStatus.OK, message,
+                        throwable));
         debug(message, throwable);
     }
 

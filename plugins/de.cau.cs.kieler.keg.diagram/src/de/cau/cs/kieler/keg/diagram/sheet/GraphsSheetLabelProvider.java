@@ -15,8 +15,7 @@ import de.cau.cs.kieler.keg.diagram.providers.GraphsElementTypes;
 /**
  * @generated
  */
-public class GraphsSheetLabelProvider extends BaseLabelProvider implements
-        ILabelProvider {
+public class GraphsSheetLabelProvider extends BaseLabelProvider implements ILabelProvider {
 
     /**
      * @generated
@@ -72,9 +71,7 @@ public class GraphsSheetLabelProvider extends BaseLabelProvider implements
             if (etype != null) {
                 return etype;
             }
-            view =
-                    view.eContainer() instanceof View ? (View) view
-                            .eContainer() : null;
+            view = view.eContainer() instanceof View ? (View) view.eContainer() : null;
         }
         return null;
     }

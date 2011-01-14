@@ -15,8 +15,8 @@ import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
 /**
  * @generated
  */
-public class Edge8EditPart extends ConnectionNodeEditPart implements
-        KEGConnection, ITreeBranchEditPart {
+public class Edge8EditPart extends ConnectionNodeEditPart implements KEGConnection,
+        ITreeBranchEditPart {
 
     /**
      * @generated
@@ -35,8 +35,7 @@ public class Edge8EditPart extends ConnectionNodeEditPart implements
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new Edge8ItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new Edge8ItemSemanticEditPolicy());
     }
 
     /**
@@ -52,9 +51,8 @@ public class Edge8EditPart extends ConnectionNodeEditPart implements
         Connection figure = new UndirectedEdgeFigure();
 
         if (figure instanceof SplineConnection) {
-            ((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin
-                    .getInstance().getPreferenceStore()
-                    .getInt(SplineConnection.PREF_SPLINE_MODE));
+            ((SplineConnection) figure).setSplineMode(GraphsDiagramEditorPlugin.getInstance()
+                    .getPreferenceStore().getInt(SplineConnection.PREF_SPLINE_MODE));
         }
         return figure;
     }

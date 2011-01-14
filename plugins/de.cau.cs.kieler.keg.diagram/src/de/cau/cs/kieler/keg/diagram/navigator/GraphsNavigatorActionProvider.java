@@ -70,12 +70,10 @@ public class GraphsNavigatorActionProvider extends CommonActionProvider {
         if (!myContribute) {
             return;
         }
-        IStructuredSelection selection =
-                (IStructuredSelection) getContext().getSelection();
+        IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
         myOpenDiagramAction.selectionChanged(selection);
         if (myOpenDiagramAction.isEnabled()) {
-            actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN,
-                    myOpenDiagramAction);
+            actionBars.setGlobalActionHandler(ICommonActionConstants.OPEN, myOpenDiagramAction);
         }
     }
 
@@ -116,17 +114,13 @@ public class GraphsNavigatorActionProvider extends CommonActionProvider {
             if (selection.size() == 1) {
                 Object selectedElement = selection.getFirstElement();
                 if (selectedElement instanceof GraphsNavigatorItem) {
-                    selectedElement =
-                            ((GraphsNavigatorItem) selectedElement).getView();
+                    selectedElement = ((GraphsNavigatorItem) selectedElement).getView();
                 } else if (selectedElement instanceof IAdaptable) {
-                    selectedElement =
-                            ((IAdaptable) selectedElement)
-                                    .getAdapter(View.class);
+                    selectedElement = ((IAdaptable) selectedElement).getAdapter(View.class);
                 }
                 if (selectedElement instanceof Diagram) {
                     Diagram diagram = (Diagram) selectedElement;
-                    if (NodeEditPart.MODEL_ID.equals(GraphsVisualIDRegistry
-                            .getModelID(diagram))) {
+                    if (NodeEditPart.MODEL_ID.equals(GraphsVisualIDRegistry.getModelID(diagram))) {
                         myDiagram = diagram;
                     }
                 }
@@ -159,19 +153,15 @@ public class GraphsNavigatorActionProvider extends CommonActionProvider {
             Resource diagramResource = diagram.eResource();
             for (EObject nextEObject : diagramResource.getContents()) {
                 if (nextEObject == diagram) {
-                    return new FileEditorInput(
-                            WorkspaceSynchronizer.getFile(diagramResource));
+                    return new FileEditorInput(WorkspaceSynchronizer.getFile(diagramResource));
                 }
                 if (nextEObject instanceof Diagram) {
                     break;
                 }
             }
             URI uri = EcoreUtil.getURI(diagram);
-            String editorName =
-                    uri.lastSegment()
-                            + '#'
-                            + diagram.eResource().getContents()
-                                    .indexOf(diagram);
+            String editorName = uri.lastSegment() + '#'
+                    + diagram.eResource().getContents().indexOf(diagram);
             IEditorInput editorInput = new URIEditorInput(uri, editorName);
             return editorInput;
         }

@@ -70,15 +70,11 @@ implements KEGNode
      * @generated
      */
     protected void createDefaultEditPolicies() {
-        installEditPolicy(EditPolicyRoles.CREATION_ROLE,
-                new CreationEditPolicy());
+        installEditPolicy(EditPolicyRoles.CREATION_ROLE, new CreationEditPolicy());
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new Node4ItemSemanticEditPolicy());
-        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE,
-                new DragDropEditPolicy());
-        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-                new Node4CanonicalEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new Node4ItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE, new DragDropEditPolicy());
+        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE, new Node4CanonicalEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
         // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
         // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -88,31 +84,29 @@ implements KEGNode
      * @generated
      */
     protected LayoutEditPolicy createLayoutEditPolicy() {
-        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep =
-                new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
+        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep = new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
 
-                    protected EditPolicy createChildEditPolicy(EditPart child) {
-                        View childView = (View) child.getModel();
-                        switch (GraphsVisualIDRegistry.getVisualID(childView)) {
-                        case PortEditPart.VISUAL_ID:
-                            return new BorderItemSelectionEditPolicy();
-                        }
-                        EditPolicy result =
-                                child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
-                        if (result == null) {
-                            result = new NonResizableEditPolicy();
-                        }
-                        return result;
-                    }
+            protected EditPolicy createChildEditPolicy(EditPart child) {
+                View childView = (View) child.getModel();
+                switch (GraphsVisualIDRegistry.getVisualID(childView)) {
+                case PortEditPart.VISUAL_ID:
+                    return new BorderItemSelectionEditPolicy();
+                }
+                EditPolicy result = child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (result == null) {
+                    result = new NonResizableEditPolicy();
+                }
+                return result;
+            }
 
-                    protected Command getMoveChildrenCommand(Request request) {
-                        return null;
-                    }
+            protected Command getMoveChildrenCommand(Request request) {
+                return null;
+            }
 
-                    protected Command getCreateCommand(CreateRequest request) {
-                        return null;
-                    }
-                };
+            protected Command getCreateCommand(CreateRequest request) {
+                return null;
+            }
+        };
         return lep;
     }
 
@@ -141,9 +135,8 @@ implements KEGNode
             return true;
         }
         if (childEditPart instanceof PortEditPart) {
-            BorderItemLocator locator =
-                    new BorderItemLocator(getMainFigure(),
-                            PositionConstants.EAST);
+            BorderItemLocator locator = new BorderItemLocator(getMainFigure(),
+                    PositionConstants.EAST);
             getBorderedFigure().getBorderItemContainer().add(
                     ((PortEditPart) childEditPart).getFigure(), locator);
             return true;
@@ -215,8 +208,7 @@ implements KEGNode
      * @generated
      */
     protected org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure createMainFigure() {
-        org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure figure =
-                createNodePlate();
+        org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure figure = createNodePlate();
         figure.setLayoutManager(new StackLayout());
         IFigure shape = createNodeShape();
         figure.add(shape);
@@ -308,8 +300,7 @@ implements KEGNode
     /**
      * @generated
      */
-    public List<IElementType> getMARelTypesOnSourceAndTarget(
-            IGraphicalEditPart targetEditPart) {
+    public List<IElementType> getMARelTypesOnSourceAndTarget(IGraphicalEditPart targetEditPart) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (targetEditPart instanceof Node2EditPart) {
             types.add(GraphsElementTypes.Edge_4001);
@@ -423,12 +414,10 @@ implements KEGNode
 
             this.setForegroundColor(THIS_FORE);
             this.setBackgroundColor(THIS_BACK);
-            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(40),
-                    getMapMode().DPtoLP(40)));
+            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(40), getMapMode().DPtoLP(40)));
 
-            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5),
-                    getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
-                    getMapMode().DPtoLP(5)));
+            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
+                    getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
             createContents();
         }
 
@@ -461,6 +450,6 @@ implements KEGNode
     /**
      * @generated
      */
-    static final Color THIS_BACK = new Color(null, 80, 230, 154);
+    static final Color THIS_BACK = new Color(null, 113, 250, 179);
 
 }

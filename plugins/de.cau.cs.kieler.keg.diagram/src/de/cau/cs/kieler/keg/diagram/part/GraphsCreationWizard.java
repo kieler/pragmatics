@@ -80,8 +80,7 @@ public class GraphsCreationWizard extends Wizard implements INewWizard {
     /**
      * @generated
      */
-    public void setOpenNewlyCreatedDiagramEditor(
-            boolean openNewlyCreatedDiagramEditor) {
+    public void setOpenNewlyCreatedDiagramEditor(boolean openNewlyCreatedDiagramEditor) {
         this.openNewlyCreatedDiagramEditor = openNewlyCreatedDiagramEditor;
     }
 
@@ -101,35 +100,26 @@ public class GraphsCreationWizard extends Wizard implements INewWizard {
      * @generated
      */
     public void addPages() {
-        diagramModelFilePage =
-                new GraphsCreationWizardPage(
-                        "DiagramModelFile", getSelection(), "kegdi"); //$NON-NLS-1$ //$NON-NLS-2$
-        diagramModelFilePage
-                .setTitle(Messages.GraphsCreationWizard_DiagramModelFilePageTitle);
+        diagramModelFilePage = new GraphsCreationWizardPage(
+                "DiagramModelFile", getSelection(), "kegdi"); //$NON-NLS-1$ //$NON-NLS-2$
+        diagramModelFilePage.setTitle(Messages.GraphsCreationWizard_DiagramModelFilePageTitle);
         diagramModelFilePage
                 .setDescription(Messages.GraphsCreationWizard_DiagramModelFilePageDescription);
         addPage(diagramModelFilePage);
 
-        domainModelFilePage =
-                new GraphsCreationWizardPage(
-                        "DomainModelFile", getSelection(), "keg") { //$NON-NLS-1$ //$NON-NLS-2$
+        domainModelFilePage = new GraphsCreationWizardPage("DomainModelFile", getSelection(), "keg") { //$NON-NLS-1$ //$NON-NLS-2$
 
-                    public void setVisible(boolean visible) {
-                        if (visible) {
-                            String fileName =
-                                    diagramModelFilePage.getFileName();
-                            fileName =
-                                    fileName.substring(0, fileName.length()
-                                            - ".kegdi".length()); //$NON-NLS-1$
-                            setFileName(GraphsDiagramEditorUtil
-                                    .getUniqueFileName(getContainerFullPath(),
-                                            fileName, "keg")); //$NON-NLS-1$
-                        }
-                        super.setVisible(visible);
-                    }
-                };
-        domainModelFilePage
-                .setTitle(Messages.GraphsCreationWizard_DomainModelFilePageTitle);
+            public void setVisible(boolean visible) {
+                if (visible) {
+                    String fileName = diagramModelFilePage.getFileName();
+                    fileName = fileName.substring(0, fileName.length() - ".kegdi".length()); //$NON-NLS-1$
+                    setFileName(GraphsDiagramEditorUtil.getUniqueFileName(getContainerFullPath(),
+                            fileName, "keg")); //$NON-NLS-1$
+                }
+                super.setVisible(visible);
+            }
+        };
+        domainModelFilePage.setTitle(Messages.GraphsCreationWizard_DomainModelFilePageTitle);
         domainModelFilePage
                 .setDescription(Messages.GraphsCreationWizard_DomainModelFilePageDescription);
         addPage(domainModelFilePage);
@@ -141,19 +131,16 @@ public class GraphsCreationWizard extends Wizard implements INewWizard {
     public boolean performFinish() {
         IRunnableWithProgress op = new WorkspaceModifyOperation(null) {
 
-            protected void execute(IProgressMonitor monitor)
-                    throws CoreException, InterruptedException {
-                diagram =
-                        GraphsDiagramEditorUtil.createDiagram(
-                                diagramModelFilePage.getURI(),
-                                domainModelFilePage.getURI(), monitor);
+            protected void execute(IProgressMonitor monitor) throws CoreException,
+                    InterruptedException {
+                diagram = GraphsDiagramEditorUtil.createDiagram(diagramModelFilePage.getURI(),
+                        domainModelFilePage.getURI(), monitor);
                 if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
                     try {
                         GraphsDiagramEditorUtil.openDiagram(diagram);
                     } catch (PartInitException e) {
                         ErrorDialog.openError(getContainer().getShell(),
-                                Messages.GraphsCreationWizardOpenEditorError,
-                                null, e.getStatus());
+                                Messages.GraphsCreationWizardOpenEditorError, null, e.getStatus());
                     }
                 }
             }

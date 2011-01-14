@@ -19,9 +19,9 @@
             green="20"/>
         <backgroundColor
             xsi:type="gmfgraph:RGBColor"
-            red="80"
-            green="230"
-            blue="154"/>
+            red="113"
+            green="250"
+            blue="179"/>
         <preferredSize
             dx="40"
             dy="40"/>
