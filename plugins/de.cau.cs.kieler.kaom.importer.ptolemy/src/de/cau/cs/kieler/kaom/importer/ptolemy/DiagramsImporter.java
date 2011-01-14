@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -107,12 +108,10 @@ public class DiagramsImporter implements IRunnableWithProgress {
     private boolean wasImportCanceled = false;
     
     /**
-     * If the import threw an exception and was thus not successful, this is
-     * the place where it's stored. As the run method cannot throw a
-     * miscellaneous exception, we need to use this way to communicate the
-     * status of the import.
+     * List of exceptions thrown during the import process, wrapped in {@code IStatus}
+     * objects.
      */
-    private CoreException exception = null;
+    private List<IStatus> exceptions = new ArrayList<IStatus>();
     
     
     /**
@@ -146,7 +145,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
      * @return {@code true} if an uninterrupted import was successful.
      */
     public boolean isImportSuccessful() {
-        return exception == null && !wasImportCanceled;
+        return exceptions.isEmpty() && !wasImportCanceled;
     }
     
     /**
@@ -159,13 +158,33 @@ public class DiagramsImporter implements IRunnableWithProgress {
     }
     
     /**
-     * If the import was not successful, this method returns the exception that
-     * occurred.
+     * Returns an {@code IStatus} object describing the outcome of the import. This
+     * may be either a single status object if everything went fine, or a multi status
+     * that contains a list of error statusses.
      * 
-     * @return the exception or {@code null}.
+     * @return the status.
      */
-    public CoreException getException() {
-        return exception;
+    public IStatus getStatus() {
+        if (wasImportCanceled) {
+            return new Status(
+                    IStatus.CANCEL,
+                    KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    "The import was canceled.");
+        } else if (exceptions.size() == 1) {
+            return exceptions.get(0);
+        } else if (exceptions.size() > 1) {
+            return new MultiStatus(
+                    KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    IStatus.ERROR,
+                    exceptions.toArray(new IStatus[exceptions.size()]),
+                    "Exceptions occurred during the import of some models.",
+                    null);
+        } else {
+            return new Status(
+                    IStatus.OK,
+                    KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    "Don't worry, everything went just fine.");
+        }
     }
     
     
@@ -198,19 +217,13 @@ public class DiagramsImporter implements IRunnableWithProgress {
         try {
             targetContainer = getTargetContainer(new SubProgressMonitor(progressMonitor, 1));
         } catch (CoreException e) {
-            exception = e;
+            exceptions.add(e.getStatus());
             progressMonitor.done();
             return;
         }
         
         // Subtask 2
-        try {
-            importFiles(new SubProgressMonitor(progressMonitor, totalWork - 1));
-        } catch (CoreException e) {
-            exception = e;
-            progressMonitor.done();
-            return;
-        }
+        importFiles(new SubProgressMonitor(progressMonitor, totalWork - 1));
         
         // Everything's done. Yay!
         progressMonitor.done();
@@ -262,16 +275,13 @@ public class DiagramsImporter implements IRunnableWithProgress {
     
     /**
      * Loops through the list of source files and calls appropriate methods to import them.
+     * Any exceptions thrown in the process are added to the list of statusses.
      * 
      * @param monitor monitor to report progress to.
-     * @throws CoreException if the import fails.
      */
-    private void importFiles(final IProgressMonitor monitor) throws CoreException {
+    private void importFiles(final IProgressMonitor monitor) {
         // Calculate the total work to be done
         int totalWork = sourceFiles.size();
-        if (initializeDiagramFiles) {
-            totalWork *= 2;
-        }
         
         // Begin the main task
         monitor.beginTask("Importing diagrams.", totalWork);
@@ -311,8 +321,8 @@ public class DiagramsImporter implements IRunnableWithProgress {
                                 + PtolemyImporterConstants.TARGET_DIAGRAM_FILE_EXTENSION);
                     monitor.worked(1);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (CoreException e) {
+                exceptions.add(e.getStatus());
             }
         }
         

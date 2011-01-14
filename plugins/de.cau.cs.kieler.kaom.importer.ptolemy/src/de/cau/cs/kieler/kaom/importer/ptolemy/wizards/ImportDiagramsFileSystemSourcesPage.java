@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 
-import de.cau.cs.kieler.core.ui.wizards.ImportFromFilesystemPage;
+import de.cau.cs.kieler.core.ui.wizards.FileSystemResourcesPage;
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
 
 
@@ -29,7 +29,7 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
  * 
  * @author cds
  */
-public class ImportDiagramsFileSystemSourcesPage extends ImportFromFilesystemPage {
+public class ImportDiagramsFileSystemSourcesPage extends FileSystemResourcesPage {
     
     // CONSTANTS
     private static final String PAGE_NAME = "importDiagramsFileSystemSourcesPage";
@@ -53,17 +53,12 @@ public class ImportDiagramsFileSystemSourcesPage extends ImportFromFilesystemPag
     }
     
     
-    ///////////////////////////////////////////////////////////////////////////////
-    // Wizardry Stuff
-    
-    // This is used to control the wizard's page flow.
-    
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void restoreDialogSettings() {
-        super.restoreDialogSettings();
+    protected void initializeControls() {
+        super.initializeControls();
         
         // Set the initial target container name
         if (!selection.isEmpty()) {
@@ -82,7 +77,6 @@ public class ImportDiagramsFileSystemSourcesPage extends ImportFromFilesystemPag
             }
         }
     }
-
 
     /**
      * {@inheritDoc}

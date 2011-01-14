@@ -19,12 +19,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kaom.importer.ptolemy.DiagramsImporter;
 import de.cau.cs.kieler.kaom.importer.ptolemy.KaomImporterPtolemyPlugin;
 
@@ -68,8 +73,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         setWindowTitle("Import Ptolemy2 Diagrams");
         setDialogSettings(KaomImporterPtolemyPlugin.getDefault().getDialogSettings());
         
-        // A progress monitor may be required by the ImportDiagramsFileSystemSourcesPage when
-        // it traverses the selection and filters it for .moml files
+        // Required for the import process
         setNeedsProgressMonitor(true);
     }
     
@@ -149,13 +153,56 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         boolean initializeDiagramFiles = optionsPage.isInitializeDiagramFiles();
         boolean overwriteWithoutWarning = optionsPage.isOverwriteWithoutWarning();
         List<File> sourceFiles = null;
+        final Maybe<List<File>> sourceFilesWrapper = new Maybe<List<File>>();
         IPath targetContainerPath = null;
         
         if (importFromFileSystem) {
-            sourceFiles = fileSystemSourcesPage.getFiles(null);
+            // Finding the source files is a potentially long-running operation that requires
+            // a progress monitor
+            try {
+                this.getContainer().run(true, true, new IRunnableWithProgress() {
+                    public void run(final IProgressMonitor monitor)
+                        throws InvocationTargetException, InterruptedException {
+                        
+                        List<File> files = fileSystemSourcesPage.getFiles(monitor);
+                        sourceFilesWrapper.set(files);
+                    }
+                });
+            } catch (Exception e) {
+                IStatus status = new Status(
+                            IStatus.ERROR,
+                            KaomImporterPtolemyPlugin.PLUGIN_ID,
+                            "Error getting the list of files to import.",
+                            e);
+                StatusManager.getManager().handle(status, StatusManager.BLOCK);
+                return false;
+            }
+            
+            sourceFiles = sourceFilesWrapper.get();
             targetContainerPath = fileSystemSourcesPage.getTargetContainerPath();
         } else {
-            sourceFiles = workspaceSourcesPage.getSourceFiles();
+            // Finding the source files is a potentially long-running operation that requires
+            // a progress monitor
+            try {
+                this.getContainer().run(true, true, new IRunnableWithProgress() {
+                    public void run(final IProgressMonitor monitor)
+                        throws InvocationTargetException, InterruptedException {
+                        
+                        List<File> files = workspaceSourcesPage.getSourceFiles(monitor);
+                        sourceFilesWrapper.set(files);
+                    }
+                });
+            } catch (Exception e) {
+                IStatus status = new Status(
+                            IStatus.ERROR,
+                            KaomImporterPtolemyPlugin.PLUGIN_ID,
+                            "Error getting the list of files to import.",
+                            e);
+                StatusManager.getManager().handle(status, StatusManager.BLOCK);
+                return false;
+            }
+            
+            sourceFiles = sourceFilesWrapper.get();
             targetContainerPath = workspaceSourcesPage.getTargetContainerPath();
         }
         
@@ -164,13 +211,13 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
                 initializeDiagramFiles, overwriteWithoutWarning);
         try {
             this.getContainer().run(true, true, importer);
-        } catch (InvocationTargetException e) {
-            // TODO Popup error message
-            e.printStackTrace();
-            return false;
-        } catch (InterruptedException e) {
-            // TODO Popup error message
-            e.printStackTrace();
+        } catch (Exception e) {
+            IStatus status = new Status(
+                        IStatus.ERROR,
+                        KaomImporterPtolemyPlugin.PLUGIN_ID,
+                        "Error importing the models.",
+                        e);
+            StatusManager.getManager().handle(status, StatusManager.BLOCK);
             return false;
         }
         
@@ -182,10 +229,9 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
             // No exception, but don't close the wizard
             return false;
         } else {
-            // Show a dialog with the exception
+            // Show the user what went wrong
             StatusManager.getManager().handle(
-                    importer.getException(), KaomImporterPtolemyPlugin.PLUGIN_ID);
-            
+                    importer.getStatus(), StatusManager.BLOCK);
             return false;
         }
     }

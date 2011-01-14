@@ -21,25 +21,13 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.WizardExportResourcesPage;
 
-import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
+import de.cau.cs.kieler.core.ui.wizards.WorkspaceResourcesPage;
+import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
 
 
 /**
@@ -47,28 +35,27 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
  * 
  * @author cds
  */
-public class ImportDiagramsWorkspaceSourcesPage extends WizardExportResourcesPage {
-
+public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
+    
     // CONSTANTS
     private static final String PAGE_NAME = "importDiagramsWorkspaceSourcesPage";
     
-    // UI WIDGETS
-    private Composite targetComposite;
-    private Label targetLabel;
-    private Text targetText;
-    private Button targetBrowseButton;
+    // VARIABLES
+    private IStructuredSelection selection;
     
     
     /**
      * Constructs a new instance.
      * 
-     * @param selection the selection the wizard was called on.
+     * @param theSelection the selection the wizard was called on.
      */
-    public ImportDiagramsWorkspaceSourcesPage(final IStructuredSelection selection) {
-        super(PAGE_NAME, selection);
+    public ImportDiagramsWorkspaceSourcesPage(final IStructuredSelection theSelection) {
+        super(PAGE_NAME, true, PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS);
         
-        this.setTitle("Import from workspace");
-        this.setMessage("Select the Ptolemy2 .moml files to import from the workspace.");
+        this.setMessage(
+                "Select the Ptolemy2 .moml or .xml files to import from the workspace.");
+        
+        selection = theSelection;
     }
     
     
@@ -76,101 +63,47 @@ public class ImportDiagramsWorkspaceSourcesPage extends WizardExportResourcesPag
      * Returns the selected source files to import. This method may take a while
      * to complete and shows its progress using a progress monitor.
      * 
+     * @param monitor progress monitor.
      * @return list of selected source files.
      */
-    public List<File> getSourceFiles() {
-        List<?> selectedResources = this.getSelectedResources();
+    public List<File> getSourceFiles(final IProgressMonitor monitor) {
+        List<IResource> selectedResources = this.getResources(monitor);
         List<File> files = new ArrayList<File>();
         
-        // Iterate through the list of selected resources looking for Ptolemy2 files
-        for (Object o : selectedResources) {
-            if (o instanceof IFile) {
-                IFile iFile = (IFile) o;
-                
-                if (Utils.isPtolemyFile(iFile.getName())) {
-                    files.add(iFile.getLocation().toFile());
-                }
+        for (IResource resource : selectedResources) {
+            if (resource instanceof IFile) {
+                IFile iFile = (IFile) resource;
+                files.add(iFile.getLocation().toFile());
             }
         }
         
         return files;
     }
     
-    /**
-     * Returns the target container path entered by the user. The container might
-     * not exist yet.
-     * 
-     * @return the container to import to.
-     */
-    public IPath getTargetContainerPath() {
-        return getPathFromText(targetText).makeAbsolute();
-    }
-    
     
     /**
      * {@inheritDoc}
      */
-    public void handleEvent(final Event event) {
-        /* It's not in the least bit clear to me why WizardDataTranserPage implements
-         * Listener, but does not implement it. (neither does WizardExportResourcesPage)
-         */
-        System.out.println("HANDLE_EVENT: " + event.toString());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected boolean allowNewContainerName() {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void createDestinationGroup(final Composite parent) {
-        // This method uses magic numbers for layout purposes, so keep Checkstyle from
-        // checking for those
-        // CHECKSTYLEOFF MagicNumber
+    protected void initializeControls() {
+        super.initializeControls();
         
-        GridLayout gl = new GridLayout(3, false);
-        
-        // Target Composite
-        targetComposite = new Composite(parent, SWT.NULL);
-        targetComposite.setLayout(gl);
-        targetComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        
-        // Target Label
-        targetLabel = new Label(targetComposite, SWT.NULL);
-        targetLabel.setText("Into folder:");
-        
-        // Target Text
-        targetText = new Text(targetComposite, SWT.SINGLE | SWT.BORDER);
-        targetText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        
-        // Target Browse Button
-        targetBrowseButton = new Button(targetComposite, SWT.NULL);
-        targetBrowseButton.setText("Browse...");
-        
-        // Event Handlers
-        targetBrowseButton.addSelectionListener(new SelectionAdapter() {
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void widgetSelected(final SelectionEvent e) {
-                doBrowse();
+        // Set the initial target container name
+        if (!selection.isEmpty()) {
+            Object element = selection.getFirstElement();
+            
+            if (element instanceof IResource) {
+                IResource resource = (IResource) element;
+                
+                if (resource instanceof IContainer) {
+                    getTargetGroupCombo().setText(
+                            resource.getFullPath().makeRelative().toString());
+                } else if (resource.getParent() != null) {
+                    getTargetGroupCombo().setText(
+                            resource.getParent().getFullPath().makeRelative().toString());
+                }
             }
-        });
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void createOptionsGroup(final Composite parent) {
-        // We don't need no stinkin' options group around here!
+        }
     }
 
     /**
@@ -191,33 +124,5 @@ public class ImportDiagramsWorkspaceSourcesPage extends WizardExportResourcesPag
     public IWizardPage getNextPage() {
         // This is the wizard's last page
         return null;
-    }
-    
-    /**
-     * Browse for container.
-     */
-    private void doBrowse() {
-        // Find the current container, if any
-        IPath currentPath = getTargetContainerPath();
-        IContainer currentContainer = null;
-        
-        if (currentPath != null) {
-            IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-            IResource resource = workspaceRoot.findMember(currentPath);
-            
-            if (resource instanceof IContainer) {
-                currentContainer = (IContainer) resource;
-            }
-        }
-        
-        // Find a new container
-        IPath newPath = queryForContainer(
-                currentContainer,
-                "Select a folder to import into.",
-                "Import into Folder");
-        
-        if (newPath != null) {
-            targetText.setText(newPath.makeRelative().toString());
-        }
     }
 }

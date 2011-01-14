@@ -14,16 +14,11 @@
 
 package de.cau.cs.kieler.kaom.importer.ptolemy.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
 
 
 /**
@@ -132,50 +127,6 @@ public final class Utils {
     }
     
     
-    // ARRAYS
-    
-    /**
-     * Returns a new array with the given item inserted or moved to the top. If the
-     * item is already in the source array, it is moved to the top. If not, it is
-     * inserted. If the array contains more items than {@code maxSize}, the item
-     * with the highest index (after insertion / move) is removed. If the item refers
-     * to the empty string or is {@code null}, the source array is returned.
-     * 
-     * @param array the source array.
-     * @param item the item to insert or to move.
-     * @param maxSize the maximum size of the returned array.
-     * @return the array with the given item moved or inserted.
-     */
-    public static String[] insertOrMoveToTop(final String[] array, final String item,
-            final int maxSize) {
-        
-        if (item == null || item.length() == 0) {
-            return array;
-        }
-        
-        List<String> newList = new ArrayList<String>(maxSize + 1);
-        
-        // Go through the old array adding all items if they don't equal the item
-        // to be moved. Traverse the array backwards to preserve the item ordering.
-        for (int i = array.length - 1; i >= 0; i--) {
-            if (!array[i].equals(item)) {
-                newList.add(array[i]);
-            }
-        }
-        
-        // Add the item
-        newList.add(item);
-        
-        // If the list is too large, remove the last item
-        if (newList.size() > maxSize) {
-            newList.remove(newList.size() - 1);
-        }
-        
-        // Return the new array
-        return newList.toArray(new String[newList.size()]);
-    }
-    
-    
     // FILES
     
     /**
@@ -192,28 +143,5 @@ public final class Utils {
         }
         
         return fileName.substring(extensionIndex + 1);
-    }
-    
-    /**
-     * Checks if the given file name's file extension matches one of the file extension
-     * we accept for Ptolemy2 diagram files.
-     * 
-     * @param name the file name to check.
-     * @return {@code true} if we think that the given name denotes a Ptolemy2 diagram file.
-     * @see de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS
-     */
-    public static boolean isPtolemyFile(final String name) {
-        String extension = getFileExtension(name);
-        if (extension.length() == 0) {
-            return false;
-        }
-        
-        for (String candidate : PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS) {
-            if (candidate.equalsIgnoreCase(extension)) {
-                return true;
-            }
-        }
-        
-        return false;
     }
 }
