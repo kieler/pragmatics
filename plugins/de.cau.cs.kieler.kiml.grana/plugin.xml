@@ -111,29 +111,17 @@
       </category>
       <provider
             category="de.cau.cs.kieler.kiml.grana.basic"
-            class="de.cau.cs.kieler.kiml.grana.analyses.ConnectedComponentsAnalysis"
-            description="The number of connected components including hierarchies."
-            id="de.cau.cs.kieler.kiml.grana.connectedComponents"
-            name="Connected Components">
+            class="de.cau.cs.kieler.kiml.grana.analyses.CompoundNodeCountAnalysis"
+            description="The number of compound nodes including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.compoundNodeCount"
+            name="Compound Node Count">
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.basic"
-            class="de.cau.cs.kieler.kiml.grana.analyses.NodeDegreeAnalysis"
-            description="The minimum, average and maximum node degree of all nodes including hierarchies."
-            id="de.cau.cs.kieler.kiml.grana.averageNodeDegree"
-            name="Node Degree">
-         <component
-               abbreviation="Min"
-               name="Minimum">
-         </component>
-         <component
-               abbreviation="Avg"
-               name="Average">
-         </component>
-         <component
-               abbreviation="Max"
-               name="Maximum">
-         </component>
+            class="de.cau.cs.kieler.kiml.grana.analyses.ConnectedComponentsAnalysis"
+            description="The number of connected components, including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.connectedComponents"
+            name="Connected Components">
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.basic"
@@ -158,10 +146,37 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.basic"
-            class="de.cau.cs.kieler.kiml.grana.analyses.CompoundNodeCountAnalysis"
-            description="The number of compound nodes including hierarchies."
-            id="de.cau.cs.kieler.kiml.grana.compoundNodeCount"
-            name="Compound Node Count">
+            class="de.cau.cs.kieler.kiml.grana.analyses.NodeDegreeAnalysis"
+            description="The minimum, average and maximum node degree of all nodes including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.averageNodeDegree"
+            name="Node Degree">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.CoverageAnalysis"
+            description="Percentage of area covered with nodes and taken up by insets."
+            id="de.cau.cs.kieler.kiml.grana.coverage"
+            name="Coverage">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.nodeSize"
+               weak="false">
+         </dependency>
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.area"
+               weak="false">
+         </dependency>
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.basic"
@@ -171,18 +186,22 @@
             name="Hyper Node Count">
       </provider>
       <provider
-            category="de.cau.cs.kieler.kiml.grana.basic"
-            class="de.cau.cs.kieler.kiml.grana.analyses.SelfLoopAnalysis"
-            description="The number of self loops."
-            id="de.cau.cs.kieler.kiml.grana.selfLoops"
-            name="Self Loops">
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.AspectRatioAnalysis"
+            description="The aspect ratio of the area a graph drawing occupies. (width / height)"
+            id="de.cau.cs.kieler.kiml.grana.aspectRatio"
+            name="Aspect Ratio">
+         <dependency
+               analysis="de.cau.cs.kieler.kiml.grana.area"
+               weak="false">
+         </dependency>
       </provider>
       <provider
-            category="de.cau.cs.kieler.kiml.grana.drawing"
-            class="de.cau.cs.kieler.kiml.grana.analyses.BendsAnalysis"
-            description="The number of bendpoints in the graph including hierarchies."
-            id="de.cau.cs.kieler.kiml.grana.bendpointCount"
-            name="Number of Bends">
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.grana.analyses.BiconnectedComponentsAnalysis"
+            description="The number of biconnected components, including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.biconnectedComponents"
+            name="Biconnected Components">
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
@@ -205,27 +224,50 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
-            class="de.cau.cs.kieler.kiml.grana.analyses.AspectRatioAnalysis"
-            description="The aspect ratio of the area a graph drawing occupies. (width / height)"
-            id="de.cau.cs.kieler.kiml.grana.aspectRatio"
-            name="Aspect Ratio">
-         <dependency
-               analysis="de.cau.cs.kieler.kiml.grana.area"
-               weak="false">
-         </dependency>
+            class="de.cau.cs.kieler.kiml.grana.analyses.EdgeLengthAnalysis"
+            description="The minimum, average and maximum edge length."
+            id="de.cau.cs.kieler.kiml.grana.edgeLength"
+            name="Edge Length">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
-            class="de.cau.cs.kieler.kiml.grana.analyses.AreaAnalysis"
-            description="The area a graph drawing occupies."
-            id="de.cau.cs.kieler.kiml.grana.area"
-            name="Area">
-         <component
-               name="Width">
-         </component>
-         <component
-               name="Height">
-         </component>
+            class="de.cau.cs.kieler.kiml.grana.analyses.BendsAnalysis"
+            description="The number of bendpoints in the graph including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.bendpointCount"
+            name="Number of Bends">
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.EdgeCrossingsAnalysis"
+            description="The number of edge crossings including hierarchies."
+            id="de.cau.cs.kieler.kiml.grana.edgeCrossings"
+            name="Number of Edge Crossings">
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.NodeEdgeOverlapsAnalysis"
+            description="The number of overlaps between nodes and edges on all hierarchy levels."
+            id="de.cau.cs.kieler.kiml.grana.nodeEdgeOverlaps"
+            name="Number of Node-Edge Overlaps">
+      </provider>
+      <provider
+            category="de.cau.cs.kieler.kiml.grana.basic"
+            class="de.cau.cs.kieler.kiml.grana.analyses.SelfLoopAnalysis"
+            description="The number of self loops."
+            id="de.cau.cs.kieler.kiml.grana.selfLoops"
+            name="Self Loops">
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
@@ -251,51 +293,16 @@
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
-            class="de.cau.cs.kieler.kiml.grana.analyses.CoverageAnalysis"
-            description="Percentage of area covered with nodes and taken up by insets."
-            id="de.cau.cs.kieler.kiml.grana.coverage"
-            name="Coverage">
-         <dependency
-               analysis="de.cau.cs.kieler.kiml.grana.nodeSize"
-               weak="false">
-         </dependency>
-         <dependency
-               analysis="de.cau.cs.kieler.kiml.grana.area"
-               weak="false">
-         </dependency>
-      </provider>
-      <provider
-            category="de.cau.cs.kieler.kiml.grana.drawing"
-            class="de.cau.cs.kieler.kiml.grana.analyses.EdgeLengthAnalysis"
-            description="The minimum, average and maximum edge length."
-            id="de.cau.cs.kieler.kiml.grana.edgeLength"
-            name="Edge Length">
+            class="de.cau.cs.kieler.kiml.grana.analyses.AreaAnalysis"
+            description="The area a graph drawing occupies."
+            id="de.cau.cs.kieler.kiml.grana.area"
+            name="Area">
          <component
-               abbreviation="Min"
-               name="Minimum">
+               name="Width">
          </component>
          <component
-               abbreviation="Avg"
-               name="Average">
+               name="Height">
          </component>
-         <component
-               abbreviation="Max"
-               name="Maximum">
-         </component>
-      </provider>
-      <provider
-            category="de.cau.cs.kieler.kiml.grana.drawing"
-            class="de.cau.cs.kieler.kiml.grana.analyses.EdgeCrossingsAnalysis"
-            description="The number of edge crossings including hierarchies."
-            id="de.cau.cs.kieler.kiml.grana.edgeCrossings"
-            name="Number of Edge Crossings">
-      </provider>
-      <provider
-            category="de.cau.cs.kieler.kiml.grana.drawing"
-            class="de.cau.cs.kieler.kiml.grana.analyses.NodeEdgeOverlapsAnalysis"
-            description="The number of overlaps between nodes and edges on all hierarchy levels."
-            id="de.cau.cs.kieler.kiml.grana.nodeEdgeOverlaps"
-            name="Number of Node-Edge Overlaps">
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"

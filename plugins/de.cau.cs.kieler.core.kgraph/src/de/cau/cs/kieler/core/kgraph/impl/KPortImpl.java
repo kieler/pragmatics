@@ -312,5 +312,20 @@ public class KPortImpl extends KGraphElementImpl implements KPort {
         }
         return super.eIsSet(featureID);
     }
+    
+    /**
+     * @generated NOT
+     */
+    @Override
+    public String toString() {
+        KLabel label = getLabel();
+        if (label != null) {
+            String text = label.getText();
+            if (text != null && text.length() > 0) {
+                return text;
+            }
+        }
+        return super.toString();
+    }
 
 } //KPortImpl
