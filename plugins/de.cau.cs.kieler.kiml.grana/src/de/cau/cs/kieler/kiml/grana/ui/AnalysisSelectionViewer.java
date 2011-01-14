@@ -32,6 +32,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import de.cau.cs.kieler.core.ui.util.TreeViewerCheckStateManager;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
@@ -72,9 +73,11 @@ public class AnalysisSelectionViewer extends Composite implements
         treeViewer.setLabelProvider(new AnalysisLabelProvider());
         treeViewer
                 .setContentProvider(new AnalysisContentProvider(theCategories));
-        treeViewer.addCheckStateListener(new CheckStateListener());
         treeViewer.setInput(theCategories);
-        treeViewer.setCheckedElements(selectedAnalyses.toArray());
+        
+        TreeViewerCheckStateManager checkStateManager = new TreeViewerCheckStateManager(treeViewer);
+        checkStateManager.checkElements(selectedAnalyses);
+        
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         treeViewer.getTree().setLayoutData(data);
         GridLayout gridLayout = new GridLayout();
@@ -158,44 +161,6 @@ public class AnalysisSelectionViewer extends Composite implements
      */
     public void selectionChanged(final SelectionChangedEvent event) {
         notifyListeners();
-    }
-
-    /**
-     * A check state listener for providing selection consistency.
-     */
-    private class CheckStateListener implements ICheckStateListener {
-
-        /**
-         * {@inheritDoc}
-         */
-        public void checkStateChanged(final CheckStateChangedEvent event) {
-            Object obj = event.getElement();
-            if (obj instanceof AnalysisCategory) {
-                // the check state of a category was changed
-                AnalysisCategory category = (AnalysisCategory) obj;
-                for (AbstractInfoAnalysis analysis : category.getAnalyses()) {
-                    treeViewer.setChecked(analysis, event.getChecked());
-                }
-                treeViewer.setExpandedState(category, true);
-            } else if (obj instanceof AbstractInfoAnalysis) {
-                // the check state of an analysis was changed
-                AbstractInfoAnalysis analysis = (AbstractInfoAnalysis) obj;
-                AnalysisCategory category = parentMap.get(analysis);
-                if (category != null) {
-                    if (event.getChecked()) {
-                        for (AbstractInfoAnalysis infoAnalysis : category
-                                .getAnalyses()) {
-                            if (!treeViewer.getChecked(infoAnalysis)) {
-                                return;
-                            }
-                        }
-                        treeViewer.setChecked(category, true);
-                    } else {
-                        treeViewer.setChecked(category, false);
-                    }
-                }
-            }
-        }
     }
 
     /**
