@@ -22,6 +22,7 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;
 import de.cau.cs.kieler.klay.layered.options.CrossingMinimization;
+import de.cau.cs.kieler.klay.layered.options.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting;
 import de.cau.cs.kieler.klay.layered.options.NodeLayering;
 
@@ -125,6 +126,12 @@ public final class Properties {
     public static final String THOROUGHNESS_ID = "de.cau.cs.kieler.klay.layered.thoroughness";
     /** property that determines how much effort should be spent. */
     public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(THOROUGHNESS_ID, 5, 0);
+    
+    /** option identifier for layer constraint. */
+    public static final String LAYER_CONSTRAINT_ID = "de.cau.cs.kieler.klay.layered.layerConstraint";
+    /** property to set constraints on the node layering. */
+    public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(
+            LAYER_CONSTRAINT_ID, LayerConstraint.NONE);
 
     /**
      * Hidden default constructor.

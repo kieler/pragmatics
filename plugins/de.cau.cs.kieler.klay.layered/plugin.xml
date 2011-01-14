@@ -54,6 +54,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.thoroughness">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.layerConstraint">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
@@ -132,6 +135,16 @@
             id="de.cau.cs.kieler.klay.layered.thoroughness"
             name="Thoroughness"
             type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="nodes"
+            class="de.cau.cs.kieler.klay.layered.options.LayerConstraint"
+            default="NONE"
+            description="Determines a constraint on the placement of the node regarding the layering."
+            id="de.cau.cs.kieler.klay.layered.layerConstraint"
+            name="Layer Constraint"
+            type="enum">
       </layoutOption>
    </extension>
 

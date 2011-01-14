@@ -144,7 +144,6 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      *         the number of nodes in this path minus one.
      */
     private int longestPathDFS(final LNode sink) {
-
         int path = 0;
         for (LPort port : sink.getPorts(PortType.INPUT)) {
             for (LEdge edge : port.getEdges()) {

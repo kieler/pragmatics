@@ -23,6 +23,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.modules.ICycleBreaker;
+import de.cau.cs.kieler.klay.layered.options.LayerConstraint;
 
 /**
  * Cycle breaker implementation that uses a greedy algorithm. Inspired by Section 9.4 of
@@ -83,9 +84,10 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
                     indeg[index] += weight;
                 }
             }
-            if (outdeg[index] == 0) {
+            LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
+            if (outdeg[index] == 0 || constraint == LayerConstraint.LAST) {
                 sinks.add(node);
-            } else if (indeg[index] == 0) {
+            } else if (indeg[index] == 0 || constraint == LayerConstraint.FIRST) {
                 sources.add(node);
             }
             index++;
@@ -105,7 +107,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
                 updateNeighbors(source);
                 unprocessedNodes--;
             }
-            if (unprocessedNodes != 0) {
+            if (unprocessedNodes > 0) {
                 int maxOutflow = Integer.MIN_VALUE;
                 LNode maxNode = null;
                 int maxIndex = 0;

@@ -97,7 +97,6 @@ public class KGraphImporter implements IGraphImporter {
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         for (KNode child : layoutNode.getChildren()) {
             KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
-            PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
             LNode newNode = new LNode(child.getLabel().getText());
             newNode.setProperty(Properties.ORIGIN, child);
             newNode.getSize().x = nodeLayout.getWidth();
@@ -128,13 +127,12 @@ public class KGraphImporter implements IGraphImporter {
                 newPort.getPos().y = portLayout.getYpos();
                 newPort.setNode(newNode);
                 elemMap.put(kport, newPort);
+                PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
                 if (portConstraints != PortConstraints.UNDEFINED) {
                     newPort.setSide(KimlUtil.calcPortSide(kport));
                 }
             }
-            if (portConstraints != PortConstraints.UNDEFINED) {
-                newNode.setProperty(Properties.PORT_CONS, portConstraints);
-            }
+            newNode.copyProperties(nodeLayout);
         }
 
         // transform edges

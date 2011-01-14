@@ -54,7 +54,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
     private Collection<LNode> nodes;
 
     /** A {@code LinkedList} containing all edges in the graph. */
-    private LinkedList<LEdge> edges;
+    private List<LEdge> edges;
 
     /**
      * A {@code LinkedList} containing all nodes of the currently identified connected component by
@@ -63,19 +63,19 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponents(Collection)
      *      connectedComponents()
      */
-    private LinkedList<LNode> componentNodes;
+    private List<LNode> componentNodes;
 
     /**
      * A {@code LinkedList} containing all source nodes of the graph, i.e. all nodes that have no
      * incident incoming edges.
      */
-    private LinkedList<LNode> sources;
+    private List<LNode> sources;
 
     /**
      * A {@code LinkedList} containing all sink nodes of the graph, i.e. all nodes that have no
      * incident outgoing edges.
      */
-    private LinkedList<LNode> sinks;
+    private List<LNode> sinks;
 
     /** The number of incoming edges incident to each node. */
     private int[] inDegree;
@@ -191,8 +191,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponentsDFS(LNode)
      *      connectedComponentsDFS()
      */
-    private LinkedList<LinkedList<LNode>> connectedComponents(final Collection<LNode> theNodes) {
-
+    private List<List<LNode>> connectedComponents(final Collection<LNode> theNodes) {
         // initialize required attributes
         if (nodeVisited == null || nodeVisited.length < theNodes.size()) {
             nodeVisited = new boolean[theNodes.size()];
@@ -207,7 +206,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
             node.id = counter++;
         }
         // determine connected components
-        LinkedList<LinkedList<LNode>> components = new LinkedList<LinkedList<LNode>>();
+        LinkedList<List<LNode>> components = new LinkedList<List<LNode>>();
         for (LNode node : theNodes) {
             if (!nodeVisited[node.id]) {
                 connectedComponentsDFS(node);
@@ -239,7 +238,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#componentNodes componentNodes
      */
     private void connectedComponentsDFS(final LNode node) {
-
         nodeVisited[node.id] = true;
         // node is part of the current connected component
         componentNodes.add(node);
@@ -285,7 +283,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
 
         // determine edges and re-index nodes
         int index = 0;
-        LinkedList<LEdge> theEdges = new LinkedList<LEdge>();
+        List<LEdge> theEdges = new LinkedList<LEdge>();
         for (LNode node : theNodes) {
             node.id = index++;
             for (LPort port : node.getPorts()) {
@@ -389,7 +387,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         }
 
         // layer graph, each connected component separately
-        for (LinkedList<LNode> connComp : connectedComponents(theNodes)) {
+        for (List<LNode> connComp : connectedComponents(theNodes)) {
 
             initialize(connComp);
             // determine optimal layering
@@ -442,7 +440,6 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      *      tightTreeDFS()
      */
     private void feasibleTree() {
-
         initLayering();
         if (edges.size() > 0) {
             Arrays.fill(edgeVisited, false);

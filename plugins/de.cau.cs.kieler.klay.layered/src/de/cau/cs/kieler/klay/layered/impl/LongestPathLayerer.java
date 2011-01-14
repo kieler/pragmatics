@@ -26,6 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.IBigNodeHandler;
 import de.cau.cs.kieler.klay.layered.modules.ILayerer;
+import de.cau.cs.kieler.klay.layered.options.LayerConstraint;
 
 /**
  * The most basic layering algorithm, which assign layers according to the
@@ -72,6 +73,24 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
         // process all nodes
         for (LNode node : nodes) {
             visit(node);
+        }
+        
+        // nodes with layering constraints need to be moved
+        Layer firstLayer = layeredGraph.getLayers().get(0);
+        for (LNode node : nodes) {
+            if (node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.FIRST
+                    && node.getLayer().getIndex() > 0) {
+                boolean hasInputs = false;
+                for (LPort port : node.getPorts()) {
+                    if (port.getType() == PortType.INPUT) {
+                        hasInputs = true;
+                        break;
+                    }
+                }
+                if (!hasInputs) {
+                    node.setLayer(firstLayer);
+                }
+            }
         }
         
         // segmentate layering, if requested
