@@ -311,7 +311,11 @@ public class DiagramsImporter implements IRunnableWithProgress {
                         targetFilesBaseName + "."
                             + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION,
                         new SubProgressMonitor(monitor, 1));
-                
+            } catch (CoreException e) {
+                exceptions.add(e.getStatus());
+            }
+            
+            try {
                 // Possibly initialize diagram file
                 if (initializeDiagramFiles) {
                     doImportDiagramFile(
@@ -459,11 +463,11 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 p1, p2, p3);
         
         // Check if everything went fine
-        if (status.getSeverity() == XtendStatus.ERROR) {
+        if (status.getSeverity() != XtendStatus.OK) {
             throw new CoreException(new Status(
-                    IStatus.ERROR,
+                    status.getSeverity(),
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    status.getMessage(),
+                    "Possible errors importing " + sourceFile.getName(),
                     status.getException()));
         }
         
