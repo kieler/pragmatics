@@ -56,7 +56,7 @@ class OverviewToolTip extends GradientToolTip {
         container.setBackground(null);
 
         Image image = null;
-        if (source.getPreviewPic() != null) {
+        if (source.getOverviewPic() != null) {
             image = computeImage(source);
             if (image != null) {
                 final Image fimage = image;
@@ -180,7 +180,7 @@ class OverviewToolTip extends GradientToolTip {
 
     private Image computeImage(Example example) {
         Bundle bundle = Platform.getBundle(example.getNamespaceId());
-        URL resource = bundle.getEntry(example.getPreviewPic());
+        URL resource = bundle.getEntry(example.getOverviewPic());
         if (resource != null) {
             ImageDescriptor descriptor = ImageDescriptor.createFromURL(resource);
             Image image = descriptor.createImage();

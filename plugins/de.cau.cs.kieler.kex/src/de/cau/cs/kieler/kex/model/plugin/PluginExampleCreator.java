@@ -342,7 +342,7 @@ public class PluginExampleCreator {
                 .toString());
         makeRootSource(location, example);
 
-        String overviewPicPath = example.getPreviewPic();
+        String overviewPicPath = example.getOverviewPic();
         if (overviewPicPath != null) {
             createdExample.setAttribute(PluginConstants.OVERVIEW_PIC, overviewPicPath);
         }

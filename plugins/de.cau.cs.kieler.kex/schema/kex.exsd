@@ -55,6 +55,35 @@
       </complexType>
    </element>
 
+   <element name="resource">
+      <complexType>
+         <attribute name="local_path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Relative to plugin.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="direct_open" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="resource_type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  file, folder, project
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="category">
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -65,15 +94,55 @@ It will be unique.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="title" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="parent_category" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kex/category/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <element name="example">
       <complexType>
          <sequence>
-            <element ref="category" minOccurs="1" maxOccurs="unbounded"/>
-            <element ref="example_resource" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="resource" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="title" type="string" use="required">
             <annotation>
                <documentation>
@@ -129,33 +198,14 @@ It will be unique.
                </appinfo>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="example_resource">
-      <complexType>
-         <attribute name="local_path" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Relative to plugin.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="direct_open" type="boolean" use="default" value="false">
+         <attribute name="category" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="resource_type" type="string" use="required">
-            <annotation>
-               <documentation>
-                  file, folder, project
-               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="de.cau.cs.kieler.kex/category/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>

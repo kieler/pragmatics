@@ -434,7 +434,7 @@ public class ImportExamplePage extends WizardPage {
      * @return
      */
     private Image loadImage(final double imageWidth, final double imageHeight) {
-        final String previewPicPath = selectedExample.getPreviewPic();
+        final String previewPicPath = selectedExample.getOverviewPic();
         if (previewPicPath != null && previewPicPath.length() > 1) {
             try {
                 ImageData imgData = new ImageData(ExampleManager.get().loadOverviewPic(

@@ -370,7 +370,7 @@ public class ExampleViewer {
     }
 
     private Image computeIconImage(Example example, int dimension, boolean fallback) {
-        String imagePath = example.getPreviewPic();
+        String imagePath = example.getOverviewPic();
         if (imagePath != null && imagePath.length() > 0) {
             Bundle bundle = Platform.getBundle(example.getNamespaceId());
             URL resource = bundle.getEntry(imagePath);

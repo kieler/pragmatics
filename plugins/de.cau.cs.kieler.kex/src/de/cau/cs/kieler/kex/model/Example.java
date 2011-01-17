@@ -265,11 +265,11 @@ public class Example {
     }
 
     /**
-     * Getter for example preview picture.
+     * Getter for example overview picture.
      * 
      * @return {@link String}
      */
-    public String getPreviewPic() {
+    public String getOverviewPic() {
         return overviewPic;
     }
 
