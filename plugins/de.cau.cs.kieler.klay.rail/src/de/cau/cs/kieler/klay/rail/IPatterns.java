@@ -13,6 +13,8 @@
  */
 package de.cau.cs.kieler.klay.rail;
 
+import java.util.List;
+
 /**
  * 
  * @author jjc
@@ -22,122 +24,121 @@ public interface IPatterns {
 
     // Breach to X cases
     
-    public int breachBreach();
+    public int breachBreach(List<Integer> occupiedPlaces, int origin);
     
-    public int breachSwitchLeftBranch();
+    public int breachSwitchLeftBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int breachSwitchLeftStraight();
+    public int breachSwitchLeftStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int breachSwitchLeftStump();
+    public int breachSwitchLeftStump(List<Integer> occupiedPlaces, int origin);
     
-    public int breachSwitchRightBranch();
+    public int breachSwitchRightBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int breachSwitchRightStraight();
+    public int breachSwitchRightStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int breachSwitchRightStump();
+    public int breachSwitchRightStump(List<Integer> occupiedPlaces, int origin);
     
     // Switch left up to X cases
     
-    public int switchLeftBranchBreach();
+    public int switchLeftBranchBreach(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftBranchSwitchRightBranch();
+    public int switchLeftBranchSwitchRightBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftBranchSwitchRightStraight();
+    public int switchLeftBranchSwitchRightStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftBranchSwitchRightStump();
+    public int switchLeftBranchSwitchRightStump(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftBranchSwitchLeftBranch();
+    public int switchLeftBranchSwitchLeftBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftBranchSwitchLeftStraight();
+    public int switchLeftBranchSwitchLeftStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftBranchSwitchLeftStump();
+    public int switchLeftBranchSwitchLeftStump(List<Integer> occupiedPlaces, int origin);
     
     // Switch left down to X cases
     
-    public int switchLeftStraightBreach();
+    public int switchLeftStraightBreach(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStraightSwitchRightBranch();
+    public int switchLeftStraightSwitchRightBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStraightSwitchRightStraight();
+    public int switchLeftStraightSwitchRightStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStraightSwitchRightStump();
+    public int switchLeftStraightSwitchRightStump(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStraightSwitchLeftBranch();
+    public int switchLeftStraightSwitchLeftBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStraightSwitchLeftStraight();
+    public int switchLeftStraightSwitchLeftStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStraightSwitchLeftStump();
+    public int switchLeftStraightSwitchLeftStump(List<Integer> occupiedPlaces, int origin);
     
     // Switch left stump to X cases
     
-    public int switchLeftStumpBreach();
+    public int switchLeftStumpBreach(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStumpSwitchRightBranch();
+    public int switchLeftStumpSwitchRightBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStumpSwitchRightStraight();
+    public int switchLeftStumpSwitchRightStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStumpSwitchRightStump();
+    public int switchLeftStumpSwitchRightStump(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStumpSwitchLeftBranch();
+    public int switchLeftStumpSwitchLeftBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStumpSwitchLeftStraight();
+    public int switchLeftStumpSwitchLeftStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchLeftStumpSwitchLeftStump();
+    public int switchLeftStumpSwitchLeftStump(List<Integer> occupiedPlaces, int origin);
     
     // Switch right up to X cases
     
-    public int switchRightBranchBreach();
+    public int switchRightBranchBreach(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightBranchSwitchRightBranch();
+    public int switchRightBranchSwitchRightBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightBranchSwitchRightStraight();
+    public int switchRightBranchSwitchRightStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightBranchSwitchRightStump();
+    public int switchRightBranchSwitchRightStump(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightBranchSwitchLeftBranch();
+    public int switchRightBranchSwitchLeftBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightBranchSwitchLeftStraight();
+    public int switchRightBranchSwitchLeftStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightBranchSwitchLeftStump();
+    public int switchRightBranchSwitchLeftStump(List<Integer> occupiedPlaces, int origin);
     
     // Switch right down to X cases
     
-    public int switchRightStraightBreach();
+    public int switchRightStraightBreach(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStraightSwitchRightBranch();
+    public int switchRightStraightSwitchRightBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStraightSwitchRightStraight();
+    public int switchRightStraightSwitchRightStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStraightSwitchRightStump();
+    public int switchRightStraightSwitchRightStump(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStraightSwitchLeftBranch();
+    public int switchRightStraightSwitchLeftBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStraightSwitchLeftStraight();
+    public int switchRightStraightSwitchLeftStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStraightSwitchLeftStump();
+    public int switchRightStraightSwitchLeftStump(List<Integer> occupiedPlaces, int origin);
     
     // Switch right stump to X cases
     
-    public int switchRightStumpBreach();
+    public int switchRightStumpBreach(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStumpSwitchRightBranch();
+    public int switchRightStumpSwitchRightBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStumpSwitchRightStraight();
+    public int switchRightStumpSwitchRightStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStumpSwitchRightStump();
+    public int switchRightStumpSwitchRightStump(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStumpSwitchLeftBranch();
+    public int switchRightStumpSwitchLeftBranch(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStumpSwitchLeftStraight();
+    public int switchRightStumpSwitchLeftStraight(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightStumpSwitchLeftStump();
+    public int switchRightStumpSwitchLeftStump(List<Integer> occupiedPlaces, int origin);
     
     // Both to both special cases
     
-    public int switchLeftBothSwitchRightBoth();
+    public int switchLeftBothSwitchRightBoth(List<Integer> occupiedPlaces, int origin);
     
-    public int switchRightBothSwitchLeftBoth();
+    public int switchRightBothSwitchLeftBoth(List<Integer> occupiedPlaces, int origin);
     
-
     
 }
