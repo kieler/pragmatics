@@ -110,7 +110,7 @@ public class ImportExamplePage extends WizardPage {
 
     public ImportExamplePage(final String name, final IStructuredSelection selection) {
         super(name);
-        setDescription("Choose examples to import.");
+        setDescription(Messages.MainPage_pageDescription);
     }
 
     public void createControl(Composite parent) {

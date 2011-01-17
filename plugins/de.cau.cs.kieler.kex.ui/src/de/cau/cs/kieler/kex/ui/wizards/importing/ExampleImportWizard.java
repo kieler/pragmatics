@@ -52,7 +52,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 
     private static final String ERROR_TITLE = "Could not complete Import";
 
-    private ImportMainPage mainPage;
+    private ImportExamplePage mainPage;
     private ImportDestPage destinationPage;
     private boolean checkDuplicate;
 
@@ -82,7 +82,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             MessageDialog.openError(this.getShell(), "Can't initialize existing example pool.",
                     e.getLocalizedMessage());
         }
-        mainPage = new ImportMainPage("Import Examples");
+        mainPage = new ImportExamplePage("Import Examples", selection);
         destinationPage = new ImportDestPage("Location", selection);
     }
 
@@ -97,7 +97,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
     public final boolean performFinish() {
         List<String> directOpens = null;
         try {
-            List<Example> checkedExamples = mainPage.getExamples();
+            List<Example> checkedExamples = mainPage.getCheckedExamples();
 
             if (checkedExamples.isEmpty()) {
                 throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
