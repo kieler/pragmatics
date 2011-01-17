@@ -79,11 +79,20 @@ public class ButtonTrigger extends AbstractTrigger {
                     }
 
                 }
+                System.out.println("ButtonTrigger: "+id+" "+pushed);
                 getInstance().trigger(
                         new ButtonState(editorPart, id, event.getParameters(), pushed));
             }
             return null;
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+//        @Override
+//        public boolean isEnabled() {
+//            return ;
+//        }
     }
 
     /**
