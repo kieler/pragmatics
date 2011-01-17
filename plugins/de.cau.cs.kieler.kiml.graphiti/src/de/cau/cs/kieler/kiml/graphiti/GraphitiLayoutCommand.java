@@ -52,7 +52,8 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public class GraphitiLayoutCommand extends RecordingCommand {
 
     /** list of graph elements and pictogram elements to layout. */
-    private List<Pair<KGraphElement, PictogramElement>> elements = new LinkedList<Pair<KGraphElement, PictogramElement>>();
+    private List<Pair<KGraphElement, PictogramElement>> elements
+            = new LinkedList<Pair<KGraphElement, PictogramElement>>();
     /** the feature provider for layout support. */
     private IFeatureProvider featureProvider;
     /** map of edge layouts to corresponding vector chains. */
@@ -225,17 +226,17 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         float heightPercent = (float) relPos.y / nodeLayout.getHeight();
         if (widthPercent + heightPercent <= 1
                 && widthPercent - heightPercent <= 0) {
-            // port is put to the left
+            // bend point is put to the left
             point.setX(point.getX() - ENDPOINT_MOVE);
         } else if (widthPercent + heightPercent >= 1
                 && widthPercent - heightPercent >= 0) {
-            // port is put to the right
+            // bend point is put to the right
             point.setX(point.getX() + ENDPOINT_MOVE);
         } else if (heightPercent < 1.0f / 2) {
-            // port is put to the top
+            // bend point is put to the top
             point.setY(point.getY() - ENDPOINT_MOVE);
         } else {
-            // port is put to the bottom
+            // bend point is put to the bottom
             point.setY(point.getY() + ENDPOINT_MOVE);
         }
     }
