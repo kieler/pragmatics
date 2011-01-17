@@ -20,10 +20,11 @@ import java.util.Map;
 /**
  * An abstract holder class for properties that uses a hash map.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
+ * @kieler.rating 2011-01-17 proposed yellow
+ *     reviewed by haf, cmot, soh
  * @author msp
  */
-public abstract class MapPropertyHolder implements IPropertyHolder {
+public class MapPropertyHolder implements IPropertyHolder {
 
     /** map of property identifiers to their values. */
     private Map<IProperty<?>, Object> propertyMap = null;

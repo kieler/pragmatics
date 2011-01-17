@@ -562,7 +562,7 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
      */
     @SuppressWarnings("unchecked")
     public Comparable<T> getLowerBound() {
-        return (Comparable<T>) Property.MINUS_INFINITY;
+        return (Comparable<T>) Property.NEGATIVE_INFINITY;
     }
 
     /**
@@ -570,7 +570,7 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
      */
     @SuppressWarnings("unchecked")
     public Comparable<T> getUpperBound() {
-        return (Comparable<T>) Property.INFINITY;
+        return (Comparable<T>) Property.POSITIVE_INFINITY;
     }
     
     /**

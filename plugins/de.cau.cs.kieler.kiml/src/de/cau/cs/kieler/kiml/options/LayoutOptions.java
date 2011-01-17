@@ -32,6 +32,11 @@ public final class LayoutOptions {
     
     ///////   PROGRAMMATIC LAYOUT OPTIONS   ///////
 
+    /** layout option key: comment box (boolean). */
+    public static final String COMMENT_BOX_ID = "de.cau.cs.kieler.layout.options.commentBox";
+    /** comment box property. */
+    public static final IProperty<Boolean> COMMENT_BOX = new Property<Boolean>(COMMENT_BOX_ID, false);
+    
     /** layout option key: diagram type (string). */
     public static final String DIAGRAM_TYPE_ID = "de.cau.cs.kieler.layout.options.diagramType";
     /** diagram type property. */

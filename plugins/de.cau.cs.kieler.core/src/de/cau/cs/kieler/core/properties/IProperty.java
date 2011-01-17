@@ -19,7 +19,8 @@ package de.cau.cs.kieler.core.properties;
  * with their {@link java.lang.Object#equals(Object)} and {@link java.lang.Object#hashCode()}
  * implementations.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
+ * @kieler.rating 2011-01-17 proposed yellow
+ *     reviewed by haf, cmot, soh
  * @param <T> type of the property
  * @author msp
  */

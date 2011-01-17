@@ -18,7 +18,8 @@ import java.util.Map;
 /**
  * Interface for holders of property values.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
+ * @kieler.rating 2011-01-17 proposed yellow
+ *     reviewed by haf, cmot, soh
  * @author msp
  */
 public interface IPropertyHolder {
@@ -30,7 +31,7 @@ public interface IPropertyHolder {
      * @param property the property to set
      * @param value the new value
      */
-    void setProperty(IProperty<?> property, final Object value);
+    void setProperty(IProperty<?> property, Object value);
     
     /**
      * Retrieves a property value. If the property is not set, its default value shall be taken,

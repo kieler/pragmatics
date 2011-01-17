@@ -16,20 +16,21 @@ package de.cau.cs.kieler.core.properties;
 /**
  * A property that uses a string for identification.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
+ * @kieler.rating 2011-01-17 proposed yellow
+ *     reviewed by haf, cmot, soh
  * @param <T> type of the property
  * @author msp
  */
 public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
     
     /** the default lower bound, which is smaller than everything else. */
-    public static final Comparable<?> MINUS_INFINITY = new Comparable<Object>() {
+    public static final Comparable<?> NEGATIVE_INFINITY = new Comparable<Object>() {
         public int compareTo(final Object other) {
             return -1;
         }
     };
     /** the default upper bound, which is greater than everything else. */
-    public static final Comparable<?> INFINITY = new Comparable<Object>() {
+    public static final Comparable<?> POSITIVE_INFINITY = new Comparable<Object>() {
         public int compareTo(final Object other) {
             return 1;
         }
@@ -41,10 +42,10 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
     private T defaultValue;
     /** the lower bound of this property. */
     @SuppressWarnings("unchecked")
-    private Comparable<T> lowerBound = (Comparable<T>) MINUS_INFINITY;
+    private Comparable<T> lowerBound = (Comparable<T>) NEGATIVE_INFINITY;
     /** the upper bound of this property. */
     @SuppressWarnings("unchecked")
-    private Comparable<T> upperBound = (Comparable<T>) INFINITY;
+    private Comparable<T> upperBound = (Comparable<T>) POSITIVE_INFINITY;
     
     /**
      * Creates a property with given identifier and {@code null} as default value.

@@ -39,7 +39,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     /** actual Graphviz layouter used to do the layout. */
     private GraphvizLayouter graphvizLayouter = new GraphvizLayouter();;
     /** command string passed to the layouter. */
-    private String command = null;
+    private String command = KGraphDotTransformation.DOT_COMMAND;
 
     /**
      * Initialize default options for the layout provider.
@@ -58,13 +58,18 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Initializes the Graphviz layout provider with the given parameter string
-     * as command.
-     * 
-     * @param parameter
-     *            parameter string that is interpreted as Graphviz command
+     * {@inheritDoc}
      */
-    public void initialize(final String parameter) {
+    @Override
+    public void initialize(final String parameter) throws KielerException {
+        if (!KGraphDotTransformation.DOT_COMMAND.equals(parameter)
+                && !KGraphDotTransformation.NEATO_COMMAND.equals(parameter)
+                && !KGraphDotTransformation.TWOPI_COMMAND.equals(parameter)
+                && !KGraphDotTransformation.FDP_COMMAND.equals(parameter)
+                && !KGraphDotTransformation.CIRCO_COMMAND.equals(parameter)) {
+            throw new KielerException(
+                    "Invalid Graphviz command set for this layout provider.");
+        }
         this.command = parameter;
     }
 
@@ -75,9 +80,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
-        if (command == null) {
-            command = KGraphDotTransformation.DOT_COMMAND;
-        }
         graphvizLayouter.layout(layoutNode, progressMonitor, command);
     }
 
@@ -87,6 +89,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     @Override
     public boolean supportsHierarchy(final KNode layoutNode) {
         // add dummy inter-level edges for a better hierarchy support
+        // TODO implement proper support for nested graphs
         if (layoutNode.getParent() == null) {
             KimlUtil.addDummyEdgesForInterlevelConnections(layoutNode);
         }

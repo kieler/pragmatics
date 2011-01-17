@@ -75,6 +75,8 @@ public interface KPort extends KGraphElement {
      * Returns the value of the '<em><b>Edges</b></em>' reference list.
      * The list contents are of type {@link de.cau.cs.kieler.core.kgraph.KEdge}.
      * <!-- begin-user-doc -->
+     * This reference is not bidirectional, so adding edges to it does not
+     * affect the source or target port references of the edges.
      * <!-- end-user-doc -->
      * <!-- begin-model-doc -->
      * Edges in this list may be incoming as well as outgoing with respect

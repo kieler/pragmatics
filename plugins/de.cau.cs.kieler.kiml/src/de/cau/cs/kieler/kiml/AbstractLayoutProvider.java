@@ -28,7 +28,8 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
  * of the layout provider. Subclasses can register their default layout option values in
  * their constructor.</p>
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @kieler.rating 2011-01-17 proposed yellow
+ *     reviewed by haf, cmot, soh
  * @author ars
  * @author msp
  */
@@ -70,7 +71,7 @@ public abstract class AbstractLayoutProvider extends MapPropertyHolder {
     }
     
     /**
-     * Sets the current debug canvas.
+     * Sets the current debug canvas. Should not be used by subclasses.
      * 
      * @param thedebugCanvas the debug canvas
      */
@@ -79,7 +80,10 @@ public abstract class AbstractLayoutProvider extends MapPropertyHolder {
     }
 
     /**
-     * Returns the current debug canvas.
+     * Returns the current debug canvas. A debug canvas can be used to draw something onto the
+     * diagram that is layouted in order to analyze and debug the layout algorithm code.
+     * {@link IDebugCanvas#setOffset(KNode, float, float) should be set before anything is
+     * drawn.
      * 
      * @return the debug canvas
      */

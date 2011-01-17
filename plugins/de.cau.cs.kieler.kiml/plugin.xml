@@ -124,6 +124,14 @@
             type="float">
       </layoutOption>
       <layoutOption
+            advanced="true"
+            default="false"
+            description="Whether the node should be regarded as a comment box instead of a regular node."
+            id="de.cau.cs.kieler.layout.options.commentBox"
+            name="Comment Box"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
             appliesTo="parents"
             default="false"
             description="Whether additional debug information shall be displayed"
@@ -132,6 +140,7 @@
             type="boolean">
       </layoutOption>
       <layoutOption
+            advanced="true"
             description="Identifier of a diagram type that is associated with the children of the respective node"
             id="de.cau.cs.kieler.layout.options.diagramType"
             name="Diagram Type"
@@ -302,16 +311,6 @@
             class="org.eclipse.emf.ecore.EReference"
             option="de.cau.cs.kieler.layout.options.edgeType"
             value="ASSOCIATION">
-      </option>
-      <option
-            class="org.eclipse.emf.ecoretools.diagram.edit.parts.EClassESuperTypesEditPart"
-            option="de.cau.cs.kieler.layout.options.edgeType"
-            value="GENERALIZATION">
-      </option>
-      <option
-            class="org.eclipse.gmf.ecore.edit.parts.EClassESuperTypesEditPart"
-            option="de.cau.cs.kieler.layout.options.edgeType"
-            value="GENERALIZATION">
       </option>
    </extension>
 
