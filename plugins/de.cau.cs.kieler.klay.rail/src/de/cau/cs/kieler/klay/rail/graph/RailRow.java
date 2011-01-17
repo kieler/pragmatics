@@ -38,8 +38,22 @@ public class RailRow {
         return nodeRows.get(node);
     }
     
+    public int getMinimalPosition() {
+        int result = Integer.MAX_VALUE;
+        for (Integer i : rowNodes.keySet()) {
+            if (i < result) {
+                result = i;
+            }
+        }
+        return result;
+    }
+    
     public boolean isPositionOccupied(int position) {
         return rowNodes.containsKey(position);
+    }
+    
+    public List<Integer> getOccupiedPositions() {
+        return new LinkedList<Integer>(rowNodes.keySet());
     }
     
     public void addNodeAtPosition(LNode node, int position) {

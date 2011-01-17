@@ -24,8 +24,10 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
+import de.cau.cs.kieler.klay.rail.IPatterns;
 import de.cau.cs.kieler.klay.rail.Properties;
 import de.cau.cs.kieler.klay.rail.graph.RailLayer;
+import de.cau.cs.kieler.klay.rail.graph.RailRow;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 import de.cau.cs.kieler.klay.rail.options.PortType;
 
@@ -38,6 +40,8 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
 
     private List<LNode> known = new LinkedList<LNode>();
     private Stack<LNode> nextNodes = new Stack<LNode>();
+
+    private IPatterns patterns = new SimplePatternsImpl();
 
     /**
      * {@inheritDoc}
@@ -77,7 +81,6 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
         // start straight first DFS
         nextNodes.push(walker);
         known.add(walker);
-        int i = 1;
         while (!nextNodes.isEmpty()) {
             walker = nextNodes.pop();
             boolean found = false;
@@ -86,6 +89,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
             }
             for (LPort port : walker.getPorts()) {
                 LNode target = port.getEdges().get(0).getTarget().getNode();
+                LPort targetPort = port.getEdges().get(0).getTarget();
                 if ((port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT) || port
                         .getProperty(Properties.PORT_TYPE).equals(PortType.STUMP))
                         && !known.contains(target)) {
@@ -95,21 +99,14 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                         nextNodes.push(walker);
                     }
                     nextNodes.push(target);
-                    if (target.getLayer() instanceof RailLayer
-                            && walker.getLayer() instanceof RailLayer) {
-                        int position = ((RailLayer) walker.getLayer()).getRowList().getPosition(
-                                walker);
-                        ((RailLayer) target.getLayer()).getRowList().addNodeAtPosition(target,
-                                position);
-                    } else {
-                        throw new IllegalArgumentException("Only works with RailLayers!");
-                    }
+                    putTargetInGrid(targetPort, port);
                     break;
                 }
             }
             if (!found) {
                 for (LPort port : walker.getPorts()) {
                     LNode target = port.getEdges().get(0).getTarget().getNode();
+                    LPort targetPort = port.getEdges().get(0).getTarget();
                     if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)
                             && !known.contains(target)) {
                         if (!known.contains(target)) {
@@ -118,24 +115,20 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                                 nextNodes.push(walker);
                             }
                             nextNodes.push(target);
-                            if (target.getLayer() instanceof RailLayer
-                                    && walker.getLayer() instanceof RailLayer) {
-                                int position = i;
-                                i++;
-                                ((RailLayer) target.getLayer()).getRowList().addNodeAtPosition(
-                                        target, position);
-                            } else {
-                                throw new IllegalArgumentException("Only works with RailLayers!");
-                            }
+                            putTargetInGrid(targetPort, port);
                         }
                     }
                 }
             }
 
         }
+
+        // get minimal position for offset
+
+        // apply grid to graph
         for (Layer layer : layeredGraph.getLayers()) {
             if (layer instanceof RailLayer) {
-                gridToAbsolutePosition((RailLayer) layer);
+                gridToAbsolutePosition((RailLayer) layer, getMinimalPosition(layeredGraph));
             } else {
                 throw new IllegalArgumentException("Only works with RailLayers!");
             }
@@ -143,13 +136,451 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
         getMonitor().done();
     }
 
-    private void gridToAbsolutePosition(final RailLayer layer) {
+    private void putTargetInGrid(final LPort targetPort, final LPort sourcePort) {
+        RailRow targetRow;
+        RailRow sourceRow;
+        LNode source = sourcePort.getNode();
+        LNode target = targetPort.getNode();
+        if (target.getLayer() instanceof RailLayer && source.getLayer() instanceof RailLayer) {
+            targetRow = ((RailLayer) target.getLayer()).getRowList();
+            sourceRow = ((RailLayer) source.getLayer()).getRowList();
+        } else {
+            throw new IllegalArgumentException("Only works with RailLayers!");
+        }
+        switch (source.getProperty(Properties.NODE_TYPE)) {
+        case BREACH_OR_CLOSE:
+            switch (target.getProperty(Properties.NODE_TYPE)) {
+            case BREACH_OR_CLOSE:
+                targetRow.addNodeAtPosition(
+                        target,
+                        patterns.breachBreach(targetRow.getOccupiedPositions(),
+                                sourceRow.getPosition(source)));
+                break;
+            case SWITCH_LEFT:
+                switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                case BRANCH:
+                    targetRow.addNodeAtPosition(target, patterns.breachSwitchLeftBranch(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                case STRAIGHT:
+                    targetRow.addNodeAtPosition(target, patterns.breachSwitchLeftStraight(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                case STUMP:
+                    targetRow.addNodeAtPosition(target, patterns.breachSwitchLeftStump(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                }
+                break;
+            case SWITCH_RIGHT:
+                switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                case BRANCH:
+                    targetRow.addNodeAtPosition(target, patterns.breachSwitchRightBranch(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                case STRAIGHT:
+                    targetRow.addNodeAtPosition(target, patterns.breachSwitchRightStraight(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                case STUMP:
+                    targetRow.addNodeAtPosition(target, patterns.breachSwitchRightStump(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                }
+                break;
+            }
+            break;
+        case SWITCH_LEFT:
+            switch (sourcePort.getProperty(Properties.PORT_TYPE)) {
+            case BRANCH:
+                switch (target.getProperty(Properties.NODE_TYPE)) {
+                case BREACH_OR_CLOSE:
+                    targetRow.addNodeAtPosition(target, patterns.switchLeftBranchBreach(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                case SWITCH_LEFT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftBranchSwitchLeftBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftBranchSwitchLeftStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftBranchSwitchLeftStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                case SWITCH_RIGHT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftBranchSwitchRightBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftBranchSwitchRightStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftBranchSwitchRightStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                }
+                break;
+            case STRAIGHT:
+                switch (target.getProperty(Properties.NODE_TYPE)) {
+                case BREACH_OR_CLOSE:
+                    targetRow.addNodeAtPosition(target, patterns.switchLeftStraightBreach(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                case SWITCH_LEFT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStraightSwitchLeftBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStraightSwitchLeftStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStraightSwitchLeftStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                case SWITCH_RIGHT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStraightSwitchRightBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStraightSwitchRightStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStraightSwitchRightStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                }
+                break;
+            case STUMP:
+                switch (target.getProperty(Properties.NODE_TYPE)) {
+                case BREACH_OR_CLOSE:
+                    targetRow.addNodeAtPosition(target, patterns.switchLeftStumpBreach(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                case SWITCH_LEFT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStumpSwitchLeftBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStumpSwitchLeftStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStumpSwitchLeftStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                case SWITCH_RIGHT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStumpSwitchRightBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStumpSwitchRightStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchLeftStumpSwitchRightStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                }
+                break;
+            }
+            break;
+        case SWITCH_RIGHT:
+            switch (sourcePort.getProperty(Properties.PORT_TYPE)) {
+            case BRANCH:
+                switch (target.getProperty(Properties.NODE_TYPE)) {
+                case BREACH_OR_CLOSE:
+                    targetRow.addNodeAtPosition(target, patterns.switchRightBranchBreach(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                case SWITCH_LEFT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightBranchSwitchLeftBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightBranchSwitchLeftStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightBranchSwitchLeftStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                case SWITCH_RIGHT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightBranchSwitchRightBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightBranchSwitchRightStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightBranchSwitchRightStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                }
+                break;
+            case STRAIGHT:
+                switch (target.getProperty(Properties.NODE_TYPE)) {
+                case BREACH_OR_CLOSE:
+                    targetRow.addNodeAtPosition(target, patterns.switchRightStraightBreach(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                case SWITCH_LEFT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightStraightSwitchLeftBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightBranchSwitchLeftStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightBranchSwitchLeftStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                case SWITCH_RIGHT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightStraightSwitchRightBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightBranchSwitchRightStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightBranchSwitchRightStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                }
+                break;
+            case STUMP:
+                switch (target.getProperty(Properties.NODE_TYPE)) {
+                case BREACH_OR_CLOSE:
+                    targetRow.addNodeAtPosition(target, patterns.switchRightStumpBreach(
+                            targetRow.getOccupiedPositions(), sourceRow.getPosition(source)));
+                    break;
+                case SWITCH_LEFT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightStumpSwitchLeftBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightStumpSwitchLeftStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightStumpSwitchLeftStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                case SWITCH_RIGHT:
+                    switch (targetPort.getProperty(Properties.PORT_TYPE)) {
+                    case BRANCH:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightStumpSwitchRightBranch(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STRAIGHT:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightStumpSwitchRightStraight(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    case STUMP:
+                        targetRow.addNodeAtPosition(
+                                target,
+                                patterns.switchRightStumpSwitchRightStump(
+                                        targetRow.getOccupiedPositions(),
+                                        sourceRow.getPosition(source)));
+                        break;
+                    }
+                    break;
+                }
+                break;
+            }
+            break;
+        }
+    }
+
+    private int getMinimalPosition(final LayeredGraph graph) {
+        int result = Integer.MAX_VALUE;
+        for (Layer layer : graph.getLayers()) {
+            if (layer instanceof RailLayer) {
+                int i = ((RailLayer) layer).getRowList().getMinimalPosition();
+                if (i < result) {
+                    result = i;
+                }
+            } else {
+                // TODO: maybe validate once, gets annoying
+            }
+        }
+        return result;
+    }
+
+    private void gridToAbsolutePosition(final RailLayer layer, final int minPos) {
         float spacing = layer.getGraph().getProperty(Properties.OBJ_SPACING);
         float borspacing = layer.getGraph().getProperty(Properties.BOR_SPACING);
         float value = borspacing;
+        boolean first = true;
+        int i = 0;
         for (LNode node : layer.getRowList().getNodesOrderedByPosition()) {
+            int position = layer.getRowList().getPosition(node);
+            if (first) {
+                int offset = position - minPos;
+                value += offset * (node.getSize().y + spacing);
+                first = false;
+            }
             node.getPos().y = value;
             System.out.println("Setting y of " + node.toString() + " to " + value);
+            System.out.println("Position was " + position);
+            i++;
             value += spacing + node.getSize().y;
         }
     }
