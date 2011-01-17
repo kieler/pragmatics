@@ -719,11 +719,12 @@ public class ExampleViewer {
                 // } else {
                 new Label(categoryHeaderContainer, SWT.NULL).setText(" "); //$NON-NLS-1$
                 // }
-                Label description = new Label(categoryHeaderContainer, SWT.WRAP);
-                GridDataFactory.fillDefaults().grab(true, false).span(2, 1).hint(100, SWT.DEFAULT)
-                        .applyTo(description);
-                description.setBackground(null);
-                description.setText(category);
+                // Label description = new Label(categoryHeaderContainer, SWT.WRAP);
+                // GridDataFactory.fillDefaults().grab(true, false).span(2, 1).hint(100,
+                // SWT.DEFAULT)
+                // .applyTo(description);
+                // description.setBackground(null);
+                // description.setText(category);
             }
 
             categoryChildrenContainer = new Composite(container, SWT.NULL);
