@@ -98,11 +98,20 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         List<String> directOpens = null;
         try {
             List<Example> checkedExamples = mainPage.getExamples();
-            // TODO warning if more examples selected than 5.
+
             if (checkedExamples.isEmpty()) {
                 throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
             }
-            // TODO check if projectPath is empty when deletes the import location.
+
+            // warning if more examples selected than 5.
+            if (checkedExamples.size() > 5
+                    && !MessageDialog.openQuestion(this.getShell(),
+                            "More than 5 examples selected",
+                            "Importing may take a while. Do you really want to continue?")) {
+                return false;
+            }
+
+            // TODO check if projectPath is empty when deletes the import location in destPage.
             IPath destinationLocation = destinationPage.getResourcePath();
             if (destinationLocation == null || destinationLocation.isEmpty()) {
                 throw new KielerException("No import location has been set.");
