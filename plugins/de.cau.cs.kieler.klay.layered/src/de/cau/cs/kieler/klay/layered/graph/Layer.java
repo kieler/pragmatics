@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.Alignment;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * A layer in a layered graph. A layer contains a list of nodes, which are
@@ -101,25 +103,39 @@ public class Layer extends LGraphElement {
      */
     public void placeNodes(final double xpos) {
         for (LNode node : nodes) {
-            // determine the number of input and output ports for the node
-            int inports = 0, outports = 0;
-            for (LPort port : node.getPorts()) {
-                switch (port.getType()) {
-                case INPUT:
-                    inports++;
-                    break;
-                case OUTPUT:
-                    outports++;
-                    break;
+            Alignment alignment = node.getProperty(LayoutOptions.ALIGNMENT);
+            double room = size.x - node.getSize().x;
+            double x = xpos;
+            switch (alignment) {
+            case LEFT:
+                break;
+            case RIGHT:
+                x += room;
+                break;
+            case CENTER:
+                x += room / 2;
+                break;
+            default:
+                // determine the number of input and output ports for the node
+                int inports = 0, outports = 0;
+                for (LPort port : node.getPorts()) {
+                    switch (port.getType()) {
+                    case INPUT:
+                        inports++;
+                        break;
+                    case OUTPUT:
+                        outports++;
+                        break;
+                    }
+                }
+                // calculate node placement based on the port numbers
+                if (inports + outports == 0) {
+                    x += room / 2;
+                } else {
+                    x += room * outports / (inports + outports);
                 }
             }
-            // calculate node placement based on the port numbers
-            double room = size.x - node.getSize().x;
-            if (inports + outports == 0) {
-                node.getPos().x = xpos + room / 2;
-            } else {
-                node.getPos().x = xpos + room * outports / (inports + outports);
-            }
+            node.getPos().x = x;
         }
     }
 

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.ui.views;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorPart;
@@ -65,11 +64,10 @@ public class DiagramDefaultAction extends Action {
     @Override
     public void run() {
         IEditorPart editorPart = layoutView.getCurrentEditor();
-        if (editorPart instanceof GraphicalEditor) {
-            GraphicalEditor graphEditor = (GraphicalEditor) editorPart;
-            EditPart diagram = (EditPart) graphEditor.getAdapter(EditPart.class);
-            DiagramLayoutManager manager = layoutView.getCurrentManager();
-            if (manager != null) {
+        DiagramLayoutManager manager = layoutView.getCurrentManager();
+        if (manager != null) {
+            EditPart diagram = manager.getBridge().getEditPart(editorPart);
+            if (diagram != null) {
                 EditingDomain editingDomain = manager.getBridge().getEditingDomain(diagram);
                 ILayoutConfig config = manager.getLayoutConfig(diagram);
                 for (IPropertySheetEntry entry : layoutView.getSelection()) {

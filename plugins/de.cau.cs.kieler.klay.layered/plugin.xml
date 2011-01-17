@@ -57,6 +57,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.layerConstraint">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.alignment">
+         </knownOption>
       </layoutProvider>
       <layoutOption
             appliesTo="parents"

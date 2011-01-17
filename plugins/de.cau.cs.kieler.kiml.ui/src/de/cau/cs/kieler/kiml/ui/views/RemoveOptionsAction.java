@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.ui.views;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorPart;
@@ -54,13 +53,12 @@ public class RemoveOptionsAction extends Action {
     @Override
     public void run() {
         IEditorPart editorPart = layoutView.getCurrentEditor();
-        if (editorPart instanceof GraphicalEditor) {
-            GraphicalEditor graphEditor = (GraphicalEditor) editorPart;
-            EditPart diagram = (EditPart) graphEditor.getAdapter(EditPart.class);
-            DiagramLayoutManager manager = layoutView.getCurrentManager();
-            if (diagram != null && manager != null) {
+        DiagramLayoutManager manager = layoutView.getCurrentManager();
+        if (manager != null) {
+            EditPart diagram = manager.getBridge().getEditPart(editorPart);
+            if (diagram != null) {
                 // show a dialog to confirm the removal of all layout options
-                String diagramName = graphEditor.getTitle();
+                String diagramName = editorPart.getTitle();
                 boolean userResponse = MessageDialog.openQuestion(layoutView.getSite().getShell(),
                         Messages.getString("kiml.ui.31"), Messages.getString("kiml.ui.32")
                         + " " + diagramName + "?");

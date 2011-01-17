@@ -276,7 +276,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
         for (LNode node : leftLayer) {
             PortConstraints cons = node.getProperty(Properties.PORT_CONS);
             if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
-                for (LPort port : node.getPorts()) {
+                for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     int start = i;
                     for (LEdge edge : port.getEdges()) {
                         int pos = targetMap.get(edge.getTarget());

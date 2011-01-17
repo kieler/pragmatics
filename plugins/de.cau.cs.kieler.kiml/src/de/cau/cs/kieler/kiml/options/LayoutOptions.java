@@ -109,6 +109,12 @@ public final class LayoutOptions {
     
     ///////  USER INTERFACE LAYOUT OPTIONS  ///////
     
+    /** layout option key: alignment (enum). */
+    public static final String ALIGNMENT_ID = "de.cau.cs.kieler.layout.options.alignment";
+    /** alignment property. */
+    public static final IProperty<Alignment> ALIGNMENT = new Property<Alignment>(
+               ALIGNMENT_ID, Alignment.AUTOMATIC);
+    
     /** layout option key: aimed aspect ratio (float). */
     public static final String ASPECT_RATIO_ID = "de.cau.cs.kieler.layout.options.aspectRatio";
     /** aspect ratio property. */

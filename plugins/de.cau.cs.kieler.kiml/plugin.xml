@@ -100,6 +100,15 @@
             name="Tree">
       </layoutType>
       <layoutOption
+            appliesTo="nodes"
+            class="de.cau.cs.kieler.kiml.options.Alignment"
+            default="AUTOMATIC"
+            description="Alignment of the selected node relative to other nodes in the same row or column."
+            id="de.cau.cs.kieler.layout.options.alignment"
+            name="Alignment"
+            type="enum">
+      </layoutOption>
+      <layoutOption
             appliesTo="parents"
             default="0.0"
             description="The aimed aspect ratio of the drawing, that is the quotient of width by height"
