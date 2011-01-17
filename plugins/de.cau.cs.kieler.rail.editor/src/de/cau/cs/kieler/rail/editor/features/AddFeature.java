@@ -347,30 +347,33 @@ public class AddFeature extends AbstractAddFeature {
 		
 		final BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
 		boxAnchor.setActive(true);
-		boxAnchor.setRelativeWidth(0.5);
-	    boxAnchor.setRelativeHeight(0.5);
+		boxAnchor.setRelativeWidth(0.0);
+	    boxAnchor.setRelativeHeight(0.4);
 	    boxAnchor.setReferencedGraphicsAlgorithm(R);
+	    
+
 	    
 	    Rectangle rec = gaService.createRectangle(boxAnchor);
 	    rec.setFilled(true);
 	    rec.setBackground(manageColor(0,0,0));
-	    gaService.setLocationAndSize(rec, 5, 5, 10, 10);
+	    gaService.setLocationAndSize(rec, 0, 0, 8, 8);
 	    
 	    final BoxRelativeAnchor boxAnchor2 = peCreateService.createBoxRelativeAnchor(containerShape);
 	    boxAnchor2.setActive(true);
-		boxAnchor2.setRelativeWidth(0.7);
-	    boxAnchor2.setRelativeHeight(0.7);
+		boxAnchor2.setRelativeWidth(0.85);
+	    boxAnchor2.setRelativeHeight(0.4);
 	    boxAnchor2.setReferencedGraphicsAlgorithm(R);
 	    
 	    Rectangle rec2 = gaService.createRectangle(boxAnchor2);
 	    rec2.setFilled(true);
 	    rec2.setBackground(manageColor(0,0,0));
-	    gaService.setLocationAndSize(rec2, 7, 7, 10, 10);
+	    gaService.setLocationAndSize(rec2, 0, 0, 8, 8);
 	    
 		
 		//
 	    layoutPictogramElement(containerShape);
-		
+	    
+	    gaService.setLocationAndSize(containerShape.getGraphicsAlgorithm(), context.getX(), context.getY(), 50, 50);
 		link(containerShape, switchVertex);
 		
 		return containerShape;

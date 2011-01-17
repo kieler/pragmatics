@@ -35,8 +35,6 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
-import de.cau.cs.kieler.rail.editor.features.AddBreachFeature;
-import de.cau.cs.kieler.rail.editor.features.AddDeadEndVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.AddFeature;
 import de.cau.cs.kieler.rail.editor.features.AddPortFeature;

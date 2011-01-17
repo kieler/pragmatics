@@ -27,6 +27,7 @@ public class CreatePortFeature extends AbstractCreateFeature {
      * {@inheritDoc}
      */
     public boolean canCreate(final ICreateContext context) {
+    	
         return (getBusinessObjectForPictogramElement(context.getTargetContainer()) instanceof Vertex)
                 && !(context.getTargetContainer() instanceof Diagram);
     }
