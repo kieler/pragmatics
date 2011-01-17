@@ -386,9 +386,14 @@
             <iterate
                   ifEmpty="false"
                   operator="and">
-               <instanceof
+               <or>
+                 <instanceof
                      value="org.eclipse.core.resources.IFile">
-               </instanceof>
+                 </instanceof>
+                 <instanceof
+                     value="org.eclipse.core.resources.IFolder">
+                 </instanceof>
+               </or>
             </iterate>
          </with>
       </definition>
