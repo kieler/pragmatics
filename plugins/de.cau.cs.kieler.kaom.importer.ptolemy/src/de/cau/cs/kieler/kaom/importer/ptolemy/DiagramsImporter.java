@@ -52,6 +52,7 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.ptolemy.moml.MomlPackage;
 
 import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
@@ -67,11 +68,13 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard;
 
 
 /**
- * An importer for Ptolemy2 diagrams. Usually invoked by the import wizard.
+ * An importer for Ptolemy2 diagrams. Usually invoked by the import wizard. Designed to
+ * only run once and be destroyed.
  * 
  * @author cds
  */
 public class DiagramsImporter implements IRunnableWithProgress {
+    
     /**
      * The wizard that uses this importer.
      */
@@ -108,10 +111,15 @@ public class DiagramsImporter implements IRunnableWithProgress {
     private boolean wasImportCanceled = false;
     
     /**
+     * The maximum severity that an Xtend status had during the import.
+     */
+    private int maxSeverity = IStatus.OK;
+    
+    /**
      * List of exceptions thrown during the import process, wrapped in {@code IStatus}
      * objects.
      */
-    private List<IStatus> exceptions = new ArrayList<IStatus>();
+    private List<IStatus> statusses = new ArrayList<IStatus>();
     
     
     /**
@@ -145,7 +153,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
      * @return {@code true} if an uninterrupted import was successful.
      */
     public boolean isImportSuccessful() {
-        return exceptions.isEmpty() && !wasImportCanceled;
+        return maxSeverity < IStatus.ERROR && !wasImportCanceled;
     }
     
     /**
@@ -170,13 +178,11 @@ public class DiagramsImporter implements IRunnableWithProgress {
                     IStatus.CANCEL,
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
                     "The import was canceled.");
-        } else if (exceptions.size() == 1) {
-            return exceptions.get(0);
-        } else if (exceptions.size() > 1) {
+        } else if (statusses.size() >= 1) {
             return new MultiStatus(
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    IStatus.ERROR,
-                    exceptions.toArray(new IStatus[exceptions.size()]),
+                    maxSeverity,
+                    statusses.toArray(new IStatus[statusses.size()]),
                     "Exceptions occurred during the import of some models.",
                     null);
         } else {
@@ -217,7 +223,8 @@ public class DiagramsImporter implements IRunnableWithProgress {
         try {
             targetContainer = getTargetContainer(new SubProgressMonitor(progressMonitor, 1));
         } catch (CoreException e) {
-            exceptions.add(e.getStatus());
+            StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG);
+            statusses.add(e.getStatus());
             progressMonitor.done();
             return;
         }
@@ -312,7 +319,8 @@ public class DiagramsImporter implements IRunnableWithProgress {
                             + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION,
                         new SubProgressMonitor(monitor, 1));
             } catch (CoreException e) {
-                exceptions.add(e.getStatus());
+                StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG);
+                statusses.add(e.getStatus());
             }
             
             try {
@@ -326,7 +334,8 @@ public class DiagramsImporter implements IRunnableWithProgress {
                     monitor.worked(1);
                 }
             } catch (CoreException e) {
-                exceptions.add(e.getStatus());
+                StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG);
+                statusses.add(e.getStatus());
             }
         }
         
@@ -463,10 +472,14 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 p1, p2, p3);
         
         // Check if everything went fine
-        if (status.getSeverity() != XtendStatus.OK) {
-            throw new CoreException(new Status(
-                    status.getSeverity(),
+        int severity = status.getSeverity();
+        maxSeverity = Math.max(maxSeverity, severity);
+        
+        if (severity == XtendStatus.WARNING || severity == XtendStatus.ERROR) {
+            throw new CoreException(new MultiStatus(
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    severity,
+                    new IStatus[] {status},
                     "Possible errors importing " + sourceFile.getName(),
                     status.getException()));
         }

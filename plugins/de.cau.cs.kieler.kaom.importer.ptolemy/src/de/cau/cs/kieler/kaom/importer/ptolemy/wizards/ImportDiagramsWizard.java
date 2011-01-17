@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -222,16 +223,42 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         }
         
         // The import wasn't cancelled, so check if it was otherwise successful
-        if (importer.isImportSuccessful()) {
+        IStatus importerStatus = importer.getStatus();
+        if (importerStatus.getSeverity() == IStatus.OK && importer.isImportSuccessful()) {
             // Everything went fine
             return true;
         } else if (importer.isImportCanceled()) {
             // No exception, but don't close the wizard
             return false;
         } else {
-            // Show the user what went wrong
-            StatusManager.getManager().handle(
-                    importer.getStatus(), StatusManager.BLOCK);
+            // There were warnings or errors. Show the user a list of models that may
+            // have had problems
+            String message = importerStatus.getSeverity() < IStatus.ERROR
+                ? "There were warnings importing some models. See the error log for details."
+                : "There were warnings and errors importing some models. See the error log for details";
+            
+            // Prepare a list of simplified errors
+            IStatus[] children = importerStatus.getChildren();
+            IStatus[] simplifiedChildren = new IStatus[children.length];
+            for (int i = 0; i < children.length; i++) {
+                simplifiedChildren[i] = new Status(
+                        children[i].getSeverity(),
+                        children[i].getPlugin(),
+                        children[i].getMessage(),
+                        children[i].getException());
+            }
+            
+            // Prepare the simplified status object
+            MultiStatus simplifiedStatus = new MultiStatus(
+                    KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    importerStatus.getSeverity(),
+                    simplifiedChildren,
+                    message,
+                    importerStatus.getException());
+            
+            // Show the user the shortened error report
+            StatusManager.getManager().handle(simplifiedStatus, StatusManager.BLOCK);
+            
             return false;
         }
     }
