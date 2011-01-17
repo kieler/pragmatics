@@ -54,18 +54,19 @@ import de.cau.cs.kieler.kaom.graphiti.features.AddEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.AddLinkFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.AddPortFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.AddRelationFeature;
-import de.cau.cs.kieler.kaom.graphiti.features.CopyEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreateEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreateLinkFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreatePortFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.CreateRelationFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditLinkFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.KaomCopyFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.KaomPasteFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.LayoutEntityFeature;
-import de.cau.cs.kieler.kaom.graphiti.features.MovePortFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.LayoutPortFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.MoveEntityFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.MovePortFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.MoveRelationFeature;
-import de.cau.cs.kieler.kaom.graphiti.features.PasteEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateLinkFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.UpdateRelationFeature;
@@ -81,11 +82,12 @@ public class FeatureProvider extends DefaultFeatureProvider {
     private IStyleProvider styleProvider;
     /** the semantic provider that is used by create-features. */
     private SemanticProvider semanticProvider;
-    
+
     /**
      * Constructor.
      * 
-     * @param dtp the diagram type provider
+     * @param dtp
+     *            the diagram type provider
      */
     public FeatureProvider(final IDiagramTypeProvider dtp) {
         super(dtp);
@@ -98,7 +100,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public ICreateFeature[] getCreateFeatures() {
-        return new ICreateFeature[] { new CreateEntityFeature(this, semanticProvider),
+        return new ICreateFeature[] {
+                new CreateEntityFeature(this, semanticProvider),
                 new CreatePortFeature(this),
                 new CreateRelationFeature(this, semanticProvider) };
     }
@@ -127,14 +130,16 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public IUpdateFeature getUpdateFeature(final IUpdateContext context) {
         if (context.getPictogramElement() instanceof ContainerShape) {
-            Object obj = getBusinessObjectForPictogramElement(context.getPictogramElement());
+            Object obj = getBusinessObjectForPictogramElement(context
+                    .getPictogramElement());
             if (obj instanceof Entity) {
                 return new UpdateEntityFeature(this);
             } else if (obj instanceof Relation) {
                 return new UpdateRelationFeature(this);
             }
         } else if (context.getPictogramElement() instanceof Connection) {
-            Object obj = getBusinessObjectForPictogramElement(context.getPictogramElement());
+            Object obj = getBusinessObjectForPictogramElement(context
+                    .getPictogramElement());
             if (obj instanceof Link) {
                 return new UpdateLinkFeature(this);
             }
@@ -163,7 +168,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public IMoveAnchorFeature getMoveAnchorFeature(final IMoveAnchorContext context) {
+    public IMoveAnchorFeature getMoveAnchorFeature(
+            final IMoveAnchorContext context) {
         if (getBusinessObjectForPictogramElement(context.getAnchor()) instanceof Port) {
             return new MovePortFeature(this);
         }
@@ -174,7 +180,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public IResizeShapeFeature getResizeShapeFeature(final IResizeShapeContext context) {
+    public IResizeShapeFeature getResizeShapeFeature(
+            final IResizeShapeContext context) {
         Shape shape = context.getShape();
         Object ob = getBusinessObjectForPictogramElement(shape);
         if (ob instanceof Entity) {
@@ -192,6 +199,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
         Object obj = getBusinessObjectForPictogramElement(pe);
         if (obj instanceof Entity) {
             return new LayoutEntityFeature(this);
+        } else if (obj instanceof Port) {
+            return new LayoutPortFeature(this);
         }
         return super.getLayoutFeature(context);
     }
@@ -200,11 +209,13 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public IDirectEditingFeature getDirectEditingFeature(final IDirectEditingContext context) {
+    public IDirectEditingFeature getDirectEditingFeature(
+            final IDirectEditingContext context) {
         PictogramElement pe = context.getPictogramElement();
         Object obj;
         if (pe instanceof ConnectionDecorator) {
-            obj = getBusinessObjectForPictogramElement(((ConnectionDecorator) pe).getConnection());
+            obj = getBusinessObjectForPictogramElement(((ConnectionDecorator) pe)
+                    .getConnection());
         } else {
             obj = getBusinessObjectForPictogramElement(pe);
         }
@@ -222,8 +233,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public ICopyFeature getCopyFeature(final ICopyContext context) {
-        // TODO generalize this to copy everything
-        return new CopyEntityFeature(this);
+        return new KaomCopyFeature(this);
     }
 
     /**
@@ -231,8 +241,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public IPasteFeature getPasteFeature(final IPasteContext context) {
-        // TODO generalize this to paste everything
-        return new PasteEntityFeature(this, semanticProvider);
+        return new KaomPasteFeature(this, semanticProvider);
     }
 
     /**
@@ -240,7 +249,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
-        return new ICreateConnectionFeature[] { new CreateLinkFeature(this, semanticProvider) };
+        return new ICreateConnectionFeature[] { new CreateLinkFeature(this,
+                semanticProvider) };
     }
 
     /**
@@ -249,7 +259,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public IDeleteFeature getDeleteFeature(final IDeleteContext context) {
         return new DefaultDeleteFeature(this) {
-            // override the user decision, so objects can be deleted without any dialog
+            // override the user decision, so objects can be deleted without any
+            // dialog
+            @Override
             protected boolean getUserDecision() {
                 return true;
             }

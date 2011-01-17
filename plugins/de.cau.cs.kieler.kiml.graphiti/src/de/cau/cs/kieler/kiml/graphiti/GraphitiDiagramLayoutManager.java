@@ -20,7 +20,6 @@ import java.util.Map.Entry;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.EditPartViewer;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -32,7 +31,6 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
-import org.eclipse.graphiti.ui.internal.editor.GraphitiScrollingGraphicalViewer;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.ui.IEditorPart;
@@ -77,11 +75,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     private Command applyLayoutCommand;
 
     /** map of pictogram elements to KGraph elements. */
-    private Map<PictogramElement, KGraphElement> pictElem2GraphElemMap
-            = new HashMap<PictogramElement, KGraphElement>();
+    private Map<PictogramElement, KGraphElement> pictElem2GraphElemMap = new HashMap<PictogramElement, KGraphElement>();
     /** map of KGraph elements to pictogram elements. */
-    private Map<KGraphElement, PictogramElement> graphElem2PictElemMap
-            = new HashMap<KGraphElement, PictogramElement>();
+    private Map<KGraphElement, PictogramElement> graphElem2PictElemMap = new HashMap<KGraphElement, PictogramElement>();
     /** list of all connections in the diagram. */
     private List<Connection> connections = new LinkedList<Connection>();
 
@@ -121,7 +117,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (editPart instanceof IPictogramElementEditPart) {
             config.initialize((IPictogramElementEditPart) editPart);
         } else {
-            IPictogramElementEditPart rootPart = getEditPartFromDiagramEditorInternal2(editPart);
+            IPictogramElementEditPart rootPart = GraphitiFrameworkBridge
+                    .getEditPartFromDiagramEditorInternal2(editPart);
             if (rootPart != null) {
                 config.initialize(rootPart);
             }
@@ -423,27 +420,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             point.setY(y);
         }
         // TODO handle FixPointAnchors
-    }
-
-    /**
-     * In some cases the EditPart passed to the methods is the mysterious
-     * DiagramEditorInternal$2. This method tries to get the root edit part from
-     * the corresponding diagram.
-     * 
-     * @param editPart
-     *            the diagram's top-level edit part
-     * @return the root pictogram element edit part
-     */
-    private IPictogramElementEditPart getEditPartFromDiagramEditorInternal2(
-            final EditPart editPart) {
-        EditPartViewer viewer = editPart.getViewer();
-        if (viewer instanceof GraphitiScrollingGraphicalViewer) {
-            EditPart contents = viewer.getContents();
-            if (contents instanceof IPictogramElementEditPart) {
-                return (IPictogramElementEditPart) contents;
-            }
-        }
-        return null;
     }
 
     /**

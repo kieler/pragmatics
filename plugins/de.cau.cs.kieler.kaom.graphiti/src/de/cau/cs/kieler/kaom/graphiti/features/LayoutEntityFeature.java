@@ -13,11 +13,16 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
+import java.util.List;
+
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ILayoutContext;
+import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.features.impl.AbstractLayoutFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
@@ -103,6 +108,15 @@ public class LayoutEntityFeature extends AbstractLayoutFeature {
                 changed |= GraphitiUtil.setBounds(ga, 0,
                         AddPortFeature.PORT_SIZE + entityHeight + TEXT_DIST,
                         containerGa.getWidth(), TEXT_HEIGHT);
+            }
+        }
+
+        // layout ports to be in a valid position
+        List<Anchor> anchors = containerShape.getAnchors();
+        for (Anchor anchor : anchors) {
+            if (anchor instanceof BoxRelativeAnchor) {
+                super.getFeatureProvider().layoutIfPossible(
+                        new LayoutContext(anchor));
             }
         }
 

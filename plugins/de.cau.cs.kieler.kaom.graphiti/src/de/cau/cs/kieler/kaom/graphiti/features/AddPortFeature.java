@@ -16,13 +16,11 @@ package de.cau.cs.kieler.kaom.graphiti.features;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
-
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
-
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
@@ -41,15 +39,16 @@ public class AddPortFeature extends AbstractAddShapeFeature {
     /** the default size of ports. */
     public static final int PORT_SIZE = 8;
 
-    
-    /** the style provider. */ 
+    /** the style provider. */
     private IStyleProvider styleProvider;
 
     /**
      * The constructor.
      * 
-     * @param fp the feature provider
-     * @param sp the style provider
+     * @param fp
+     *            the feature provider
+     * @param sp
+     *            the style provider
      */
     public AddPortFeature(final IFeatureProvider fp, final IStyleProvider sp) {
         super(fp);
@@ -62,7 +61,7 @@ public class AddPortFeature extends AbstractAddShapeFeature {
     public boolean canAdd(final IAddContext context) {
         return (context.getNewObject() instanceof Port);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -75,44 +74,47 @@ public class AddPortFeature extends AbstractAddShapeFeature {
         }
         return newElement;
     }
-    
+
     /**
      * Create a port that is bound to an entity's boundary.
      * 
-     * @param container the container shape of the parent entity
-     * @param xpos the x position
-     * @param ypos the y position
+     * @param container
+     *            the container shape of the parent entity
+     * @param xpos
+     *            the x position
+     * @param ypos
+     *            the y position
      * @return a new pictogram element for the port
      */
     private PictogramElement createBoundPort(final ContainerShape container,
             final int xpos, final int ypos) {
+
         int nodeWidth = container.getGraphicsAlgorithm().getWidth();
         int nodeHeight = container.getGraphicsAlgorithm().getHeight();
-        float widthPercent = (float) xpos / nodeWidth;
-        float heightPercent = (float) ypos / nodeHeight;
-        if (widthPercent + heightPercent <= 1 && widthPercent - heightPercent <= 0) {
-            // port is put to the left
-            widthPercent = 0;
-        } else if (widthPercent + heightPercent >= 1 && widthPercent - heightPercent >= 0) {
-            // port is put to the right
-            widthPercent = 1;
-        } else if (heightPercent < 1.0f / 2) {
-            // port is put to the top
-            heightPercent = 0;
+
+        float widthPercent = (float) (xpos - 2) / nodeWidth;
+        float heightPercent = (float) (ypos - 2) / nodeHeight;
+        float deltaY = heightPercent < (1.0f / 2.0f) ? heightPercent
+                : 1 - heightPercent;
+        float deltaX = widthPercent < (1.0f / 2.0f) ? widthPercent
+                : 1 - widthPercent;
+        if (deltaY < deltaX) {
+            heightPercent = Math.round(heightPercent);
         } else {
-            // port is put to the bottom
-            heightPercent = 1;
+            widthPercent = Math.round(widthPercent);
         }
 
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(container);
+        BoxRelativeAnchor boxAnchor = peCreateService
+                .createBoxRelativeAnchor(container);
         boxAnchor.setRelativeWidth(widthPercent);
         boxAnchor.setRelativeHeight(heightPercent);
         boxAnchor.setActive(true);
 
         IGaService gaService = Graphiti.getGaService();
         // look for the actual rectangle that represents the parent entity
-        for (GraphicsAlgorithm ga : container.getGraphicsAlgorithm().getGraphicsAlgorithmChildren()) {
+        for (GraphicsAlgorithm ga : container.getGraphicsAlgorithm()
+                .getGraphicsAlgorithmChildren()) {
             if (ga instanceof Rectangle) {
                 boxAnchor.setReferencedGraphicsAlgorithm(ga);
                 break;
@@ -120,9 +122,10 @@ public class AddPortFeature extends AbstractAddShapeFeature {
         }
 
         Rectangle rectangleShape = gaService.createRectangle(boxAnchor);
-        rectangleShape.setStyle(styleProvider.getStyle(StyleProvider.SOLID_STYLE));
-        gaService.setLocationAndSize(rectangleShape, -PORT_SIZE / 2, -PORT_SIZE / 2,
-                PORT_SIZE, PORT_SIZE);
+        rectangleShape.setStyle(styleProvider
+                .getStyle(StyleProvider.SOLID_STYLE));
+        gaService.setLocationAndSize(rectangleShape, -PORT_SIZE / 2,
+                -PORT_SIZE / 2, PORT_SIZE, PORT_SIZE);
 
         return boxAnchor;
     }
