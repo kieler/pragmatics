@@ -25,9 +25,9 @@ public enum PortType {
     
     /** The peak of a switch. */
     STUMP,
-    /** The upper branch of a switch. */
-    UP,
-    /** The lower branch of a switch. */
-    DOWN;
+    /** The port of a switch with a straight line to the peak. */
+    STRAIGHT,
+    /** The branch of a switch. */
+    BRANCH;
 
 }

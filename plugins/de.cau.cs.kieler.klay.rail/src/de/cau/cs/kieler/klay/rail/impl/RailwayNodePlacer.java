@@ -13,13 +13,12 @@
  */
 package de.cau.cs.kieler.klay.rail.impl;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -28,6 +27,7 @@ import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
 import de.cau.cs.kieler.klay.rail.Properties;
 import de.cau.cs.kieler.klay.rail.graph.RailLayer;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
+import de.cau.cs.kieler.klay.rail.options.PortType;
 
 /**
  * Node placer for railway layout.
@@ -35,6 +35,9 @@ import de.cau.cs.kieler.klay.rail.options.NodeType;
  * @author jjc
  */
 public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer {
+
+    private List<LNode> known = new LinkedList<LNode>();
+    private Stack<LNode> nextNodes = new Stack<LNode>();
 
     /**
      * {@inheritDoc}
@@ -50,106 +53,96 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
     public void placeNodes(final LayeredGraph layeredGraph) {
         getMonitor().begin("Linear segments node placement", 1);
 
-        float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
-        float borspacing = layeredGraph.getProperty(Properties.BOR_SPACING);
-        int layerCount = layeredGraph.getLayers().size();
-        double maximalMoveUp = Double.NEGATIVE_INFINITY;
-        
+        // determine starting position for straight-first DFS
+        LNode walker = null;
+        known = new LinkedList<LNode>();
+        nextNodes = new Stack<LNode>();
+        findStart: for (Layer layer : layeredGraph.getLayers()) {
+            for (LNode node : layer.getNodes()) {
+                if (node.getProperty(Properties.ENTRY_POINT)) {
+                    walker = node;
+                    break findStart;
+                }
+            }
+        }
+        if (walker == null) {
+            throw new IllegalArgumentException("No entry point found!");
+        }
+        if (walker.getLayer() instanceof RailLayer) {
+            ((RailLayer) walker.getLayer()).getRowList().addNodeAtPosition(walker, 0);
+        } else {
+            throw new IllegalArgumentException("Only works with RailLayers!");
+        }
+
+        // start straight first DFS
+        nextNodes.push(walker);
+        known.add(walker);
+        int i = 1;
+        while (!nextNodes.isEmpty()) {
+            walker = nextNodes.pop();
+            boolean found = false;
+            if (allNeighborsKnown(walker)) {
+                continue;
+            }
+            for (LPort port : walker.getPorts()) {
+                LNode target = port.getEdges().get(0).getTarget().getNode();
+                if ((port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT) || port
+                        .getProperty(Properties.PORT_TYPE).equals(PortType.STUMP))
+                        && !known.contains(target)) {
+                    found = true;
+                    known.add(target);
+                    if (!allNeighborsKnown(walker)) {
+                        nextNodes.push(walker);
+                    }
+                    nextNodes.push(target);
+                    if (target.getLayer() instanceof RailLayer
+                            && walker.getLayer() instanceof RailLayer) {
+                        int position = ((RailLayer) walker.getLayer()).getRowList().getPosition(
+                                walker);
+                        ((RailLayer) target.getLayer()).getRowList().addNodeAtPosition(target,
+                                position);
+                    } else {
+                        throw new IllegalArgumentException("Only works with RailLayers!");
+                    }
+                    break;
+                }
+            }
+            if (!found) {
+                for (LPort port : walker.getPorts()) {
+                    LNode target = port.getEdges().get(0).getTarget().getNode();
+                    if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)
+                            && !known.contains(target)) {
+                        if (!known.contains(target)) {
+                            known.add(target);
+                            if (!allNeighborsKnown(walker)) {
+                                nextNodes.push(walker);
+                            }
+                            nextNodes.push(target);
+                            if (target.getLayer() instanceof RailLayer
+                                    && walker.getLayer() instanceof RailLayer) {
+                                int position = i;
+                                i++;
+                                ((RailLayer) target.getLayer()).getRowList().addNodeAtPosition(
+                                        target, position);
+                            } else {
+                                throw new IllegalArgumentException("Only works with RailLayers!");
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
         for (Layer layer : layeredGraph.getLayers()) {
             if (layer instanceof RailLayer) {
-                System.out.println("Raillayer");
-                RailLayer rl = (RailLayer) layer;
-                int i = 0;
-                for (LNode node : rl.getNodes()) {
-                    rl.getRowList().addNodeAtPosition(node, i);
-                    i++;
-                }
-                gridToAbsolutePosition(rl);
+                gridToAbsolutePosition((RailLayer) layer);
+            } else {
+                throw new IllegalArgumentException("Only works with RailLayers!");
             }
         }
-        /*for (int i = 0; i < layerCount - 1; i++) {
-            List<KVector> occupiedSpots;
-            for (int j = 0; j < layeredGraph.getLayers().get(i).getNodes().size(); j++) {
-                LNode currentNode = layeredGraph.getLayers().get(i).getNodes().get(j);
-                if (currentNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)) {
-                    Iterator<LPort> theTwoPorts = currentNode.getPorts(PortType.OUTPUT).iterator();
-                    LPort port = theTwoPorts.next();
-                    if (theTwoPorts.hasNext()) {
-                        LPort port2 = theTwoPorts.next();
-                        double moveUp = 0;
-                        if (port.getPos().y < port2.getPos().y) {
-                            port2.getEdges().get(0).getTarget().getNode().getPos().y = currentNode
-                                    .getPos().y;
-
-                            moveUp = currentNode.getPos().y
-                                    - port.getEdges().get(0).getTarget().getNode().getSize().y
-                                    - spacing;
-                            port.getEdges().get(0).getTarget().getNode().getPos().y = moveUp;
-                        } else {
-                            port.getEdges().get(0).getTarget().getNode().getPos().y = currentNode
-                                    .getPos().y;
-                            moveUp = currentNode.getPos().y
-                                    - port2.getEdges().get(0).getTarget().getNode().getSize().y
-                                    - spacing;
-                            port2.getEdges().get(0).getTarget().getNode().getPos().y = moveUp;
-                        }
-                        if (Math.abs(moveUp) > maximalMoveUp) {
-                            maximalMoveUp = moveUp;
-                        }
-                    } else {
-                        port.getEdges().get(0).getTarget().getNode().getPos().y = currentNode
-                                .getPos().y;
-                    }
-                } else if (currentNode.getProperty(Properties.NODE_TYPE).equals(
-                        NodeType.SWITCH_RIGHT)) {
-                    Iterator<LPort> theTwoPorts = currentNode.getPorts(PortType.OUTPUT).iterator();
-                    LPort port = theTwoPorts.next();
-                    if (theTwoPorts.hasNext()) {
-                        LPort port2 = theTwoPorts.next();
-                        double moveDown = 0;
-                        if (port.getPos().y < port2.getPos().y) {
-                            port.getEdges().get(0).getTarget().getNode().getPos().y = currentNode
-                                    .getPos().y;
-                            moveDown = currentNode.getPos().y
-                                    + port.getEdges().get(0).getTarget().getNode().getSize().y
-                                    + spacing;
-                            port2.getEdges().get(0).getTarget().getNode().getPos().y = moveDown;
-                        } else {
-                            port2.getEdges().get(0).getTarget().getNode().getPos().y = currentNode
-                                    .getPos().y;
-                            moveDown = currentNode.getPos().y
-                                    + port2.getEdges().get(0).getTarget().getNode().getSize().y
-                                    + spacing;
-                            port.getEdges().get(0).getTarget().getNode().getPos().y = moveDown;
-                        }
-                    } else {
-                        port.getEdges().get(0).getTarget().getNode().getPos().y = currentNode
-                        .getPos().y;
-                    }
-                } else {
-                    if (currentNode.getPorts().get(0).getType().equals(PortType.OUTPUT)) {
-                        currentNode.getPorts().get(0).getEdges().get(0).getTarget().getNode()
-                                .getPos().y = currentNode.getPos().y;
-                    }
-                }
-                layeredGraph.getLayers().get(i).getSize().x = Math.max(layeredGraph.getLayers()
-                        .get(i).getSize().x, currentNode.getSize().x);
-            }
-        }
-
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
-                node.getPos().y += maximalMoveUp + borspacing;
-            }
-        }
-
-        KVector graphSize = layeredGraph.getSize();
-        for (Layer layer : layeredGraph.getLayers()) {
-            graphSize.y = Math.max(graphSize.y, layer.getSize().y);
-        }*/
         getMonitor().done();
     }
-    
+
     private void gridToAbsolutePosition(final RailLayer layer) {
         float spacing = layer.getGraph().getProperty(Properties.OBJ_SPACING);
         float borspacing = layer.getGraph().getProperty(Properties.BOR_SPACING);
@@ -159,6 +152,14 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
             System.out.println("Setting y of " + node.toString() + " to " + value);
             value += spacing + node.getSize().y;
         }
+    }
+
+    private boolean allNeighborsKnown(final LNode node) {
+        boolean result = true;
+        for (LPort port : node.getPorts()) {
+            result &= known.contains(port.getEdges().get(0).getTarget().getNode());
+        }
+        return result;
     }
 
 }

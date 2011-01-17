@@ -47,6 +47,11 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
 
         double xpos = 0.0f;
         for (Layer layer : layeredGraph.getLayers()) {
+            for (LNode node : layer.getNodes()) {
+                if (node.getSize().x > layer.getSize().x) {
+                    layer.getSize().x = node.getSize().x;
+                }
+            }
             layer.placeNodes(xpos);
             for (LNode node : layer.getNodes()) {
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
@@ -61,31 +66,31 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
                         } else {
                             m = Double.POSITIVE_INFINITY;
                         }
-                        
+
                         // can't draw edge straight (or nearly straight)?
                         if (!(-SLOPE_TOLERANCE < m && m < SLOPE_TOLERANCE)) {
                             // this point creates an orthogonal triangle with p0 and p1
                             KVector pOrth = new KVector(p0.x + xpos, edge.getTarget().getNode()
                                     .getPos().y
                                     + p1.y);
-                            //System.out.println("otrh " + pOrth.toString());
-                            //System.out.println("p0 " + p0.toString());
+                            // System.out.println("otrh " + pOrth.toString());
+                            // System.out.println("p0 " + p0.toString());
 
                             double a = p0.distance(p1);
-                            //System.out.println("a is: " + a);
+                            // System.out.println("a is: " + a);
                             double b = p0.distance(pOrth);
-                            //System.out.println("b is: " + b);
+                            // System.out.println("b is: " + b);
                             double sineBeta = a / b;
-                            //System.out.println("sine beta is: " + sineBeta);
+                            // System.out.println("sine beta is: " + sineBeta);
                             double beta = Math.asin(sineBeta);
-                            //System.out.println("beta is: " + Math.toDegrees(beta));
+                            // System.out.println("beta is: " + Math.toDegrees(beta));
                             double alpha = Math.toRadians(BEND_ANGLE);
-                            //System.out.println("alpha is: " + Math.toDegrees(alpha));
+                            // System.out.println("alpha is: " + Math.toDegrees(alpha));
                             double gamma = (2 * Math.PI) - (alpha + beta);
-                            //System.out.println("gamma is: " + Math.toDegrees(gamma));
+                            // System.out.println("gamma is: " + Math.toDegrees(gamma));
 
                             double c = (a * Math.sin(gamma)) / Math.sin(alpha);
-                            //System.out.println("c is: " + c);
+                            // System.out.println("c is: " + c);
 
                             KVector bendPoint = new KVector(p1.x - c + xpos, pOrth.y);
                             edge.getBendPoints().add(bendPoint);

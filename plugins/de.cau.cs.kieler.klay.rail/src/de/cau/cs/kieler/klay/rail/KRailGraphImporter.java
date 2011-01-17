@@ -124,6 +124,7 @@ public class KRailGraphImporter implements IGraphImporter {
                 }
                 LPort newPort = new LPort(type, kport.getLabel().getText());
                 newPort.setProperty(Properties.ORIGIN, kport);
+                newPort.setProperty(Properties.PORT_TYPE, portLayout.getProperty(Properties.PORT_TYPE));
                 newPort.getPos().x = portLayout.getXpos();
                 newPort.getPos().y = portLayout.getYpos();
                 newPort.setNode(newNode);

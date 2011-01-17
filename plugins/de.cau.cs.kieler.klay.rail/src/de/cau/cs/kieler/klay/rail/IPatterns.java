@@ -24,111 +24,111 @@ public interface IPatterns {
     
     public int breachBreach();
     
-    public int breachSwitchLeftUp();
+    public int breachSwitchLeftBranch();
     
-    public int breachSwitchLeftDown();
+    public int breachSwitchLeftStraight();
     
     public int breachSwitchLeftStump();
     
-    public int breachSwitchRightUp();
+    public int breachSwitchRightBranch();
     
-    public int breachSwitchRightDown();
+    public int breachSwitchRightStraight();
     
     public int breachSwitchRightStump();
     
     // Switch left up to X cases
     
-    public int switchLeftUpBreach();
+    public int switchLeftBranchBreach();
     
-    public int switchLeftUpSwitchRightUp();
+    public int switchLeftBranchSwitchRightBranch();
     
-    public int switchLeftUpSwitchRightDown();
+    public int switchLeftBranchSwitchRightStraight();
     
-    public int switchLeftUpSwitchRightStump();
+    public int switchLeftBranchSwitchRightStump();
     
-    public int switchLeftUpSwitchLeftUp();
+    public int switchLeftBranchSwitchLeftBranch();
     
-    public int switchLeftUpSwitchLeftDown();
+    public int switchLeftBranchSwitchLeftStraight();
     
-    public int switchLeftUpSwitchLeftStump();
+    public int switchLeftBranchSwitchLeftStump();
     
     // Switch left down to X cases
     
-    public int switchLeftDownBreach();
+    public int switchLeftStraightBreach();
     
-    public int switchLeftDownSwitchRightUp();
+    public int switchLeftStraightSwitchRightBranch();
     
-    public int switchLeftDownSwitchRightDown();
+    public int switchLeftStraightSwitchRightStraight();
     
-    public int switchLeftDownSwitchRightStump();
+    public int switchLeftStraightSwitchRightStump();
     
-    public int switchLeftDownSwitchLeftUp();
+    public int switchLeftStraightSwitchLeftBranch();
     
-    public int switchLeftDownSwitchLeftDown();
+    public int switchLeftStraightSwitchLeftStraight();
     
-    public int switchLeftDownSwitchLeftStump();
+    public int switchLeftStraightSwitchLeftStump();
     
     // Switch left stump to X cases
     
     public int switchLeftStumpBreach();
     
-    public int switchLeftStumpSwitchRightUp();
+    public int switchLeftStumpSwitchRightBranch();
     
-    public int switchLeftStumpSwitchRightDown();
+    public int switchLeftStumpSwitchRightStraight();
     
     public int switchLeftStumpSwitchRightStump();
     
-    public int switchLeftStumpSwitchLeftUp();
+    public int switchLeftStumpSwitchLeftBranch();
     
-    public int switchLeftStumpSwitchLeftDown();
+    public int switchLeftStumpSwitchLeftStraight();
     
     public int switchLeftStumpSwitchLeftStump();
     
     // Switch right up to X cases
     
-    public int switchRightUpBreach();
+    public int switchRightBranchBreach();
     
-    public int switchRightUpSwitchRightUp();
+    public int switchRightBranchSwitchRightBranch();
     
-    public int switchRightUpSwitchRightDown();
+    public int switchRightBranchSwitchRightStraight();
     
-    public int switchRightUpSwitchRightStump();
+    public int switchRightBranchSwitchRightStump();
     
-    public int switchRightUpSwitchLeftUp();
+    public int switchRightBranchSwitchLeftBranch();
     
-    public int switchRightUpSwitchLeftDown();
+    public int switchRightBranchSwitchLeftStraight();
     
-    public int switchRightUpSwitchLeftStump();
+    public int switchRightBranchSwitchLeftStump();
     
     // Switch right down to X cases
     
-    public int switchRightDownBreach();
+    public int switchRightStraightBreach();
     
-    public int switchRightDownSwitchRightUp();
+    public int switchRightStraightSwitchRightBranch();
     
-    public int switchRightDownSwitchRightDown();
+    public int switchRightStraightSwitchRightStraight();
     
-    public int switchRightDownSwitchRightStump();
+    public int switchRightStraightSwitchRightStump();
     
-    public int switchRightDownSwitchLeftUp();
+    public int switchRightStraightSwitchLeftBranch();
     
-    public int switchRightDownSwitchLeftDown();
+    public int switchRightStraightSwitchLeftStraight();
     
-    public int switchRightDownSwitchLeftStump();
+    public int switchRightStraightSwitchLeftStump();
     
     // Switch right stump to X cases
     
     public int switchRightStumpBreach();
     
-    public int switchRightStumpSwitchRightUp();
+    public int switchRightStumpSwitchRightBranch();
     
-    public int switchRightStumpSwitchRightDown();
+    public int switchRightStumpSwitchRightStraight();
     
     public int switchRightStumpSwitchRightStump();
     
-    public int switchRightStumpSwitchLeftUp();
+    public int switchRightStumpSwitchLeftBranch();
     
-    public int switchRightStumpSwitchLeftDown();
+    public int switchRightStumpSwitchLeftStraight();
     
     public int switchRightStumpSwitchLeftStump();
     

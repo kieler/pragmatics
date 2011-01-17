@@ -46,7 +46,7 @@
             appliesTo="ports"
             class="de.cau.cs.kieler.klay.rail.options.PortType"
             default="STUMP"
-            description="Which port is this. Can be left default on breaches or closes."
+            description="Which port is this. Can be left default on stump."
             id="de.cau.cs.kieler.klay.rail.portType"
             name="Port Type"
             type="enum">
