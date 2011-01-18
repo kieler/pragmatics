@@ -113,9 +113,9 @@ public class KiviMenuContributionService {
                 null, SWT.PUSH, null, null));
     }
 
-    /** Get the list of registered ButtonConfigurations. *
+    /** Get the list of registered ButtonConfigurations. 
      * @returns all registered ButtonConfigurations
-     * /
+     */
     public List<ButtonConfiguration> getButtonConfigurations() {
         return buttonConfigurations;
     }
