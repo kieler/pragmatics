@@ -35,33 +35,97 @@ public class KiviMenuContributionService {
     /** internal list of Buttons. */
     private List<ButtonConfiguration> buttonConfigurations = new ArrayList<ButtonConfiguration>();
 
-    /** Add a button configuration with all possible parameters. */
-    public void addToolbarButton(ICombination responsibleCombination, final String id,
+    /**
+     * Add a button configuration with all possible parameters.
+     * 
+     * @param responsibleCombination
+     *            the KiVi Combination which is responsible for this button. the button will be made
+     *            invisible if the combination gets deactivated
+     * @param id
+     *            the ID that the button should get. Need to identify the button lateron with this
+     *            ID
+     * @param label
+     *            an optional label for the button. May be null. Either the label or the icon should
+     *            be specified.
+     * @param tooltip
+     *            a tooltip for the button, may be null
+     * @param icon
+     *            the icon for the button, may be null. Either the label or the icon should be
+     *            specified. An Image descriptor can be obtained by the plugin activator with the
+     *            plugin ID and the relative path of the icon within that plugin.
+     * @param style
+     *            an SWT style constant, either SWT.PUSH, SWT.RADIO or SWT.CHECK
+     * @param visibilityExpression
+     *            an eclipse core Expression that gets registered as visibility expression, may be
+     *            null
+     * @param activeEditors
+     *            Strings of editor IDs for which this button should be made visible only, parameter
+     *            to avoid using the visibilityExpression, may be left
+     */
+    public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String label, final String tooltip, final ImageDescriptor icon, final int style,
             final Expression visibilityExpression, final String... activeEditors) {
         buttonConfigurations.add(new ButtonConfiguration(responsibleCombination, id, label,
                 tooltip, icon, style, visibilityExpression, activeEditors));
     }
 
-    /** Add a button configuration with only a few parameters. */
-    public void addToolbarButton(ICombination responsibleCombination, final String id,
+    /**
+     * Add a button configuration with only a few parameters.
+     * 
+     * @param responsibleCombination
+     *            the KiVi Combination which is responsible for this button. the button will be made
+     *            invisible if the combination gets deactivated
+     * @param id
+     *            the ID that the button should get. Need to identify the button lateron with this
+     *            ID
+     * @param tooltip
+     *            a tooltip for the button, may be null
+     * @param icon
+     *            the icon for the button, may be null. Either the label or the icon should be
+     *            specified. An Image descriptor can be obtained by the plugin activator with the
+     *            plugin ID and the relative path of the icon within that plugin.
+     * @param activeEditors
+     *            Strings of editor IDs for which this button should be made visible only, parameter
+     *            to avoid using the visibilityExpression, may be left
+     */
+    public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String tooltip, final ImageDescriptor icon, final String... activeEditors) {
         buttonConfigurations.add(new ButtonConfiguration(responsibleCombination, id, "KiviButton",
                 tooltip, icon, SWT.PUSH, null, activeEditors));
     }
 
-    /** Add the simplest button configuration possible. Usually used only for quick testing. */
-    public void addToolbarButton(ICombination responsibleCombination, final String id,
+    /**
+     * Add the simplest button configuration possible. Usually used only for quick testing.
+     * 
+     * @param responsibleCombination
+     *            the KiVi Combination which is responsible for this button. the button will be made
+     *            invisible if the combination gets deactivated
+     * @param id
+     *            the ID that the button should get. Need to identify the button lateron with this
+     *            ID
+     * @param label
+     *            an optional label for the button. May be null. Either the label or the icon should
+     *            be specified.
+     */
+    public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String label) {
         buttonConfigurations.add(new ButtonConfiguration(responsibleCombination, id, label, null,
                 null, SWT.PUSH, null, null));
     }
 
-    /** Get the list of registered ButtonConfigurations. */
+    /** Get the list of registered ButtonConfigurations. *
+     * @returns all registered ButtonConfigurations
+     * /
     public List<ButtonConfiguration> getButtonConfigurations() {
         return buttonConfigurations;
     }
 
+    /**
+     * A container class for configurations for buttons.
+     * 
+     * @author haf
+     * 
+     */
     public static class ButtonConfiguration {
         String id;
         String label;
