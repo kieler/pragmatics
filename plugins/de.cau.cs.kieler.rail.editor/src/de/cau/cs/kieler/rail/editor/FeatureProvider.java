@@ -15,6 +15,7 @@ import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IResizeShapeFeature;
 import org.eclipse.graphiti.features.IUpdateFeature;
 import org.eclipse.graphiti.features.context.IAddContext;
+import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveAnchorContext;
@@ -22,6 +23,7 @@ import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
+import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -45,6 +47,7 @@ import de.cau.cs.kieler.rail.editor.features.DirectEditBreachFeatures;
 import de.cau.cs.kieler.rail.editor.features.LayoutFeature;
 import de.cau.cs.kieler.rail.editor.features.MovePortFeature;
 import de.cau.cs.kieler.rail.editor.features.ResizeFeature;
+import de.cau.cs.kieler.rail.editor.features.RotateSwitchFeature;
 import de.cau.cs.kieler.rail.editor.features.TypeFeatures;
 import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
 
@@ -205,4 +208,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
         // simply return all create connection features
         return getCreateConnectionFeatures();
     }    
+    @Override
+    public ICustomFeature[] getCustomFeatures(ICustomContext context) {
+        return new ICustomFeature[] { new RotateSwitchFeature(this) };
+    }
 }
