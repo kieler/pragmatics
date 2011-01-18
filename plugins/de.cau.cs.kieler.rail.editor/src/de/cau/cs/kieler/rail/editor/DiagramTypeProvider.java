@@ -18,7 +18,9 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
 	    super();
 	    setFeatureProvider(new FeatureProvider(this));
 	}
-	
+	/**
+     * {@inheritDoc}
+     */
     @Override
     public IToolBehaviorProvider[] getAvailableToolBehaviorProviders() {
         if (toolBehaviorProviders == null) {

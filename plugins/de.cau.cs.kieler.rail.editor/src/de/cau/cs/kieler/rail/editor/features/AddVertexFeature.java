@@ -41,7 +41,7 @@ import de.cau.cs.kieler.rail.editor.StyleProvider;
  * @param <TypeFeatures>
  *
  */
-public class AddFeature extends AbstractAddFeature {
+public class AddVertexFeature extends AbstractAddFeature {
 
 	/** the style provider. */ 
     protected IStyleProvider styleProvider;
@@ -57,9 +57,9 @@ public class AddFeature extends AbstractAddFeature {
 
 	private static final int PORT_SIZE = 10;
     
-    TypeFeatures type;
+    private TypeFeatures type;
     
-	public AddFeature(IFeatureProvider fp, final IStyleProvider thestyleProvider, TypeFeatures type) {
+	public AddVertexFeature(IFeatureProvider fp, final IStyleProvider thestyleProvider, TypeFeatures type) {
 		super(fp);
 		this.styleProvider = thestyleProvider;
 		this.type = type;
@@ -69,9 +69,8 @@ public class AddFeature extends AbstractAddFeature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.graphiti.func.IAdd#canAdd(org.eclipse.graphiti.features.context.IAddContext)
 	 */
-	//public abstract boolean canAdd(IAddContext context);
     public boolean canAdd(IAddContext context) {
-        // check if user wants to add a Einbruchsknoten
+        // check if user wants to add a the right vertex
         if (isInstanceof(context.getNewObject())) {
             // check if user wants to add to a diagram
             if (context.getTargetContainer() instanceof Diagram) {
@@ -81,7 +80,8 @@ public class AddFeature extends AbstractAddFeature {
         return false;
     }
 
-	/* (non-Javadoc)
+	/**
+	 * Add the right vertex
 	 * @see org.eclipse.graphiti.func.IAdd#add(org.eclipse.graphiti.features.context.IAddContext)
 	 */
 	public  PictogramElement add(IAddContext context){
@@ -103,7 +103,11 @@ public class AddFeature extends AbstractAddFeature {
 		layoutPictogramElement(pe);
 		return pe;
 	}
-
+	/**
+	 * Checks if object is a instance of the right vertex with the information in the type variable
+	 * @param object
+	 * @return
+	 */
 	public boolean isInstanceof(Object object){
 		switch (type){
 		case BREANCH:
@@ -116,7 +120,11 @@ public class AddFeature extends AbstractAddFeature {
 		}
 		return false;
 	}
-	
+	/**
+	 * PictogramElement for the breach vertex
+	 * @param context
+	 * @return
+	 */
 	private PictogramElement addBreach(IAddContext context){
 		Einbruchsknoten addedClass = (Einbruchsknoten) context.getNewObject();
         Diagram targetDiagram = (Diagram) context.getTargetContainer();
@@ -146,10 +154,7 @@ public class AddFeature extends AbstractAddFeature {
             
             gaService.setLocationAndSize(ellipse,
                     context.getX(), context.getY()+10, width, height-10);
-            
-            //ellipse.setStyle(styleProvider.getStyle("1"));
-            
-            
+
  
             // if added Class has no resource we add it to the resource 
             // of the diagram
@@ -190,6 +195,11 @@ public class AddFeature extends AbstractAddFeature {
         
         return containerShape;
 	}
+	/**
+	 * PictogramElement for the deadend vertex
+	 * @param context
+	 * @return
+	 */
 	private PictogramElement addDeadEndVertex(IAddContext context){
 		Stumpfgleisknoten addedClass = (Stumpfgleisknoten) context.getNewObject();
         Diagram targetDiagram = (Diagram) context.getTargetContainer();

@@ -36,10 +36,10 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
-import de.cau.cs.kieler.rail.editor.features.AddFeature;
+import de.cau.cs.kieler.rail.editor.features.AddVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.AddPortFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
-import de.cau.cs.kieler.rail.editor.features.CreateFeature;
+import de.cau.cs.kieler.rail.editor.features.CreateVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.CreatePortFeature;
 import de.cau.cs.kieler.rail.editor.features.DirectEditBreachFeatures;
 import de.cau.cs.kieler.rail.editor.features.LayoutFeature;
@@ -59,25 +59,28 @@ public class FeatureProvider extends DefaultFeatureProvider {
     private IStyleProvider styleProvider;
 	/**
 	 * 
+	 * @param dtp
 	 */
 	public FeatureProvider( IDiagramTypeProvider dtp) {
         super(dtp);
         styleProvider = new StyleProvider(dtp);
     }
-	
+	/**
+     * {@inheritDoc}
+     */
     @Override
     public IAddFeature getAddFeature(IAddContext context) {
     	if (context.getNewObject() instanceof Einbruchsknoten) {
-            return new AddFeature(this,this.styleProvider,TypeFeatures.BREANCH);
+            return new AddVertexFeature(this,this.styleProvider,TypeFeatures.BREANCH);
         } else if (context.getNewObject() instanceof Stumpfgleisknoten) {
-        	return new AddFeature(this,this.styleProvider,TypeFeatures.DEADENDVERTEX);
+        	return new AddVertexFeature(this,this.styleProvider,TypeFeatures.DEADENDVERTEX);
         } else if (context.getNewObject() instanceof Weichenknoten) {
         	EOrientation E = ((Weichenknoten)(context.getNewObject())).getAbzweigendeLage();
         	switch (E){
         	case LINKS:
-        		return new AddFeature(this,this.styleProvider,TypeFeatures.SWITCHVERTEX_LEFT);
+        		return new AddVertexFeature(this,this.styleProvider,TypeFeatures.SWITCHVERTEX_LEFT);
         	case RECHTS:
-        		return new AddFeature(this,this.styleProvider,TypeFeatures.SWITCHVERTEX_RIGHT);
+        		return new AddVertexFeature(this,this.styleProvider,TypeFeatures.SWITCHVERTEX_RIGHT);
         	}
         } else if (context.getNewObject() instanceof Port)
         {
@@ -89,25 +92,31 @@ public class FeatureProvider extends DefaultFeatureProvider {
         return super.getAddFeature(context);
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ICreateFeature[] getCreateFeatures() {
     	//, new CreateDeadEndVertexFeature(this)
     	
-    	return new ICreateFeature[] { new CreateFeature(this,TypeFeatures.BREANCH ),
-    			new CreateFeature(this,TypeFeatures.DEADENDVERTEX ), 
-    			new CreateFeature(this,TypeFeatures.SWITCHVERTEX_LEFT),
-    			new CreateFeature(this,TypeFeatures.SWITCHVERTEX_RIGHT),
+    	return new ICreateFeature[] { new CreateVertexFeature(this,TypeFeatures.BREANCH ),
+    			new CreateVertexFeature(this,TypeFeatures.DEADENDVERTEX ), 
+    			new CreateVertexFeature(this,TypeFeatures.SWITCHVERTEX_LEFT),
+    			new CreateVertexFeature(this,TypeFeatures.SWITCHVERTEX_RIGHT),
     			new CreatePortFeature(this)
     		};
     }
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
         return new ICreateConnectionFeature[] {
             new CreateEdgeFeature (this) };
     }
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IUpdateFeature getUpdateFeature(IUpdateContext context) {
         PictogramElement pictogramElement = context.getPictogramElement();
@@ -119,7 +128,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
         }
         return super.getUpdateFeature(context);
     }
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDirectEditingFeature getDirectEditingFeature(
         IDirectEditingContext context) {
@@ -131,7 +142,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
         return super.getDirectEditingFeature(context);
     }
 
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IResizeShapeFeature getResizeShapeFeature(
             IResizeShapeContext context) {
@@ -152,7 +165,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
         }
         return super.getResizeShapeFeature(context);
     }
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ILayoutFeature getLayoutFeature(ILayoutContext context) {
         PictogramElement pictogramElement = context.getPictogramElement();

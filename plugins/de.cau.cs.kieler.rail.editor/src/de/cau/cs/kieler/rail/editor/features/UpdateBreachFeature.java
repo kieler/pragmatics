@@ -31,7 +31,7 @@ public class UpdateBreachFeature extends AbstractUpdateFeature {
             getBusinessObjectForPictogramElement(context.getPictogramElement());
         return (bo instanceof Einbruchsknoten);
     }
- 
+    
     public IReason updateNeeded(IUpdateContext context) {
         // retrieve name from pictogram model
         String pictogramName = null;

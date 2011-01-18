@@ -42,7 +42,9 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
 	public ToolBehaviorProvider(DiagramTypeProvider diagramTypeProvider) {
 		super(diagramTypeProvider);
 	}
-	
+	/**
+     * {@inheritDoc}
+     */
 	@Override
     public IPaletteCompartmentEntry[] getPalette() {
         List<IPaletteCompartmentEntry> ret =

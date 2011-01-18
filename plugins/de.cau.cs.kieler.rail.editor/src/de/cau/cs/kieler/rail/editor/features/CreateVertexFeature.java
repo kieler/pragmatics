@@ -44,14 +44,14 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
 
 
-public class CreateFeature extends AbstractCreateFeature  {
+public class CreateVertexFeature extends AbstractCreateFeature  {
     private static final String TITLE = "Create class";
     
     private static final String USER_QUESTION = "Enter new class name";
 
 	private TypeFeatures type;
  
-    public CreateFeature(IFeatureProvider fp,TypeFeatures type) {
+    public CreateVertexFeature(IFeatureProvider fp,TypeFeatures type) {
         // set name and description of the creation feature
     	super(fp, getName(type), getName(type) + " erstellen");
     	this.type = type;

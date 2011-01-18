@@ -12,7 +12,9 @@ public class KrailNewWizard extends GraphitiNewWizard {
     public KrailNewWizard(){
     	super("Rail","krail","topologie","Rail",DiagramEditor.DIAGRAM_EDITOR_ID);
     }
-
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	protected EObject createModel(String name) {
 		Model model = TopologieFactory.eINSTANCE.createModel();

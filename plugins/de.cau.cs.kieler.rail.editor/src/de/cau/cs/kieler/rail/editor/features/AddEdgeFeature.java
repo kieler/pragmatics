@@ -21,20 +21,36 @@ import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
 
+/**
+ * AddFeature for the graphical Representation of the edge.
+ * @author hdw
+ *
+ */
 public class AddEdgeFeature extends AbstractAddFeature {
  
+	/**
+	 * {@value styleProvider} The styleProvider of the styles.
+	 */
     private IStyleProvider styleProvider;
 
+    /**
+     * Constructor
+     * @param fp FeatureProvider
+     * @param styleProvider StyleProvider
+     */
 	public AddEdgeFeature (IFeatureProvider fp,final IStyleProvider styleProvider) {
         super(fp);
 		this.styleProvider = styleProvider;
     }
  
+	/**
+	 * @param context The context on witch the graphical Representation is created to.
+	 * @return The Pictogram Element for the Edge (a line for source to target)
+	 */
     public PictogramElement add(IAddContext context) {
     	IPeCreateService peCreateService = Graphiti.getPeCreateService();
     	
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
-        //Edge addedEdge = (Edge) context.getNewObject();
         
         System.out.println("AddEdgeFeature#add");
         
@@ -46,13 +62,11 @@ public class AddEdgeFeature extends AbstractAddFeature {
         connection.setEnd(addConContext.getTargetAnchor());
  
         IGaService gaService = Graphiti.getGaService();
-        //TODO Do it with the Style Provider
+        
         Polyline polyline = gaService.createPolyline(connection);
-        polyline.setLineWidth(2);
-        polyline.setForeground(manageColor(IColorConstant.BLACK));
+        polyline.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
  
         // create link and wire it
-        //TODO make to run.
         if (((EObject) context.getNewObject()).eResource() == null) {
             getDiagram().eResource().getContents().add((EObject) context.getNewObject());
         }
@@ -85,6 +99,9 @@ public class AddEdgeFeature extends AbstractAddFeature {
         return connection;
     }
  
+    /**
+     * 
+     */
     public boolean canAdd(IAddContext context) {
         // return true if given business object is an EReference
         // note, that the context must be an instance of IAddConnectionContext

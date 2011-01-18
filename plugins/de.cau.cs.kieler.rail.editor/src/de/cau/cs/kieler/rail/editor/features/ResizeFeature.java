@@ -27,7 +27,9 @@ public class ResizeFeature extends DefaultResizeShapeFeature {
         super(fp);
         this.type = type;
     }
- 
+	/**
+     * {@inheritDoc}
+     */
     @Override
     public boolean canResizeShape(IResizeShapeContext context) {
         boolean canResize = super.canResizeShape(context);
