@@ -316,23 +316,11 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     @Override
     public String toString() {
-        if (eIsProxy()) return super.toString();
-
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (xpos: ");
-        result.append(xpos);
-        result.append(", ypos: ");
-        result.append(ypos);
-        result.append(", width: ");
-        result.append(width);
-        result.append(", height: ");
-        result.append(height);
-        result.append(')');
-        return result.toString();
+        return "(" + xpos + "," + ypos + "|" + width + "," + height + ")";
     }
 
 } //KShapeLayoutImpl

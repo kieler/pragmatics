@@ -212,19 +212,11 @@ public class KPointImpl extends EObjectImpl implements KPoint {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     @Override
     public String toString() {
-        if (eIsProxy()) return super.toString();
-
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (x: ");
-        result.append(x);
-        result.append(", y: ");
-        result.append(y);
-        result.append(')');
-        return result.toString();
+        return "(" + x + "," + y + ")";
     }
 
 } //KPointImpl
