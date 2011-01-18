@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
 import de.cau.cs.kieler.kex.model.SourceType;
@@ -31,9 +32,9 @@ import de.cau.cs.kieler.kex.model.SourceType;
  */
 public class DBExampleCollector extends ExampleCollector {
 
-    private final Map<String, Example> examplePool;
+    private final Map<String, Example> examplePool = new HashMap<String, Example>();
 
-    private final List<String> categories;
+    private final List<Category> categories = new ArrayList<Category>();
 
     // private final DatabaseHandler dbHandler;
 
@@ -41,8 +42,6 @@ public class DBExampleCollector extends ExampleCollector {
      * Creates a new DBExampleCollector.
      */
     public DBExampleCollector() {
-        examplePool = new HashMap<String, Example>();
-        categories = new ArrayList<String>();
         // dbHandler = new DatabaseHandler();
     }
 
@@ -76,7 +75,7 @@ public class DBExampleCollector extends ExampleCollector {
      * 
      * @return {@link List} of {@link String}
      */
-    public List<String> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 

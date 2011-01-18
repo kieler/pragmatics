@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
+import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.SourceType;
 
 /**
@@ -329,10 +330,11 @@ public class ExampleExportPage extends WizardResourceImportPage {
     public static void fillTree(final Tree tree) {
         // disable drawing to avoid flicker
         tree.setRedraw(false);
-        List<String> categories = ExampleManager.get().getCategories();
-        for (String category : categories) {
+        List<Category> categories = ExampleManager.get().getCategories();
+        for (Category category : categories) {
             TreeItem item = new TreeItem(tree, SWT.NONE);
-            item.setText(category);
+            item.setText(category.getTitle());
+            item.setData(category);
         }
         // enable drawing
         tree.setRedraw(true);

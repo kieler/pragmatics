@@ -46,6 +46,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.controller.util.IOHandler;
+import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleResource;
 
@@ -99,13 +100,13 @@ public class PluginExampleCreator {
      *             , if duplicatechecks fails or can be thrown by getPluginNode(...).
      */
     public void addExtension(final File location, final Example parseElement,
-            final List<String> creatableCategories, final String absOverviewPic)
+            final List<Category> creatableCategories, final String absOverviewPic)
             throws KielerException {
 
         Node pluginNode = getPluginNode(location);
         Node extensionKEX = filterExtensionKEX(pluginNode);
 
-        checkDuplicate(extensionKEX, parseElement.getTitle(), creatableCategories);
+        checkDuplicate(extensionKEX, parseElement.getId(), creatableCategories);
         if (absOverviewPic != null) {
             parseElement.setOverviewPic(createLocalPluginPath(absOverviewPic));
         }
@@ -116,28 +117,28 @@ public class PluginExampleCreator {
     }
 
     // TODO testen...
-    private void checkDuplicate(final Node extensionKEX, final String exampleTitle,
-            final List<String> creatableCategories) throws KielerException {
+    private void checkDuplicate(final Node extensionKEX, final String exampleId,
+            final List<Category> creatableCategories) throws KielerException {
         NodeList childNodes = extensionKEX.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
             String nodeName = item.getNodeName();
-            if (PluginConstants.CATEGORY.equals(nodeName)) {
-                Node namedItem = item.getAttributes().getNamedItem(PluginConstants.ID);
+            if (PluginConstants.Category.CATEGORY.equals(nodeName)) {
+                Node namedItem = item.getAttributes().getNamedItem(PluginConstants.Category.ID);
                 if (namedItem != null) {
-                    for (String creatableCategory : creatableCategories) {
-                        if (creatableCategory.equals(namedItem.getNodeValue())) {
+                    for (Category creatableCategory : creatableCategories) {
+                        if (creatableCategory.getId().equals(namedItem.getNodeValue())) {
                             throw new KielerException(ErrorMessage.DUPLICATE_ELEMENT
-                                    + "The category \"" + creatableCategory
+                                    + "The category \"" + creatableCategory.getId()
                                     + "\" exists already in choosen plugin project.");
                         }
                     }
                 }
-            } else if (PluginConstants.EXAMPLE.equals(nodeName)) {
-                Node namedItem = item.getAttributes().getNamedItem(PluginConstants.TITLE);
-                if (namedItem != null && exampleTitle.equals(namedItem.getNodeValue())) {
+            } else if (PluginConstants.Example.EXAMPLE.equals(nodeName)) {
+                Node namedItem = item.getAttributes().getNamedItem(PluginConstants.Example.ID);
+                if (namedItem != null && exampleId.equals(namedItem.getNodeValue())) {
                     throw new KielerException(ErrorMessage.DUPLICATE_ELEMENT + "The example \""
-                            + exampleTitle + "\" exists already in choosen plugin project.");
+                            + exampleId + "\" exists already in choosen plugin project.");
                 }
             }
         }
@@ -289,11 +290,16 @@ public class PluginExampleCreator {
         }
     }
 
-    private boolean addExampleCategories(final Node node, final List<String> creatableCategories) {
-        List<String> creates = creatableCategories;
-        for (String creatable : creates) {
-            Element createdCategory = parsedXML.createElement(PluginConstants.CATEGORY);
-            createdCategory.setAttribute(PluginConstants.ID, creatable);
+    private boolean addExampleCategories(final Node node, final List<Category> creatableCategories) {
+        List<Category> creates = creatableCategories;
+        for (Category creatable : creates) {
+            Element createdCategory = parsedXML.createElement(PluginConstants.Category.CATEGORY);
+            createdCategory.setAttribute(PluginConstants.Category.ID, creatable.getId());
+            createdCategory.setAttribute(PluginConstants.Category.TITLE, creatable.getTitle());
+            createdCategory.setAttribute(PluginConstants.Category.DESCRIPTION,
+                    creatable.getDescription());
+            createdCategory.setAttribute(PluginConstants.Category.ICON, creatable.getIconPath());
+            createdCategory.setAttribute(PluginConstants.Category.PARENT, creatable.getParentId());
             node.appendChild(createdCategory);
         }
         return true;
@@ -328,41 +334,44 @@ public class PluginExampleCreator {
                 .append(e.getLocalizedMessage()).toString());
     }
 
-    private Node toNode(final String categoryId) {
-        Element createdElement = parsedXML.createElement(PluginConstants.CATEGORY);
-        createdElement.setAttribute(PluginConstants.ID, categoryId);
+    private Node toNode(final Category category) {
+        Element createdElement = parsedXML.createElement(PluginConstants.Category.CATEGORY);
+        createdElement.setAttribute(PluginConstants.Category.ID, category.getId());
+        createdElement.setAttribute(PluginConstants.Category.TITLE, category.getTitle());
+        createdElement
+                .setAttribute(PluginConstants.Category.DESCRIPTION, category.getDescription());
+        createdElement.setAttribute(PluginConstants.Category.ICON, category.getIconPath());
+        createdElement.setAttribute(PluginConstants.Category.PARENT, category.getParentId());
         return createdElement;
     }
 
     private Node toNode(final Example example, final File location) throws KielerException {
-        Element createdExample = parsedXML.createElement(PluginConstants.EXAMPLE);
-        createdExample.setAttribute(PluginConstants.TITLE, example.getTitle());
-        createdExample.setAttribute(PluginConstants.DESCRIPTION, example.getDescription());
-        createdExample.setAttribute(PluginConstants.GENERATION_DATE, example.getGenerationDate()
-                .toString());
+        Element createdExample = parsedXML.createElement(PluginConstants.Example.EXAMPLE);
+        createdExample.setAttribute(PluginConstants.Example.ID, example.getId());
+        createdExample.setAttribute(PluginConstants.Example.TITLE, example.getTitle());
+        createdExample.setAttribute(PluginConstants.Example.CATEGORY, example.getCategoryId());
+        createdExample.setAttribute(PluginConstants.Example.DESCRIPTION, example.getDescription());
+        createdExample.setAttribute(PluginConstants.Example.GENERATION_DATE, example
+                .getGenerationDate().toString());
         makeRootSource(location, example);
 
         String overviewPicPath = example.getOverviewPic();
         if (overviewPicPath != null) {
-            createdExample.setAttribute(PluginConstants.OVERVIEW_PIC, overviewPicPath);
+            createdExample.setAttribute(PluginConstants.Example.OVERVIEW_PIC, overviewPicPath);
         }
         String author = example.getAuthor();
         if (author != null) {
-            createdExample.setAttribute(PluginConstants.AUTHOR, author);
+            createdExample.setAttribute(PluginConstants.Example.AUTHOR, author);
         }
 
         String contact = example.getContact();
         if (contact != null) {
-            createdExample.setAttribute(PluginConstants.CONTACT, contact);
+            createdExample.setAttribute(PluginConstants.Example.CONTACT, contact);
         }
 
         String rootDirectory = example.getRootDir();
         if (rootDirectory != null) {
-            createdExample.setAttribute(PluginConstants.ROOT_DIRECTORY, rootDirectory);
-        }
-
-        for (String category : example.getCategories()) {
-            createdExample.appendChild(toNode(category));
+            createdExample.setAttribute(PluginConstants.Example.ROOT_DIRECTORY, rootDirectory);
         }
 
         for (ExampleResource exResource : example.getResources()) {
@@ -373,12 +382,13 @@ public class PluginExampleCreator {
     }
 
     private Node toNode(final String relativePath, final ExampleResource exResource) {
-        Element createdExResource = parsedXML.createElement(PluginConstants.EXAMPLE_RESOURCE);
-        createdExResource.setAttribute(PluginConstants.LOCAL_PATH,
-                relativePath + "/" + exResource.getLocalPath());
-        createdExResource.setAttribute(PluginConstants.RESOURCE_TYPE,
+        Element createdExResource = parsedXML
+                .createElement(PluginConstants.Resource.EXAMPLE_RESOURCE);
+        createdExResource.setAttribute(PluginConstants.Resource.LOCAL_PATH, relativePath + "/"
+                + exResource.getLocalPath());
+        createdExResource.setAttribute(PluginConstants.Resource.RESOURCE_TYPE,
                 ExampleResource.Type.map(exResource.getResourceType()));
-        createdExResource.setAttribute(PluginConstants.DIRECT_OPEN,
+        createdExResource.setAttribute(PluginConstants.Resource.DIRECT_OPEN,
                 Boolean.toString(exResource.isDirectOpen()));
         return createdExResource;
 

@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExportResource;
+import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
 import de.cau.cs.kieler.kex.model.ExampleResource;
@@ -75,8 +76,9 @@ public final class ExampleExport {
         String destLocation = (String) map.get(ExampleElement.DEST_LOCATION);
         validateField(destLocation, 2, "Destination Location");
 
-        List<String> categories = (List<String>) map.get(ExampleElement.CATEGORIES);
-        validateElement(categories, 1, "Categories");
+        // TODO ueber validator nachdenken
+        // List<String> categories = (List<String>) map.get(ExampleElement.CATEGORY);
+        // validateElement(categories, 1, "Categories");
 
         List<ExportResource> exportedResources = (List<ExportResource>) map
                 .get(ExampleElement.RESOURCES);
@@ -181,10 +183,9 @@ public final class ExampleExport {
                     (String) properties.get(ExampleElement.OVERVIEW_PIC), extensionCreator,
                     destFile, finishedResources);
 
-            extensionCreator
-                    .addExtension(destFile, mappedExample,
-                            (List<String>) properties.get(ExampleElement.CREATE_CATEGORIES),
-                            absOverviewPic);
+            extensionCreator.addExtension(destFile, mappedExample,
+                    (List<Category>) properties.get(ExampleElement.CREATE_CATEGORIES),
+                    absOverviewPic);
         } catch (KielerException e) {
             extensionCreator.deleteExampleResources(finishedResources);
             throw e;
@@ -214,10 +215,10 @@ public final class ExampleExport {
     public static Example mapToExample(final Map<ExampleElement, Object> properties) {
         Example result = new Example((String) properties.get(ExampleElement.ID),
                 (String) properties.get(ExampleElement.TITLE),
+                (String) properties.get(ExampleElement.CATEGORY),
                 (SourceType) properties.get(ExampleElement.SOURCETYPE));
         result.setDescription((String) properties.get(ExampleElement.DESCRIPTION));
         result.setContact((String) properties.get(ExampleElement.CONTACT));
-        result.addCategories((List<String>) properties.get(ExampleElement.CATEGORIES));
         result.setAuthor((String) properties.get(ExampleElement.AUTHOR));
         result.setRootDir((String) properties.get(ExampleElement.DEST_LOCATION));
         result.setOverviewPic((String) properties.get(ExampleElement.OVERVIEW_PIC));

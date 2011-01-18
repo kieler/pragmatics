@@ -57,6 +57,7 @@ import org.eclipse.ui.dialogs.WizardResourceImportPage;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
+import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
 
 /**
@@ -174,7 +175,7 @@ public class ImportExamplePage extends WizardPage {
 
         Tree tree = treeViewer.getTree();
 
-        List<String> categories = ExampleManager.get().getCategories();
+        List<Category> categories = ExampleManager.get().getCategories();
         if (categories.size() == 0) {
             MessageDialog.openError(getShell(), "Could not start example import wizard",
                     "There are no examples to import. Please check installed features!");
@@ -182,8 +183,9 @@ public class ImportExamplePage extends WizardPage {
 
         for (int i = 0; i < categories.size(); i++) {
             TreeItem iItem = new TreeItem(tree, SWT.CHECK);
-            iItem.setText(categories.get(i));
-            addExamplesToItem(categories.get(i), iItem);
+            iItem.setText(categories.get(i).getTitle());
+            iItem.setData(categories.get(i));
+            addExamplesToItem(categories.get(i).getTitle(), iItem);
         }
 
         // Spaltenk�pfe und Zeilenbegrenzungen sichtbar machen
@@ -240,15 +242,16 @@ public class ImportExamplePage extends WizardPage {
             }
         });
 
-        List<String> categories = ExampleManager.get().getCategories();
+        List<Category> categories = ExampleManager.get().getCategories();
         if (categories.size() == 0) {
             MessageDialog.openError(getShell(), "Could not start example import wizard",
                     "There are no examples to import. Please check installed features!");
         }
         for (int i = 0; i < categories.size(); i++) {
             TreeItem iItem = new TreeItem(exampleTree, SWT.CHECK);
-            iItem.setText(categories.get(i));
-            addExamplesToItem(categories.get(i), iItem);
+            iItem.setText(categories.get(i).getTitle());
+            iItem.setData(categories.get(i));
+            addExamplesToItem(categories.get(i).getTitle(), iItem);
         }
         return exampleTree;
     }

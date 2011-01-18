@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Path;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.util.ExampleExport;
 import de.cau.cs.kieler.kex.controller.util.ExampleImport;
+import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.SourceType;
 import de.cau.cs.kieler.kex.model.database.DBExampleCollector;
@@ -145,8 +146,8 @@ public final class ExampleManager {
      * 
      * @return {@link List} of {@link String}.
      */
-    public List<String> getCategories() {
-        List<String> result = new ArrayList<String>();
+    public List<Category> getCategories() {
+        List<Category> result = new ArrayList<Category>();
         result.addAll(databaseCollector.getCategories());
         result.addAll(extensionCollector.getCategories());
         return result;
@@ -255,16 +256,16 @@ public final class ExampleManager {
         }
     }
 
+    // FIXME geht so nicht mehr.
     public Collection<? extends String> getNonEmptyCategories() {
         List<String> result = new ArrayList<String>();
         for (Example example : getExamples().values()) {
-            for (String category : example.getCategories()) {
-                if (!result.contains(category)) {
-                    result.add(category);
-                }
+            String category = example.getCategoryId();
+            if (!result.contains(category)) {
+                result.add(category);
             }
+
         }
         return result;
     }
-
 }

@@ -18,6 +18,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * The mainmodel class of KEX. This model has all attributes for an KEX example.
  * 
@@ -26,17 +28,17 @@ import java.util.List;
  */
 public class Example {
 
-    private final String id;
+    private final Date generationDate = Calendar.getInstance().getTime();
 
-    private final String title;
+    private final List<ExampleResource> resources = new ArrayList<ExampleResource>();
 
-    private final List<ExampleResource> resources;
+    private String id;
 
-    private final List<String> categories;
+    private String title;
 
-    private final SourceType sourceType;
+    private String categoryId;
 
-    private final Date generationDate;
+    private SourceType sourceType;
 
     private String description;
 
@@ -55,52 +57,50 @@ public class Example {
     /**
      * Creates a new example model.
      * 
+     * @param idParam
+     *            , {@link String}
      * @param titleParam
      *            , {@link String}
+     * @param categoryParam
+     *            , {@link Category}
      * @param sourceTypeParam
      *            , {@link SourceType}
      */
-    public Example(final String idParam, final String titleParam, final SourceType sourceTypeParam) {
-        this.id = idParam;
-        this.title = titleParam;
-        this.sourceType = sourceTypeParam;
-        this.resources = new ArrayList<ExampleResource>();
-        this.categories = new ArrayList<String>();
-        this.generationDate = Calendar.getInstance().getTime();
+    public Example(final String idParam, final String titleParam, final String categoryIdParam,
+            final SourceType sourceTypeParam) {
+        Assert.isNotNull(idParam);
+        Assert.isNotNull(titleParam);
+        Assert.isNotNull(categoryIdParam);
+        Assert.isNotNull(sourceTypeParam);
+        setId(idParam);
+        setTitle(titleParam);
+        setCategoryId(categoryIdParam);
+        setSourceType(sourceTypeParam);
     }
 
     @Override
     public String toString() {
-        return new StringBuffer().append("Example [title= ").append(getTitle())
-                .append(",source type= ").append(SourceType.map(this.sourceType))
-                .append(getContact()).append(", author= ").append(this.author)
-                .append(", generated at= ").append(this.generationDate.toString())
-                .append(", description= ").append(getDescription()).append("]").toString();
+        return new StringBuffer().append("Example [id= ").append(getId()).append(", title= ")
+                .append(getTitle()).append(", category= ").append(getCategoryId())
+                .append(", source type= ").append(SourceType.map(this.getSourceType()))
+                .append(", contact= ").append(getContact()).append(", author= ")
+                .append(getAuthor()).append(", generated at= ")
+                .append(getGenerationDate().toString()).append(", description= ")
+                .append(getDescription()).append("]").toString();
     }
 
     /**
      * Searches for a category.
      * 
-     * @param category
+     * @param categoryId
      *            , {@link String}
      * @return boolean
      */
-    public boolean contains(final String category) {
-        for (String element : getCategories()) {
-            if (category.equals(element)) {
-                return true;
-            }
+    public boolean contains(final String categoryId) {
+        if (getCategoryId().equals(categoryId)) {
+            return true;
         }
         return false;
-    }
-
-    /**
-     * Getter for example title.
-     * 
-     * @return {@link String}
-     */
-    public String getTitle() {
-        return this.title;
     }
 
     /**
@@ -121,23 +121,8 @@ public class Example {
         return this.sourceType;
     }
 
-    /**
-     * adds categories to example.
-     * 
-     * @param categoriesParam
-     *            , {@link List} of {@link String}s.
-     */
-    public void addCategories(final List<String> categoriesParam) {
-        this.categories.addAll(categoriesParam);
-    }
-
-    /**
-     * Getter for example categories.
-     * 
-     * @return {@link List} of {@link String}s
-     */
-    public List<String> getCategories() {
-        return categories;
+    private void setSourceType(final SourceType sourceTypeParam) {
+        this.sourceType = sourceTypeParam;
     }
 
     /**
@@ -293,6 +278,45 @@ public class Example {
             return isProject;
         }
 
+    }
+
+    private void setId(final String idParam) {
+        this.id = idParam;
+    }
+
+    /**
+     * Getter for example id.
+     * 
+     * @return {@link String}
+     */
+    public String getId() {
+        return id;
+    }
+
+    private void setTitle(final String titleParam) {
+        this.title = titleParam;
+    }
+
+    /**
+     * Getter for example title.
+     * 
+     * @return {@link String}
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * Getter for example categoryId.
+     * 
+     * @return {@link String}
+     */
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    private void setCategoryId(final String categoryIdParam) {
+        this.categoryId = categoryIdParam;
     }
 
 }

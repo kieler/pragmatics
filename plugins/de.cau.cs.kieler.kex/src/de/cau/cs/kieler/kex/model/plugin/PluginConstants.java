@@ -15,37 +15,56 @@ package de.cau.cs.kieler.kex.model.plugin;
 
 public final class PluginConstants {
 
-    // global constants
     public static final String KEX_EXT_POINT = "de.cau.cs.kieler.kex";
     public static final String PLUGIN = "plugin";
     public static final String EXTENSION = "extension";
     public static final String POINT = "point";
 
-    // example constants
-    public static final String EXAMPLE = "example";
-    public static final String TITLE = "title";
-    public static final String GENERATION_DATE = "generation_date";
-    public static final String DESCRIPTION = "description";
-    public static final String AUTHOR = "author";
-    public static final String CONTACT = "contact";
-    public static final String OVERVIEW_PIC = "overview_pic";
+    public final class Example {
+        public static final String EXAMPLE = "example";
+        public static final String ID = "id";
+        public static final String TITLE = "title";
+        public static final String CATEGORY = "category";
+        public static final String GENERATION_DATE = "generation_date";
+        public static final String DESCRIPTION = "description";
+        public static final String AUTHOR = "author";
+        public static final String CONTACT = "contact";
+        public static final String OVERVIEW_PIC = "overview_pic";
+        public static final String ROOT_DIRECTORY = "root_directory";
 
-    // category constants
-    public static final String CATEGORY = "category";
-    public static final String ID = "id";
+        private Example() {
+            // should not be called.
+        }
+    }
 
-    // example resource constants
-    public static final String EXAMPLE_RESOURCE = "example_resource";
-    public static final String LOCAL_PATH = "local_path";
-    public static final String DIRECT_OPEN = "direct_open";
-    public static final String RESOURCE_TYPE = "resource_type";
-    public static final String ROOT_DIRECTORY = "root_directory";
-    public static final Object QUICK_START = "QuickStart";
+    public final class Category {
+        public static final String CATEGORY = "category";
+        public static final String ID = "id";
+        public static final String TITLE = "title";
+        public static final String DESCRIPTION = "description";
+        public static final String ICON = "icon";
+        public static final String PARENT = "parent_category";
 
-    /**
-     * should not be called.
-     */
+        private Category() {
+            // should not be called.
+        }
+    }
+
+    public final class Resource {
+        public static final String EXAMPLE_RESOURCE = "example_resource";
+        public static final String LOCAL_PATH = "local_path";
+        public static final String DIRECT_OPEN = "direct_open";
+        public static final String RESOURCE_TYPE = "resource_type";
+        public static final String ROOT_DIRECTORY = "root_directory";
+        public static final String QUICK_START = "QuickStart";
+
+        private Resource() {
+            // should not be called.
+        }
+    }
+
     private PluginConstants() {
+        // should not be called.
     }
 
 }

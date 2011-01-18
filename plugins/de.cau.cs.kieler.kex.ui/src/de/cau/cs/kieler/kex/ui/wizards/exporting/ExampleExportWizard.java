@@ -86,7 +86,8 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 
             result.put(ExampleElement.SOURCETYPE, exportPage.getSourceType());
             result.put(ExampleElement.DEST_LOCATION, exportPage.getDestLocation());
-            result.put(ExampleElement.CATEGORIES, exportPage.getCheckedCategories());
+            // FIXME category auf eine runterbrechen, denke dran bei example mit catIds arbeiten!!!
+            result.put(ExampleElement.CATEGORY, exportPage.getCheckedCategories().get(0));
             result.put(ExampleElement.CREATE_CATEGORIES, exportPage.getCreatableCategories());
 
             resourcePage.buildResourceStructure();
