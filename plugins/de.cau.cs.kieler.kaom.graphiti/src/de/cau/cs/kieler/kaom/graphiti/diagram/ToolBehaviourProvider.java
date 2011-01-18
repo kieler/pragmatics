@@ -17,20 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
-import org.eclipse.graphiti.features.ICreateConnectionFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.context.IPictogramElementContext;
-import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
-import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
-import org.eclipse.graphiti.services.Graphiti;
-import org.eclipse.graphiti.tb.ContextButtonEntry;
 import org.eclipse.graphiti.tb.ContextMenuEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
@@ -92,15 +86,15 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
         IFeatureProvider featureProvider = getFeatureProvider();
         Object obj = featureProvider.getBusinessObjectForPictogramElement(pe);
 
-        // if (obj instanceof Entity) {
-        // GraphicsAlgorithm invisible = pe.getGraphicsAlgorithm();
-        // for (GraphicsAlgorithm algo :
-        // invisible.getGraphicsAlgorithmChildren()) {
-        // if (algo instanceof Rectangle) {
-        // return algo;
-        // }
-        // }
-        // }
+        if (obj instanceof Entity) {
+            GraphicsAlgorithm invisible = pe.getGraphicsAlgorithm();
+            for (GraphicsAlgorithm algo : invisible
+                    .getGraphicsAlgorithmChildren()) {
+                if (algo instanceof Rectangle) {
+                    return algo;
+                }
+            }
+        }
 
         return super.getSelectionBorder(pe);
     }
@@ -111,38 +105,38 @@ public class ToolBehaviourProvider extends DefaultToolBehaviorProvider {
     @Override
     public IContextButtonPadData getContextButtonPad(
             final IPictogramElementContext context) {
-        IContextButtonPadData data = super.getContextButtonPad(context);
-        PictogramElement pe = context.getPictogramElement();
+        // IContextButtonPadData data = super.getContextButtonPad(context);
+        // PictogramElement pe = context.getPictogramElement();
+        //
+        // setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE);
 
-        setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE);
+        // CreateConnectionContext ccc = new CreateConnectionContext();
+        // ccc.setSourcePictogramElement(pe);
+        // Anchor anchor = null;
+        // if (pe instanceof Anchor) {
+        // anchor = (Anchor) pe;
+        // } else if (pe instanceof AnchorContainer) {
+        // anchor = Graphiti.getPeService().getChopboxAnchor(
+        // (AnchorContainer) pe);
+        // }
+        // ccc.setSourceAnchor(anchor);
+        //
+        // ContextButtonEntry button = new ContextButtonEntry(null, context);
+        // button.setText("Create Connection");
+        // button.setIconId(ImageProvider.IMAGE_LINK);
+        // ICreateConnectionFeature[] features = getFeatureProvider()
+        // .getCreateConnectionFeatures();
+        // for (ICreateConnectionFeature feature : features) {
+        // if (feature.isAvailable(ccc) && feature.canStartConnection(ccc)) {
+        // button.addDragAndDropFeature(feature);
+        // }
+        // }
+        //
+        // if (button.getDragAndDropFeatures().size() > 0) {
+        // data.getDomainSpecificContextButtons().add(button);
+        // }
 
-        CreateConnectionContext ccc = new CreateConnectionContext();
-        ccc.setSourcePictogramElement(pe);
-        Anchor anchor = null;
-        if (pe instanceof Anchor) {
-            anchor = (Anchor) pe;
-        } else if (pe instanceof AnchorContainer) {
-            anchor = Graphiti.getPeService().getChopboxAnchor(
-                    (AnchorContainer) pe);
-        }
-        ccc.setSourceAnchor(anchor);
-
-        ContextButtonEntry button = new ContextButtonEntry(null, context);
-        button.setText("Create Connection");
-        button.setIconId(ImageProvider.IMAGE_LINK);
-        ICreateConnectionFeature[] features = getFeatureProvider()
-                .getCreateConnectionFeatures();
-        for (ICreateConnectionFeature feature : features) {
-            if (feature.isAvailable(ccc) && feature.canStartConnection(ccc)) {
-                button.addDragAndDropFeature(feature);
-            }
-        }
-
-        if (button.getDragAndDropFeatures().size() > 0) {
-            data.getDomainSpecificContextButtons().add(button);
-        }
-
-        return data;
+        return null;
     }
 
     /**

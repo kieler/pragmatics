@@ -258,6 +258,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public IDeleteFeature getDeleteFeature(final IDeleteContext context) {
+        // FIXME: delete links when port/entity/relation is deleted
         return new DefaultDeleteFeature(this) {
             // override the user decision, so objects can be deleted without any
             // dialog
