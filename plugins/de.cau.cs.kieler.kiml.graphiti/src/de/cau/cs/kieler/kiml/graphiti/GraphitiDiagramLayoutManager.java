@@ -46,6 +46,7 @@ import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
@@ -75,9 +76,11 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     private Command applyLayoutCommand;
 
     /** map of pictogram elements to KGraph elements. */
-    private Map<PictogramElement, KGraphElement> pictElem2GraphElemMap = new HashMap<PictogramElement, KGraphElement>();
+    private Map<PictogramElement, KGraphElement> pictElem2GraphElemMap =
+            new HashMap<PictogramElement, KGraphElement>();
     /** map of KGraph elements to pictogram elements. */
-    private Map<KGraphElement, PictogramElement> graphElem2PictElemMap = new HashMap<KGraphElement, PictogramElement>();
+    private Map<KGraphElement, PictogramElement> graphElem2PictElemMap =
+            new HashMap<KGraphElement, PictogramElement>();
     /** list of all connections in the diagram. */
     private List<Connection> connections = new LinkedList<Connection>();
 
@@ -98,7 +101,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /** the framework bridge for this layout manager. */
-    private GraphitiFrameworkBridge graphitiBridge = new GraphitiFrameworkBridge();
+    private GraphitiFrameworkBridge graphitiBridge =
+            new GraphitiFrameworkBridge();
 
     /**
      * {@inheritDoc}
@@ -117,8 +121,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (editPart instanceof IPictogramElementEditPart) {
             config.initialize((IPictogramElementEditPart) editPart);
         } else {
-            IPictogramElementEditPart rootPart = GraphitiFrameworkBridge
-                    .getEditPartFromDiagramEditorInternal2(editPart);
+            IPictogramElementEditPart rootPart =
+                    GraphitiFrameworkBridge
+                            .getEditPartFromDiagramEditorInternal2(editPart);
             if (rootPart != null) {
                 config.initialize(rootPart);
             }
@@ -152,8 +157,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     "Not supported by this layout manager: Editor "
                             + editorPart + ", Edit part " + editPart);
         }
-        PictogramElement element = ((IPictogramElementEditPart) layoutRootPart)
-                .getPictogramElement();
+        PictogramElement element =
+                ((IPictogramElementEditPart) layoutRootPart)
+                        .getPictogramElement();
 
         KNode topNode = KimlUtil.createInitializedNode();
         if (element instanceof ContainerShape) {
@@ -219,12 +225,14 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
                 KNode childnode = KimlUtil.createInitializedNode();
                 childnode.setParent(parentNode);
-                KShapeLayout shapeLayout = childnode
-                        .getData(KShapeLayout.class);
+                KShapeLayout shapeLayout =
+                        childnode.getData(KShapeLayout.class);
                 shapeLayout.setXpos(containerGa.getX());
                 shapeLayout.setYpos(containerGa.getY());
                 shapeLayout.setHeight(containerGa.getHeight());
                 shapeLayout.setWidth(containerGa.getWidth());
+
+                setInsets(shapeLayout, containerGa);
 
                 // TODO how to get minimal size of the shape
                 shapeLayout.setProperty(LayoutOptions.MIN_WIDTH, 40.0f);
@@ -235,8 +243,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
                 boolean shapeHasChildren = false;
                 if (shape instanceof ContainerShape) {
-                    shapeHasChildren = buildLayoutGraphRecursively(
-                            (ContainerShape) shape, childnode, layoutConfig);
+                    shapeHasChildren =
+                            buildLayoutGraphRecursively((ContainerShape) shape,
+                                    childnode, layoutConfig);
 
                     // find a label for the container shape
                     for (Shape child : ((ContainerShape) shape).getChildren()) {
@@ -258,8 +267,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                         pictElem2GraphElemMap.put(anchor, port);
                         graphElem2PictElemMap.put(port, anchor);
                         port.setNode(childnode);
-                        KShapeLayout portLayout = port
-                                .getData(KShapeLayout.class);
+                        KShapeLayout portLayout =
+                                port.getData(KShapeLayout.class);
 
                         BoxRelativeAnchor bra = (BoxRelativeAnchor) anchor;
                         double relWidth = bra.getRelativeWidth();
@@ -302,6 +311,53 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         return parentHasChildren;
     }
 
+    /**
+     * Calculate insets from the invisible rectangle to the visible shape.
+     * 
+     * @param shapeLayout
+     *            the shape layout
+     * @param containerGa
+     *            the invisible GA
+     */
+    private void setInsets(final KShapeLayout shapeLayout,
+            final GraphicsAlgorithm containerGa) {
+        GraphicsAlgorithm ga = findVisibleGa(containerGa);
+        int left = ga.getX();
+        int top = ga.getY();
+        int right = containerGa.getWidth() - ga.getX() - ga.getWidth();
+        int bottom = containerGa.getHeight() - ga.getY() - ga.getHeight();
+
+        KInsets insets = shapeLayout.getProperty(LayoutOptions.INSETS);
+        insets.setLeft(left);
+        insets.setRight(right);
+        insets.setBottom(bottom);
+        insets.setTop(top);
+    }
+
+    /**
+     * Find a visible GraphicsAlgorithm to stick the ports on.
+     * 
+     * @param graphicsAlgorithm
+     *            parent GA
+     * @return a visible GA
+     */
+    private GraphicsAlgorithm findVisibleGa(
+            final GraphicsAlgorithm graphicsAlgorithm) {
+        if (graphicsAlgorithm.getLineVisible()) {
+            return graphicsAlgorithm;
+        }
+        GraphicsAlgorithm result = graphicsAlgorithm;
+        for (GraphicsAlgorithm ga : graphicsAlgorithm
+                .getGraphicsAlgorithmChildren()) {
+            GraphicsAlgorithm returned = findVisibleGa(ga);
+            if (returned.getLineVisible()) {
+                result = returned;
+                break;
+            }
+        }
+        return result;
+    }
+
     /** minimal value for the relative location of head labels. */
     private static final double HEAD_LOCATION = 0.7;
     /** maximal value for the relative location of tail labels. */
@@ -322,11 +378,12 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
             // set target node and port
             KNode targetNode;
-            KPort targetPort = (KPort) pictElem2GraphElemMap.get(connection
-                    .getEnd());
+            KPort targetPort =
+                    (KPort) pictElem2GraphElemMap.get(connection.getEnd());
             if (targetPort == null) {
-                targetNode = (KNode) pictElem2GraphElemMap.get(connection
-                        .getEnd().getParent());
+                targetNode =
+                        (KNode) pictElem2GraphElemMap.get(connection.getEnd()
+                                .getParent());
             } else {
                 edge.setTargetPort(targetPort);
                 targetPort.getEdges().add(edge);
@@ -336,11 +393,12 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
             // set source node and port
             KNode sourceNode;
-            KPort sourcePort = (KPort) pictElem2GraphElemMap.get(connection
-                    .getStart());
+            KPort sourcePort =
+                    (KPort) pictElem2GraphElemMap.get(connection.getStart());
             if (sourcePort == null) {
-                sourceNode = (KNode) pictElem2GraphElemMap.get(connection
-                        .getStart().getParent());
+                sourceNode =
+                        (KNode) pictElem2GraphElemMap.get(connection.getStart()
+                                .getParent());
             } else {
                 edge.setSourcePort(sourcePort);
                 sourcePort.getEdges().add(edge);
@@ -368,8 +426,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     graphElem2PictElemMap.put(label, decorator);
 
                     // set label placement
-                    KShapeLayout labelLayout = label
-                            .getData(KShapeLayout.class);
+                    KShapeLayout labelLayout =
+                            label.getData(KShapeLayout.class);
                     EdgeLabelPlacement placement = EdgeLabelPlacement.CENTER;
                     if (decorator.isLocationRelative()) {
                         if (decorator.getLocation() >= HEAD_LOCATION) {
@@ -405,8 +463,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             KShapeLayout portLayout = kPort.getData(KShapeLayout.class);
             float x = portLayout.getXpos() + portLayout.getWidth() / 2;
             float y = portLayout.getYpos() + portLayout.getHeight() / 2;
-            KShapeLayout nodeLayout = kPort.getNode().getData(
-                    KShapeLayout.class);
+            KShapeLayout nodeLayout =
+                    kPort.getNode().getData(KShapeLayout.class);
             x += nodeLayout.getXpos();
             y += nodeLayout.getYpos();
             point.setX(x);
@@ -428,14 +486,15 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     @Override
     protected void transferLayout(final boolean cacheLayout) {
         // TODO support caching of layout
-        GraphitiLayoutCommand command = new GraphitiLayoutCommand(
-                diagramEditor.getEditingDomain(), diagramEditor
-                        .getDiagramTypeProvider().getFeatureProvider());
+        GraphitiLayoutCommand command =
+                new GraphitiLayoutCommand(diagramEditor.getEditingDomain(),
+                        diagramEditor.getDiagramTypeProvider()
+                                .getFeatureProvider());
         for (Entry<KGraphElement, PictogramElement> entry : graphElem2PictElemMap
                 .entrySet()) {
             KGraphElement element = entry.getKey();
-            KGraphData layoutData = element
-                    .getData(element instanceof KEdge ? KEdgeLayout.class
+            KGraphData layoutData =
+                    element.getData(element instanceof KEdge ? KEdgeLayout.class
                             : KShapeLayout.class);
             if (!layoutData.getProperty(LayoutOptions.NO_LAYOUT)) {
                 command.add(element, entry.getValue());
@@ -449,8 +508,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      */
     @Override
     protected void applyLayout() {
-        TransactionalEditingDomain editingDomain = diagramEditor
-                .getEditingDomain();
+        TransactionalEditingDomain editingDomain =
+                diagramEditor.getEditingDomain();
         editingDomain.getCommandStack().execute(applyLayoutCommand);
     }
 
@@ -475,7 +534,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      * map of editor change listeners to all editors for which they have
      * registered.
      */
-    private Map<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>> listenerMap = new HashMap<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>>();
+    private Map<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>> listenerMap =
+            new HashMap<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>>();
 
     /**
      * {@inheritDoc}
@@ -487,10 +547,11 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             final DiagramEditor diagEditor = (DiagramEditor) editorPart;
             diagEditor.getGraphicalViewer().addSelectionChangedListener(
                     listener);
-            List<Pair<DiagramEditor, ISelectionChangedListener>> editorList = listenerMap
-                    .get(listener);
+            List<Pair<DiagramEditor, ISelectionChangedListener>> editorList =
+                    listenerMap.get(listener);
             if (editorList == null) {
-                editorList = new LinkedList<Pair<DiagramEditor, ISelectionChangedListener>>();
+                editorList =
+                        new LinkedList<Pair<DiagramEditor, ISelectionChangedListener>>();
                 listenerMap.put(listener, editorList);
             }
             editorList.add(new Pair<DiagramEditor, ISelectionChangedListener>(
@@ -503,8 +564,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      */
     @Override
     public void removeChangeListener(final IEditorChangeListener listener) {
-        List<Pair<DiagramEditor, ISelectionChangedListener>> editorList = listenerMap
-                .remove(listener);
+        List<Pair<DiagramEditor, ISelectionChangedListener>> editorList =
+                listenerMap.remove(listener);
         if (editorList != null) {
             for (Pair<DiagramEditor, ISelectionChangedListener> pair : editorList) {
                 pair.getFirst().getGraphicalViewer()
