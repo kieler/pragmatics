@@ -42,7 +42,6 @@ import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
@@ -61,6 +60,7 @@ import de.cau.cs.kieler.kaom.graphiti.features.CreateRelationFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditLinkFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.KaomCopyFeature;
+import de.cau.cs.kieler.kaom.graphiti.features.KaomDeleteFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.KaomPasteFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.LayoutEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.LayoutPortFeature;
@@ -130,16 +130,18 @@ public class FeatureProvider extends DefaultFeatureProvider {
     @Override
     public IUpdateFeature getUpdateFeature(final IUpdateContext context) {
         if (context.getPictogramElement() instanceof ContainerShape) {
-            Object obj = getBusinessObjectForPictogramElement(context
-                    .getPictogramElement());
+            Object obj =
+                    getBusinessObjectForPictogramElement(context
+                            .getPictogramElement());
             if (obj instanceof Entity) {
                 return new UpdateEntityFeature(this);
             } else if (obj instanceof Relation) {
                 return new UpdateRelationFeature(this);
             }
         } else if (context.getPictogramElement() instanceof Connection) {
-            Object obj = getBusinessObjectForPictogramElement(context
-                    .getPictogramElement());
+            Object obj =
+                    getBusinessObjectForPictogramElement(context
+                            .getPictogramElement());
             if (obj instanceof Link) {
                 return new UpdateLinkFeature(this);
             }
@@ -153,7 +155,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public IMoveShapeFeature getMoveShapeFeature(final IMoveShapeContext context) {
+    public IMoveShapeFeature
+            getMoveShapeFeature(final IMoveShapeContext context) {
         Shape shape = context.getShape();
         Object ob = getBusinessObjectForPictogramElement(shape);
         if (ob instanceof Entity) {
@@ -214,8 +217,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
         PictogramElement pe = context.getPictogramElement();
         Object obj;
         if (pe instanceof ConnectionDecorator) {
-            obj = getBusinessObjectForPictogramElement(((ConnectionDecorator) pe)
-                    .getConnection());
+            obj =
+                    getBusinessObjectForPictogramElement(((ConnectionDecorator) pe)
+                            .getConnection());
         } else {
             obj = getBusinessObjectForPictogramElement(pe);
         }
@@ -241,7 +245,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public IPasteFeature getPasteFeature(final IPasteContext context) {
-        return new KaomPasteFeature(this, semanticProvider);
+        return new KaomPasteFeature(this);
     }
 
     /**
@@ -258,15 +262,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public IDeleteFeature getDeleteFeature(final IDeleteContext context) {
-        // FIXME: delete links when port/entity/relation is deleted
-        return new DefaultDeleteFeature(this) {
-            // override the user decision, so objects can be deleted without any
-            // dialog
-            @Override
-            protected boolean getUserDecision() {
-                return true;
-            }
-        };
+        return new KaomDeleteFeature(this);
     }
 
 }

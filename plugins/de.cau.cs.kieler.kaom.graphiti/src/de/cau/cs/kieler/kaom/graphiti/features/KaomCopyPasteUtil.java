@@ -88,6 +88,7 @@ public class KaomCopyPasteUtil {
             }
 
             EObject elem = list.get(0);
+            modelElems.add(elem);
             pictToEObjectMap.put(pe, elem);
             eObjectTopictMap.put(elem, pe);
 
@@ -144,10 +145,16 @@ public class KaomCopyPasteUtil {
             }
         }
 
-        modelElems.addAll(entities);
-        modelElems.addAll(relations);
-        modelElems.addAll(links);
-        modelElems.addAll(ports);
+        Iterator<EObject> iter = modelElems.iterator();
+        // remove discarded elements from the list to keep the order
+        // of the original selection intact
+        while (iter.hasNext()) {
+            EObject next = iter.next();
+            if (!(entities.contains(next) || relations.contains(next)
+                    || links.contains(next) || ports.contains(next))) {
+                iter.remove();
+            }
+        }
         return modelElems;
     }
 }

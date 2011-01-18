@@ -20,26 +20,25 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IPasteContext;
+import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
+import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
+import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.AbstractPasteFeature;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
+import de.cau.cs.kieler.kaom.Linkable;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
-import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
 
 /**
  * @author soh
  */
 public class KaomPasteFeature extends AbstractPasteFeature {
-
-    /**
-     * the semantic provider used to fetch the top-level element of the current
-     * diagram.
-     */
-    private SemanticProvider semanticProvider;
 
     /**
      *
@@ -54,9 +53,8 @@ public class KaomPasteFeature extends AbstractPasteFeature {
      * @param sp
      *            the semantic provider
      */
-    public KaomPasteFeature(final IFeatureProvider fp, final SemanticProvider sp) {
+    public KaomPasteFeature(final IFeatureProvider fp) {
         super(fp);
-        this.semanticProvider = sp;
         util = new KaomCopyPasteUtil();
     }
 
@@ -76,11 +74,83 @@ public class KaomPasteFeature extends AbstractPasteFeature {
         case ON_SINGLE_ENTITY:
             pasteIntoEntity((Entity) selection.get(0), clipBoard);
             break;
+        case LINKS_BETWEEN_ITEMS:
+            List<Link> links = new LinkedList<Link>();
+            for (EObject o : clipBoard) {
+                links.add((Link) o);
+            }
+            pasteLinksBetweenItems((Linkable) selection.get(0),
+                    (Linkable) selection.get(1), links);
+            break;
 
         case UNDEF:
         default:
-            throw new RuntimeException();
+            throw new UnsupportedOperationException();
         }
+    }
+
+    /**
+     * Paste one or more links between two items that can be linked.
+     * 
+     * @param source
+     *            source item
+     * @param target
+     *            target item
+     * @param links
+     *            the list of links
+     */
+    private void pasteLinksBetweenItems(final Linkable source,
+            final Linkable target, final List<Link> links) {
+        EObject container = source;
+        PictogramElement pe = util.geteObjectTopictMap().get(source);
+        if (source instanceof Port) {
+            Port port = (Port) source;
+            container = port.eContainer();
+            pe = (PictogramElement) pe.eContainer();
+        }
+        Entity parent = (Entity) container.eContainer();
+        ContainerShape cs = (ContainerShape) pe.eContainer();
+
+        Anchor srcAnchor = getAnchor(source);
+        Anchor targetAnchor = getAnchor(target);
+
+        for (Link link : links) {
+            Link copy = EcoreUtil.copy(link);
+            parent.getChildLinks().add(copy);
+
+            copy.setSource(source);
+            source.getOutgoingLinks().add(copy);
+
+            copy.setTarget(target);
+            target.getIncomingLinks().add(copy);
+
+            AddConnectionContext acc =
+                    new AddConnectionContext(srcAnchor, targetAnchor);
+            acc.setNewObject(copy);
+            acc.setTargetContainer(cs);
+            getFeatureProvider().addIfPossible(acc);
+        }
+    }
+
+    /**
+     * Get the anchor of the given model element.
+     * 
+     * @param eObject
+     *            the model element
+     * @return the anchor
+     */
+    private Anchor getAnchor(final EObject eObject) {
+        if (eObject instanceof Port) {
+            return (Anchor) util.geteObjectTopictMap().get(eObject);
+        }
+        AnchorContainer ac =
+                (AnchorContainer) util.geteObjectTopictMap().get(eObject);
+        for (Anchor a : ac.getAnchors()) {
+            if (a instanceof ChopboxAnchor) {
+                return a;
+            }
+        }
+        return null;
     }
 
     /**
@@ -89,8 +159,8 @@ public class KaomPasteFeature extends AbstractPasteFeature {
      */
     private void pasteIntoEntity(final Entity parentEntity,
             final List<EObject> clipBoard) {
-        ContainerShape container = (ContainerShape) util.geteObjectTopictMap()
-                .get(parentEntity);
+        ContainerShape container =
+                (ContainerShape) util.geteObjectTopictMap().get(parentEntity);
         for (EObject object : clipBoard) {
             EObject newObject = EcoreUtil.copy(object);
             if (object instanceof Entity) {
@@ -102,9 +172,10 @@ public class KaomPasteFeature extends AbstractPasteFeature {
             }
 
             AddContext ac = new AddContext();
+            ac.setTargetContainer(container);
+            ac.setNewObject(newObject);
             ac.setLocation(container.getGraphicsAlgorithm().getWidth() / 2,
                     container.getGraphicsAlgorithm().getHeight() / 2);
-            ac.setTargetContainer(container);
             addGraphicalRepresentation(ac, newObject);
         }
 
@@ -114,14 +185,150 @@ public class KaomPasteFeature extends AbstractPasteFeature {
      * @author soh
      */
     private static enum Situation {
-        ON_SINGLE_ENTITY, UNDEF;
+        ON_SINGLE_ENTITY, LINKS_BETWEEN_ITEMS, UNDEF;
     }
 
     /**
      * @author soh
      */
     private static enum PartialSituation {
-        ONE_ENTITY, ONE_PORT, ONE_LINK, ONE_RELATION, ONLY_ENTITIES, ONLY_RELATIONS, ONLY_PORTS, ONLY_LINKS, UNDEF;
+        ONE_ENTITY, TWO_ENTITIES, ONE_PORT, TWO_PORTS, ONE_LINK, TWO_LINKS,
+        ONE_RELATION, TWO_RELATIONS, MANY_ENTITIES, MANY_RELATIONS, MANY_PORTS,
+        MANY_LINKS, UNDEF;
+
+        /**
+         * @param eObject
+         * @return
+         */
+        public static PartialSituation one(final EObject eObject) {
+            if (eObject instanceof Entity) {
+                return ONE_ENTITY;
+            } else if (eObject instanceof Relation) {
+                return ONE_RELATION;
+            } else if (eObject instanceof Link) {
+                return ONE_LINK;
+            } else if (eObject instanceof Port) {
+                return ONE_PORT;
+            } else {
+                return UNDEF;
+            }
+        }
+
+        /**
+         * @param eObject
+         * @return
+         */
+        public static PartialSituation two(final EObject eObject) {
+            if (eObject instanceof Entity) {
+                return TWO_ENTITIES;
+            } else if (eObject instanceof Relation) {
+                return TWO_RELATIONS;
+            } else if (eObject instanceof Link) {
+                return TWO_LINKS;
+            } else if (eObject instanceof Port) {
+                return TWO_PORTS;
+            } else {
+                return UNDEF;
+            }
+        }
+
+        /**
+         * @param eObject
+         * @return
+         */
+        public static PartialSituation many(final EObject eObject) {
+            if (eObject instanceof Entity) {
+                return MANY_ENTITIES;
+            } else if (eObject instanceof Relation) {
+                return MANY_RELATIONS;
+            } else if (eObject instanceof Link) {
+                return MANY_LINKS;
+            } else if (eObject instanceof Port) {
+                return MANY_PORTS;
+            } else {
+                return UNDEF;
+            }
+        }
+
+        // /**
+        // * @param situation
+        // * @return
+        // */
+        // public static boolean entities(final PartialSituation situation) {
+        // return situation == ONE_ENTITY || situation == TWO_ENTITIES
+        // || situation == MANY_ENTITIES;
+        // }
+
+        // /**
+        // * @param situation
+        // * @return
+        // */
+        // public static boolean relations(final PartialSituation situation) {
+        // return situation == ONE_RELATION || situation == TWO_RELATIONS
+        // || situation == MANY_RELATIONS;
+        // }
+        //
+        // /**
+        // * @param situation
+        // * @return
+        // */
+        // public static boolean ports(final PartialSituation situation) {
+        // return situation == ONE_PORT || situation == TWO_PORTS
+        // || situation == MANY_PORTS;
+        // }
+        //
+        /**
+         * @param situation
+         * @return
+         */
+        public static boolean links(final PartialSituation situation) {
+            return situation == ONE_LINK || situation == TWO_LINKS
+                    || situation == MANY_LINKS;
+        }
+
+        /**
+         * @param situation
+         * @return
+         */
+        public static boolean isOne(final PartialSituation situation) {
+            return situation == ONE_ENTITY || situation == ONE_LINK
+                    || situation == ONE_PORT || situation == ONE_RELATION;
+        }
+
+        /**
+         * @param situation
+         * @return
+         */
+        public static boolean isTwo(final PartialSituation situation) {
+            return situation == TWO_ENTITIES || situation == TWO_LINKS
+                    || situation == TWO_PORTS || situation == TWO_RELATIONS;
+        }
+
+        /**
+         * @param list
+         * @return
+         */
+        public static boolean noLinks(final List<PartialSituation> list) {
+            for (PartialSituation p : list) {
+                if (links(p)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * @param list
+         * @return
+         */
+        public static boolean onlyLinks(final List<PartialSituation> list) {
+            for (PartialSituation p : list) {
+                if (!links(p)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     /**
@@ -131,66 +338,63 @@ public class KaomPasteFeature extends AbstractPasteFeature {
      */
     private Situation analyze(final List<EObject> selection,
             final List<EObject> clipBoard) {
-        Situation result = Situation.UNDEF;
-        PartialSituation selSit = doPartialAnalysis(selection);
-        PartialSituation clipSit = doPartialAnalysis(clipBoard);
-        switch (selSit) {
-        case ONE_ENTITY:
-            if (clipSit == PartialSituation.ONE_ENTITY
-                    || clipSit == PartialSituation.ONE_PORT
-                    || clipSit == PartialSituation.ONE_RELATION
-                    || clipSit == PartialSituation.ONLY_ENTITIES
-                    || clipSit == PartialSituation.ONLY_PORTS
-                    || clipSit == PartialSituation.ONLY_RELATIONS) {
-                return Situation.ON_SINGLE_ENTITY;
-            }
+        List<PartialSituation> selectionSituation =
+                doPartialAnalysis(selection);
+        List<PartialSituation> clipboardSituation =
+                doPartialAnalysis(clipBoard);
+        if (selectionSituation.isEmpty()
+                || selectionSituation.contains(PartialSituation.UNDEF)
+                || clipboardSituation.isEmpty()
+                || clipboardSituation.contains(PartialSituation.UNDEF)) {
             return Situation.UNDEF;
-        case ONE_LINK:
-            break;
-        case ONE_PORT:
-            break;
-        case ONE_RELATION:
-            break;
-        case ONLY_ENTITIES:
-            break;
-        case UNDEF:
-            break;
-        case ONLY_RELATIONS:
-            break;
-        case ONLY_LINKS:
-            break;
-        case ONLY_PORTS:
-            break;
-
         }
 
-        return result;
+        if (selectionSituation.size() == 1) {
+            PartialSituation selSit = selectionSituation.get(0);
+            if (selSit == PartialSituation.ONE_ENTITY
+                    && PartialSituation.noLinks(clipboardSituation)) {
+                return Situation.ON_SINGLE_ENTITY;
+            } else if (PartialSituation.isTwo(selSit)
+                    && !PartialSituation.links(selSit)
+                    && PartialSituation.onlyLinks(clipboardSituation)) {
+                return Situation.LINKS_BETWEEN_ITEMS;
+            }
+        } else if (selectionSituation.size() == 2) {
+            PartialSituation first = selectionSituation.get(0);
+            PartialSituation second = selectionSituation.get(1);
+            if (PartialSituation.isOne(first) && PartialSituation.isOne(second)
+                    && !PartialSituation.links(first)
+                    && !PartialSituation.links(second)
+                    && PartialSituation.onlyLinks(clipboardSituation)) {
+                return Situation.LINKS_BETWEEN_ITEMS;
+            }
+        }
+        return Situation.UNDEF;
     }
 
-    private PartialSituation doPartialAnalysis(final List<EObject> list) {
-        PartialSituation selSit = PartialSituation.UNDEF;
-        if (list.size() == 1) {
-            EObject selected = list.get(0);
-            if (selected instanceof Entity) {
-                return PartialSituation.ONE_ENTITY;
-            } else if (selected instanceof Port) {
-                return PartialSituation.ONE_PORT;
-            } else if (selected instanceof Link) {
-                return PartialSituation.ONE_LINK;
-            } else if (selected instanceof Relation) {
-                return PartialSituation.ONE_RELATION;
-            }
-        }
-        boolean onlyEntities = true;
+    /**
+     * @param list
+     * @return
+     */
+    private List<PartialSituation> doPartialAnalysis(final List<EObject> list) {
+        List<PartialSituation> result = new LinkedList<PartialSituation>();
         for (EObject eObj : list) {
-            if (!(eObj instanceof Entity)) {
-                onlyEntities = false;
+            if (result.contains(PartialSituation.one(eObj))) {
+                result.remove(PartialSituation.one(eObj));
+                result.add(PartialSituation.two(eObj));
+            } else if (result.contains(PartialSituation.two(eObj))) {
+                result.remove(PartialSituation.two(eObj));
+                result.add(PartialSituation.many(eObj));
+            } else if (result.contains(PartialSituation.many(eObj))) {
+                // do nothing
+            } else {
+                PartialSituation part = PartialSituation.one(eObj);
+                if (part != PartialSituation.UNDEF) {
+                    result.add(part);
+                }
             }
         }
-        if (onlyEntities) {
-            selSit = PartialSituation.ONLY_ENTITIES;
-        }
-        return selSit;
+        return result;
     }
 
     /**
