@@ -18,7 +18,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.CombinationParameter;
-import de.cau.cs.kieler.core.kivi.triggers.ButtonTrigger.ButtonState;
+import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 

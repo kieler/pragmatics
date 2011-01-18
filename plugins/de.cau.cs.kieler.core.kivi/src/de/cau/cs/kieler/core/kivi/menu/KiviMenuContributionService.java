@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.kivi.triggers;
+package de.cau.cs.kieler.core.kivi.menu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class KiviMenuContributionService {
     /** internal list of Buttons. */
     private List<ButtonConfiguration> buttonConfigurations = new ArrayList<ButtonConfiguration>();
 
-    /** Add a button configuration with all possible parameters */
+    /** Add a button configuration with all possible parameters. */
     public void addToolbarButton(ICombination responsibleCombination, final String id,
             final String label, final String tooltip, final ImageDescriptor icon, final int style,
             final Expression visibilityExpression, final String... activeEditors) {
@@ -43,7 +43,7 @@ public class KiviMenuContributionService {
                 tooltip, icon, style, visibilityExpression, activeEditors));
     }
 
-    /** Add a button configuration with only a few parameters */
+    /** Add a button configuration with only a few parameters. */
     public void addToolbarButton(ICombination responsibleCombination, final String id,
             final String tooltip, final ImageDescriptor icon, final String... activeEditors) {
         buttonConfigurations.add(new ButtonConfiguration(responsibleCombination, id, "KiviButton",
@@ -57,7 +57,7 @@ public class KiviMenuContributionService {
                 null, SWT.PUSH, null, null));
     }
 
-    /** Get the list of registered ButtonConfigurations */
+    /** Get the list of registered ButtonConfigurations. */
     public List<ButtonConfiguration> getButtonConfigurations() {
         return buttonConfigurations;
     }

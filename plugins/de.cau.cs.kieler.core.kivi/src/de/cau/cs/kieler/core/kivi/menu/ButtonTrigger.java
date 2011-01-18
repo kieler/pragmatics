@@ -11,22 +11,17 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.kivi.triggers;
+package de.cau.cs.kieler.core.kivi.menu;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.cau.cs.kieler.core.kivi.AbstractTrigger;
 import de.cau.cs.kieler.core.kivi.AbstractTriggerState;
 import de.cau.cs.kieler.core.kivi.ITrigger;
+import de.cau.cs.kieler.core.kivi.ITriggerState;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.Maybe;
@@ -41,7 +36,7 @@ public class ButtonTrigger extends AbstractTrigger {
 
     private static ButtonTrigger instance;
 
-    private static ButtonTrigger getInstance() {
+    static ButtonTrigger getInstance() {
         return instance;
     }
 
@@ -53,46 +48,6 @@ public class ButtonTrigger extends AbstractTrigger {
     @Override
     public void unregister() {
         instance = null;
-    }
-
-    /**
-     * The handler that receives commands from various view management buttons.
-     * 
-     * @author mmu
-     * 
-     */
-    public static class ButtonHandler extends AbstractHandler {
-
-        /**
-         * {@inheritDoc}
-         */
-        public Object execute(final ExecutionEvent event) throws ExecutionException {
-            if (getInstance() != null) {
-                IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
-                String id = event.getCommand().getId();
-                boolean pushed = false;
-                if (event.getTrigger() instanceof Event) {
-                    Event e = (Event) event.getTrigger();
-                    if (e.widget instanceof ToolItem) {
-                        ToolItem tool = (ToolItem) e.widget;
-                        pushed = tool.getSelection();
-                    }
-
-                }
-                System.out.println("ButtonTrigger: "+id+" "+pushed);
-                getInstance().trigger(
-                        new ButtonState(editorPart, id, event.getParameters(), pushed));
-            }
-            return null;
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-//        @Override
-//        public boolean isEnabled() {
-//            return ;
-//        }
     }
 
     /**
@@ -108,8 +63,9 @@ public class ButtonTrigger extends AbstractTrigger {
         private String buttonId = "";
 
         private boolean pushedIn = false;
-
         private Map<?, ?> parameters = new HashMap<Object, Object>();
+
+        private Map<String, Boolean> buttonStatusMap = new HashMap<String, Boolean>();
 
         /**
          * Default constructor.
@@ -135,6 +91,7 @@ public class ButtonTrigger extends AbstractTrigger {
             buttonId = id;
             pushedIn = pushed;
             parameters = params;
+            buttonStatusMap.put(id, pushed);
         }
 
         /**
@@ -157,7 +114,7 @@ public class ButtonTrigger extends AbstractTrigger {
         }
 
         /**
-         * Get the id for the button.
+         * Get the id for the last button pressed. 
          * 
          * @return the id
          */
@@ -175,7 +132,8 @@ public class ButtonTrigger extends AbstractTrigger {
         }
 
         /**
-         * Check if a toggle button is pushed in or not.
+         * Check if a toggle button is pushed in or not. Gives the state of the last button
+         * pressed.
          * 
          * @return true if pushed in
          */
@@ -188,6 +146,29 @@ public class ButtonTrigger extends AbstractTrigger {
          */
         public Class<? extends ITrigger> getTriggerClass() {
             return ButtonTrigger.class;
+        }
+
+        /**
+         * Get the map of button IDs to the state of the button. Returns false if the button Id is
+         * not registered.
+         * 
+         * @return the map of button IDs to the state of the button.
+         */
+        public boolean isPushedIn(String buttonId) {
+            if (buttonStatusMap.containsKey(buttonId)) {
+                return buttonStatusMap.get(buttonId);
+            }
+            return false;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void merge(ITriggerState previous) {
+            if (previous instanceof ButtonState) {
+                this.buttonStatusMap.putAll(((ButtonState) previous).buttonStatusMap);
+            }
         }
 
     }

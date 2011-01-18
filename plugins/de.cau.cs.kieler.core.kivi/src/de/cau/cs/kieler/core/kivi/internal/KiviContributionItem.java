@@ -3,7 +3,9 @@ package de.cau.cs.kieler.core.kivi.internal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IParameter;
@@ -24,9 +26,9 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IServiceLocator;
 
-import de.cau.cs.kieler.core.kivi.triggers.ButtonTrigger;
-import de.cau.cs.kieler.core.kivi.triggers.KiviMenuContributionService;
-import de.cau.cs.kieler.core.kivi.triggers.KiviMenuContributionService.ButtonConfiguration;
+import de.cau.cs.kieler.core.kivi.menu.ButtonHandler;
+import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
+import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.ButtonConfiguration;
 
 /**
  * Dynamic toolbar contribution for the use with KIELER View Management. It extends the idea of
@@ -72,7 +74,8 @@ public class KiviContributionItem extends CompoundContributionItem implements
      */
     private InternalMenuService menuService;
 
-    private List<IContributionItem> buttons = new ArrayList<IContributionItem>();
+    static private Map<String, IContributionItem> idButtonMap = new HashMap<String, IContributionItem>();
+    static private Map<IContributionItem, ButtonHandler> buttonsHandlerMap = new HashMap<IContributionItem, ButtonHandler>();
 
     /**
      * {@inheritDoc}
@@ -92,32 +95,37 @@ public class KiviContributionItem extends CompoundContributionItem implements
 
         System.out.println("KiviContributionItem.getContributionItems()");
 
-        // every Toolbar update re-create all buttons.
-        // TODO: caching might be more efficient
-        buttons.clear();
         List<ButtonConfiguration> buttonConfigurations = KiviMenuContributionService.INSTANCE
                 .getButtonConfigurations();
         for (ButtonConfiguration config : buttonConfigurations) {
-            // only show button, if the corresponding KiVi combination is actually activated
-            if (config.getResponsiveCombination().isActive()) {
-                if (commandService != null) {
-                    // get a command and register the Kivi ButtonHandler for it
-                    Command cmd = commandService.getCommand(config.getId());
-                    Category category = commandService.getCategory("de.cau.cs.kieler");
-                    IParameter[] params = {};
-                    cmd.define(config.getLabel(), null, category, params);
-                    cmd.setHandler(new ButtonTrigger.ButtonHandler());
-                }
+
+            IContributionItem item;
+            // first look for a cached button
+            item = idButtonMap.get(config.getId());
+            // only create a new button, if there has no one be defined before
+            if (item == null && commandService != null) {
+                // get a command and register the Kivi ButtonHandler for it
+                Command cmd = commandService.getCommand(config.getId());
+                Category category = commandService.getCategory("de.cau.cs.kieler");
+                IParameter[] params = {};
+                cmd.define(config.getLabel(), null, category, params);
+                // define a Handler for the command
+                ButtonHandler buttonHandler = new ButtonHandler();
+                cmd.setHandler(buttonHandler);
+
                 // now specify the button
                 CommandContributionItemParameter parameter = new CommandContributionItemParameter(
                         serviceLocator, config.getId(), config.getId(),
                         new HashMap<String, String>(), config.getIcon(), null, null,
-                        config.getLabel(), null, config.getTooltip(), config.getStyle(), null, false);
+                        config.getLabel(), null, config.getTooltip(), config.getStyle(), null,
+                        false);
                 // this is the button
-                CommandContributionItem item = new CommandContributionItem(parameter);
-                item.setVisible(true);
-                buttons.add(item);
-                
+                item = new CommandContributionItem(parameter);
+                // remember some relations between button, its handler and the corresponding
+                // configuration
+                buttonsHandlerMap.put(item, buttonHandler);
+                idButtonMap.put(config.getId(), item);
+
                 // specify visibility
                 Expression visibilityExpression = null;
                 // specify visibility for active editors
@@ -146,14 +154,40 @@ public class KiviContributionItem extends CompoundContributionItem implements
                     menuService.registerVisibleWhen(item, visibilityExpression, null, null);
                 }
             }
+            // change the visibility if some combination has changed its active state (e.g. from
+            // prefs)
+            if (!config.getResponsiveCombination().isActive()) {
+                item.setVisible(false);
+            }
         }
 
-        return (IContributionItem[]) buttons.toArray(new IContributionItem[buttons.size()]);
+        return (IContributionItem[]) buttonsHandlerMap.keySet().toArray(
+                new IContributionItem[buttonsHandlerMap.size()]);
     }
 
     /**
-     * (haf) simply copied the code from the CompoundContributionItem.
-     *  {@inheritDoc}
+     * Set the enabled state of a menu contribution handler associated with the given ID. This state
+     * is used by corresponding menu contributions (buttons, menu entries, etc.) to determine the
+     * enabled state of that menu item, e.g. whether a button should be grayed out or not.
+     * 
+     * @author haf
+     * @param buttonID
+     *            the id associated in KiVi with the menu item
+     * @param enabled
+     *            true iff the handler is enabled.
+     */
+    public static void setEnabledState(final String buttonID, final boolean enabled) {
+        IContributionItem item = idButtonMap.get(buttonID);
+        if (item != null) {
+            ButtonHandler handler = buttonsHandlerMap.get(item);
+            if (handler != null) {
+                handler.setEnabled(enabled);
+            }
+        }
+    }
+
+    /**
+     * (haf) simply copied the code from the CompoundContributionItem. {@inheritDoc}
      */
     @Override
     public void fill(final ToolBar parent, final int index) {
