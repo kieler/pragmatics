@@ -21,6 +21,11 @@ import org.eclipse.osgi.util.NLS;
  * @author cds
  */
 public final class Messages extends NLS {
+    // This is an automatically generated utility class. Keep Checkstyle off.
+    // CHECKSTYLEOFF JavadocVariable
+    // CHECKSTYLEOFF StaticVariableName
+    // CHECKSTYLEOFF VisibilityModifier
+    
     private static final String BUNDLE_NAME =
         "de.cau.cs.kieler.kaom.importer.ptolemy.messages"; //$NON-NLS-1$
     
