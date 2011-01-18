@@ -23,7 +23,7 @@ public enum LayoutAlgorithm {
     /** Sugiyama's layout algorithm. */
     SUGIYAMA,
     /** The planarization layout algorithm. */
-    UMLPLANARIZATION,
+    PLANARIZATION,
     /** The FMMM layout algorithm. */
     FMMM,
     /** The Davidson-Harel layout algorithm. */

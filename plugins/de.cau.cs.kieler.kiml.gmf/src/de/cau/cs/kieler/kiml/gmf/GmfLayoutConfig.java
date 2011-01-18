@@ -156,6 +156,10 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      */
     @Override
     public void setFocus(final Object element) {
+        if (element != null) {
+            // first clear the current focus
+            super.setFocus(null);
+        }
         super.setFocus(element);
         if (element instanceof IGraphicalEditPart) {
             super.setFocus(((IGraphicalEditPart) element).getNotationView().getElement());

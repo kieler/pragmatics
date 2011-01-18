@@ -107,13 +107,16 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * Set the edit part or domain model element as focus for this layout configuration.
      * This can be done without initializing the layout configuration in order to use
      * {@link #getAllProperties()} efficiently, since the same configuration instance can
-     * be reused multiple times.
+     * be reused multiple times. Passing {@code null} clears the current focus.
      * 
      * @param element an {@link EditPart} or {@link EObject}
      */
     @Override
     public void setFocus(final Object element) {
-        if (element instanceof EditPart) {
+        if (element == null) {
+            this.focusEditPart = null;
+            this.modelElement = null;
+        } else if (element instanceof EditPart) {
             this.focusEditPart = (EditPart) element;
         } else if (element instanceof EObject) {
             this.modelElement = (EObject) element;

@@ -59,7 +59,7 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         case SUGIYAMA:
             layoutAlgorithm = new SugiyamaLayouter();
             break;
-        case UMLPLANARIZATION:
+        case PLANARIZATION:
             layoutAlgorithm = new PlanarizationLayouter();
             break;
         case FMMM:

@@ -81,10 +81,14 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      */
     @Override
     public void setFocus(final Object element) {
+        if (element != null) {
+            // first clear the current focus
+            super.setFocus(null);
+        }
         super.setFocus(element);
         if (element instanceof IPictogramElementEditPart) {
             PictogramElement pe = ((IPictogramElementEditPart) element).getPictogramElement();
-            if (pe.getLink().getBusinessObjects().size() > 0) {
+            if (pe.getLink() != null && pe.getLink().getBusinessObjects().size() > 0) {
                 super.setFocus(pe.getLink().getBusinessObjects().get(0));
             }
         }

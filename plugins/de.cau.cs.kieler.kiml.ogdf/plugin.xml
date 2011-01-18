@@ -97,8 +97,8 @@
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
             id="de.cau.cs.kieler.kiml.ogdf.planarizationUML"
-            name="Mixed-Upward Planarization"
-            parameter="UMLPLANARIZATION"
+            name="Planarization"
+            parameter="PLANARIZATION"
             type="de.cau.cs.kieler.layout.types.orthogonal">
          <supportedDiagram
                priority="10"
