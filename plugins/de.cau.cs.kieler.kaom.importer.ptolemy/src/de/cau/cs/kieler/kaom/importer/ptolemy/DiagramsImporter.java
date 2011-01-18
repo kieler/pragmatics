@@ -15,7 +15,11 @@
 package de.cau.cs.kieler.kaom.importer.ptolemy;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +78,11 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard;
  * @author cds
  */
 public class DiagramsImporter implements IRunnableWithProgress {
+    
+    /**
+     * Size of the file copy buffer in bytes.
+     */
+    private static final int FILE_BUFFER_SIZE = 1024;
     
     /**
      * The wizard that uses this importer.
@@ -244,7 +253,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
      * @throws CoreException if something goes wrong creating the target container.
      */
     private IContainer getTargetContainer(final IProgressMonitor monitor) throws CoreException {
-        monitor.beginTask("Ensure target container existence.", 1);
+        monitor.beginTask("Ensuring target container existence.", 1);
         
         // Declare some helpful variables
         IContainer currContainer;
@@ -291,7 +300,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         int totalWork = sourceFiles.size();
         
         // Begin the main task
-        monitor.beginTask("Importing diagrams.", totalWork);
+        monitor.beginTask("Importing models.", totalWork);
         
         // Iterate through the array of source files
         for (File sourceFile : sourceFiles) {
@@ -435,6 +444,50 @@ public class DiagramsImporter implements IRunnableWithProgress {
     }
     
     /**
+     * Returns a version of the source file with moml file extension.
+     * 
+     * This is necessary because the import can only cope with moml files, not with the
+     * more common xml files. To work around this, xml files are copied to the temp
+     * folder, using a file name with a moml extension.
+     *  
+     * @param sourceFile the source file to possibly be copied to a temporary moml file.
+     * @return moml file to be imported.
+     * @throws IOException if the creation of the temporary file failed.
+     */
+    private File getTemporarySourceFile(final File sourceFile) throws IOException {
+        // Check if the source file is already a moml file
+        if (Utils.getFileExtension(sourceFile.getName()).toLowerCase().equals(
+                PtolemyImporterConstants.PTOLEMY_INTERNAL_FILE_EXTENSION)) {
+            
+            return sourceFile;
+        }
+        
+        // Get the file's base name
+        String baseName = Utils.getFileBaseName(sourceFile.getName());
+        
+        // Create a temporary file that automatically gets deleted when the VM ends
+        File realSourceFile = File.createTempFile(baseName,
+                "." + PtolemyImporterConstants.PTOLEMY_INTERNAL_FILE_EXTENSION);
+        realSourceFile.deleteOnExit();
+        
+        // Copy the source file's content to the new file
+        InputStream iStream = new FileInputStream(sourceFile);
+        OutputStream oStream = new FileOutputStream(realSourceFile);
+        
+        byte[] buffer = new byte[FILE_BUFFER_SIZE];
+        int len;
+        
+        while ((len = iStream.read(buffer)) > 0) {
+            oStream.write(buffer, 0, len);
+        }
+        
+        iStream.close();
+        oStream.close();
+        
+        return realSourceFile;
+    }
+    
+    /**
      * Does the actual work of importing the given file.
      * 
      * @param sourceFile the source file to import.
@@ -447,11 +500,23 @@ public class DiagramsImporter implements IRunnableWithProgress {
         
         URI sourceFileURI, targetFileURI;
         
+        // Copy the source file to a temporary file with a .moml extension
+        File realSourceFile;
+        try {
+            realSourceFile = getTemporarySourceFile(sourceFile);
+        } catch (IOException e) {
+            throw new CoreException(new Status(
+                    IStatus.ERROR,
+                    KaomImporterPtolemyPlugin.PLUGIN_ID,
+                    "Unable to create temporary .moml file.",
+                    e));
+        }
+        
         // Prepare target file
         IFile targetFile = targetContainer.getFile(new Path(targetFileName));
         
         // Prepare URIs
-        sourceFileURI = URI.createFileURI(sourceFile.getAbsolutePath());
+        sourceFileURI = URI.createFileURI(realSourceFile.getAbsolutePath());
         targetFileURI = URI.createPlatformResourceURI(targetFile.getFullPath().toString(), true);
         
         // Setup the transformation

@@ -25,7 +25,12 @@ public final class PtolemyImporterConstants {
     /**
      * The possible extensions for Ptolemy diagram files.
      */
-    public static final String[] PTOLEMY_FILE_EXTENSIONS = {"moml"};
+    public static final String[] PTOLEMY_FILE_EXTENSIONS = {"moml", "xml"};
+    
+    /**
+     * The file extension internally used for temporary Ptolemy model files.
+     */
+    public static final String PTOLEMY_INTERNAL_FILE_EXTENSION = "moml";
     
     /**
      * Our target file extension for model files.

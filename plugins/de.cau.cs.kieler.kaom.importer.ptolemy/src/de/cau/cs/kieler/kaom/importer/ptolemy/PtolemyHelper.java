@@ -48,10 +48,6 @@ import de.cau.cs.kieler.kaom.Port;
  * @author cds
  */
 public class PtolemyHelper implements IExecutionContextAware {
-
-//    /** The Xtend execution context. Currently not used. */
-//    private ExecutionContext ctx;
-
     
     /**
      * Constructs a new instance.
@@ -292,8 +288,6 @@ public class PtolemyHelper implements IExecutionContextAware {
      * @param context the execution context.
      */
     public void setExecutionContext(final ExecutionContext context) {
-//        // This is currently not used
-//        this.ctx = context;
     }
 
 }

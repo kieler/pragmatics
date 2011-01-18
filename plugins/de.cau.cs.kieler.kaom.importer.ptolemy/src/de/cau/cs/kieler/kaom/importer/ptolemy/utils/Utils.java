@@ -134,7 +134,7 @@ public final class Utils {
      * with a dot, the part following it is not considered a file extension.
      * 
      * @param fileName name of the file whose extension to return.
-     * @return the file extension, if any.
+     * @return the file extension, if any, without the dot.
      */
     public static String getFileExtension(final String fileName) {
         int extensionIndex = fileName.lastIndexOf('.');
@@ -143,5 +143,21 @@ public final class Utils {
         }
         
         return fileName.substring(extensionIndex + 1);
+    }
+    
+    /**
+     * Returns the file name without file extension.
+     * 
+     * @param fileName name of the file whose base name to return.
+     * @return the base name.
+     */
+    public static String getFileBaseName(final String fileName) {
+        String extension = getFileExtension(fileName);
+        
+        if (extension.length() == 0) {
+            return fileName;
+        } else {
+            return fileName.substring(0, fileName.length() - extension.length() - 1);
+        }
     }
 }
