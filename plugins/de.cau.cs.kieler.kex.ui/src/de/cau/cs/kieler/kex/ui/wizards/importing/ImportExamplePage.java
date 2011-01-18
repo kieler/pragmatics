@@ -59,6 +59,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
+import de.cau.cs.kieler.kex.ui.wizards.importing.viewer.ExampleTreeViewer;
 
 /**
  * This class represents the import page of importwizard. It contains a tree which shows the
@@ -99,6 +100,7 @@ public class ImportExamplePage extends WizardPage {
     private Composite previewComp;
 
     private Label previewDesc;
+    private ExampleTreeViewer viewer;
 
     /**
      * The constructor will be called with following parameters.
@@ -127,7 +129,8 @@ public class ImportExamplePage extends WizardPage {
     }
 
     private Control createLeft(Composite parent) {
-        return createTreeComposite(parent);
+        viewer = new ExampleTreeViewer(parent);
+        return viewer.getControl();
     }
 
     private void createRight(Composite parent, Control control) {

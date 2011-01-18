@@ -88,9 +88,10 @@ public class QuickStartAction implements IIntroAction {
 
         Example quickStarter = null;
         try {
-            // TODO editorabhängig suchen, d.h. pluginid aus link mit
+            // TODO editorabhï¿½ngig suchen, d.h. pluginid aus link mit
             // reinreichen und dann suchen, da exampleTitle
-            // nicht unbedingt eindeutig
+            // nicht unbedingt eindeutig,
+            // TODO hier auch die id statt des titles zu verwenden.
             quickStarter = ExampleManager.get().getExample(sourcetype, exampleTitle);
         } catch (KielerException e) {
             showError("Example loading error", e.getMessage());

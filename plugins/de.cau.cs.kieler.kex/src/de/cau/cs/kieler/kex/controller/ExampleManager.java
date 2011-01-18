@@ -102,24 +102,23 @@ public final class ExampleManager {
      *             , can be thrown by <code> {@link PluginExampleCollector}.getExample(...) </code>
      *             and if the example found example is null.
      */
-    public Example getExample(final SourceType type, final String exampleTitle)
-            throws KielerException {
+    public Example getExample(final SourceType type, final String exampleId) throws KielerException {
         if (type == SourceType.KIELER) {
             if (isLoaded) {
                 Map<String, Example> examplePool = extensionCollector.getExamplePool();
-                Example example = examplePool.get(exampleTitle);
+                Example example = examplePool.get(exampleId);
                 if (example != null) {
                     return example;
                 } else {
-                    throw new KielerException(ErrorMessage.NO_EXAMPLE_FOUND + exampleTitle);
+                    throw new KielerException(ErrorMessage.NO_EXAMPLE_FOUND + exampleId);
                 }
             } else {
-                return PluginExampleCollector.getExample(exampleTitle);
+                return PluginExampleCollector.getExample(exampleId);
             }
         }
         if (type == SourceType.PUBLIC) {
             // search in online interface for example
-            return DBExampleCollector.getExample(exampleTitle);
+            return DBExampleCollector.getExample(exampleId);
         }
         return null;
     }

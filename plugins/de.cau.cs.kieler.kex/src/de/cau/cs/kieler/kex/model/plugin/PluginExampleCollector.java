@@ -119,7 +119,10 @@ public class PluginExampleCollector extends ExampleCollector {
         String description = categoryElement.getAttribute(PluginConstants.Category.DESCRIPTION);
         String iconPath = categoryElement.getAttribute(PluginConstants.Category.ICON);
         String parentId = categoryElement.getAttribute(PluginConstants.Category.PARENT);
-        getCategories().add(new Category(id, title, description, iconPath, parentId));
+        Category category = new Category(id, title, description, iconPath, parentId);
+        String exNamespaceId = categoryElement.getNamespaceIdentifier();
+        category.setNamespaceId(exNamespaceId);
+        getCategories().add(category);
     }
 
     @Override
@@ -205,20 +208,20 @@ public class PluginExampleCollector extends ExampleCollector {
 
     /**
      * 
-     * @param exampleTitle
+     * @param exampleId
      *            , {@link String}
      * @return {@link Example}
      * @throws KielerException
      *             , if a {@link InvalidRegistryObjectException} or a
      *             {@link IllegalArgumentException} has been thrown.
      */
-    public static Example getExample(final String exampleTitle) throws KielerException {
+    public static Example getExample(final String exampleId) throws KielerException {
         IConfigurationElement[] configElements = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(PluginConstants.KEX_EXT_POINT);
         for (IConfigurationElement element : configElements) {
             String elementName = element.getName();
             if (PluginConstants.Example.EXAMPLE.equals(elementName)) {
-                if (element.getAttribute(PluginConstants.Example.TITLE).equals(exampleTitle)) {
+                if (element.getAttribute(PluginConstants.Example.ID).equals(exampleId)) {
                     try {
                         return toExample(element);
                     } catch (InvalidRegistryObjectException e) {
@@ -233,7 +236,6 @@ public class PluginExampleCollector extends ExampleCollector {
                 }
             }
         }
-
         return null;
     }
 }

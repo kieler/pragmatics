@@ -24,10 +24,16 @@ import org.eclipse.core.runtime.Assert;
 public class Category {
 
     private String id;
+
     private String title;
+
     private String description;
+
     private String iconPath;
+
     private String parentId;
+
+    private String namespaceId;
 
     /**
      * creates a new example category.
@@ -124,6 +130,14 @@ public class Category {
     public String toString() {
         return new StringBuffer().append("Example [id= ").append(id).append(", title= ")
                 .append(title).append("]").toString();
+    }
+
+    public void setNamespaceId(String namespaceId) {
+        this.namespaceId = namespaceId;
+    }
+
+    public String getNamespaceId() {
+        return namespaceId;
     }
 
 }
