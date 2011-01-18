@@ -73,7 +73,8 @@ public class PtolemyHelper implements IExecutionContextAware {
                 try {
                     actor = instantiatePtolemyEntity((EntityType) o);
                 } catch (XmlException xe) {
-                    System.out.println("Could not instanciate entity: " + xe.getMessage());
+                    System.out.println(Messages.PtolemyHelper_exception_entityInstantiationFailed
+                            + xe.getMessage());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -81,7 +82,8 @@ public class PtolemyHelper implements IExecutionContextAware {
                 try {
                     actor = instantiatePtolemyEntity((ClassType) o);
                 } catch (XmlException xe) {
-                    System.out.println("Could not instanciate entity: " + xe.getMessage());
+                    System.out.println(Messages.PtolemyHelper_exception_entityInstantiationFailed
+                            + xe.getMessage());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -116,13 +118,13 @@ public class PtolemyHelper implements IExecutionContextAware {
                     // Find out whether it is an input or output (or both)
                     if (ptolemyPort.isInput()) {
                         Annotation isInput = AnnotationsFactory.eINSTANCE.createAnnotation();
-                        isInput.setName("input");
+                        isInput.setName("input"); //$NON-NLS-1$
                         kaomPort.getAnnotations().add(isInput);
                     }
                     
                     if (ptolemyPort.isOutput()) {
                         Annotation isOutput = AnnotationsFactory.eINSTANCE.createAnnotation();
-                        isOutput.setName("output");
+                        isOutput.setName("output"); //$NON-NLS-1$
                         kaomPort.getAnnotations().add(isOutput);
                     }
                     
@@ -155,7 +157,7 @@ public class PtolemyHelper implements IExecutionContextAware {
     public NamedObj instantiatePtolemyEntity(final EntityType entity) throws Exception {
         String classname = entity.getClass1();
         
-        if (classname.equals("ptolemy.domains.modal.kernel.State")) {
+        if (classname.equals("ptolemy.domains.modal.kernel.State")) { //$NON-NLS-1$
             return instantiatePtolemyState(entity.getClass1(), entity.getName());
         }
         
@@ -172,7 +174,7 @@ public class PtolemyHelper implements IExecutionContextAware {
     public NamedObj instantiatePtolemyEntity(final ClassType classType) throws Exception {
         String classname = classType.getExtends();
         
-        if (classname.equals("ptolemy.domains.modal.kernel.State")) {
+        if (classname.equals("ptolemy.domains.modal.kernel.State")) { //$NON-NLS-1$
             return instantiatePtolemyState(classType.getExtends(), classType.getName());
         }
         
@@ -187,7 +189,7 @@ public class PtolemyHelper implements IExecutionContextAware {
      * @throws Exception may throw different exceptions during parsing.
      */
     public NamedObj instantiatePtolemyEntity(final String className) throws Exception {
-        return instantiatePtolemyActor(className, "actorInstance");
+        return instantiatePtolemyActor(className, "actorInstance"); //$NON-NLS-1$
     }
 
     /**
@@ -209,11 +211,13 @@ public class PtolemyHelper implements IExecutionContextAware {
         MoMLParser.setMoMLFilters(BackwardCompatibility.allFilters());
         
         // atomic actors require a valid parent so create a dummy parent
-        String parent = "<entity name=\"TopLevel\" class=\"ptolemy.actor.TypedCompositeActor\">";
+        String parent =
+            "<entity name=\"TopLevel\" class=\"ptolemy.actor.TypedCompositeActor\">"; //$NON-NLS-1$
         
         // embed the real entity description in the parent
-        String child = parent + "<entity name=\"" + entityName + "\"class=\"" + className
-                + "\"/> </entity>";
+        String child = parent + "<entity name=\"" + entityName //$NON-NLS-1$
+                + "\"class=\"" + className //$NON-NLS-1$
+                + "\"/> </entity>"; //$NON-NLS-1$
         
         // let the parser do the job
         NamedObj actor = parser.parse(child);
@@ -243,11 +247,13 @@ public class PtolemyHelper implements IExecutionContextAware {
         // states may only be in a ModalController and not in a normal
         // CompositeActor
         String parent =
-            "<entity name=\"TopLevel\" class=\"ptolemy.domains.modal.modal.ModalController\">";
+            "<entity name=\"TopLevel\" " //$NON-NLS-1$
+            + "class=\"ptolemy.domains.modal.modal.ModalController\">"; //$NON-NLS-1$
         
         // embed the real entity description in the parent
-        String child = parent + "<entity name=\"" + entityName + "\"class=\"" + className
-                + "\"/> </entity>";
+        String child = parent + "<entity name=\"" + entityName //$NON-NLS-1$
+                + "\"class=\"" + className //$NON-NLS-1$
+                + "\"/> </entity>"; //$NON-NLS-1$
         
         // let the parser do the job
         NamedObj actor = parser.parse(child);

@@ -27,6 +27,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 
 import de.cau.cs.kieler.core.ui.wizards.WorkspaceResourcesPage;
+import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
 
 
@@ -38,7 +39,7 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
 public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
     
     // CONSTANTS
-    private static final String PAGE_NAME = "importDiagramsWorkspaceSourcesPage";
+    private static final String PAGE_NAME = "importDiagramsWorkspaceSourcesPage"; //$NON-NLS-1$
     
     // VARIABLES
     private IStructuredSelection selection;
@@ -52,8 +53,7 @@ public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
     public ImportDiagramsWorkspaceSourcesPage(final IStructuredSelection theSelection) {
         super(PAGE_NAME, true, PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS);
         
-        this.setMessage(
-                "Select the Ptolemy2 .moml or .xml files to import from the workspace.");
+        this.setMessage(Messages.ImportDiagramsWorkspaceSourcesPage_message);
         
         selection = theSelection;
     }

@@ -21,6 +21,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 
 import de.cau.cs.kieler.core.ui.wizards.FileSystemResourcesPage;
+import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
 
 
@@ -32,7 +33,7 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
 public class ImportDiagramsFileSystemSourcesPage extends FileSystemResourcesPage {
     
     // CONSTANTS
-    private static final String PAGE_NAME = "importDiagramsFileSystemSourcesPage";
+    private static final String PAGE_NAME = "importDiagramsFileSystemSourcesPage"; //$NON-NLS-1$
     
     // VARIABLES
     private IStructuredSelection selection;
@@ -47,7 +48,7 @@ public class ImportDiagramsFileSystemSourcesPage extends FileSystemResourcesPage
         super(PAGE_NAME, true, PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS);
         
         this.setMessage(
-                "Select the Ptolemy2 .moml or .xml files to import from the local file system.");
+                Messages.ImportDiagramsFileSystemSourcesPage_message);
         
         selection = theSelection;
     }

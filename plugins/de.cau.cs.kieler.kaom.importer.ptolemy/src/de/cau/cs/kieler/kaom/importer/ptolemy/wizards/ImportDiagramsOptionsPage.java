@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
 import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
 
 
@@ -35,11 +36,14 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
 public class ImportDiagramsOptionsPage extends WizardPage {
     
     // CONSTANTS
-    private static final String PAGE_NAME = "importDiagramsOptionsPage";
+    private static final String PAGE_NAME = "importDiagramsOptionsPage"; //$NON-NLS-1$
     
-    private static final String SETT_SOURCE_FILESYSTEM = PAGE_NAME + ".source.filesystem";
-    private static final String SETT_OPT_INIT_KAOD = PAGE_NAME + ".options.initKaodFiles";
-    private static final String SETT_OPT_OVERWRITE = PAGE_NAME + ".options.overwrite";
+    private static final String SETT_SOURCE_FILESYSTEM =
+        PAGE_NAME + ".source.filesystem"; //$NON-NLS-1$
+    private static final String SETT_OPT_INIT_KAOD =
+        PAGE_NAME + ".options.initKaodFiles"; //$NON-NLS-1$
+    private static final String SETT_OPT_OVERWRITE =
+        PAGE_NAME + ".options.overwrite"; //$NON-NLS-1$
     
     // WIDGETS
     private Composite container;
@@ -57,8 +61,8 @@ public class ImportDiagramsOptionsPage extends WizardPage {
     public ImportDiagramsOptionsPage() {
         super(PAGE_NAME);
         
-        this.setTitle("Import options");
-        this.setMessage("Select where to import the diagrams from and where to import them to.");
+        this.setTitle(Messages.ImportDiagramsOptionsPage_title);
+        this.setMessage(Messages.ImportDiagramsOptionsPage_message);
         
         // This page is always complete
         this.setPageComplete(true);
@@ -127,7 +131,7 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         
         // Source Label
         sourceLabel = new Label(container, SWT.NULL);
-        sourceLabel.setText("Source:");
+        sourceLabel.setText(Messages.ImportDiagramsOptionsPage_sourceLabel_text);
 
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalSpan = 3;
@@ -135,9 +139,10 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         
         // Source File System Button
         sourceFileSystemButton = new Button(container, SWT.RADIO);
-        sourceFileSystemButton.setText("File system");
+        sourceFileSystemButton.setText(
+                Messages.ImportDiagramsOptionsPage_fileSystemButton_text);
         sourceFileSystemButton.setToolTipText(
-                "The Ptolemy2 diagrams to import are not inside the workspace.");
+                Messages.ImportDiagramsOptionsPage_fileSystemButton_toolTip);
         
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalIndent = 15;
@@ -146,9 +151,10 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         
         // Source Workspace Button
         sourceWorkspaceButton = new Button(container, SWT.RADIO);
-        sourceWorkspaceButton.setText("Workspace");
+        sourceWorkspaceButton.setText(
+                Messages.ImportDiagramsOptionsPage_workspaceButton_text);
         sourceWorkspaceButton.setToolTipText(
-                "The Ptolemy2 diagrams to import are inside the workspace.");
+                Messages.ImportDiagramsOptionsPage_workspaceButton_toolTip);
         
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalIndent = 15;
@@ -160,7 +166,8 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         
         // Opt Label
         optLabel = new Label(container, SWT.NULL);
-        optLabel.setText("Options:");
+        optLabel.setText(
+                Messages.ImportDiagramsOptionsPage_optionsLabel_text);
 
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalSpan = 3;
@@ -168,10 +175,10 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         
         // Opt Initialize Diagram Files Button
         optInitializeDiagramFilesButton = new Button(container, SWT.CHECK);
-        optInitializeDiagramFilesButton.setText("Initialize KAOD diagram files");
+        optInitializeDiagramFilesButton.setText(
+                Messages.ImportDiagramsOptionsPage_initializeDiagramFilesButton_text);
         optInitializeDiagramFilesButton.setToolTipText(
-                "If checked, for each imported diagram a KAOD file is automatically created that "
-                + "can be opened with the diagram editor.");
+                Messages.ImportDiagramsOptionsPage_initializeDiagramFilesButton_toolTip);
         
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalIndent = 15;
@@ -180,9 +187,10 @@ public class ImportDiagramsOptionsPage extends WizardPage {
         
         // Opt Overwrite Button
         optOverwriteButton = new Button(container, SWT.CHECK);
-        optOverwriteButton.setText("Overwrite existing resources without warning.");
-        optOverwriteButton.setToolTipText("If checked, imported diagrams that conflict with an "
-                + "existing resource's name will replace that resource instead of being renamed.");
+        optOverwriteButton.setText(
+                Messages.ImportDiagramsOptionsPage_overwriteButton_text);
+        optOverwriteButton.setToolTipText(
+                Messages.ImportDiagramsOptionsPage_overwriteButton_toolTip);
         
         gd = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
         gd.horizontalIndent = 15;

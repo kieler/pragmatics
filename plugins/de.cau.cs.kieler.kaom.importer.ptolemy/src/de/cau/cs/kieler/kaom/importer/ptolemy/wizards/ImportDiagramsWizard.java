@@ -33,6 +33,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kaom.importer.ptolemy.DiagramsImporter;
 import de.cau.cs.kieler.kaom.importer.ptolemy.KaomImporterPtolemyPlugin;
+import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
 
 
 /**
@@ -71,7 +72,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
     public ImportDiagramsWizard() {
         super();
         
-        setWindowTitle("Import Ptolemy2 Diagrams");
+        setWindowTitle(Messages.ImportDiagramsWizard_title);
         setDialogSettings(KaomImporterPtolemyPlugin.getDefault().getDialogSettings());
         
         // Required for the import process
@@ -173,7 +174,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
                 IStatus status = new Status(
                             IStatus.ERROR,
                             KaomImporterPtolemyPlugin.PLUGIN_ID,
-                            "Error getting the list of files to import.",
+                            Messages.ImportDiagramsWizard_exceptions_fileListError,
                             e);
                 StatusManager.getManager().handle(status, StatusManager.BLOCK);
                 return false;
@@ -197,7 +198,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
                 IStatus status = new Status(
                             IStatus.ERROR,
                             KaomImporterPtolemyPlugin.PLUGIN_ID,
-                            "Error getting the list of files to import.",
+                            Messages.ImportDiagramsWizard_exceptions_fileListError,
                             e);
                 StatusManager.getManager().handle(status, StatusManager.BLOCK);
                 return false;
@@ -216,7 +217,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
             IStatus status = new Status(
                         IStatus.ERROR,
                         KaomImporterPtolemyPlugin.PLUGIN_ID,
-                        "Error importing the models.",
+                        Messages.ImportDiagramsWizard_exceptions_modelImportError,
                         e);
             StatusManager.getManager().handle(status, StatusManager.BLOCK);
             return false;
@@ -234,8 +235,8 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
             // There were warnings or errors. Show the user a list of models that may
             // have had problems
             String message = importerStatus.getSeverity() < IStatus.ERROR
-                ? "There were warnings importing some models. See the error log for details."
-                : "There were warnings and errors importing some models. See the error log for details";
+                ? Messages.ImportDiagramsWizard_exceptions_importWarnings
+                : Messages.ImportDiagramsWizard_exceptions_importErrors;
             
             // Prepare a list of simplified errors
             IStatus[] children = importerStatus.getChildren();

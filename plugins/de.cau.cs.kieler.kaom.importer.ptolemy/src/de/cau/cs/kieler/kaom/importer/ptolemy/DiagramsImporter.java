@@ -186,19 +186,19 @@ public class DiagramsImporter implements IRunnableWithProgress {
             return new Status(
                     IStatus.CANCEL,
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    "The import was canceled.");
+                    Messages.DiagramsImporter_status_importCanceled);
         } else if (statusses.size() >= 1) {
             return new MultiStatus(
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
                     maxSeverity,
                     statusses.toArray(new IStatus[statusses.size()]),
-                    "Exceptions occurred during the import of some models.",
+                    Messages.DiagramsImporter_status_exceptions,
                     null);
         } else {
             return new Status(
                     IStatus.OK,
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    "Don't worry, everything went just fine.");
+                    Messages.DiagramsImporter_status_ok);
         }
     }
     
@@ -221,7 +221,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         int totalWork = sourceFiles.size() * workPerSourceFile + 1;
         
         // Begin the main task
-        progressMonitor.beginTask("Import Ptolemy2 diagrams...", totalWork);
+        progressMonitor.beginTask(Messages.DiagramsImporter_task_importingDiagrams, totalWork);
         
         /* The main task is splitted into two subtasks:
          *  1. Ensuring the existence of the target container.
@@ -253,7 +253,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
      * @throws CoreException if something goes wrong creating the target container.
      */
     private IContainer getTargetContainer(final IProgressMonitor monitor) throws CoreException {
-        monitor.beginTask("Ensuring target container existence.", 1);
+        monitor.beginTask(Messages.DiagramsImporter_task_ensuringTargetContainerExistence, 1);
         
         // Declare some helpful variables
         IContainer currContainer;
@@ -268,7 +268,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
             throw new CoreException(new Status(
                     IStatus.ERROR,
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    "Invalid target container path: Project doesn't exist."));
+                    Messages.DiagramsImporter_exception_projectNotExistant));
         }
         
         // Iterate through the path segments, creating the folder structure along the way
@@ -300,7 +300,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         int totalWork = sourceFiles.size();
         
         // Begin the main task
-        monitor.beginTask("Importing models.", totalWork);
+        monitor.beginTask(Messages.DiagramsImporter_task_importingModels, totalWork);
         
         // Iterate through the array of source files
         for (File sourceFile : sourceFiles) {
@@ -324,7 +324,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
             try {
                 doImportModelFile(
                         sourceFile,
-                        targetFilesBaseName + "."
+                        targetFilesBaseName + "." //$NON-NLS-1$
                             + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION,
                         new SubProgressMonitor(monitor, 1));
             } catch (CoreException e) {
@@ -336,9 +336,9 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 // Possibly initialize diagram file
                 if (initializeDiagramFiles) {
                     doImportDiagramFile(
-                            targetFilesBaseName + "."
+                            targetFilesBaseName + "." //$NON-NLS-1$
                                 + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION,
-                            targetFilesBaseName + "."
+                            targetFilesBaseName + "." //$NON-NLS-1$
                                 + PtolemyImporterConstants.TARGET_DIAGRAM_FILE_EXTENSION);
                     monitor.worked(1);
                 }
@@ -376,7 +376,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         boolean diagramFileNameClash = false;
         
         IFile file = targetContainer.getFile(new Path(
-                sourceFileBaseName + "."
+                sourceFileBaseName + "." //$NON-NLS-1$
                     + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION));
         if (file.exists()) {
             modelFileNameClash = true;
@@ -384,7 +384,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         
         if (initializeDiagramFiles) {
             file = targetContainer.getFile(new Path(
-                    sourceFileBaseName + "."
+                    sourceFileBaseName + "." //$NON-NLS-1$
                         + PtolemyImporterConstants.TARGET_DIAGRAM_FILE_EXTENSION));
             if (file.exists() && initializeDiagramFiles) {
                 diagramFileNameClash = true;
@@ -394,31 +394,31 @@ public class DiagramsImporter implements IRunnableWithProgress {
         // If we have a name clash, ask the user for a new name. Politely.
         if (modelFileNameClash || diagramFileNameClash) {
             StringBuilder sb = new StringBuilder();
-            sb.append("The target folder already contains the following file(s):\n\n");
+            sb.append(Messages.DiagramsImporter_message_filesExist_prefix);
             
             if (modelFileNameClash) {
-                sb.append("    "
+                sb.append("    " //$NON-NLS-1$
                         + sourceFileBaseName
-                        + "."
+                        + "." //$NON-NLS-1$
                         + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION
-                        + "\n");
+                        + "\n"); //$NON-NLS-1$
             }
             
             if (diagramFileNameClash) {
-                sb.append("    "
+                sb.append("    " //$NON-NLS-1$
                         + sourceFileBaseName
-                        + "."
+                        + "." //$NON-NLS-1$
                         + PtolemyImporterConstants.TARGET_DIAGRAM_FILE_EXTENSION
-                        + "\n");
+                        + "\n"); //$NON-NLS-1$
             }
             
-            sb.append("\n");
-            sb.append("Please enter a new name without file extension or cancel the import.");
+            sb.append("\n"); //$NON-NLS-1$
+            sb.append(Messages.DiagramsImporter_message_filesExist_suffix);
             
             // Popup a dialog
             final InputDialog dialog = new InputDialog(
                     wizard.getShell(),
-                    "File Already Exists",
+                    Messages.DiagramsImporter_title_filesExist,
                     sb.toString(),
                     sourceFileBaseName,
                     null);
@@ -435,7 +435,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
             } else {
                 // We have a new name. Check if it clashes
                 return getBaseFileName(
-                        dialog.getValue() + "."
+                        dialog.getValue() + "." //$NON-NLS-1$
                             + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION);
             }
         } else {
@@ -467,7 +467,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         
         // Create a temporary file that automatically gets deleted when the VM ends
         File realSourceFile = File.createTempFile(baseName,
-                "." + PtolemyImporterConstants.PTOLEMY_INTERNAL_FILE_EXTENSION);
+                "." + PtolemyImporterConstants.PTOLEMY_INTERNAL_FILE_EXTENSION); //$NON-NLS-1$
         realSourceFile.deleteOnExit();
         
         // Copy the source file's content to the new file
@@ -508,7 +508,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
             throw new CoreException(new Status(
                     IStatus.ERROR,
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    "Unable to create temporary .moml file.",
+                    Messages.DiagramsImporter_exception_temporaryFileCreationFailed,
                     e));
         }
         
@@ -520,8 +520,8 @@ public class DiagramsImporter implements IRunnableWithProgress {
         targetFileURI = URI.createPlatformResourceURI(targetFile.getFullPath().toString(), true);
         
         // Setup the transformation
-        String transformation = "models/ptolemy2kaom";
-        String entryFunction = "transform";
+        String transformation = "models/ptolemy2kaom"; //$NON-NLS-1$
+        String entryFunction = "transform"; //$NON-NLS-1$
         
         EPackage p1 = MomlPackage.eINSTANCE;
         EPackage p2 = KaomPackage.eINSTANCE;
@@ -545,7 +545,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
                     severity,
                     new IStatus[] {status},
-                    "Possible errors importing " + sourceFile.getName(),
+                    Messages.DiagramsImporter_exception_possibleErrors + sourceFile.getName(),
                     status.getException()));
         }
         
@@ -567,7 +567,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
             throw new CoreException(new Status(
                     IStatus.ERROR,
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    "Model file not found: " + sourceFileName));
+                    Messages.DiagramsImporter_exception_modelFileNotFound + sourceFileName));
         }
         
         // Get the target file
@@ -606,7 +606,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         affectedFiles.add(targetFile);
         AbstractTransactionalCommand command = new AbstractTransactionalCommand(
                 editingDomain,
-                "",
+                "", //$NON-NLS-1$
                 affectedFiles) {
             
             @Override
@@ -624,7 +624,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
             throw new CoreException(new Status(
                     IStatus.ERROR,
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    "Error initializing diagram " + targetFileName,
+                    Messages.DiagramsImporter_exception_diagramInitialization + targetFileName,
                     e));
         }
         
@@ -636,7 +636,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
             throw new CoreException(new Status(
                     IStatus.ERROR,
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    "Error initializing diagram " + targetFileName,
+                    Messages.DiagramsImporter_exception_diagramInitialization + targetFileName,
                     e));
         }
     }
