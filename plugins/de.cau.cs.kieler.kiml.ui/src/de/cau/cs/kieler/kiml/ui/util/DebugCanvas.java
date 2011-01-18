@@ -13,8 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.ui.util;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Ellipse;
@@ -28,12 +31,15 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
- * A canvas for drawing debug information on the active diagram.
+ * A canvas for drawing debug information on the active diagram. Currently the offset of
+ * hierarchical nodes is only computed correctly if the root node of the layout is the diagram.
  * 
  * @kieler.rating 2011-01-13 proposed yellow msp
  * @author mri
@@ -42,8 +48,6 @@ public class DebugCanvas implements IDebugCanvas {
 
     /** the layer that is drawn on. */
     private IFigure layer;
-    /** whether the canvas has currently any figures on it. */
-    private boolean isDirty;
     /** the x-Offset of this canvas. */
     private float xOffset;
     /** the y-Offset of this canvas. */
@@ -52,6 +56,8 @@ public class DebugCanvas implements IDebugCanvas {
     private boolean isBuffered;
     /** the buffer of figures to be drawn. */
     private List<IFigure> figureBuffer = new LinkedList<IFigure>();
+    /** the set of already drawn figures. */
+    private Set<IFigure> drawnFigures = new HashSet<IFigure>();
 
     /**
      * Sets the canvas up for the given layout manager. This Method must be called
@@ -74,8 +80,9 @@ public class DebugCanvas implements IDebugCanvas {
         KNode currentNode = parentNode;
         while (currentNode != null) {
             KShapeLayout nodeLayout = currentNode.getData(KShapeLayout.class);
-            xOffset += nodeLayout.getXpos();
-            yOffset += nodeLayout.getYpos();
+            KInsets insets = nodeLayout.getProperty(LayoutOptions.INSETS);
+            xOffset += nodeLayout.getXpos() + insets.getLeft();
+            yOffset += nodeLayout.getYpos() + insets.getTop();
             currentNode = currentNode.getParent();
         }
     }
@@ -121,7 +128,7 @@ public class DebugCanvas implements IDebugCanvas {
         } else {
             PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
-                    isDirty = true;
+                    drawnFigures.add(figure);
                     layer.add(figure);
                 }
             });
@@ -259,23 +266,19 @@ public class DebugCanvas implements IDebugCanvas {
      * {@inheritDoc}
      */
     public void clear() {
-        if (layer != null && isDirty) {
+        if (layer != null && !drawnFigures.isEmpty()) {
             PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
                 public void run() {
-                    int i = 0;
-                    while (layer.getChildren().size() > i) {
-                        Object obj = layer.getChildren().get(i);
-                        if (obj instanceof IFigure) {
-                            IFigure figure = (IFigure) obj;
-                            layer.remove(figure);
-                        } else {
-                            ++i;
+                    Iterator<?> figureIter = layer.getChildren().iterator();
+                    while (figureIter.hasNext()) {
+                        Object obj = figureIter.next();
+                        if (drawnFigures.contains(obj)) {
+                            figureIter.remove();
+                            drawnFigures.remove(obj);
                         }
                     }
                 }
             });
-
-            isDirty = false;
         }
         figureBuffer.clear();
     }
@@ -296,10 +299,10 @@ public class DebugCanvas implements IDebugCanvas {
                             label.setSize(label.getPreferredSize());
                         }
                     }
+                    drawnFigures.addAll(figureBuffer);
                     figureBuffer.clear();
                 }
             });
-            isDirty = true;
         }
     }
 

@@ -292,25 +292,27 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
     
                 // calculate offset for edge and label coordinates
                 KNode sourceParent = layoutEdge.getSource().getParent();
-                IGraphicalEditPart sourceParentEP = getGraphElem2EditPartMap().get(sourceParent);
-                Rectangle sourceParentBounds = sourceParentEP == null ? new Rectangle()
-                        : KimlUiUtil.getAbsoluteBounds(sourceParentEP.getFigure());
-                KInsets insets = sourceParent.getData(KShapeLayout.class)
-                        .getProperty(LayoutOptions.INSETS);
-                float offsetx = sourceParentBounds.x + insets.getLeft();
-                float offsety = sourceParentBounds.y + insets.getTop();
-    
-                // store the current coordinates of the edge
-                KEdgeLayout edgeLayout = layoutEdge.getData(KEdgeLayout.class);
-                setEdgeLayout(edgeLayout, connection, offsetx, offsety);
-                
-                // set edge labels
-                processLabels(connection, layoutEdge, EdgeLabelPlacement.UNDEFINED,
-                        offsetx, offsety);
-    
-                // set user defined layout options for the edge
-                layoutConfig.setFocus(connection);
-                edgeLayout.copyProperties(layoutConfig);
+                if (sourceParent != null) {
+                    IGraphicalEditPart sourceParentEP = getGraphElem2EditPartMap().get(sourceParent);
+                    Rectangle sourceParentBounds = sourceParentEP == null ? new Rectangle()
+                            : KimlUiUtil.getAbsoluteBounds(sourceParentEP.getFigure());
+                    KInsets insets = sourceParent.getData(KShapeLayout.class)
+                            .getProperty(LayoutOptions.INSETS);
+                    float offsetx = sourceParentBounds.x + insets.getLeft();
+                    float offsety = sourceParentBounds.y + insets.getTop();
+        
+                    // store the current coordinates of the edge
+                    KEdgeLayout edgeLayout = layoutEdge.getData(KEdgeLayout.class);
+                    setEdgeLayout(edgeLayout, connection, offsetx, offsety);
+                    
+                    // set edge labels
+                    processLabels(connection, layoutEdge, EdgeLabelPlacement.UNDEFINED,
+                            offsetx, offsety);
+        
+                    // set user defined layout options for the edge
+                    layoutConfig.setFocus(connection);
+                    edgeLayout.copyProperties(layoutConfig);
+                }
             }
         }
     }

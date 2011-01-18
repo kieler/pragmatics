@@ -197,6 +197,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             layeredGraph.setProperty(Properties.DEBUG_CANVAS, debugCanvas);
             float borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING);
             debugCanvas.setOffset(parent, borderSpacing, borderSpacing);
+            debugCanvas.setBuffered(true);
         }
     }
 
