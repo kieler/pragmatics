@@ -1,8 +1,10 @@
 package de.cau.cs.kieler.rail.editor.features;
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
@@ -11,10 +13,12 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.IAreaContext;
 import org.eclipse.graphiti.features.context.ICreateContext;
+import org.eclipse.graphiti.features.context.ITargetContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.AreaContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
@@ -30,6 +34,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.impl.ContainerShapeImpl;
 import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.services.IGaCreateService;
 import org.eclipse.graphiti.services.IPeCreateService;
 
 import de.cau.cs.kieler.rail.Topologie.Model;
@@ -62,85 +67,89 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     }
  
     public Object[] create(ICreateContext context) {
-        // ask user for Einbruchsknoten name
-        //Einbruchsknoten vertex = SpecializedVerticesFactory.eINSTANCE.createEinbruchsknoten();
     	Vertex vertex = getVertex();
-    	
-    	//Ports will be create.
-    	Port abzweig = BasegraphFactory.eINSTANCE.createPort();
-    	abzweig.setName(EPort.ABZWEIG);
-    	Port stamm = BasegraphFactory.eINSTANCE.createPort();
-    	stamm.setName(EPort.STAMM);
-    	Port spitze = BasegraphFactory.eINSTANCE.createPort();
-    	spitze.setName(EPort.SPITZE);
-    	
-    	vertex.getPorts().add(abzweig);
-    	vertex.getPorts().add(stamm);
-    	vertex.getPorts().add(spitze);
-    	
-    	//PictogramElement v = addGraphicalRepresentation(context, vertex);
-    	
-    	//CreateContext c = new CreateContext();
-    	
     	
         KrailDiagramEditor kde = ((KrailDiagramEditor) getDiagramEditor());
         ContainerShape tc = context.getTargetContainer();
         Model model = kde.fetchModel(tc);
         
-        //Model model = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(context.getTargetContainer());
-        
         model.getVertices().add(vertex);  
         
         // do the add
         
-        PictogramElement v = addGraphicalRepresentation(context, vertex);
-        //v.getGraphicsAlgorithm().getPictogramElement().
+        vertex.getPorts().addAll(addGraphicalRepresentationForPorts(vertex));
+        PictogramElement vertexPE = addGraphicalRepresentation(context, vertex);
         
-        //context.getTargetConnection()
-        //ContainerShape c = Graphiti.getCreateService().createContainerShape(context.getTargetContainer(), false);
-        
-        //
-        //context.getTargetContainer().setContainer(c);
-        
-    	//not call with context instated something else    nicht mit context, sondern mit was anderem Aufrufen
-        /*
-        int l = context.getTargetContainer().getChildren().size();
-        
-        int i;
-        for(i = 0; i < l;i++){
-        	if (context.getTargetContainer().getChildren().get(i).getLink().getBusinessObjects() == vertex){
-        		break;
-        	}
-        }*/
-        //IAreaContext shape = (IAreaContext) context.getTargetContainer().getChildren().get(i);
-        
-        AddContext addBookContext = new AddContext(new AreaContext(),vertex);
+    	
+    	
+        // return newly created business object(s)
+        return new Object[] { vertex };
+    }
+    
+    /**
+     * Creates the ports and addGraphicalRepresentation for them.
+     * @param context
+     * @param vertex
+     * @param vertexPE
+     * @return the created ports as bisnes 
+     */
+    private EList<Port> addGraphicalRepresentationForPorts(Object vertex){
+    	EList<Port> ports=new BasicEList<Port>();
+    	
+    	switch (type){
+    		case SWITCHVERTEX_LEFT:
+    		case SWITCHVERTEX_RIGHT:
+    			Port abzweig = BasegraphFactory.eINSTANCE.createPort();
+    	    	abzweig.setName(EPort.ABZWEIG);
+    	    	Port stamm = BasegraphFactory.eINSTANCE.createPort();
+    	    	stamm.setName(EPort.STAMM);
+    	    	Port spitze = BasegraphFactory.eINSTANCE.createPort();
+    	    	spitze.setName(EPort.SPITZE);
+    			ports.add(abzweig);
+    			ports.add(stamm);
+    			ports.add(spitze);
+    	}
+    	return ports;
+    }
+    
+    /**
+     * Creates the ports and addGraphicalRepresentation for them.
+     * @param context
+     * @param vertex
+     * @param vertexPE 
+     * @param vertexPE
+     * @return the created ports as bisnes 
+     */
+    private EList<Port> addGraphicalRepresentationForPorts(ITargetContext context, Object vertex, PictogramElement vertexPE){
+    	EList<Port> ports=new BasicEList<Port>();
+    	
+    	AddContext addBookContext = new AddContext(new AreaContext(),vertex);
         
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         ContainerShape contShape = peCreateService.createContainerShape(context.getTargetContainer(),false);
         
-        
+        contShape.setGraphicsAlgorithm(vertexPE.getGraphicsAlgorithm());
         addBookContext.setTargetContainer(contShape);
-        
-        addGraphicalRepresentation( addBookContext, stamm);
-    	addGraphicalRepresentation(addBookContext, spitze);
-    	addGraphicalRepresentation(addBookContext, abzweig);
-        
-        // return newly created business object(s)
-        return new Object[] { vertex };
+    	
+    	switch (type){
+    		case SWITCHVERTEX_LEFT:
+    		case SWITCHVERTEX_RIGHT:
+    			Port abzweig = BasegraphFactory.eINSTANCE.createPort();
+    	    	abzweig.setName(EPort.ABZWEIG);
+    	    	Port stamm = BasegraphFactory.eINSTANCE.createPort();
+    	    	stamm.setName(EPort.STAMM);
+    	    	Port spitze = BasegraphFactory.eINSTANCE.createPort();
+    	    	spitze.setName(EPort.SPITZE);
+    			ports.add(abzweig);
+    			ports.add(stamm);
+    			ports.add(spitze);
+    			
+    			addGraphicalRepresentation(addBookContext, stamm);
+    	    	addGraphicalRepresentation(addBookContext, spitze);
+    	    	addGraphicalRepresentation(addBookContext, abzweig);
+    	}
+    	return ports;
     }
-    /*
-    public Object[] create(final ICreateContext context) {
-        Vertex vertex = (Vertex) getBusinessObjectForPictogramElement(context.getTargetContainer());
-        Port port = BasegraphFactory.eINSTANCE.createPort();
-        //TODO allow only 2 or 3.
-        vertex.getPorts().add(port);
-
-        addGraphicalRepresentation(context, port);
-        return new Object[] { port };
-    }*/
-    
-    
     private Vertex getVertex()
     {
     	Vertex vertex;

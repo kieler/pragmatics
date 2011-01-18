@@ -3,13 +3,27 @@
  */
 package de.cau.cs.kieler.rail.editor.features;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.swing.JOptionPane;
 
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
+import org.eclipse.graphiti.internal.ExternalPictogramLink;
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Polygon;
@@ -21,7 +35,9 @@ import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.mm.pictograms.impl.PictogramLinkImpl;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
@@ -30,6 +46,8 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 
+import de.cau.cs.kieler.rail.Topologie.Basegraph.BasegraphFactory;
+import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
@@ -354,19 +372,39 @@ public class AddVertexFeature extends AbstractAddFeature {
 		
 		
 		//peCreateService.createBoxRelativeAnchor(containerShape);
-		
+		/*
 		final BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
 		boxAnchor.setActive(true);
 		boxAnchor.setRelativeWidth(0.0);
 	    boxAnchor.setRelativeHeight(0.4);
-	    boxAnchor.setReferencedGraphicsAlgorithm(R);
+	    boxAnchor.setReferencedGraphicsAlgorithm(R);*/
+	    
+	    
+	    //PictogramLink h = new ExternalPictogramLink();
+	    //h.getBusinessObjects().add(BasegraphFactory.eINSTANCE.createPort());
+	    double i=0.0;
+		for(Port port : switchVertex.getPorts()){
+	    	final BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
+			boxAnchor.setActive(true);
+			boxAnchor.setRelativeWidth(i);
+		    boxAnchor.setRelativeHeight(0.4);
+		    boxAnchor.setReferencedGraphicsAlgorithm(R);
+		    
+		    Rectangle rec = gaService.createRectangle(boxAnchor);
+		    rec.setFilled(true);
+		    rec.setBackground(manageColor(0,0,0));
+		    gaService.setLocationAndSize(rec, 0, 0, 8, 8);
+		    
+	    	link(boxAnchor,port);
+	    	i+=0.2;
+	    }
+	    
+	    
+		//boxAnchor.setLink(h);
 	    
 
 	    
-	    Rectangle rec = gaService.createRectangle(boxAnchor);
-	    rec.setFilled(true);
-	    rec.setBackground(manageColor(0,0,0));
-	    gaService.setLocationAndSize(rec, 0, 0, 8, 8);
+	    
 	    
 	    final BoxRelativeAnchor boxAnchor2 = peCreateService.createBoxRelativeAnchor(containerShape);
 	    boxAnchor2.setActive(true);
