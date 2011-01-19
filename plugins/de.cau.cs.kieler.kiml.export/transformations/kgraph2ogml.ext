@@ -47,6 +47,11 @@ String generateEdgeId():
 	generateName("edge", "e")
 ;
 
+// generates an id for a label
+String generateLabelId():
+	generateName("label", "l")
+;
+
 // the entry point for the transformation
 create ogml::DocumentRoot transform(KNode node, Boolean layoutInformation):
 	let ogmlRoot = new ogml::OgmlType:
@@ -84,6 +89,7 @@ Void transformNode(KNode node, ogml::NodeType parent):
 create ogml::NodeType getNode(KNode node): 
 	(if node.label.text.length > 0 then
 		(let label = new LabelType:
+		label.setId(getId(node.label)) ->
 		label.setContent(node.label.text) ->
 		this.label.add(label))) ->
 	this.setId(getId(node))
@@ -173,4 +179,9 @@ cached String getId(KNode node):
 // returns the id associated with the edge
 cached String getId(KEdge edge):
 	generateEdgeId()
+;
+
+// returns the id associated with the label
+cached String getId(KLabel label):
+	generateLabelId()
 ;

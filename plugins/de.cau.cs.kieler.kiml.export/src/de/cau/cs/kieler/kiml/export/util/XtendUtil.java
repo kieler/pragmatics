@@ -27,16 +27,14 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
- * A utility class that provides functionality that can be accessed by xtend
- * transformations.
+ * A utility class that provides functionality that can be accessed by xtend transformations.
  * 
  * @author mri
  */
 public final class XtendUtil {
 
     /** the name-generator names mapped on the counter variables. */
-    private static Map<String, Integer> generators =
-            new HashMap<String, Integer>();
+    private static Map<String, Integer> generators = new HashMap<String, Integer>();
 
     /**
      * A private constructor to make the class not instantiable.
@@ -54,8 +52,7 @@ public final class XtendUtil {
      *            a prefix for the generated name
      * @return the generated name
      */
-    public static String generateName(final String generatorName,
-            final String namePrefix) {
+    public static String generateName(final String generatorName, final String namePrefix) {
         Integer number = generators.get(generatorName);
         if (number == null) {
             number = 0;
@@ -82,9 +79,9 @@ public final class XtendUtil {
     }
 
     /**
-     * This is a workaround method for xtend to solve the issue of missing
-     * methods, which are not really missing, but unknown to xtend. It calls a
-     * method of a class instance with a number of parameters.
+     * This is a workaround method for xtend to solve the issue of missing methods, which are not
+     * really missing, but unknown to xtend. It calls a method of a class instance with a number of
+     * parameters.
      * 
      * @param instance
      *            the class instance
@@ -93,17 +90,15 @@ public final class XtendUtil {
      * @param params
      *            the parameters
      */
-    public static void callMethod(final Object instance,
-            final String methodName, final Object... params) {
+    public static void callMethod(final Object instance, final String methodName,
+            final Object... params) {
         Class<?>[] paramClasses = new Class<?>[params.length];
         int i = 0;
         for (Object param : params) {
             paramClasses[i++] = param.getClass();
         }
         try {
-            Method method =
-                    instance.getClass().getDeclaredMethod(methodName,
-                            paramClasses);
+            Method method = instance.getClass().getDeclaredMethod(methodName, paramClasses);
             method.invoke(instance, params);
         } catch (SecurityException e) {
             // do nothing
@@ -119,8 +114,7 @@ public final class XtendUtil {
     }
 
     /**
-     * See {@code callMethod}. This method is restricted on methods with a
-     * single string parameter.
+     * See {@code callMethod}. This method is restricted on methods with a single string parameter.
      * 
      * @param instance
      *            the class instance
@@ -129,8 +123,8 @@ public final class XtendUtil {
      * @param param
      *            the string parameter
      */
-    public static void callStringMethod(final Object instance,
-            final String methodName, final String param) {
+    public static void callStringMethod(final Object instance, final String methodName,
+            final String param) {
         callMethod(instance, methodName, param);
     }
 
@@ -166,8 +160,7 @@ public final class XtendUtil {
      * @param shapeLayout
      *            the shape layout
      */
-    public static void ogmlSetShapeBounds(final ShapeType1 shape,
-            final KShapeLayout shapeLayout) {
+    public static void ogmlSetShapeBounds(final ShapeType1 shape, final KShapeLayout shapeLayout) {
         int widthInt = Math.round(shapeLayout.getWidth());
         int heightInt = Math.round(shapeLayout.getHeight());
         BigInteger widthBigInt = BigInteger.valueOf(widthInt);
