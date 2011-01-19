@@ -59,8 +59,8 @@ public class DirectEditBreachFeatures extends AbstractDirectEditingFeature {
     public void setValue(String value, IDirectEditingContext context) {
         // set the new name for the MOF class
         PictogramElement pe = context.getPictogramElement();
-        Einbruchsknoten eClass = (Einbruchsknoten) getBusinessObjectForPictogramElement(pe);
-        eClass.setName(value);
+        Einbruchsknoten einbruchsknoten = (Einbruchsknoten) getBusinessObjectForPictogramElement(pe);
+        einbruchsknoten.setName(value);
  
         // Explicitly update the shape to display the new value in the diagram
         // Note, that this might not be necessary in future versions of Graphiti

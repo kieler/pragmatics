@@ -333,7 +333,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 		//virtual Rectangle
 		Rectangle R = gaService.createRectangle(containerShape);
 		R.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-		R.setForeground(manageColor(0, 0, 0));
+		R.setForeground(manageColor(255, 255, 255));
 		
 		//Line (straight line)
 		Shape shapep=peCreateService.createShape(containerShape, false);
@@ -357,7 +357,10 @@ public class AddVertexFeature extends AbstractAddFeature {
 	    	final BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
 			boxAnchor.setActive(true);
 			
-			boxAnchor.setRelativeHeight(0.4);
+			double portWidth = PORT_SIZE/50;
+			
+			
+			boxAnchor.setRelativeHeight(0.4);//(0.5-portWidth);
 			switch (port.getName()){
 			case SPITZE:
 				boxAnchor.setRelativeWidth(0.0);
@@ -366,15 +369,17 @@ public class AddVertexFeature extends AbstractAddFeature {
 				boxAnchor.setRelativeWidth(0.85);
 				break;
 			case ABZWEIG:
-				boxAnchor.setRelativeWidth(0.85);
+				boxAnchor.setRelativeWidth(1.0-portWidth);
 				boxAnchor.setRelativeHeight(0.1);
 			}
 		    
+			
 		    boxAnchor.setReferencedGraphicsAlgorithm(R);
 		    
 		    Rectangle rec = gaService.createRectangle(boxAnchor);
-		    rec.setFilled(true);
-		    rec.setBackground(manageColor(0,0,0));
+		    rec.setFilled(false);
+		    rec.setForeground(manageColor(255,255,255));
+		    //rec.set
 		    
 		    gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
 		    

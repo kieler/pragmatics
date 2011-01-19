@@ -90,4 +90,11 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
  
         return ret.toArray(new IPaletteCompartmentEntry[ret.size()]);
     }
+    @Override
+    public GraphicsAlgorithm[] getClickArea(PictogramElement pe) {
+    	//maybe later I will use it.
+    	//System.out.println(pe);
+		return super.getClickArea(pe);
+    	
+    }
 }

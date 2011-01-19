@@ -24,6 +24,7 @@ import org.eclipse.graphiti.features.context.IPictogramElementContext;
 import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -50,6 +51,7 @@ import de.cau.cs.kieler.rail.editor.features.ResizeFeature;
 import de.cau.cs.kieler.rail.editor.features.RotateSwitchFeature;
 import de.cau.cs.kieler.rail.editor.features.TypeFeatures;
 import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
+import de.cau.cs.kieler.rail.editor.features.UpdateSwitchFeature;
 
 /**
  * @author hdw
@@ -117,6 +119,21 @@ public class FeatureProvider extends DefaultFeatureProvider {
         return new ICreateConnectionFeature[] {
             new CreateEdgeFeature (this) };
     }
+    
+    /*
+     *     @Override
+    public IUpdateFeature getUpdateFeature(IUpdateContext context) {
+        PictogramElement pictogramElement = context.getPictogramElement();
+        if (pictogramElement instanceof ContainerShape) {
+            Object bo = getBusinessObjectForPictogramElement(pictogramElement);
+            if (bo instanceof EClass) {
+                return new TutorialUpdateEClassFeature(this);
+            }
+        }
+        return super.getUpdateFeature(context);
+    }
+     */
+    
     /**
      * {@inheritDoc}
      */
@@ -127,6 +144,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
             Object bo = getBusinessObjectForPictogramElement(pictogramElement);
             if (bo instanceof Einbruchsknoten) {
                 return new UpdateBreachFeature(this);
+            }
+            else if (bo instanceof Weichenknoten) {
+                return new UpdateSwitchFeature(this);
             }
         }
         return super.getUpdateFeature(context);
@@ -212,4 +232,6 @@ public class FeatureProvider extends DefaultFeatureProvider {
     public ICustomFeature[] getCustomFeatures(ICustomContext context) {
         return new ICustomFeature[] { new RotateSwitchFeature(this) };
     }
+
+    
 }
