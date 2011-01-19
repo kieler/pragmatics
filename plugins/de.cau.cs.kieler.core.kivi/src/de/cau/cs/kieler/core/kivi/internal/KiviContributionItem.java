@@ -76,7 +76,8 @@ public class KiviContributionItem extends CompoundContributionItem implements
 
     static private Map<String, IContributionItem> idButtonMap = new HashMap<String, IContributionItem>();
     static private Map<IContributionItem, ButtonHandler> buttonsHandlerMap = new HashMap<IContributionItem, ButtonHandler>();
-
+    static private List<IContributionItem> buttons = new ArrayList<IContributionItem>();
+    
     /**
      * {@inheritDoc}
      */
@@ -125,6 +126,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
                 // configuration
                 buttonsHandlerMap.put(item, buttonHandler);
                 idButtonMap.put(config.getId(), item);
+                buttons.add(item);
 
                 // specify visibility
                 Expression visibilityExpression = null;
@@ -161,8 +163,8 @@ public class KiviContributionItem extends CompoundContributionItem implements
             }
         }
 
-        return (IContributionItem[]) buttonsHandlerMap.keySet().toArray(
-                new IContributionItem[buttonsHandlerMap.size()]);
+        // return list of menu contributions in the correct order
+        return buttons.toArray(new IContributionItem[buttonsHandlerMap.size()]); 
     }
 
     /**
