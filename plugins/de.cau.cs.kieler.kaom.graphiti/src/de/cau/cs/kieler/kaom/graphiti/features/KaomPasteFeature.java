@@ -22,6 +22,7 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IPasteContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
+import org.eclipse.graphiti.features.context.impl.UpdateContext;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -140,7 +141,12 @@ public class KaomPasteFeature extends AbstractPasteFeature {
                 new AddConnectionContext(srcAnchor, targetAnchor);
         acc.setNewObject(link);
         acc.setTargetContainer(cs);
-        getFeatureProvider().addIfPossible(acc);
+        PictogramElement pe = getFeatureProvider().addIfPossible(acc);
+        if (pe != null) {
+            UpdateContext up = new UpdateContext(pe);
+            getFeatureProvider().updateIfPossibleAndNeeded(up);
+        }
+
     }
 
     /**

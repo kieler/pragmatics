@@ -217,17 +217,17 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     private void fixLastBendPoint(final BoxRelativeAnchor end,
             final List<KPoint> allPoints, final KPoint target) {
         if (allPoints.size() > 1) {
-            KPoint last = allPoints.get(allPoints.size() - 1);
-            KPoint prev = allPoints.get(allPoints.size() - 2);
-            double relWidth = end.getRelativeWidth();
-            double relHeight = end.getRelativeHeight();
-            if (relHeight != 0.0 && last.getY() < target.getY()) {
-                allPoints.remove(last);
-                prev.setY(target.getY() + 1);
-            } else if (relHeight != 1.0 && last.getY() > target.getY()) {
-                allPoints.remove(last);
-                prev.setY(target.getY() - 1);
-            }
+            // KPoint last = allPoints.get(allPoints.size() - 1);
+            // KPoint prev = allPoints.get(allPoints.size() - 2);
+            // double relWidth = end.getRelativeWidth();
+            // double relHeight = end.getRelativeHeight();
+            // if (relHeight != 0.0 && last.getY() < target.getY()) {
+            // allPoints.remove(last);
+            // prev.setY(target.getY() + 1);
+            // } else if (relHeight != 1.0 && last.getY() > target.getY()) {
+            // allPoints.remove(last);
+            // prev.setY(target.getY() - 1);
+            // }
         }
 
     }
