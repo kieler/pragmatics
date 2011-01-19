@@ -116,7 +116,7 @@ public class KaomFigureProvider implements IRenderingProvider {
     /**
      * debug variable. If true svg graphics will be discarded. Simple rectangles are drawn instead.
      */
-    private static boolean lightweightGraphics = true;
+    private static boolean lightweightGraphics = false;
     
     /**
      * {@inheritDoc}
