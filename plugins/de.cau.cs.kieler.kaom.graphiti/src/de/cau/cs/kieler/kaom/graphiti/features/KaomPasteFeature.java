@@ -23,10 +23,11 @@ import org.eclipse.graphiti.features.context.IPasteContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
-import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.PictogramLink;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.features.AbstractPasteFeature;
 
 import de.cau.cs.kieler.core.model.graphiti.ui.AbstractReInitGraphitiDiagramCommand;
@@ -110,8 +111,8 @@ public class KaomPasteFeature extends AbstractPasteFeature {
         Entity parent = (Entity) container.eContainer();
         ContainerShape cs = (ContainerShape) pe.eContainer();
 
-        Anchor srcAnchor = getAnchor(source);
-        Anchor targetAnchor = getAnchor(target);
+        Anchor srcAnchor = getAnchor(cs, source);
+        Anchor targetAnchor = getAnchor(cs, target);
 
         for (Link link : links) {
             Link copy = EcoreUtil.copy(link);
@@ -128,8 +129,8 @@ public class KaomPasteFeature extends AbstractPasteFeature {
     }
 
     private void addLinkToView(final ContainerShape cs, final Link link) {
-        Anchor srcAnchor = getAnchor(link.getSource());
-        Anchor targetAnchor = getAnchor(link.getTarget());
+        Anchor srcAnchor = getAnchor(cs, link.getSource());
+        Anchor targetAnchor = getAnchor(cs, link.getTarget());
         addLinkToView(cs, srcAnchor, targetAnchor, link);
     }
 
@@ -149,18 +150,45 @@ public class KaomPasteFeature extends AbstractPasteFeature {
      *            the model element
      * @return the anchor
      */
-    private Anchor getAnchor(final EObject eObject) {
-        if (eObject instanceof Port) {
-            return (Anchor) util.geteObjectTopictMap().get(eObject);
+    private Anchor getAnchor(final Shape cs, final EObject eObject) {
+        boolean findChopBoxAnchor = false;
+        if (cs.getLink().getBusinessObjects().get(0) == eObject) {
+            findChopBoxAnchor = true;
         }
-        AnchorContainer ac =
-                (AnchorContainer) util.geteObjectTopictMap().get(eObject);
-        for (Anchor a : ac.getAnchors()) {
-            if (a instanceof ChopboxAnchor) {
-                return a;
+        for (Anchor a : cs.getAnchors()) {
+            if (findChopBoxAnchor) {
+                if (a instanceof ChopboxAnchor) {
+                    return a;
+                }
+            } else {
+                PictogramLink link = a.getLink();
+                if (link != null) {
+                    if (eObject == link.getBusinessObjects().get(0)) {
+                        return a;
+                    }
+                }
+            }
+        }
+        if (cs instanceof ContainerShape) {
+            for (Shape child : ((ContainerShape) cs).getChildren()) {
+                Anchor a = getAnchor(child, eObject);
+                if (a != null) {
+                    return a;
+                }
             }
         }
         return null;
+        // if (eObject instanceof Port) {
+        // return (Anchor) util.geteObjectTopictMap().get(eObject);
+        // }
+        // AnchorContainer ac =
+        // (AnchorContainer) util.geteObjectTopictMap().get(eObject);
+        // for (Anchor a : ac.getAnchors()) {
+        // if (a instanceof ChopboxAnchor) {
+        // return a;
+        // }
+        // }
+        // return null;
     }
 
     /**
@@ -194,23 +222,24 @@ public class KaomPasteFeature extends AbstractPasteFeature {
      * @param entity
      */
     private void recursiveAdd(final ContainerShape cs, final Entity entity) {
+        List<ContainerShape> children = new LinkedList<ContainerShape>();
         for (Entity ent : entity.getChildEntities()) {
             PictogramElement pe = addToView(cs, ent);
+            children.add((ContainerShape) pe);
             recursiveAdd((ContainerShape) pe, ent);
-            for (Link link : ent.getOutgoingLinks()) {
-                addLinkToView(cs, link);
-            }
         }
         for (Relation rel : entity.getChildRelations()) {
             addToView(cs, rel);
         }
         for (Port port : entity.getChildPorts()) {
             addToView(cs, port);
-            for (Link link : port.getOutgoingLinks()) {
-                addLinkToView(cs, link);
-            }
         }
-        AbstractReInitGraphitiDiagramCommand.alignBoxRelativeAnchors(cs);
+        for (Link link : entity.getChildLinks()) {
+            addLinkToView(cs, link);
+        }
+        for (ContainerShape child : children) {
+            AbstractReInitGraphitiDiagramCommand.alignBoxRelativeAnchors(child);
+        }
     }
 
     /**

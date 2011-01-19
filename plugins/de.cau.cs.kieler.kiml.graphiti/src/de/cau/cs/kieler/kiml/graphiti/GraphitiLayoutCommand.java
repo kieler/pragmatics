@@ -200,8 +200,8 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             moveBendpointOutofNode(kedge.getTarget(),
                     allPoints.get(allPoints.size() - 1), offset);
         } else if (conn.getEnd() instanceof BoxRelativeAnchor) {
-            KPoint endPoint = edgeLayout.getTargetPoint();
-            KPoint prevPoint = allPoints.get(allPoints.size() - 1);
+            fixLastBendPoint((BoxRelativeAnchor) conn.getEnd(), allPoints,
+                    edgeLayout.getTargetPoint());
         }
 
         // add the bend points to the connection
@@ -212,6 +212,24 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                             (int) Math.round(kpoint.getY() + offset.y));
             pointList.add(point);
         }
+    }
+
+    private void fixLastBendPoint(final BoxRelativeAnchor end,
+            final List<KPoint> allPoints, final KPoint target) {
+        if (allPoints.size() > 1) {
+            KPoint last = allPoints.get(allPoints.size() - 1);
+            KPoint prev = allPoints.get(allPoints.size() - 2);
+            double relWidth = end.getRelativeWidth();
+            double relHeight = end.getRelativeHeight();
+            if (relHeight != 0.0 && last.getY() < target.getY()) {
+                allPoints.remove(last);
+                prev.setY(target.getY() + 1);
+            } else if (relHeight != 1.0 && last.getY() > target.getY()) {
+                allPoints.remove(last);
+                prev.setY(target.getY() - 1);
+            }
+        }
+
     }
 
     /** how much to move bend points out of the source or target node. */

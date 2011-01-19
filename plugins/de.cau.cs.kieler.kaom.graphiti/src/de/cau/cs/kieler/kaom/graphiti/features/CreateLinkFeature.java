@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kaom.graphiti.features;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
@@ -25,6 +26,7 @@ import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
+import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.graphiti.diagram.ImageProvider;
 import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
 
@@ -35,16 +37,22 @@ import de.cau.cs.kieler.kaom.graphiti.diagram.SemanticProvider;
  */
 public class CreateLinkFeature extends AbstractCreateConnectionFeature {
 
-    /** the semantic provider used to fetch the top-level element of the current diagram. */
+    /**
+     * the semantic provider used to fetch the top-level element of the current
+     * diagram.
+     */
     private SemanticProvider semanticProvider;
-    
+
     /**
      * The constructor.
      * 
-     * @param fp the feature provider
-     * @param sp the semantic provider
+     * @param fp
+     *            the feature provider
+     * @param sp
+     *            the semantic provider
      */
-    public CreateLinkFeature(final IFeatureProvider fp, final SemanticProvider sp) {
+    public CreateLinkFeature(final IFeatureProvider fp,
+            final SemanticProvider sp) {
         super(fp, "Link", "Create Link");
         this.semanticProvider = sp;
     }
@@ -56,11 +64,15 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
         Object source = null, target = null;
         Anchor sourceAnchor = context.getSourceAnchor();
         if (sourceAnchor != null) {
-            source = getBusinessObjectForPictogramElement(sourceAnchor.getParent());
+            source =
+                    getBusinessObjectForPictogramElement(sourceAnchor
+                            .getParent());
         }
         Anchor targetAnchor = context.getTargetAnchor();
         if (targetAnchor != null) {
-            target = getBusinessObjectForPictogramElement(targetAnchor.getParent());
+            target =
+                    getBusinessObjectForPictogramElement(targetAnchor
+                            .getParent());
         }
 
         return (sourceAnchor == null || source instanceof Linkable)
@@ -71,9 +83,8 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
      * {@inheritDoc}
      */
     public boolean canStartConnection(final ICreateConnectionContext context) {
-        return (context.getSourceAnchor() != null
-                && getBusinessObjectForPictogramElement(
-                context.getSourceAnchor().getParent()) != null);
+        return (context.getSourceAnchor() != null && getBusinessObjectForPictogramElement(context
+                .getSourceAnchor().getParent()) != null);
     }
 
     /**
@@ -83,28 +94,56 @@ public class CreateLinkFeature extends AbstractCreateConnectionFeature {
         Object source = null, target = null;
         Anchor sourceAnchor = context.getSourceAnchor();
         if (sourceAnchor instanceof BoxRelativeAnchor) {
-            source = getBusinessObjectForPictogramElement(context.getSourceAnchor());
+            source =
+                    getBusinessObjectForPictogramElement(context
+                            .getSourceAnchor());
         } else if (sourceAnchor != null) {
-            source = getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent());
+            source =
+                    getBusinessObjectForPictogramElement(context
+                            .getSourceAnchor().getParent());
         }
         Anchor targetAnchor = context.getTargetAnchor();
         if (targetAnchor instanceof BoxRelativeAnchor) {
-            target = getBusinessObjectForPictogramElement(context.getTargetAnchor());
+            target =
+                    getBusinessObjectForPictogramElement(context
+                            .getTargetAnchor());
         } else if (targetAnchor != null) {
-            target = getBusinessObjectForPictogramElement(context.getTargetAnchor().getParent());
+            target =
+                    getBusinessObjectForPictogramElement(context
+                            .getTargetAnchor().getParent());
         }
 
         if (source instanceof Linkable && target instanceof Linkable) {
             Link link = KaomFactory.eINSTANCE.createLink();
             link.setSource((Linkable) source);
             link.setTarget((Linkable) target);
-            Entity topEntity = semanticProvider.fetchEntity(getDiagram());
+            Entity sourceParent = null, targetParent = null;
+            if (source instanceof Port) {
+                sourceParent =
+                        (Entity) ((Port) source).eContainer().eContainer();
+            } else {
+                sourceParent = (Entity) ((EObject) source).eContainer();
+            }
+            if (target instanceof Port) {
+                targetParent =
+                        (Entity) ((Port) target).eContainer().eContainer();
+            } else {
+                targetParent = (Entity) ((EObject) target).eContainer();
+            }
+            Entity topEntity = null;
+            if (targetParent == sourceParent) {
+                topEntity = sourceParent;
+            } else {
+                topEntity = semanticProvider.fetchEntity(getDiagram());
+            }
             topEntity.getChildLinks().add(link);
-            
-            AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(),
-                    context.getTargetAnchor());
+
+            AddConnectionContext addContext =
+                    new AddConnectionContext(context.getSourceAnchor(),
+                            context.getTargetAnchor());
             addContext.setNewObject(link);
-            Connection connection = (Connection) getFeatureProvider().addIfPossible(addContext);
+            Connection connection =
+                    (Connection) getFeatureProvider().addIfPossible(addContext);
             getFeatureProvider().getDirectEditingInfo().setActive(true);
             return connection;
         }
