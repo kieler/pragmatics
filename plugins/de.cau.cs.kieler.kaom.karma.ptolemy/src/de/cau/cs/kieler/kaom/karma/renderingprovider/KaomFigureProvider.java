@@ -112,7 +112,11 @@ public class KaomFigureProvider implements IRenderingProvider {
      */
     private static final int ROUNDED_BENDPOINTS_RADIUS = 10;
     
-    private static boolean lightweightGraphics = false;
+    
+    /**
+     * debug variable. If true svg graphics will be discarded. Simple rectangles are drawn instead.
+     */
+    private static boolean lightweightGraphics = true;
     
     /**
      * {@inheritDoc}
@@ -457,6 +461,9 @@ public class KaomFigureProvider implements IRenderingProvider {
     private static IFigure createDirector() {
         String directorsvg = "<svg width=\"102\" height=\"32\"><rect x=\"0\" y=\"0\" width=\"100\" "
                 + " height=\"30\" style=\"fill:#00FF00;stroke:black;stroke-width:1\"/></svg>";
+        if (lightweightGraphics) {
+            return getDefaultFigure();
+        }
         return createSvg(directorsvg);
     }
 
@@ -468,6 +475,9 @@ public class KaomFigureProvider implements IRenderingProvider {
                 + "-8.789062,10.335937 14.554687,0 0,3.041016 -18.246093,0 "
                 + "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
                 + "</svg>";
+        if (lightweightGraphics) {
+            return getDefaultFigure();
+        }
         return createSvg(accsvg);
     }
 
