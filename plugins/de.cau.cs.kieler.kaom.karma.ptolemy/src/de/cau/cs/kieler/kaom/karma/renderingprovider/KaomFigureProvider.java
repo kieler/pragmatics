@@ -112,11 +112,14 @@ public class KaomFigureProvider implements IRenderingProvider {
      */
     private static final int ROUNDED_BENDPOINTS_RADIUS = 10;
     
+    private static boolean lightweightGraphics = false;
+    
     /**
      * {@inheritDoc}
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object, final EditPart part) {
+        //ElementTypeRegistry etr = ElementTypeRegistry.getInstance();
         if (input.equals("_IconDescription")) {
             return createPtolemyFigure(getPtolemyInstance(object));
         } else if (input.equals("MonitorValue")) {
@@ -249,7 +252,7 @@ public class KaomFigureProvider implements IRenderingProvider {
      *            the string describing an svg in xml
      * @return an svg description compatible with the svg standard
      */
-    private static String repairSvg(final String svg) {
+    private static String repairSvg(final String svg, Dimension size) {
         try {
             String svgDescription = svg;
             XMLParser xmlpars = new XMLParser();
@@ -271,7 +274,8 @@ public class KaomFigureProvider implements IRenderingProvider {
                         String.valueOf(Integer.parseInt(rectElement.getAttribute("height")) + 1));
                 svgElement.setAttribute("width",
                         String.valueOf(Integer.parseInt(rectElement.getAttribute("width")) + 1));
-
+                size.height = Integer.parseInt(rectElement.getAttribute("height")) + 1;
+                size.width = Integer.parseInt(rectElement.getAttribute("width")) + 1 ;
                 xoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("x")));
                 yoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("y")));
             } else {
@@ -300,6 +304,8 @@ public class KaomFigureProvider implements IRenderingProvider {
                     int maxY = Collections.max(pointsY);
                     svgElement.setAttribute("height", String.valueOf(maxX + xoffset + 1));
                     svgElement.setAttribute("width", String.valueOf(maxY + yoffset + 1));
+                    size.height = maxX + xoffset + 1;
+                    size.width = maxY + yoffset + 1;
                 }
 
             }
@@ -651,13 +657,35 @@ public class KaomFigureProvider implements IRenderingProvider {
                 org.eclipse.swt.graphics.Image image = new org.eclipse.swt.graphics.Image(Display.getCurrent(),
                         CoreUiUtil.convertAWTImageToSWT(resizedImage));
                 ScalableImageFigure fig = new ScalableImageFigure(image);
+                 if (lightweightGraphics) {
+                     Dimension size = new Dimension(img.getWidth(null),img.getHeight(null));
+                     IFigure lightweight = getDefaultFigure();
+                     //lightweight.setBounds(original.getBounds());
+                     lightweight.setMinimumSize(size.getCopy());
+                     lightweight.setPreferredSize(size.getCopy());
+                     lightweight.getBounds().setSize(size.getCopy());
+                     lightweight.setSize(size.getCopy());
+                     return lightweight;
+                 }
                 return fig;
             }
-            svg = repairSvg(svg);
+            Dimension size = new Dimension();
+            svg = repairSvg(svg, size);
             if (svg == null) {
                 return getDefaultFigure();
             } else {
-                return createSvg(svg);
+                if (lightweightGraphics) {
+                    IFigure original = createSvg(svg);
+                    IFigure lightweight = getDefaultFigure();
+                    //lightweight.setBounds(original.getBounds());
+                    lightweight.setMinimumSize(size.getCopy());
+                    lightweight.setPreferredSize(size.getCopy());
+                    lightweight.getBounds().setSize(size.getCopy());
+                    lightweight.setSize(size.getCopy());
+                    return lightweight;
+                } else {
+                    return createSvg(svg);
+                }
             }
         }
 

@@ -96,7 +96,6 @@ public class AdvancedRenderingEditPartUtil {
                         layoutManager.layout(figure);
                     }
                 }
-
             }
         }
     }

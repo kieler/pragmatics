@@ -95,6 +95,7 @@ public class SwitchableFigure extends Shape {
         currentFigure = figure;
         currentFigure.setParent(this.getParent());
         currentFigure.setBounds(super.getBounds());
+        
 
         if (this.getParent() instanceof DefaultSizeNodeFigure
                 && figure instanceof ScalableImageFigure) {
@@ -103,6 +104,11 @@ public class SwitchableFigure extends Shape {
             if (image != null ) {
                     defaultSizeNodeFigure.setDefaultSize(image.getBounds().width + 2, image.getBounds().height + 2);
             }
+        } else if (this.getParent() instanceof DefaultSizeNodeFigure) {
+            DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
+            if (currentFigure.getPreferredSize().height != 0 && currentFigure.getPreferredSize().width != 0) {
+                defaultSizeNodeFigure.setDefaultSize(currentFigure.getPreferredSize().width + 2, currentFigure.getPreferredSize().height + 2);
+        }
         }
         // this.repaint();
         
