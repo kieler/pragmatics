@@ -23,6 +23,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.context.IPictogramElementsContext;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
@@ -82,7 +83,11 @@ public class KaomCopyPasteUtil {
         List<Entity> entities = new LinkedList<Entity>();
         List<Relation> relations = new LinkedList<Relation>();
         for (PictogramElement pe : pes) {
-            EList<EObject> list = pe.getLink().getBusinessObjects();
+            PictogramLink link = pe.getLink();
+            if (link == null) {
+                continue;
+            }
+            EList<EObject> list = link.getBusinessObjects();
             if (list.isEmpty()) {
                 continue;
             }

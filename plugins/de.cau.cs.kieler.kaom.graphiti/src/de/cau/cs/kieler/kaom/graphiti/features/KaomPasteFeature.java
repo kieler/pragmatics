@@ -29,6 +29,7 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.AbstractPasteFeature;
 
+import de.cau.cs.kieler.core.model.graphiti.ui.AbstractReInitGraphitiDiagramCommand;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
@@ -50,8 +51,6 @@ public class KaomPasteFeature extends AbstractPasteFeature {
      * 
      * @param fp
      *            the feature provider
-     * @param sp
-     *            the semantic provider
      */
     public KaomPasteFeature(final IFeatureProvider fp) {
         super(fp);
@@ -124,12 +123,23 @@ public class KaomPasteFeature extends AbstractPasteFeature {
             copy.setTarget(target);
             target.getIncomingLinks().add(copy);
 
-            AddConnectionContext acc =
-                    new AddConnectionContext(srcAnchor, targetAnchor);
-            acc.setNewObject(copy);
-            acc.setTargetContainer(cs);
-            getFeatureProvider().addIfPossible(acc);
+            addLinkToView(cs, srcAnchor, targetAnchor, copy);
         }
+    }
+
+    private void addLinkToView(final ContainerShape cs, final Link link) {
+        Anchor srcAnchor = getAnchor(link.getSource());
+        Anchor targetAnchor = getAnchor(link.getTarget());
+        addLinkToView(cs, srcAnchor, targetAnchor, link);
+    }
+
+    private void addLinkToView(final ContainerShape cs, final Anchor srcAnchor,
+            final Anchor targetAnchor, final Link link) {
+        AddConnectionContext acc =
+                new AddConnectionContext(srcAnchor, targetAnchor);
+        acc.setNewObject(link);
+        acc.setTargetContainer(cs);
+        getFeatureProvider().addIfPossible(acc);
     }
 
     /**
@@ -171,14 +181,51 @@ public class KaomPasteFeature extends AbstractPasteFeature {
                 parentEntity.getChildPorts().add((Port) newObject);
             }
 
-            AddContext ac = new AddContext();
-            ac.setTargetContainer(container);
-            ac.setNewObject(newObject);
-            ac.setLocation(container.getGraphicsAlgorithm().getWidth() / 2,
-                    container.getGraphicsAlgorithm().getHeight() / 2);
-            addGraphicalRepresentation(ac, newObject);
+            PictogramElement pe = addToView(container, newObject);
+            if (newObject instanceof Entity) {
+                recursiveAdd((ContainerShape) pe, (Entity) newObject);
+            }
         }
 
+    }
+
+    /**
+     * @param cs
+     * @param entity
+     */
+    private void recursiveAdd(final ContainerShape cs, final Entity entity) {
+        for (Entity ent : entity.getChildEntities()) {
+            PictogramElement pe = addToView(cs, ent);
+            recursiveAdd((ContainerShape) pe, ent);
+            for (Link link : ent.getOutgoingLinks()) {
+                addLinkToView(cs, link);
+            }
+        }
+        for (Relation rel : entity.getChildRelations()) {
+            addToView(cs, rel);
+        }
+        for (Port port : entity.getChildPorts()) {
+            addToView(cs, port);
+            for (Link link : port.getOutgoingLinks()) {
+                addLinkToView(cs, link);
+            }
+        }
+        AbstractReInitGraphitiDiagramCommand.alignBoxRelativeAnchors(cs);
+    }
+
+    /**
+     * @param cs
+     * @param eObj
+     * @return
+     */
+    private PictogramElement addToView(final ContainerShape cs,
+            final EObject eObj) {
+        AddContext ac = new AddContext();
+        ac.setTargetContainer(cs);
+        ac.setNewObject(eObj);
+        ac.setLocation(cs.getGraphicsAlgorithm().getWidth() / 2, cs
+                .getGraphicsAlgorithm().getHeight() / 2);
+        return addGraphicalRepresentation(ac, eObj);
     }
 
     /**

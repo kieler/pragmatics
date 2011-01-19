@@ -271,12 +271,18 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                                 port.getData(KShapeLayout.class);
 
                         BoxRelativeAnchor bra = (BoxRelativeAnchor) anchor;
+                        GraphicsAlgorithm ga =
+                                bra.getReferencedGraphicsAlgorithm();
                         double relWidth = bra.getRelativeWidth();
                         double relHeight = bra.getRelativeHeight();
-                        int xoffset = anchor.getGraphicsAlgorithm().getX();
-                        int yoffset = anchor.getGraphicsAlgorithm().getY();
-                        double parentWidth = shapeLayout.getWidth();
-                        double parentHeight = shapeLayout.getHeight();
+                        double xoffset =
+                                anchor.getGraphicsAlgorithm().getX()
+                                        + ga.getX();
+                        double yoffset =
+                                anchor.getGraphicsAlgorithm().getY()
+                                        + ga.getY();
+                        double parentWidth = ga.getWidth();
+                        double parentHeight = ga.getHeight();
                         portLayout
                                 .setXpos((float) (relWidth * parentWidth + xoffset));
                         portLayout
@@ -461,8 +467,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             BoxRelativeAnchor port = (BoxRelativeAnchor) anchor;
             KPort kPort = (KPort) pictElem2GraphElemMap.get(port);
             KShapeLayout portLayout = kPort.getData(KShapeLayout.class);
-            float x = portLayout.getXpos() + portLayout.getWidth() / 2;
-            float y = portLayout.getYpos() + portLayout.getHeight() / 2;
+            float x = portLayout.getXpos() + portLayout.getWidth() / 2.0f;
+            float y = portLayout.getYpos() + portLayout.getHeight() / 2.0f;
             KShapeLayout nodeLayout =
                     kPort.getNode().getData(KShapeLayout.class);
             x += nodeLayout.getXpos();
@@ -472,8 +478,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         } else if (anchor instanceof ChopboxAnchor) {
             KNode kNode = (KNode) pictElem2GraphElemMap.get(anchor.getParent());
             KShapeLayout nodeLayout = kNode.getData(KShapeLayout.class);
-            float x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
-            float y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
+            float x = nodeLayout.getWidth() / 2.0f + nodeLayout.getXpos();
+            float y = nodeLayout.getHeight() / 2.0f + nodeLayout.getYpos();
             point.setX(x);
             point.setY(y);
         }
