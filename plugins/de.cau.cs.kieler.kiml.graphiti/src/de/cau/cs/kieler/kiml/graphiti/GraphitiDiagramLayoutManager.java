@@ -283,10 +283,24 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                                         + ga.getY();
                         double parentWidth = ga.getWidth();
                         double parentHeight = ga.getHeight();
-                        portLayout
-                                .setXpos((float) (relWidth * parentWidth + xoffset));
-                        portLayout
-                                .setYpos((float) (relHeight * parentHeight + yoffset));
+                        float xPos = (float) (relWidth * parentWidth + xoffset);
+                        float yPos =
+                                (float) (relHeight * parentHeight + yoffset);
+
+                        // place port center directly outer bounds line
+                        if (relWidth == 0) {
+                            xPos += anchor.getGraphicsAlgorithm().getX();
+                        } else if (relWidth == 1) {
+                            xPos -= anchor.getGraphicsAlgorithm().getX();
+                        }
+                        if (relHeight == 0) {
+                            yPos += anchor.getGraphicsAlgorithm().getY();
+                        } else if (relHeight == 1) {
+                            yPos -= anchor.getGraphicsAlgorithm().getY();
+                        }
+
+                        portLayout.setXpos(xPos);
+                        portLayout.setYpos(yPos);
 
                         portLayout.setWidth(anchor.getGraphicsAlgorithm()
                                 .getWidth());

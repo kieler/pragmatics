@@ -122,8 +122,6 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         KShapeLayout shapeLayout = kport.getData(KShapeLayout.class);
         if (pelem instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor anchor = (BoxRelativeAnchor) pelem;
-            KShapeLayout parentLayout =
-                    kport.getNode().getData(KShapeLayout.class);
             GraphicsAlgorithm ga = anchor.getReferencedGraphicsAlgorithm();
             double parentWidth = ga.getWidth();
             double parentHeight = ga.getHeight();
@@ -157,7 +155,6 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         ga.setY(Math.round(shapeLayout.getYpos()));
         ga.setHeight(Math.round(shapeLayout.getHeight()));
         ga.setWidth(Math.round(shapeLayout.getWidth()));
-
         featureProvider.layoutIfPossible(new LayoutContext(pelem));
     }
 
@@ -193,15 +190,14 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             moveBendpointOutofNode(kedge.getSource(), allPoints.get(0), offset);
         } else if (conn.getStart() instanceof BoxRelativeAnchor) {
             allPoints.add(edgeLayout.getSourcePoint());
+            fixFirstBendPoint(edgeLayout.getSourcePoint(),
+                    (BoxRelativeAnchor) conn.getStart());
         }
         allPoints.addAll(edgeLayout.getBendPoints());
         if (conn.getEnd() instanceof ChopboxAnchor) {
             allPoints.add(edgeLayout.getTargetPoint());
             moveBendpointOutofNode(kedge.getTarget(),
                     allPoints.get(allPoints.size() - 1), offset);
-        } else if (conn.getEnd() instanceof BoxRelativeAnchor) {
-            fixLastBendPoint((BoxRelativeAnchor) conn.getEnd(), allPoints,
-                    edgeLayout.getTargetPoint());
         }
 
         // add the bend points to the connection
@@ -214,22 +210,31 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         }
     }
 
-    private void fixLastBendPoint(final BoxRelativeAnchor end,
-            final List<KPoint> allPoints, final KPoint target) {
-        if (allPoints.size() > 1) {
-            // KPoint last = allPoints.get(allPoints.size() - 1);
-            // KPoint prev = allPoints.get(allPoints.size() - 2);
-            // double relWidth = end.getRelativeWidth();
-            // double relHeight = end.getRelativeHeight();
-            // if (relHeight != 0.0 && last.getY() < target.getY()) {
-            // allPoints.remove(last);
-            // prev.setY(target.getY() + 1);
-            // } else if (relHeight != 1.0 && last.getY() > target.getY()) {
-            // allPoints.remove(last);
-            // prev.setY(target.getY() - 1);
-            // }
+    /**
+     * moves the first bend point back onto the edge of the port.
+     * 
+     * @param sourcePoint
+     *            the point to move
+     * @param start
+     *            the port
+     */
+    private void fixFirstBendPoint(final KPoint sourcePoint,
+            final BoxRelativeAnchor start) {
+        // undo port center trickery
+        if (start.getRelativeWidth() == 0) {
+            sourcePoint.setX(sourcePoint.getX()
+                    - start.getGraphicsAlgorithm().getX());
+        } else if (start.getRelativeWidth() == 1) {
+            sourcePoint.setX(sourcePoint.getX()
+                    + start.getGraphicsAlgorithm().getX());
         }
-
+        if (start.getRelativeHeight() == 0) {
+            sourcePoint.setY(sourcePoint.getY()
+                    - start.getGraphicsAlgorithm().getY());
+        } else if (start.getRelativeHeight() == 1) {
+            sourcePoint.setY(sourcePoint.getY()
+                    + start.getGraphicsAlgorithm().getY());
+        }
     }
 
     /** how much to move bend points out of the source or target node. */
@@ -243,6 +248,8 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      *            the node that contains the anchor
      * @param point
      *            the bend point to move
+     * @param offset
+     *            the vector by which to move the bendpoint
      */
     private void moveBendpointOutofNode(final KNode node, final KPoint point,
             final KVector offset) {
