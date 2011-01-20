@@ -25,15 +25,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.common.core.command.CommandResult;
 import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
 import org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand;
@@ -41,16 +38,15 @@ import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.WorkbenchJob;
 
-import de.cau.cs.kieler.core.ui.commands.AbstractReInitDiagramCommand;
-import de.cau.cs.kieler.core.ui.util.EditorUtils;
+import de.cau.cs.kieler.core.model.ui.AbstractReInitDiagramCommand;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
+import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditor;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorUtil;
 import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 import de.cau.cs.kieler.kaom.diagram.part.Messages;
-import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
 /**
  * A command that reinitializes a diagram file from a given kixs file.
@@ -66,58 +62,50 @@ public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
     /** File extension for model files. */
     private static final String MODEL_EXTENSION = "kaom";
 
-    /** Delay for the auto layout. */
-    private static final long AUTO_LAYOUT_DELAY = 1000;
+    // /** Delay for the auto layout. */
+    // private static final long AUTO_LAYOUT_DELAY = 1000;
+    //
+    // /**
+    // * Perform actions after the reinit.
+    // *
+    // * @param path
+    // * the file
+    // * @param partners
+    // * the partner files
+    // * @param monitor
+    // * the progress monitor
+    // */
+    // @Override
+    // protected void performPostOperationAction(final IFile path,
+    // final List<IFile> partners, final IProgressMonitor monitor) {
+    // WorkbenchJob job = new WorkbenchJob("") {
+    //
+    // @Override
+    // public IStatus runInUIThread(final IProgressMonitor monitor) {
+    // // perform auto layout
+    // IEditorPart editor = EditorUtils.getLastActiveEditor();
+    // EditPart part = null;
+    // if (editor != null) {
+    // EclipseLayoutServices.getInstance().layout(editor, part,
+    // false, true);
+    // }
+    // return new Status(IStatus.OK,
+    // "de.cau.cs.kieler.synccharts.diagram.custom", "Done");
+    // }
+    // };
+    //
+    // job.schedule(AUTO_LAYOUT_DELAY);
+    // }
 
     /**
-     * Perform actions after the reinit.
      * 
-     * @param path
-     *            the file
-     * @param partners
-     *            the partner files
-     * @param monitor
-     *            the progress monitor
+     * {@inheritDoc}
      */
     @Override
-    protected void performPostOperationAction(final IFile path,
-            final List<IFile> partners, final IProgressMonitor monitor) {
-        WorkbenchJob job = new WorkbenchJob("") {
-
-            @Override
-            public IStatus runInUIThread(final IProgressMonitor monitor) {
-                // perform auto layout
-                IEditorPart editor = EditorUtils.getLastActiveEditor();
-                EditPart part = null;
-                if (editor != null) {
-                    EclipseLayoutServices.getInstance().layout(editor, part,
-                            false, true);
-                }
-                return new Status(IStatus.OK,
-                        "de.cau.cs.kieler.synccharts.diagram.custom", "Done");
-            }
-        };
-
-        job.schedule(AUTO_LAYOUT_DELAY);
-    }
-
-    /**
-     * Create a new diagram file from the given semantics model.
-     * 
-     * @param diagramRoot
-     *            the root element.
-     * @param editingDomain
-     *            the editing domain.
-     * @param diagramFile
-     *            the destination file
-     * @param monitor
-     *            the progress monitor
-     * @return true if the creation was successful
-     */
-    @Override
-    public boolean createNewDiagram(final EObject diagramRoot,
+    public IEditorPart createNewDiagram(final EObject diagramRoot,
             final TransactionalEditingDomain editingDomain,
             final IFile diagramFile, final IProgressMonitor monitor) {
+        final Maybe<IEditorPart> result = new Maybe<IEditorPart>(null);
         List<IFile> affectedFiles = new LinkedList<IFile>();
         refreshWorkspace();
 
@@ -141,33 +129,40 @@ public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
 
         KaomDiagramEditorUtil.setCharset(diagramFile);
         affectedFiles.add(diagramFile);
-        final URI diagramModelURI = URI.createPlatformResourceURI(diagramFile
-                .getFullPath().toString(), true);
+        final URI diagramModelURI =
+                URI.createPlatformResourceURI(diagramFile.getFullPath()
+                        .toString(), true);
         ResourceSet resourceSet = editingDomain.getResourceSet();
-        final Resource diagramResource = resourceSet
-                .createResource(diagramModelURI);
-        final AbstractTransactionalCommand command = new AbstractTransactionalCommand(
-                editingDomain,
-                Messages.KaomNewDiagramFileWizard_InitDiagramCommand,
-                affectedFiles) {
+        final Resource diagramResource =
+                resourceSet.createResource(diagramModelURI);
+        final AbstractTransactionalCommand command =
+                new AbstractTransactionalCommand(editingDomain,
+                        Messages.KaomNewDiagramFileWizard_InitDiagramCommand,
+                        affectedFiles) {
 
-            @Override
-            protected CommandResult doExecuteWithResult(
-                    final IProgressMonitor monitor, final IAdaptable info)
-                    throws ExecutionException {
-                int diagramVID = KaomVisualIDRegistry
-                        .getDiagramVisualID(diagramRoot);
-                if (diagramVID != EntityEditPart.VISUAL_ID) {
-                    String msg = Messages.KaomNewDiagramFileWizard_IncorrectRootError;
-                    return CommandResult.newErrorCommandResult(msg);
-                }
-                Diagram diagram = ViewService.createDiagram(diagramRoot,
-                        EntityEditPart.MODEL_ID,
-                        KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
-                diagramResource.getContents().add(diagram);
-                return CommandResult.newOKCommandResult();
-            }
-        };
+                    @Override
+                    protected CommandResult doExecuteWithResult(
+                            final IProgressMonitor monitor,
+                            final IAdaptable info) throws ExecutionException {
+                        int diagramVID =
+                                KaomVisualIDRegistry
+                                        .getDiagramVisualID(diagramRoot);
+                        if (diagramVID != EntityEditPart.VISUAL_ID) {
+                            String msg =
+                                    Messages.KaomNewDiagramFileWizard_IncorrectRootError;
+                            return CommandResult.newErrorCommandResult(msg);
+                        }
+                        Diagram diagram =
+                                ViewService
+                                        .createDiagram(
+                                                diagramRoot,
+                                                EntityEditPart.MODEL_ID,
+                                                KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
+                        diagramResource.getContents().add(diagram);
+                        return CommandResult.newOKCommandResult();
+                    }
+                };
+
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
             public void run() {
@@ -176,8 +171,9 @@ public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
                             command, new NullProgressMonitor(), null);
                     diagramResource.save(KaomDiagramEditorUtil.getSaveOptions());
 
-                    KaomDiagramEditorUtil.openDiagram(diagramResource);
-
+                    IEditorPart editor =
+                            openDiagram(diagramResource, KaomDiagramEditor.ID);
+                    result.set(editor);
                 } catch (ExecutionException e) {
                     KaomDiagramEditorPlugin.getInstance().logError(
                             "Unable to create model and diagram", e); //$NON-NLS-1$
@@ -192,7 +188,7 @@ public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
                 }
             }
         });
-        return true;
+        return result.get();
     }
 
     /**

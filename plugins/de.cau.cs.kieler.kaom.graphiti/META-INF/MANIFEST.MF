@@ -15,7 +15,8 @@ Require-Bundle: de.cau.cs.kieler.core,
  org.eclipse.graphiti.mm,
  org.eclipse.graphiti.ui,
  org.eclipse.ui.ide,
- de.cau.cs.kieler.core.ui;bundle-version="0.4.0"
+ de.cau.cs.kieler.core.ui;bundle-version="0.4.0",
+ de.cau.cs.kieler.core.model;bundle-version="0.4.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: de.cau.cs.kieler.kaom,

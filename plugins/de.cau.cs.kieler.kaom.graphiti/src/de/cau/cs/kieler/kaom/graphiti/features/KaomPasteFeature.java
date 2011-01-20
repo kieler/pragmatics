@@ -31,12 +31,12 @@ import org.eclipse.graphiti.mm.pictograms.PictogramLink;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.features.AbstractPasteFeature;
 
-import de.cau.cs.kieler.core.model.graphiti.ui.AbstractReInitGraphitiDiagramCommand;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Linkable;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.Relation;
+import de.cau.cs.kieler.kaom.graphiti.diagram.ReInitKaomDiagramCommand;
 
 /**
  * @author soh
@@ -244,7 +244,7 @@ public class KaomPasteFeature extends AbstractPasteFeature {
             addLinkToView(cs, link);
         }
         for (ContainerShape child : children) {
-            AbstractReInitGraphitiDiagramCommand.alignBoxRelativeAnchors(child);
+            new ReInitKaomDiagramCommand().alignBoxRelativeAnchors(child);
         }
     }
 

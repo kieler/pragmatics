@@ -214,6 +214,12 @@ point="org.eclipse.ui.menus">
           description="Performs automatic layout when either of the buttons or the key combination is pressed."
           name="Automatic Layout">
     </combination>
+    <combination
+          active="true"
+          class="de.cau.cs.kieler.kiml.ui.layout.LayoutAfterDiagramReinitCombination"
+          description="Performs an automatic layout after a diagram has been reinitialized from its model file"
+          name="Layout After Diagram Reinitialization">
+    </combination>
  </extension>
    
 </plugin>
