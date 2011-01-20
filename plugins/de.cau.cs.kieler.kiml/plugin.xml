@@ -28,6 +28,9 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.bendPoints">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
       </layoutProvider>
       <layoutProvider
             class="de.cau.cs.kieler.kiml.util.BoxLayoutProvider"

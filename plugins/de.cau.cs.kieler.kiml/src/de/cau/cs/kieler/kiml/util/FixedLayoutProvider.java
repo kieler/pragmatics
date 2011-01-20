@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -38,6 +39,16 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
     /** the layout provider id. */
     public static final String ID = "de.cau.cs.kieler.kiml.layouter.fixed";
     
+    /** default value for border spacing. */
+    private static final float DEF_BORDER_SPACING = 15.0f;
+    
+    /**
+     * Initialize the default values of the fixed layout provider.
+     */
+    public FixedLayoutProvider() {
+        setProperty(LayoutOptions.BORDER_SPACING, DEF_BORDER_SPACING);
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -45,6 +56,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Null Layout", 1);
+        float maxx = 0, maxy = 0;
         
         for (KNode node : layoutNode.getChildren()) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
@@ -67,6 +79,8 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                     }
                 }
             }
+            maxx = Math.max(maxx, nodeLayout.getXpos() + nodeLayout.getWidth());
+            maxy = Math.max(maxy, nodeLayout.getYpos() + nodeLayout.getHeight());
             
             // set the fixed position of the ports, or leave them as they are
             for (KPort port : node.getPorts()) {
@@ -90,6 +104,16 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 }
             }
         }
+        
+        // set size of the parent node
+        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
+        float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        if (borderSpacing < 0) {
+            borderSpacing = DEF_BORDER_SPACING;
+        }
+        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        parentLayout.setWidth(maxx + borderSpacing + insets.getLeft() + insets.getRight());
+        parentLayout.setHeight(maxy + borderSpacing + insets.getTop() + insets.getBottom());
         
         progressMonitor.done();
     }
