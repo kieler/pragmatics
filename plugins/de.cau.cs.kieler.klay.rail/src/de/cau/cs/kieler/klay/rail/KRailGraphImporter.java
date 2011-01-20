@@ -43,10 +43,10 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * Manages the transformation of KGraphs for railway to LayeredGraphs.
- * Custom class adapted from KGraphImporter, since some features aren't
- * supported there. If this changes, the original may be used again.
- *
+ * Manages the transformation of KGraphs for railway to LayeredGraphs. Custom class adapted from
+ * KGraphImporter, since some features aren't supported there. If this changes, the original may be
+ * used again.
+ * 
  * @author msp, jjc
  */
 public class KRailGraphImporter implements IGraphImporter {
@@ -55,11 +55,12 @@ public class KRailGraphImporter implements IGraphImporter {
     private LayeredGraph layeredGraph;
     /** the imported nodes. */
     private List<LNode> importedNodes;
-    
+
     /**
      * Imports a KGraph to a layered graph.
      * 
-     * @param knode the top level node of the KGraph
+     * @param knode
+     *            the top level node of the KGraph
      */
     public KRailGraphImporter(final KNode knode) {
         importedNodes = transformGraph(knode);
@@ -80,7 +81,7 @@ public class KRailGraphImporter implements IGraphImporter {
     public LayeredGraph getGraph() {
         return layeredGraph;
     }
-    
+
     /**
      * Transform the given KGraph to a layered graph.
      * 
@@ -95,13 +96,15 @@ public class KRailGraphImporter implements IGraphImporter {
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         for (KNode child : layoutNode.getChildren()) {
             KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
-            PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+            PortConstraints portConstraints = nodeLayout
+                    .getProperty(LayoutOptions.PORT_CONSTRAINTS);
             LNode newNode = new LNode(child.getLabel().getText());
             newNode.setProperty(Properties.ORIGIN, child);
             newNode.getSize().x = nodeLayout.getWidth();
             newNode.getSize().y = nodeLayout.getHeight();
             newNode.setProperty(Properties.NODE_TYPE, nodeLayout.getProperty(Properties.NODE_TYPE));
-            newNode.setProperty(Properties.ENTRY_POINT, nodeLayout.getProperty(Properties.ENTRY_POINT));
+            newNode.setProperty(Properties.ENTRY_POINT,
+                    nodeLayout.getProperty(Properties.ENTRY_POINT));
             layeredNodes.add(newNode);
             elemMap.put(child, newNode);
             KPort[] sortedPorts = KimlUtil.getSortedPorts(child);
@@ -124,7 +127,8 @@ public class KRailGraphImporter implements IGraphImporter {
                 }
                 LPort newPort = new LPort(type, kport.getLabel().getText());
                 newPort.setProperty(Properties.ORIGIN, kport);
-                newPort.setProperty(Properties.PORT_TYPE, portLayout.getProperty(Properties.PORT_TYPE));
+                newPort.setProperty(Properties.PORT_TYPE,
+                        portLayout.getProperty(Properties.PORT_TYPE));
                 newPort.getPos().x = portLayout.getXpos();
                 newPort.getPos().y = portLayout.getYpos();
                 newPort.setNode(newNode);
@@ -190,7 +194,6 @@ public class KRailGraphImporter implements IGraphImporter {
         return layeredNodes;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -219,15 +222,13 @@ public class KRailGraphImporter implements IGraphImporter {
                         edge.id = -1;
                     }
                 }
-                /*for (LPort port : lnode.getPorts()) {
-                    Object original = port.getProperty(Properties.ORIGIN);
-                    if (original instanceof KPort) {
-                        KPort kport = (KPort) original;
-                        KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-                        portLayout.setXpos((float) (port.getPos().x + offset.x));
-                        portLayout.setYpos((float) (port.getPos().y + offset.y));
-                    }
-                }*/
+                /*
+                 * for (LPort port : lnode.getPorts()) { Object original =
+                 * port.getProperty(Properties.ORIGIN); if (original instanceof KPort) { KPort kport
+                 * = (KPort) original; KShapeLayout portLayout = kport.getData(KShapeLayout.class);
+                 * portLayout.setXpos((float) (port.getPos().x + offset.x));
+                 * portLayout.setYpos((float) (port.getPos().y + offset.y)); } }
+                 */
             }
         }
 
@@ -262,7 +263,7 @@ public class KRailGraphImporter implements IGraphImporter {
                 }
             }
         }
-        
+
         // process the edges
         for (Map.Entry<KEdge, List<LEdge>> edgeEntry : edgeMap.entrySet()) {
             KEdge kedge = edgeEntry.getKey();
@@ -275,12 +276,20 @@ public class KRailGraphImporter implements IGraphImporter {
             LEdge lastEdge = edgeList.get(edgeList.size() - 1);
             LPort targetPort = lastEdge.getTarget();
             targetPort.getPos().add(targetPort.getNode().getPos());
+            KShapeLayout standardPort = kedge.getSourcePort().getData(KShapeLayout.class);
+            KVector sourcePortOffset = new KVector(standardPort.getWidth(),
+                    standardPort.getHeight() / 2);
+            KVector targetPortOffset = new KVector(0, standardPort.getHeight() / 2);
             if (firstEdge.getProperty(Properties.REVERSED)) {
-                applyLayout(edgeLayout.getSourcePoint(), targetPort.getPos(), offset);
-                applyLayout(edgeLayout.getTargetPoint(), sourcePort.getPos(), offset);
+                applyLayout(edgeLayout.getSourcePoint(), targetPort.getPos().add(targetPortOffset),
+                        offset);
+                applyLayout(edgeLayout.getTargetPoint(), sourcePort.getPos().add(sourcePortOffset),
+                        offset);
             } else {
-                applyLayout(edgeLayout.getSourcePoint(), sourcePort.getPos(), offset);
-                applyLayout(edgeLayout.getTargetPoint(), targetPort.getPos(), offset);
+                applyLayout(edgeLayout.getSourcePoint(), sourcePort.getPos().add(sourcePortOffset),
+                        offset);
+                applyLayout(edgeLayout.getTargetPoint(), targetPort.getPos().add(targetPortOffset),
+                        offset);
             }
             // set bend points, considering direction of the edge
             List<KPoint> bendPoints = edgeLayout.getBendPoints();
@@ -288,7 +297,7 @@ public class KRailGraphImporter implements IGraphImporter {
             for (LEdge ledge : edgeList) {
                 for (KVector lpoint : ledge.getBendPoints()) {
                     KPoint newPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    applyLayout(newPoint, lpoint, offset);
+                    applyLayout(newPoint, lpoint.add(sourcePortOffset), offset);
                     if (ledge.getProperty(Properties.REVERSED)) {
                         bendPoints.add(0, newPoint);
                     } else {
@@ -319,5 +328,5 @@ public class KRailGraphImporter implements IGraphImporter {
         kpoint.setX((float) (lpoint.x + offset.x));
         kpoint.setY((float) (lpoint.y + offset.y));
     }
-    
+
 }
