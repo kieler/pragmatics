@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IParameter;
@@ -31,17 +30,19 @@ import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService.ButtonConfiguration;
 
 /**
- * Dynamic toolbar contribution for the use with KIELER View Management. It extends the idea of
- * CompoundContributionItems, which are only defined for menus, to toolbars. Hence, the toolbar is
- * filled dynamically with buttons, which only get updated at the ToolbarManager updates, which are
- * not in control of the user. Hence, newly inserted buttons or visibility updates might be delayed
- * until the next ToolbarManager update, which is for example at a change to a different kind of
- * editor or the change of the perspective.
+ * Dynamic toolbar contribution for the use with KIELER View Management. It
+ * extends the idea of CompoundContributionItems, which are only defined for
+ * menus, to toolbars. Hence, the toolbar is filled dynamically with buttons,
+ * which only get updated at the ToolbarManager updates, which are not in
+ * control of the user. Hence, newly inserted buttons or visibility updates
+ * might be delayed until the next ToolbarManager update, which is for example
+ * at a change to a different kind of editor or the change of the perspective.
  * 
- * All visibility management is implemented using the standard core expressions of eclipse that are
- * also used by the org.eclipse.ui.menu extension point. However, the core expressions API is not
- * publicly available due to restrictions in the corresponding org.eclipse.core.expressions plug-in
- * and therefore result in compiler warnings.
+ * All visibility management is implemented using the standard core expressions
+ * of eclipse that are also used by the org.eclipse.ui.menu extension point.
+ * However, the core expressions API is not publicly available due to
+ * restrictions in the corresponding org.eclipse.core.expressions plug-in and
+ * therefore result in compiler warnings.
  * 
  * @author haf
  * 
@@ -50,20 +51,21 @@ public class KiviContributionItem extends CompoundContributionItem implements
         IWorkbenchContribution {
 
     /**
-     * A ServiceLocator that is given to this class from outside at initialization. It is used to
-     * find command- and menu services and is required by the ContributionItemParameter
+     * A ServiceLocator that is given to this class from outside at
+     * initialization. It is used to find command- and menu services and is
+     * required by the ContributionItemParameter
      */
     private IServiceLocator serviceLocator;
 
     /**
-     * The CommandService gives access to the Command API of Eclipse and allows to programmatically
-     * create new commands.
+     * The CommandService gives access to the Command API of Eclipse and allows
+     * to programmatically create new commands.
      */
     private ICommandService commandService;
 
     /**
-     * The MenuService gives access to some menu management functionality. Here it is used to
-     * register the enablement expressions for menu-entries.
+     * The MenuService gives access to some menu management functionality. Here
+     * it is used to register the enablement expressions for menu-entries.
      */
     /*
      * haf: need to have access to the registerVisibleWhen method currently defined in
@@ -74,30 +76,38 @@ public class KiviContributionItem extends CompoundContributionItem implements
      */
     private InternalMenuService menuService;
 
-    static private Map<String, IContributionItem> idButtonMap = new HashMap<String, IContributionItem>();
-    static private Map<IContributionItem, ButtonHandler> buttonsHandlerMap = new HashMap<IContributionItem, ButtonHandler>();
-    static private List<IContributionItem> buttons = new ArrayList<IContributionItem>();
-    
+    static private Map<String, IContributionItem> idButtonMap =
+            new HashMap<String, IContributionItem>();
+    static private Map<IContributionItem, ButtonHandler> buttonsHandlerMap =
+            new HashMap<IContributionItem, ButtonHandler>();
+    static private List<IContributionItem> buttons =
+            new ArrayList<IContributionItem>();
+
     /**
      * {@inheritDoc}
      */
     public void initialize(final IServiceLocator theServiceLocator) {
         this.serviceLocator = theServiceLocator;
-        this.commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
-        this.menuService = (InternalMenuService) serviceLocator.getService(IMenuService.class);
+        this.commandService =
+                (ICommandService) serviceLocator
+                        .getService(ICommandService.class);
+        this.menuService =
+                (InternalMenuService) serviceLocator
+                        .getService(IMenuService.class);
     }
 
     /**
-     * The main code to create a button. It reads the button configurations from the
-     * KiviMenuContributionService and adds buttons accordingly. {@inheritDoc}
+     * The main code to create a button. It reads the button configurations from
+     * the KiviMenuContributionService and adds buttons accordingly.
+     * {@inheritDoc}
      */
     @Override
     protected IContributionItem[] getContributionItems() {
 
-        System.out.println("KiviContributionItem.getContributionItems()");
+        // System.out.println("KiviContributionItem.getContributionItems()");
 
-        List<ButtonConfiguration> buttonConfigurations = KiviMenuContributionService.INSTANCE
-                .getButtonConfigurations();
+        List<ButtonConfiguration> buttonConfigurations =
+                KiviMenuContributionService.INSTANCE.getButtonConfigurations();
         for (ButtonConfiguration config : buttonConfigurations) {
 
             IContributionItem item;
@@ -107,7 +117,8 @@ public class KiviContributionItem extends CompoundContributionItem implements
             if (item == null && commandService != null) {
                 // get a command and register the Kivi ButtonHandler for it
                 Command cmd = commandService.getCommand(config.getId());
-                Category category = commandService.getCategory("de.cau.cs.kieler");
+                Category category =
+                        commandService.getCategory("de.cau.cs.kieler");
                 IParameter[] params = {};
                 cmd.define(config.getLabel(), null, category, params);
                 // define a Handler for the command
@@ -115,14 +126,17 @@ public class KiviContributionItem extends CompoundContributionItem implements
                 cmd.setHandler(buttonHandler);
 
                 // now specify the button
-                CommandContributionItemParameter parameter = new CommandContributionItemParameter(
-                        serviceLocator, config.getId(), config.getId(),
-                        new HashMap<String, String>(), config.getIcon(), null, null,
-                        config.getLabel(), null, config.getTooltip(), config.getStyle(), null,
-                        false);
+                CommandContributionItemParameter parameter =
+                        new CommandContributionItemParameter(serviceLocator,
+                                config.getId(), config.getId(),
+                                new HashMap<String, String>(),
+                                config.getIcon(), null, null,
+                                config.getLabel(), null, config.getTooltip(),
+                                config.getStyle(), null, false);
                 // this is the button
                 item = new CommandContributionItem(parameter);
-                // remember some relations between button, its handler and the corresponding
+                // remember some relations between button, its handler and the
+                // corresponding
                 // configuration
                 buttonsHandlerMap.put(item, buttonHandler);
                 idButtonMap.put(config.getId(), item);
@@ -131,11 +145,13 @@ public class KiviContributionItem extends CompoundContributionItem implements
                 // specify visibility
                 Expression visibilityExpression = null;
                 // specify visibility for active editors
-                if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
+                if (config.getActiveEditors() != null
+                        && config.getActiveEditors().length > 0) {
                     CompositeExpression or = new OrExpression();
                     visibilityExpression = or;
                     for (String editorId : config.getActiveEditors()) {
-                        CompositeExpression with = new WithExpression("activeEditorId");
+                        CompositeExpression with =
+                                new WithExpression("activeEditorId");
                         Expression equals = new EqualsExpression(editorId);
                         with.add(equals);
                         or.add(with);
@@ -153,10 +169,12 @@ public class KiviContributionItem extends CompoundContributionItem implements
                     }
                 }
                 if (visibilityExpression != null) {
-                    menuService.registerVisibleWhen(item, visibilityExpression, null, null);
+                    menuService.registerVisibleWhen(item, visibilityExpression,
+                            null, null);
                 }
             }
-            // change the visibility if some combination has changed its active state (e.g. from
+            // change the visibility if some combination has changed its active
+            // state (e.g. from
             // prefs)
             if (!config.getResponsiveCombination().isActive()) {
                 item.setVisible(false);
@@ -164,13 +182,14 @@ public class KiviContributionItem extends CompoundContributionItem implements
         }
 
         // return list of menu contributions in the correct order
-        return buttons.toArray(new IContributionItem[buttonsHandlerMap.size()]); 
+        return buttons.toArray(new IContributionItem[buttonsHandlerMap.size()]);
     }
 
     /**
-     * Set the enabled state of a menu contribution handler associated with the given ID. This state
-     * is used by corresponding menu contributions (buttons, menu entries, etc.) to determine the
-     * enabled state of that menu item, e.g. whether a button should be grayed out or not.
+     * Set the enabled state of a menu contribution handler associated with the
+     * given ID. This state is used by corresponding menu contributions
+     * (buttons, menu entries, etc.) to determine the enabled state of that menu
+     * item, e.g. whether a button should be grayed out or not.
      * 
      * @author haf
      * @param buttonID
@@ -178,7 +197,8 @@ public class KiviContributionItem extends CompoundContributionItem implements
      * @param enabled
      *            true iff the handler is enabled.
      */
-    public static void setEnabledState(final String buttonID, final boolean enabled) {
+    public static void setEnabledState(final String buttonID,
+            final boolean enabled) {
         IContributionItem item = idButtonMap.get(buttonID);
         if (item != null) {
             ButtonHandler handler = buttonsHandlerMap.get(item);
@@ -189,7 +209,8 @@ public class KiviContributionItem extends CompoundContributionItem implements
     }
 
     /**
-     * (haf) simply copied the code from the CompoundContributionItem. {@inheritDoc}
+     * (haf) simply copied the code from the CompoundContributionItem.
+     * {@inheritDoc}
      */
     @Override
     public void fill(final ToolBar parent, final int index) {
