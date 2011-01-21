@@ -50,6 +50,16 @@ public class KVectorChain extends LinkedList<KVector> implements IDataObject {
     }
     
     /**
+     * Creates a vector chain from a given vector array.
+     * 
+     * @param vectors an array of vectors
+     */
+    public KVectorChain(final KVector[] vectors) {
+        super();
+        addAll(vectors);
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -133,6 +143,17 @@ public class KVectorChain extends LinkedList<KVector> implements IDataObject {
      */
     public void addLast(final double x, final double y) {
         addLast(new KVector(x, y));
+    }
+
+    /**
+     * Add all the vectors in the given array to the end of this vector chain.
+     * 
+     * @param vectors a vector array
+     */
+    public void addAll(final KVector[] vectors) {
+        for (KVector vector : vectors) {
+            add(vector);
+        }
     }
     
     /**

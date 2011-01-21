@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.core.math;
 
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Mathematics utility class for the KIELER projects.
@@ -192,6 +193,96 @@ public final class KielerMath {
             result[i] = new KVector(x, y);
         }
         return result;
+    }
+    
+    /**
+     * Calculate a number of points on the Bezier curve defined by the given control points.
+     * The degree of the curve is derived from the number of control points. The array of
+     * resulting curve points includes the target point, but does not include the source point
+     * of the curve.
+     * 
+     * @param controlPoints the control points
+     * @param resultSize number of returned curve points
+     * @return points on the curve defined by the given control points
+     */
+    public static KVector[] calcBezierPoints(final int resultSize,
+            final KVector ... controlPoints) {
+        if (resultSize <= 0) {
+            return new KVector[0];
+        }
+        KVector[] result = new KVector[resultSize];
+        int n = controlPoints.length - 1;
+        double dt = (1.0 / resultSize), t = 0;
+        for (int i = 0; i < resultSize; i++) {
+            t += dt;
+            double x = 0, y = 0;
+            for (int j = 0; j <= n; j++) {
+                KVector p = controlPoints[j];
+                double factor = binomiald(n, j) * pow(1 - t, n - j) * pow(t, j);
+                x += p.x * factor;
+                y += p.y * factor;
+            }
+            result[i] = new KVector(x, y);
+        }
+        return result;
+    }
+    
+    /**
+     * Calculate a number of points on the Bezier curve defined by the given control points.
+     * The degree of the curve is derived from the number of control points. The array of
+     * resulting curve points includes the target point, but does not include the source point
+     * of the curve. The number of approximation points is derived from the given control points.
+     * 
+     * @param controlPoints the control points
+     * @return points on the curve defined by the given control points
+     */
+    public static KVector[] calcBezierPoints(final KVector ... controlPoints) {
+        return calcBezierPoints(getApproximationCount(controlPoints), controlPoints);
+    }
+    
+    /**
+     * Calculate a suggestion for the number of approximation points of the Bezier curve that
+     * is defined by the given control points. The degree of the curve is derived from the
+     * number of control points.
+     * 
+     * @param controlPoints the control points
+     * @return a recommendation for the number of approximation points for the curve
+     */
+    public static int getApproximationCount(final KVector ... controlPoints) {
+        // TODO find a more intelligent count for the approximation points
+        return controlPoints.length;
+    }
+    
+    /**
+     * Computes an approximation for the spline that is defined by the given control points.
+     * The control points are interpreted as a series of cubic Bezier curves.
+     * 
+     * @param controlPoints control points of a piecewise cubic spline
+     * @return a vector chain that approximates the spline
+     */
+    public static KVectorChain appoximateSpline(final KVectorChain controlPoints) {
+        int ctrlPtCount = controlPoints.size();
+        KVectorChain spline = new KVectorChain();
+        ListIterator<KVector> controlIter = controlPoints.listIterator();
+        KVector currentPoint = controlIter.next();
+        spline.add(currentPoint);
+        while (controlIter.hasNext()) {
+            int remainingPoints = ctrlPtCount - controlIter.nextIndex();
+            if (remainingPoints == 1) {
+                spline.add(controlIter.next());
+            } else if (remainingPoints == 2) {
+                // calculate a quadratic bezier curve
+                spline.addAll(calcBezierPoints(currentPoint, controlIter.next(), controlIter.next()));
+            } else {
+                // calculate a cubic bezier curve
+                KVector control1 = controlIter.next();
+                KVector control2 = controlIter.next();
+                KVector nextPoint = controlIter.next();
+                spline.addAll(calcBezierPoints(currentPoint, control1, control2, nextPoint));
+                currentPoint = nextPoint;
+            }
+        }
+        return spline;
     }
     
     /** degree of splines equation to find roots. */
