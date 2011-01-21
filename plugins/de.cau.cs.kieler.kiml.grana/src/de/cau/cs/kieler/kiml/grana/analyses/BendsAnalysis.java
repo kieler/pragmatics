@@ -73,6 +73,8 @@ public class BendsAnalysis implements IAnalysis {
         // Compute the average number of bend points per edge
         if (edges > 0) {
             avg = (float) sum / (float) edges;
+        } else {
+            min = 0;
         }
 
         progressMonitor.done();

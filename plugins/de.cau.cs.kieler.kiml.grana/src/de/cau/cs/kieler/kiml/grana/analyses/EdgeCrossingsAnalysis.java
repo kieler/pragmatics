@@ -162,6 +162,8 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
             // Sum only counts each crossing once. But since each crossing is a crossing
             // of two edges, for the average we have to double sum
             avg = (float) (sum * 2) / (float) edges.size();
+        } else {
+            min = 0;
         }
 
         progressMonitor.done();
