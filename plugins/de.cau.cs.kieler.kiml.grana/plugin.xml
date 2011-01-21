@@ -270,6 +270,22 @@
             description="The number of edge crossings including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.edgeCrossings"
             name="Number of Edge Crossings">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
+         <component
+               abbreviation="Sum"
+               name="Sum">
+         </component>
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"

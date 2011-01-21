@@ -28,9 +28,11 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 
 /**
  * A graph analysis that computes the number of edge crossings. It assumes that
- * the edge bend points describe polylines (splines are not supported).
+ * the edge bend points describe polylines (splines are not supported). Returns
+ * a four-component result {@code (int min, float avg, int max, int sum)}.
  * 
  * @author mri
+ * @author cds
  */
 public class EdgeCrossingsAnalysis implements IAnalysis {
 
@@ -119,7 +121,9 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
+        
         progressMonitor.begin("Edge Crossings analysis", 1);
+        
         LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
         List<KEdge> edges = new LinkedList<KEdge>();
         nodeQueue.offer(parentNode);
@@ -134,17 +138,33 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
         
         // count the number of crossings between all edges of the compound graph
         ListIterator<KEdge> iter1 = edges.listIterator();
-        int numberOfCrossings = 0;
+        
+        int min = Integer.MAX_VALUE;
+        int max = 0;
+        int sum = 0;
+        int current;
+        float avg = 0.0f;
+        
         while (iter1.hasNext()) {
             KEdge edge1 = iter1.next();
             ListIterator<KEdge> iter2 = edges.listIterator(iter1.nextIndex());
             while (iter2.hasNext()) {
                 KEdge edge2 = iter2.next();
-                numberOfCrossings += computeNumberOfCrossings(edge1, edge2);
+                
+                current = computeNumberOfCrossings(edge1, edge2);
+                min = Math.min(min, current);
+                max = Math.max(max, current);
+                sum += current;
             }
+        }
+        
+        if (edges.size() > 0) {
+            // Sum only counts each crossing once. But since each crossing is a crossing
+            // of two edges, for the average we have to double sum
+            avg = (float) (sum * 2) / (float) edges.size();
         }
 
         progressMonitor.done();
-        return numberOfCrossings;
+        return new Object[] {min, avg, max, sum};
     }
 }
