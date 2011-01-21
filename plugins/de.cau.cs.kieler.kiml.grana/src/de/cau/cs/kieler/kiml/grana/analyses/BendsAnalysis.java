@@ -25,9 +25,11 @@ import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 
 /**
- * A graph analysis that counts the number of bendpoints.
+ * A graph analysis that counts the number of bendpoints. Returns a four-component
+ * result {@code (int min, float avg, int max, int sum)}.
  * 
  * @author mri
+ * @author cds
  */
 public class BendsAnalysis implements IAnalysis {
 
@@ -38,23 +40,43 @@ public class BendsAnalysis implements IAnalysis {
             final Map<String, Object> results,
             final IKielerProgressMonitor progressMonitor)
             throws KielerException {
+        
         progressMonitor.begin("Number of Bends analysis", 1);
-
-        Integer numberOfBends = 0;
+        
+        int min = Integer.MAX_VALUE;
+        float avg = 0.0f;
+        int max = 0;
+        int sum = 0;
+        int edges = 0;
+        int current;
+        
         List<KNode> nodeQueue = new LinkedList<KNode>();
         nodeQueue.add(parentNode);
         while (nodeQueue.size() > 0) {
-            // pop first element
+            // Pop first element
             KNode node = nodeQueue.remove(0);
+            
+            // Iterate through the node's edges
             for (KEdge edge : node.getOutgoingEdges()) {
                 KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                numberOfBends += edgeLayout.getBendPoints().size();
+                current = edgeLayout.getBendPoints().size();
+                
+                min = Math.min(min, current);
+                max = Math.max(max, current);
+                sum += current;
+                edges++;
             }
+            
             nodeQueue.addAll(node.getChildren());
+        }
+        
+        // Compute the average number of bend points per edge
+        if (edges > 0) {
+            avg = (float) sum / (float) edges;
         }
 
         progressMonitor.done();
-        return numberOfBends;
+        return new Object[] {min, avg, max, sum};
     }
 
 }

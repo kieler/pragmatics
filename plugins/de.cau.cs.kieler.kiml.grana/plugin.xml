@@ -247,6 +247,22 @@
             description="The number of bendpoints in the graph including hierarchies."
             id="de.cau.cs.kieler.kiml.grana.bendpointCount"
             name="Number of Bends">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
+         <component
+               abbreviation="Sum"
+               name="Sum">
+         </component>
       </provider>
       <provider
             category="de.cau.cs.kieler.kiml.grana.drawing"
