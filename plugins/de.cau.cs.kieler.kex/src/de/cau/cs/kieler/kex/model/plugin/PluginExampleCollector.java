@@ -83,8 +83,6 @@ public class PluginExampleCollector extends ExampleCollector {
                         continue;
                     }
                     this.examplePool.put(exampleTitle, example);
-                } else if (PluginConstants.Category.CATEGORY.equals(elementName)) {
-                    collectCategory(element);
                 }
             } catch (InvalidRegistryObjectException e) {
                 throw new KielerException("Error while loading example \""
@@ -122,7 +120,7 @@ public class PluginExampleCollector extends ExampleCollector {
         Category category = new Category(id, title, description, iconPath, parentId);
         String exNamespaceId = categoryElement.getNamespaceIdentifier();
         category.setNamespaceId(exNamespaceId);
-        getCategories().add(category);
+        categoryPool.add(category);
     }
 
     @Override
@@ -136,7 +134,7 @@ public class PluginExampleCollector extends ExampleCollector {
      * @return {@link List} of {@link Category}
      */
     public List<Category> getCategories() {
-        if (this.categoryPool == null) {
+        if (this.categoryPool == null || categoryPool.isEmpty()) {
             this.categoryPool = new ArrayList<Category>();
             loadCategories();
         }

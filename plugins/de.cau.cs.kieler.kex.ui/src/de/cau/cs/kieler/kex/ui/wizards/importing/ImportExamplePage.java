@@ -15,8 +15,10 @@ package de.cau.cs.kieler.kex.ui.wizards.importing;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -42,7 +44,6 @@ import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -64,13 +65,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
-import org.eclipse.ui.internal.dialogs.WizardActivityFilter;
-import org.eclipse.ui.internal.dialogs.WizardContentProvider;
-import org.eclipse.ui.internal.dialogs.WizardPatternFilter;
-import org.eclipse.ui.model.AdaptableList;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.wizards.IWizardCategory;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -153,49 +147,94 @@ public class ImportExamplePage extends WizardPage {
         viewer = tree.getViewer();
         viewer.setContentProvider(new ExampleContentProvider());
         viewer.setLabelProvider(new ExampleLabelProvider());
-        List<Object> viewerInput = new ArrayList<Object>();
-        viewerInput.addAll(ExampleManager.get().getCategories());
-        viewerInput.addAll(ExampleManager.get().getExamples().values());
-        viewer.setInput(viewerInput);
+        CategoryExampleTree categoryTree = new CategoryExampleTree();
+        categoryTree.addCategories(ExampleManager.get().getCategories());
+        categoryTree.addExamples(ExampleManager.get().getExamples().values());
+        viewer.setInput(categoryTree.elements);
         return viewer.getControl();
     }
 
     protected class CategoryExampleTree {
 
-        private class TreeItem {
+        protected class TreeItem {
 
-            String name;
+            private String name;
 
-            Object data;
+            private Object data;
 
-            TreeItem parent;
+            private TreeItem parent;
+
+            private final List<TreeItem> children = new ArrayList<TreeItem>();
 
             TreeItem(String nameParam, Object dataParam, TreeItem parentParam) {
-                name = nameParam;
-                data = dataParam;
-                parent = parentParam;
+                setName(nameParam);
+                setData(dataParam);
+                Assert.isNotNull(nameParam);
+                Assert.isNotNull(dataParam);
+                if (parentParam != null) {
+                    setParent(parentParam);
+                    children.add(parentParam);
+                }
+            }
+
+            public List<TreeItem> getChildren() {
+                return this.children;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setData(Object data) {
+                this.data = data;
+            }
+
+            public Object getData() {
+                return data;
+            }
+
+            public void setParent(TreeItem parent) {
+                this.parent = parent;
+            }
+
+            public TreeItem getParent() {
+                return parent;
             }
 
         }
 
         private final List<TreeItem> elements = new ArrayList<TreeItem>();
 
-        public void addElement(Object element, String parent) {
-            if (element instanceof Category) {
-                String parentId = ((Category) element).getParentId();
-                new TreeItem(((Category) element).getTitle(), element, getElement(parentId));
-            } else if (element instanceof Example) {
-                String parentId = ((Example) element).getCategoryId();
-                new TreeItem(((Example) element).getTitle(), element, getElement(parentId));
-            } else {
-                // not supported
+        public void addCategories(Collection<Category> elements) {
+            for (Category element : elements) {
+                addCategory(element);
             }
         }
 
-        private TreeItem getElement(String id) {
-            for (TreeItem element : elements) {
-                if (element.data instanceof Category) {
-                    Category cat = ((Category) element.data);
+        public void addCategory(Category element) {
+            this.elements.add(new TreeItem(element.getTitle(), element, getParentItem(element
+                    .getParentId())));
+        }
+
+        public void addExamples(Collection<Example> elements) {
+            for (Example element : elements) {
+                addExample(element);
+            }
+        }
+
+        public void addExample(final Example element) {
+            this.elements.add(new TreeItem(element.getTitle(), element, getParentItem(element
+                    .getCategoryId())));
+        }
+
+        private TreeItem getParentItem(final String id) {
+            for (CategoryExampleTree.TreeItem element : elements) {
+                if (element.getData() instanceof Category) {
+                    Category cat = ((Category) element.getData());
                     if (cat.getId().equals(id)) {
                         return element;
                     }
@@ -203,132 +242,7 @@ public class ImportExamplePage extends WizardPage {
             }
             return null;
         }
-    }
 
-    /*
-     * Class to create a control that shows a categorized tree of wizard types.
-     */
-    protected class CategorizedWizardSelectionTree {
-        private final static int SIZING_LISTS_HEIGHT = 200;
-
-        private final IWizardCategory wizardCategories;
-        private final String message;
-        private TreeViewer viewer;
-
-        /**
-         * Constructor for CategorizedWizardSelectionTree
-         * 
-         * @param categories
-         *            root wizard category for the wizard type
-         * @param msg
-         *            message describing what the user should choose from the tree.
-         */
-        protected CategorizedWizardSelectionTree(IWizardCategory categories, String msg) {
-            this.wizardCategories = categories;
-            this.message = msg;
-        }
-
-        /**
-         * Create the tree viewer and a message describing what the user should choose from the
-         * tree.
-         * 
-         * @param parent
-         *            Composite on which the tree viewer is to be created
-         * @return Comoposite with all widgets
-         */
-        protected Composite createControl(Composite parent) {
-            Font font = parent.getFont();
-
-            // create composite for page.
-            Composite outerContainer = new Composite(parent, SWT.NONE);
-            outerContainer.setLayout(new GridLayout());
-            outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-            outerContainer.setFont(font);
-
-            Label messageLabel = new Label(outerContainer, SWT.NONE);
-            if (message != null) {
-                messageLabel.setText(message);
-            }
-            messageLabel.setFont(font);
-
-            createFilteredTree(outerContainer);
-            layoutTopControl(viewer.getControl());
-
-            return outerContainer;
-        }
-
-        /**
-         * Create the categorized tree viewer.
-         * 
-         * @param parent
-         */
-        private void createFilteredTree(Composite parent) {
-            // Create a FilteredTree for the categories and wizards
-            FilteredTree filteredTree = new FilteredTree(parent, SWT.SINGLE | SWT.CHECK
-                    | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, new WizardPatternFilter(), true);
-            viewer = filteredTree.getViewer();
-            filteredTree.setFont(parent.getFont());
-
-            viewer.setContentProvider(new WizardContentProvider());
-            viewer.setLabelProvider(new WorkbenchLabelProvider());
-            // viewer.setComparator(DataTransferWizardCollectionComparator.INSTANCE);
-
-            ArrayList<IWizardCategory> inputArray = new ArrayList<IWizardCategory>();
-            boolean expandTop = false;
-
-            if (wizardCategories != null) {
-                if (wizardCategories.getParent() == null) {
-                    IWizardCategory[] children = wizardCategories.getCategories();
-                    for (int i = 0; i < children.length; i++) {
-                        inputArray.add(children[i]);
-                    }
-                } else {
-                    expandTop = true;
-                    inputArray.add(wizardCategories);
-                }
-            }
-
-            // ensure the category is expanded. If there is a remembered expansion it will be set
-            // later.
-            if (expandTop) {
-                viewer.setAutoExpandLevel(2);
-            }
-
-            AdaptableList input = new AdaptableList(inputArray);
-
-            // filter wizard list according to capabilities that are enabled
-            viewer.addFilter(new WizardActivityFilter());
-
-            viewer.setInput(input);
-        }
-
-        /**
-         * 
-         * @return the categorized tree viewer
-         */
-        protected TreeViewer getViewer() {
-            return viewer;
-        }
-
-        /**
-         * Layout for the given control.
-         * 
-         * @param control
-         */
-        private void layoutTopControl(Control control) {
-            GridData data = new GridData(GridData.FILL_BOTH);
-
-            int availableRows = DialogUtil.availableRows(control.getParent());
-
-            // Only give a height hint if the dialog is going to be too small
-            if (availableRows > 50) {
-                data.heightHint = SIZING_LISTS_HEIGHT;
-            } else {
-                data.heightHint = availableRows * 3;
-            }
-
-            control.setLayoutData(data);
-        }
     }
 
     private class ExampleContentProvider implements ITreeContentProvider {
@@ -340,19 +254,23 @@ public class ImportExamplePage extends WizardPage {
         }
 
         public Object[] getElements(Object inputElement) {
-            return ((ArrayList<Object>) inputElement).toArray();
+            return ((ArrayList<CategoryExampleTree.TreeItem>) inputElement).toArray();
         }
 
         public Object[] getChildren(Object parentElement) {
-            return null;
+            if (parentElement instanceof CategoryExampleTree.TreeItem
+                    && ((CategoryExampleTree.TreeItem) parentElement).getData() instanceof Category) {
+                return ((CategoryExampleTree.TreeItem) parentElement).getChildren().toArray();
+            }
+            return new Object[0];
         }
 
         public Object getParent(Object element) {
-            return null;
+            return ((CategoryExampleTree.TreeItem) element).getParent();
         }
 
         public boolean hasChildren(Object element) {
-            return false;
+            return getChildren(element).length > 0;
         }
 
     }
@@ -361,30 +279,22 @@ public class ImportExamplePage extends WizardPage {
 
         @Override
         public String getText(Object element) {
-            String name = (String) element;
-            return name;
-
-            // if (element instanceof Category) {
-            // return ((Category) element).getTitle();
-            // }
-            // if (element instanceof Example) {
-            // return ((Example) element).getTitle();
-            // }
-            // return null;
-
+            return ((CategoryExampleTree.TreeItem) element).getName();
         }
 
         @Override
         public Image getImage(final Object element) {
-            if (element instanceof Category) {
-                return computeIconImage(((Category) element).getIconPath(),
-                        ((Category) element).getNamespaceId());
-            }
-
-            if (element instanceof Example) {
-                return computeIconImage(((Example) element).getOverviewPic(),
-                        ((Example) element).getNamespaceId());
-            }
+            // Object data = ((CategoryExampleTree.TreeItem) element).getData();
+            //
+            // if (data instanceof Category) {
+            // return computeIconImage(((Category) data).getIconPath(),
+            // ((Category) data).getNamespaceId());
+            // }
+            //
+            // if (data instanceof Example) {
+            // return computeIconImage(((Example) data).getOverviewPic(),
+            // ((Example) data).getNamespaceId());
+            // }
             return null;
         }
 
