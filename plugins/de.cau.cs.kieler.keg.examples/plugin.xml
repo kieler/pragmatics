@@ -11,7 +11,7 @@
    <extension
          point="de.cau.cs.kieler.kex">
       <category
-            icon="icons/product/graphs16.png"
+            icon="icons/graphs16.png"
             id="de.cau.cs.kieler.keg"
             title="KIELER Graphs Editor">
       </category>
