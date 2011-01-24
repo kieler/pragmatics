@@ -41,6 +41,7 @@ import org.eclipse.ui.PlatformUI;
 
 import de.cau.cs.kieler.core.model.ui.AbstractReInitDiagramCommand;
 import de.cau.cs.kieler.core.util.Maybe;
+import de.cau.cs.kieler.kaom.diagram.custom.AnnotationDisplayer;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditor;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
@@ -188,7 +189,11 @@ public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
                 }
             }
         });
-        return result.get();
+        
+        //display some annotations
+        IEditorPart editorPart = result.get();
+        AnnotationDisplayer.displayAnnotations(editorPart);
+        return editorPart;
     }
 
     /**

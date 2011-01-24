@@ -1071,6 +1071,7 @@ Void optimizeAnnotationRepresentation(Annotation annotation) :
             // Mark the original annotation for removal
             //annotation.markAsRemovable()
         )
+        /*
         case isTopLevel && isTypedStringAnnotation && annotation.type.matches(
             "ptolemy.vergil.kernel.attributes.TextAttribute") : (
             // Comments / large text boxes are annotations of the top level
@@ -1092,6 +1093,7 @@ Void optimizeAnnotationRepresentation(Annotation annotation) :
             // Mark the original annotation for removal
             //annotation.markAsRemovable()
         )
+        */
             
         default :
             null    
