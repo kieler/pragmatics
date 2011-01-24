@@ -81,6 +81,9 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
         // start straight first DFS
         nextNodes.push(walker);
         known.add(walker);
+        List<LNode> trunk = new LinkedList<LNode>();
+        boolean stillTrunk = true;
+        
         while (!nextNodes.isEmpty()) {
             walker = nextNodes.pop();
             boolean found = false;
@@ -98,6 +101,9 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                     if (!allNeighborsKnown(walker)) {
                         nextNodes.push(walker);
                     }
+                    if (stillTrunk) {
+                        trunk.add(walker);
+                    }
                     nextNodes.push(target);
                     putTargetInGrid(targetPort, port);
                     break;
@@ -109,6 +115,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                     LPort targetPort = port.getEdges().get(0).getTarget();
                     if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)
                             && !known.contains(target)) {
+                        stillTrunk = false;
                         if (!known.contains(target)) {
                             known.add(target);
                             if (!allNeighborsKnown(walker)) {
@@ -567,21 +574,14 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
     private void gridToAbsolutePosition(final RailLayer layer, final int minPos) {
         float spacing = layer.getGraph().getProperty(Properties.OBJ_SPACING);
         float borspacing = layer.getGraph().getProperty(Properties.BOR_SPACING);
-        float value = borspacing;
-        boolean first = true;
-        int i = 0;
+        double value = borspacing;
         for (LNode node : layer.getRowList().getNodesOrderedByPosition()) {
             int position = layer.getRowList().getPosition(node);
-            if (first) {
-                int offset = position - minPos;
-                value += offset * (node.getSize().y + spacing);
-                first = false;
-            }
+            int offset = (-1) * minPos;
+            value = offset * (node.getSize().y + spacing) + position * (node.getSize().y + spacing);
             node.getPos().y = value;
             System.out.println("Setting y of " + node.toString() + " to " + value);
             System.out.println("Position was " + position);
-            i++;
-            value += spacing + node.getSize().y;
         }
     }
 
