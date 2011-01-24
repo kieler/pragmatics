@@ -26,7 +26,7 @@ import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 /**
  * A provider for styles of diagram elements.
  *
- * @author msp
+ * @author hdw
  */
 public class StyleProvider implements IStyleProvider {
 
@@ -95,6 +95,8 @@ public class StyleProvider implements IStyleProvider {
     //TODO new one.
     /** style id for Breach (Einbruchsstelle)*/
     public static final String BREACH = "breach";
+    /** style id for Breach (Einbruchsstelle)*/
+    public static final String PORT = "port";
     
     /**
      * Create the style with given identifier.
@@ -115,11 +117,17 @@ public class StyleProvider implements IStyleProvider {
             Style style = gaService.createStyle(defaultStyle, id);
             style.setFilled(true);
             return style;
-        } else if (BREACH.equals(id)){  //TODO strage. I think??
+        } else if (BREACH.equals(id)){ 
         	Style style = gaService.createStyle(diagram, id);
         	//TODO has to fix.
         	return style;
-        }
+        } else if (PORT.equals(id)){  
+        	Style style = gaService.createStyle(diagram, id);
+        	style.setForeground(gaService.manageColor(diagram, ColorConstant.WHITE));
+        	style.setBackground(gaService.manageColor(diagram, ColorConstant.WHITE));
+        	style.setFilled(false);
+    	return style;
+    }
         return null;
     }
     

@@ -31,7 +31,7 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
-import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
+
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;

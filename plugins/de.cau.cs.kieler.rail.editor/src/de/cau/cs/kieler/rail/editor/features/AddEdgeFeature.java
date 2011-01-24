@@ -18,8 +18,9 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.IColorConstant;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
-import de.cau.cs.kieler.kaom.graphiti.diagram.StyleProvider;
+
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
+import de.cau.cs.kieler.rail.editor.StyleProvider;
 
 /**
  * AddFeature for the graphical Representation of the edge.

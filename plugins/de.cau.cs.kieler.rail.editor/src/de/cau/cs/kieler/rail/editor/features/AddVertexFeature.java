@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -144,7 +145,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 	 * @return
 	 */
 	private PictogramElement addBreach(IAddContext context){
-		Einbruchsknoten addedClass = (Einbruchsknoten) context.getNewObject();
+		Einbruchsknoten einbruchsknoten = (Einbruchsknoten) context.getNewObject();
         Diagram targetDiagram = (Diagram) context.getTargetContainer();
  
         // CONTAINER SHAPE WITH CIRCLE
@@ -162,9 +163,10 @@ public class AddVertexFeature extends AbstractAddFeature {
         System.out.println(context.getHeight());
         System.out.println(context.getWidth());
         
+        Ellipse ellipse;
         {
         	//Create Ellipse
-            Ellipse ellipse = gaService.createEllipse( containerShape);
+            ellipse = gaService.createEllipse( containerShape);
             ellipse.setLineWidth(3);
             ellipse.setFilled(false);
             ellipse.setForeground(manageColor(0,0,0));
@@ -177,11 +179,11 @@ public class AddVertexFeature extends AbstractAddFeature {
             // if added Class has no resource we add it to the resource 
             // of the diagram
             // in a real scenario the business model would have its own resource
-            if (addedClass.eResource() == null) {
-                     getDiagram().eResource().getContents().add(addedClass);
+            if (einbruchsknoten.eResource() == null) {
+                     getDiagram().eResource().getContents().add(einbruchsknoten);
             }
             // create link and wire it
-            link(containerShape, addedClass);
+            link(containerShape, einbruchsknoten);
         }
  
         // SHAPE WITH TEXT
@@ -192,17 +194,35 @@ public class AddVertexFeature extends AbstractAddFeature {
             // create and set text graphics algorithm
             //Compromise only
             String ans;
-            ans = JOptionPane.showInputDialog(null, "Enter Label");
-            addedClass.setName(ans);  //TODO ???
-            Text text = gaService.createDefaultText(shape, addedClass.getName()); //addedClass.getName()
+            
+            ans = ExampleUtil.askString("", "Enter Label","");
+            //ans = JOptionPane.showInputDialog(null, "Enter Label");
+            einbruchsknoten.setName(ans);  //TODO ???
+            Text text = gaService.createDefaultText(shape, einbruchsknoten.getName()); //addedClass.getName()
             text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
             text.getFont().setBold(true);
             gaService.setLocationAndSize(text, 0, 0, width, 20);
  
+            
+            //PORT
+            Port port = einbruchsknoten.getPorts().get(0);
+            final BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
+			boxAnchor.setActive(true);
+			boxAnchor.setRelativeHeight(0.5);
+			boxAnchor.setRelativeWidth(0.5);
+			boxAnchor.setReferencedGraphicsAlgorithm(ellipse);
+			Rectangle rec = gaService.createRectangle(boxAnchor);
+		    rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
+		    
+		    gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
+		    
+	    	link(boxAnchor,port);
+            //PORT
+            
             // create link and wire it
-            link(shape, addedClass);
+            link(shape, einbruchsknoten);
         }
         
         // add a chopbox anchor to the shape
@@ -335,24 +355,8 @@ public class AddVertexFeature extends AbstractAddFeature {
 		R.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
 		R.setForeground(manageColor(255, 255, 255));
 		
-		//Line (straight line)
-		Shape shapep=peCreateService.createShape(containerShape, false);
-		Polyline polyline = gaService.createPolyline(shapep,new int[]{0,25,25,25});
 		
-		
-		//Line (30°)
-		Shape shapep30=peCreateService.createShape(containerShape, false);
-		Polyline polyline30 = gaService.createPolyline(shapep30,new int[]{20,25,0,(int) (25*0.577350269)});
-		
-		Shape shape = peCreateService.createShape(containerShape, false);
-		
-		switchVertex.setName("Bla");
-		Text text = gaService.createDefaultText(shape, switchVertex.getName());
-		text.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-		text.setX(context.getX());
-		text.setY(context.getY());
-		
-
+		//PORT
 		for(Port port : switchVertex.getPorts()){
 	    	final BoxRelativeAnchor boxAnchor = peCreateService.createBoxRelativeAnchor(containerShape);
 			boxAnchor.setActive(true);
@@ -369,7 +373,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 				boxAnchor.setRelativeWidth(0.85);
 				break;
 			case ABZWEIG:
-				boxAnchor.setRelativeWidth(1.0-portWidth);
+				boxAnchor.setRelativeWidth(0.8);
 				boxAnchor.setRelativeHeight(0.1);
 			}
 		    
@@ -377,19 +381,41 @@ public class AddVertexFeature extends AbstractAddFeature {
 		    boxAnchor.setReferencedGraphicsAlgorithm(R);
 		    
 		    Rectangle rec = gaService.createRectangle(boxAnchor);
-		    rec.setFilled(false);
-		    rec.setForeground(manageColor(255,255,255));
-		    //rec.set
+		    rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
 		    
 		    gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
 		    
 	    	link(boxAnchor,port);
 	    }
+		//PORT
+		
+		
+		//Line (straight line)
+		Shape shapep=peCreateService.createShape(containerShape, false);
+		Polyline polyline = gaService.createPolyline(shapep,new int[]{0,25,25,25});
+		
+		
+		//Line (30°)
+		Shape shapep30=peCreateService.createShape(containerShape, false);
+		Polyline polyline30 = gaService.createPolyline(shapep30,new int[]{20,25,0,(int) (25*0.577350269)});
+		
+		Shape shape = peCreateService.createShape(containerShape, false);
+		
+		switchVertex.setName("");
+		Text text = gaService.createDefaultText(shape, switchVertex.getName());
+		text.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+		text.setX(context.getX());
+		text.setY(context.getY());
+		
+
+
 	    
 	    layoutPictogramElement(containerShape);
 	    
 	    gaService.setLocationAndSize(containerShape.getGraphicsAlgorithm(), context.getX(), context.getY(), 50, 50);
 		link(containerShape, switchVertex);
+		
+		updatePictogramElement(containerShape);
 		
 		return containerShape;
 	}
