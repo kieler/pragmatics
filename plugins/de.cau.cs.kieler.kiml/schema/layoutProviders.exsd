@@ -117,6 +117,23 @@ Layout providers can be grouped using categories, and they can be given a type t
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  An optional description that will appear on selection dialogs for layout algorithms.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="preview" type="string">
+            <annotation>
+               <documentation>
+                  An optional preview image that will appear on selection dialogs for layout algorithms.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -144,6 +161,13 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                <appInfo>
                   <meta.attribute translatable="true"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  An optional description that will appear on selection dialogs for layout algorithms.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

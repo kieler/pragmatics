@@ -27,11 +27,13 @@ import java.util.TreeSet;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class LayoutProviderData {
+public class LayoutProviderData implements ILayoutData {
 
     /** The minimal allowed priority value. Values less or equal to this value
      *  are treated as 'not supported'. */
     public static final int MIN_PRIORITY = Integer.MIN_VALUE >> 2;
+    /** default name for layout providers for which no name is given. */
+    public static final String DEFAULT_PROVIDER_NAME = "<Unnamed Layouter>";
 
     /** internal data type for storage of supported diagram information. */
     private static final class SupportedDiagram {
@@ -45,30 +47,54 @@ public class LayoutProviderData {
     }
     
     /** identifier of the layout provider. */
-    private String id;
+    private String id = "";
     /** user friendly name of the layout provider. */
-    private String name;
+    private String name = "";
     /** runtime instance of the layout provider. */
     private AbstractLayoutProvider instance;
     /** layout type identifier. */
-    private String type;
+    private String type = "";
     /** category identifier. */
-    private String category;
+    private String category = "";
+    /** detail description. */
+    private String description = "";
     
     /** list of known layout options. */
     private Set<String> knownOptions = new TreeSet<String>();
     /** list of supported diagrams. */
     private List<SupportedDiagram> supportedDiagrams = new LinkedList<SupportedDiagram>();
+    
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(final Object obj) {
+        if (obj instanceof LayoutProviderData) {
+            return this.id.equals(((LayoutProviderData) obj).id);
+        }
+        return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return id.hashCode();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-        if (getName() != null && getName().length() > 0) {
-            return getName();
+        if (name != null && name.length() > 0) {
+            String categoryName = LayoutServices.getInstance().getCategoryName(category);
+            if (categoryName == null) {
+                return name;
+            } else {
+                return name + " (" + categoryName + ")";
+            }
         } else {
-            return getId();
+            return DEFAULT_PROVIDER_NAME;
         }
     }
     
@@ -169,6 +195,7 @@ public class LayoutProviderData {
      * @param theid the id to set
      */
     public void setId(final String theid) {
+        assert theid != null;
         this.id = theid;
     }
 
@@ -187,7 +214,11 @@ public class LayoutProviderData {
      * @param thename the name to set
      */
     public void setName(final String thename) {
-        this.name = thename;
+        if (thename == null || thename.length() == 0) {
+            this.name = DEFAULT_PROVIDER_NAME;
+        } else {
+            this.name = thename;
+        }
     }
 
     /**
@@ -197,6 +228,28 @@ public class LayoutProviderData {
      */
     public String getName() {
         return name;
+    }
+    
+    /**
+     * Sets the description.
+     * 
+     * @param thedescription the description to set
+     */
+    public void setDescription(final String thedescription) {
+        if (thedescription == null) {
+            this.description = "";
+        } else {
+            this.description = thedescription;
+        }
+    }
+    
+    /**
+     * Returns the description.
+     * 
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -241,7 +294,11 @@ public class LayoutProviderData {
      * @param thecategory the category to set
      */
     public void setCategory(final String thecategory) {
-        this.category = thecategory;
+        if (thecategory == null) {
+            this.category = "";
+        } else {
+            this.category = thecategory;
+        }
     }
 
     /**

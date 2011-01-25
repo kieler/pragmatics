@@ -28,7 +28,7 @@ import de.cau.cs.kieler.core.util.IDataObject;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?>> {
+public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparable<IProperty<?>> {
 
     /** literal value constant for booleans. */
     public static final String BOOLEAN_LITERAL = "boolean";
@@ -42,6 +42,9 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
     public static final String ENUM_LITERAL = "enum";
     /** literal value constant for data objects. */
     public static final String OBJECT_LITERAL = "object";
+    
+    /** default name for layout options for which no name is given. */
+    public static final String DEFAULT_OPTION_NAME = "<Unnamed Option>";
 
     /** data type enumeration. */
     public enum Type {
@@ -121,15 +124,15 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
     }
 
     /** identifier of the layout option. */
-    private String id;
+    private String id = "";
     /** the default value of this option. */
     private T defaultValue;
     /** type of the layout option. */
     private Type type = Type.UNDEFINED;
     /** user friendly name of the layout option. */
-    private String name;
+    private String name = "";
     /** a description to be displayed in the UI. */
-    private String description;
+    private String description = "";
     /** configured targets (accessed through bit masks). */
     private int targets;
     /** the class that represents this option type. */
@@ -470,6 +473,7 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
      * @param theid the identifier to set
      */
     public void setId(final String theid) {
+        assert theid != null;
         this.id = theid;
     }
 
@@ -520,7 +524,11 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
      * @param thename the name to set
      */
     public void setName(final String thename) {
-        this.name = thename;
+        if (thename == null || thename.length() == 0) {
+            this.name = DEFAULT_OPTION_NAME;
+        } else {
+            this.name = thename;
+        }
     }
 
     /**
@@ -538,7 +546,11 @@ public class LayoutOptionData<T> implements IProperty<T>, Comparable<IProperty<?
      * @param thedescription the description to set
      */
     public void setDescription(final String thedescription) {
-        this.description = thedescription;
+        if (thedescription == null) {
+            this.description = "";
+        } else {
+            this.description = thedescription;
+        }
     }
 
     /**

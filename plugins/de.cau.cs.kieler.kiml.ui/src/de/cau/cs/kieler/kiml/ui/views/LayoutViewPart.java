@@ -264,7 +264,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
             public void partOpened(final IWorkbenchPart part) {
             }
         };
-        workbenchWindow.getPartService().addPartListener(partListener);  
+        workbenchWindow.getPartService().addPartListener(partListener);
+        toolkit.dispose();
     }
 
     /**

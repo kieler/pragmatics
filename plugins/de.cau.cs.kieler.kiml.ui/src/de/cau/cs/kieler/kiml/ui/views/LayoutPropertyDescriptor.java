@@ -28,6 +28,7 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -79,21 +80,16 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             case STRING:
                 LayoutServices layoutServices = LayoutServices.getInstance();
                 if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
-                    String layoutHint = layoutHintValues[(Integer) element];
-                    String layoutType = layoutServices.getLayoutTypeName(layoutHint);
+                    String layoutHint = (String) element;
+                    LayoutTypeData layoutType = layoutServices.getLayoutTypeData(layoutHint);
                     if (layoutType != null) {
-                        return layoutType + " " + Messages.getString("kiml.ui.9");
+                        return layoutType.toString();
                     }
                     LayoutProviderData providerData = layoutServices.getLayoutProviderData(layoutHint);
                     if (providerData != null) {
-                        String category = layoutServices.getCategoryName(providerData.getCategory());
-                        if (category == null) {
-                            return providerData.getName();
-                        } else {
-                            return providerData.getName() + " (" + category + ")";
-                        }
+                        return providerData.toString();
                     }
-                    return layoutHint;
+                    return Messages.getString("kiml.ui.8");
                 } else {
                     return (String) element;
                 }
@@ -109,10 +105,6 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     
     /** the layout option data associated with this property descriptor. */
     private LayoutOptionData<?> optionData;
-    /** array of choices for the layout hint option. */
-    private String[] layoutHintChoices;
-    /** array of identifiers for the layout hint option. */
-    private String[] layoutHintValues;
     /** the label provider for this property descriptor. */
     private LayoutOptionLabelProvider labelProvider;
     
@@ -120,14 +112,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * Creates a layout property descriptor based on a specific layout option.
      * 
      * @param theoptionData the layout option data
-     * @param thelayoutHintChoices the array of choices for the layout hint option
-     * @param thelayoutHintValues the array of identifiers for the layout hint option
      */
-    public LayoutPropertyDescriptor(final LayoutOptionData<?> theoptionData,
-            final String[] thelayoutHintChoices, final String[] thelayoutHintValues) {
+    public LayoutPropertyDescriptor(final LayoutOptionData<?> theoptionData) {
         this.optionData = theoptionData;
-        this.layoutHintChoices = thelayoutHintChoices;
-        this.layoutHintValues = thelayoutHintValues;
     }
     
     /**
@@ -137,7 +124,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         switch (optionData.getType()) {
         case STRING:
             if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
-                return new ComboBoxCellEditor(parent, layoutHintChoices, SWT.READ_ONLY);
+                return new LayouterHintCellEditor(parent);
             } else {
                 return new TextCellEditor(parent);
             }

@@ -23,8 +23,6 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -42,7 +40,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.dialogs.ListDialog;
 
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -50,9 +47,9 @@ import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
+import de.cau.cs.kieler.kiml.ui.LayouterHintDialog;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
-import de.cau.cs.kieler.kiml.ui.views.LayoutPropertySource;
 import de.cau.cs.kieler.kiml.ui.views.LayoutViewPart;
 
 /**
@@ -314,31 +311,6 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         return null;
     }
     
-    /** data holder class for selection of a layout hint. */
-    private static final class SelectionData {
-        private int index;
-        private String label;
-        
-        /**
-         * Creates a selection data for a layout hint.
-         * 
-         * @param thelabel the label to display
-         * @param theindex the index in the list
-         */
-        private SelectionData(final String thelabel, final int theindex) {
-            this.label = thelabel;
-            this.index = theindex;
-        }
-        
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            return label;
-        }
-    }
-    
     /**
      * Shows an input dialog to edit the given option table entry.
      * 
@@ -349,22 +321,12 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         LayoutOptionData<?> optionData = entry.getOptionData();
         if (entry.getValue() != null) {
             if (optionData.getId().equals(LayoutOptions.LAYOUTER_HINT_ID)) {
-                // show a selection dialog for a layout hint
-                ListDialog dialog = new ListDialog(shell);
-                dialog.setTitle(Messages.getString("kiml.ui.58")); //$NON-NLS-1$
-                dialog.setContentProvider(ArrayContentProvider.getInstance());
-                dialog.setLabelProvider(new LabelProvider());
-                String[] layoutHintChoices = LayoutPropertySource.getLayoutHintChoices();
-                SelectionData[] input = new SelectionData[layoutHintChoices.length];
-                for (int i = 0; i < layoutHintChoices.length; i++) {
-                    input[i] = new SelectionData(layoutHintChoices[i], i);
-                }
-                dialog.setInput(input);
-                if (dialog.open() == ListDialog.OK) {
-                    Object[] result = dialog.getResult();
-                    if (result != null && result.length > 0) {
-                        int index = ((SelectionData) result[0]).index;
-                        entry.setValue(LayoutPropertySource.getLayoutHint(index));
+                // show a selection dialog for a layouter hint
+                LayouterHintDialog dialog = new LayouterHintDialog(shell, null);
+                if (dialog.open() == LayouterHintDialog.OK) {
+                    String result = dialog.getSelectedHint();
+                    if (result != null) {
+                        entry.setValue(result);
                     }
                 }
             } else {

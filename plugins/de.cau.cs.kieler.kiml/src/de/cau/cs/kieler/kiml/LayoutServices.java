@@ -50,8 +50,9 @@ public class LayoutServices {
     /** mapping of layout option identifiers to their data instances. */
     private Map<String, LayoutOptionData<?>> layoutOptionMap
             = new LinkedHashMap<String, LayoutOptionData<?>>();
-    /** mapping of layout type identifiers to their names. */
-    private Map<String, String> layoutTypeMap = new HashMap<String, String>();
+    /** mapping of layout type identifiers to their data instances. */
+    private Map<String, LayoutTypeData> layoutTypeMap
+            = new LinkedHashMap<String, LayoutTypeData>();
     /** mapping of category identifiers to their names. */
     private Map<String, String> categoryMap = new HashMap<String, String>();
     /** mapping of diagram type identifiers to their names. */
@@ -131,6 +132,9 @@ public class LayoutServices {
          * @param providerData data instance of the layout provider to register
          */
         public void addLayoutProvider(final LayoutProviderData providerData) {
+            if (layoutProviderMap.containsKey(providerData.getId())) {
+                layoutProviderMap.remove(providerData.getId());
+            }
             layoutProviderMap.put(providerData.getId(), providerData);
         }
 
@@ -141,17 +145,26 @@ public class LayoutServices {
          * @param optionData data instance of the layout option to register
          */
         public void addLayoutOption(final LayoutOptionData<?> optionData) {
+            if (layoutOptionMap.containsKey(optionData.getId())) {
+                layoutOptionMap.remove(optionData.getId());
+            }
             layoutOptionMap.put(optionData.getId(), optionData);
         }
 
         /**
-         * Registers the given layout type.
+         * Registers the given layout type. If there is already a registered layout
+         * type instance with the same identifier, it is overwritten, but its
+         * contained layouters are copied.
          * 
-         * @param id identifier of the type
-         * @param name user friendly name of the type
+         * @param typeData data instance of the layout type to register
          */
-        public void addLayoutType(final String id, final String name) {
-            layoutTypeMap.put(id, name);
+        public void addLayoutType(final LayoutTypeData typeData) {
+            LayoutTypeData oldData = layoutTypeMap.get(typeData.getId());
+            if (oldData != null) {
+                typeData.getLayouters().addAll(oldData.getLayouters());
+                layoutTypeMap.remove(typeData.getId());
+            }
+            layoutTypeMap.put(typeData.getId(), typeData);
         }
 
         /**
@@ -272,13 +285,13 @@ public class LayoutServices {
     }
 
     /**
-     * Returns the name of the layout type with given identifier.
+     * Returns the data instance of the layout type with given identifier.
      * 
      * @param id identifier of the type
-     * @return user friendly name of the type, or {@code null} if the layout
+     * @return layout type data instance with given identifier, or {@code null} if the layout
      *         type is not registered
      */
-    public final String getLayoutTypeName(final String id) {
+    public final LayoutTypeData getLayoutTypeData(final String id) {
         return layoutTypeMap.get(id);
     }
     
@@ -288,8 +301,8 @@ public class LayoutServices {
      * 
      * @return a list of all layout types
      */
-    public final List<Pair<String, String>> getLayoutTypes() {
-        return Pair.toList(layoutTypeMap);
+    public final Collection<LayoutTypeData> getLayoutTypeData() {
+        return Collections.unmodifiableCollection(layoutTypeMap.values());
     }
 
     /**

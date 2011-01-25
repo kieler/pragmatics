@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
@@ -42,6 +43,8 @@ import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.ui.EclipseLayoutProviderData;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
@@ -102,6 +105,8 @@ public class EclipseLayoutServices extends LayoutServices {
     public static final String ATTRIBUTE_OPTION = "option";
     /** name of the 'parameter' attribute in the extension points. */
     public static final String ATTRIBUTE_PARAMETER = "parameter";
+    /** name of the 'preview' attribute in the extension points. */
+    public static final String ATTRIBUTE_PREVIEW = "preview";
     /** name of the 'priority' attribute in the extension points. */
     public static final String ATTRIBUTE_PRIORITY = "priority";
     /** name of the 'type' attribute in the extension points. */
@@ -109,11 +114,6 @@ public class EclipseLayoutServices extends LayoutServices {
     /** name of the 'value' attribute in the extension points. */
     public static final String ATTRIBUTE_VALUE = "value";
 
-    /** default name for layout providers for which no name is given. */
-    public static final String DEFAULT_PROVIDER_NAME = "<Unnamed Layouter>";
-    /** default name for layout options for which no name is given. */
-    public static final String DEFAULT_OPTION_NAME = "<Unnamed Option>";
-    
     /** preference identifier for the list of registered diagram elements. */
     public static final String PREF_REG_ELEMENTS = "kiml.reg.elements";
     /** preference identifier for oblique edge routing. */
@@ -495,53 +495,68 @@ public class EclipseLayoutServices extends LayoutServices {
                     AbstractLayoutProvider layoutProvider = (AbstractLayoutProvider) element
                             .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (layoutProvider != null) {
-                        LayoutProviderData providerData = new LayoutProviderData();
+                        EclipseLayoutProviderData providerData = new EclipseLayoutProviderData();
                         providerData.setInstance(layoutProvider);
-                        providerData.setId(element.getAttribute(ATTRIBUTE_ID));
-                        if (providerData.getId() == null || providerData.getId().length() == 0) {
+                        String layouterId = element.getAttribute(ATTRIBUTE_ID);
+                        if (layouterId == null || layouterId.length() == 0) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
                             continue;
                         }
+                        providerData.setId(layouterId);
                         providerData.setName(element.getAttribute(ATTRIBUTE_NAME));
-                        if (providerData.getName() == null || providerData.getName().length() == 0) {
-                            providerData.setName(DEFAULT_PROVIDER_NAME);
+                        providerData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
+                        providerData.setCategory(element.getAttribute(ATTRIBUTE_CATEGORY));
+                        String previewPath = element.getAttribute(ATTRIBUTE_PREVIEW);
+                        if (previewPath != null) {
+                            providerData.setPreviewImage(AbstractUIPlugin.imageDescriptorFromPlugin(
+                                    element.getContributor().getName(), previewPath));
                         }
-                        try {
-                            layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
-                            providerData.setType(element.getAttribute(ATTRIBUTE_TYPE));
-                            if (providerData.getType() == null) {
-                                providerData.setType("");
-                            }
-                            providerData.setCategory(element.getAttribute(ATTRIBUTE_CATEGORY));
-                            if (providerData.getCategory() == null) {
-                                providerData.setCategory("");
-                            }
-                            for (IConfigurationElement child : element.getChildren()) {
-                                if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
-                                    String option = child.getAttribute(ATTRIBUTE_OPTION);
-                                    if (option != null && option.length() > 0) {
-                                        providerData.setOption(option, true);
-                                    } else {
+                        
+                        // process the layout type
+                        String layoutType = element.getAttribute(ATTRIBUTE_TYPE);
+                        if (layoutType == null) {
+                            layoutType = "";
+                        }
+                        LayoutTypeData typeData = getLayoutTypeData(layoutType);
+                        if (typeData == null) {
+                            typeData = new LayoutTypeData();
+                            typeData.setId(layoutType);
+                            registry().addLayoutType(typeData);
+                        }
+                        providerData.setType(layoutType);
+                        typeData.getLayouters().add(providerData);
+                        
+                        // process child elements (known options and supported diagrams)
+                        for (IConfigurationElement child : element.getChildren()) {
+                            if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
+                                String option = child.getAttribute(ATTRIBUTE_OPTION);
+                                if (option != null && option.length() > 0) {
+                                    providerData.setOption(option, true);
+                                } else {
+                                    reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
+                                            ATTRIBUTE_OPTION, null);
+                                }
+                            } else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
+                                String type = child.getAttribute(ATTRIBUTE_TYPE);
+                                if (type == null || type.length() == 0) {
+                                    reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
+                                            ATTRIBUTE_TYPE, null);
+                                } else {
+                                    String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
+                                    try {
+                                        providerData.setDiagramSupport(type,
+                                                Integer.parseInt(priority));
+                                    } catch (NumberFormatException exception) {
                                         reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                                ATTRIBUTE_OPTION, null);
-                                    }
-                                } else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
-                                    String type = child.getAttribute(ATTRIBUTE_TYPE);
-                                    if (type == null || type.length() == 0) {
-                                        reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                                ATTRIBUTE_TYPE, null);
-                                    } else {
-                                        String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
-                                        try {
-                                            providerData.setDiagramSupport(type,
-                                                    Integer.parseInt(priority));
-                                        } catch (NumberFormatException exception) {
-                                            reportError(EXTP_ID_LAYOUT_PROVIDERS, child,
-                                                    ATTRIBUTE_PRIORITY, exception);
-                                        }
+                                                ATTRIBUTE_PRIORITY, exception);
                                     }
                                 }
                             }
+                        }
+                        
+                        // initialize the layout provider (which can fail)
+                        try {
+                            layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
                             registry().addLayoutProvider(providerData);
                         } catch (KielerException exception) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, element,
@@ -554,13 +569,14 @@ public class EclipseLayoutServices extends LayoutServices {
             } else if (ELEMENT_LAYOUT_TYPE.equals(element.getName())) {
                 // register a layout type from the extension
                 String id = element.getAttribute(ATTRIBUTE_ID);
-                String name = element.getAttribute(ATTRIBUTE_NAME);
                 if (id == null || id.length() == 0) {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
-                } else if (name == null) {
-                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_NAME, null);
                 } else {
-                    registry().addLayoutType(id, name);
+                    LayoutTypeData typeData = new LayoutTypeData();
+                    typeData.setId(id);
+                    typeData.setName(element.getAttribute(ATTRIBUTE_NAME));
+                    typeData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
+                    registry().addLayoutType(typeData);
                 }
             } else if (ELEMENT_CATEGORY.equals(element.getName())) {
                 // register a category from the extension
@@ -577,11 +593,11 @@ public class EclipseLayoutServices extends LayoutServices {
                 // register a layout option from the extension
                 LayoutOptionData<Object> optionData = new LayoutOptionData<Object>();
                 String optionId = element.getAttribute(ATTRIBUTE_ID);
-                optionData.setId(optionId);
                 if (optionId == null || optionId.length() == 0) {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
                     continue;
                 }
+                optionData.setId(optionId);
                 try {
                     optionData.setType(element.getAttribute(ATTRIBUTE_TYPE));
                 } catch (IllegalArgumentException exception) {
@@ -608,13 +624,7 @@ public class EclipseLayoutServices extends LayoutServices {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
                 }
                 optionData.setName(element.getAttribute(ATTRIBUTE_NAME));
-                if (optionData.getName() == null) {
-                    optionData.setName(DEFAULT_OPTION_NAME);
-                }
                 optionData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
-                if (optionData.getDescription() == null) {
-                    optionData.setDescription("");
-                }
                 optionData.setTargets(element.getAttribute(ATTRIBUTE_APPLIESTO));
                 String advanced = element.getAttribute(ATTRIBUTE_ADVANCED);
                 optionData.setAdvanced(advanced != null && advanced.equals("true"));

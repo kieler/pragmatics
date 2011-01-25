@@ -13,22 +13,17 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
@@ -41,13 +36,6 @@ import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
  * @author msp
  */
 public class LayoutPropertySource implements IPropertySource {
-
-    /** array of choices for the layout hint option. */
-    private static String[] layoutHintChoices;
-    /** array of identifiers for the layout hint option. */
-    private static String[] layoutHintValues;
-    /** map of layout hint identifiers to their respective indices in the above arrays. */
-    private static Map<String, Integer> layoutHintIndexMap;
     
     /** the layout configuration for this property source. */
     private ILayoutConfig layoutConfig;
@@ -73,14 +61,10 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public IPropertyDescriptor[] getPropertyDescriptors() {
         if (propertyDescriptors == null) {
-            if (layoutHintChoices == null) {
-                createLayoutHintChoices();
-            }
             List<LayoutOptionData<?>> optionData = layoutConfig.getOptionData();
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
             for (int i = 0; i < propertyDescriptors.length; i++) {
-                propertyDescriptors[i] = new LayoutPropertyDescriptor(optionData.get(i),
-                        layoutHintChoices, layoutHintValues);
+                propertyDescriptors[i] = new LayoutPropertyDescriptor(optionData.get(i));
             }
         }
         return propertyDescriptors;
@@ -114,12 +98,6 @@ public class LayoutPropertySource implements IPropertySource {
             return "";
         }
         switch (optionData.getType()) {
-        case STRING:
-            if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
-                return layoutHintIndexMap.get(value);
-            } else {
-                return value;
-            }
         case INT:
         case FLOAT:
             return value.toString();
@@ -153,25 +131,24 @@ public class LayoutPropertySource implements IPropertySource {
                 Object value = thevalue;
                 LayoutOptionData<?> optionData = LayoutServices.getInstance()
                         .getLayoutOptionData((String) id);
+                switch (optionData.getType()) {
+                case STRING:
+                    break;
+                case BOOLEAN:
+                    value = Boolean.valueOf((Integer) value == 1);
+                    break;
+                case ENUM:
+                    value = optionData.getEnumValue((Integer) value);
+                    break;
+                default:
+                    value = optionData.parseValue((String) value);
+                }
+                layoutConfig.setProperty(optionData, value);
                 if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
-                    layoutConfig.setProperty(optionData,
-                            layoutHintValues[((Integer) value).intValue()]);
                     LayoutViewPart layoutView = LayoutViewPart.findView();
                     if (layoutView != null) {
                         layoutView.refresh();
                     }
-                } else {
-                    switch (optionData.getType()) {
-                    case BOOLEAN:
-                        value = Boolean.valueOf((Integer) value == 1);
-                        break;
-                    case ENUM:
-                        value = optionData.getEnumValue((Integer) value);
-                        break;
-                    default:
-                        value = optionData.parseValue((String) value);
-                    }
-                    layoutConfig.setProperty(optionData, value);
                 }
             }
         };
@@ -214,80 +191,6 @@ public class LayoutPropertySource implements IPropertySource {
             }
         }
     }
-
-    /**
-     * Creates the array of layout hint choices to be displayed to the user.
-     */
-    private static synchronized void createLayoutHintChoices() {
-        LayoutServices layoutServices = LayoutServices.getInstance();
-        Map<String, List<LayoutProviderData>> typeMap
-                = new LinkedHashMap<String, List<LayoutProviderData>>();
-        int choicesCount = 0;
-        for (LayoutProviderData providerData : layoutServices.getLayoutProviderData()) {
-            String key = providerData.getType();
-            if (layoutServices.getLayoutTypeName(key) == null) {
-                key = "zzz";
-            }
-            List<LayoutProviderData> typeList = typeMap.get(key);
-            if (typeList == null) {
-                typeList = new LinkedList<LayoutProviderData>();
-                typeMap.put(key, typeList);
-                choicesCount++;
-            }
-            typeList.add(providerData);
-            choicesCount++;
-        }
-        layoutHintChoices = new String[choicesCount];
-        layoutHintValues = new String[choicesCount];
-        layoutHintIndexMap = new HashMap<String, Integer>();
-        String[] types = typeMap.keySet().toArray(new String[typeMap.keySet().size()]);
-        Arrays.sort(types);
-        int index = 0;
-        for (String typeId : types) {
-            String typeName = layoutServices.getLayoutTypeName(typeId);
-            if (typeName == null) {
-                typeName = Messages.getString("kiml.ui.8");
-            }
-            layoutHintValues[index] = typeId;
-            layoutHintIndexMap.put(typeId, Integer.valueOf(index));
-            layoutHintChoices[index++] = typeName + " " + Messages.getString("kiml.ui.9");
-            for (LayoutProviderData providerData : typeMap.get(typeId)) {
-                String providerName = "  - " + providerData.getName();
-                String category = layoutServices.getCategoryName(providerData.getCategory());
-                if (category != null) {
-                    providerName += " (" + category + ")";
-                }
-                layoutHintValues[index] = providerData.getId();
-                layoutHintIndexMap.put(providerData.getId(), Integer.valueOf(index));
-                layoutHintChoices[index++] = providerName;
-            }
-        }
-    }
-    
-    /**
-     * Return an array of choices for the layout hint option.
-     * 
-     * @return the layout hint choices
-     */
-    public static String[] getLayoutHintChoices() {
-        if (layoutHintChoices == null) {
-            createLayoutHintChoices();
-        }
-        return layoutHintChoices;
-    }
-    
-    /**
-     * Return the layout hint at the given index of the layout hint choices array.
-     * 
-     * @param choiceIndex an index for {@link #getLayoutHintChoices()}
-     * @return the corresponding layout hint
-     */
-    public static String getLayoutHint(final int choiceIndex) {
-        if (layoutHintValues == null) {
-            createLayoutHintChoices();
-        }
-        return layoutHintValues[choiceIndex];
-    }
     
     /**
      * Returns an identifier for a displayed layout hint name.
@@ -308,9 +211,9 @@ public class LayoutPropertySource implements IPropertySource {
         }
         if (bestHint == null) {
             // look for a matching layout type
-            for (Pair<String, String> layoutType : LayoutServices.getInstance().getLayoutTypes()) {
-                String typeId = layoutType.getFirst();
-                String typeName = layoutType.getSecond();
+            for (LayoutTypeData layoutType : LayoutServices.getInstance().getLayoutTypeData()) {
+                String typeId = layoutType.getId();
+                String typeName = layoutType.getName();
                 if (displayedName.startsWith(typeName) && typeName.length() > bestLength) {
                     bestHint = typeId;
                     bestLength = typeName.length();
