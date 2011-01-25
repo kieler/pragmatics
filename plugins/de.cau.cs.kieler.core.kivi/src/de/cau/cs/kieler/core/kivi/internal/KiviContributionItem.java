@@ -87,12 +87,13 @@ public class KiviContributionItem extends CompoundContributionItem implements
     private InternalMenuService menuService;
 
     // dunno how to get the formatter to make a linebreak here
-    // CHECKSTYLEOFF MaximumLineLength   
+    // CHECKSTYLEOFF MaximumLineLength
     private static Map<String, IContributionItem> idButtonMap = new HashMap<String, IContributionItem>();
-    private static Map<IContributionItem, ButtonHandler> buttonsHandlerMap = new HashMap<IContributionItem, ButtonHandler>(); 
+    private static Map<IContributionItem, ButtonHandler> buttonsHandlerMap = new HashMap<IContributionItem, ButtonHandler>();
     private static List<IContributionItem> buttons = new ArrayList<IContributionItem>();
+
     // CHECKSTYLEON MaximumLineLength
-     
+
     /**
      * {@inheritDoc}
      */
@@ -121,8 +122,20 @@ public class KiviContributionItem extends CompoundContributionItem implements
             IContributionItem item;
             // first look for a cached button
             item = idButtonMap.get(config.getId());
+
+            // have to check whether the commands have been undefined in the meantime
+            boolean isCommandDefined = false;
+            try {
+                if (item != null && item instanceof CommandContributionItem
+                        && ((CommandContributionItem) item).getCommand().getCommand().isDefined()) {
+                    isCommandDefined = true;
+                }
+            } catch (NullPointerException npe) {
+                /* nothing */
+            }
+
             // only create a new button, if there has no one be defined before
-            if (item == null && commandService != null) {
+            if (!isCommandDefined) {
                 // get a command and register the Kivi ButtonHandler for it
                 Command cmd = commandService.getCommand(config.getId());
                 Category category = commandService.getCategory("de.cau.cs.kieler");
@@ -132,6 +145,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
                 ButtonHandler buttonHandler = new ButtonHandler();
                 cmd.setHandler(buttonHandler);
 
+                System.out.println("Created command " + cmd.getId() + " " + cmd.isDefined());
                 // now specify the button
                 CommandContributionItemParameter parameter = new CommandContributionItemParameter(
                         serviceLocator, config.getId(), config.getId(),
@@ -139,14 +153,15 @@ public class KiviContributionItem extends CompoundContributionItem implements
                         config.getLabel(), null, config.getTooltip(), config.getStyle(), null,
                         false);
                 // this is the button
-                item = new CommandContributionItem(parameter);
-                // remember some relations between button, its handler and the
-                // corresponding
-                // configuration
+                if (item == null) {
+                    item = new CommandContributionItem(parameter);
+                    // remember some relations between button, its handler and the
+                    // corresponding
+                    // configuration
+                    idButtonMap.put(config.getId(), item);
+                    buttons.add(item);
+                }
                 buttonsHandlerMap.put(item, buttonHandler);
-                idButtonMap.put(config.getId(), item);
-                buttons.add(item);
-
                 // specify visibility
                 Expression visibilityExpression = null;
                 // specify visibility for active editors

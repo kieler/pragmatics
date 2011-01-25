@@ -57,15 +57,20 @@ public class KiVi {
 
     private List<CombinationDescriptor> availableCombinations = new ArrayList<CombinationDescriptor>();
 
-    private Map<ITrigger, Collection<ICombination>> combinationsByTrigger;;
+    private Map<ITrigger, Collection<ICombination>> combinationsByTrigger;
+    // haf: here a mapping from Trigger*States* to Combinations is more important
+    private Map<Class<? extends ITriggerState>, Collection<ICombination>> combinationsByTriggerStates;
 
     private boolean active = false;
+
+    private boolean initialized = false;
 
     /**
      * Instantiate the singleton class.
      */
     public KiVi() {
         combinationsByTrigger = new HashMap<ITrigger, Collection<ICombination>>();
+        combinationsByTriggerStates = new HashMap<Class<? extends ITriggerState>, Collection<ICombination>>();
         combinationsWorker.start();
         effectsWorker.start();
     }
@@ -80,11 +85,21 @@ public class KiVi {
     }
 
     /**
-     * Called on eclipse startup to do a short initialization.
+     * Called on eclipse startup to do a short initialization. This is called either by an Eclipse
+     * early startup registered call or by the KiViMenuContributionItem, when it gets first asked
+     * for its menu items, depending on what happens first.
+     * 
+     * @author haf
      */
     public void initialize() {
-        setActive(KiViPlugin.getDefault().getPreferenceStore().getBoolean(PROPERTY_ACTIVE));
-        loadCombinations();
+        // initialize only once
+        if (initialized) {
+            return;
+        } else {
+            initialized = true;
+            setActive(KiViPlugin.getDefault().getPreferenceStore().getBoolean(PROPERTY_ACTIVE));
+            loadCombinations();
+        }
     }
 
     /**
@@ -276,7 +291,8 @@ public class KiVi {
             ((AbstractTriggerState) triggerState).setSequenceNumber();
         }
 
-        Collection<ICombination> cs = getCombinations(triggerState.getTriggerClass());
+        //Collection<ICombination> cs = getCombinations(triggerState.getTriggerClass());
+        Collection<ICombination> cs = getCombinationsByTriggerState(triggerState.getClass());
         for (ICombination c : cs) {
             List<IEffect> effects = c.trigger(triggerState);
             for (IEffect effect : effects) {
@@ -349,6 +365,31 @@ public class KiVi {
     }
 
     /**
+     * Retrieve List of availableCombinations that are active and listening to the specified class
+     * of trigger states.
+     * 
+     * @author haf
+     * @param trigger
+     *            class of triggers
+     * @param triggerState
+     *            class of trigger state
+     * @return list of availableCombinations
+     */
+    private Collection<ICombination> getCombinationsByTriggerState(final Class<? extends ITriggerState> triggerState) {
+        synchronized (combinationsByTrigger) {
+     //       for (ITriggerState t : combinationsByTriggerStates.keySet()) {
+     //           if (triggerState.isInstance(t)) {
+                    Collection<ICombination> list = combinationsByTriggerStates.get(triggerState);
+                    if (list != null) {
+                        return list;
+                    }
+     //           }
+      //      }
+        }
+        return new ArrayList<ICombination>();
+    }
+
+    /**
      * Check whether any combination of the given class is active.
      * 
      * @param clazz
@@ -381,29 +422,45 @@ public class KiVi {
         try {
             ITriggerState triggerState = null;
             ITrigger trigger = null;
+            boolean oldList = true;
             synchronized (combinationsByTrigger) {
                 synchronized (triggerStates) {
+                    // haf: add an instance of the trigger state to our current trigger state cache
                     triggerState = triggerStates.get(clazz);
                     if (triggerState == null) {
                         triggerState = clazz.newInstance();
                         triggerStates.put(clazz, triggerState);
                     }
                 }
-                for (Map.Entry<ITrigger, Collection<ICombination>> entry : combinationsByTrigger
-                        .entrySet()) {
-                    if (triggerState.getTriggerClass().isInstance(entry.getKey())) {
-                        entry.getValue().add(combination);
-                        return;
-                    }
+                
+                
+                // haf: remember which combinations listen to a trigger
+                //  using multimap pattern here
+                oldList = addToList(combinationsByTriggerStates, clazz, combination);
+                if(!oldList){
+                    trigger = triggerState.getTriggerClass().newInstance();
+                    addToList(combinationsByTrigger, trigger, combination);
                 }
-                // trigger not found, add new list for new trigger
-                trigger = triggerState.getTriggerClass().newInstance();
-                Set<ICombination> set = new LinkedHashSet<ICombination>();
-                set.add(combination);
-                combinationsByTrigger.put(trigger, set);
+                
+//                // first, see if there is already such map entry available and add it
+//                for (Map.Entry<ITrigger, Collection<ICombination>> entry : combinationsByTrigger
+//                        .entrySet()) {
+//                    if (triggerState.getTriggerClass().isInstance(entry.getKey())) {
+//                        entry.getValue().add(combination);
+//                        return;
+//                    }
+//                }
+//                // trigger not found, add new list for new trigger
+//                trigger = triggerState.getTriggerClass().newInstance();
+//                Set<ICombination> set = new LinkedHashSet<ICombination>();
+//                set.add(combination);
+//                combinationsByTrigger.put(trigger, set);
             }
             // moved outside the synchronized to avoid deadlock by foreign trigger code
-            trigger.setActive(isActive());
+            if(!oldList){
+                // activate any trigger seen for the first time
+                trigger.setActive(isActive());
+            }
         } catch (InstantiationException e) {
             error(e);
         } catch (IllegalAccessException e) {
@@ -450,6 +507,32 @@ public class KiVi {
         } catch (IllegalAccessException e) {
             error(e);
         }
+    }
+
+    /**
+     * Add an item to a map, where the map uses the MultiMap pattern (see google.collections). Used
+     * here to avoid using the google library. If the library is officially introduced to KIELER,
+     * this could be changed.
+     * 
+     * @author haf
+     * @param map
+     * @param key
+     * @param item
+     * @returns initialized
+     */
+    private <S,T> boolean addToList(Map<S, Collection<T>> map, S key, T item) {
+        // first see whether the entry already exists
+        Collection<T> list = map.get(key);
+        boolean initialized = true;
+        if (list == null) {
+            // if not, add a new entry
+            list = new ArrayList<T>();
+            map.put(key, list);
+            initialized = false;
+        }
+        // now add the new item to the list
+        list.add(item);
+        return initialized;
     }
 
     /**
