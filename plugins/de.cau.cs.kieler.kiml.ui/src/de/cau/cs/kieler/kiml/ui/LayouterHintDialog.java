@@ -15,10 +15,13 @@ package de.cau.cs.kieler.kiml.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -27,6 +30,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -54,6 +58,8 @@ public class LayouterHintDialog extends Dialog {
     private Label displayNameLabel;
     /** the label for displaying the description of the current hint. */
     private Label descriptionLabel;
+    /** the label for displaying the preview image. */
+    private Label imageLabel;
     /** the tree viewer for layout algorithm selection. */
     private TreeViewer treeViewer;
     
@@ -87,7 +93,61 @@ public class LayouterHintDialog extends Dialog {
         if (element instanceof ILayoutData) {
             layouterHint = ((ILayoutData) element).getId();
         }
+        if (imageLabel.getImage() != null) {
+            imageLabel.getImage().dispose();
+            imageLabel.setImage(null);
+        }
         return super.close();
+    }
+    
+    /**
+     * Update the currently displayed value by changing the tree selection and
+     * updating the description area.
+     * 
+     * @param value the current value string
+     */
+    private void updateValue(final String value) {
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        ILayoutData layoutData = layoutServices.getLayoutProviderData(value);
+        if (layoutData == null) {
+            layoutData = layoutServices.getLayoutTypeData(value);
+        }
+        if (layoutData != null) {
+            treeViewer.setSelection(new StructuredSelection(layoutData));
+            updateValue(layoutData);
+        }
+    }
+    
+    /**
+     * Update the currently displayed value of the description area according
+     * to the tree selection.
+     * 
+     * @param layoutData the currently selected layout data
+     */
+    private void updateValue(final ILayoutData layoutData) {
+        String name = layoutData.getName();
+        if (name == null || name.length() == 0) {
+            name = layoutData instanceof LayoutProviderData
+                    ? Messages.getString("kiml.ui.61")
+                    : Messages.getString("kiml.ui.8");
+        }
+        displayNameLabel.setText(name);
+        String description = layoutData.getDescription();
+        if (description == null || description.length() == 0) {
+            description = Messages.getString("kiml.ui.60");
+        }
+        descriptionLabel.setText(description);
+        Image newImage = null;
+        if (layoutData instanceof EclipseLayoutProviderData) {
+            ImageDescriptor descriptor = ((EclipseLayoutProviderData) layoutData).getPreviewImage();
+            if (descriptor != null) {
+                newImage = descriptor.createImage();
+            }
+        }
+        if (imageLabel.getImage() != null) {
+            imageLabel.getImage().dispose();
+        }
+        imageLabel.setImage(newImage);
     }
     
     /**
@@ -99,6 +159,19 @@ public class LayouterHintDialog extends Dialog {
         ((GridLayout) composite.getLayout()).numColumns = 2;
         createSelectionTree(composite);
         createDescriptionArea(composite);
+        updateValue(layouterHint);
+        
+        // add a selection listener to the tree so that the selected element is displayed
+        treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(final SelectionChangedEvent event) {
+                IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                Object element = selection.getFirstElement();
+                if (element instanceof ILayoutData) {
+                    updateValue((ILayoutData) element);
+                }
+            }
+        });
+        
         return composite;
     }
     
@@ -118,19 +191,14 @@ public class LayouterHintDialog extends Dialog {
         filterText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY));
         
         // create tree viewer
-        LayoutServices layoutServices = LayoutServices.getInstance();
         treeViewer = new TreeViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
         final LayouterHintProvider provider = new LayouterHintProvider();
         treeViewer.setContentProvider(provider);
         treeViewer.setLabelProvider(new LabelProvider());
         treeViewer.setSorter(new ViewerSorter());
         treeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        treeViewer.setInput(layoutServices);
+        treeViewer.setInput(LayoutServices.getInstance());
         treeViewer.expandAll();
-        LayoutProviderData providerData = layoutServices.getLayoutProviderData(layouterHint);
-        if (providerData != null) {
-            treeViewer.setSelection(new StructuredSelection(providerData));
-        }
         treeViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(final DoubleClickEvent event) {
                 okPressed();
@@ -169,6 +237,10 @@ public class LayouterHintDialog extends Dialog {
     
     /** width of the description area. */
     private static final int DESCRIPTION_WIDTH = 300;
+    /** height of the image label. */
+    private static final int IMAGE_HEIGHT = 200;
+    /** vertical spacing in the description area. */
+    private static final int DESCR_SPACING = 10;
     
     /**
      * Create the dialog area that displays the description of a layout algorithm.
@@ -179,18 +251,28 @@ public class LayouterHintDialog extends Dialog {
     private Control createDescriptionArea(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         
+        // create label for the display name
         displayNameLabel = new Label(composite, SWT.NONE);
         FontDescriptor fontDescriptor = FontDescriptor.createFrom(parent.getFont());
         fontDescriptor = fontDescriptor.increaseHeight(2).setStyle(SWT.BOLD);
         displayNameLabel.setFont(fontDescriptor.createFont(parent.getDisplay()));
-        displayNameLabel.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+        displayNameLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         
+        // create label for the description
         descriptionLabel = new Label(composite, SWT.WRAP);
-        GridData descriptionLayoutData = new GridData(SWT.FILL, SWT.TOP, false, true);
+        GridData descriptionLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
         descriptionLayoutData.widthHint = DESCRIPTION_WIDTH;
         descriptionLabel.setLayoutData(descriptionLayoutData);
         
-        composite.setLayout(new GridLayout());
+        // create label for the preview image
+        imageLabel = new Label(composite, SWT.NONE);
+        GridData imageLayoutData = new GridData(SWT.FILL, SWT.BOTTOM, true, false);
+        imageLayoutData.heightHint = IMAGE_HEIGHT;
+        imageLabel.setLayoutData(imageLayoutData);
+        
+        GridLayout compositeLayout = new GridLayout();
+        compositeLayout.verticalSpacing = DESCR_SPACING;
+        composite.setLayout(compositeLayout);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         return composite;
     }
