@@ -21,6 +21,9 @@
       <diagramType
         id="de.cau.cs.kieler.rail.editor.DiagramType">
       </diagramType>
+      <imageProvider
+               id="de.cau.cs.kieler.rail.editor.ImageProvider">
+         </imageProvider>
     </diagramTypeProvider>
   </extension>
   <extension
@@ -42,4 +45,11 @@
            name="Rail Editor">
      </editor>
   </extension>
+     <extension
+         point="org.eclipse.graphiti.ui.imageProviders">
+      <imageProvider
+            class="de.cau.cs.kieler.rail.editor.ImageProvider"
+            id="de.cau.cs.kieler.rail.editor.ImageProvider">
+      </imageProvider>
+   </extension>
 </plugin>
