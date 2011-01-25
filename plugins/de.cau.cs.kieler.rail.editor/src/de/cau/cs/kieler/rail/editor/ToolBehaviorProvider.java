@@ -45,6 +45,7 @@ import org.eclipse.graphiti.util.ILocationInfo;
 
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.impl.WeichenknotenImpl;
 import de.cau.cs.kieler.rail.editor.features.CreatePortFeature;
 import de.cau.cs.kieler.rail.editor.features.ToggleSwitchFeature;
 
@@ -118,7 +119,8 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
                                        IPictogramElementContext context) {
         IContextButtonPadData data = super.getContextButtonPad(context);
         PictogramElement pe = context.getPictogramElement();
-        Object bo = context.getPictogramElement().getLink().getBusinessObjects();
+        Object bo = getFeatureProvider().getBusinessObjectForPictogramElement(pe);
+        //Object bo = context.getPictogramElement().getLink().getBusinessObjects();
         
         // 1. set the generic context buttons
         // note, that we do not add 'remove' (just as an example)
@@ -135,8 +137,6 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
             data.setCollapseContextButton(collapseButton);
           }
         
-        System.out.println(bo);
-        System.out.println(bo instanceof Weichenknoten);
         CustomContext ccToogle = new CustomContext(new PictogramElement[] { pe });
         if(bo instanceof Weichenknoten){
         	
@@ -144,8 +144,9 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
         	
         	for(int i = 0; i < cf.length;i++){
         		if (cf[i].getName() ==ToggleSwitchFeature.NAME){
-        			IContextButtonEntry toogleButton = ContextEntryHelper
-                	.createCollapseContextButton(true, cf[i], ccToogle);
+        			System.out.println(cf[i].getName());
+        			
+        			IContextButtonEntry toogleButton = new ContextButtonEntry(cf[i], context);
         			
         			if(((Weichenknoten)bo).getAbzweigendeLage() == EOrientation.LINKS){
                 		toogleButton.setText("links Weiche -> rechts Weiche");
@@ -153,8 +154,9 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
                 			toogleButton.setText("rechts Weiche -> links Weiche");
                 		}
                 	toogleButton.setIconId(ImageProvider.IMG_TOGGLE);
+                	//cf[i].execute(context);
                 	
-                	data.setCollapseContextButton(toogleButton);
+                	data.getDomainSpecificContextButtons().add(toogleButton);
         		}
         	}
         	
