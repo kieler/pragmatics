@@ -109,6 +109,9 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                     break;
                 }
             }
+
+            //TODO calulate maximal space usage of branches and push first branch node up/down accordingly!
+
             if (!found) {
                 for (LPort port : walker.getPorts()) {
                     LNode target = port.getEdges().get(0).getTarget().getNode();
