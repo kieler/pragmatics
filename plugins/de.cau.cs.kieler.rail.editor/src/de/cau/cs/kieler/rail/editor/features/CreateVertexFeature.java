@@ -135,7 +135,7 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
         
         contShape.setGraphicsAlgorithm(vertexPE.getGraphicsAlgorithm());
         addBookContext.setTargetContainer(contShape);
-    	
+
     	switch (type){
     		case SWITCHVERTEX_LEFT:
     		case SWITCHVERTEX_RIGHT:

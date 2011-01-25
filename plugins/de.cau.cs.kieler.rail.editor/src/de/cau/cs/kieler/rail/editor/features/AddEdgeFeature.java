@@ -52,9 +52,6 @@ public class AddEdgeFeature extends AbstractAddFeature {
     	IPeCreateService peCreateService = Graphiti.getPeCreateService();
     	
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
-        
-        System.out.println("AddEdgeFeature#add");
-        
        
         // CONNECTION WITH POLYLINE
         Connection connection = peCreateService

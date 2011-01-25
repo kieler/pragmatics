@@ -373,8 +373,13 @@ public class AddVertexFeature extends AbstractAddFeature {
 				boxAnchor.setRelativeWidth(0.85);
 				break;
 			case ABZWEIG:
-				boxAnchor.setRelativeWidth(0.8);
-				boxAnchor.setRelativeHeight(0.1);
+				if(orientatin == EOrientation.LINKS){
+					boxAnchor.setRelativeWidth(0.8);
+				}
+				else{
+					boxAnchor.setRelativeWidth(0.2);
+				}
+				boxAnchor.setRelativeHeight(0.0);
 			}
 		    
 			

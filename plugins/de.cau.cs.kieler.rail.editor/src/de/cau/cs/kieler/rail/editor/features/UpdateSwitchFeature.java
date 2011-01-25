@@ -85,6 +85,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
 //        }
  
         int width = pictogramElement.getGraphicsAlgorithm().getWidth();
+        int height = pictogramElement.getGraphicsAlgorithm().getHeight();
         
         //Polylines
         ContainerShape containerShape = (ContainerShape) context.getPictogramElement();
@@ -111,25 +112,46 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             		int boxHeight = anchor.getGraphicsAlgorithm().getWidth();
             		switch (port.getName()){
 	            		case SPITZE:
-	            			spitzeStammXY[0] = (int) (width*(box.getRelativeWidth())-boxWidth*2);
-	            			spitzeStammXY[1] = (int) (width*(box.getRelativeHeight())+boxHeight/2);
+	            			spitzeStammXY[0] = (int) (width*(box.getRelativeWidth())-boxWidth/2);
+	            			spitzeStammXY[1] = (int) (height*(box.getRelativeHeight())+boxHeight/2);
 	            			break;
 	            		case STAMM:
-	            			spitzeStammXY[2] = (int) (width*(box.getRelativeWidth())+boxWidth*2);
-	            			spitzeStammXY[3] = (int) (width*(box.getRelativeHeight())+boxHeight/2);
+	            			spitzeStammXY[2] = (int) (width*(box.getRelativeWidth())+boxWidth/2);
+	            			spitzeStammXY[3] = (int) (height*(box.getRelativeHeight())+boxHeight/2);
 	            			break;
 	            		case ABZWEIG:
-	            			mitteAbzweigXY[2] = (int) (width*(box.getRelativeWidth())+boxWidth*2);
-	            			mitteAbzweigXY[3] = (int) (width*(box.getRelativeHeight())+boxHeight/2);
+	            			System.out.println("Abzweig");
+	            			mitteAbzweigXY[2] = (int) (width*(box.getRelativeWidth())+boxWidth/2);
+	            			System.out.println("relativ width: "+ box.getRelativeWidth());
+	            			mitteAbzweigXY[3] = (int) (height*(box.getRelativeHeight())+boxHeight/2);
+	            			System.out.println("relativ height: "+ box.getRelativeHeight());
             		}
             	}
             }
+            System.out.println("width: "+width);
+            System.out.println("height: "+height);
+            System.out.println("spitzeStammXY");
+            for(int i : spitzeStammXY){
+            	System.out.println(i);
+            }
+            System.out.println("mitteAbzweigXY");
+            for(int i : mitteAbzweigXY){
+            	System.out.println(i);
+            }
+            System.out.println();
+            
             mitteAbzweigXY[1] = getY_from_Array(mitteAbzweigXY,25);
             
             for(int i = 0; i < 2;i++){
             	for(int j=0; j < 2; j++){
+            		System.out.println("PolyLine x: " + (i==0 ? spitzeStammXY[0+j*2] : mitteAbzweigXY[0+j*2]));
 		            polylines.get(i).getPoints().get(j).setX(i==0 ? spitzeStammXY[0+j*2] : mitteAbzweigXY[0+j*2]);
+		            System.out.println("PolyLine y: " + (i==0 ? spitzeStammXY[1+j*2] : mitteAbzweigXY[1+j*2]));
 		            polylines.get(i).getPoints().get(j).setY(i==0 ? spitzeStammXY[1+j*2] : mitteAbzweigXY[1+j*2]);
+		            /*if(j==1){
+		            	polylines.get(i).getPoints().get(j).setY(0);
+		            	polylines.get(i).getPoints().get(j).setX(0);
+		            }*/
             	}
             }
         }

@@ -8,23 +8,28 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+
+import de.cau.cs.kieler.rail.Topologie.Basegraph.EPort;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 
-public class RotateSwitchFeature extends AbstractCustomFeature {
+public class ToggleSwitchFeature extends AbstractCustomFeature {
  
-    public RotateSwitchFeature(IFeatureProvider fp) {
+    public static final String NAME = "ToggleSwitch";
+
+	public ToggleSwitchFeature(IFeatureProvider fp) {
         super(fp);
     }
  
     @Override
     public String getName() {
-        return "Rotate Switch";
+        return NAME;
     }
  
     @Override
     public String getDescription() {
-        return "Ändert den Winkel der Weiche";
+        return "Wandelt Weiche von links Weiche nach rechts Weiche oder umgekert";
     }
  
     @Override
@@ -51,18 +56,35 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
                 String currentName = weichenknoten.getName();
                 
                 PictogramElement pictogramElement = context.getInnerPictogramElement();
-                ContainerShape cs = (ContainerShape) pictogramElement;
                 
+                
+                //toggeln
+                if (pictogramElement instanceof ContainerShape) {
+                	ContainerShape cs = (ContainerShape) pictogramElement;
+                    for(Anchor anchor : cs.getAnchors()){
+                    	if (anchor instanceof BoxRelativeAnchor){
+                    		Port port = (Port)getBusinessObjectForPictogramElement(anchor);
+                    		BoxRelativeAnchor box = (BoxRelativeAnchor) anchor.getGraphicsAlgorithm().getPictogramElement();
+                    		int boxWidth = anchor.getGraphicsAlgorithm().getWidth();
+                    		int boxHeight = anchor.getGraphicsAlgorithm().getWidth();
+                    		if (port.getName()==EPort.ABZWEIG){
+                    			box.setRelativeWidth(Math.abs(1-box.getRelativeWidth()));
+                    			//box.setRelativeWidth(0.5);
+                    		}
+                    	}
+                    }
+                //toggeln
+                Weichenknoten wk=((Weichenknoten)bo);
+                if(wk.getAbzweigendeLage()==EOrientation.LINKS){
+                	wk.setAbzweigendeLage(EOrientation.RECHTS);
+                }else{
+                	wk.setAbzweigendeLage(EOrientation.LINKS);
+                }
                 updatePictogramElement(pictogramElement);
                 
-                // ask user for a new class name
-                String newName =ExampleUtil.askString(getName(), getDescription(),
-                        currentName);
-                if (newName != null) {
-                    weichenknoten.setName(newName);
-                }
             }
         }
+       }
     }
     /*
               if (pictogramElement instanceof ContainerShape) {
