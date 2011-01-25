@@ -49,6 +49,7 @@ import de.cau.cs.kieler.rail.editor.features.LayoutFeature;
 import de.cau.cs.kieler.rail.editor.features.MovePortFeature;
 import de.cau.cs.kieler.rail.editor.features.ResizeFeature;
 import de.cau.cs.kieler.rail.editor.features.RotateSwitchFeature;
+import de.cau.cs.kieler.rail.editor.features.ToggleSwitchFeature;
 import de.cau.cs.kieler.rail.editor.features.TypeFeatures;
 import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
 import de.cau.cs.kieler.rail.editor.features.UpdateSwitchFeature;
@@ -230,7 +231,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
     }    
     @Override
     public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-        return new ICustomFeature[] { new RotateSwitchFeature(this) };
+        return new ICustomFeature[] { new RotateSwitchFeature(this), new ToggleSwitchFeature(this) };
     }
 
     
