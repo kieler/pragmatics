@@ -65,13 +65,15 @@ public class AddRelationFeature extends AbstractAddShapeFeature {
     public PictogramElement add(final IAddContext context) {
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         IGaService gaService = Graphiti.getGaService();
-        Shape relationShape = peCreateService.createShape(
-                context.getTargetContainer(), true);
-        Polygon polygon = gaService.createPolygon(relationShape, new int[] { 0,
-                VERTEX_RADIUS, VERTEX_RADIUS, 2 * VERTEX_RADIUS,
-                2 * VERTEX_RADIUS, VERTEX_RADIUS, VERTEX_RADIUS, 0 });
-        polygon.setStyle(styleProvider.getStyle(StyleProvider.SOLID_STYLE));
-        gaService.setLocation(polygon, context.getX(), context.getY(), false);
+        Shape relationShape =
+                peCreateService.createShape(context.getTargetContainer(), true);
+        Polygon polygon =
+                gaService.createPolygon(relationShape, new int[] { 0,
+                        VERTEX_RADIUS, VERTEX_RADIUS, 2 * VERTEX_RADIUS,
+                        2 * VERTEX_RADIUS, VERTEX_RADIUS, VERTEX_RADIUS, 0 });
+        polygon.setStyle(styleProvider.getStyle(StyleProvider.RELATION_STYLE));
+        gaService.setLocationAndSize(polygon, context.getX(), context.getY(),
+                2 * VERTEX_RADIUS, 2 * VERTEX_RADIUS, false);
         peCreateService.createChopboxAnchor(relationShape);
 
         link(relationShape, context.getNewObject());

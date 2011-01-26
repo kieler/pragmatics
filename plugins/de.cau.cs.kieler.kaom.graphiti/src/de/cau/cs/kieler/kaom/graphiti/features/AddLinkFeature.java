@@ -83,7 +83,7 @@ public class AddLinkFeature extends AbstractAddFeature {
         connection.setEnd(addConContext.getTargetAnchor());
         IGaService gaService = Graphiti.getGaService();
         Polyline polyline = gaService.createPolyline(connection);
-        polyline.setStyle(styleProvider.getStyle());
+        polyline.setStyle(styleProvider.getStyle(StyleProvider.LINK_STYLE));
         polyline.setLineWidth(2);
         link(connection, context.getNewObject());
 
@@ -102,7 +102,7 @@ public class AddLinkFeature extends AbstractAddFeature {
                 gaService.createPolygon(arrowDecorator, new int[] {
                         -ARROW_LENGTH, ARROW_WIDTH / 2, 0, 0, -ARROW_LENGTH,
                         -ARROW_WIDTH / 2 });
-        arrow.setStyle(styleProvider.getStyle(StyleProvider.SOLID_STYLE));
+        arrow.setStyle(styleProvider.getStyle(StyleProvider.LINK_STYLE));
 
         // provide information to support direct-editing directly
         // after object creation (must be activated additionally)

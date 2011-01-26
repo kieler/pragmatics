@@ -25,23 +25,24 @@ import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 
 /**
  * A provider for styles of diagram elements.
- *
+ * 
  * @author msp
  */
 public class StyleProvider implements IStyleProvider {
 
     /** the diagram type provider for which this style provider is operating. */
     private IDiagramTypeProvider diagramTypeProvider;
-    
+
     /**
      * Creates a style provider for a given diagram type provider.
      * 
-     * @param provider the diagram type provider
+     * @param provider
+     *            the diagram type provider
      */
     public StyleProvider(final IDiagramTypeProvider provider) {
         this.diagramTypeProvider = provider;
     }
-    
+
     /**
      * Returns the default style.
      * 
@@ -50,11 +51,12 @@ public class StyleProvider implements IStyleProvider {
     public Style getStyle() {
         return getStyle(DEFAULT_STYLE);
     }
-    
+
     /**
      * Fetch the style with given identifier.
      * 
-     * @param id the style identifier
+     * @param id
+     *            the style identifier
      * @return a style instance, or {@code null} if the id is unknown
      */
     public Style getStyle(final String id) {
@@ -65,20 +67,22 @@ public class StyleProvider implements IStyleProvider {
         }
         return style;
     }
-    
+
     /**
      * Look recursively for an appropriate style.
      * 
-     * @param container a style container
-     * @param id the style identifier
+     * @param container
+     *            a style container
+     * @param id
+     *            the style identifier
      * @return a style instance, or {@code null} if the style could not be found
      */
     private Style getStyle(final StyleContainer container, final String id) {
         Style style = null;
         for (Style diagramStyle : container.getStyles()) {
             if (id.equals(diagramStyle.getId())) {
-                 style = diagramStyle;
-                 break;
+                style = diagramStyle;
+                break;
             }
             style = getStyle(diagramStyle, id);
             if (style != null) {
@@ -87,22 +91,28 @@ public class StyleProvider implements IStyleProvider {
         }
         return style;
     }
-    
+
     /** the default style id for KAOM diagrams. */
     public static final String DEFAULT_STYLE = "default";
     /** style id for items with solid color fill. */
     public static final String SOLID_STYLE = "solid";
     /** style id for entities. */
     public static final String ENTITY_STYLE = "entity";
-    
+    /** style id for connections. */
+    public static final String LINK_STYLE = "connection";
+    /** style id for relations. */
+    public static final String RELATION_STYLE = "relation";
+
     /** the lightness value for entity background. */
     private static final int ENTITY_VALUE = 245;
-    
+
     /**
      * Create the style with given identifier.
      * 
-     * @param diagram the diagram
-     * @param id the style identifier
+     * @param diagram
+     *            the diagram
+     * @param id
+     *            the style identifier
      * @return a new style instance, or {@code null} if the id is unknown
      */
     private Style createStyle(final Diagram diagram, final String id) {
@@ -110,20 +120,33 @@ public class StyleProvider implements IStyleProvider {
         Style style = null;
         if (DEFAULT_STYLE.equals(id)) {
             style = gaService.createStyle(diagram, id);
-            style.setForeground(gaService.manageColor(diagram, ColorConstant.BLACK));
-            style.setBackground(gaService.manageColor(diagram, ColorConstant.WHITE));
+            style.setForeground(gaService.manageColor(diagram,
+                    ColorConstant.BLACK));
+            style.setBackground(gaService.manageColor(diagram,
+                    ColorConstant.WHITE));
         } else if (SOLID_STYLE.equals(id)) {
             Style defaultStyle = getStyle(DEFAULT_STYLE);
             style = gaService.createStyle(defaultStyle, id);
-            style.setBackground(gaService.manageColor(diagram, ColorConstant.BLACK));
+            style.setBackground(gaService.manageColor(diagram,
+                    ColorConstant.BLACK));
             style.setFilled(true);
         } else if (ENTITY_STYLE.equals(id)) {
             Style defaultStyle = getStyle(DEFAULT_STYLE);
             style = gaService.createStyle(defaultStyle, id);
+            style.setBackground(gaService.manageColor(diagram, ENTITY_VALUE,
+                    ENTITY_VALUE, ENTITY_VALUE));
+        } else if (RELATION_STYLE.equals(id)) {
+            Style parentStyle = getStyle(LINK_STYLE);
+            style = gaService.createStyle(parentStyle, id);
+        } else if (LINK_STYLE.equals(id)) {
+            Style parentStyle = getStyle(SOLID_STYLE);
+            style = gaService.createStyle(parentStyle, id);
             style.setBackground(gaService.manageColor(diagram,
-                    ENTITY_VALUE, ENTITY_VALUE, ENTITY_VALUE));
+                    ColorConstant.DARK_GRAY));
+            style.setForeground(gaService.manageColor(diagram,
+                    ColorConstant.DARK_GRAY));
         }
         return style;
     }
-    
+
 }

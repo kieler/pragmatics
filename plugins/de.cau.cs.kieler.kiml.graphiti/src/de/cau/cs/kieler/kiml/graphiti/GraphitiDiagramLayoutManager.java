@@ -140,6 +140,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         connections.clear();
         pictElem2GraphElemMap.clear();
         graphElem2PictElemMap.clear();
+        portAdjustments.clear();
 
         if (editorPart instanceof DiagramEditor) {
             diagramEditor = (DiagramEditor) editorPart;
@@ -287,17 +288,26 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                         float yPos =
                                 (float) (relHeight * parentHeight + yoffset);
 
+                        Pair<Float, Float> offset =
+                                new Pair<Float, Float>(0f, 0f);
                         // place port center directly on outer bounds line
                         if (new Double(0.0).equals(relWidth)) {
-                            xPos += anchor.getGraphicsAlgorithm().getX();
+                            offset.setFirst((float) anchor
+                                    .getGraphicsAlgorithm().getX());
                         } else if (new Double(1.0).equals(relWidth)) {
-                            xPos -= anchor.getGraphicsAlgorithm().getX();
+                            offset.setFirst((float) -anchor
+                                    .getGraphicsAlgorithm().getX());
                         }
                         if (new Double(0.0).equals(relHeight)) {
-                            yPos += anchor.getGraphicsAlgorithm().getY();
+                            offset.setSecond((float) anchor
+                                    .getGraphicsAlgorithm().getY());
                         } else if (new Double(1.0).equals(relHeight)) {
-                            yPos -= anchor.getGraphicsAlgorithm().getY();
+                            offset.setSecond((float) -anchor
+                                    .getGraphicsAlgorithm().getY());
                         }
+                        xPos += offset.getFirst();
+                        yPos += offset.getSecond();
+                        portAdjustments.put(port, offset);
 
                         portLayout.setXpos(xPos);
                         portLayout.setYpos(yPos);
@@ -338,6 +348,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         parentLayout.setProperty(LayoutOptions.FIXED_SIZE, !parentHasChildren);
         return parentHasChildren;
     }
+
+    private Map<KPort, Pair<Float, Float>> portAdjustments =
+            new HashMap<KPort, Pair<Float, Float>>();
 
     /**
      * Calculate insets from the invisible rectangle to the visible shape.
@@ -517,7 +530,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         GraphitiLayoutCommand command =
                 new GraphitiLayoutCommand(diagramEditor.getEditingDomain(),
                         diagramEditor.getDiagramTypeProvider()
-                                .getFeatureProvider());
+                                .getFeatureProvider(), pictElem2GraphElemMap,
+                        graphElem2PictElemMap, portAdjustments);
         for (Entry<KGraphElement, PictogramElement> entry : graphElem2PictElemMap
                 .entrySet()) {
             KGraphElement element = entry.getKey();
