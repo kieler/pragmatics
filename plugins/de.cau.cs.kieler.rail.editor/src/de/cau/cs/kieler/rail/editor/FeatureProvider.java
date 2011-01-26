@@ -108,8 +108,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
     	return new ICreateFeature[] { new CreateVertexFeature(this,TypeFeatures.BREANCH ),
     			new CreateVertexFeature(this,TypeFeatures.DEADENDVERTEX ), 
     			new CreateVertexFeature(this,TypeFeatures.SWITCHVERTEX_LEFT),
-    			new CreateVertexFeature(this,TypeFeatures.SWITCHVERTEX_RIGHT),
-    			new CreatePortFeature(this)
+    			new CreateVertexFeature(this,TypeFeatures.SWITCHVERTEX_RIGHT)
     		};
     }
     /**

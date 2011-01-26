@@ -139,13 +139,14 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
         //if bo is a switch show COTEXT_BUTTON
         if(bo instanceof Weichenknoten){
         	CustomContext ccToogle = new CustomContext(new PictogramElement[] { pe });
-
+        	ccToogle.setInnerPictogramElement(pe);
             ICustomFeature[] cf = getFeatureProvider().getCustomFeatures(ccToogle);
         	
             //catch the right feature
         	for(int i = 0; i < cf.length;i++){
+        		
         		if (cf[i].getName() ==ToggleSwitchFeature.NAME){//instanceof possible too
-        			System.out.println(cf[i].getName());
+        			System.out.println(cf[i].getName() + " 3");
         			
         			ContextButtonEntry toogleButton = new ContextButtonEntry(cf[i], ccToogle);
         			

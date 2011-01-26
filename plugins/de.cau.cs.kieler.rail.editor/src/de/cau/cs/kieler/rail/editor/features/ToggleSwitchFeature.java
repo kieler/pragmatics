@@ -57,7 +57,8 @@ public class ToggleSwitchFeature extends AbstractCustomFeature {
     }
  
     public void execute(ICustomContext context) {
-        PictogramElement[] pes = context.getPictogramElements();
+    	
+    	PictogramElement[] pes = context.getPictogramElements();
         if (pes != null && pes.length == 1) {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
             if (bo instanceof Weichenknoten) {

@@ -24,6 +24,7 @@ import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
 import org.eclipse.graphiti.internal.ExternalPictogramLink;
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
+import org.eclipse.graphiti.mm.MmFactory;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
@@ -205,6 +206,12 @@ public class AddVertexFeature extends AbstractAddFeature {
             text.getFont().setBold(true);
             gaService.setLocationAndSize(text, 0, 0, width, 20);
  
+            //for the Layouter
+            Property properPort = MmFactory.eINSTANCE.createProperty();
+			properPort.setKey("layout:de.cau.cs.kieler.klay.rail.portType");
+			properPort.setValue("BRANCH");
+			containerShape.getProperties().add(properPort);
+            
             
             //PORT
             Port port = einbruchsknoten.getPorts().get(0);
@@ -238,6 +245,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 	 * @param context
 	 * @return
 	 */
+	//BREACH_OR_CLOSE
 	private PictogramElement addDeadEndVertex(IAddContext context){
 		Stumpfgleisknoten addedClass = (Stumpfgleisknoten) context.getNewObject();
         Diagram targetDiagram = (Diagram) context.getTargetContainer();
@@ -348,6 +356,19 @@ public class AddVertexFeature extends AbstractAddFeature {
 		ContainerShape containerShape =
             peCreateService.createContainerShape(targetDiagram, true);
 		
+		//for the Layouter
+		Property properOrientatin = MmFactory.eINSTANCE.createProperty();
+		properOrientatin.setKey("layout:de.cau.cs.kieler.klay.rail.nodeType");
+		switch(orientatin){
+			case LINKS:
+				properOrientatin.setValue("SWITCH_LEFT");
+				break;
+			case RECHTS:
+				properOrientatin.setValue("SWITCH_RIGHT");
+				break;
+		}
+		containerShape.getProperties().add(properOrientatin);
+		
 		IGaService gaService = Graphiti.getGaService();
 		
 		//virtual Rectangle
@@ -363,16 +384,21 @@ public class AddVertexFeature extends AbstractAddFeature {
 			
 			double portWidth = PORT_SIZE/50;
 			
+			Property properPort = MmFactory.eINSTANCE.createProperty();
+			properPort.setKey("layout:de.cau.cs.kieler.klay.rail.portType");
 			
 			boxAnchor.setRelativeHeight(0.4);//(0.5-portWidth);
 			switch (port.getName()){
 			case SPITZE:
 				boxAnchor.setRelativeWidth(0.0);
+				properPort.setValue("STUMP");
 				break;
 			case STAMM:
 				boxAnchor.setRelativeWidth(0.85);
+				properPort.setValue("STRAIGHT");
 				break;
 			case ABZWEIG:
+				properPort.setValue("BRANCH");
 				if(orientatin == EOrientation.LINKS){
 					boxAnchor.setRelativeWidth(0.8);
 				}
@@ -381,7 +407,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 				}
 				boxAnchor.setRelativeHeight(0.0);
 			}
-		    
+			containerShape.getProperties().add(properPort);
 			
 		    boxAnchor.setReferencedGraphicsAlgorithm(R);
 		    
