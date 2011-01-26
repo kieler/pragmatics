@@ -22,16 +22,18 @@ import java.util.List;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -51,16 +53,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
-import de.cau.cs.kieler.kex.ui.wizards.importing.FilteredCheckboxTree.FilterableCheckboxTreeViewer;
 
 /**
  * This class represents the import page of importwizard. It contains a tree which shows the
@@ -94,7 +94,7 @@ public class ImportExamplePage extends WizardPage {
 
     private Label previewDesc;
 
-    private FilterableCheckboxTreeViewer viewer;
+    private CheckboxTreeViewer treeViewer;
 
     /**
      * The constructor will be called with following parameters.
@@ -117,255 +117,104 @@ public class ImportExamplePage extends WizardPage {
         composite.setLayout(gridLayout);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         setControl(composite);
-        Control exampleTreeControl = createLeft(composite);
-        createRight(composite, exampleTreeControl);
+        createLeft(composite);
+        createRight(composite);
         getShell().setMinimumSize(540, 600);
     }
 
-    private Control createLeft(Composite parent) {
-        PatternFilter filter = new PatternFilter();
-        FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, SWT.MULTI | SWT.H_SCROLL
-                | SWT.CHECK | SWT.V_SCROLL, filter);
-        viewer = (FilterableCheckboxTreeViewer) tree.getViewer();
-        viewer.setContentProvider(new ExampleContentProvider());
-        viewer.setLabelProvider(new ExampleLabelProvider());
-        TreeItem root = new TreeItem(viewer.getTree(), SWT.NONE | SWT.CHECK);
+    private void createLeft(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        // create filter text
+        final Text filterText = new Text(composite, SWT.BORDER);
+        filterText.setText("type filter text");
+        filterText.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        filterText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 
-        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+        // create tree viewer
+        treeViewer = new CheckboxTreeViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER
+                | SWT.H_SCROLL);
+        treeViewer.setContentProvider(new ExampleContentProvider());
+        treeViewer.setLabelProvider(new ExampleLabelProvider());
+        treeViewer.setSorter(new ViewerSorter());
+        treeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        fillTreeViewer();
+        treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
             public void selectionChanged(SelectionChangedEvent event) {
 
-                Image previewPic = null;
-                // if the selection is empty clear the label
-                if (event.getSelection().isEmpty()) {
-                    getExampleDescField().setText("");
-                    selectedExample = null;
-                    // previewPic = initPreviewImage();
-                    // imageLabel.setImage(previewPic);
-
-                } else if (event.getSelection() instanceof TreeSelection) {
-                    TreeSelection selection = (TreeSelection) event.getSelection();
-                    TreeItem firstElement = (TreeItem) selection.getFirstElement();
-                    Object data = firstElement.getData();
-                    if (data instanceof Category) {
-                        String catDesc = ((Category) data).getDescription();
-                        if (catDesc != null) {
-                            getExampleDescField().setText(catDesc);
-                        }
-                    } else if (data instanceof Example) {
-                        updateDescriptionLabel((Example) data);
-                    }
-                } else {
-                    return;
-                }
-                updateImageLabel(previewPic);
-                // selected is a category
-                // getExampleDescription().setText("");
-                // updateImageLabel(initPreviewImage());
-
-                // Object data = ((TreeItem) e.getSource()).getData();
-                // if (data instanceof Category) {
-                // getExampleDescription().setText(((Category) data).getDescription());
-                // imageLabel.setImage(initPreviewImage());
-                // } else if (data instanceof Example) {
-                // Example example = (Example) data;
-                // updateDescriptionLabel(example);
-                // previewPic = loadImage(IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
-                // // updateCategory(e);
-                // // if (e.detail == SWT.CHECK) {
-                // // boolean check = selected.getChecked();
-                // // TreeItem[] items = selected.getItems();
-                // // for (TreeItem treeItem : items) {
-                // // treeItem.setChecked(check);
-                // // }
-                // // }
             }
         });
-        //
-        // viewer.addCheckStateListener(new ICheckStateListener() {
-        // public void checkStateChanged(CheckStateChangedEvent event) {
-        // TreeItem item = (TreeItem) event.getElement();
-        // item.setSelected(event.getChecked());
-        // }
-        // });
+        treeViewer.addCheckStateListener(new ICheckStateListener() {
 
-        List<Category> categories = ExampleManager.get().getCategories();
-        if (categories.size() < 1) {
-            MessageDialog.openError(getShell(), "Could not start example import wizard",
-                    "There are no examples to import. Please check installed features!");
-            // FIXME close that wizard or wizarddialog! this.getWizard().performCancel();
-        }
-        // create category tree items
-        for (Category category : categories) {
-            if (category.getParentId() == null) {
-                org.eclipse.swt.widgets.TreeItem treeItem = new org.eclipse.swt.widgets.TreeItem(
-                        root, SWT.NONE | SWT.CHECK);
-                treeItem.setData(category);
-            } else {
-                // FIXME create subcategory
-                org.eclipse.swt.widgets.TreeItem treeItem = new org.eclipse.swt.widgets.TreeItem(
-                        root, SWT.NONE | SWT.CHECK);
-                treeItem.setData(category);
+            public void checkStateChanged(CheckStateChangedEvent event) {
+
             }
-        }
-
-        Collection<Example> values = ExampleManager.get().getExamples().values();
-        for (Example example : values) {
-            org.eclipse.swt.widgets.TreeItem parentCategory = findTreeItem(root.getItems(),
-                    example.getCategoryId());
-            org.eclipse.swt.widgets.TreeItem item = new org.eclipse.swt.widgets.TreeItem(
-                    parentCategory, SWT.NONE);
-            item.setData(example);
-        }
-        viewer.setInput(root);
-        viewer.refresh();
-        return viewer.getControl();
+        });
+        treeViewer.expandAll();
     }
 
-    private org.eclipse.swt.widgets.TreeItem findTreeItem(org.eclipse.swt.widgets.TreeItem[] items,
-            String categoryId) {
-        // TODO handle with subcategries -> rekursion
-        for (org.eclipse.swt.widgets.TreeItem treeItem : items) {
-            Object data = treeItem.getData();
-            if (data instanceof Category) {
-                if (((Category) data).getId().equals(categoryId)) {
-                    return treeItem;
+    private void fillTreeViewer() {
+        List<Pair<Category, List<Object>>> viewElement = new ArrayList<Pair<Category, List<Object>>>();
+        List<Category> categories = ExampleManager.get().getCategories();
+        Collection<Example> values = ExampleManager.get().getExamples().values();
+
+        // TODO build subCategories
+        for (Category category : categories) {
+            Pair<Category, List<Object>> categoryPair = new Pair<Category, List<Object>>();
+            List<Object> categoryList = new ArrayList<Object>();
+            for (Example example : values) {
+                if (example.getCategoryId().equals(category.getId())) {
+                    categoryList.add(example);
                 }
             }
+            if (category.getParentId() == null) {
+                categoryPair.setFirst(category);
+                categoryPair.setSecond(categoryList);
+                viewElement.add(categoryPair);
+            }
         }
-        return null;
+        treeViewer.setInput(viewElement);
+
     }
 
-    // protected class TreeItem {
-    //
-    // private String name;
-    //
-    // private Object data;
-    //
-    // private TreeItem parent;
-    //
-    // private boolean selected = false;
-    //
-    // private final List<TreeItem> children = new ArrayList<TreeItem>();
-    //
-    // TreeItem(String nameParam, Object dataParam, TreeItem parentParam) {
-    // Assert.isNotNull(nameParam);
-    // setName(nameParam);
-    // setData(dataParam);
-    // if (parentParam != null) {
-    // setParent(parentParam);
-    // }
-    // }
-    //
-    // public boolean isSelected() {
-    // return selected;
-    // }
-    //
-    // public void setSelected(boolean checked) {
-    // this.selected = checked;
-    // if (parent != null) {
-    // parent.maybeSelect();
-    // }
-    // }
-    //
-    // private void maybeSelect() {
-    // for (TreeItem item : children) {
-    // if (!item.isSelected()) {
-    // return;
-    // }
-    // }
-    // this.setSelected(true);
-    // }
-    //
-    // public List<TreeItem> getChildren() {
-    // return this.children;
-    // }
-    //
-    // public void setName(String name) {
-    // this.name = name;
-    // }
-    //
-    // public String getName() {
-    // return name;
-    // }
-    //
-    // public void setData(Object data) {
-    // this.data = data;
-    // }
-    //
-    // public Object getData() {
-    // return data;
-    // }
-    //
-    // public void setParent(TreeItem parent) {
-    // this.parent = parent;
-    // }
-    //
-    // public TreeItem getParent() {
-    // return parent;
-    // }
-    //
-    // public void addCategories(Collection<Category> elements) {
-    // for (Category element : elements) {
-    // addCategory(element);
-    // }
-    // }
-    //
-    // public boolean addCategory(Category element) {
-    // if (element.getParentId() != null) {
-    // for (TreeItem child : children) {
-    // if (child.getData() instanceof Category
-    // && ((Category) child.getData()).getId().equals(element.getParentId())) {
-    // child.children.add(new TreeItem(element.getTitle(), element, child));
-    // return true;
-    // }
-    // }
-    // } else {
-    // this.children.add(new TreeItem(element.getTitle(), element, this));
-    // return true;
-    // }
-    // return false;
-    // }
-    //
-    // public void addExamples(Collection<Example> elements) {
-    // for (Example element : elements) {
-    // addExample(element);
-    // }
-    // }
-    //
-    // public boolean addExample(final Example element) {
-    // for (TreeItem child : children) {
-    // if (child.getData() instanceof Category
-    // && ((Category) child.getData()).getId().equals(element.getCategoryId())) {
-    // child.children.add(new TreeItem(element.getTitle(), element, child));
-    // return true;
-    // }
-    // }
-    // return false;
-    // }
-    // }
-
     private class ExampleContentProvider implements ITreeContentProvider {
+
+        // Maybe use treeElements which are implemented in an revision before.
+        List<Pair<Category, List<Object>>> input;
 
         public void dispose() {
         }
 
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
         }
 
-        public Object[] getElements(Object inputElement) {
-            if (!((TreeItem) inputElement).isDisposed()) {
-                return getChildren(inputElement);
+        @SuppressWarnings("unchecked")
+        public Object[] getElements(final Object inputElement) {
+            input = (ArrayList<Pair<Category, List<Object>>>) inputElement;
+            return input.toArray();
+        }
+
+        @SuppressWarnings("unchecked")
+        public Object[] getChildren(final Object parentElement) {
+            if (parentElement instanceof Pair) {
+                Pair<Category, List<Object>> elements = (Pair<Category, List<Object>>) parentElement;
+                return elements.getSecond().toArray();
+            } else {
+                return Collections.EMPTY_LIST.toArray();
             }
-            return Collections.EMPTY_LIST.toArray();
         }
 
-        public Object[] getChildren(Object parentElement) {
-            return ((TreeItem) parentElement).getItems();
-        }
-
-        public Object getParent(Object element) {
-            return ((TreeItem) element).getParent();
+        public Object getParent(final Object element) {
+            if (element instanceof Example) {
+                for (Pair pair : input) {
+                    if (((Category) pair.getFirst()).getId().equals(
+                            ((Example) element).getCategoryId()))
+                        return pair.getFirst();
+                }
+            }
+            return null;
         }
 
         public boolean hasChildren(Object element) {
@@ -376,30 +225,24 @@ public class ImportExamplePage extends WizardPage {
 
     private class ExampleLabelProvider extends LabelProvider implements ILabelProvider {
 
+        @SuppressWarnings("unchecked")
         @Override
-        public String getText(Object element) {
-            if (element instanceof TreeItem) {
-                Object data = ((TreeItem) element).getData();
-                if (data instanceof Category) {
-                    return ((Category) data).getTitle();
-                }
-                if (data instanceof Example) {
-                    return ((Example) data).getTitle();
-                }
+        public String getText(final Object element) {
+            if (element instanceof Pair) {
+                Pair<Category, List<Object>> pair = (Pair<Category, List<Object>>) element;
+                return (pair.getFirst()).getTitle();
+            }
+            if (element instanceof Example) {
+                return ((Example) element).getTitle();
             }
             return null;
         }
 
         @Override
         public Image getImage(final Object element) {
-            if (element == null) {
-                return null;
-            }
-            Object data = ((TreeItem) element).getData();
-
-            if (data instanceof Category) {
-                return computeIconImage(((Category) data).getIconPath(),
-                        ((Category) data).getNamespaceId());
+            if (element instanceof Category) {
+                return computeIconImage(((Category) element).getIconPath(),
+                        ((Category) element).getNamespaceId());
             }
             // TODO extend with example image
             // if (data instanceof Example) {
@@ -426,12 +269,12 @@ public class ImportExamplePage extends WizardPage {
 
     }
 
-    private void createRight(Composite parent, Control control) {
+    private void createRight(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        createPreviewComp(composite, control);
-        createDescriptionComp(composite, control);
+        createPreviewComp(composite);
+        createDescriptionComp(composite);
     }
 
     /**
@@ -440,7 +283,7 @@ public class ImportExamplePage extends WizardPage {
      * @param composite
      * @param controlComp
      */
-    private void createPreviewComp(final Composite composite, final Control controlComp) {
+    private void createPreviewComp(final Composite composite) {
         // TODO check where previewComp is used!?
         previewComp = composite;
         previewDesc = new Label(composite, SWT.NONE);
@@ -511,7 +354,7 @@ public class ImportExamplePage extends WizardPage {
         });
     }
 
-    private void createDescriptionComp(Composite composite, Control control) {
+    private void createDescriptionComp(final Composite composite) {
         Label descriptionLabel = new Label(composite, SWT.NONE);
         descriptionLabel.setText("Example Description");
         this.exampleDescField = new Text(composite, SWT.NONE | SWT.MULTI | SWT.V_SCROLL
@@ -625,7 +468,7 @@ public class ImportExamplePage extends WizardPage {
      */
     public List<Example> getCheckedExamples() {
         List<Example> result = new ArrayList<Example>();
-        Object[] checkedElements = this.viewer.getCheckedElements();
+        Object[] checkedElements = this.treeViewer.getCheckedElements();
         for (Object ob : checkedElements)
             if (ob instanceof Example) {
                 result.add((Example) ob);
