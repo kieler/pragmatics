@@ -17,6 +17,7 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 public class ToggleSwitchFeature extends AbstractCustomFeature {
  
     public static final String NAME = "ToggleSwitch";
+    public int n=0;
 
 	public ToggleSwitchFeature(IFeatureProvider fp) {
         super(fp);
@@ -44,6 +45,14 @@ public class ToggleSwitchFeature extends AbstractCustomFeature {
                 ret = true;
             }
         }
+        
+        System.out.println("canExecute" + (ret ? " true" : " false"));
+        //Exception e = new Exception();
+    	//e.printStackTrace();
+        if(n==1){
+        	n=1;
+        }
+    	n++;
         return ret;
     }
  

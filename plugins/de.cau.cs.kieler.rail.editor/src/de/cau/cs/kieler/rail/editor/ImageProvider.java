@@ -14,6 +14,6 @@ public class ImageProvider extends AbstractImageProvider {
     @Override
     protected void addAvailableImages() {
         // register the path for each image identifier
-        addImageFilePath(IMG_TOGGLE, "icons/toggle_icon.ico");
+        addImageFilePath(IMG_TOGGLE, "/icons/toggle_icon.ico");
     }
 }

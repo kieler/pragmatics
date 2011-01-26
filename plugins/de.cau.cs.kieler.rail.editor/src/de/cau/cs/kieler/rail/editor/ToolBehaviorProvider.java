@@ -41,6 +41,7 @@ import org.eclipse.graphiti.tb.IContextMenuEntry;
 import org.eclipse.graphiti.tb.IDecorator;
 import org.eclipse.graphiti.tb.ISelectionInfo;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
+import org.eclipse.graphiti.ui.internal.command.ContextEntryCommand;
 import org.eclipse.graphiti.util.ILocationInfo;
 
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
@@ -106,6 +107,9 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
  
         return ret.toArray(new IPaletteCompartmentEntry[ret.size()]);
     }
+	/**
+     * {@inheritDoc}
+     */
     @Override
     public GraphicsAlgorithm[] getClickArea(PictogramElement pe) {
     	//maybe later I will use it.
@@ -113,40 +117,37 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
 		return super.getClickArea(pe);
     	
     }
-    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IContextButtonPadData getContextButtonPad(
                                        IPictogramElementContext context) {
         IContextButtonPadData data = super.getContextButtonPad(context);
+        
         PictogramElement pe = context.getPictogramElement();
         Object bo = getFeatureProvider().getBusinessObjectForPictogramElement(pe);
-        //Object bo = context.getPictogramElement().getLink().getBusinessObjects();
         
         // 1. set the generic context buttons
         // note, that we do not add 'remove' (just as an example)
         setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE |
                                                CONTEXT_BUTTON_UPDATE);
        
-        // 2. set the collapse button
-        // simply use the first custom feature (senseless example)
-        CustomContext cc = new CustomContext(new PictogramElement[] { pe });
-        ICustomFeature[] cf = getFeatureProvider().getCustomFeatures(cc);
-        if (cf.length >= 1) {
-            IContextButtonEntry collapseButton = ContextEntryHelper
-                        .createCollapseContextButton(true, cf[0], cc);
-            data.setCollapseContextButton(collapseButton);
-          }
         
-        CustomContext ccToogle = new CustomContext(new PictogramElement[] { pe });
+        
+     // 2. set the toggle button
+        //if bo is a switch show COTEXT_BUTTON
         if(bo instanceof Weichenknoten){
+        	CustomContext ccToogle = new CustomContext(new PictogramElement[] { pe });
+
+            ICustomFeature[] cf = getFeatureProvider().getCustomFeatures(ccToogle);
         	
-        	//ContextButtonEntry toogleButton = new ContextButtonEntry(null, context);
-        	
+            //catch the right feature
         	for(int i = 0; i < cf.length;i++){
-        		if (cf[i].getName() ==ToggleSwitchFeature.NAME){
+        		if (cf[i].getName() ==ToggleSwitchFeature.NAME){//instanceof possible too
         			System.out.println(cf[i].getName());
         			
-        			IContextButtonEntry toogleButton = new ContextButtonEntry(cf[i], context);
+        			ContextButtonEntry toogleButton = new ContextButtonEntry(cf[i], ccToogle);
         			
         			if(((Weichenknoten)bo).getAbzweigendeLage() == EOrientation.LINKS){
                 		toogleButton.setText("links Weiche -> rechts Weiche");
@@ -154,48 +155,13 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
                 			toogleButton.setText("rechts Weiche -> links Weiche");
                 		}
                 	toogleButton.setIconId(ImageProvider.IMG_TOGGLE);
-                	//cf[i].execute(context);
-                	
-                	data.getDomainSpecificContextButtons().add(toogleButton);
+
+                	data.getGenericContextButtons().add(toogleButton);
         		}
         	}
         	
-        	//ICustomFeature[] cf = getFeatureProvider().getCustomFeatures(cc);
-        	
         }
-        
-     /*
-        // 3. add one domain specific context-button, which offers all
-        // available connection-features as drag&drop features...
- 
-        // 3.a. create new CreateConnectionContext
-        CreateConnectionContext ccc = new CreateConnectionContext();
-        ccc.setSourcePictogramElement(pe);
-        Anchor anchor = null;
-        if (pe instanceof Anchor) {
-            anchor = (Anchor) pe;
-        } else if (pe instanceof AnchorContainer) {
-            // assume, that our shapes always have chopbox anchors
-            anchor = Graphiti.getPeService()
-                     .getChopboxAnchor((AnchorContainer) pe);
-        }
-        ccc.setSourceAnchor(anchor);
-       
-        // 3.b. create context button and add all applicable features
-        ContextButtonEntry button = new ContextButtonEntry(null, context);
-        button.setText("Create connection");
-        button.setIconId(ImageProvider.IMG_TOGGLE);
-        ICreateConnectionFeature[] features =
-            getFeatureProvider().getCreateConnectionFeatures();
-        for (ICreateConnectionFeature feature : features) {
-            if (feature.isAvailable(ccc) && feature.canStartConnection(ccc))
-                button.addDragAndDropFeature(feature);
-        }
- 
-        // 3.c. add context button, if it contains at least one feature
-        if (button.getDragAndDropFeatures().size() > 0) {
-           data.getDomainSpecificContextButtons().add(button);
-        }*/
+
    
         return data;
     }
