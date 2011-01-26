@@ -16,42 +16,33 @@ package de.cau.cs.kieler.kex.ui.wizards.importing;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CellLabelProvider;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -60,9 +51,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.osgi.framework.Bundle;
@@ -71,6 +60,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
+import de.cau.cs.kieler.kex.ui.wizards.importing.FilteredCheckboxTree.FilterableCheckboxTreeViewer;
 
 /**
  * This class represents the import page of importwizard. It contains a tree which shows the
@@ -85,24 +75,16 @@ public class ImportExamplePage extends WizardPage {
     private static final int IMAGE_MAX_WIDTH = 800;
     private static final int IMAGE_MAX_HEIGHT = 600;
 
-    private static final int IMAGE_PRE_WIDTH = 208;
-    private static final int IMAGE_PRE_HEIGHT = 117;
+    private static final int IMAGE_PRE_WIDTH = 240;
+    private static final int IMAGE_PRE_HEIGHT = 135;
 
-    private static final int DESC_HEIGHT_HINT = 100;
-    private static final int DESC_MIN_HEIGHT = 80;
-
-    private static final int EXTREE_WIDTH = 190;
-    private static final int EXTREE_HEIGHT = 300;
-
-    private static final int OFFSET = 5;
-    private static final int PREVIEW_OFFSET = 20;
+    private static final int DESC_HEIGHT_HINT = 160;
+    private static final int DESC_MIN_HEIGHT = 120;
 
     private static final int IMG_PADDINGS_WIDTH = 40;
     private static final int IMG_PADDINGS_HEIGHT = 120;
 
-    private Text exampleDescription;
-
-    private Tree exampleTree;
+    private Text exampleDescField;
 
     private Label imageLabel;
 
@@ -112,7 +94,7 @@ public class ImportExamplePage extends WizardPage {
 
     private Label previewDesc;
 
-    private TreeViewer viewer;
+    private FilterableCheckboxTreeViewer viewer;
 
     /**
      * The constructor will be called with following parameters.
@@ -136,114 +118,232 @@ public class ImportExamplePage extends WizardPage {
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         setControl(composite);
         Control exampleTreeControl = createLeft(composite);
-        // createRight(composite, exampleTreeControl);
+        createRight(composite, exampleTreeControl);
         getShell().setMinimumSize(540, 600);
     }
 
     private Control createLeft(Composite parent) {
         PatternFilter filter = new PatternFilter();
-        FilteredTree tree = new FilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.CHECK
-                | SWT.V_SCROLL, filter, true);
-        viewer = tree.getViewer();
+        FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, SWT.MULTI | SWT.H_SCROLL
+                | SWT.CHECK | SWT.V_SCROLL, filter);
+        viewer = (FilterableCheckboxTreeViewer) tree.getViewer();
         viewer.setContentProvider(new ExampleContentProvider());
         viewer.setLabelProvider(new ExampleLabelProvider());
-        CategoryExampleTree categoryTree = new CategoryExampleTree();
-        categoryTree.addCategories(ExampleManager.get().getCategories());
-        categoryTree.addExamples(ExampleManager.get().getExamples().values());
-        viewer.setInput(categoryTree.elements);
+        TreeItem root = new TreeItem(viewer.getTree(), SWT.NONE | SWT.CHECK);
+
+        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+            public void selectionChanged(SelectionChangedEvent event) {
+
+                Image previewPic = null;
+                // if the selection is empty clear the label
+                if (event.getSelection().isEmpty()) {
+                    getExampleDescField().setText("");
+                    selectedExample = null;
+                    // previewPic = initPreviewImage();
+                    // imageLabel.setImage(previewPic);
+
+                } else if (event.getSelection() instanceof TreeSelection) {
+                    TreeSelection selection = (TreeSelection) event.getSelection();
+                    TreeItem firstElement = (TreeItem) selection.getFirstElement();
+                    Object data = firstElement.getData();
+                    if (data instanceof Category) {
+                        String catDesc = ((Category) data).getDescription();
+                        if (catDesc != null) {
+                            getExampleDescField().setText(catDesc);
+                        }
+                    } else if (data instanceof Example) {
+                        updateDescriptionLabel((Example) data);
+                    }
+                } else {
+                    return;
+                }
+                updateImageLabel(previewPic);
+                // selected is a category
+                // getExampleDescription().setText("");
+                // updateImageLabel(initPreviewImage());
+
+                // Object data = ((TreeItem) e.getSource()).getData();
+                // if (data instanceof Category) {
+                // getExampleDescription().setText(((Category) data).getDescription());
+                // imageLabel.setImage(initPreviewImage());
+                // } else if (data instanceof Example) {
+                // Example example = (Example) data;
+                // updateDescriptionLabel(example);
+                // previewPic = loadImage(IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
+                // // updateCategory(e);
+                // // if (e.detail == SWT.CHECK) {
+                // // boolean check = selected.getChecked();
+                // // TreeItem[] items = selected.getItems();
+                // // for (TreeItem treeItem : items) {
+                // // treeItem.setChecked(check);
+                // // }
+                // // }
+            }
+        });
+        //
+        // viewer.addCheckStateListener(new ICheckStateListener() {
+        // public void checkStateChanged(CheckStateChangedEvent event) {
+        // TreeItem item = (TreeItem) event.getElement();
+        // item.setSelected(event.getChecked());
+        // }
+        // });
+
+        List<Category> categories = ExampleManager.get().getCategories();
+        if (categories.size() < 1) {
+            MessageDialog.openError(getShell(), "Could not start example import wizard",
+                    "There are no examples to import. Please check installed features!");
+            // FIXME close that wizard or wizarddialog! this.getWizard().performCancel();
+        }
+        // create category tree items
+        for (Category category : categories) {
+            if (category.getParentId() == null) {
+                org.eclipse.swt.widgets.TreeItem treeItem = new org.eclipse.swt.widgets.TreeItem(
+                        root, SWT.NONE | SWT.CHECK);
+                treeItem.setData(category);
+            } else {
+                // FIXME create subcategory
+                org.eclipse.swt.widgets.TreeItem treeItem = new org.eclipse.swt.widgets.TreeItem(
+                        root, SWT.NONE | SWT.CHECK);
+                treeItem.setData(category);
+            }
+        }
+
+        Collection<Example> values = ExampleManager.get().getExamples().values();
+        for (Example example : values) {
+            org.eclipse.swt.widgets.TreeItem parentCategory = findTreeItem(root.getItems(),
+                    example.getCategoryId());
+            org.eclipse.swt.widgets.TreeItem item = new org.eclipse.swt.widgets.TreeItem(
+                    parentCategory, SWT.NONE);
+            item.setData(example);
+        }
+        viewer.setInput(root);
+        viewer.refresh();
         return viewer.getControl();
     }
 
-    protected class CategoryExampleTree {
-
-        protected class TreeItem {
-
-            private String name;
-
-            private Object data;
-
-            private TreeItem parent;
-
-            private final List<TreeItem> children = new ArrayList<TreeItem>();
-
-            TreeItem(String nameParam, Object dataParam, TreeItem parentParam) {
-                setName(nameParam);
-                setData(dataParam);
-                Assert.isNotNull(nameParam);
-                Assert.isNotNull(dataParam);
-                if (parentParam != null) {
-                    setParent(parentParam);
-                    children.add(parentParam);
+    private org.eclipse.swt.widgets.TreeItem findTreeItem(org.eclipse.swt.widgets.TreeItem[] items,
+            String categoryId) {
+        // TODO handle with subcategries -> rekursion
+        for (org.eclipse.swt.widgets.TreeItem treeItem : items) {
+            Object data = treeItem.getData();
+            if (data instanceof Category) {
+                if (((Category) data).getId().equals(categoryId)) {
+                    return treeItem;
                 }
             }
-
-            public List<TreeItem> getChildren() {
-                return this.children;
-            }
-
-            public void setName(String name) {
-                this.name = name;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public void setData(Object data) {
-                this.data = data;
-            }
-
-            public Object getData() {
-                return data;
-            }
-
-            public void setParent(TreeItem parent) {
-                this.parent = parent;
-            }
-
-            public TreeItem getParent() {
-                return parent;
-            }
-
         }
-
-        private final List<TreeItem> elements = new ArrayList<TreeItem>();
-
-        public void addCategories(Collection<Category> elements) {
-            for (Category element : elements) {
-                addCategory(element);
-            }
-        }
-
-        public void addCategory(Category element) {
-            this.elements.add(new TreeItem(element.getTitle(), element, getParentItem(element
-                    .getParentId())));
-        }
-
-        public void addExamples(Collection<Example> elements) {
-            for (Example element : elements) {
-                addExample(element);
-            }
-        }
-
-        public void addExample(final Example element) {
-            this.elements.add(new TreeItem(element.getTitle(), element, getParentItem(element
-                    .getCategoryId())));
-        }
-
-        private TreeItem getParentItem(final String id) {
-            for (CategoryExampleTree.TreeItem element : elements) {
-                if (element.getData() instanceof Category) {
-                    Category cat = ((Category) element.getData());
-                    if (cat.getId().equals(id)) {
-                        return element;
-                    }
-                }
-            }
-            return null;
-        }
-
+        return null;
     }
+
+    // protected class TreeItem {
+    //
+    // private String name;
+    //
+    // private Object data;
+    //
+    // private TreeItem parent;
+    //
+    // private boolean selected = false;
+    //
+    // private final List<TreeItem> children = new ArrayList<TreeItem>();
+    //
+    // TreeItem(String nameParam, Object dataParam, TreeItem parentParam) {
+    // Assert.isNotNull(nameParam);
+    // setName(nameParam);
+    // setData(dataParam);
+    // if (parentParam != null) {
+    // setParent(parentParam);
+    // }
+    // }
+    //
+    // public boolean isSelected() {
+    // return selected;
+    // }
+    //
+    // public void setSelected(boolean checked) {
+    // this.selected = checked;
+    // if (parent != null) {
+    // parent.maybeSelect();
+    // }
+    // }
+    //
+    // private void maybeSelect() {
+    // for (TreeItem item : children) {
+    // if (!item.isSelected()) {
+    // return;
+    // }
+    // }
+    // this.setSelected(true);
+    // }
+    //
+    // public List<TreeItem> getChildren() {
+    // return this.children;
+    // }
+    //
+    // public void setName(String name) {
+    // this.name = name;
+    // }
+    //
+    // public String getName() {
+    // return name;
+    // }
+    //
+    // public void setData(Object data) {
+    // this.data = data;
+    // }
+    //
+    // public Object getData() {
+    // return data;
+    // }
+    //
+    // public void setParent(TreeItem parent) {
+    // this.parent = parent;
+    // }
+    //
+    // public TreeItem getParent() {
+    // return parent;
+    // }
+    //
+    // public void addCategories(Collection<Category> elements) {
+    // for (Category element : elements) {
+    // addCategory(element);
+    // }
+    // }
+    //
+    // public boolean addCategory(Category element) {
+    // if (element.getParentId() != null) {
+    // for (TreeItem child : children) {
+    // if (child.getData() instanceof Category
+    // && ((Category) child.getData()).getId().equals(element.getParentId())) {
+    // child.children.add(new TreeItem(element.getTitle(), element, child));
+    // return true;
+    // }
+    // }
+    // } else {
+    // this.children.add(new TreeItem(element.getTitle(), element, this));
+    // return true;
+    // }
+    // return false;
+    // }
+    //
+    // public void addExamples(Collection<Example> elements) {
+    // for (Example element : elements) {
+    // addExample(element);
+    // }
+    // }
+    //
+    // public boolean addExample(final Example element) {
+    // for (TreeItem child : children) {
+    // if (child.getData() instanceof Category
+    // && ((Category) child.getData()).getId().equals(element.getCategoryId())) {
+    // child.children.add(new TreeItem(element.getTitle(), element, child));
+    // return true;
+    // }
+    // }
+    // return false;
+    // }
+    // }
 
     private class ExampleContentProvider implements ITreeContentProvider {
 
@@ -254,19 +354,18 @@ public class ImportExamplePage extends WizardPage {
         }
 
         public Object[] getElements(Object inputElement) {
-            return ((ArrayList<CategoryExampleTree.TreeItem>) inputElement).toArray();
+            if (!((TreeItem) inputElement).isDisposed()) {
+                return getChildren(inputElement);
+            }
+            return Collections.EMPTY_LIST.toArray();
         }
 
         public Object[] getChildren(Object parentElement) {
-            if (parentElement instanceof CategoryExampleTree.TreeItem
-                    && ((CategoryExampleTree.TreeItem) parentElement).getData() instanceof Category) {
-                return ((CategoryExampleTree.TreeItem) parentElement).getChildren().toArray();
-            }
-            return new Object[0];
+            return ((TreeItem) parentElement).getItems();
         }
 
         public Object getParent(Object element) {
-            return ((CategoryExampleTree.TreeItem) element).getParent();
+            return ((TreeItem) element).getParent();
         }
 
         public boolean hasChildren(Object element) {
@@ -279,18 +378,30 @@ public class ImportExamplePage extends WizardPage {
 
         @Override
         public String getText(Object element) {
-            return ((CategoryExampleTree.TreeItem) element).getName();
+            if (element instanceof TreeItem) {
+                Object data = ((TreeItem) element).getData();
+                if (data instanceof Category) {
+                    return ((Category) data).getTitle();
+                }
+                if (data instanceof Example) {
+                    return ((Example) data).getTitle();
+                }
+            }
+            return null;
         }
 
         @Override
         public Image getImage(final Object element) {
-            // Object data = ((CategoryExampleTree.TreeItem) element).getData();
-            //
-            // if (data instanceof Category) {
-            // return computeIconImage(((Category) data).getIconPath(),
-            // ((Category) data).getNamespaceId());
-            // }
-            //
+            if (element == null) {
+                return null;
+            }
+            Object data = ((TreeItem) element).getData();
+
+            if (data instanceof Category) {
+                return computeIconImage(((Category) data).getIconPath(),
+                        ((Category) data).getNamespaceId());
+            }
+            // TODO extend with example image
             // if (data instanceof Example) {
             // return computeIconImage(((Example) data).getOverviewPic(),
             // ((Example) data).getNamespaceId());
@@ -318,144 +429,9 @@ public class ImportExamplePage extends WizardPage {
     private void createRight(Composite parent, Control control) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
-        composite.setLayoutData(new GridData(SWT.NONE));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         createPreviewComp(composite, control);
         createDescriptionComp(composite, control);
-    }
-
-    private void createDescriptionComp(Composite composite, Control control) {
-        Label descriptionLabel = new Label(composite, SWT.NONE);
-        descriptionLabel.setText("Example Description");
-
-        this.exampleDescription = new Text(composite, SWT.NONE | SWT.MULTI | SWT.V_SCROLL
-                | SWT.BORDER);
-        GridData descData = new GridData(GridData.FILL_HORIZONTAL);
-        descData.heightHint = DESC_HEIGHT_HINT;
-        descData.minimumHeight = DESC_MIN_HEIGHT;
-        this.exampleDescription.setLayoutData(descData);
-
-    }
-
-    /**
-     * creates the composite of the tree with importable examples.
-     * 
-     * @param parent
-     * @return Control, the created composite.
-     */
-    private Control createTreeComposite(final Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns = 3;
-        composite.setLayout(new GridLayout());
-        composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-
-        Composite treeComposite = new Composite(composite, SWT.NONE);
-        TreeColumnLayout treeColumnLayout = new TreeColumnLayout();
-        treeComposite.setLayout(treeColumnLayout);
-
-        TreeViewer treeViewer = new TreeViewer(treeComposite, SWT.BORDER | SWT.FULL_SELECTION);
-        // createTree(treeComposite);
-        // new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION);
-
-        Tree tree = treeViewer.getTree();
-
-        List<Category> categories = ExampleManager.get().getCategories();
-        if (categories.size() == 0) {
-            MessageDialog.openError(getShell(), "Could not start example import wizard",
-                    "There are no examples to import. Please check installed features!");
-        }
-
-        for (int i = 0; i < categories.size(); i++) {
-            TreeItem iItem = new TreeItem(tree, SWT.CHECK);
-            iItem.setText(categories.get(i).getTitle());
-            iItem.setData(categories.get(i));
-            addExamplesToItem(categories.get(i).getTitle(), iItem);
-        }
-
-        // Spaltenk�pfe und Zeilenbegrenzungen sichtbar machen
-        tree.setHeaderVisible(true);
-        tree.setLinesVisible(true);
-
-        // treeViewer = new TreeViewer(parent);
-        // treeViewer.setContentProvider(new MovingBoxContentProvider());
-        // treeViewer.setLabelProvider(new MovingBoxLabelProvider());
-        // treeViewer.setInput(getInitalInput());
-        // treeViewer.expandAll();
-
-        // ArrayContentProvider kann verwendet werden, da Input-Objekt eine Java Collection ist
-        treeViewer.setContentProvider(ArrayContentProvider.getInstance());
-
-        // F�r jede Spalte ein TableViewerColumn erzeugen
-        TreeViewerColumn viewerNameColumn = new TreeViewerColumn(treeViewer, SWT.NONE);
-        viewerNameColumn.getColumn().setText("Examples");
-        viewerNameColumn.getColumn().setWidth(140);
-
-        // LabelProvider f�r jede Spalte setzen
-        viewerNameColumn.setLabelProvider(new CellLabelProvider() {
-            @Override
-            public void update(ViewerCell cell) {
-                cell.setText(((Example) cell.getElement()).getTitle());
-            }
-        });
-
-        treeColumnLayout.setColumnData(viewerNameColumn.getColumn(), new ColumnWeightData(50, 20,
-                true));
-        // List<SomeObject> als Input-Objekt setzen
-        // treeViewer.setInput(ExampleManager.get().getExamples().values());
-
-        return composite;
-    }
-
-    /**
-     * creates the tree object and fills it with categories and examples.
-     * 
-     * @param composite
-     * @param topControl
-     * @return exampleTree
-     */
-    private Tree createTree(final Composite composite) {
-        exampleTree = new Tree(composite, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL
-                | SWT.FULL_SELECTION);
-        exampleTree.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(final SelectionEvent e) {
-                updateElements(e);
-            }
-
-            public void widgetDefaultSelected(final SelectionEvent e) {
-                updateElements(e);
-            }
-        });
-
-        List<Category> categories = ExampleManager.get().getCategories();
-        if (categories.size() == 0) {
-            MessageDialog.openError(getShell(), "Could not start example import wizard",
-                    "There are no examples to import. Please check installed features!");
-        }
-        for (int i = 0; i < categories.size(); i++) {
-            TreeItem iItem = new TreeItem(exampleTree, SWT.CHECK);
-            iItem.setText(categories.get(i).getTitle());
-            iItem.setData(categories.get(i));
-            addExamplesToItem(categories.get(i).getTitle(), iItem);
-        }
-        return exampleTree;
-    }
-
-    /**
-     * Creates new tree items for a category tree item.
-     * 
-     * @param category
-     *            , category id
-     * @param tItem
-     *            , category tree item
-     */
-    private void addExamplesToItem(final String category, final TreeItem tItem) {
-        for (Example example : ExampleManager.get().getExamples().values()) {
-            if (example.contains(category)) {
-                TreeItem item = new TreeItem(tItem, SWT.CHECK);
-                item.setText(example.getTitle());
-                item.setData(example);
-            }
-        }
     }
 
     /**
@@ -465,22 +441,20 @@ public class ImportExamplePage extends WizardPage {
      * @param controlComp
      */
     private void createPreviewComp(final Composite composite, final Control controlComp) {
-
-        previewComp = new Composite(composite, SWT.NONE);
-        previewComp.setLayout(new FormLayout());
-        FormData prevData = new FormData();
-        prevData.left = new FormAttachment(controlComp, PREVIEW_OFFSET);
-        previewComp.setLayoutData(prevData);
-        previewDesc = new Label(previewComp, SWT.NONE);
+        // TODO check where previewComp is used!?
+        previewComp = composite;
+        previewDesc = new Label(composite, SWT.NONE);
         previewDesc.setText("Example Preview");
-        FormData formData = new FormData();
-        previewDesc.setLayoutData(formData);
-        imageLabel = new Label(previewComp, SWT.BORDER);
+        GridData previewDescData = new GridData(GridData.FILL_HORIZONTAL);
+        previewDesc.setLayoutData(previewDescData);
+        imageLabel = new Label(composite, SWT.BORDER);
         imageLabel.setImage(initPreviewImage());
+        GridData imgLabelData = new GridData(GridData.FILL_HORIZONTAL, GridData.FILL_VERTICAL,
+                true, true);
         // 16 : 9
-        FormData formData2 = new FormData(IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
-        formData2.top = new FormAttachment(previewDesc, OFFSET);
-        imageLabel.setLayoutData(formData2);
+        imgLabelData.heightHint = IMAGE_PRE_HEIGHT;
+        imgLabelData.minimumHeight = DESC_MIN_HEIGHT;
+        imageLabel.setLayoutData(imgLabelData);
         imageLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(final MouseEvent e) {
@@ -537,65 +511,31 @@ public class ImportExamplePage extends WizardPage {
         });
     }
 
-    /**
-     * updates description and preview pictures of an example.
-     * 
-     * @param e
-     */
-    private void updateElements(final SelectionEvent e) {
-        if (!(e.item instanceof TreeItem)) {
-            getExampleDescription().setText("");
-            imageLabel.setImage(initPreviewImage());
-            return;
-        }
-
-        TreeItem selected = (TreeItem) e.item;
-        // parent is != null if selected is a example
-        if (selected.getParentItem() != null) {
-            // selected is a example
-            Object data = selected.getData();
-            Image previewPic = null;
-            if (data instanceof Example) {
-                selectedExample = (Example) data;
-                updateDescriptionLabel(selectedExample);
-                previewPic = loadImage(IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
-                updateCategory(e);
-            } else {
-                getExampleDescription().setText("");
-                selectedExample = null;
-                previewPic = initPreviewImage();
-                imageLabel.setImage(initPreviewImage());
-
-            }
-            updateImageLabel(previewPic);
-        } else {
-            // selected is a category
-            getExampleDescription().setText("");
-            updateImageLabel(initPreviewImage());
-            if (e.detail == SWT.CHECK) {
-                boolean check = selected.getChecked();
-                TreeItem[] items = selected.getItems();
-                for (TreeItem treeItem : items) {
-                    treeItem.setChecked(check);
-                }
-            }
-        }
+    private void createDescriptionComp(Composite composite, Control control) {
+        Label descriptionLabel = new Label(composite, SWT.NONE);
+        descriptionLabel.setText("Example Description");
+        this.exampleDescField = new Text(composite, SWT.NONE | SWT.MULTI | SWT.V_SCROLL
+                | SWT.BORDER);
+        GridData descData = new GridData(GridData.FILL_HORIZONTAL);
+        descData.heightHint = DESC_HEIGHT_HINT;
+        descData.minimumHeight = DESC_MIN_HEIGHT;
+        this.exampleDescField.setLayoutData(descData);
     }
 
-    private void updateCategory(final SelectionEvent e) {
-        if (e.detail != SWT.CHECK) {
-            return;
-        }
-        TreeItem parentItem = ((TreeItem) e.item).getParentItem();
-        TreeItem[] items = parentItem.getItems();
-        boolean selectedAll = true;
-        for (TreeItem treeItem : items) {
-            if (!treeItem.getChecked()) {
-                selectedAll = false;
-                break;
-            }
-        }
-        parentItem.setChecked(selectedAll);
+    private void updateCategory(final SelectionChangedEvent e) {
+        // if (e.detail != SWT.CHECK) {
+        return;
+        // }
+        // TreeItem parentItem = ((TreeItem) e.item).getParentItem();
+        // TreeItem[] items = parentItem.getItems();
+        // boolean selectedAll = true;
+        // for (TreeItem treeItem : items) {
+        // if (!treeItem.getChecked()) {
+        // selectedAll = false;
+        // break;
+        // }
+        // }
+        // parentItem.setChecked(selectedAll);
     }
 
     /**
@@ -605,11 +545,12 @@ public class ImportExamplePage extends WizardPage {
      *            , {@link Image}
      */
     private void updateImageLabel(final Image image) {
-        FormData formData = new FormData(image.getImageData().width, image.getImageData().height);
-        formData.top = new FormAttachment(previewDesc, OFFSET);
-        imageLabel.setLayoutData(formData);
-        imageLabel.setImage(image);
-        imageLabel.pack();
+        // FormData formData = new FormData(image.getImageData().width,
+        // image.getImageData().height);
+        // formData.top = new FormAttachment(previewDesc, OFFSET);
+        // imageLabel.setLayoutData(formData);
+        // imageLabel.setImage(image);
+        // imageLabel.pack();
     }
 
     /**
@@ -648,7 +589,7 @@ public class ImportExamplePage extends WizardPage {
                 .append(example.getAuthor()).append("\n").append("Contact: ")
                 .append(example.getContact()).append("\n").append("\n")
                 .append(example.getDescription());
-        getExampleDescription().setText(sb.toString());
+        getExampleDescField().setText(sb.toString());
     }
 
     // TODO falls ein image nicht richtig geladen wird wegen format fehler oder
@@ -684,14 +625,11 @@ public class ImportExamplePage extends WizardPage {
      */
     public List<Example> getCheckedExamples() {
         List<Example> result = new ArrayList<Example>();
-        for (TreeItem item : exampleTree.getItems()) {
-            TreeItem[] categoryItems = item.getItems();
-            for (TreeItem categoryItem : categoryItems) {
-                if (categoryItem.getChecked() && categoryItem.getData() != null) {
-                    result.add((Example) categoryItem.getData());
-                }
+        Object[] checkedElements = this.viewer.getCheckedElements();
+        for (Object ob : checkedElements)
+            if (ob instanceof Example) {
+                result.add((Example) ob);
             }
-        }
         return result;
     }
 
@@ -700,8 +638,8 @@ public class ImportExamplePage extends WizardPage {
      * 
      * @return Text
      */
-    public Text getExampleDescription() {
-        return exampleDescription;
+    public Text getExampleDescField() {
+        return exampleDescField;
     }
 
 }
