@@ -36,6 +36,8 @@ public class LayouterHintProvider implements ITreeContentProvider {
     private Map<Object, Boolean> filterMap = new HashMap<Object, Boolean>();
     /** the current filter value. */
     private String filterValue;
+    /** the current best filter match. */
+    private String bestFilterMatch;
     
     /**
      * {@inheritDoc}
@@ -102,6 +104,7 @@ public class LayouterHintProvider implements ITreeContentProvider {
             filterValue = filterValue.toLowerCase();
         }
         filterMap.clear();
+        bestFilterMatch = null;
     }
     
     /**
@@ -116,16 +119,32 @@ public class LayouterHintProvider implements ITreeContentProvider {
             if (filterValue != null && filterValue.length() > 0) {
                 if (element instanceof LayoutTypeData) {
                     LayoutTypeData typeData = (LayoutTypeData) element;
-                    boolean hasFilteredChild = false;
-                    for (LayoutProviderData layouterData : typeData.getLayouters()) {
-                        hasFilteredChild |= applyFilter(layouterData);
+                    result = typeData.getName().toLowerCase().contains(filterValue);
+                    if (result) {
+                        for (LayoutProviderData layouterData : typeData.getLayouters()) {
+                            filterMap.put(layouterData, Boolean.TRUE);
+                        }
+                        if (bestFilterMatch == null) {
+                            bestFilterMatch = typeData.getId();
+                        } else {
+                            bestFilterMatch = "";
+                        }
+                    } else {
+                        boolean hasFilteredChild = false;
+                        for (LayoutProviderData layouterData : typeData.getLayouters()) {
+                            hasFilteredChild |= applyFilter(layouterData);
+                        }
+                        result = hasFilteredChild;
                     }
-                    result = hasFilteredChild || typeData.getName()
-                            .toLowerCase().contains(filterValue);
                 } else if (element instanceof LayoutProviderData) {
                     LayoutProviderData layouterData = (LayoutProviderData) element;
                     if (layouterData.getName().toLowerCase().contains(filterValue)) {
                         result = Boolean.TRUE;
+                        if (bestFilterMatch == null) {
+                            bestFilterMatch = layouterData.getId();
+                        } else {
+                            bestFilterMatch = "";
+                        }
                     } else {
                         String category = LayoutServices.getInstance().getCategoryName(
                                 layouterData.getCategory());
@@ -138,6 +157,15 @@ public class LayouterHintProvider implements ITreeContentProvider {
             filterMap.put(element, result);
         }
         return result;
+    }
+    
+    /**
+     * Returns the best match of the currently active filter.
+     * 
+     * @return the best filter match
+     */
+    public String getBestFilterMatch() {
+        return bestFilterMatch;
     }
 
 }

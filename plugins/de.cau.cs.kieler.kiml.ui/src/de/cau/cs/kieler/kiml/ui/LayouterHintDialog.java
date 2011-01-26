@@ -62,6 +62,8 @@ public class LayouterHintDialog extends Dialog {
     private Label imageLabel;
     /** the tree viewer for layout algorithm selection. */
     private TreeViewer treeViewer;
+    /** the content provider that is used to filter the layouters. */
+    private LayouterHintProvider contentProvider;
     
     /**
      * Creates a layout hint dialog.
@@ -92,6 +94,8 @@ public class LayouterHintDialog extends Dialog {
         Object element = selection.getFirstElement();
         if (element instanceof ILayoutData) {
             layouterHint = ((ILayoutData) element).getId();
+        } else {
+            layouterHint = contentProvider.getBestFilterMatch();
         }
         if (imageLabel.getImage() != null) {
             imageLabel.getImage().dispose();
@@ -192,8 +196,8 @@ public class LayouterHintDialog extends Dialog {
         
         // create tree viewer
         treeViewer = new TreeViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-        final LayouterHintProvider provider = new LayouterHintProvider();
-        treeViewer.setContentProvider(provider);
+        contentProvider = new LayouterHintProvider();
+        treeViewer.setContentProvider(contentProvider);
         treeViewer.setLabelProvider(new LabelProvider());
         treeViewer.setSorter(new ViewerSorter());
         treeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -217,7 +221,7 @@ public class LayouterHintDialog extends Dialog {
                     filterText.setText(newText);
                     filterText.setSelection(pos);
                 } else {
-                    provider.updateFilter(filterText.getText());
+                    contentProvider.updateFilter(filterText.getText());
                     treeViewer.refresh();
                     treeViewer.expandAll();
                 }
@@ -226,7 +230,7 @@ public class LayouterHintDialog extends Dialog {
         treeViewer.addFilter(new ViewerFilter() {
             public boolean select(final Viewer viewer, final Object parentElement,
                     final Object element) {
-                return provider.applyFilter(element);
+                return contentProvider.applyFilter(element);
             }
         });
         

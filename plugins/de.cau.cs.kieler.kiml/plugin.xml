@@ -160,6 +160,15 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.options.LayoutDirection"
+            default="UNDEFINED"
+            description="Overall direction of edges: horizontal or vertical"
+            id="de.cau.cs.kieler.layout.options.layoutDirection"
+            name="Direction"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
             class="de.cau.cs.kieler.kiml.options.EdgeRouting"
             default="UNDEFINED"
             description="Defines how edges are routed"
@@ -218,15 +227,6 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.kiml.options.LayoutDirection"
-            default="UNDEFINED"
-            description="Overall direction of edges: horizontal or vertical"
-            id="de.cau.cs.kieler.layout.options.layoutDirection"
-            name="Layout Direction"
-            type="enum">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
             default="false"
             description="Whether the selected layouter should consider the full hierarchy"
             id="de.cau.cs.kieler.layout.options.layoutHierarchy"
@@ -237,7 +237,7 @@
             appliesTo="parents"
             description="Select either a specific layout algorithm or a layout type"
             id="de.cau.cs.kieler.layout.options.layoutHint"
-            name="Layout Provider or Type"
+            name="Layout Algorithm"
             type="string">
       </layoutOption>
       <layoutOption
