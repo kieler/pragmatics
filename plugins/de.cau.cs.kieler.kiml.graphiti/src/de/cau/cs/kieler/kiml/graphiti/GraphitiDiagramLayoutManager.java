@@ -287,15 +287,15 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                         float yPos =
                                 (float) (relHeight * parentHeight + yoffset);
 
-                        // place port center directly outer bounds line
-                        if (relWidth == 0) {
+                        // place port center directly on outer bounds line
+                        if (new Double(0.0).equals(relWidth)) {
                             xPos += anchor.getGraphicsAlgorithm().getX();
-                        } else if (relWidth == 1) {
+                        } else if (new Double(1.0).equals(relWidth)) {
                             xPos -= anchor.getGraphicsAlgorithm().getX();
                         }
-                        if (relHeight == 0) {
+                        if (new Double(0.0).equals(relHeight)) {
                             yPos += anchor.getGraphicsAlgorithm().getY();
-                        } else if (relHeight == 1) {
+                        } else if (new Double(1.0).equals(relHeight)) {
                             yPos -= anchor.getGraphicsAlgorithm().getY();
                         }
 
@@ -307,7 +307,15 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                         portLayout.setHeight(anchor.getGraphicsAlgorithm()
                                 .getHeight());
                     }
-                    connections.addAll(anchor.getOutgoingConnections());
+                    for (Connection c : anchor.getOutgoingConnections()) {
+                        if (c.getEnd() != null && c.getStart() != null) {
+                            connections.add(c);
+                        } else {
+                            System.out
+                                    .println("GraphitiDiagramLayoutManager, line 314: ignoring edge: "
+                                            + c + " (start or end missing)");
+                        }
+                    }
                 }
 
                 // set port constraints to fixed if there are no further
