@@ -10,6 +10,7 @@ import org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.gmf.runtime.notation.View;
 
+import de.cau.cs.kieler.core.ui.figures.SplineConnection;
 import de.cau.cs.kieler.kaom.diagram.edit.policies.LinkItemSemanticEditPolicy;
 import de.cau.cs.kieler.karma.AdvancedRenderingConnectionEditPart;
 
@@ -63,7 +64,7 @@ public class LinkEditPart extends AdvancedRenderingConnectionEditPart implements
 	/**
 	 * @generated
 	 */
-	public class LinkFigure extends PolylineConnectionEx {
+	public class LinkFigure extends SplineConnection {
 
 		/**
 		 * @generated

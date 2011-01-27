@@ -49,6 +49,11 @@ mapping inout InnerClassViewmap::changeExtension(){
     	temp := temp.replace("org.eclipse.draw2d.RectangleFigure", "de.cau.cs.kieler.karma.SwitchableFigure");
 		self.classBody := temp;
     } endif;
+    if (name = "LinkFigure") then {
+    	var temp : String := self.classBody;
+    	temp := temp.replace("org.eclipse.gmf.runtime.draw2d.ui.figures.PolylineConnectionEx", "de.cau.cs.kieler.core.ui.figures.SplineConnection");
+		self.classBody := temp;
+    } endif;
 	
 }
 	
