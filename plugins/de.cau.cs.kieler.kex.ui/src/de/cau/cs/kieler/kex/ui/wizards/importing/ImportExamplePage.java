@@ -23,15 +23,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
@@ -49,7 +48,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -142,17 +140,48 @@ public class ImportExamplePage extends WizardPage {
         fillTreeViewer();
         treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+            @SuppressWarnings("unchecked")
             public void selectionChanged(SelectionChangedEvent event) {
+                TreeSelection treeEvent = (TreeSelection) event.getSelection();
+                Object firstElement = treeEvent.getFirstElement();
+                if (firstElement instanceof Pair) {
+                    Pair<Category, ArrayList<Object>> pair = (Pair<Category, ArrayList<Object>>) firstElement;
+                    String desc = pair.getFirst().getDescription();
+                    getExampleDescField().setText(desc != null ? desc : "");
+                    updateImageLabel(noPreviewPic());
+                } else if (firstElement instanceof Example) {
+                    selectedExample = (Example) firstElement;
+                    updateDescriptionLabel((Example) firstElement);
+                    updateImageLabel(computeImage(selectedExample.getOverviewPic(),
+                            selectedExample.getNamespaceId(), IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT));
 
-            }
-        });
-        treeViewer.addCheckStateListener(new ICheckStateListener() {
-
-            public void checkStateChanged(CheckStateChangedEvent event) {
-
+                }
             }
         });
         treeViewer.expandAll();
+    }
+
+    protected Image computeImage(String imagePath, String nameSpaceId, int imageWidth,
+            int imageHeight) {
+        if (imagePath != null && imagePath.length() > 0) {
+            Bundle bundle = Platform.getBundle(nameSpaceId);
+            URL resource = bundle.getEntry(imagePath);
+            if (resource != null) {
+                ImageDescriptor descriptor = ImageDescriptor.createFromURL(resource);
+                if (!(imageWidth == -1 || imageHeight == -1)) {
+                    ImageData imgData = descriptor.getImageData();
+                    double tempSize = Math.max(imgData.width / imageWidth, imgData.height
+                            / imageHeight);
+                    imgData = imgData.scaledTo((int) (imgData.width / tempSize),
+                            (int) (imgData.height / tempSize));
+                }
+                Image image = descriptor.createImage();
+                if (image != null) {
+                    return image;
+                }
+            }
+        }
+        return null;
     }
 
     private void fillTreeViewer() {
@@ -238,17 +267,18 @@ public class ImportExamplePage extends WizardPage {
             return null;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Image getImage(final Object element) {
-            if (element instanceof Category) {
-                return computeIconImage(((Category) element).getIconPath(),
-                        ((Category) element).getNamespaceId());
+            if (element instanceof Pair) {
+                Pair<Category, List<Object>> pair = (Pair<Category, List<Object>>) element;
+                Category first = pair.getFirst();
+                return computeImage(first.getIconPath(), first.getNamespaceId(), -1, -1);
             }
-            // TODO extend with example image
-            // if (data instanceof Example) {
-            // return computeIconImage(((Example) data).getOverviewPic(),
-            // ((Example) data).getNamespaceId());
-            // }
+            if (element instanceof Example) {
+                return computeImage(((Example) element).getOverviewPic(),
+                        ((Example) element).getNamespaceId(), -1, -1);
+            }
             return null;
         }
 
@@ -388,11 +418,7 @@ public class ImportExamplePage extends WizardPage {
      *            , {@link Image}
      */
     private void updateImageLabel(final Image image) {
-        // FormData formData = new FormData(image.getImageData().width,
-        // image.getImageData().height);
-        // formData.top = new FormAttachment(previewDesc, OFFSET);
-        // imageLabel.setLayoutData(formData);
-        // imageLabel.setImage(image);
+        imageLabel.setImage(image);
         // imageLabel.pack();
     }
 
@@ -419,10 +445,10 @@ public class ImportExamplePage extends WizardPage {
 
             } catch (final KielerException e) {
                 e.printStackTrace();
-                return noPreviewPic(previewComp.getDisplay());
+                return noPreviewPic();
             }
         }
-        return noPreviewPic(previewComp.getDisplay());
+        return noPreviewPic();
 
     }
 
@@ -444,8 +470,8 @@ public class ImportExamplePage extends WizardPage {
      * 
      * @return "no preview" picture
      */
-    private Image noPreviewPic(final Display display) {
-        return new Image(display, ExampleManager.get().loadStandardPic());
+    private Image noPreviewPic() {
+        return new Image(this.previewComp.getDisplay(), ExampleManager.get().loadStandardPic());
     }
 
     /**
