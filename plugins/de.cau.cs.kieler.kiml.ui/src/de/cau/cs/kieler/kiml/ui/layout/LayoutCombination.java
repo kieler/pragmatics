@@ -93,7 +93,7 @@ public class LayoutCombination extends AbstractCombination {
         if (layoutScope instanceof String && layoutScope.equals(VAL_SELECTION)) {
             for (EObject selected : selection.getSelectedEObjects()) {
                 // merging of multiple selected objects is done by the layout effect
-                schedule(new LayoutEffect(button.getEditor(), selected, zoom, progressBar));
+                schedule(new LayoutEffect(button.getEditor(), selected, zoom, progressBar)); 
             }
         } else {
             schedule(new LayoutEffect(button.getEditor(), null, zoom, progressBar));

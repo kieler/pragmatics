@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import de.cau.cs.kieler.core.KielerNotSupportedException;
 import de.cau.cs.kieler.core.kivi.internal.CombinationsWorker;
 import de.cau.cs.kieler.core.kivi.internal.EffectsWorker;
 import de.cau.cs.kieler.core.kivi.internal.IEffectsListener;
@@ -291,12 +292,17 @@ public class KiVi {
             ((AbstractTriggerState) triggerState).setSequenceNumber();
         }
 
-        //Collection<ICombination> cs = getCombinations(triggerState.getTriggerClass());
+        // Collection<ICombination> cs = getCombinations(triggerState.getTriggerClass());
         Collection<ICombination> cs = getCombinationsByTriggerState(triggerState.getClass());
         for (ICombination c : cs) {
-            List<IEffect> effects = c.trigger(triggerState);
-            for (IEffect effect : effects) {
-                executeEffect(effect);
+
+            try {
+                List<IEffect> effects = c.trigger(triggerState);
+                for (IEffect effect : effects) {
+                    executeEffect(effect);
+                }
+            } catch (KielerNotSupportedException e) {
+                error(c, triggerState, e);
             }
         }
         triggerState.finish();
@@ -375,16 +381,17 @@ public class KiVi {
      *            class of trigger state
      * @return list of availableCombinations
      */
-    private Collection<ICombination> getCombinationsByTriggerState(final Class<? extends ITriggerState> triggerState) {
+    private Collection<ICombination> getCombinationsByTriggerState(
+            final Class<? extends ITriggerState> triggerState) {
         synchronized (combinationsByTrigger) {
-     //       for (ITriggerState t : combinationsByTriggerStates.keySet()) {
-     //           if (triggerState.isInstance(t)) {
-                    Collection<ICombination> list = combinationsByTriggerStates.get(triggerState);
-                    if (list != null) {
-                        return list;
-                    }
-     //           }
-      //      }
+            // for (ITriggerState t : combinationsByTriggerStates.keySet()) {
+            // if (triggerState.isInstance(t)) {
+            Collection<ICombination> list = combinationsByTriggerStates.get(triggerState);
+            if (list != null) {
+                return list;
+            }
+            // }
+            // }
         }
         return new ArrayList<ICombination>();
     }
@@ -432,32 +439,31 @@ public class KiVi {
                         triggerStates.put(clazz, triggerState);
                     }
                 }
-                
-                
+
                 // haf: remember which combinations listen to a trigger
-                //  using multimap pattern here
+                // using multimap pattern here
                 oldList = addToList(combinationsByTriggerStates, clazz, combination);
-                if(!oldList){
+                if (!oldList) {
                     trigger = triggerState.getTriggerClass().newInstance();
                     addToList(combinationsByTrigger, trigger, combination);
                 }
-                
-//                // first, see if there is already such map entry available and add it
-//                for (Map.Entry<ITrigger, Collection<ICombination>> entry : combinationsByTrigger
-//                        .entrySet()) {
-//                    if (triggerState.getTriggerClass().isInstance(entry.getKey())) {
-//                        entry.getValue().add(combination);
-//                        return;
-//                    }
-//                }
-//                // trigger not found, add new list for new trigger
-//                trigger = triggerState.getTriggerClass().newInstance();
-//                Set<ICombination> set = new LinkedHashSet<ICombination>();
-//                set.add(combination);
-//                combinationsByTrigger.put(trigger, set);
+
+                // // first, see if there is already such map entry available and add it
+                // for (Map.Entry<ITrigger, Collection<ICombination>> entry : combinationsByTrigger
+                // .entrySet()) {
+                // if (triggerState.getTriggerClass().isInstance(entry.getKey())) {
+                // entry.getValue().add(combination);
+                // return;
+                // }
+                // }
+                // // trigger not found, add new list for new trigger
+                // trigger = triggerState.getTriggerClass().newInstance();
+                // Set<ICombination> set = new LinkedHashSet<ICombination>();
+                // set.add(combination);
+                // combinationsByTrigger.put(trigger, set);
             }
             // moved outside the synchronized to avoid deadlock by foreign trigger code
-            if(!oldList){
+            if (!oldList) {
                 // activate any trigger seen for the first time
                 trigger.setActive(isActive());
             }
@@ -520,7 +526,7 @@ public class KiVi {
      * @param item
      * @returns initialized
      */
-    private <S,T> boolean addToList(Map<S, Collection<T>> map, S key, T item) {
+    private <S, T> boolean addToList(Map<S, Collection<T>> map, S key, T item) {
         // first see whether the entry already exists
         Collection<T> list = map.get(key);
         boolean initialized = true;
@@ -545,6 +551,25 @@ public class KiVi {
         StatusManager.getManager().handle(
                 new Status(Status.ERROR, KiViPlugin.PLUGIN_ID, t.getLocalizedMessage(), t),
                 StatusManager.LOG);
+    }
+
+    /**
+     * Log an error in a Combination that was triggered by a specific Trigger.
+     * 
+     * @param responsibleCombination
+     *            the Combination involved
+     * @param trigger
+     *            the Trigger that caused the execution of the combination
+     * @param cause
+     *            the original exception
+     */
+    public static void error(final ICombination responsibleCombination,
+            final ITriggerState trigger, final Throwable cause) {
+        String message = "Error in View Management Combination "
+                + responsibleCombination.getClass().getName() + " triggered by "
+                + trigger.getClass().getName() + " " + cause.getLocalizedMessage();
+        StatusManager.getManager().handle(
+                new Status(Status.ERROR, KiViPlugin.PLUGIN_ID, message, cause), StatusManager.LOG);
     }
 
     /**

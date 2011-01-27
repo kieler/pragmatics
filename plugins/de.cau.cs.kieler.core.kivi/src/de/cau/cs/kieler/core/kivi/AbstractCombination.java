@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import de.cau.cs.kieler.core.KielerNotSupportedException;
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 
 /**
@@ -86,7 +87,7 @@ public abstract class AbstractCombination implements ICombination {
             KiVi.error(e);
         } catch (InvocationTargetException e) {
             KiVi.error(e);
-        }
+        }  
         if (doNothing) {
             doNothing = false;
             effects = toUndo; // keep old effects

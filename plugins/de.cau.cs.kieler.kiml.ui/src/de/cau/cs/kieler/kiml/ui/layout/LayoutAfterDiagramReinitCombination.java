@@ -49,7 +49,7 @@ public class LayoutAfterDiagramReinitCombination extends AbstractCombination {
             boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
 
             schedule(new LayoutEffect(trigger.getEditor(), null, zoom,
-                    progressBar));
+                    progressBar)); 
         }
     }
 }

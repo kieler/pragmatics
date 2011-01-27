@@ -134,7 +134,13 @@ public class KiviContributionItem extends CompoundContributionItem implements
                 /* nothing */
             }
 
-            // only create a new button, if there has no one be defined before
+            /* 
+             * ContributionItems schould be defined only once. However, their corresponding
+             * Commands might get "undefined" again later on by the Command persistence framework
+             * and then the platform requests this method again, where the Commands need to be
+             * created again, while the ContributionItems should not. And also visibility
+             * may not be registered again.
+             */
             if (!isCommandDefined) {
                 // get a command and register the Kivi ButtonHandler for it
                 Command cmd = commandService.getCommand(config.getId());
@@ -152,51 +158,55 @@ public class KiviContributionItem extends CompoundContributionItem implements
                         new HashMap<String, String>(), config.getIcon(), null, null,
                         config.getLabel(), null, config.getTooltip(), config.getStyle(), null,
                         false);
-                // this is the button
+                // create button only if it was not created before 
+                // (while Command might need definition multiple times)
                 if (item == null) {
+                    // this is the button
                     item = new CommandContributionItem(parameter);
                     // remember some relations between button, its handler and the
                     // corresponding
                     // configuration
                     idButtonMap.put(config.getId(), item);
                     buttons.add(item);
+
+                    // specify visibility
+                    Expression visibilityExpression = null;
+                    // specify visibility for active editors
+
+                    if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
+                        CompositeExpression or = new OrExpression();
+                        visibilityExpression = or;
+                        for (String editorId : config.getActiveEditors()) {
+                            CompositeExpression with = new WithExpression("activeEditorId");
+                            Expression equals = new EqualsExpression(editorId);
+                            with.add(equals);
+                            or.add(with);
+                        }
+                    }
+                    // specify visibility for a given core expression
+                    if (config.getVisibilityExpression() != null) {
+                        if (visibilityExpression == null) {
+                            visibilityExpression = config.getVisibilityExpression();
+                        } else {
+                            // there are some active editor specifications already
+                            CompositeExpression and = new AndExpression();
+                            and.add(visibilityExpression);
+                            and.add(config.getVisibilityExpression());
+                        }
+                    }
+                    if (visibilityExpression != null) {
+                        menuService.registerVisibleWhen(item, visibilityExpression, null, null);
+                        // request evaluation of all visibility expressions registered for a certain
+                        // variable. This must be done to show buttons also from the beginning,
+                        // because
+                        // expressions are always false in the beginning
+                        if (evaluationService != null) {
+                            evaluationService.requestEvaluation("activeEditorId");
+                        }
+
+                    }
                 }
                 buttonsHandlerMap.put(item, buttonHandler);
-                // specify visibility
-                Expression visibilityExpression = null;
-                // specify visibility for active editors
-
-                if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
-                    CompositeExpression or = new OrExpression();
-                    visibilityExpression = or;
-                    for (String editorId : config.getActiveEditors()) {
-                        CompositeExpression with = new WithExpression("activeEditorId");
-                        Expression equals = new EqualsExpression(editorId);
-                        with.add(equals);
-                        or.add(with);
-                    }
-                }
-                // specify visibility for a given core expression
-                if (config.getVisibilityExpression() != null) {
-                    if (visibilityExpression == null) {
-                        visibilityExpression = config.getVisibilityExpression();
-                    } else {
-                        // there are some active editor specifications already
-                        CompositeExpression and = new AndExpression();
-                        and.add(visibilityExpression);
-                        and.add(config.getVisibilityExpression());
-                    }
-                }
-                if (visibilityExpression != null) {
-                    menuService.registerVisibleWhen(item, visibilityExpression, null, null);
-                    // request evaluation of all visibility expressions registered for a certain
-                    // variable. This must be done to show buttons also from the beginning, because
-                    // expressions are always false in the beginning
-                    if (evaluationService != null) {
-                        evaluationService.requestEvaluation("activeEditorId");
-                    }
-
-                }
             }
             // change the visibility if some combination has changed its active
             // state (e.g. from
