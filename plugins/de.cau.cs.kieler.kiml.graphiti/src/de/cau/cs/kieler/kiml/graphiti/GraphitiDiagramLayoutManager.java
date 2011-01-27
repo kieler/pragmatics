@@ -260,8 +260,13 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 for (Anchor anchor : shape.getAnchors()) {
                     if (anchor instanceof BoxRelativeAnchor) {
                         shapeHasPorts = true;
-                        addPort(containerGa, childnode,
-                                (BoxRelativeAnchor) anchor);
+                        try {
+                            addPort(containerGa, childnode,
+                                    (BoxRelativeAnchor) anchor);
+                        } catch (ElementMissingException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
 
                     }
                     for (Connection c : anchor.getIncomingConnections()) {
@@ -315,18 +320,22 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      *            the parent node
      * @param bra
      *            the anchor
+     * @throws ElementMissingException
      */
     private void addPort(final GraphicsAlgorithm containerGa,
-            final KNode childnode, final BoxRelativeAnchor bra) {
+            final KNode childnode, final BoxRelativeAnchor bra)
+            throws ElementMissingException {
         KPort port = KimlUtil.createInitializedPort();
-        ElementInfo.PortInfo portInfo = new ElementInfo.PortInfo(port, bra);
-        pictElem2ElemInfoMap.put(bra, portInfo);
-        graphElem2ElemInfoMap.put(port, portInfo);
-
         port.setNode(childnode);
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
 
         GraphicsAlgorithm ga = bra.getReferencedGraphicsAlgorithm();
+        if (ga == null) {
+            throw new ElementMissingException();
+        }
+        ElementInfo.PortInfo portInfo = new ElementInfo.PortInfo(port, bra);
+        pictElem2ElemInfoMap.put(bra, portInfo);
+        graphElem2ElemInfoMap.put(port, portInfo);
         double xoffset = bra.getGraphicsAlgorithm().getX();
         double yoffset = bra.getGraphicsAlgorithm().getY();
         if (containerGa != findVisibleGa(containerGa)) {
