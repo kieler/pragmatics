@@ -453,6 +453,7 @@ Port getPort(Entity parent, String portName) :
             reportWarning("Non-Existing Port referenced: "
                 + portName + " for Entity " + parent.name) -> 
             newPort.setName(portName) ->
+            newPort.addStringAnnotation("language", "ptolemy") ->
             parent.childPorts.add(newPort) -> 
             newPort
         )
@@ -462,6 +463,7 @@ Port getPort(Entity parent, String portName) :
             // port with the given name to the actor and return that 
             reportWarning("Non-Existing Port referenced: " + portName) -> 
             newPort.setName(splitName.size < 2 ? "null" : splitName.get(1)) -> 
+            newPort.addStringAnnotation("language", "ptolemy") ->
             actor.childPorts.add(newPort) -> 
             newPort
         )
