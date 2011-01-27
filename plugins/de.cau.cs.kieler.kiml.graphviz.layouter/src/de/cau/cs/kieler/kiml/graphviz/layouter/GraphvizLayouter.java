@@ -39,6 +39,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
 import de.cau.cs.kieler.core.util.ForwardingInputStream;
+import de.cau.cs.kieler.core.util.NonBlockingInputStream;
 
 /**
  * Layouter that calls Graphviz through a child process to perform layout. The graph structure and
