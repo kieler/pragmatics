@@ -39,6 +39,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.graphiti.ElementInfo.ConnectionInfo;
 import de.cau.cs.kieler.kiml.graphiti.ElementInfo.PortInfo;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -199,6 +200,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         List<org.eclipse.graphiti.mm.algorithms.styles.Point> pointList =
                 conn.getBendpoints();
         pointList.clear();
+        ConnectionInfo info = (ConnectionInfo) graphElem2ElemInfoMap.get(kedge);
 
         // determine the offset for all bend points
         KNode parent = kedge.getSource();
@@ -215,10 +217,12 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             allPoints.add(sourcePoint.getX(), sourcePoint.getY());
             moveBendpointOutofNode(kedge.getSource(), allPoints.get(0), offset);
         } else if (conn.getStart() instanceof BoxRelativeAnchor) {
-            KPoint sourcePoint = edgeLayout.getSourcePoint();
-            allPoints.add(sourcePoint.getX(), sourcePoint.getY());
-            fixFirstBendPoint(allPoints.get(0),
-                    (BoxRelativeAnchor) conn.getStart());
+            if (!info.isUndirected()) {
+                KPoint sourcePoint = edgeLayout.getSourcePoint();
+                allPoints.add(sourcePoint.getX(), sourcePoint.getY());
+                fixFirstBendPoint(allPoints.get(0),
+                        (BoxRelativeAnchor) conn.getStart());
+            }
         }
         for (KPoint bendPoint : edgeLayout.getBendPoints()) {
             Float x = bendPoint.getX();
@@ -240,8 +244,10 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                     last.y--;
                 }
             }
+            // if (!info.isUndirected()) {
             // allPoints.add(edgeLayout.getTargetPoint().getX(), edgeLayout
             // .getTargetPoint().getY());
+            // }
         }
 
         // transform spline control points into approximated bend points
@@ -259,7 +265,9 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                             (int) Math.round(kpoint.x + offset.x),
                             (int) Math.round(kpoint.y + offset.y));
             pointList.add(point);
+            System.out.println(point);
         }
+        System.out.println();
     }
 
     /**

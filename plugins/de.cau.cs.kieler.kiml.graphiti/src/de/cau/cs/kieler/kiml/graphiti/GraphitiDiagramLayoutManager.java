@@ -260,63 +260,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 for (Anchor anchor : shape.getAnchors()) {
                     if (anchor instanceof BoxRelativeAnchor) {
                         shapeHasPorts = true;
-                        KPort port = KimlUtil.createInitializedPort();
-                        ElementInfo.PortInfo portInfo =
-                                new ElementInfo.PortInfo(port, anchor);
-                        pictElem2ElemInfoMap.put(anchor, portInfo);
-                        graphElem2ElemInfoMap.put(port, portInfo);
-
-                        port.setNode(childnode);
-                        KShapeLayout portLayout =
-                                port.getData(KShapeLayout.class);
-
-                        BoxRelativeAnchor bra = (BoxRelativeAnchor) anchor;
-                        GraphicsAlgorithm ga =
-                                bra.getReferencedGraphicsAlgorithm();
-                        double xoffset = anchor.getGraphicsAlgorithm().getX();
-                        double yoffset = anchor.getGraphicsAlgorithm().getY();
-                        if (containerGa != findVisibleGa(containerGa)) {
-                            xoffset += ga.getX();
-                            yoffset += ga.getY();
-                            portInfo.setContainerHasInvisibleParent(true);
-                        }
-                        double relWidth = bra.getRelativeWidth();
-                        double relHeight = bra.getRelativeHeight();
-
-                        double parentWidth = ga.getWidth();
-                        double parentHeight = ga.getHeight();
-                        float xPos = (float) (relWidth * parentWidth + xoffset);
-                        float yPos =
-                                (float) (relHeight * parentHeight + yoffset);
-
-                        Pair<Float, Float> offset =
-                                new Pair<Float, Float>(0f, 0f);
-                        // place port center directly on outer bounds line
-                        if (new Double(0.0).equals(relWidth)) {
-                            offset.setFirst((float) anchor
-                                    .getGraphicsAlgorithm().getX());
-                        } else if (new Double(1.0).equals(relWidth)) {
-                            offset.setFirst((float) -anchor
-                                    .getGraphicsAlgorithm().getX());
-                        }
-                        if (new Double(0.0).equals(relHeight)) {
-                            offset.setSecond((float) anchor
-                                    .getGraphicsAlgorithm().getY());
-                        } else if (new Double(1.0).equals(relHeight)) {
-                            offset.setSecond((float) -anchor
-                                    .getGraphicsAlgorithm().getY());
-                        }
-                        xPos += offset.getFirst();
-                        yPos += offset.getSecond();
-                        portInfo.setOffset(offset);
-
-                        portLayout.setXpos(xPos);
-                        portLayout.setYpos(yPos);
-
-                        portLayout.setWidth(anchor.getGraphicsAlgorithm()
-                                .getWidth());
-                        portLayout.setHeight(anchor.getGraphicsAlgorithm()
-                                .getHeight());
+                        addPort(containerGa, childnode,
+                                (BoxRelativeAnchor) anchor);
 
                     }
                     for (Connection c : anchor.getIncomingConnections()) {
@@ -361,6 +306,63 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         parentLayout.setProperty(LayoutOptions.FIXED_SIZE, !parentHasChildren);
         return parentHasChildren;
+    }
+
+    /**
+     * @param containerGa
+     *            the containerGa
+     * @param childnode
+     *            the parent node
+     * @param bra
+     *            the anchor
+     */
+    private void addPort(final GraphicsAlgorithm containerGa,
+            final KNode childnode, final BoxRelativeAnchor bra) {
+        KPort port = KimlUtil.createInitializedPort();
+        ElementInfo.PortInfo portInfo = new ElementInfo.PortInfo(port, bra);
+        pictElem2ElemInfoMap.put(bra, portInfo);
+        graphElem2ElemInfoMap.put(port, portInfo);
+
+        port.setNode(childnode);
+        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+
+        GraphicsAlgorithm ga = bra.getReferencedGraphicsAlgorithm();
+        double xoffset = bra.getGraphicsAlgorithm().getX();
+        double yoffset = bra.getGraphicsAlgorithm().getY();
+        if (containerGa != findVisibleGa(containerGa)) {
+            xoffset += ga.getX();
+            yoffset += ga.getY();
+            portInfo.setContainerHasInvisibleParent(true);
+        }
+        double relWidth = bra.getRelativeWidth();
+        double relHeight = bra.getRelativeHeight();
+
+        double parentWidth = ga.getWidth();
+        double parentHeight = ga.getHeight();
+        float xPos = (float) (relWidth * parentWidth + xoffset);
+        float yPos = (float) (relHeight * parentHeight + yoffset);
+
+        Pair<Float, Float> offset = new Pair<Float, Float>(0f, 0f);
+        // place port center directly on outer bounds line
+        if (new Double(0.0).equals(relWidth)) {
+            offset.setFirst((float) bra.getGraphicsAlgorithm().getX());
+        } else if (new Double(1.0).equals(relWidth)) {
+            offset.setFirst((float) -bra.getGraphicsAlgorithm().getX());
+        }
+        if (new Double(0.0).equals(relHeight)) {
+            offset.setSecond((float) bra.getGraphicsAlgorithm().getY());
+        } else if (new Double(1.0).equals(relHeight)) {
+            offset.setSecond((float) -bra.getGraphicsAlgorithm().getY());
+        }
+        xPos += offset.getFirst();
+        yPos += offset.getSecond();
+        portInfo.setOffset(offset);
+
+        portLayout.setXpos(xPos);
+        portLayout.setYpos(yPos);
+
+        portLayout.setWidth(bra.getGraphicsAlgorithm().getWidth());
+        portLayout.setHeight(bra.getGraphicsAlgorithm().getHeight());
     }
 
     /**
@@ -490,6 +492,11 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             return;
         }
 
+        // FIXME: find a way to determine whether or not a graph is directed.
+        String name = diagramEditor.getClass().getCanonicalName();
+        if (name.equals("de.cau.cs.kieler.rail.editor.KrailDiagramEditor")) {
+            info.setUndirected(true);
+        }
         info.setGraphElem(edge);
         graphElem2ElemInfoMap.put(edge, info);
 
@@ -562,9 +569,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             KShapeLayout portLayout = kPort.getData(KShapeLayout.class);
             float x = portLayout.getXpos() + portLayout.getWidth() / 2.0f;
             float y = portLayout.getYpos() + portLayout.getHeight() / 2.0f;
-            KShapeLayout nodeLayout =
-                    kPort.getNode().getData(KShapeLayout.class);
             if (info.containerHasInvisibleParent()) {
+                KShapeLayout nodeLayout =
+                        kPort.getNode().getData(KShapeLayout.class);
                 x += nodeLayout.getXpos();
                 y += nodeLayout.getYpos();
             }
