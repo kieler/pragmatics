@@ -416,94 +416,107 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      */
     private void processConnections(final GraphitiLayoutConfig layoutConfig) {
         for (Map.Entry<Connection, Anchor> entry : connections.entrySet()) {
-            Connection connection = entry.getKey();
-            KEdge edge = KimlUtil.createInitializedEdge();
+            processConnection(entry, layoutConfig);
+        }
+    }
 
-            // set target node and port
-            KNode targetNode;
-            Anchor targetAnchor = connection.getEnd();
+    private void processConnection(final Entry<Connection, Anchor> entry,
+            final GraphitiLayoutConfig layoutConfig) {
+        Connection connection = entry.getKey();
+        KEdge edge = KimlUtil.createInitializedEdge();
+
+        // set target node and port
+        KNode targetNode;
+        Anchor targetAnchor = connection.getEnd();
+        if (targetAnchor == null) {
+            // connection end not set, try finding in list of incoming
+            // connections of all anchors
+            targetAnchor = incomingConnections.get(connection);
             if (targetAnchor == null) {
-                // connection end not set, try finding in list of incoming
-                // connections of all anchors
-                targetAnchor = incomingConnections.get(connection);
-                if (targetAnchor == null) {
-                    // connection leads nowhere, ignore
-                    continue;
-                }
+                // connection leads nowhere, ignore
+                return;
             }
-            KPort targetPort = (KPort) pictElem2GraphElemMap.get(targetAnchor);
-            if (targetPort == null) {
-                targetNode =
-                        (KNode) pictElem2GraphElemMap.get(targetAnchor
-                                .getParent());
-            } else {
-                edge.setTargetPort(targetPort);
-                targetPort.getEdges().add(edge);
-                targetNode = targetPort.getNode();
-            }
-            edge.setTarget(targetNode);
+        }
+        KPort targetPort = (KPort) pictElem2GraphElemMap.get(targetAnchor);
+        if (targetPort == null) {
+            targetNode =
+                    (KNode) pictElem2GraphElemMap.get(targetAnchor.getParent());
+        } else {
+            edge.setTargetPort(targetPort);
+            targetPort.getEdges().add(edge);
+            targetNode = targetPort.getNode();
+        }
+        edge.setTarget(targetNode);
 
-            // set source node and port
-            KNode sourceNode;
-            Anchor sourceAnchor = connection.getStart();
-            if (sourceAnchor == null) {
-                // connection start not set, use entry value
-                sourceAnchor = entry.getValue();
-                // entry value cannot be null
-            }
-            KPort sourcePort = (KPort) pictElem2GraphElemMap.get(sourceAnchor);
-            if (sourcePort == null) {
-                sourceNode =
-                        (KNode) pictElem2GraphElemMap.get(sourceAnchor
-                                .getParent());
-            } else {
-                edge.setSourcePort(sourcePort);
-                sourcePort.getEdges().add(edge);
-                sourceNode = sourcePort.getNode();
-            }
-            edge.setSource(sourceNode);
+        // set source node and port
+        KNode sourceNode;
+        Anchor sourceAnchor = connection.getStart();
+        if (sourceAnchor == null) {
+            // connection start not set, use entry value
+            sourceAnchor = entry.getValue();
+            // entry value cannot be null
+        }
+        KPort sourcePort = (KPort) pictElem2GraphElemMap.get(sourceAnchor);
+        if (sourcePort == null) {
+            sourceNode =
+                    (KNode) pictElem2GraphElemMap.get(sourceAnchor.getParent());
+        } else {
+            edge.setSourcePort(sourcePort);
+            sourcePort.getEdges().add(edge);
+            sourceNode = sourcePort.getNode();
+        }
+        edge.setSource(sourceNode);
 
-            pictElem2GraphElemMap.put(connection, edge);
-            graphElem2PictElemMap.put(edge, connection);
-
-            // set source and target point
-            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+        // set source and target point
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+        try {
             calculateAnchorEnds(edgeLayout.getSourcePoint(), sourceAnchor);
             calculateAnchorEnds(edgeLayout.getTargetPoint(), targetAnchor);
-
-            // find labels for the connection
-            for (ConnectionDecorator decorator : connection
-                    .getConnectionDecorators()) {
-                GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
-                if (ga instanceof Text) {
-                    Text text = (Text) ga;
-                    String labelText = text.getValue();
-                    KLabel label = KimlUtil.createInitializedLabel(edge);
-                    label.setText(labelText);
-                    edge.getLabels().add(label);
-                    graphElem2PictElemMap.put(label, decorator);
-
-                    // set label placement
-                    KShapeLayout labelLayout =
-                            label.getData(KShapeLayout.class);
-                    EdgeLabelPlacement placement = EdgeLabelPlacement.CENTER;
-                    if (decorator.isLocationRelative()) {
-                        if (decorator.getLocation() >= HEAD_LOCATION) {
-                            placement = EdgeLabelPlacement.HEAD;
-                        } else if (decorator.getLocation() <= TAIL_LOCATION) {
-                            placement = EdgeLabelPlacement.TAIL;
-                        }
-                    }
-                    labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
-                            placement);
-                }
-            }
-
-            // set user defined layout options for the edge
-            layoutConfig.setFocus(diagramEditor
-                    .getEditPartForPictogramElement(connection));
-            edgeLayout.copyProperties(layoutConfig);
+        } catch (ElementMissingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return;
         }
+
+        pictElem2GraphElemMap.put(connection, edge);
+        graphElem2PictElemMap.put(edge, connection);
+
+        // find labels for the connection
+        for (ConnectionDecorator decorator : connection
+                .getConnectionDecorators()) {
+            GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
+            if (ga instanceof Text) {
+                Text text = (Text) ga;
+                String labelText = text.getValue();
+                KLabel label = KimlUtil.createInitializedLabel(edge);
+                label.setText(labelText);
+                edge.getLabels().add(label);
+                graphElem2PictElemMap.put(label, decorator);
+
+                // set label placement
+                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                EdgeLabelPlacement placement = EdgeLabelPlacement.CENTER;
+                if (decorator.isLocationRelative()) {
+                    if (decorator.getLocation() >= HEAD_LOCATION) {
+                        placement = EdgeLabelPlacement.HEAD;
+                    } else if (decorator.getLocation() <= TAIL_LOCATION) {
+                        placement = EdgeLabelPlacement.TAIL;
+                    }
+                }
+                labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                        placement);
+            }
+        }
+
+        // set user defined layout options for the edge
+        layoutConfig.setFocus(diagramEditor
+                .getEditPartForPictogramElement(connection));
+        edgeLayout.copyProperties(layoutConfig);
+
+    }
+
+    private static class ElementMissingException extends Exception {
+
     }
 
     /**
@@ -513,11 +526,16 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      *            a start or end point of an edge
      * @param anchor
      *            the corresponding pictogram anchor
+     * @throws ElementMissingException
      */
-    private void calculateAnchorEnds(final KPoint point, final Anchor anchor) {
+    private void calculateAnchorEnds(final KPoint point, final Anchor anchor)
+            throws ElementMissingException {
         if (anchor instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor port = (BoxRelativeAnchor) anchor;
             KPort kPort = (KPort) pictElem2GraphElemMap.get(port);
+            if (kPort == null) {
+                throw new ElementMissingException();
+            }
             KShapeLayout portLayout = kPort.getData(KShapeLayout.class);
             float x = portLayout.getXpos() + portLayout.getWidth() / 2.0f;
             float y = portLayout.getYpos() + portLayout.getHeight() / 2.0f;
