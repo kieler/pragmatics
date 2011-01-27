@@ -37,7 +37,7 @@ public class RailRow {
     public int getPosition(LNode node) {
         return nodeRows.get(node);
     }
-    
+
     public int getMinimalPosition() {
         int result = Integer.MAX_VALUE;
         for (Integer i : rowNodes.keySet()) {
@@ -47,15 +47,25 @@ public class RailRow {
         }
         return result;
     }
-    
+
+    public int getMaximalPosition() {
+        int result = Integer.MIN_VALUE;
+        for (Integer i : rowNodes.keySet()) {
+            if (i > result) {
+                result = i;
+            }
+        }
+        return result;
+    }
+
     public boolean isPositionOccupied(int position) {
         return rowNodes.containsKey(position);
     }
-    
+
     public List<Integer> getOccupiedPositions() {
         return new LinkedList<Integer>(rowNodes.keySet());
     }
-    
+
     public void addNodeAtPosition(LNode node, int position) {
         if (rowNodes.containsKey(position)) {
             throw new IllegalArgumentException("Position is already occupied.");
@@ -66,7 +76,7 @@ public class RailRow {
         rowNodes.put(position, node);
         nodeRows.put(node, position);
     }
-    
+
     public List<LNode> getNodesOrderedByPosition() {
         Set<Integer> keySet = rowNodes.keySet();
         List<Integer> keyList = new LinkedList<Integer>(keySet);
@@ -78,4 +88,3 @@ public class RailRow {
         return result;
     }
 }
-
