@@ -126,13 +126,11 @@ public class AddVertexFeature extends AbstractAddFeature {
 	private PictogramElement addBreach(IAddContext context){
 		Einbruchsknoten einbruchsknoten = (Einbruchsknoten) context.getNewObject();
         Diagram targetDiagram = (Diagram) context.getTargetContainer();
- 
+        
         // CONTAINER SHAPE WITH CIRCLE
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         ContainerShape containerShape =
              peCreateService.createContainerShape(targetDiagram, true);
- 
-        
         
         // define a default size for the shape
         int width = 50;
