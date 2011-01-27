@@ -213,17 +213,11 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             final GraphitiLayoutConfig layoutConfig) {
         boolean parentHasChildren = false;
         for (Shape shape : parentElement.getChildren()) {
-            boolean relevantShape = false;
+            boolean relevantShape = !shape.getAnchors().isEmpty();
             // all relevant shapes have to be layouted, not just containers
             // (e.g. KAOM Relations)
-            for (Anchor anchor : shape.getAnchors()) {
-                if (anchor instanceof ChopboxAnchor) {
-                    relevantShape = true;
-                    parentHasChildren = true;
-                    break;
-                }
-            }
             if (relevantShape) {
+                parentHasChildren = true;
                 GraphicsAlgorithm containerGa = shape.getGraphicsAlgorithm();
 
                 KNode childnode = KimlUtil.createInitializedNode();
