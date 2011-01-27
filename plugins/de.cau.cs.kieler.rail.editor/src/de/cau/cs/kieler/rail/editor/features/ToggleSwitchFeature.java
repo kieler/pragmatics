@@ -3,6 +3,7 @@ package de.cau.cs.kieler.rail.editor.features;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -93,10 +94,13 @@ public class ToggleSwitchFeature extends AbstractCustomFeature {
                     }
                 //toggeln
                 Weichenknoten wk=((Weichenknoten)bo);
+                Property property = (Property) context.getProperty("layout:de.cau.cs.kieler.klay.rail.nodeType");
                 if(wk.getAbzweigendeLage()==EOrientation.LINKS){
                 	wk.setAbzweigendeLage(EOrientation.RECHTS);
+                	property.setValue("SWITCH_RIGHT");
                 }else{
                 	wk.setAbzweigendeLage(EOrientation.LINKS);
+                	property.setValue("SWITCH_LEFT");
                 }
                 updatePictogramElement(pictogramElement);
                 
