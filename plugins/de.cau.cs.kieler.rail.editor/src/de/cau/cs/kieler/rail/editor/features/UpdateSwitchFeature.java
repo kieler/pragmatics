@@ -167,9 +167,10 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
  
         return false;
     }
+    //TODO better comment
     /**
-     * Calculate the Y pos for the 
-     * @param mitteAbzweigXY
+     * Calculate the Y pos for the straight line (port Stamm to port Ende) for a x pos
+     * @param mitteAbzweigXY  
      * @param x
      * @return
      */

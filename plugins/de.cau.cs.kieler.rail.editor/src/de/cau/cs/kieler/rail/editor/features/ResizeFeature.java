@@ -22,7 +22,11 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 public class ResizeFeature extends DefaultResizeShapeFeature {
    
     private TypeFeatures type;
-
+	/**
+	 * 
+	 * @param fp
+	 * @param type
+	 */
 	public ResizeFeature(IFeatureProvider fp, TypeFeatures type) {
         super(fp);
         this.type = type;
@@ -49,6 +53,9 @@ public class ResizeFeature extends DefaultResizeShapeFeature {
         }
         return canResize;
     }
+    /**
+     * {@inheritDoc}
+     */
 	public boolean isInstanceof(Object object){
 		switch (type){
 		case BREANCH:
@@ -61,7 +68,10 @@ public class ResizeFeature extends DefaultResizeShapeFeature {
 		}
 		return false;
 	}
-	
+	/**
+	 * 
+	 * @return
+	 */
     private Vertex getVertex()
     {
     	Vertex vertex;

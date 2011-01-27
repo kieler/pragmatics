@@ -16,17 +16,23 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
     public RotateSwitchFeature(IFeatureProvider fp) {
         super(fp);
     }
- 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "Rotate Switch";
     }
- 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDescription() {
         return "Ändert den Winkel der Weiche";
     }
- 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean canExecute(ICustomContext context) {
         // allow rename if exactly one pictogram element
@@ -41,7 +47,9 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
         }
         return ret;
     }
- 
+    /**
+     * {@inheritDoc}
+     */
     public void execute(ICustomContext context) {
         PictogramElement[] pes = context.getPictogramElements();
         if (pes != null && pes.length == 1) {
@@ -64,31 +72,4 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
             }
         }
     }
-    /*
-              if (pictogramElement instanceof ContainerShape) {
-            ContainerShape cs = (ContainerShape) pictogramElement;
-            
-            for(Anchor anchor : cs.getAnchors()){
-            	if (anchor instanceof BoxRelativeAnchor){
-            		Port port = (Port)getBusinessObjectForPictogramElement(anchor);
-            		BoxRelativeAnchor box = (BoxRelativeAnchor) anchor.getGraphicsAlgorithm().getPictogramElement();
-            		int boxWidth = anchor.getGraphicsAlgorithm().getWidth();
-            		int boxHeight = anchor.getGraphicsAlgorithm().getWidth();
-            		switch (port.getName()){
-	            		case SPITZE:
-	            			spitzeStammXY[0] = (int) (width*(box.getRelativeWidth())-boxWidth*2);
-	            			spitzeStammXY[1] = (int) (width*(box.getRelativeHeight())+boxHeight/2);
-	            			break;
-	            		case STAMM:
-	            			spitzeStammXY[2] = (int) (width*(box.getRelativeWidth())+boxWidth*2);
-	            			spitzeStammXY[3] = (int) (width*(box.getRelativeHeight())+boxHeight/2);
-	            			break;
-	            		case ABZWEIG:
-	            			mitteAbzweigXY[2] = (int) (width*(box.getRelativeWidth())+boxWidth*2);
-	            			mitteAbzweigXY[3] = (int) (width*(box.getRelativeHeight())+boxHeight/2);
-            		}
-            	}
-            }
-     * 
-     */
 }

@@ -39,14 +39,16 @@ public class LayoutFeature extends AbstractLayoutFeature {
     private int width = 50;
     
     TypeFeatures type;
- 
+    
     public LayoutFeature(IFeatureProvider fp ,TypeFeatures type, int height, int width) {
         super(fp);
         this.type = type;
         this.height = height;
         this.width = width;
     }
- 
+    /**
+     * {@inheritDoc}
+     */
     public boolean canLayout(ILayoutContext context) {
        // return true, if pictogram element is linked to an EClass
        PictogramElement pe = context.getPictogramElement();
@@ -60,7 +62,9 @@ public class LayoutFeature extends AbstractLayoutFeature {
        return businessObjects.size() == 1
               && isInstanceof(businessObjects.get(0));
     }
- 
+    /**
+     * {@inheritDoc}
+     */
     public boolean layout(ILayoutContext context) {
         boolean anythingChanged = false;
         ContainerShape containerShape =
@@ -105,7 +109,11 @@ public class LayoutFeature extends AbstractLayoutFeature {
         return anythingChanged;
     }
     
-    
+    /**
+     * 
+     * @param object
+     * @return Is an object with 
+     */
 	public boolean isInstanceof(Object object){
 		switch (type){
 		case BREANCH:

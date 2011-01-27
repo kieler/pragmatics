@@ -1,7 +1,6 @@
 package de.cau.cs.kieler.rail.editor.features;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
@@ -15,8 +14,6 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
-import org.eclipse.graphiti.util.IColorConstant;
-
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
