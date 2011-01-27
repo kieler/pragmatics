@@ -39,6 +39,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.graphiti.ElementInfo.PortInfo;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -61,9 +62,10 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     /** map of edge layouts to corresponding vector chains. */
     private Map<KEdgeLayout, KVectorChain> bendpointsMap =
             new HashMap<KEdgeLayout, KVectorChain>();
-    private Map<KGraphElement, PictogramElement> graphElem2PictElemMap;
-    private Map<PictogramElement, KGraphElement> pictElem2GraphElemMap;
-    private Map<KPort, Pair<Float, Float>> portAdjustments;
+    /** Elements map. */
+    private Map<KGraphElement, ElementInfo> graphElem2ElemInfoMap;
+    /** Elements map. */
+    private Map<PictogramElement, ElementInfo> pictElem2ElemInfoMap;
 
     /**
      * Creates a Graphiti layout command.
@@ -73,20 +75,19 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param thefeatureProvider
      *            the feature provider
      * @param graphElem2PictElemMapParam
+     *            elements map
      * @param pictElem2GraphElemMapParam
-     * @param portAdjustmentsParam
+     *            elements map
      */
     public GraphitiLayoutCommand(
             final TransactionalEditingDomain domain,
             final IFeatureProvider thefeatureProvider,
-            final Map<PictogramElement, KGraphElement> pictElem2GraphElemMapParam,
-            final Map<KGraphElement, PictogramElement> graphElem2PictElemMapParam,
-            final Map<KPort, Pair<Float, Float>> portAdjustmentsParam) {
+            final Map<PictogramElement, ElementInfo> pictElem2GraphElemMapParam,
+            final Map<KGraphElement, ElementInfo> graphElem2PictElemMapParam) {
         super(domain, "Automatic Layout");
         this.featureProvider = thefeatureProvider;
-        this.graphElem2PictElemMap = graphElem2PictElemMapParam;
-        this.pictElem2GraphElemMap = pictElem2GraphElemMapParam;
-        this.portAdjustments = portAdjustmentsParam;
+        this.graphElem2ElemInfoMap = graphElem2PictElemMapParam;
+        this.pictElem2ElemInfoMap = pictElem2GraphElemMapParam;
     }
 
     /**
@@ -138,13 +139,18 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         if (pelem instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor anchor = (BoxRelativeAnchor) pelem;
             GraphicsAlgorithm ga = anchor.getReferencedGraphicsAlgorithm();
+            PortInfo info = (PortInfo) graphElem2ElemInfoMap.get(kport);
             double parentWidth = ga.getWidth();
             double parentHeight = ga.getHeight();
-            double offsetx = anchor.getGraphicsAlgorithm().getX() + ga.getX();
-            double offsety = anchor.getGraphicsAlgorithm().getY() + ga.getY();
+            double offsetx = anchor.getGraphicsAlgorithm().getX();
+            double offsety = anchor.getGraphicsAlgorithm().getY();
+            if (info.containerHasInvisibleParent()) {
+                offsetx += ga.getX();
+                offsety += ga.getY();
+            }
             double x = shapeLayout.getXpos();
             double y = shapeLayout.getYpos();
-            Pair<Float, Float> ad = portAdjustments.get(kport);
+            Pair<Float, Float> ad = info.getOffset();
             if (ad != null) {
                 y -= ad.getSecond();
                 x -= ad.getFirst();
@@ -215,7 +221,12 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                     (BoxRelativeAnchor) conn.getStart());
         }
         for (KPoint bendPoint : edgeLayout.getBendPoints()) {
-            allPoints.add(bendPoint.getX(), bendPoint.getY());
+            Float x = bendPoint.getX();
+            Float y = bendPoint.getY();
+            if (x.equals(Float.NaN) || y.equals(Float.NaN)) {
+                continue;
+            }
+            allPoints.add(x, y);
         }
         if (conn.getEnd() instanceof ChopboxAnchor) {
             KPoint targetPoint = edgeLayout.getTargetPoint();
@@ -262,8 +273,9 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     private void fixFirstBendPoint(final KVector sourcePoint,
             final BoxRelativeAnchor start) {
         // undo port center trickery
-        KPort port = (KPort) pictElem2GraphElemMap.get(start);
-        Pair<Float, Float> ad = portAdjustments.get(port);
+        ElementInfo.PortInfo info =
+                (ElementInfo.PortInfo) pictElem2ElemInfoMap.get(start);
+        Pair<Float, Float> ad = info.getOffset();
         sourcePoint.x -= ad.getFirst();
         sourcePoint.y -= ad.getSecond();
         // if (start.getRelativeWidth() == 0) {

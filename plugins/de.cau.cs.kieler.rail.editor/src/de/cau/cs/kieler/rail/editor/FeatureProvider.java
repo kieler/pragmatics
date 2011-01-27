@@ -27,10 +27,10 @@ import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
-import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
+import de.cau.cs.kieler.core.model.graphiti.features.DefaultKielerDeleteFeature;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
@@ -251,18 +251,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public IDeleteFeature getDeleteFeature(final IDeleteContext context) {
-        return new DefaultDeleteFeature(this) {
-            /**
-             * 
-             * {@inheritDoc}
-             */
-            // override the user decision, so objects can be deleted without any
-            // dialog
-            @Override
-            protected boolean getUserDecision() {
-                return true;
-            }
-        };
+        return new DefaultKielerDeleteFeature(this);
     }
 
 }

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kaom.graphiti.features;
+package de.cau.cs.kieler.core.model.graphiti.features;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,9 +29,13 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 
 /**
+ * Default feature that removes outgoing and incoming links of any node when the
+ * node is removed. This feature also doesn't prompt the user to confirm the
+ * deletion.
+ * 
  * @author soh
  */
-public class KaomDeleteFeature extends DefaultDeleteFeature {
+public class DefaultKielerDeleteFeature extends DefaultDeleteFeature {
 
     private Set<Connection> links = null;
 
@@ -41,7 +45,7 @@ public class KaomDeleteFeature extends DefaultDeleteFeature {
      * @param fp
      *            the feature provider
      */
-    public KaomDeleteFeature(final IFeatureProvider fp) {
+    public DefaultKielerDeleteFeature(final IFeatureProvider fp) {
         super(fp);
     }
 

@@ -53,4 +53,31 @@
             id="de.cau.cs.kieler.rail.editor.ImageProvider">
       </imageProvider>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+         <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.rail.editor.ReInitKrailDiagramCommand"
+            description="Reinitialize the diagram for the selected topologie file overwriting the old krail file."
+            id="de.cau.cs.kieler.rail.editor.reinitDiagram"
+            name="Reinitialize and save kaog diagram">
+      </command>
+         </extension>
+      <extension
+         point="org.eclipse.ui.menus">
+            <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="de.cau.cs.kieler"
+               label="KIELER"
+               mnemonic="K">
+         </menu>
+         <command
+               commandId="de.cau.cs.kieler.rail.editor.reinitDiagram"
+               label="Initialize rail diagram file (krail)"
+               style="push"
+               tooltip="Reinitialize the diagram for the selected topologie file, overwriting the old krail file.">
+         </command>
+      </menuContribution>
+   </extension>
 </plugin>

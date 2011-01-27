@@ -45,6 +45,7 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
+import de.cau.cs.kieler.core.model.graphiti.features.DefaultKielerDeleteFeature;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Link;
 import de.cau.cs.kieler.kaom.Port;
@@ -60,7 +61,6 @@ import de.cau.cs.kieler.kaom.graphiti.features.CreateRelationFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.DirectEditLinkFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.KaomCopyFeature;
-import de.cau.cs.kieler.kaom.graphiti.features.KaomDeleteFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.KaomPasteFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.LayoutEntityFeature;
 import de.cau.cs.kieler.kaom.graphiti.features.LayoutPortFeature;
@@ -262,7 +262,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public IDeleteFeature getDeleteFeature(final IDeleteContext context) {
-        return new KaomDeleteFeature(this);
+        return new DefaultKielerDeleteFeature(this);
     }
 
 }
