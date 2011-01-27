@@ -23,6 +23,9 @@ public class ToggleSwitchFeature extends AbstractCustomFeature {
         super(fp);
     }
  
+	/**
+	 * 
+	 */
     @Override
     public String getName() {
         return NAME;

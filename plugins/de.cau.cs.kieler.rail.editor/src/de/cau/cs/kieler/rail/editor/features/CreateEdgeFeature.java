@@ -83,6 +83,10 @@ public class CreateEdgeFeature extends
     	else{
     		System.out.println(getBusinessObjectForPictogramElement(
                     context.getSourceAnchor()));
+    		System.out.println("source Anchor");
+    		System.out.println(context.getSourceAnchor());
+    		System.out.println("source PictElem");
+    		System.out.println(context.getSourcePictogramElement());
     	}
     	System.out.println("##canStartConnection##");
     	return (context.getSourceAnchor() != null
@@ -99,7 +103,7 @@ public class CreateEdgeFeature extends
         Object target=null;
  
         System.out.println("#create#");
-        System.out.println(context.getSourceAnchor());
+        System.out.println("source Anchor");
         System.out.println(getBusinessObjectForPictogramElement(context.getSourceAnchor()));
         System.out.println(context.getTargetAnchor());
         System.out.println(getBusinessObjectForPictogramElement(context.getTargetAnchor()));
@@ -139,7 +143,7 @@ public class CreateEdgeFeature extends
             
             Model topModel = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(getDiagram());
             
-            //TODO Make the linkt
+            //TODO Make the link
             topModel.getEdges().add(link);
             
             getFeatureProvider().getDirectEditingInfo().setActive(true);

@@ -20,19 +20,34 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 
+/**
+ * 
+ * @author hdw
+ *	Update feature for the switch
+ *	It updates the lines for the ports.
+ */
 public class UpdateSwitchFeature extends AbstractUpdateFeature {
 	 
+	/**
+	 * Updater for the switch
+	 * @param fp
+	 */
     public UpdateSwitchFeature(IFeatureProvider fp) {
         super(fp);
     }
  
+    /**
+     * {@inheritDoc}
+     */
     public boolean canUpdate(IUpdateContext context) {
         // return true, if linked business object is a EClass
         Object bo =
             getBusinessObjectForPictogramElement(context.getPictogramElement());
         return (bo instanceof Weichenknoten);
     }
- 
+    /**
+     * {@inheritDoc}
+     */
     public IReason updateNeeded(IUpdateContext context) {
         // retrieve name from pictogram model
     	
@@ -68,21 +83,15 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
         }
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     public boolean update(IUpdateContext context) {
     	int[] spitzeStammXY={0,0,0,0};
     	int[] mitteAbzweigXY={25,25,0,0};
     	List<Polyline> polylines = new LinkedList<Polyline>();
     	
-    	//I think i don't need it.
-//        // retrieve name from business model
-//        String businessName = null;
         PictogramElement pictogramElement = context.getPictogramElement();
-//        Object bo = getBusinessObjectForPictogramElement(pictogramElement);
-//        if (bo instanceof Weichenknoten) {
-//        	Weichenknoten weichenknoten = (Weichenknoten) bo;
-//            businessName = weichenknoten.getName();
-//        }
  
         int width = pictogramElement.getGraphicsAlgorithm().getWidth();
         int height = pictogramElement.getGraphicsAlgorithm().getHeight();
@@ -158,7 +167,12 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
  
         return false;
     }
-
+    /**
+     * Calculate the Y pos for the 
+     * @param mitteAbzweigXY
+     * @param x
+     * @return
+     */
 	private int getY_from_Array(int[] mitteAbzweigXY, int x) {
 		double m = (mitteAbzweigXY[3] - mitteAbzweigXY[1])/(mitteAbzweigXY[2] - mitteAbzweigXY[0]);
 		double b = mitteAbzweigXY[1]-m*mitteAbzweigXY[0];
