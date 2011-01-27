@@ -90,6 +90,11 @@ public final class LayoutOptions {
     /** 'no layout' property. */
     public static final IProperty<Boolean> NO_LAYOUT = new Property<Boolean>(NO_LAYOUT_ID, false);
     
+    /** layout option key: offset of ports on the node border (float). */
+    public static final String OFFSET_ID = "de.cau.cs.kieler.layout.options.offset";
+    /** offset property. */
+    public static final IProperty<Float> OFFSET = new Property<Float>(OFFSET_ID, 0.0f);
+    
     /** layout option key: side of a port on its node's boundary (enum). */
     public static final String PORT_SIDE_ID = "de.cau.cs.kieler.layout.options.portSide";
     /** port side property. */

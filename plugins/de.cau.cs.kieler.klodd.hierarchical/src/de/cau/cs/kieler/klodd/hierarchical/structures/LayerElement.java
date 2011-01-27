@@ -308,6 +308,7 @@ public class LayerElement {
             shapeLayout.setYpos(position.getY() + posOffset.getY());
         } else if (elemObj instanceof KPort) {
             KShapeLayout shapeLayout = elemObj.getData(KShapeLayout.class);
+            float portOffset = shapeLayout.getProperty(LayoutOptions.OFFSET);
             switch (shapeLayout.getProperty(LayoutOptions.PORT_SIDE)) {
             case NORTH:
                 if (layer.getLayeredGraph().getExternalPortConstraints() == PortConstraints.FIXED_POS) {
@@ -315,10 +316,10 @@ public class LayerElement {
                 } else {
                     shapeLayout.setXpos(position.getX() + insets.getLeft());
                 }
-                shapeLayout.setYpos(position.getY());
+                shapeLayout.setYpos(position.getY() - portOffset);
                 break;
             case EAST:
-                shapeLayout.setXpos(position.getX() + insets.getLeft() + insets.getRight());
+                shapeLayout.setXpos(position.getX() + insets.getLeft() + insets.getRight() + portOffset);
                 if (layer.getLayeredGraph().getExternalPortConstraints() == PortConstraints.FIXED_POS) {
                     shapeLayout.setYpos(position.getY());
                 } else {
@@ -331,10 +332,10 @@ public class LayerElement {
                 } else {
                     shapeLayout.setXpos(position.getX() + insets.getLeft());
                 }
-                shapeLayout.setYpos(position.getY() + insets.getTop() + insets.getBottom());
+                shapeLayout.setYpos(position.getY() + insets.getTop() + insets.getBottom() + portOffset);
                 break;
             case WEST:
-                shapeLayout.setXpos(position.getX());
+                shapeLayout.setXpos(position.getX() - portOffset);
                 if (layer.getLayeredGraph().getExternalPortConstraints() == PortConstraints.FIXED_POS) {
                     shapeLayout.setYpos(position.getY());
                 } else {
@@ -1006,8 +1007,27 @@ public class LayerElement {
         for (KPort port : ports) {
             pos += incr;
             KShapeLayout portLayout = port.getData(KShapeLayout.class);
-            portLayout.setXpos(vertical ? startX - (subPortDim ? portLayout.getWidth() : 0) : pos);
-            portLayout.setYpos(vertical ? pos : startY - (subPortDim ? portLayout.getHeight() : 0));
+            float offset = portLayout.getProperty(LayoutOptions.OFFSET);
+            float xpos, ypos;
+            if (vertical) {
+                xpos = startX;
+                if (subPortDim) {
+                    xpos -= portLayout.getWidth() + offset;
+                } else {
+                    xpos += offset;
+                }
+                ypos = pos;
+            } else {
+                xpos = pos;
+                ypos =  startY;
+                if (subPortDim) {
+                    ypos -= portLayout.getHeight() + offset;
+                } else {
+                    ypos += offset;
+                }
+            }
+            portLayout.setXpos(xpos);
+            portLayout.setYpos(ypos);
         }
     }
 

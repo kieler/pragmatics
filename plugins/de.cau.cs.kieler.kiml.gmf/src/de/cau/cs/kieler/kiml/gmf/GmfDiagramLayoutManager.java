@@ -459,11 +459,38 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
                 Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(borderItem.getFigure());
                 Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(currentEditPart.getFigure());
-                portLayout.setXpos(portBounds.x - nodeBounds.x);
-                portLayout.setYpos(portBounds.y - nodeBounds.y);
+                float xpos = portBounds.x - nodeBounds.x;
+                portLayout.setXpos(xpos);
+                float ypos = portBounds.y - nodeBounds.y;
+                portLayout.setYpos(ypos);
                 portLayout.setWidth(portBounds.width);
                 portLayout.setHeight(portBounds.height);
                 hasPorts = true;
+                
+                // calculate port offset from the node border
+                float offset = 0;
+                KShapeLayout nodeLayout = parentLayoutNode.getData(KShapeLayout.class);
+                float widthPercent = xpos / nodeLayout.getWidth();
+                float heightPercent = ypos / nodeLayout.getHeight();
+                if (widthPercent + heightPercent <= 1
+                        && widthPercent - heightPercent <= 0) {
+                    // port is on the left
+                    offset = -(xpos + portLayout.getWidth());
+                } else if (widthPercent + heightPercent >= 1
+                        && widthPercent - heightPercent >= 0) {
+                    // port is on the right
+                    offset = xpos - nodeLayout.getWidth();
+                } else if (heightPercent < 1.0f / 2) {
+                    // port is on the top
+                    offset = -(ypos + portLayout.getHeight());
+                } else {
+                    // port is on the bottom
+                    offset = ypos - nodeLayout.getHeight();
+                }
+                if (offset != 0) {
+                    portLayout.setProperty(LayoutOptions.OFFSET, offset);
+                }
+                
                 // set user defined layout options for the port
                 layoutConfig.setFocus(borderItem);
                 portLayout.copyProperties(layoutConfig);
