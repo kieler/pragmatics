@@ -42,6 +42,10 @@ public class ApplyLayoutRequest extends Request {
     /** list of layout graph elements and the corresponding edit parts. */
     private List<Pair<KGraphElement, GraphicalEditPart>> mappingList
             = new LinkedList<Pair<KGraphElement, GraphicalEditPart>>();
+    /** the upper bound for horizontal coordinates. */
+    private float boundx = Float.MAX_VALUE;
+    /** the upper bound for vertical coordinates. */
+    private float boundy = Float.MAX_VALUE;
     
     /**
      * Creates a request to apply layout.
@@ -72,6 +76,35 @@ public class ApplyLayoutRequest extends Request {
      */
     public List<Pair<KGraphElement, GraphicalEditPart>> getElements() {
         return mappingList;
+    }
+    
+    /**
+     * Set an upper bound on the coordinates of the layout graph.
+     * 
+     * @param x the upper bound for horizontal coordinates
+     * @param y the upper bound for vertical coordinates
+     */
+    public void setUpperBound(final float x, final float y) {
+        this.boundx = x;
+        this.boundy = y;
+    }
+    
+    /**
+     * Returns the upper bound for horizontal coordinates.
+     * 
+     * @return the x bound
+     */
+    public float getXBound() {
+        return boundx;
+    }
+    
+    /**
+     * Returns the upper bound for vertical coordinates.
+     * 
+     * @return the y bound
+     */
+    public float getYBound() {
+        return boundy;
     }
     
 }

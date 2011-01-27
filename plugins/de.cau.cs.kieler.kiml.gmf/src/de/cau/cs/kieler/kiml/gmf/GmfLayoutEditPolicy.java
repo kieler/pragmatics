@@ -101,6 +101,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 GmfLayoutCommand command = new GmfLayoutCommand(
                         hostEditPart.getEditingDomain(), Messages.getString("kiml.ui.5"), //$NON-NLS-1$
                         new EObjectAdapter((View) hostEditPart.getModel()));
+                float xbound = layoutRequest.getXBound();
+                float ybound = layoutRequest.getYBound();
                 
                 // retrieve layout data from the request and compute layout data for the command
                 for (Pair<KGraphElement, GraphicalEditPart> layoutPair : layoutRequest.getElements()) {
@@ -115,7 +117,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                                 (ConnectionEditPart) layoutPair.getSecond());
                     } else if (layoutPair.getFirst() instanceof KLabel) {
                         addEdgeLabelLayout(command, (KLabel) layoutPair.getFirst(),
-                                (LabelEditPart) layoutPair.getSecond());
+                                (LabelEditPart) layoutPair.getSecond(), xbound, ybound);
                     }
                 }
                 
@@ -262,7 +264,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param labelEditPart edit part to which layout is applied
      */
     private void addEdgeLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
-            final LabelEditPart labelEditPart) {
+            final LabelEditPart labelEditPart, final float xbound, final float ybound) {
         // get zoom level for offset compensation
         double zoomLevel = 1.0;
         if (labelEditPart.getRoot() instanceof DiagramRootEditPart) {
@@ -277,6 +279,12 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         Point newLocation = new Point(labelLayout.getXpos(), labelLayout.getYpos());
         sourceFigure.translateToAbsolute(newLocation);
         newLocation.scale(1 / zoomLevel);
+        if (newLocation.x <= 0 || newLocation.y <= 0
+                || newLocation.x > xbound || newLocation.y > ybound) {
+            // empty labels are just positioned near their reference point
+            command.addShapeLayout((View) labelEditPart.getModel(), new Point(), null);
+            return;
+        }
         Rectangle targetBounds = new Rectangle(labelEditPart.getFigure().getBounds());
         targetBounds.x = newLocation.x;
         targetBounds.y = newLocation.y;

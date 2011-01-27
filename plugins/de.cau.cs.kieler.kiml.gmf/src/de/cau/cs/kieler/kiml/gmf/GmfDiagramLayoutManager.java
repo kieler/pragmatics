@@ -96,6 +96,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             = new HashMap<IGraphicalEditPart, KGraphElement>();
     /** list of connection edit parts that were found in the diagram. */
     private LinkedList<ConnectionEditPart> connections = new LinkedList<ConnectionEditPart>();
+    /** list of empty labels, which should be kept near to their edge. */
+    private LinkedList<LabelEditPart> emptyLabels = new LinkedList<LabelEditPart>();
     /** editor part of the currently layouted diagram. */
     private DiagramEditor diagramEditorPart;
     /** diagram edit part of the currently layouted diagram. */
@@ -247,6 +249,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         graphElem2EditPartMap.clear();
         editPart2GraphElemMap.clear();
         connections.clear();
+        emptyLabels.clear();
 
         // get the diagram editor part
         if (editorPart instanceof DiagramEditor) {
@@ -296,8 +299,16 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // create a new request to change the layout
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
         for (Entry<KGraphElement, IGraphicalEditPart> entry : graphElem2EditPartMap.entrySet()) {
-            applyLayoutRequest.addElement(entry.getKey(), entry.getValue());
+            if (entry.getKey() != layoutGraph) {
+                applyLayoutRequest.addElement(entry.getKey(), entry.getValue());
+            }
         }
+        for (LabelEditPart labelEditPart : emptyLabels) {
+            KLabel label = KimlUtil.createInitializedLabel(null);
+            applyLayoutRequest.addElement(label, labelEditPart);
+        }
+        KShapeLayout graphLayout = layoutGraph.getData(KShapeLayout.class);
+        applyLayoutRequest.setUpperBound(graphLayout.getWidth(), graphLayout.getHeight());
 
         // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
         applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
@@ -470,19 +481,19 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 // calculate port offset from the node border
                 float offset = 0;
                 KShapeLayout nodeLayout = parentLayoutNode.getData(KShapeLayout.class);
-                float widthPercent = xpos / nodeLayout.getWidth();
-                float heightPercent = ypos / nodeLayout.getHeight();
+                float widthPercent = (xpos + portBounds.width / 2) / nodeLayout.getWidth();
+                float heightPercent = (ypos + portBounds.height / 2) / nodeLayout.getHeight();
                 if (widthPercent + heightPercent <= 1
                         && widthPercent - heightPercent <= 0) {
                     // port is on the left
-                    offset = -(xpos + portLayout.getWidth());
+                    offset = -(xpos + portBounds.width);
                 } else if (widthPercent + heightPercent >= 1
                         && widthPercent - heightPercent >= 0) {
                     // port is on the right
                     offset = xpos - nodeLayout.getWidth();
                 } else if (heightPercent < 1.0f / 2) {
                     // port is on the top
-                    offset = -(ypos + portLayout.getHeight());
+                    offset = -(ypos + portBounds.height);
                 } else {
                     // port is on the bottom
                     offset = ypos - nodeLayout.getHeight();
@@ -852,10 +863,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     }
                     font = label.getFont();
                 }
-                if (labelText != null) {
-                    if (labelText.length() == 0) {
-                        labelText = "";
-                    }
+                if (labelText != null && labelText.length() > 0) {
                     KLabel label = KimlUtil.createInitializedLabel(edge);
                     KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
@@ -891,6 +899,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     label.setText(labelText);
                     edge.getLabels().add(label);
                     graphElem2EditPartMap.put(label, labelEditPart);
+                } else {
+                    emptyLabels.add(labelEditPart);
                 }
             }
         }

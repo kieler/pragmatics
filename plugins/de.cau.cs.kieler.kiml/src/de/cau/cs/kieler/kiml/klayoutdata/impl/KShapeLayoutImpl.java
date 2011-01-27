@@ -320,7 +320,7 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
      */
     @Override
     public String toString() {
-        return "(" + xpos + "," + ypos + "|" + width + "," + height + ")";
+        return "(" + xpos + "," + ypos + " | " + width + "," + height + ")";
     }
 
 } //KShapeLayoutImpl
