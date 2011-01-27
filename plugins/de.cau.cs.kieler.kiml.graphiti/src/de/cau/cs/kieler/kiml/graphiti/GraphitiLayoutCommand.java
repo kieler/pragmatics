@@ -223,6 +223,12 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             moveBendpointOutofNode(kedge.getTarget(),
                     allPoints.get(allPoints.size() - 1), offset);
         } else if (conn.getEnd() instanceof BoxRelativeAnchor) {
+            if (allPoints.size() > 1) {
+                KVector last = allPoints.get(allPoints.size() - 1);
+                if (last.y == edgeLayout.getTargetPoint().getY()) {
+                    last.y--;
+                }
+            }
             // allPoints.add(edgeLayout.getTargetPoint().getX(), edgeLayout
             // .getTargetPoint().getY());
         }

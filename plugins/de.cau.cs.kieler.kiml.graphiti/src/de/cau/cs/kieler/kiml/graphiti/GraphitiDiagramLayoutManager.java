@@ -82,7 +82,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     private Map<KGraphElement, PictogramElement> graphElem2PictElemMap =
             new HashMap<KGraphElement, PictogramElement>();
     /** list of all connections in the diagram. */
-    private List<Connection> connections = new LinkedList<Connection>();
+    private Map<Connection, Anchor> connections =
+            new HashMap<Connection, Anchor>();
 
     /**
      * {@inheritDoc}
@@ -141,6 +142,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         pictElem2GraphElemMap.clear();
         graphElem2PictElemMap.clear();
         portAdjustments.clear();
+        incomingConnections.clear();
 
         if (editorPart instanceof DiagramEditor) {
             diagramEditor = (DiagramEditor) editorPart;
@@ -267,6 +269,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                         KPort port = KimlUtil.createInitializedPort();
                         pictElem2GraphElemMap.put(anchor, port);
                         graphElem2PictElemMap.put(port, anchor);
+
                         port.setNode(childnode);
                         KShapeLayout portLayout =
                                 port.getData(KShapeLayout.class);
@@ -316,15 +319,13 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                                 .getWidth());
                         portLayout.setHeight(anchor.getGraphicsAlgorithm()
                                 .getHeight());
+
+                    }
+                    for (Connection c : anchor.getIncomingConnections()) {
+                        incomingConnections.put(c, anchor);
                     }
                     for (Connection c : anchor.getOutgoingConnections()) {
-                        if (c.getEnd() != null && c.getStart() != null) {
-                            connections.add(c);
-                        } else {
-                            System.out
-                                    .println("GraphitiDiagramLayoutManager, line 314: ignoring edge: "
-                                            + c + " (start or end missing)");
-                        }
+                        connections.put(c, anchor);
                     }
                 }
 
@@ -349,6 +350,9 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         return parentHasChildren;
     }
 
+    private Map<Connection, Anchor> incomingConnections =
+            new HashMap<Connection, Anchor>();
+
     private Map<KPort, Pair<Float, Float>> portAdjustments =
             new HashMap<KPort, Pair<Float, Float>>();
 
@@ -367,7 +371,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         int top = ga.getY();
         int right = containerGa.getWidth() - ga.getX() - ga.getWidth();
         int bottom = containerGa.getHeight() - ga.getY() - ga.getHeight();
-
         KInsets insets = shapeLayout.getProperty(LayoutOptions.INSETS);
         insets.setLeft(left);
         insets.setRight(right);
@@ -412,18 +415,26 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      *            the layout configuration
      */
     private void processConnections(final GraphitiLayoutConfig layoutConfig) {
-        for (Connection connection : connections) {
+        for (Map.Entry<Connection, Anchor> entry : connections.entrySet()) {
+            Connection connection = entry.getKey();
             KEdge edge = KimlUtil.createInitializedEdge();
-            pictElem2GraphElemMap.put(connection, edge);
-            graphElem2PictElemMap.put(edge, connection);
 
             // set target node and port
             KNode targetNode;
-            KPort targetPort =
-                    (KPort) pictElem2GraphElemMap.get(connection.getEnd());
+            Anchor targetAnchor = connection.getEnd();
+            if (targetAnchor == null) {
+                // connection end not set, try finding in list of incoming
+                // connections of all anchors
+                targetAnchor = incomingConnections.get(connection);
+                if (targetAnchor == null) {
+                    // connection leads nowhere, ignore
+                    continue;
+                }
+            }
+            KPort targetPort = (KPort) pictElem2GraphElemMap.get(targetAnchor);
             if (targetPort == null) {
                 targetNode =
-                        (KNode) pictElem2GraphElemMap.get(connection.getEnd()
+                        (KNode) pictElem2GraphElemMap.get(targetAnchor
                                 .getParent());
             } else {
                 edge.setTargetPort(targetPort);
@@ -434,11 +445,16 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
             // set source node and port
             KNode sourceNode;
-            KPort sourcePort =
-                    (KPort) pictElem2GraphElemMap.get(connection.getStart());
+            Anchor sourceAnchor = connection.getStart();
+            if (sourceAnchor == null) {
+                // connection start not set, use entry value
+                sourceAnchor = entry.getValue();
+                // entry value cannot be null
+            }
+            KPort sourcePort = (KPort) pictElem2GraphElemMap.get(sourceAnchor);
             if (sourcePort == null) {
                 sourceNode =
-                        (KNode) pictElem2GraphElemMap.get(connection.getStart()
+                        (KNode) pictElem2GraphElemMap.get(sourceAnchor
                                 .getParent());
             } else {
                 edge.setSourcePort(sourcePort);
@@ -447,12 +463,13 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             }
             edge.setSource(sourceNode);
 
+            pictElem2GraphElemMap.put(connection, edge);
+            graphElem2PictElemMap.put(edge, connection);
+
             // set source and target point
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-            calculateAnchorEnds(edgeLayout.getSourcePoint(),
-                    connection.getStart());
-            calculateAnchorEnds(edgeLayout.getTargetPoint(),
-                    connection.getEnd());
+            calculateAnchorEnds(edgeLayout.getSourcePoint(), sourceAnchor);
+            calculateAnchorEnds(edgeLayout.getTargetPoint(), targetAnchor);
 
             // find labels for the connection
             for (ConnectionDecorator decorator : connection
