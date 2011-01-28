@@ -50,9 +50,12 @@ public class BendsMetric implements IAnalysis {
         try {
             // load numbers from analyses
             Object edgesResult = results.get(GRANA_EDGE_COUNT);
-            Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
+            Object[] bendsResult = (Object[]) results.get(GRANA_BENDPOINT_COUNT);
+
+            // bendsResult is Object[] {min, avg, max, sum}
+
             int edgesCount = (Integer) edgesResult;
-            int bendsCount = (Integer) bendsResult;
+            int bendsCount = (Integer) bendsResult[3];
 
             // FIXME: For some reason, the bends count in the layout graph may
             // be reduced after the layout is applied. This means the result

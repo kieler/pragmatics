@@ -55,12 +55,13 @@ public class EdgeCrossingsMetric implements IAnalysis {
         Float result;
 
         try {
-            Object crossingsResult = results.get(GRANA_EDGE_CROSSINGS_COUNT);
+            // EdgeCrossingsAnalysis result is Object[] {min, avg, max, sum}
+            Object[] crossingsResult = (Object[]) results.get(GRANA_EDGE_CROSSINGS_COUNT);
             Object edgesResult = results.get(GRANA_EDGE_COUNT);
-            Object bendsResult = results.get(GRANA_BENDPOINT_COUNT);
+            Object[] bendsResult = (Object[]) results.get(GRANA_BENDPOINT_COUNT);
             int edgesCount = (Integer) edgesResult;
-            int bendsCount = (Integer) bendsResult;
-            int crossingsCount = (Integer) crossingsResult;
+            int bendsCount = (Integer) bendsResult[3];
+            int crossingsCount = (Integer) crossingsResult[3];
 
             int edgesAuxCount = edgesCount + bendsCount;
 
