@@ -10,6 +10,9 @@
       <actualFigure
           xsi:type="gmfgraph:Rectangle"
           name="EntityRectangle">
+        <layout
+            xsi:type="gmfgraph:CustomLayout"
+            qualifiedClassName="de.cau.cs.kieler.kaom.custom.EntityLayout"/>
         <foregroundColor
             xsi:type="gmfgraph:ConstantColor"
             value="black"/>
