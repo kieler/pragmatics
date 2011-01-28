@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.alg.planarity;
+package de.cau.cs.kieler.klay.planar.planarity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,11 +45,11 @@ import de.cau.cs.kieler.klay.planar.util.IFunction;
  * "Das Links Rechts Planaritätskriterium" (seminar paper, German, downloadable from:
  * {@linkplain www.inf.uni-konstanz.de/algo/lehre/ws08/projekt/ausarbeitungen/kaiser.pdf}).
  * 
- * @see de.cau.cs.kieler.klay.planar.alg.planarity.rtprak.planarization.IPlanarityTester
+ * @see de.cau.cs.kieler.klay.planar.planarity.rtprak.planarization.IPlanarityTester
  *      IPlanarityTester
- * @see de.cau.cs.rtprak.planarization.graph.impl.IGraph IGraph
- * @see de.cau.cs.rtprak.planarization.graph.impl.INode INode
- * @see de.cau.cs.rtprak.planarization.graph.impl.IEdge IEdge
+ * @see de.cau.cs.kieler.klay.planar.graph.impl.IGraph IGraph
+ * @see de.cau.cs.kieler.klay.planar.graph.impl.INode INode
+ * @see de.cau.cs.kieler.klay.planar.graph.impl.IEdge IEdge
  * 
  * @author pdo
  */
@@ -62,9 +62,10 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
 
     /**
      * The edges of the input graph, whose addition will cause non-planarity (i.e. the edges of the
-     * input graph, that are not part of the planar subgraph of G determined by {@code
-     * planarSubgraph()}). Note, that these edges are only those, that have been identified during
-     * current iteration. A list of all crossing edges is saved in {@code planarSubgraph()} itself.
+     * input graph, that are not part of the planar subgraph of G determined by
+     * {@code planarSubgraph()}). Note, that these edges are only those, that have been identified
+     * during current iteration. A list of all crossing edges is saved in {@code planarSubgraph()}
+     * itself.
      */
     private LinkedList<IEdge> crossingEdges;
 
@@ -434,8 +435,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * to a lower node in the DFS-tree). Furthermore, it determines lowpoints, respectively
      * next-to-lowest lowpoints (indicate the lowest / next-to-lowest return point of each node) and
      * nesting depth (define, which edges in the adjacency list are the outermost in a planar
-     * drawing (if the graph is planar) and therefore have to be traversed first in {@code
-     * testingDFS()}).
+     * drawing (if the graph is planar) and therefore have to be traversed first in
+     * {@code testingDFS()}).
      * 
      * @param v
      *            the root of the current DFS-subtree
@@ -489,8 +490,8 @@ public class LRPlanarityTester extends AbstractAlgorithm implements IPlanarityTe
      * true}, this method will identify all edges, that cause edge crossings (and therefore
      * determines a planar subgraph). If {@code false}, it will only run until one crossing edge is
      * identified (planarity testing). Independently of the chosen mode, all edges that turned out
-     * to violate the left-right-criterion during method execution will be added to {@code
-     * crossingEdges} and {@code isPlanar} is set to {@code false}.
+     * to violate the left-right-criterion during method execution will be added to
+     * {@code crossingEdges} and {@code isPlanar} is set to {@code false}.
      * 
      * This method traverses the graph by a modified depth-first trying to merge all constraints
      * (indicate, whether two or more edges have to be drawn on the same or different sides of the

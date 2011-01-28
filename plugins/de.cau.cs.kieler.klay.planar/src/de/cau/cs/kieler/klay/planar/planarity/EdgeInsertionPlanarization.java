@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.alg.planarity;
+package de.cau.cs.kieler.klay.planar.planarity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,9 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.klay.planar.alg.pathfinding.AbstractPathFinder;
-import de.cau.cs.kieler.klay.planar.alg.pathfinding.DijkstraPathFinder;
-import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
@@ -31,6 +28,9 @@ import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.INode.NodeType;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
+import de.cau.cs.kieler.klay.planar.pathfinding.AbstractPathFinder;
+import de.cau.cs.kieler.klay.planar.pathfinding.DijkstraPathFinder;
+import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 
 /**
  * Inserts an edge in a planar graph by building the dual graph. How the dual graph is build,

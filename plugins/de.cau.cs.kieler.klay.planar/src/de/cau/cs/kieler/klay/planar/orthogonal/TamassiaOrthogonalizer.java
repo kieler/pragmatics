@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.alg.orthogonal;
+package de.cau.cs.kieler.klay.planar.orthogonal;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,10 +21,8 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.alg.flownetwork.IFlowNetworkSolver;
-import de.cau.cs.kieler.klay.planar.alg.flownetwork.SuccessiveShortestPathFlowSolver;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.OrthogonalRepresentation.OrthogonalAngle;
-import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder;
+import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
+import de.cau.cs.kieler.klay.planar.flownetwork.SuccessiveShortestPathFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IFace;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
@@ -33,6 +31,8 @@ import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.INode;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
+import de.cau.cs.kieler.klay.planar.orthogonal.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 
 /**
  * Orthogonalizer based on the bend minimizing algorithm for 4-planar graphs by R. Tamassia. Note

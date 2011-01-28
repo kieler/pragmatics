@@ -13,7 +13,7 @@
  */
 
 /**
- * Graph algorithms to solve problems in flow networks.
+ * Graph algorithms for finding a path between nodes in a graph.
  */
-package de.cau.cs.kieler.klay.planar.alg.flownetwork;
+package de.cau.cs.kieler.klay.planar.pathfinding;
 

@@ -22,21 +22,21 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.GiottoCompactor;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.ICompactor;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.OrthogonalRepresentation;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.IOrthogonalizer;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.TamassiaOrthogonalizer;
-import de.cau.cs.kieler.klay.planar.alg.planarity.BoyerMyrvoldPlanarityTester;
-import de.cau.cs.kieler.klay.planar.alg.planarity.EdgeInsertionPlanarization;
-import de.cau.cs.kieler.klay.planar.alg.planarity.IPlanarityTester;
-import de.cau.cs.kieler.klay.planar.alg.planarity.IPlanarizer;
-import de.cau.cs.kieler.klay.planar.alg.planarity.LRPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
-import de.cau.cs.kieler.klay.planar.options.PlanarityTestAlgorithm;
+import de.cau.cs.kieler.klay.planar.orthogonal.GiottoCompactor;
+import de.cau.cs.kieler.klay.planar.orthogonal.ICompactor;
+import de.cau.cs.kieler.klay.planar.orthogonal.IOrthogonalizer;
+import de.cau.cs.kieler.klay.planar.orthogonal.OrthogonalRepresentation;
+import de.cau.cs.kieler.klay.planar.orthogonal.TamassiaOrthogonalizer;
+import de.cau.cs.kieler.klay.planar.planarity.BoyerMyrvoldPlanarityTester;
+import de.cau.cs.kieler.klay.planar.planarity.EdgeInsertionPlanarization;
+import de.cau.cs.kieler.klay.planar.planarity.IPlanarityTester;
+import de.cau.cs.kieler.klay.planar.planarity.IPlanarizer;
+import de.cau.cs.kieler.klay.planar.planarity.LRPlanarityTester;
+import de.cau.cs.kieler.klay.planar.planarity.PlanarityTestStrategy;
 
 /**
  * Layout provider for an orthogonal layout.
@@ -44,15 +44,15 @@ import de.cau.cs.kieler.klay.planar.options.PlanarityTestAlgorithm;
  * @author ocl
  * @author pdo
  */
-public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
+public class PlanarLayoutProvider extends AbstractLayoutProvider {
 
     // ======================== Layout Options =====================================================
 
     /** The layout option ID for the planar testing algorithm option. */
     public static final String PLANAR_TESTING_ALGORITHM_ID = "de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm";
     /** property for planar testing algorithm. */
-    public static final IProperty<PlanarityTestAlgorithm> PLANAR_TESTING_ALGORITHM = new Property<PlanarityTestAlgorithm>(
-            PLANAR_TESTING_ALGORITHM_ID, PlanarityTestAlgorithm.BOYER_MYRVOLD_ALGORITHM);
+    public static final IProperty<PlanarityTestStrategy> PLANAR_TESTING_ALGORITHM = new Property<PlanarityTestStrategy>(
+            PLANAR_TESTING_ALGORITHM_ID, PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM);
 
     // ======================== Attributes =========================================================
 
@@ -80,7 +80,7 @@ public class OrthogonalLayoutProvider extends AbstractLayoutProvider {
 
         // Get layout options
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        PlanarityTestAlgorithm algorithm = parentLayout.getProperty(PLANAR_TESTING_ALGORITHM);
+        PlanarityTestStrategy algorithm = parentLayout.getProperty(PLANAR_TESTING_ALGORITHM);
         switch (algorithm) {
         case BOYER_MYRVOLD_ALGORITHM:
             if (!(this.tester instanceof BoyerMyrvoldPlanarityTester)) {

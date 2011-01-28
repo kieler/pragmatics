@@ -11,20 +11,20 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.alg.flownetwork;
+package de.cau.cs.kieler.klay.planar.flownetwork;
 
 import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.alg.flownetwork.IFlowNetworkSolver.IMinimumCostFlowSolver;
-import de.cau.cs.kieler.klay.planar.alg.pathfinding.BellmanFordPathFinder;
-import de.cau.cs.kieler.klay.planar.alg.pathfinding.DijkstraPathFinder;
-import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder;
+import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver.IMinimumCostFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.pathfinding.BellmanFordPathFinder;
+import de.cau.cs.kieler.klay.planar.pathfinding.DijkstraPathFinder;
+import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder;
 
 /**
  * Solve the minimum cost flow problem on flow networks using the successive shortest path

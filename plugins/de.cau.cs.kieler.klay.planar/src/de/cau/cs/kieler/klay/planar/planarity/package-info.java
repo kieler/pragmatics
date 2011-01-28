@@ -13,7 +13,8 @@
  */
 
 /**
- * Graph algorithms for finding a path between nodes in a graph.
+ * Graph algorithms that deal with planarity, e.g. planarity testing and adding edges
+ * into a planar graph.
  */
-package de.cau.cs.kieler.klay.planar.alg.pathfinding;
+package de.cau.cs.kieler.klay.planar.planarity;
 

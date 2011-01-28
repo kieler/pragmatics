@@ -9,3 +9,11 @@ Require-Bundle: de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.grana
+Export-Package: de.cau.cs.kieler.klay.planar,
+ de.cau.cs.kieler.klay.planar.flownetwork,
+ de.cau.cs.kieler.klay.planar.graph,
+ de.cau.cs.kieler.klay.planar.graph.impl,
+ de.cau.cs.kieler.klay.planar.orthogonal,
+ de.cau.cs.kieler.klay.planar.pathfinding,
+ de.cau.cs.kieler.klay.planar.planarity,
+ de.cau.cs.kieler.klay.planar.util

@@ -11,9 +11,19 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
+package de.cau.cs.kieler.klay.planar.planarity;
 
 /**
- * Graph algorithms that deal with orthogonal drawings of a graph.
+ * An enum layout option to choose a planarity test algorithm.
+ * 
+ * @author ocl
  */
-package de.cau.cs.kieler.klay.planar.alg.orthogonal;
+public enum PlanarityTestStrategy {
 
+    /** The algorithm by Boyer and Myrvold. */
+    BOYER_MYRVOLD_ALGORITHM,
+
+    /** The algorithm based on the left-right-planarity test. */
+    LEFT_RIGHT_PLANARITY_ALGORITHM;
+
+}

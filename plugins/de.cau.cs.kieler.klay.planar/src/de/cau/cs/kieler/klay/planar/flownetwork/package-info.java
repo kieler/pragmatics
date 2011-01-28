@@ -13,8 +13,7 @@
  */
 
 /**
- * Graph algorithms that deal with planarity, e.g. planarity testing and adding edges
- * into a planar graph.
+ * Graph algorithms to solve problems in flow networks.
  */
-package de.cau.cs.kieler.klay.planar.alg.planarity;
+package de.cau.cs.kieler.klay.planar.flownetwork;
 

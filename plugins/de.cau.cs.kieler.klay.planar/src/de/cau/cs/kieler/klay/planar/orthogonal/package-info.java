@@ -13,7 +13,7 @@
  */
 
 /**
- * Layout options for the planarity based orthogonal layouter.
+ * Graph algorithms that deal with orthogonal drawings of a graph.
  */
-package de.cau.cs.kieler.klay.planar.options;
+package de.cau.cs.kieler.klay.planar.orthogonal;
 

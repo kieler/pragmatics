@@ -20,12 +20,12 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.klay.planar.alg.planarity.BoyerMyrvoldPlanarityTester;
-import de.cau.cs.kieler.klay.planar.alg.planarity.IPlanarityTester;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.IGraphFactory;
 import de.cau.cs.kieler.klay.planar.graph.impl.PGraphFactory;
+import de.cau.cs.kieler.klay.planar.planarity.BoyerMyrvoldPlanarityTester;
+import de.cau.cs.kieler.klay.planar.planarity.IPlanarityTester;
 
 /**
  * A graph analysis, that uses planarity testing algorithms to check if a graph is planar.

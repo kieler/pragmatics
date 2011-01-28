@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.alg.orthogonal;
+package de.cau.cs.kieler.klay.planar.orthogonal;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -19,10 +19,10 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.alg.orthogonal.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.IGraph;
 import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.orthogonal.OrthogonalRepresentation.OrthogonalAngle;
 
 /**
  * A compaction algorithm that reduces the orthogonal representation to a simple orthogonal

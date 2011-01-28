@@ -11,16 +11,16 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar.alg.pathfinding;
+package de.cau.cs.kieler.klay.planar.pathfinding;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.klay.planar.alg.pathfinding.IPathFinder.IShortestPathFinder;
 import de.cau.cs.kieler.klay.planar.graph.IEdge;
 import de.cau.cs.kieler.klay.planar.graph.INode;
+import de.cau.cs.kieler.klay.planar.pathfinding.IPathFinder.IShortestPathFinder;
 
 /**
  * Use the Bellman-Ford Algorithm to find the shortest path between two nodes in any graph. Contrary
