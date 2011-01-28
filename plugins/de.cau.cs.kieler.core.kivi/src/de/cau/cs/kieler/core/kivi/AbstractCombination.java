@@ -41,11 +41,14 @@ public abstract class AbstractCombination implements ICombination {
     private boolean doNothing = false;
 
     private boolean noUndo = false;
+    
+    private ITriggerState triggeringState;
 
     /**
      * {@inheritDoc}
      */
     public List<IEffect> trigger(final ITriggerState triggerState) {
+        this.triggeringState = triggerState;
         boolean found = true;
         if (triggerState instanceof EffectTriggerState<?>) {
             found = false; // potentially skip execution if wrong effect type
@@ -163,6 +166,16 @@ public abstract class AbstractCombination implements ICombination {
         } else { // FIXME is there any way to check against this type?
             return (Class<? extends ITriggerState>[]) execute.getParameterTypes();
         }
+    }
+    
+    /**
+     * Convenience method to obtain the ITriggerState that actually caused the
+     * execute method to be invoked. This can be used to conceptually go back
+     * from the states to the event, to find out, which state was constructed last.
+     * @return the trigger state that was constructed last
+     */
+    protected ITriggerState getTriggerState(){
+        return triggeringState;
     }
 
     /**
