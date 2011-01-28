@@ -23,7 +23,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.INodePlacer;
 import de.cau.cs.kieler.klay.rail.IPatterns;
 import de.cau.cs.kieler.klay.rail.Properties;
 import de.cau.cs.kieler.klay.rail.graph.RailLayer;

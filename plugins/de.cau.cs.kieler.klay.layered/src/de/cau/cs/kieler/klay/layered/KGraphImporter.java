@@ -41,7 +41,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting;
+import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 
 /**
  * Manages the transformation of KGraphs to LayeredGraphs.
@@ -252,9 +252,9 @@ public class KGraphImporter implements IGraphImporter {
         }
         
         // process the edges
-        LayeredEdgeRouting routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
-        boolean splinesActive = routing == LayeredEdgeRouting.SIMPLE_SPLINES
-                || routing == LayeredEdgeRouting.COMPLEX_SPLINES;
+        EdgeRoutingStrategy routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
+        boolean splinesActive = routing == EdgeRoutingStrategy.SIMPLE_SPLINES
+                || routing == EdgeRoutingStrategy.COMPLEX_SPLINES;
         for (Map.Entry<KEdge, List<LEdge>> edgeEntry : edgeMap.entrySet()) {
             KEdge kedge = edgeEntry.getKey();
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);

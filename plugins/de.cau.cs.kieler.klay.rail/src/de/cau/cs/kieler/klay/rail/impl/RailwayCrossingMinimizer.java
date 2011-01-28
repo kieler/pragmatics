@@ -22,7 +22,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.modules.ICrossingMinimizer;
+import de.cau.cs.kieler.klay.layered.p3order.ICrossingMinimizer;
 import de.cau.cs.kieler.klay.rail.Properties;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 

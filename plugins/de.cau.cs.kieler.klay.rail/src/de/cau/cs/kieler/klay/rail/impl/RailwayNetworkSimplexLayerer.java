@@ -29,10 +29,10 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.impl.BigNodeHandler;
-import de.cau.cs.kieler.klay.layered.impl.LayeringEnhancer;
-import de.cau.cs.kieler.klay.layered.modules.IBigNodeHandler;
-import de.cau.cs.kieler.klay.layered.modules.ILayerer;
+import de.cau.cs.kieler.klay.layered.p2layers.BigNodeHandler;
+import de.cau.cs.kieler.klay.layered.p2layers.IBigNodeHandler;
+import de.cau.cs.kieler.klay.layered.p2layers.ILayerer;
+import de.cau.cs.kieler.klay.layered.p2layers.LayeringEnhancer;
 import de.cau.cs.kieler.klay.rail.graph.RailLayer;
 
 /**
@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.rail.graph.RailLayer;
  * {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
  * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories}.
  * 
- * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
+ * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
  * 
  * @author pdo
  */
@@ -63,7 +63,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * A {@code LinkedList} containing all nodes of the currently identified connected component by
      * {@code connectedComponents()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponents(Collection)
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#connectedComponents(Collection)
      *      connectedComponents()
      */
     private LinkedList<LNode> componentNodes;
@@ -107,7 +107,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * A flag indicating whether a specified node is part of the spanning tree determined by
      * {@code tightTree()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS() tightTreeDFS()
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#tightTreeDFS() tightTreeDFS()
      */
     private boolean[] treeNode;
 
@@ -115,7 +115,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * A flag indicating whether a specified edge is part of the spanning tree determined by
      * {@code tightTree()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS(LNode)
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#tightTreeDFS(LNode)
      *      tightTreeDFS()
      */
     private boolean[] treeEdge;
@@ -136,7 +136,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * The current postorder traversal number used by {@code postorderTraversal()} to assign an
      * unique traversal ID to each node.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#postorderTraversal(LNode)
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#postorderTraversal(LNode)
      *      postorderTraversal()
      */
     private int postOrder;
@@ -144,7 +144,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
     /**
      * The postorder traversal ID of each node determined by {@code postorderTraversal()}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#postorderTraversal(LNode)
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#postorderTraversal(LNode)
      *      postorderTraversal()
      */
     private int[] poID;
@@ -153,7 +153,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * The lowest postorder traversal ID of each nodes reachable through a node lower in the
      * traversal tree determined by {@code postorderTraversal}.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#postorderTraversal(LNode)
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#postorderTraversal(LNode)
      *      postorderTraversal()
      */
     private int[] lowestPoID;
@@ -166,7 +166,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * including the tree edge, minus the sum of the weights of all edges from the head to the tail
      * component.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalues() cutvalues()
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalues() cutvalues()
      */
     private int[] cutvalue;
 
@@ -191,7 +191,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * @return a {@code LinkedList} of {@code LinkedLists} containing all nodes of every connected
      *         component
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponentsDFS(LNode)
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#connectedComponentsDFS(LNode)
      *      connectedComponentsDFS()
      */
     private LinkedList<LinkedList<LNode>> connectedComponents(final Collection<LNode> theNodes) {
@@ -237,9 +237,9 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * @return a {@code LinkedList} containing all nodes reachable through a path beginning at the
      *         input node (i.e. all nodes connected to the input node)
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#connectedComponents(Collection)
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#connectedComponents(Collection)
      *      connectedComponents()
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#componentNodes componentNodes
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#componentNodes componentNodes
      */
     private void connectedComponentsDFS(final LNode node) {
 
@@ -365,7 +365,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * @param theLayeredGraph
      *            an initially empty layered graph which is filled with layers
      *            
-     * @see de.cau.cs.kieler.klay.layered.modules.ILayerer ILayerer
+     * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
     public void layer(final Collection<LNode> theNodes, final LayeredGraph theLayeredGraph) {
         assert theNodes != null;
@@ -441,7 +441,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * non-tree nodes as well. If all nodes of the graph are contained in the spanning tree, a tight
      * tree has been found. A concluding computation of each edge's initial cut value takes place.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#tightTreeDFS(LNode)
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#tightTreeDFS(LNode)
      *      tightTreeDFS()
      */
     private void feasibleTree() {
@@ -481,10 +481,10 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * of the graph (i.e. sink and source nodes) will be assigned to a layer as close to their
      * adjacent nodes as possible.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layeringDFS(LNode, boolean)
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#layeringDFS(LNode, boolean)
      *      layeringDFS()
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layer layer
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#minSpan minSpan
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#layer layer
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#minSpan minSpan
      */
     private void initLayering() {
 
@@ -537,8 +537,8 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      *            this method only traverses incoming edges. Otherwise, if {@code reverse = true},
      *            only outgoing edges will be traversed
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layer layer
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#revLayer revLayer
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#layer layer
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#revLayer revLayer
      */
     private void layeringDFS(final LNode node, final boolean reverse) {
 
@@ -612,8 +612,8 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      *            the root of the DFS-subtree
      * @return the number of nodes in the determined tight DFS-tree
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#treeEdge treeEdge
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#treeNode treeNode
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#treeEdge treeEdge
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#treeNode treeNode
      */
     private int tightTreeDFS(final LNode node) {
 
@@ -681,9 +681,9 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      *            the root of the DFS-subtree
      * @return the lowest post-order ID of any descending edge in the depth-first-search
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#poID poID
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#lowestPoID lowestPoID
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#postOrder postOrder
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#poID poID
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#lowestPoID lowestPoID
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#postOrder postOrder
      */
     private int postorderTraversal(final LNode node) {
 
@@ -747,7 +747,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * all edges going from the tail to the head component, including the tree edge itself, minus
      * the sum of the weights of all edges from the head to the tail component.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalue cutvalue
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalue cutvalue
      */
     private void cutvalues() {
 
@@ -836,8 +836,8 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      *             performance of O(|E|^2). The method {@code cutvalues()} computes the cut values
      *             in linear time and therefore, should be used instead.
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalue cutvalue
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#cutvalues() cutvalues()
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalue cutvalue
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalues() cutvalues()
      */
     @SuppressWarnings("unused")
     private void naiveCutvalues() {
@@ -928,8 +928,8 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * @throws IllegalArgumentException
      *             if either {@code leave} is no tree edge or {@code enter} is a tree edge already
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#enterEdge(LEdge) enterEdge()
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#leaveEdge() leaveEdge()
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#enterEdge(LEdge) enterEdge()
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#leaveEdge() leaveEdge()
      */
     private void exchange(final LEdge leave, final LEdge enter) {
 
@@ -1048,8 +1048,8 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      * @param node
      *            the node to put into its assigned layer in the layered graph
      * 
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layeredGraph layeredGraph
-     * @see de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer#layer layer
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#layeredGraph layeredGraph
+     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#layer layer
      */
     private void putNode(final LNode node) {
 

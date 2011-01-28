@@ -20,11 +20,11 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
-import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer.Region;
-import de.cau.cs.kieler.klay.layered.options.CrossingMinimization;
-import de.cau.cs.kieler.klay.layered.options.LayerConstraint;
-import de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting;
-import de.cau.cs.kieler.klay.layered.options.NodeLayering;
+import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
+import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
+import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer.Region;
+import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 
 /**
  * Container for priority definitions.
@@ -107,20 +107,20 @@ public final class Properties {
     /** option identifier for edge routing. */
     public static final String EDGE_ROUTING_ID = "de.cau.cs.kieler.klay.layered.edgeRouting";
     /** property to choose an edge routing strategy. */
-    public static final IProperty<LayeredEdgeRouting> EDGE_ROUTING = new Property<LayeredEdgeRouting>(
-            EDGE_ROUTING_ID, LayeredEdgeRouting.POLYLINE);
+    public static final IProperty<EdgeRoutingStrategy> EDGE_ROUTING = new Property<EdgeRoutingStrategy>(
+            EDGE_ROUTING_ID, EdgeRoutingStrategy.POLYLINE);
 
     /** option identifier for node layering. */
     public static final String NODE_LAYERING_ID = "de.cau.cs.kieler.klay.layered.nodeLayering";
     /** property to choose a node layering strategy. */
-    public static final IProperty<NodeLayering> NODE_LAYERING = new Property<NodeLayering>(
-            NODE_LAYERING_ID, NodeLayering.NETWORK_SIMPLEX);
+    public static final IProperty<LayeringStrategy> NODE_LAYERING = new Property<LayeringStrategy>(
+            NODE_LAYERING_ID, LayeringStrategy.NETWORK_SIMPLEX);
     
     /** option identifier for crossing minimization. */
     public static final String CROSS_MIN_ID = "de.cau.cs.kieler.klay.layered.crossingMinimization";
     /** property to choose a crossing minimization strategy. */
-    public static final IProperty<CrossingMinimization> CROSS_MIN = new Property<CrossingMinimization>(
-            CROSS_MIN_ID, CrossingMinimization.LAYER_SWEEP);
+    public static final IProperty<CrossingMinimizationStrategy> CROSS_MIN = new Property<CrossingMinimizationStrategy>(
+            CROSS_MIN_ID, CrossingMinimizationStrategy.LAYER_SWEEP);
     
     /** option identifier for thoroughness. */
     public static final String THOROUGHNESS_ID = "de.cau.cs.kieler.klay.layered.thoroughness";

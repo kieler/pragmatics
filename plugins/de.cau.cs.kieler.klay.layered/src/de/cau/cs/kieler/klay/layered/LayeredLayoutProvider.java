@@ -27,25 +27,25 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.impl.GreedyCycleBreaker;
-import de.cau.cs.kieler.klay.layered.impl.LPSolveCrossingMinimizer;
-import de.cau.cs.kieler.klay.layered.impl.LPSolveLayerer;
-import de.cau.cs.kieler.klay.layered.impl.LayerSweepCrossingMinimizer;
-import de.cau.cs.kieler.klay.layered.impl.LinearSegmentsNodePlacer;
-import de.cau.cs.kieler.klay.layered.impl.LongestPathLayerer;
-import de.cau.cs.kieler.klay.layered.impl.NetworkSimplexLayerer;
-import de.cau.cs.kieler.klay.layered.impl.OrthogonalEdgeRouter;
-import de.cau.cs.kieler.klay.layered.impl.SimpleSplineEdgeRouter;
-import de.cau.cs.kieler.klay.layered.impl.PolylineEdgeRouter;
-import de.cau.cs.kieler.klay.layered.impl.ComplexSplineEdgeRouter;
-import de.cau.cs.kieler.klay.layered.modules.ICrossingMinimizer;
-import de.cau.cs.kieler.klay.layered.modules.ICycleBreaker;
-import de.cau.cs.kieler.klay.layered.modules.IEdgeRouter;
-import de.cau.cs.kieler.klay.layered.modules.ILayerer;
-import de.cau.cs.kieler.klay.layered.modules.INodePlacer;
-import de.cau.cs.kieler.klay.layered.options.CrossingMinimization;
-import de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting;
-import de.cau.cs.kieler.klay.layered.options.NodeLayering;
+import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
+import de.cau.cs.kieler.klay.layered.p1cycles.ICycleBreaker;
+import de.cau.cs.kieler.klay.layered.p2layers.ILayerer;
+import de.cau.cs.kieler.klay.layered.p2layers.LPSolveLayerer;
+import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
+import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
+import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
+import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
+import de.cau.cs.kieler.klay.layered.p3order.ICrossingMinimizer;
+import de.cau.cs.kieler.klay.layered.p3order.LPSolveCrossingMinimizer;
+import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
+import de.cau.cs.kieler.klay.layered.p4nodes.INodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
+import de.cau.cs.kieler.klay.layered.p5edges.ComplexSplineEdgeRouter;
+import de.cau.cs.kieler.klay.layered.p5edges.IEdgeRouter;
+import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
+import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
+import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
+import de.cau.cs.kieler.klay.layered.p5edges.SimpleSplineEdgeRouter;
 
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
@@ -107,7 +107,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      */
     private void updateModules(final KShapeLayout parentLayout) {
         // check which layering strategy to use
-        NodeLayering placing = parentLayout.getProperty(Properties.NODE_LAYERING);
+        LayeringStrategy placing = parentLayout.getProperty(Properties.NODE_LAYERING);
         switch (placing) {
         case LONGEST_PATH:
             if (!(layerer instanceof LongestPathLayerer)) {
@@ -132,7 +132,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
         
         // check which crossing minimization strategy to use
-        CrossingMinimization crossMin = parentLayout.getProperty(Properties.CROSS_MIN);
+        CrossingMinimizationStrategy crossMin = parentLayout.getProperty(Properties.CROSS_MIN);
         switch (crossMin) {
         case LP_SOLVER:
             if (!(crossingMinimizer instanceof LPSolveCrossingMinimizer)) {
@@ -146,7 +146,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
 
         // check which edge router to use
-        LayeredEdgeRouting routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
+        EdgeRoutingStrategy routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
         switch (routing) {
         case ORTHOGONAL:
             if (!(edgeRouter instanceof OrthogonalEdgeRouter)) {

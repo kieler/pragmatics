@@ -63,7 +63,7 @@
       </layoutProvider>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.options.LayeredEdgeRouting"
+            class="de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy"
             default="POLYLINE"
             description="Strategy for edge routing"
             id="de.cau.cs.kieler.klay.layered.edgeRouting"
@@ -97,7 +97,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.options.NodeLayering"
+            class="de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy"
             default="NETWORK_SIMPLEX"
             description="Strategy for node layering"
             id="de.cau.cs.kieler.klay.layered.nodeLayering"
@@ -106,7 +106,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.options.CrossingMinimization"
+            class="de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy"
             default="LAYER_SWEEP"
             description="Strategy for crossing minimization."
             id="de.cau.cs.kieler.klay.layered.crossingMinimization"
@@ -142,7 +142,7 @@
       <layoutOption
             advanced="true"
             appliesTo="nodes"
-            class="de.cau.cs.kieler.klay.layered.options.LayerConstraint"
+            class="de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint"
             default="NONE"
             description="Determines a constraint on the placement of the node regarding the layering."
             id="de.cau.cs.kieler.klay.layered.layerConstraint"
