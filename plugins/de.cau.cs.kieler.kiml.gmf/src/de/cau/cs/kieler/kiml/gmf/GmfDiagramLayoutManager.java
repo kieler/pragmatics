@@ -304,7 +304,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
         }
         for (LabelEditPart labelEditPart : emptyLabels) {
-            KLabel label = KimlUtil.createInitializedLabel(null);
+            IGraphicalEditPart connection = (IGraphicalEditPart) labelEditPart.getParent();
+            KLabel label = KimlUtil.createInitializedLabel(editPart2GraphElemMap.get(connection));
             applyLayoutRequest.addElement(label, labelEditPart);
         }
         KShapeLayout graphLayout = layoutGraph.getData(KShapeLayout.class);
