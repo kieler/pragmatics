@@ -59,6 +59,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
+import de.cau.cs.kieler.kex.ui.util.ImageConverter;
 
 /**
  * This class represents the import page of importwizard. It contains a tree which shows the
@@ -152,8 +153,7 @@ public class ImportExamplePage extends WizardPage {
                 } else if (firstElement instanceof Example) {
                     selectedExample = (Example) firstElement;
                     updateDescriptionLabel((Example) firstElement);
-                    updateImageLabel(computeImage(selectedExample.getOverviewPic(),
-                            selectedExample.getNamespaceId(), IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT));
+                    updateImageLabel(loadImage(false, IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT));
 
                 }
             }
@@ -339,6 +339,9 @@ public class ImportExamplePage extends WizardPage {
 
                     private Rectangle bounds;
 
+                    private final int MAX_WIDTH = 800;
+                    private final int MAX_HEIGHT = 600;
+
                     @Override
                     protected void createButtonsForButtonBar(final Composite parent) {
                         super.createButton(parent, IDialogConstants.OK_ID,
@@ -347,23 +350,34 @@ public class ImportExamplePage extends WizardPage {
 
                     @Override
                     protected Control createDialogArea(final Composite parent) {
+                        // scrolling
                         Composite composite = (Composite) super.createDialogArea(parent);
                         Composite innerComp = new Composite(composite, SWT.CENTER | SWT.BORDER);
                         innerComp.setLayout(new GridLayout());
                         Label imgLabel = new Label(innerComp, SWT.BORDER | SWT.V_SCROLL
                                 | SWT.H_SCROLL);
-                        imgLabel.setLayoutData(new GridData(GridData.CENTER));
-                        Image image = loadImage(IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT);
+                        imgLabel.setLayoutData(new GridData(GridData.CENTER | SWT.V_SCROLL
+                                | SWT.H_SCROLL));
+                        Image image = loadImage(true, -1, -1);
                         bounds = image.getBounds();
                         imgLabel.setImage(image);
+                        imgLabel.pack();
                         return composite;
                     }
 
                     @Override
                     protected Point getInitialSize() {
-                        // imagesize + paddings
-                        return new Point(bounds.width + IMG_PADDINGS_WIDTH, bounds.height
-                                + IMG_PADDINGS_HEIGHT);
+                        int currentImageWidth = bounds.width + IMG_PADDINGS_WIDTH;
+                        int currentImageHeight = bounds.height + IMG_PADDINGS_HEIGHT;
+
+                        if (MAX_WIDTH <= currentImageWidth) {
+                            currentImageWidth = MAX_WIDTH;
+                        }
+                        if (MAX_HEIGHT <= currentImageHeight) {
+                            currentImageHeight = MAX_HEIGHT;
+                        }
+                        return new Point(currentImageWidth, currentImageHeight);
+
                     }
 
                     @Override
@@ -419,28 +433,35 @@ public class ImportExamplePage extends WizardPage {
      */
     private void updateImageLabel(final Image image) {
         imageLabel.setImage(image);
-        // imageLabel.pack();
+        Rectangle bounds = image.getBounds();
+        imageLabel.setSize(bounds.width + IMG_PADDINGS_WIDTH, bounds.height + IMG_PADDINGS_HEIGHT);
+        imageLabel.pack();
     }
 
     /**
-     * loads preview image. The parameters define the max width and heigt of an image. The loaded
-     * image will scaled to the parameter values, while keeping the imageformat.
+     * Loads image. The parameters define the max width and heigt of an image. The loaded image will
+     * scaled to the parameter values, while keeping the imageformat. If fullSize is true,
+     * imageWidth and imageHeight will ignore and the image will load with its normal size.
      * 
+     * @param fullSize
+     *            , set false, if imageWidth and imageHeight should used for scaling
      * @param image_width
      * @param image_height
      * @return
      */
-    private Image loadImage(final double imageWidth, final double imageHeight) {
+    private Image loadImage(boolean fullSize, final double imageWidth, final double imageHeight) {
         final String previewPicPath = selectedExample.getOverviewPic();
         if (previewPicPath != null && previewPicPath.length() > 1) {
             try {
                 ImageData imgData = new ImageData(ExampleManager.get().loadOverviewPic(
                         selectedExample));
-
-                double tempSize = Math
-                        .max(imgData.width / imageWidth, imgData.height / imageHeight);
-                imgData = imgData.scaledTo((int) (imgData.width / tempSize),
-                        (int) (imgData.height / tempSize));
+                if (!fullSize) {
+                    double tempSize = Math.max(imgData.width / imageWidth, imgData.height
+                            / imageHeight);
+                    imgData = ImageConverter.scaleSWTImage(imgData,
+                            (int) (imgData.width / tempSize), (int) (imgData.height / tempSize),
+                            java.awt.Image.SCALE_SMOOTH);
+                }
                 return new Image(previewComp.getDisplay(), imgData);
 
             } catch (final KielerException e) {
