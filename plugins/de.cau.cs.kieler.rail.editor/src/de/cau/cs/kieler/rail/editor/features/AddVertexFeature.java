@@ -333,6 +333,10 @@ public class AddVertexFeature extends AbstractAddFeature {
 
     private PictogramElement addSwitchVertex(final IAddContext context,
             final EOrientation orientatin) {
+    	
+    	int[] spitzeStammXY = { 0, 0, 0, 0 };
+        int[] mitteAbzweigXY = { 25, 25, 0, 0 };
+    	
         // create Switch from source
         Weichenknoten switchVertex = (Weichenknoten) context.getNewObject();
         switchVertex.setAbzweigendeLage(orientatin);
@@ -365,6 +369,10 @@ public class AddVertexFeature extends AbstractAddFeature {
         R.setForeground(manageColor(255, 255, 255));
 
         // PORT
+        
+        int width =50;// containerShape.getGraphicsAlgorithm().getWidth();
+        int height =50;// containerShape.getGraphicsAlgorithm().getHeight();
+        
         for (Port port : switchVertex.getPorts()) {
             final BoxRelativeAnchor boxAnchor =
                     peCreateService.createBoxRelativeAnchor(containerShape);
@@ -376,14 +384,27 @@ public class AddVertexFeature extends AbstractAddFeature {
             properPort.setKey("layout:de.cau.cs.kieler.klay.rail.portType");
 
             boxAnchor.setRelativeHeight(0.4);// (0.5-portWidth);
+            
+            
+            int boxWidth = PORT_SIZE;
+            int boxHeight = PORT_SIZE;
+            
             switch (port.getName()) {
             case SPITZE:
                 boxAnchor.setRelativeWidth(0.0);
                 properPort.setValue("STUMP");
+                spitzeStammXY[0] =
+                    (int) (width * (boxAnchor.getRelativeWidth()) - boxWidth / 2);
+                spitzeStammXY[1] =
+                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
                 break;
             case STAMM:
                 boxAnchor.setRelativeWidth(0.85);
                 properPort.setValue("STRAIGHT");
+                spitzeStammXY[2] =
+                    (int) (width * (boxAnchor.getRelativeWidth()) + boxWidth / 2);
+                spitzeStammXY[3] =
+                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
                 break;
             case ABZWEIG:
                 properPort.setValue("BRANCH");
@@ -393,8 +414,13 @@ public class AddVertexFeature extends AbstractAddFeature {
                     boxAnchor.setRelativeWidth(0.2);
                 }
                 boxAnchor.setRelativeHeight(0.0);
+                mitteAbzweigXY[2] =
+                    (int) (width * (boxAnchor.getRelativeWidth()) + boxWidth / 2);
+                mitteAbzweigXY[3] =
+                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
             }
-            containerShape.getProperties().add(properPort);
+            boxAnchor.getProperties().add(properPort);
+            //containerShape.getProperties().add(properPort);
 
             boxAnchor.setReferencedGraphicsAlgorithm(R);
 
@@ -410,13 +436,14 @@ public class AddVertexFeature extends AbstractAddFeature {
         // Line (straight line)
         Shape shapep = peCreateService.createShape(containerShape, false);
         Polyline polyline =
-                gaService.createPolyline(shapep, new int[] { 0, 25, 25, 25 });
+                gaService.createPolyline(shapep, spitzeStammXY); //{ 0, 25, 25, 25 });
 
         // Line (30°)
+        mitteAbzweigXY[1] = getY_from_Array(mitteAbzweigXY, 25);
         Shape shapep30 = peCreateService.createShape(containerShape, false);
         Polyline polyline30 =
-                gaService.createPolyline(shapep30, new int[] { 20, 25, 0,
-                        (int) (25 * 0.577350269) });
+                gaService.createPolyline(shapep30, mitteAbzweigXY);//new int[] { 20, 25, 0,
+                        //(int) (25 * 0.577350269) });
 
         Shape shape = peCreateService.createShape(containerShape, false);
 
@@ -505,5 +532,21 @@ public class AddVertexFeature extends AbstractAddFeature {
                 PORT_SIZE, PORT_SIZE);
 
         return boxAnchor;
+    }
+    /**
+     * Calculate the Y pos for the straight line (port Stamm to port Ende) for a
+     * x pos
+     * 
+     * @param mitteAbzweigXY
+     * @param x
+     * @return
+     */
+    private int getY_from_Array(final int[] mitteAbzweigXY, final int x) {
+        double m =
+                (mitteAbzweigXY[3] - mitteAbzweigXY[1])
+                        / (mitteAbzweigXY[2] - mitteAbzweigXY[0]);
+        double b = mitteAbzweigXY[1] - m * mitteAbzweigXY[0];
+        return (int) (m * x + b);
+
     }
 }

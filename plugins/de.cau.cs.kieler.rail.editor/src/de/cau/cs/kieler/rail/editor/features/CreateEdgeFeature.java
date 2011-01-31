@@ -7,6 +7,8 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
 import org.eclipse.graphiti.features.impl.AbstractCreateConnectionFeature;
+import org.eclipse.graphiti.mm.MmFactory;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
@@ -76,6 +78,17 @@ public class CreateEdgeFeature extends
     public boolean canStartConnection(ICreateConnectionContext context) {
     	System.out.println("##canStartConnection##");
     	System.out.println(context.getSourceAnchor());
+    	System.out.println(context.getSourceAnchor());
+    	System.out.println(getFeatureProvider().getBusinessObjectForPictogramElement(context.getSourceAnchor()));
+    	
+    	//Property p = MmFactory.eINSTANCE.createProperty();
+        //p.getValue();// "layout:de.cau.cs.kieler.klay.rail.portType");
+    	
+        for (Property p : context.getSourceAnchor().getProperties()){
+        	System.out.println(p.getValue());
+        }
+    	
+    	//layout:de.cau.cs.kieler.klay.rail.portType
     	
     	if(context.getSourceAnchor() != null){
     		System.out.println(getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent()));
