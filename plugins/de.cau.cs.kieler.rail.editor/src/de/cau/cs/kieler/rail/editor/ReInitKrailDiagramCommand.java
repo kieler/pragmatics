@@ -56,4 +56,9 @@ public class ReInitKrailDiagramCommand extends
         return KrailDiagramEditor.MODEL_FILE_EXTENSION;
     }
 
+    @Override
+    protected boolean addChildrenRecursively(final EObject eObj) {
+        return false;
+    }
+
 }
