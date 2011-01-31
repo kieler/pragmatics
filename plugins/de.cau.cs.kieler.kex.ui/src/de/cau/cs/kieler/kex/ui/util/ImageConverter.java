@@ -110,13 +110,13 @@ public class ImageConverter {
                 }
             }
             return data;
+
         }
         return null;
     }
 
     public static ImageData scaleSWTImage(ImageData imgData, int width, int height, int hint) {
         BufferedImage bufImg = convertToAWT(imgData);
-        System.out.println(bufImg.getWidth());
         Image image = bufImg.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
         int widthP = image.getWidth(null);
         int heightP = image.getHeight(null);
