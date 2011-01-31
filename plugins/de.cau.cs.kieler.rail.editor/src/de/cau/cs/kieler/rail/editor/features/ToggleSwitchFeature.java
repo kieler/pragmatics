@@ -94,7 +94,8 @@ public class ToggleSwitchFeature extends AbstractCustomFeature {
                     }
                 //toggeln
                 Weichenknoten wk=((Weichenknoten)bo);
-                Property property = (Property) context.getProperty("layout:de.cau.cs.kieler.klay.rail.nodeType");
+                
+                Property property = (Property) context.getInnerPictogramElement().getProperties().get(0);
                 if(wk.getAbzweigendeLage()==EOrientation.LINKS){
                 	wk.setAbzweigendeLage(EOrientation.RECHTS);
                 	property.setValue("SWITCH_RIGHT");

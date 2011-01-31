@@ -41,6 +41,8 @@ import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.AddPortFeature;
 import de.cau.cs.kieler.rail.editor.features.AddVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
+import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature2;
+import de.cau.cs.kieler.rail.editor.features.CreatePortFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.DirectEditBreachFeatures;
 import de.cau.cs.kieler.rail.editor.features.LayoutFeature;
@@ -113,7 +115,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
                 new CreateVertexFeature(this, TypeFeatures.BREANCH),
                 new CreateVertexFeature(this, TypeFeatures.DEADENDVERTEX),
                 new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_LEFT),
-                new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT) };
+                new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT),
+                new CreatePortFeature(this)};
     }
 
     /**
@@ -121,7 +124,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
-        return new ICreateConnectionFeature[] { new CreateEdgeFeature(this) };
+        return new ICreateConnectionFeature[] { new CreateEdgeFeature(this),new CreateEdgeFeature2(this) };
     }
 
     /*
