@@ -23,7 +23,6 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 
-
 /**
  * A graph analysis that finds the number of connected components in a graph. Returns
  * a single-component result of type integer.

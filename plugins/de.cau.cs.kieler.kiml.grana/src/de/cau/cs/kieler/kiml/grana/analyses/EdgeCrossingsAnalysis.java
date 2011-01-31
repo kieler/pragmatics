@@ -22,9 +22,12 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * A graph analysis that computes the number of edge crossings. It assumes that
@@ -147,15 +150,33 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
         
         while (iter1.hasNext()) {
             KEdge edge1 = iter1.next();
+            KPort sourcePort1 = edge1.getSourcePort();
+            KPort targetPort1 = edge1.getTargetPort();
+            KShapeLayout sourceLayout = edge1.getSource().getData(KShapeLayout.class);
+            KShapeLayout targetLayout = edge1.getTarget().getData(KShapeLayout.class);
+            current = 0;
             ListIterator<KEdge> iter2 = edges.listIterator(iter1.nextIndex());
             while (iter2.hasNext()) {
                 KEdge edge2 = iter2.next();
+                KPort sourcePort2 = edge2.getSourcePort();
+                KPort targetPort2 = edge2.getTargetPort();
                 
-                current = computeNumberOfCrossings(edge1, edge2);
-                min = Math.min(min, current);
-                max = Math.max(max, current);
-                sum += current;
+                boolean samePort = false;
+                samePort |= sourcePort1 != null
+                        && (sourcePort1 == sourcePort2 || sourcePort1 == targetPort2);
+                samePort |= targetPort1 != null
+                        && (targetPort1 == targetPort2 || targetPort1 == sourcePort2);
+                samePort |= edge1.getSource() == edge2.getSource()
+                        && sourceLayout.getProperty(LayoutOptions.HYPERNODE);
+                samePort |= edge1.getTarget() == edge2.getTarget()
+                        && targetLayout.getProperty(LayoutOptions.HYPERNODE);
+                if (!samePort) {
+                    current += computeNumberOfCrossings(edge1, edge2);
+                }
             }
+            min = Math.min(min, current);
+            max = Math.max(max, current);
+            sum += current;
         }
         
         if (edges.size() > 0) {

@@ -97,27 +97,31 @@ public class BiconnectedComponentsAnalysis implements IAnalysis {
         // follow the outgoing edges
         for (KEdge edge : node.getOutgoingEdges()) {
             KNode endpoint = edge.getTarget();
-            Integer endpointNum = dfsMap.get(endpoint);
-            if (endpointNum == null) {
-                endpointNum = nextDfsnum;
-                parent[endpointNum] = dfsNum;
-                count += dfsVisit(endpoint);
-                lowpt[dfsNum] = Math.min(lowpt[dfsNum], lowpt[endpointNum]);
-            } else {
-                lowpt[dfsNum] = Math.min(lowpt[dfsNum], endpointNum);
+            if (endpoint.getParent() == node.getParent()) {
+                Integer endpointNum = dfsMap.get(endpoint);
+                if (endpointNum == null) {
+                    endpointNum = nextDfsnum;
+                    parent[endpointNum] = dfsNum;
+                    count += dfsVisit(endpoint);
+                    lowpt[dfsNum] = Math.min(lowpt[dfsNum], lowpt[endpointNum]);
+                } else {
+                    lowpt[dfsNum] = Math.min(lowpt[dfsNum], endpointNum);
+                }
             }
         }
         // follow the incoming edges
         for (KEdge edge : node.getIncomingEdges()) {
             KNode endpoint = edge.getSource();
-            Integer endpointNum = dfsMap.get(endpoint);
-            if (endpointNum == null) {
-                endpointNum = nextDfsnum;
-                parent[endpointNum] = dfsNum;
-                count += dfsVisit(endpoint);
-                lowpt[dfsNum] = Math.min(lowpt[dfsNum], lowpt[endpointNum]);
-            } else {
-                lowpt[dfsNum] = Math.min(lowpt[dfsNum], endpointNum);
+            if (endpoint.getParent() == node.getParent()) {
+                Integer endpointNum = dfsMap.get(endpoint);
+                if (endpointNum == null) {
+                    endpointNum = nextDfsnum;
+                    parent[endpointNum] = dfsNum;
+                    count += dfsVisit(endpoint);
+                    lowpt[dfsNum] = Math.min(lowpt[dfsNum], lowpt[endpointNum]);
+                } else {
+                    lowpt[dfsNum] = Math.min(lowpt[dfsNum], endpointNum);
+                }
             }
         }
         // analyze the result
