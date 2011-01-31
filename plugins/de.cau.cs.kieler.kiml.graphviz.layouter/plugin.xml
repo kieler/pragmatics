@@ -185,9 +185,11 @@
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
+            description="Circular layout, after Six and Tollis &apos;99, Kaufmann and Wiese &apos;02. This is suitable for certain diagrams of multiple cyclic structures such as certain telecommunications networks."
             id="de.cau.cs.kieler.kiml.graphviz.circo"
             name="Circo"
             parameter="circo"
+            preview="images/circo.png"
             type="de.cau.cs.kieler.layout.types.circle">
          <supportedDiagram
                priority="6"
