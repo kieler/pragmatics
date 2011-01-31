@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.rail;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -23,6 +24,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -36,14 +38,13 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.ICycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.ILayerer;
-import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.layered.p3order.ICrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.INodePlacer;
 import de.cau.cs.kieler.klay.layered.p5edges.IEdgeRouter;
 import de.cau.cs.kieler.klay.rail.impl.RailwayCrossingMinimizer;
+import de.cau.cs.kieler.klay.rail.impl.RailwayEdgeRouter;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNodePlacer;
-import de.cau.cs.kieler.klay.rail.impl.RailwayEdgeRouter;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 
 /**
@@ -64,7 +65,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     /** phase 2: layering module. */
     private ILayerer layerer = new RailwayNetworkSimplexLayerer();
     /** phase 3: crossing minimization module. */
-    private ICrossingMinimizer crossingMinimizer = new RailwayCrossingMinimizer();
+    private ICrossingMinimizer crossingMinimizer =
+            new RailwayCrossingMinimizer();
     /** phase 4: node placement module. */
     private INodePlacer nodePlacer = new RailwayNodePlacer();
     /** phase 5: Edge routing module. */
@@ -81,7 +83,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
+    public void doLayout(final KNode layoutNode,
+            final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Railway layout", 1);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
@@ -110,8 +113,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
      * @param parentLayout
      *            the layout data for the parent node
      */
-    private void setOptions(final LayeredGraph layeredGraph, final KNode parent,
-            final KShapeLayout parentLayout) {
+    private void setOptions(final LayeredGraph layeredGraph,
+            final KNode parent, final KShapeLayout parentLayout) {
         // set object spacing option
         float objSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
         if (objSpacing >= 0) {
@@ -119,11 +122,12 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         }
 
         // set border spacing option
-        float borSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        float borSpacing =
+                parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borSpacing >= 0) {
             layeredGraph.setProperty(Properties.BOR_SPACING, borSpacing);
         }
-        
+
         layeredGraph.setProperty(Properties.RANDOM, new Random(1));
     }
 
@@ -135,7 +139,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
      * @param themonitor
      *            a progress monitor, or {@code null}
      */
-    public void layout(final IGraphImporter importer, final IKielerProgressMonitor themonitor) {
+    public void layout(final IGraphImporter importer,
+            final IKielerProgressMonitor themonitor) {
         IKielerProgressMonitor monitor = themonitor;
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
@@ -148,8 +153,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         validateRailwayGraph(nodes);
         System.out.println("Redirecting ...");
         redirectEdges(nodes);
-        //System.out.println("Preprocessing ...");
-        //preprocess(nodes);
+        // System.out.println("Preprocessing ...");
+        // preprocess(nodes);
         System.out.println("Ready to start layout.");
 
         // phase 1: cycle breaking
@@ -169,13 +174,15 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         edgeRouter.reset(monitor.subTask(1));
         edgeRouter.routeEdges(layeredGraph);
 
+        swapBackSwappedEdges();
         monitor.done();
     }
 
     /**
-     * Validates the graph against the requirements of a railway graph. This has to be executed
-     * before any processing or layouting is done. When this was executed, we may often access the
-     * first member of some lists, because we know then that they contain only one element.
+     * Validates the graph against the requirements of a railway graph. This has
+     * to be executed before any processing or layouting is done. When this was
+     * executed, we may often access the first member of some lists, because we
+     * know then that they contain only one element.
      * 
      * @param thenodes
      *            A list of nodes to validate
@@ -186,41 +193,51 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
             if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
                 foundEntryNodes++;
             }
-            if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.BREACH_OR_CLOSE)) {
+            if (lNode.getProperty(Properties.NODE_TYPE).equals(
+                    NodeType.BREACH_OR_CLOSE)) {
                 if (lNode.getPorts().size() != 1) {
-                    System.out.println("A breach or close may only have one port.");
-                    throw new IllegalArgumentException("A breach or close may only have one port.");
+                    System.out
+                            .println("A breach or close may only have one port.");
+                    throw new IllegalArgumentException(
+                            "A breach or close may only have one port.");
                 }
             }
-            if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)
-                    || lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_RIGHT)) {
+            if (lNode.getProperty(Properties.NODE_TYPE).equals(
+                    NodeType.SWITCH_LEFT)
+                    || lNode.getProperty(Properties.NODE_TYPE).equals(
+                            NodeType.SWITCH_RIGHT)) {
                 if (lNode.getPorts().size() != SWITCH_PORTS) {
-                    System.out.println("A switch has to have exactly " + SWITCH_PORTS + " ports.");
-                    throw new IllegalArgumentException("A switch has to have exactly "
+                    System.out.println("A switch has to have exactly "
                             + SWITCH_PORTS + " ports.");
+                    throw new IllegalArgumentException(
+                            "A switch has to have exactly " + SWITCH_PORTS
+                                    + " ports.");
                 }
             }
             for (LPort lPort : lNode.getPorts()) {
                 if (lPort.getEdges().size() != 1) {
                     System.out.println("Each port may only have one edge");
-                    throw new IllegalArgumentException("Each port may only have one edge");
+                    throw new IllegalArgumentException(
+                            "Each port may only have one edge");
                 }
             }
             // TODO: circle detection here or in redirection?
         }
         if (foundEntryNodes != 1) {
-            throw new IllegalArgumentException("Currently the graph needs exactly one entry point.");
+            throw new IllegalArgumentException(
+                    "Currently the graph needs exactly one entry point.");
         }
     }
 
     /**
-     * Method to correct the direction of all edges. Edges have to go out from the entry point, this
-     * method will apply this to given graph.
+     * Method to correct the direction of all edges. Edges have to go out from
+     * the entry point, this method will apply this to given graph.
      * 
      * @param thenodes
      *            A list of nodes to process
      */
     private void redirectEdges(final List<LNode> thenodes) {
+        swappedEdges.clear();
         LPort entryPort = new LPort();
         HashMap<LPort, Boolean> visited = new HashMap<LPort, Boolean>();
         Queue<LPort> queue = new LinkedList<LPort>();
@@ -233,6 +250,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                     // entry port has to be output since all edges
                     // are directed right bound coming from here
                     swapPorts(entryPort.getEdges().get(0));
+                    // remember that edge was swapped
+                    swappedEdges.add(entryPort.getEdges().get(0));
                 }
             }
             for (LPort lPort : lNode.getPorts()) {
@@ -250,6 +269,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                 if (!visited.get(lPort)) {
                     if (lPort.getType().equals(PortType.INPUT)) {
                         swapPorts(lPort.getEdges().get(0));
+                        // remember that edge was swapped
+                        swappedEdges.add(lPort.getEdges().get(0));
                     }
                     queue.add(lPort);
                     visited.put(lPort, true);
@@ -259,8 +280,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Method to apply general conventions of the railway layout to nodes. These are, for example,
-     * the port positions on a node.
+     * Method to apply general conventions of the railway layout to nodes. These
+     * are, for example, the port positions on a node.
      * 
      * @param thenodes
      *            A list of nodes to process
@@ -274,7 +295,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                 port.setSide(PortSide.EAST);
                 port.getPos().x = port.getNode().getSize().x;
                 port.getPos().y = port.getNode().getSize().y / 2;
-            } else if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.BREACH_OR_CLOSE)) {
+            } else if (lNode.getProperty(Properties.NODE_TYPE).equals(
+                    NodeType.BREACH_OR_CLOSE)) {
                 List<LPort> ports = lNode.getPorts();
                 // same as above
                 LPort port = ports.get(0);
@@ -289,7 +311,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                             "Railway layout doesn't allow undefined ports.");
                 }
                 port.getPos().y = port.getNode().getSize().y / 2;
-            } else if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)) {
+            } else if (lNode.getProperty(Properties.NODE_TYPE).equals(
+                    NodeType.SWITCH_LEFT)) {
                 List<LPort> ports = lNode.getPorts();
                 // same as above
                 int inputPorts = 0;
@@ -311,18 +334,22 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                         lPort.setSide(PortSide.WEST);
                         lPort.getPos().x = 0;
                         if (flipped) {
-                            lPort.getPos().y = lPort.getNode().getSize().y / (7 - flipOffset);
+                            lPort.getPos().y =
+                                    lPort.getNode().getSize().y
+                                            / (7 - flipOffset);
                             flipOffset = 3;
                         } else {
                             lPort.getPos().y = lPort.getNode().getSize().y / 5;
                         }
-                    } else  {
+                    } else {
                         lPort.setSide(PortSide.EAST);
                         lPort.getPos().x = lPort.getNode().getSize().x;
                         if (flipped) {
                             lPort.getPos().y = lPort.getNode().getSize().y / 5;
                         } else {
-                            lPort.getPos().y = lPort.getNode().getSize().y / (6 + flipOffset);
+                            lPort.getPos().y =
+                                    lPort.getNode().getSize().y
+                                            / (6 + flipOffset);
                             flipOffset = 3;
                         }
                     }
@@ -333,7 +360,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Swaps the direction of an edges and changes the port types while doing so.
+     * Swaps the direction of an edges and changes the port types while doing
+     * so.
      * 
      * @param theedge
      *            The edge to use.
@@ -346,4 +374,37 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         theedge.getSource().setType(PortType.OUTPUT);
     }
 
+    /** Holds all swapped edges for later reversing. */
+    private List<LEdge> swappedEdges = new LinkedList<LEdge>();
+
+    /**
+     * Undo the swapping on all edges that were swapped.
+     * 
+     */
+    private void swapBackSwappedEdges() {
+        Iterator<LEdge> iter = swappedEdges.iterator();
+        while (iter.hasNext()) {
+            LEdge edge = iter.next();
+            iter.remove();
+            swapBack(edge);
+        }
+    }
+
+    /**
+     * Swaps the direction of an edges and changes the port types while doing
+     * so.
+     * 
+     * @param theedge
+     *            The edge to use.
+     */
+    private void swapBack(final LEdge theedge) {
+        swapPorts(theedge);
+        // also swap the list of bendpoints
+        List<KVector> points = theedge.getBendPoints();
+        List<KVector> newPoints = new LinkedList<KVector>();
+        for (int i = points.size() - 1; i >= 0; i--) {
+            newPoints.add(points.get(i));
+        }
+        theedge.setProperty(LayoutOptions.BEND_POINTS, newPoints);
+    }
 }

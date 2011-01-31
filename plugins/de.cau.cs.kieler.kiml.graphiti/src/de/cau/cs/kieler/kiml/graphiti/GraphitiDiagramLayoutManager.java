@@ -501,11 +501,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             return;
         }
 
-        // FIXME: find a way to determine whether or not a graph is directed.
-        String name = diagramEditor.getClass().getCanonicalName();
-        if (name.equals("de.cau.cs.kieler.rail.editor.KrailDiagramEditor")) {
-            info.setUndirected(true);
-        }
         info.setGraphElem(edge);
         graphElem2ElemInfoMap.put(edge, info);
 

@@ -120,9 +120,6 @@ public class ElementInfo {
         /** Target anchor. */
         private Anchor target;
 
-        /** true if the edge has no direction. */
-        private boolean isUndirected = false;
-
         /**
          * 
          * 
@@ -180,25 +177,6 @@ public class ElementInfo {
         @Override
         public KEdge getGraphElem() {
             return (KEdge) super.getGraphElem();
-        }
-
-        /**
-         * Setter for the isUndirected.
-         * 
-         * @param isUndirectedParam
-         *            the isUndirected to set
-         */
-        public void setUndirected(final boolean isUndirectedParam) {
-            this.isUndirected = isUndirectedParam;
-        }
-
-        /**
-         * Getter for the isUndirected.
-         * 
-         * @return the isUndirected
-         */
-        public boolean isUndirected() {
-            return isUndirected;
         }
 
     }
