@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ui.layout;
 
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Interface for cached layouts that can be applied repeatedly.
@@ -26,16 +26,16 @@ public interface ICachedLayout {
     /**
      * Applies the cached layout to the given editor part.
      * 
-     * @param editorPart a diagram editor part
+     * @param workbenchPart a diagram workbench part
      * @param animate if true, Draw2D animation is activated
      */
-    void applyLayout(IEditorPart editorPart, boolean animate);
+    void applyLayout(IWorkbenchPart workbenchPart, boolean animate);
     
     /**
      * Applies the cached layout to the given editor part.
      * 
-     * @param editorPart a diagram editor part
+     * @param workbenchPart a diagram workbench part
      */
-    void applyLayout(IEditorPart editorPart);
+    void applyLayout(IWorkbenchPart workbenchPart);
 
 }

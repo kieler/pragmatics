@@ -28,10 +28,9 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CompoundCommand;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -73,8 +72,8 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    protected boolean supports(final IEditorPart editorPart) {
-        return editorPart instanceof GraphsDiagramEditor;
+    protected boolean supports(final IWorkbenchPart workbenchPart) {
+        return workbenchPart instanceof GraphsDiagramEditor;
     }
 
     /**

@@ -18,7 +18,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -52,13 +52,13 @@ public class RemoveOptionsAction extends Action {
      */
     @Override
     public void run() {
-        IEditorPart editorPart = layoutView.getCurrentEditor();
+        IWorkbenchPart workbenchPart = layoutView.getCurrentEditor();
         DiagramLayoutManager manager = layoutView.getCurrentManager();
         if (manager != null) {
-            EditPart diagram = manager.getBridge().getEditPart(editorPart);
+            EditPart diagram = manager.getBridge().getEditPart(workbenchPart);
             if (diagram != null) {
                 // show a dialog to confirm the removal of all layout options
-                String diagramName = editorPart.getTitle();
+                String diagramName = workbenchPart.getTitle();
                 boolean userResponse = MessageDialog.openQuestion(layoutView.getSite().getShell(),
                         Messages.getString("kiml.ui.31"), Messages.getString("kiml.ui.32")
                         + " " + diagramName + "?");

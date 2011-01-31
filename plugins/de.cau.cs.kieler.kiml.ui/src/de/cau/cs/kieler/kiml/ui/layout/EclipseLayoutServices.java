@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
@@ -160,17 +160,17 @@ public class EclipseLayoutServices extends LayoutServices {
     /**
      * Returns the most suitable layout manager for the given editor and edit part.
      * 
-     * @param editorPart the editor for which the layout manager should be
+     * @param workbenchPart the workbench part for which the layout manager should be
      *     fetched, or {@code null}
      * @param editPart the edit part for which the layout manager should be
      *     fetched, or {@code null}
      * @return the most suitable diagram layout manager
      */
-    public DiagramLayoutManager getManager(final IEditorPart editorPart,
+    public DiagramLayoutManager getManager(final IWorkbenchPart workbenchPart,
             final EditPart editPart) {
         for (DiagramLayoutManager manager : managers) {
-            if (manager.supports(editorPart)
-                    || editorPart == null && manager.supports(editPart)) {
+            if (manager.supports(workbenchPart)
+                    || workbenchPart == null && manager.supports(editPart)) {
                 return manager;
             }
         }
@@ -196,13 +196,13 @@ public class EclipseLayoutServices extends LayoutServices {
      * Retrieve a layout configuration for the given editor using the most suitable
      * layout manager.
      * 
-     * @param editorPart the editor part for which the configuration should be fetched
+     * @param workbenchPart the workbench part for which the configuration should be fetched
      * @return a layout configuration for the editor, or {@code null}
      */
-    public ILayoutConfig getLayoutConfig(final IEditorPart editorPart) {
-        DiagramLayoutManager manager = getManager(editorPart, null);
+    public ILayoutConfig getLayoutConfig(final IWorkbenchPart workbenchPart) {
+        DiagramLayoutManager manager = getManager(workbenchPart, null);
         if (manager != null) {
-            EditPart diagramEditPart = manager.getBridge().getEditPart(editorPart);
+            EditPart diagramEditPart = manager.getBridge().getEditPart(workbenchPart);
             return manager.getLayoutConfig(diagramEditPart);
         }
         return null;
@@ -228,8 +228,8 @@ public class EclipseLayoutServices extends LayoutServices {
      * manager instance. Animation and a progress bar can be optionally turned
      * on.
      * 
-     * @param editorPart
-     *            the editor for which layout is performed, or {@code null} if
+     * @param workbenchPart
+     *            the workbench part for which layout is performed, or {@code null} if
      *            the diagram is not part of an editor
      * @param editPart
      *            the parent edit part for which layout is performed, or {@code
@@ -240,10 +240,10 @@ public class EclipseLayoutServices extends LayoutServices {
      *            if true, a progress bar is displayed
      * @return the diagram layout manager that was used for layout
      */
-    public DiagramLayoutManager layout(final IEditorPart editorPart,
+    public DiagramLayoutManager layout(final IWorkbenchPart workbenchPart,
             final EditPart editPart, final boolean animate,
             final boolean progressBar) {
-        return layout(editorPart, editPart, animate, progressBar, false);
+        return layout(workbenchPart, editPart, animate, progressBar, false);
     }
 
     /**
@@ -251,8 +251,8 @@ public class EclipseLayoutServices extends LayoutServices {
      * manager instance and caches the layout result. Animation and a progress
      * bar can be optionally turned on.
      * 
-     * @param editorPart
-     *            the editor for which layout is performed, or {@code null} if
+     * @param workbenchPart
+     *            the workbench part for which layout is performed, or {@code null} if
      *            the diagram is not part of an editor
      * @param editPart
      *            the parent edit part for which layout is performed, or {@code
@@ -264,9 +264,9 @@ public class EclipseLayoutServices extends LayoutServices {
      * @return the cached layout result
      */
     public ICachedLayout cacheLayout(
-            final IEditorPart editorPart, final EditPart editPart,
+            final IWorkbenchPart workbenchPart, final EditPart editPart,
             final boolean animate, final boolean progressBar) {
-        DiagramLayoutManager manager = layout(editorPart, editPart, animate, progressBar, true);
+        DiagramLayoutManager manager = layout(workbenchPart, editPart, animate, progressBar, true);
         return manager.getCachedLayout();
     }
 
@@ -275,8 +275,8 @@ public class EclipseLayoutServices extends LayoutServices {
      * manager instance. Animation, a progress bar, and layout of ancestors can
      * be optionally turned on.
      * 
-     * @param editorPart
-     *            the editor for which layout is performed, or {@code null} if
+     * @param workbenchPart
+     *            the workbench part for which layout is performed, or {@code null} if
      *            the diagram is not part of an editor
      * @param editPart
      *            the parent edit part for which layout is performed, or {@code
@@ -290,18 +290,18 @@ public class EclipseLayoutServices extends LayoutServices {
      *            part, but also for its ancestors
      * @return the diagram layout manager that was used for layout
      */
-    public DiagramLayoutManager layout(final IEditorPart editorPart,
+    public DiagramLayoutManager layout(final IWorkbenchPart workbenchPart,
             final EditPart editPart, final boolean animate,
             final boolean progressBar, final boolean layoutAncestors) {
-        DiagramLayoutManager manager = getManager(editorPart, editPart);
+        DiagramLayoutManager manager = getManager(workbenchPart, editPart);
         if (manager != null) {
             manager.setLayoutConfig(null);
-            manager.layout(editorPart, editPart, animate, progressBar,
+            manager.layout(workbenchPart, editPart, animate, progressBar,
                     layoutAncestors, false);
             return manager;
         } else {
             throw new UnsupportedOperationException(Messages.getString("kiml.ui.15")
-                    + editorPart.getTitle() + ".");
+                    + workbenchPart.getTitle() + ".");
         }
     }
 

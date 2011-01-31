@@ -28,8 +28,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -43,7 +41,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -63,7 +61,6 @@ import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutProviderData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
@@ -76,7 +73,7 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
+public class LayoutViewPart extends ViewPart implements ISelectionListener {
 
     /** the view identifier. */
     public static final String VIEW_ID = "de.cau.cs.kieler.kiml.views.layout";
@@ -92,10 +89,8 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
     private ScrolledForm form;
     /** the page that is displayed in this view part. */
     private PropertySheetPage page;
-    /** the part listener that tracks the active editor part. */
-    private IPartListener partListener;
     /** the currently tracked diagram editor. */
-    private IEditorPart currentEditor;
+    private IWorkbenchPart currentWorkbenchPart;
     /** the currently used diagram layout manager. */
     private DiagramLayoutManager currentManager;
     /** the currently examined edit part. */
@@ -229,42 +224,21 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
             advancedItem.getAction().run();
         }
         
+        // get the current selection and trigger an update
         IWorkbenchWindow workbenchWindow = getSite().getWorkbenchWindow();
         IWorkbenchPage activePage = workbenchWindow.getActivePage();
         if (activePage != null) {
             final IWorkbenchPart activePart = activePage.getActivePart();
-            if (activePart != null) {
+            final ISelection selection = workbenchWindow.getSelectionService().getSelection();
+            if (activePart != null && selection != null) {
                 workbenchWindow.getWorkbench().getDisplay().asyncExec(new Runnable() {
                     public void run() {
-                        setInput(activePart);
+                        selectionChanged(activePart, selection);
                     }
                 });
             }
         }
-        
-        partListener = new IPartListener() {
-            public void partActivated(final IWorkbenchPart part) {
-                setInput(part);
-            }
-            public void partDeactivated(final IWorkbenchPart part) {
-            }
-            public void partBroughtToTop(final IWorkbenchPart part) {
-            }
-            public void partClosed(final IWorkbenchPart part) {
-                if (part == currentEditor) {
-                    if (currentManager != null) {
-                        currentManager.removeChangeListener(LayoutViewPart.this);
-                        currentManager = null;
-                    }
-                    currentEditor = null;
-                    currentEditPart = null;
-                    currentProviderData = DEFAULT_PROVIDER_DATA;
-                }
-            }
-            public void partOpened(final IWorkbenchPart part) {
-            }
-        };
-        workbenchWindow.getPartService().addPartListener(partListener);
+        workbenchWindow.getSelectionService().addSelectionListener(this);
         toolkit.dispose();
     }
 
@@ -296,14 +270,11 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
                     advancedItem.getAction().isChecked());
         }
         // dispose the view part
-        super.dispose();
-        getSite().getWorkbenchWindow().getPartService().removePartListener(partListener);
-        if (currentManager != null) {
-            currentManager.removeChangeListener(LayoutViewPart.this);
-            currentManager = null;
-        }
-        currentEditor = null;
+        getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+        currentManager = null;
+        currentWorkbenchPart = null;
         currentEditPart = null;
+        super.dispose();
     }
     
     /**
@@ -316,52 +287,17 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
             }
         });
     }
-    
-    /**
-     * Sets the input for the property sheet page.
-     * 
-     * @param part the active workbench part
-     */
-    private void setInput(final IWorkbenchPart part) {
-        if (part instanceof IEditorPart) {
-            IEditorPart editorPart = (IEditorPart) part;
-            DiagramLayoutManager manager = EclipseLayoutServices.getInstance()
-                    .getManager(editorPart, null);
-            if (manager != null) {
-                if (currentManager != null) {
-                    currentManager.removeChangeListener(this);
-                }
-                currentEditor = editorPart;
-                currentManager = manager;
-                editorChanged();
-                manager.addChangeListener(editorPart, this);
-            }
-        }
-    }
 
     /**
      * {@inheritDoc}
      */
-    public void selectionChanged(final SelectionChangedEvent event) {
-        if (currentEditor != null) {
-            ISelection selection = event.getSelection();
-            if (selection instanceof IStructuredSelection) {
-                page.selectionChanged(currentEditor, selection);
-                setPartText();
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void editorChanged() {
-        if (currentManager != null) {
-            ISelection selection = currentManager.getBridge().getSelection(currentEditor);
-            if (selection instanceof IStructuredSelection) {
-                page.selectionChanged(currentEditor, selection);
-                setPartText();
-            }
+    public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
+        DiagramLayoutManager manager = EclipseLayoutServices.getInstance().getManager(part, null);
+        if (manager != null) {
+            this.currentWorkbenchPart = part;
+            this.currentManager = manager;
+            page.selectionChanged(part, selection);
+            setPartText();
         }
     }
     
@@ -567,13 +503,12 @@ public class LayoutViewPart extends ViewPart implements IEditorChangeListener {
     }
 
     /**
-     * Returns the currently active editor that is tracked by the layout view.
+     * Returns the currently active workbench part that is tracked by the layout view.
      * 
-     * @return the currently tracked editor, or {@code null} if there is none
+     * @return the current workbench part, or {@code null} if there is none
      */
-    public IEditorPart getCurrentEditor() {
-        // FIXME what about nested editors?
-        return currentEditor;
+    public IWorkbenchPart getCurrentEditor() {
+        return currentWorkbenchPart;
     }
 
     /**

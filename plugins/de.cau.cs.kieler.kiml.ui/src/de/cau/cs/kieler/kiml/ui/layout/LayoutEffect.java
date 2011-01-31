@@ -19,15 +19,12 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.KielerNotSupportedException;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
-import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.ui.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
@@ -63,39 +60,41 @@ public class LayoutEffect extends AbstractEffect {
     /**
      * Create a new layout effect for the given diagram editor and EObject.
      * 
-     * @param editor
-     *            the diagram editor containing the diagram to layout
+     * @param workbenchPart
+     *            the workbench part containing the diagram to layout
      * @param object
      *            the domain model object to layout
      * @throws KielerNotSupportedException if layout is not supported for the given workbench part
      */
-    public LayoutEffect(final IWorkbenchPart editor, final EObject object) throws KielerNotSupportedException {
-        this.diagramEditor = editor;
-        this.bridge = GraphicalFrameworkService.getInstance().getBridge(editor);
+    public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object)
+            throws KielerNotSupportedException {
+        this.diagramEditor = workbenchPart;
+        this.bridge = GraphicalFrameworkService.getInstance().getBridge(workbenchPart);
         this.editPart = bridge.getEditPart(object);
     }
 
     /**
      * Create a new layout effect for the given diagram editor and EObject.
      * 
-     * @param editor
-     *            the diagram editor containing the diagram to layout
+     * @param workbenchPart
+     *            the workbench part containing the diagram to layout
      * @param object
      *            the domain model object to layout
      * @param zoomToFit
      *            whether zoom to fit shall be performed
      * @throws KielerNotSupportedException if layout is not supported for the given workbench part
      */
-    public LayoutEffect(final IWorkbenchPart editor, final EObject object, final boolean zoomToFit) throws KielerNotSupportedException {
-        this(editor, object);
+    public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
+            final boolean zoomToFit) throws KielerNotSupportedException {
+        this(workbenchPart, object);
         this.doZoom = zoomToFit;
     }
 
     /**
      * Create a new layout effect for the given diagram editor and EObject.
      * 
-     * @param editor
-     *            the diagram editor containing the diagram to layout
+     * @param workbenchPart
+     *            the workbench part containing the diagram to layout
      * @param object
      *            the domain model object to layout
      * @param zoomToFit
@@ -104,9 +103,9 @@ public class LayoutEffect extends AbstractEffect {
      *            whether a progress bar shall be displayed
      * @throws KielerNotSupportedException if layout is not supported for the given workbench part
      */
-    public LayoutEffect(final IWorkbenchPart editor, final EObject object, final boolean zoomToFit,
-            final boolean progressBar) throws KielerNotSupportedException {
-        this(editor, object);
+    public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
+            final boolean zoomToFit, final boolean progressBar) throws KielerNotSupportedException {
+        this(workbenchPart, object);
         this.doZoom = zoomToFit;
         this.useProgMonitor = progressBar;
     }
@@ -114,8 +113,8 @@ public class LayoutEffect extends AbstractEffect {
     /**
      * Create a new layout effect for the given diagram editor and EObject.
      * 
-     * @param editor
-     *            the diagram editor containing the diagram to layout
+     * @param workbenchPart
+     *            the workbench part containing the diagram to layout
      * @param object
      *            the domain model object to layout
      * @param zoomToFit
@@ -126,9 +125,10 @@ public class LayoutEffect extends AbstractEffect {
      *            whether to include the ancestors in the layout process
      * @throws KielerNotSupportedException if layout is not supported for the given workbench part
      */
-    public LayoutEffect(final IWorkbenchPart editor, final EObject object, final boolean zoomToFit,
-            final boolean progressBar, final boolean ancestors) throws KielerNotSupportedException {
-        this(editor, object);
+    public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
+            final boolean zoomToFit, final boolean progressBar,
+            final boolean ancestors) throws KielerNotSupportedException {
+        this(workbenchPart, object);
         this.doZoom = zoomToFit;
         this.useProgMonitor = progressBar;
         this.layoutAncestors = ancestors;
@@ -137,8 +137,8 @@ public class LayoutEffect extends AbstractEffect {
     /**
      * Create a new layout effect for the given diagram editor and EObject.
      * 
-     * @param editor
-     *            the diagram editor containing the diagram to layout
+     * @param workbenchPart
+     *            the workbench part containing the diagram to layout
      * @param object
      *            the domain model element to layout
      * @param zoomToFit
@@ -151,9 +151,10 @@ public class LayoutEffect extends AbstractEffect {
      *            whether the layout shall be animated
      * @throws KielerNotSupportedException if layout is not supported for the given workbench part
      */
-    public LayoutEffect(final IWorkbenchPart editor, final EObject object, final boolean zoomToFit,
-            final boolean progressBar, final boolean ancestors, final boolean animation) throws KielerNotSupportedException {
-        this(editor, object);
+    public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
+            final boolean zoomToFit, final boolean progressBar, final boolean ancestors,
+            final boolean animation) throws KielerNotSupportedException {
+        this(workbenchPart, object);
         this.doZoom = zoomToFit;
         this.useProgMonitor = progressBar;
         this.layoutAncestors = ancestors;
@@ -184,25 +185,20 @@ public class LayoutEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        // FIXME: remove this check (and the casts) after the EclipseLayoutServie also supports other
-        // IWorkbenchParts
-        if (diagramEditor instanceof IEditorPart) {
-            manager = EclipseLayoutServices.getInstance().getManager((IEditorPart) diagramEditor,
-                    editPart);
-            if (manager != null) {
-                List<EditPart> zoomToList = null;
-                /*
-                 * haf: trying to add a semantical zoom that zooms to a given list of elements. does
-                 * not yet work
-                 */
-                if (editPart != null) {
-                    zoomToList = Collections.singletonList(editPart);
-                }
-                // System.out.println("Layout: "+((View) editPart.getModel()).getElement());
-                manager.setLayoutConfig(layoutConfig);
-                manager.layout((IEditorPart) diagramEditor, editPart, doAnimate, useProgMonitor,
-                        layoutAncestors, false, doZoom/* , zoomToList */);
+        manager = EclipseLayoutServices.getInstance().getManager(diagramEditor, editPart);
+        if (manager != null) {
+            List<EditPart> zoomToList = null;
+            /*
+             * haf: trying to add a semantical zoom that zooms to a given list of elements. does
+             * not yet work
+             */
+            if (editPart != null) {
+                zoomToList = Collections.singletonList(editPart);
             }
+            // System.out.println("Layout: "+((View) editPart.getModel()).getElement());
+            manager.setLayoutConfig(layoutConfig);
+            manager.layout(diagramEditor, editPart, doAnimate, useProgMonitor,
+                    layoutAncestors, false, doZoom/* , zoomToList */);
         }
     }
 

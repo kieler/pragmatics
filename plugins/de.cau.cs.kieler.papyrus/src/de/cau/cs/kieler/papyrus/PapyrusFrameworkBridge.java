@@ -16,7 +16,7 @@ package de.cau.cs.kieler.papyrus;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.papyrus.core.editor.IMultiDiagramEditor;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.model.GmfFrameworkBridge;
 
@@ -50,11 +50,11 @@ public class PapyrusFrameworkBridge extends GmfFrameworkBridge {
      * {@inheritDoc}
      */
     @Override
-    public ISelection getSelection(final IEditorPart editorPart) {
-        if (editorPart instanceof IMultiDiagramEditor) {
-            return super.getSelection(((IMultiDiagramEditor) editorPart).getActiveEditor());
+    public ISelection getSelection(final IWorkbenchPart workbenchPart) {
+        if (workbenchPart instanceof IMultiDiagramEditor) {
+            return super.getSelection(((IMultiDiagramEditor) workbenchPart).getActiveEditor());
         }
-        return super.getSelection(editorPart);
+        return super.getSelection(workbenchPart);
     }
 
 }

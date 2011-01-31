@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.gmf;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -47,9 +46,8 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -58,7 +56,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.model.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -68,7 +65,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
@@ -165,8 +161,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    protected boolean supports(final IEditorPart editorPart) {
-        return editorPart instanceof DiagramEditor;
+    protected boolean supports(final IWorkbenchPart workbenchPart) {
+        return workbenchPart instanceof DiagramEditor;
     }
 
     /**
@@ -175,44 +171,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     @Override
     protected boolean supports(final EditPart editPart) {
         return editPart instanceof IGraphicalEditPart;
-    }
-
-    /** map of editor change listeners to all editors for which they have registered. */
-    private Map<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>> listenerMap
-            = new HashMap<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>>();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addChangeListener(final IEditorPart editorPart, final IEditorChangeListener listener) {
-        if (editorPart instanceof DiagramEditor) {
-            final DiagramEditor diagramEditor = (DiagramEditor) editorPart;
-            diagramEditor.getDiagramGraphicalViewer().addSelectionChangedListener(listener);
-            List<Pair<DiagramEditor, ISelectionChangedListener>> editorList = listenerMap
-                .get(listener);
-            if (editorList == null) {
-                editorList = new LinkedList<Pair<DiagramEditor, ISelectionChangedListener>>();
-                listenerMap.put(listener, editorList);
-            }
-            editorList.add(new Pair<DiagramEditor, ISelectionChangedListener>(diagramEditor,
-                listener));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void removeChangeListener(final IEditorChangeListener listener) {
-        List<Pair<DiagramEditor, ISelectionChangedListener>> editorList = listenerMap
-            .remove(listener);
-        if (editorList != null) {
-            for (Pair<DiagramEditor, ISelectionChangedListener> pair : editorList) {
-                pair.getFirst().getDiagramGraphicalViewer()
-                    .removeSelectionChangedListener(pair.getSecond());
-            }
-        }
     }
 
     /** the editing provider for this layout manager. */
@@ -244,7 +202,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    public KNode buildLayoutGraph(final IEditorPart editorPart, final EditPart editPart,
+    public KNode buildLayoutGraph(final IWorkbenchPart workbenchPart, final EditPart editPart,
         final boolean layoutAncestors) {
         graphElem2EditPartMap.clear();
         editPart2GraphElemMap.clear();
@@ -252,8 +210,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         emptyLabels.clear();
 
         // get the diagram editor part
-        if (editorPart instanceof DiagramEditor) {
-            diagramEditorPart = (DiagramEditor) editorPart;
+        if (workbenchPart instanceof DiagramEditor) {
+            diagramEditorPart = (DiagramEditor) workbenchPart;
         } else {
             diagramEditorPart = null;
         }
@@ -280,7 +238,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         }
         if (layoutRootPart == null) {
             throw new UnsupportedOperationException("Not supported by this layout manager: Editor "
-                + editorPart + ", Edit part " + editPart);
+                + workbenchPart + ", Edit part " + editPart);
         }
 
         // find the diagram edit part

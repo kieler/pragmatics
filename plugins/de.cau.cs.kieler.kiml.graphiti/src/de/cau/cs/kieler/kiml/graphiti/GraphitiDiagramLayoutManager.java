@@ -32,8 +32,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -53,7 +52,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -89,8 +87,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    protected boolean supports(final IEditorPart editorPart) {
-        return editorPart instanceof DiagramEditor;
+    protected boolean supports(final IWorkbenchPart workbenchPart) {
+        return workbenchPart instanceof DiagramEditor;
     }
 
     /**
@@ -136,14 +134,14 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      * {@inheritDoc}
      */
     @Override
-    public KNode buildLayoutGraph(final IEditorPart editorPart,
+    public KNode buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final EditPart editPart, final boolean layoutAncestors) {
         connections.clear();
         pictElem2ElemInfoMap.clear();
         graphElem2ElemInfoMap.clear();
 
-        if (editorPart instanceof DiagramEditor) {
-            diagramEditor = (DiagramEditor) editorPart;
+        if (workbenchPart instanceof DiagramEditor) {
+            diagramEditor = (DiagramEditor) workbenchPart;
         } else {
             diagramEditor = null;
         }
@@ -156,7 +154,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (!(layoutRootPart instanceof IPictogramElementEditPart)) {
             throw new UnsupportedOperationException(
                     "Not supported by this layout manager: Editor "
-                            + editorPart + ", Edit part " + editPart);
+                            + workbenchPart + ", Edit part " + editPart);
         }
         PictogramElement element =
                 ((IPictogramElementEditPart) layoutRootPart)
@@ -643,50 +641,6 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     protected ICachedLayout getCachedLayout() {
         // TODO support caching of layouts
         return null;
-    }
-
-    /**
-     * map of editor change listeners to all editors for which they have
-     * registered.
-     */
-    private Map<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>> listenerMap =
-            new HashMap<IEditorChangeListener, List<Pair<DiagramEditor, ISelectionChangedListener>>>();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addChangeListener(final IEditorPart editorPart,
-            final IEditorChangeListener listener) {
-        if (editorPart instanceof DiagramEditor) {
-            final DiagramEditor diagEditor = (DiagramEditor) editorPart;
-            diagEditor.getGraphicalViewer().addSelectionChangedListener(
-                    listener);
-            List<Pair<DiagramEditor, ISelectionChangedListener>> editorList =
-                    listenerMap.get(listener);
-            if (editorList == null) {
-                editorList =
-                        new LinkedList<Pair<DiagramEditor, ISelectionChangedListener>>();
-                listenerMap.put(listener, editorList);
-            }
-            editorList.add(new Pair<DiagramEditor, ISelectionChangedListener>(
-                    diagEditor, listener));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void removeChangeListener(final IEditorChangeListener listener) {
-        List<Pair<DiagramEditor, ISelectionChangedListener>> editorList =
-                listenerMap.remove(listener);
-        if (editorList != null) {
-            for (Pair<DiagramEditor, ISelectionChangedListener> pair : editorList) {
-                pair.getFirst().getGraphicalViewer()
-                        .removeSelectionChangedListener(pair.getSecond());
-            }
-        }
     }
 
     /**

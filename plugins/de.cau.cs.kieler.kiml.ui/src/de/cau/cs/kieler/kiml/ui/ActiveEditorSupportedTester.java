@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.kiml.ui;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
@@ -31,9 +31,9 @@ public class ActiveEditorSupportedTester extends PropertyTester {
      */
     public boolean test(final Object receiver, final String property,
             final Object[] args, final Object expectedValue) {
-        if (receiver instanceof IEditorPart) {
-            IEditorPart editorPart = (IEditorPart) receiver;
-            return EclipseLayoutServices.getInstance().getManager(editorPart, null) != null;
+        if (receiver instanceof IWorkbenchPart) {
+            IWorkbenchPart workbenchPart = (IWorkbenchPart) receiver;
+            return EclipseLayoutServices.getInstance().getManager(workbenchPart, null) != null;
         }
         return false;
     }

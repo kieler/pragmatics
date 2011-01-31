@@ -30,7 +30,7 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -111,16 +111,16 @@ public class GmfCachedLayout implements ICachedLayout {
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(final IEditorPart editorPart, final boolean animate) {
+    public void applyLayout(final IWorkbenchPart workbenchPart, final boolean animate) {
         MonitoredOperation.runInUI(new Runnable() {
             public void run() {
                 if (animate) {
                     Animation.markBegin();
-                    applyLayout(editorPart);
+                    applyLayout(workbenchPart);
                     Animation.run(DiagramLayoutManager.calcAnimationTime(
                             layoutCache.size() / ANIMATION_SHORTEN));
                 } else {
-                    applyLayout(editorPart);
+                    applyLayout(workbenchPart);
                 }
             }
         }, false);
@@ -129,16 +129,16 @@ public class GmfCachedLayout implements ICachedLayout {
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(final IEditorPart editorPart) {
+    public void applyLayout(final IWorkbenchPart workbenchPart) {
         // get a command stack to execute the command
         CommandStack commandStack = null;
-        if (editorPart != null) {
-            Object adapter = editorPart.getAdapter(CommandStack.class);
+        if (workbenchPart != null) {
+            Object adapter = workbenchPart.getAdapter(CommandStack.class);
             if (adapter instanceof CommandStack) {
                 commandStack = (CommandStack) adapter;
             }
         }
-        if (commandStack == null || !(editorPart instanceof DiagramEditor)) {
+        if (commandStack == null || !(workbenchPart instanceof DiagramEditor)) {
             IStatus status = new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
                     "The selected editor has no command stack.", null);
             StatusManager.getManager().handle(status);
@@ -146,7 +146,7 @@ public class GmfCachedLayout implements ICachedLayout {
         }
 
         // create a new request to change the layout
-        DiagramEditor diagramEditor = (DiagramEditor) editorPart;
+        DiagramEditor diagramEditor = (DiagramEditor) workbenchPart;
         Map<EObject, View> viewMap = getViewMap(diagramEditor.getDiagram());
         Map<?, ?> editPartRegistry = diagramEditor.getDiagramGraphicalViewer().getEditPartRegistry();
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();

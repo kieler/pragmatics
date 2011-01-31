@@ -26,7 +26,7 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -39,7 +39,6 @@ import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.triggers.LayoutGraphTrigger;
@@ -113,8 +112,8 @@ public abstract class DiagramLayoutManager {
      * manager. A progress bar indicating progress of the layout algorithm is
      * optionally shown to the user.
      * 
-     * @param editorPart
-     *            the editor for which layout is performed, or {@code null} if
+     * @param workbenchPart
+     *            the workbench part for which layout is performed, or {@code null} if
      *            the diagram is not part of an editor
      * @param editPart
      *            the parent edit part for which layout is performed, or
@@ -129,12 +128,11 @@ public abstract class DiagramLayoutManager {
      * @param cacheLayout
      *            if true, the layout result is cached for the underlying model
      */
-    public final void layout(final IEditorPart editorPart,
+    public final void layout(final IWorkbenchPart workbenchPart,
             final EditPart editPart, final boolean animate,
             final boolean progressBar, final boolean layoutAncestors,
             final boolean cacheLayout) {
-        layout(editorPart, editPart, animate, progressBar, layoutAncestors,
-                cacheLayout, false);
+        layout(workbenchPart, editPart, animate, progressBar, layoutAncestors, cacheLayout, false);
     }
 
     /**
@@ -142,8 +140,8 @@ public abstract class DiagramLayoutManager {
      * manager. A progress bar indicating progress of the layout algorithm is
      * optionally shown to the user.
      * 
-     * @param editorPart
-     *            the editor for which layout is performed, or {@code null} if
+     * @param workbenchPart
+     *            the workbench part for which layout is performed, or {@code null} if
      *            the diagram is not part of an editor
      * @param editPart
      *            the parent edit part for which layout is performed, or
@@ -160,47 +158,44 @@ public abstract class DiagramLayoutManager {
      * @param zoom
      *            if true, automatic zoom-to-fit is activated
      */
-    public final void layout(final IEditorPart editorPart,
+    public final void layout(final IWorkbenchPart workbenchPart,
             final EditPart editPart, final boolean animate,
             final boolean progressBar, final boolean layoutAncestors,
             final boolean cacheLayout, final boolean zoom) {
         // perform layout with a progress bar
         if (progressBar) {
-            final MonitoredOperation monitoredOperation =
-                    new MonitoredOperation() {
-                        // first phase: build the layout graph
-                        @Override
-                        protected void preUIexec() {
-                            KNode graph =
-                                    buildLayoutGraph(editorPart, editPart,
-                                            layoutAncestors);
-                            LayoutGraphTrigger.triggerPreLayout(graph);
-                        }
+            final MonitoredOperation monitoredOperation = new MonitoredOperation() {
+                // first phase: build the layout graph
+                @Override
+                protected void preUIexec() {
+                    KNode graph = buildLayoutGraph(workbenchPart, editPart, layoutAncestors);
+                    LayoutGraphTrigger.triggerPreLayout(graph);
+                }
 
-                        // second phase: execute layout algorithms
-                        @Override
-                        protected IStatus
-                                execute(final IProgressMonitor monitor) {
-                            return layout(new KielerProgressMonitor(monitor,
-                                    MAX_PROGRESS_LEVELS), layoutAncestors);
-                        }
+                // second phase: execute layout algorithms
+                @Override
+                protected IStatus
+                        execute(final IProgressMonitor monitor) {
+                    return layout(new KielerProgressMonitor(monitor,
+                            MAX_PROGRESS_LEVELS), layoutAncestors);
+                }
 
-                        // third phase: apply layout with animation
-                        @Override
-                        protected void postUIexec(final IStatus status) {
-                            if (status.getSeverity() == IStatus.OK) {
-                                int nodeCount =
-                                        status == null ? 0 : status.getCode();
-                                if (zoom) {
-                                    applyAndZoom(nodeCount, animate,
-                                            cacheLayout);
-                                } else {
-                                    applyAnimatedLayout(animate, cacheLayout,
-                                            nodeCount);
-                                }
-                            }
+                // third phase: apply layout with animation
+                @Override
+                protected void postUIexec(final IStatus status) {
+                    if (status.getSeverity() == IStatus.OK) {
+                        int nodeCount =
+                                status == null ? 0 : status.getCode();
+                        if (zoom) {
+                            applyAndZoom(nodeCount, animate,
+                                    cacheLayout);
+                        } else {
+                            applyAnimatedLayout(animate, cacheLayout,
+                                    nodeCount);
                         }
-                    };
+                    }
+                }
+            };
             monitoredOperation.runMonitored();
 
             // perform layout without a progress bar
@@ -208,9 +203,7 @@ public abstract class DiagramLayoutManager {
             MonitoredOperation.runInUI(new Runnable() {
                 // first phase: build the layout graph
                 public void run() {
-                    KNode graph =
-                            buildLayoutGraph(editorPart, editPart,
-                                    layoutAncestors);
+                    KNode graph = buildLayoutGraph(workbenchPart, editPart, layoutAncestors);
                     LayoutGraphTrigger.triggerPreLayout(graph);
                 }
             }, true);
@@ -369,8 +362,7 @@ public abstract class DiagramLayoutManager {
 
         Viewport vp = zoomManager.getViewport();
         // find the top-level Viewport
-        EditPart oneElement = elements.get(0); // we already know that elements
-                                               // is not empty
+        EditPart oneElement = elements.get(0); // we already know that elements is not empty
         if (oneElement instanceof GraphicalEditPart) {
             IFigure oneFigure = ((GraphicalEditPart) oneElement).getFigure();
             IFigure parent = oneFigure.getParent();
@@ -381,9 +373,8 @@ public abstract class DiagramLayoutManager {
                 parent = parent.getParent();
             }
         }
-
-        System.out.println("VP and zoomManager VP the same: "
-                + (zoomManager.getViewport() == vp));
+        
+        System.out.println("VP and zoomManager VP the same: " + (zoomManager.getViewport() == vp));
 
         if (scale <= oldScale) {
             zoomManager.setViewLocation(newLocation);
@@ -542,11 +533,11 @@ public abstract class DiagramLayoutManager {
      * Determines whether this layout manager is able to perform layout for the
      * given editor.
      * 
-     * @param editorPart
-     *            an editor part
+     * @param workbenchPart
+     *            a workbench part
      * @return true if this layout manager supports the editor part
      */
-    protected abstract boolean supports(IEditorPart editorPart);
+    protected abstract boolean supports(IWorkbenchPart workbenchPart);
 
     /**
      * Determines whether this layout manager is able to perform layout for the
@@ -563,9 +554,8 @@ public abstract class DiagramLayoutManager {
      * layout graph should reflect the structure of edit parts in the original
      * diagram.
      * 
-     * @param editorPart
-     *            the editor for which layout is performed, or {@code null} if
-     *            the diagram is not part of an editor
+     * @param workbenchPart
+     *            the workbench part for which layout is performed, or {@code null}
      * @param editPart
      *            the parent edit part for which layout is performed, or
      *            {@code null} if the whole diagram shall be layouted
@@ -574,7 +564,7 @@ public abstract class DiagramLayoutManager {
      *            part, but also for its ancestors
      * @return a layout graph instance
      */
-    public abstract KNode buildLayoutGraph(IEditorPart editorPart,
+    public abstract KNode buildLayoutGraph(IWorkbenchPart workbenchPart,
             EditPart editPart, boolean layoutAncestors);
 
     /**
@@ -626,26 +616,5 @@ public abstract class DiagramLayoutManager {
      * @return the last cached layout
      */
     protected abstract ICachedLayout getCachedLayout();
-
-    /**
-     * Register a listener for change of the active editor or active selection.
-     * The default implementation does nothing.
-     * 
-     * @param editorPart
-     *            editor to register to
-     * @param listener
-     *            listener to register
-     */
-    public abstract void addChangeListener(IEditorPart editorPart,
-            IEditorChangeListener listener);
-
-    /**
-     * Remove a change listener from all editors for which it has registered.
-     * The default implementation does nothing.
-     * 
-     * @param listener
-     *            listener to remove
-     */
-    public abstract void removeChangeListener(IEditorChangeListener listener);
 
 }

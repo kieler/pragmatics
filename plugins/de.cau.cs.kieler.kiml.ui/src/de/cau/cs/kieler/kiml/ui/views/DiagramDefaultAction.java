@@ -18,7 +18,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.ILayoutConfig;
@@ -63,10 +63,10 @@ public class DiagramDefaultAction extends Action {
      */
     @Override
     public void run() {
-        IEditorPart editorPart = layoutView.getCurrentEditor();
+        IWorkbenchPart workbenchPart = layoutView.getCurrentEditor();
         DiagramLayoutManager manager = layoutView.getCurrentManager();
         if (manager != null) {
-            EditPart diagram = manager.getBridge().getEditPart(editorPart);
+            EditPart diagram = manager.getBridge().getEditPart(workbenchPart);
             if (diagram != null) {
                 EditingDomain editingDomain = manager.getBridge().getEditingDomain(diagram);
                 ILayoutConfig config = manager.getLayoutConfig(diagram);
