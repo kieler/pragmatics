@@ -42,6 +42,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.IEditorChangeListener;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
+import de.cau.cs.kieler.kiml.ui.triggers.LayoutGraphTrigger;
 import de.cau.cs.kieler.kiml.ui.util.DebugCanvas;
 
 /**
@@ -58,14 +59,13 @@ public abstract class DiagramLayoutManager {
     /** the debug canvas to use. */
     private static final DebugCanvas DEBUG_CANVAS = new DebugCanvas();
     /** the layouter engine used to layout diagrams. */
-    private static final RecursiveLayouterEngine LAYOUTER_ENGINE = new RecursiveLayouterEngine(
-            DEBUG_CANVAS);
-    
+    private static final RecursiveLayouterEngine LAYOUTER_ENGINE =
+            new RecursiveLayouterEngine(DEBUG_CANVAS);
+
     /** the configured priority of the layout manager. */
     private int priority;
     /** a layout configuration that is injected externally. */
     private ILayoutConfig externalLayoutConfig;
-
 
     /**
      * Return the manager priority.
@@ -79,31 +79,35 @@ public abstract class DiagramLayoutManager {
     /**
      * Set the manager priority.
      * 
-     * @param thepriority the priority to set
+     * @param thepriority
+     *            the priority to set
      */
     public final void setPriority(final int thepriority) {
         this.priority = thepriority;
     }
-    
+
     /**
      * Set an external layout configuration to use with this layout manager.
-     * Giving {@code null} as parameter resets the configuration to the standard.
+     * Giving {@code null} as parameter resets the configuration to the
+     * standard.
      * 
-     * @param layoutConfig a layout configuration, or {@code null}
+     * @param layoutConfig
+     *            a layout configuration, or {@code null}
      */
     public final void setLayoutConfig(final ILayoutConfig layoutConfig) {
         this.externalLayoutConfig = layoutConfig;
     }
-    
+
     /**
-     * Returns the layout configuration that was set externally for this layout manager.
+     * Returns the layout configuration that was set externally for this layout
+     * manager.
      * 
      * @return the external layout configuration, or {@code null}
      */
     protected final ILayoutConfig getExternalConfig() {
         return externalLayoutConfig;
     }
-    
+
     /**
      * Performs layout on the given editor or edit part using this layout
      * manager. A progress bar indicating progress of the layout algorithm is
@@ -113,8 +117,8 @@ public abstract class DiagramLayoutManager {
      *            the editor for which layout is performed, or {@code null} if
      *            the diagram is not part of an editor
      * @param editPart
-     *            the parent edit part for which layout is performed, or {@code
-     *            null} if the whole diagram shall be layouted
+     *            the parent edit part for which layout is performed, or
+     *            {@code null} if the whole diagram shall be layouted
      * @param animate
      *            if true, Draw2D animation is activated
      * @param progressBar
@@ -129,7 +133,8 @@ public abstract class DiagramLayoutManager {
             final EditPart editPart, final boolean animate,
             final boolean progressBar, final boolean layoutAncestors,
             final boolean cacheLayout) {
-        layout(editorPart, editPart, animate, progressBar, layoutAncestors, cacheLayout, false);
+        layout(editorPart, editPart, animate, progressBar, layoutAncestors,
+                cacheLayout, false);
     }
 
     /**
@@ -141,8 +146,8 @@ public abstract class DiagramLayoutManager {
      *            the editor for which layout is performed, or {@code null} if
      *            the diagram is not part of an editor
      * @param editPart
-     *            the parent edit part for which layout is performed, or {@code
-     *            null} if the whole diagram shall be layouted
+     *            the parent edit part for which layout is performed, or
+     *            {@code null} if the whole diagram shall be layouted
      * @param animate
      *            if true, Draw2D animation is activated
      * @param progressBar
@@ -161,45 +166,57 @@ public abstract class DiagramLayoutManager {
             final boolean cacheLayout, final boolean zoom) {
         // perform layout with a progress bar
         if (progressBar) {
-            final MonitoredOperation monitoredOperation = new MonitoredOperation() {
-                // first phase: build the layout graph
-                @Override
-                protected void preUIexec() {
-                    buildLayoutGraph(editorPart, editPart, layoutAncestors);
-                }
-
-                // second phase: execute layout algorithms
-                @Override
-                protected IStatus execute(final IProgressMonitor monitor) {
-                    return layout(new KielerProgressMonitor(monitor,
-                            MAX_PROGRESS_LEVELS), layoutAncestors);
-                }
-
-                // third phase: apply layout with animation
-                @Override
-                protected void postUIexec(final IStatus status) {
-                    if (status.getSeverity() == IStatus.OK) {
-                        int nodeCount = status == null ? 0 : status.getCode();
-                        if (zoom) {
-                            applyAndZoom(nodeCount, animate, cacheLayout);
-                        } else {
-                            applyAnimatedLayout(animate, cacheLayout, nodeCount);
+            final MonitoredOperation monitoredOperation =
+                    new MonitoredOperation() {
+                        // first phase: build the layout graph
+                        @Override
+                        protected void preUIexec() {
+                            KNode graph =
+                                    buildLayoutGraph(editorPart, editPart,
+                                            layoutAncestors);
+                            LayoutGraphTrigger.triggerPreLayout(graph);
                         }
-                    }
-                }
-            };
+
+                        // second phase: execute layout algorithms
+                        @Override
+                        protected IStatus
+                                execute(final IProgressMonitor monitor) {
+                            return layout(new KielerProgressMonitor(monitor,
+                                    MAX_PROGRESS_LEVELS), layoutAncestors);
+                        }
+
+                        // third phase: apply layout with animation
+                        @Override
+                        protected void postUIexec(final IStatus status) {
+                            if (status.getSeverity() == IStatus.OK) {
+                                int nodeCount =
+                                        status == null ? 0 : status.getCode();
+                                if (zoom) {
+                                    applyAndZoom(nodeCount, animate,
+                                            cacheLayout);
+                                } else {
+                                    applyAnimatedLayout(animate, cacheLayout,
+                                            nodeCount);
+                                }
+                            }
+                        }
+                    };
             monitoredOperation.runMonitored();
 
-        // perform layout without a progress bar
+            // perform layout without a progress bar
         } else {
             MonitoredOperation.runInUI(new Runnable() {
                 // first phase: build the layout graph
                 public void run() {
-                    buildLayoutGraph(editorPart, editPart, layoutAncestors);
+                    KNode graph =
+                            buildLayoutGraph(editorPart, editPart,
+                                    layoutAncestors);
+                    LayoutGraphTrigger.triggerPreLayout(graph);
                 }
             }, true);
             // second phase: execute layout algorithms
-            final IStatus status = layout(new BasicProgressMonitor(0), layoutAncestors);
+            final IStatus status =
+                    layout(new BasicProgressMonitor(0), layoutAncestors);
             MonitoredOperation.runInUI(new Runnable() {
                 // third phase: apply layout with animation
                 public void run() {
@@ -213,28 +230,37 @@ public abstract class DiagramLayoutManager {
             }, false);
         }
     }
-    
+
     /**
      * Apply layout with zoom and animation.
      * 
-     * @param animate if true, activate Draw2D animation
-     * @param cacheLayout if true, the layout result is cached for the underlying model
-     * @param nodeCount the number of nodes in the layouted diagram
+     * @param animate
+     *            if true, activate Draw2D animation
+     * @param cacheLayout
+     *            if true, the layout result is cached for the underlying model
+     * @param nodeCount
+     *            the number of nodes in the layouted diagram
      */
     public final void applyAndZoom(final int nodeCount, final boolean animate,
             final boolean cacheLayout) {
         // determine pre- or post-layout zoom
-        final ZoomManager zoomManager = getBridge().getZoomManager(getEditPart(getLayoutGraph()));
+        final ZoomManager zoomManager =
+                getBridge().getZoomManager(getEditPart(getLayoutGraph()));
         KNode parentNode = getLayoutGraph();
         while (parentNode.getParent() != null) {
             parentNode = parentNode.getParent();
         }
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        Dimension available = zoomManager.getViewport().getClientArea().getSize();
+        Dimension available =
+                zoomManager.getViewport().getClientArea().getSize();
         float desiredWidth = parentLayout.getWidth();
-        double scaleX = Math.min(available.width / desiredWidth, zoomManager.getMaxZoom());
+        double scaleX =
+                Math.min(available.width / desiredWidth,
+                        zoomManager.getMaxZoom());
         float desiredHeight = parentLayout.getHeight();
-        double scaleY = Math.min(available.height / desiredHeight, zoomManager.getMaxZoom());
+        double scaleY =
+                Math.min(available.height / desiredHeight,
+                        zoomManager.getMaxZoom());
         final double scale = Math.min(scaleX, scaleY);
         final double oldScale = zoomManager.getZoom();
 
@@ -252,8 +278,10 @@ public abstract class DiagramLayoutManager {
     }
 
     /**
-     * Apply layout with animation and zoom and scroll such that the given elements are visible.
-     * Currently experimental, does not yet zoom correctly.
+     * Apply layout with animation and zoom and scroll such that the given
+     * elements are visible. Currently experimental, does not yet zoom
+     * correctly.
+     * 
      * @author haf
      * 
      * @param elements
@@ -265,8 +293,9 @@ public abstract class DiagramLayoutManager {
      * @param nodeCount
      *            the number of nodes in the layouted diagram
      */
-    public final void applyAndZoomToElements(final List<EditPart> elements, final int nodeCount,
-            final boolean animate, final boolean cacheLayout) {
+    public final void applyAndZoomToElements(final List<EditPart> elements,
+            final int nodeCount, final boolean animate,
+            final boolean cacheLayout) {
         if (elements == null || elements.isEmpty()) {
             // fallback to normal zoom-to-fit
             applyAndZoom(nodeCount, animate, cacheLayout);
@@ -280,7 +309,7 @@ public abstract class DiagramLayoutManager {
         float y2 = Float.NEGATIVE_INFINITY;
 
         for (EditPart editPart : elements) {
-            //System.out.println("Figure Bounds: "+((GraphicalEditPart)editPart).getFigure().getBounds());
+            // System.out.println("Figure Bounds: "+((GraphicalEditPart)editPart).getFigure().getBounds());
             KNode node = getLayoutNode(editPart);
             KShapeLayout layout = node.getData(KShapeLayout.class);
             // calculate absolute coordinates
@@ -310,66 +339,78 @@ public abstract class DiagramLayoutManager {
         }
 
         // determine pre- or post-layout zoom
-        final ZoomManager zoomManager = getBridge().getZoomManager(getEditPart(getLayoutGraph()));
-        Dimension available = zoomManager.getViewport().getClientArea().getSize();
+        final ZoomManager zoomManager =
+                getBridge().getZoomManager(getEditPart(getLayoutGraph()));
+        Dimension available =
+                zoomManager.getViewport().getClientArea().getSize();
         float desiredWidth = x2 - x1;
         float desiredHeight = y2 - y1;
-        double scaleX = Math.min(available.width / desiredWidth, zoomManager.getMaxZoom());
-        double scaleY = Math.min(available.height / desiredHeight, zoomManager.getMaxZoom());
+        double scaleX =
+                Math.min(available.width / desiredWidth,
+                        zoomManager.getMaxZoom());
+        double scaleY =
+                Math.min(available.height / desiredHeight,
+                        zoomManager.getMaxZoom());
         final double scale = Math.min(scaleX, scaleY);
         final double oldScale = zoomManager.getZoom();
 
-        System.out.println("Bounding box: " + x1 + " " + y1 + " " + x2 + " " + y2 + " New Scale: "
-                + scale + " availaible: " + available);
+        System.out.println("Bounding box: " + x1 + " " + y1 + " " + x2 + " "
+                + y2 + " New Scale: " + scale + " availaible: " + available);
         Point newLocation = new Point(x1, y1);
-        //newLocation.scale(1 / scale);
-//        RectangleFigure rect = new RectangleFigure();
-//        rect.setBounds(new Rectangle((int)newLocation.x,(int)newLocation.y,(int)(desiredWidth*scale),(int)(desiredHeight*scale)));
-//        //rect.setBounds(new Rectangle(39,248,100,100));
-//        rect.setLineWidth(5);
-//        rect.setForegroundColor(ColorConstants.red);
-//        rect.setFill(false);
-//        rect.setVisible(true);
-        
+        // newLocation.scale(1 / scale);
+        // RectangleFigure rect = new RectangleFigure();
+        // rect.setBounds(new
+        // Rectangle((int)newLocation.x,(int)newLocation.y,(int)(desiredWidth*scale),(int)(desiredHeight*scale)));
+        // //rect.setBounds(new Rectangle(39,248,100,100));
+        // rect.setLineWidth(5);
+        // rect.setForegroundColor(ColorConstants.red);
+        // rect.setFill(false);
+        // rect.setVisible(true);
+
         Viewport vp = zoomManager.getViewport();
         // find the top-level Viewport
-        EditPart oneElement = elements.get(0); // we already know that elements is not empty
-        if(oneElement instanceof GraphicalEditPart){
+        EditPart oneElement = elements.get(0); // we already know that elements
+                                               // is not empty
+        if (oneElement instanceof GraphicalEditPart) {
             IFigure oneFigure = ((GraphicalEditPart) oneElement).getFigure();
             IFigure parent = oneFigure.getParent();
-            while(parent != null){
-                if(parent instanceof Viewport){
-                    vp = (Viewport)parent;
+            while (parent != null) {
+                if (parent instanceof Viewport) {
+                    vp = (Viewport) parent;
                 }
                 parent = parent.getParent();
             }
         }
-        
-        System.out.println("VP and zoomManager VP the same: "+(zoomManager.getViewport() == vp));
-        
+
+        System.out.println("VP and zoomManager VP the same: "
+                + (zoomManager.getViewport() == vp));
+
         if (scale <= oldScale) {
             zoomManager.setViewLocation(newLocation);
-            //zoomManager.setZoom(scale);
+            // zoomManager.setZoom(scale);
             zoomManager.setViewLocation(newLocation);
         }
         applyAnimatedLayout(animate, cacheLayout, nodeCount);
         if (scale > oldScale) {
             zoomManager.setViewLocation(newLocation);
-            //zoomManager.setZoom(scale);
+            // zoomManager.setZoom(scale);
             zoomManager.setViewLocation(newLocation);
         }
-        //zoomManager.setViewLocation(new Point(39,248));
+        // zoomManager.setViewLocation(new Point(39,248));
     }
-    
+
     /**
      * Apply layout with or without animation.
      * 
-     * @param animate if true, activate Draw2D animation
-     * @param cacheLayout if true, the layout result is cached for the underlying model
-     * @param nodeCount the number of nodes in the layouted diagram
+     * @param animate
+     *            if true, activate Draw2D animation
+     * @param cacheLayout
+     *            if true, the layout result is cached for the underlying model
+     * @param nodeCount
+     *            the number of nodes in the layouted diagram
      */
-    public final void applyAnimatedLayout(final boolean animate, final boolean cacheLayout,
-            final int nodeCount) {
+    public final void applyAnimatedLayout(final boolean animate,
+            final boolean cacheLayout, final int nodeCount) {
         // transfer layout to the diagram
         transferLayout(cacheLayout);
         if (animate) {
@@ -403,10 +444,12 @@ public abstract class DiagramLayoutManager {
         try {
             // get the layout graph instance
             KNode layoutGraph = getLayoutGraph();
+            LayoutGraphTrigger.triggerPostLayout(layoutGraph);
 
             // perform layout on the layout graph
             DEBUG_CANVAS.setManager(this);
-            LAYOUTER_ENGINE.layout(layoutGraph, progressMonitor, layoutAncestors);
+            LAYOUTER_ENGINE.layout(layoutGraph, progressMonitor,
+                    layoutAncestors);
             if (progressMonitor.isCanceled()) {
                 return new Status(IStatus.CANCEL, KimlUiPlugin.PLUGIN_ID, 0,
                         null, null);
@@ -420,8 +463,10 @@ public abstract class DiagramLayoutManager {
         } catch (Throwable exception) {
             String message = Messages.getString("kiml.ui.1");
             if (LAYOUTER_ENGINE.getLastLayoutProvider() != null) {
-                message += " (" + LAYOUTER_ENGINE.getLastLayoutProvider().getClass()
-                                .getSimpleName() + ")";
+                message +=
+                        " ("
+                                + LAYOUTER_ENGINE.getLastLayoutProvider()
+                                        .getClass().getSimpleName() + ")";
             }
             return new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID, message,
                     exception);
@@ -459,34 +504,37 @@ public abstract class DiagramLayoutManager {
      * @return number of milliseconds to animate
      */
     public static int calcAnimationTime(final int graphSize) {
-        int time = MIN_ANIMATION_TIME
-                + (int) (ANIM_FACT * Math.sqrt(graphSize));
+        int time =
+                MIN_ANIMATION_TIME + (int) (ANIM_FACT * Math.sqrt(graphSize));
         return time <= MAX_ANIMATION_TIME ? time : MAX_ANIMATION_TIME;
     }
-    
+
     /**
-     * Returns the edit part associated with the given layout node. This is only valid after
-     * {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was called.
+     * Returns the edit part associated with the given layout node. This is only
+     * valid after {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was
+     * called.
      * 
-     * @param knode a node from the layout graph
+     * @param knode
+     *            a node from the layout graph
      * @return the corresponding edit part, or {@code null}
      */
     public EditPart getEditPart(final KNode knode) {
         return null;
     }
-    
+
     /**
-     * Returns the layout node associated with the given edit part. This is only valid after
-     * {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was called.
+     * Returns the layout node associated with the given edit part. This is only
+     * valid after {@link #buildLayoutGraph(IEditorPart, EditPart, boolean)} was
+     * called.
      * 
-     * @param editPart an edit part of the currently layouted diagram
+     * @param editPart
+     *            an edit part of the currently layouted diagram
      * @return the corresponding layout node, or {@code null}
      */
     public KNode getLayoutNode(final EditPart editPart) {
         return null;
     }
-    
-    
+
     /*-------------------------------------------------------------------------------------------*/
     /*------------------- Abstract methods to be implemented by subclasses ----------------------*/
 
@@ -519,8 +567,8 @@ public abstract class DiagramLayoutManager {
      *            the editor for which layout is performed, or {@code null} if
      *            the diagram is not part of an editor
      * @param editPart
-     *            the parent edit part for which layout is performed, or {@code
-     *            null} if the whole diagram shall be layouted
+     *            the parent edit part for which layout is performed, or
+     *            {@code null} if the whole diagram shall be layouted
      * @param layoutAncestors
      *            if true, layout is not only performed for the selected edit
      *            part, but also for its ancestors
@@ -528,21 +576,24 @@ public abstract class DiagramLayoutManager {
      */
     public abstract KNode buildLayoutGraph(IEditorPart editorPart,
             EditPart editPart, boolean layoutAncestors);
-    
+
     /**
      * Returns the graphical framework bridge for this layout manager.
      * 
-     * @return a framework bridge that is suitable for diagrams that are managed by
-     *     this layout manager
+     * @return a framework bridge that is suitable for diagrams that are managed
+     *         by this layout manager
      */
     public abstract IGraphicalFrameworkBridge getBridge();
-    
+
     /**
-     * Returns a layout configuration for the given edit part. If {@code editPart} is
-     * {@code null}, a generic layout configuration is created.
+     * Returns a layout configuration for the given edit part. If
+     * {@code editPart} is {@code null}, a generic layout configuration is
+     * created.
      * 
-     * @param editPart an edit part
-     * @return a layout configuration for the edit part, or a generic configuration
+     * @param editPart
+     *            an edit part
+     * @return a layout configuration for the edit part, or a generic
+     *         configuration
      */
     public abstract ILayoutConfig getLayoutConfig(EditPart editPart);
 
@@ -575,13 +626,15 @@ public abstract class DiagramLayoutManager {
      * @return the last cached layout
      */
     protected abstract ICachedLayout getCachedLayout();
-    
+
     /**
      * Register a listener for change of the active editor or active selection.
      * The default implementation does nothing.
      * 
-     * @param editorPart editor to register to
-     * @param listener listener to register
+     * @param editorPart
+     *            editor to register to
+     * @param listener
+     *            listener to register
      */
     public abstract void addChangeListener(IEditorPart editorPart,
             IEditorChangeListener listener);
@@ -590,8 +643,9 @@ public abstract class DiagramLayoutManager {
      * Remove a change listener from all editors for which it has registered.
      * The default implementation does nothing.
      * 
-     * @param listener listener to remove
+     * @param listener
+     *            listener to remove
      */
     public abstract void removeChangeListener(IEditorChangeListener listener);
-    
+
 }

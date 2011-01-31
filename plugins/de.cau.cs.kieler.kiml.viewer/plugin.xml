@@ -22,5 +22,14 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="de.cau.cs.kieler.core.kivi.combinations">
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.kiml.viewer.UpdateViewerCombination"
+            description="Shows a finished layout graph in the KIML Viewer"
+            name="Show Layout Graph in Viewer">
+      </combination>
+   </extension>
 
 </plugin>

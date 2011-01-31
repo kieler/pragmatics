@@ -240,8 +240,8 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                     last.y--;
                 }
             }
-            allPoints.add(edgeLayout.getTargetPoint().getX(), edgeLayout
-                    .getTargetPoint().getY());
+            // allPoints.add(edgeLayout.getTargetPoint().getX(), edgeLayout
+            // .getTargetPoint().getY());
         }
 
         // transform spline control points into approximated bend points
@@ -259,9 +259,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                             (int) Math.round(kpoint.x + offset.x),
                             (int) Math.round(kpoint.y + offset.y));
             pointList.add(point);
-            System.out.println(point);
         }
-        System.out.println();
     }
 
     /**
