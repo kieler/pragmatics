@@ -82,6 +82,7 @@ import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.core.ui.figures.SplineConnection;
 import de.cau.cs.kieler.core.ui.util.CoreUiUtil;
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper;
 import de.cau.cs.kieler.karma.IRenderingProvider;
@@ -136,10 +137,11 @@ public class KaomFigureProvider implements IRenderingProvider {
         } else if (input.equals("accumulator")) {
             return createAccumulator();
         } else if (input.equals("connection")) {
-            if (oldFigure instanceof PolylineConnectionEx) {
-                PolylineConnectionEx connection = ((PolylineConnectionEx) oldFigure);
+            if (oldFigure instanceof SplineConnection) {
+                SplineConnection connection = ((SplineConnection) oldFigure);
                 connection.setTargetDecoration(null);
                 connection.setLineWidthFloat(LINE_WIDTH);
+                connection.setSplineMode(SplineConnection.SPLINE_OFF);
                 final ConnectionEditPart cPart = (ConnectionEditPart) part;
 
                 AbstractEMFOperation emfOp = new AbstractEMFOperation(cPart.getEditingDomain(),
@@ -149,7 +151,7 @@ public class KaomFigureProvider implements IRenderingProvider {
                             throws ExecutionException {
                         RoutingStyle style = (RoutingStyle) ((View) cPart.getModel())
                                 .getStyle(NotationPackage.Literals.ROUTING_STYLE);
-                        style.setRouting(Routing.RECTILINEAR_LITERAL); // or Routing.TREE_LITERAL
+                        //style.setRouting(Routing.RECTILINEAR_LITERAL); // or Routing.TREE_LITERAL
                         style.setRoundedBendpointsRadius(ROUNDED_BENDPOINTS_RADIUS);
                         style.setSmoothness(Smoothness.NONE_LITERAL);
                         return Status.OK_STATUS;
@@ -167,10 +169,11 @@ public class KaomFigureProvider implements IRenderingProvider {
                 return null;
             }
         } else if (input.equals("stateConnection")) {
-            if (oldFigure instanceof PolylineConnectionEx) {
-                PolylineConnectionEx connection = ((PolylineConnectionEx) oldFigure);
+            if (oldFigure instanceof SplineConnection) {
+                SplineConnection connection = ((SplineConnection) oldFigure);
                 connection.setTargetDecoration(createArrowDecoration());
                 connection.setLineWidthFloat(LINE_WIDTH);
+                connection.setSplineMode(SplineConnection.SPLINE_CUBIC);
                 return oldFigure;
             } else {
                 return null;
