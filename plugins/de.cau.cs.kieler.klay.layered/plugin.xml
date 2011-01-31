@@ -8,6 +8,7 @@
             class="de.cau.cs.kieler.klay.layered.LayeredLayoutProvider"
             id="de.cau.cs.kieler.klay.layered"
             name="KLay Layered"
+            preview="images/layered.png"
             type="de.cau.cs.kieler.layout.types.layered">
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">

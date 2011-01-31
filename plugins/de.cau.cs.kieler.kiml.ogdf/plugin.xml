@@ -72,6 +72,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.sugiyama"
             name="Sugiyama"
             parameter="SUGIYAMA"
+            preview="images/sugiyama.png"
             type="de.cau.cs.kieler.layout.types.layered">
          <supportedDiagram
                priority="9"
@@ -132,6 +133,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.fmmm"
             name="FMMM"
             parameter="FMMM"
+            preview="images/fmmm.png"
             type="de.cau.cs.kieler.layout.types.force">
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed">
@@ -161,6 +163,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.davidsonHarel"
             name="Davidson-Harel"
             parameter="DAVIDSON_HAREL"
+            preview="images/davidson-harel.png"
             type="de.cau.cs.kieler.layout.types.force">
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">
@@ -190,6 +193,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.fruchtermanReingold"
             name="Fruchterman-Reingold"
             parameter="FRUCHTERMAN_REINGOLD"
+            preview="images/fruchterman-reingold.png"
             type="de.cau.cs.kieler.layout.types.force">
          <knownOption
                option="de.cau.cs.kieler.kiml.ogdf.option.iterations">
@@ -213,6 +217,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.circular"
             name="Circular"
             parameter="CIRCULAR"
+            preview="images/circular.png"
             type="de.cau.cs.kieler.layout.types.circle">
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">
@@ -288,6 +293,7 @@
             id="de.cau.cs.kieler.kiml.ogdf.upwardPlanarization"
             name="Upward-Planarization"
             parameter="UPWARD_PLANARIZATION"
+            preview="images/upward.png"
             type="de.cau.cs.kieler.layout.types.layered">
          <knownOption
                option="de.cau.cs.kieler.layout.options.minSpacing">

@@ -29,6 +29,7 @@
             id="de.cau.cs.kieler.kiml.graphviz.dot"
             name="Dot"
             parameter="dot"
+            preview="images/dot.png"
             type="de.cau.cs.kieler.layout.types.layered">
          <supportedDiagram
                priority="10"
@@ -69,6 +70,7 @@
             id="de.cau.cs.kieler.kiml.graphviz.neato"
             name="Neato"
             parameter="neato"
+            preview="images/neato.png"
             type="de.cau.cs.kieler.layout.types.force">
          <supportedDiagram
                priority="7"
@@ -112,6 +114,7 @@
             id="de.cau.cs.kieler.kiml.graphviz.fdp"
             name="FDP"
             parameter="fdp"
+            preview="images/fdp.png"
             type="de.cau.cs.kieler.layout.types.force">
          <supportedDiagram
                priority="6"

@@ -171,6 +171,7 @@ point="org.eclipse.ui.menus">
           class="de.cau.cs.kieler.kiml.ui.util.Draw2DLayoutProvider"
           id="de.cau.cs.kieler.kiml.layouter.draw2d"
           name="Draw2D Layout"
+          preview="images/draw2d.png"
           type="de.cau.cs.kieler.layout.types.layered">
        <supportedDiagram
              priority="1"
