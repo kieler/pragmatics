@@ -118,13 +118,7 @@ public class ImageConverter {
     public static ImageData scaleSWTImage(ImageData imgData, int width, int height, int hint) {
         BufferedImage bufImg = convertToAWT(imgData);
         Image image = bufImg.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
-        int widthP = image.getWidth(null);
-        int heightP = image.getHeight(null);
-
-        // Neues Image erzeugen
         BufferedImage bImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-        // Altes Image auf BufferedImage zeichnen
         bImage.getGraphics().drawImage(image, 0, 0, null);
 
         return convertToSWT(bImage);

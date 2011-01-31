@@ -54,7 +54,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Category;
@@ -153,7 +152,9 @@ public class ImportExamplePage extends WizardPage {
                 } else if (firstElement instanceof Example) {
                     selectedExample = (Example) firstElement;
                     updateDescriptionLabel((Example) firstElement);
-                    updateImageLabel(loadImage(false, IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT));
+                    Image computeImage = computeImage(selectedExample.getOverviewPic(),
+                            selectedExample.getNamespaceId(), IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
+                    updateImageLabel(computeImage != null ? computeImage : noPreviewPic());
 
                 }
             }
@@ -161,21 +162,27 @@ public class ImportExamplePage extends WizardPage {
         treeViewer.expandAll();
     }
 
-    protected Image computeImage(String imagePath, String nameSpaceId, int imageWidth,
-            int imageHeight) {
+    private Image computeImage(String imagePath, String nameSpaceId, int imageWidth, int imageHeight) {
         if (imagePath != null && imagePath.length() > 0) {
             Bundle bundle = Platform.getBundle(nameSpaceId);
             URL resource = bundle.getEntry(imagePath);
             if (resource != null) {
                 ImageDescriptor descriptor = ImageDescriptor.createFromURL(resource);
+                Image image = null;
                 if (!(imageWidth == -1 || imageHeight == -1)) {
                     ImageData imgData = descriptor.getImageData();
-                    double tempSize = Math.max(imgData.width / imageWidth, imgData.height
-                            / imageHeight);
-                    imgData = imgData.scaledTo((int) (imgData.width / tempSize),
-                            (int) (imgData.height / tempSize));
+                    double tempSize = Math.max((double) imgData.width / (double) imageWidth,
+                            (double) imgData.height / (double) imageHeight);
+                    if (tempSize == 0) {
+                        tempSize = 1;
+                    }
+                    imgData = ImageConverter.scaleSWTImage(imgData,
+                            (int) (imgData.width / tempSize), (int) (imgData.height / tempSize),
+                            java.awt.Image.SCALE_SMOOTH);
+                    image = new Image(this.getShell().getDisplay(), imgData);
+                } else {
+                    image = descriptor.createImage();
                 }
-                Image image = descriptor.createImage();
                 if (image != null) {
                     return image;
                 }
@@ -277,26 +284,10 @@ public class ImportExamplePage extends WizardPage {
             }
             if (element instanceof Example) {
                 return computeImage(((Example) element).getOverviewPic(),
-                        ((Example) element).getNamespaceId(), -1, -1);
+                        ((Example) element).getNamespaceId(), 16, 16);
             }
             return null;
         }
-
-        private Image computeIconImage(final String imagePath, final String nameSpaceId) {
-            if (imagePath != null && imagePath.length() > 0) {
-                Bundle bundle = Platform.getBundle(nameSpaceId);
-                URL resource = bundle.getEntry(imagePath);
-                if (resource != null) {
-                    ImageDescriptor descriptor = ImageDescriptor.createFromURL(resource);
-                    Image image = descriptor.createImage();
-                    if (image != null) {
-                        return image;
-                    }
-                }
-            }
-            return null;
-        }
-
     }
 
     private void createRight(Composite parent) {
@@ -339,8 +330,10 @@ public class ImportExamplePage extends WizardPage {
 
                     private Rectangle bounds;
 
-                    private final int MAX_WIDTH = 800;
-                    private final int MAX_HEIGHT = 600;
+                    private final int DIALOG_WIDTH = 800;
+                    private final int DIALOG_HEIGHT = 600;
+
+                    private Point point;
 
                     @Override
                     protected void createButtonsForButtonBar(final Composite parent) {
@@ -358,7 +351,9 @@ public class ImportExamplePage extends WizardPage {
                                 | SWT.H_SCROLL);
                         imgLabel.setLayoutData(new GridData(GridData.CENTER | SWT.V_SCROLL
                                 | SWT.H_SCROLL));
-                        Image image = loadImage(true, -1, -1);
+                        // berechnung muss vorher geschehen. hier ist point.x == null
+                        Image image = computeImage(selectedExample.getOverviewPic(),
+                                selectedExample.getNamespaceId(), this.point.x, this.point.y);
                         bounds = image.getBounds();
                         imgLabel.setImage(image);
                         imgLabel.pack();
@@ -367,16 +362,18 @@ public class ImportExamplePage extends WizardPage {
 
                     @Override
                     protected Point getInitialSize() {
-                        int currentImageWidth = bounds.width + IMG_PADDINGS_WIDTH;
-                        int currentImageHeight = bounds.height + IMG_PADDINGS_HEIGHT;
+                        int currentImageWidth = bounds.width;
+                        int currentImageHeight = bounds.height;
 
-                        if (MAX_WIDTH <= currentImageWidth) {
-                            currentImageWidth = MAX_WIDTH;
+                        if (DIALOG_WIDTH <= currentImageWidth) {
+                            currentImageWidth = DIALOG_WIDTH;
                         }
-                        if (MAX_HEIGHT <= currentImageHeight) {
-                            currentImageHeight = MAX_HEIGHT;
+                        if (DIALOG_HEIGHT <= currentImageHeight) {
+                            currentImageHeight = DIALOG_HEIGHT;
                         }
-                        return new Point(currentImageWidth, currentImageHeight);
+                        this.point = new Point(currentImageWidth + IMG_PADDINGS_WIDTH,
+                                currentImageHeight + IMG_PADDINGS_HEIGHT);
+                        return point;
 
                     }
 
@@ -438,40 +435,42 @@ public class ImportExamplePage extends WizardPage {
         imageLabel.pack();
     }
 
-    /**
-     * Loads image. The parameters define the max width and heigt of an image. The loaded image will
-     * scaled to the parameter values, while keeping the imageformat. If fullSize is true,
-     * imageWidth and imageHeight will ignore and the image will load with its normal size.
-     * 
-     * @param fullSize
-     *            , set false, if imageWidth and imageHeight should used for scaling
-     * @param image_width
-     * @param image_height
-     * @return
-     */
-    private Image loadImage(boolean fullSize, final double imageWidth, final double imageHeight) {
-        final String previewPicPath = selectedExample.getOverviewPic();
-        if (previewPicPath != null && previewPicPath.length() > 1) {
-            try {
-                ImageData imgData = new ImageData(ExampleManager.get().loadOverviewPic(
-                        selectedExample));
-                if (!fullSize) {
-                    double tempSize = Math.max(imgData.width / imageWidth, imgData.height
-                            / imageHeight);
-                    imgData = ImageConverter.scaleSWTImage(imgData,
-                            (int) (imgData.width / tempSize), (int) (imgData.height / tempSize),
-                            java.awt.Image.SCALE_SMOOTH);
-                }
-                return new Image(previewComp.getDisplay(), imgData);
-
-            } catch (final KielerException e) {
-                e.printStackTrace();
-                return noPreviewPic();
-            }
-        }
-        return noPreviewPic();
-
-    }
+    // /**
+    // * Loads image. The parameters define the max width and heigt of an image. The loaded image
+    // will
+    // * scaled to the parameter values, while keeping the imageformat. If fullSize is true,
+    // * imageWidth and imageHeight will ignore and the image will load with its normal size.
+    // *
+    // * @param fullSize
+    // * , set false, if imageWidth and imageHeight should used for scaling
+    // * @param image_width
+    // * @param image_height
+    // * @return
+    // */
+    // private Image loadImage(boolean fullSize, final double imageWidth, final double imageHeight)
+    // {
+    // final String previewPicPath = selectedExample.getOverviewPic();
+    // if (previewPicPath != null && previewPicPath.length() > 1) {
+    // try {
+    // ImageData imgData = new ImageData(ExampleManager.get().loadOverviewPic(
+    // selectedExample));
+    // if (!fullSize) {
+    // double tempSize = Math.max(imgData.width / imageWidth, imgData.height
+    // / imageHeight);
+    // imgData = ImageConverter.scaleSWTImage(imgData,
+    // (int) (imgData.width / tempSize), (int) (imgData.height / tempSize),
+    // java.awt.Image.SCALE_SMOOTH);
+    // }
+    // return new Image(previewComp.getDisplay(), imgData);
+    //
+    // } catch (final KielerException e) {
+    // e.printStackTrace();
+    // return noPreviewPic();
+    // }
+    // }
+    // return noPreviewPic();
+    //
+    // }
 
     private void updateDescriptionLabel(final Example example) {
         StringBuilder sb = new StringBuilder();
