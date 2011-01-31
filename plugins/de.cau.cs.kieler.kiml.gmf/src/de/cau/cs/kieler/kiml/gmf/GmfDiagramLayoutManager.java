@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.gmf;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,6 +47,9 @@ import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IWorkbenchPart;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -85,11 +87,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
     /** map of layout graph elements to edit parts. */
-    private Map<KGraphElement, IGraphicalEditPart> graphElem2EditPartMap
-            = new LinkedHashMap<KGraphElement, IGraphicalEditPart>();
-    /** map of edit parts to layout graph elements. */
-    private Map<IGraphicalEditPart, KGraphElement> editPart2GraphElemMap
-            = new HashMap<IGraphicalEditPart, KGraphElement>();
+    private BiMap<KGraphElement, IGraphicalEditPart> graphElem2EditPartMap = HashBiMap.create();
     /** list of connection edit parts that were found in the diagram. */
     private LinkedList<ConnectionEditPart> connections = new LinkedList<ConnectionEditPart>();
     /** list of empty labels, which should be kept near to their edge. */
@@ -126,7 +124,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * @return the editPart2GraphElemMap
      */
     protected Map<IGraphicalEditPart, KGraphElement> getEditPart2GraphElemMap() {
-        return editPart2GraphElemMap;
+        return graphElem2EditPartMap.inverse();
     }
 
     /**
@@ -205,7 +203,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
     public KNode buildLayoutGraph(final IWorkbenchPart workbenchPart, final EditPart editPart,
         final boolean layoutAncestors) {
         graphElem2EditPartMap.clear();
-        editPart2GraphElemMap.clear();
         connections.clear();
         emptyLabels.clear();
 
@@ -263,7 +260,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         }
         for (LabelEditPart labelEditPart : emptyLabels) {
             IGraphicalEditPart connection = (IGraphicalEditPart) labelEditPart.getParent();
-            KLabel label = KimlUtil.createInitializedLabel(editPart2GraphElemMap.get(connection));
+            KLabel label = KimlUtil.createInitializedLabel(
+                    graphElem2EditPartMap.inverse().get(connection));
             applyLayoutRequest.addElement(label, labelEditPart);
         }
         KShapeLayout graphLayout = layoutGraph.getData(KShapeLayout.class);
@@ -334,7 +332,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      */
     @Override
     public KNode getLayoutNode(final EditPart editPart) {
-        KGraphElement graphElement = editPart2GraphElemMap.get(editPart);
+        KGraphElement graphElement = graphElem2EditPartMap.inverse().get(editPart);
         if (graphElement instanceof KNode) {
             return (KNode) graphElement;
         } else {
@@ -363,7 +361,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         }
         shapeLayout.setHeight(rootBounds.height);
         shapeLayout.setWidth(rootBounds.width);
-        editPart2GraphElemMap.put(rootPart, topNode);
         graphElem2EditPartMap.put(topNode, rootPart);
 
         // create a layout configuration
@@ -422,7 +419,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 AbstractBorderItemEditPart borderItem = (AbstractBorderItemEditPart) obj;
                 KPort port = KimlUtil.createInitializedPort();
                 graphElem2EditPartMap.put(port, borderItem);
-                editPart2GraphElemMap.put(borderItem, port);
                 port.setNode(parentLayoutNode);
 
                 // set the port's layout, relative to the node position
@@ -548,7 +544,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     }
 
                     parentLayoutNode.getChildren().add(childLayoutNode);
-                    editPart2GraphElemMap.put(childNodeEditPart, childLayoutNode);
                     graphElem2EditPartMap.put(childLayoutNode, childNodeEditPart);
                     hasChildNodes = true;
                     // process the child as new current edit part
@@ -577,7 +572,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     font = label.getFont();
                 }
                 if (text != null) {
-                    KNode parent = (KNode) editPart2GraphElemMap.get(graphicalEditPart.getParent());
+                    KNode parent = (KNode) graphElem2EditPartMap.inverse()
+                            .get(graphicalEditPart.getParent());
                     KLabel label = parent.getLabel();
                     if (label.getText() == null || label.getText().length() == 0) {
                         label.setText(text);
@@ -663,7 +659,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             // find a proper source node and source port
             EditPart sourceObj = connection.getSource();
             if (sourceObj instanceof AbstractBorderItemEditPart) {
-                sourcePort = (KPort) editPart2GraphElemMap.get(sourceObj);
+                sourcePort = (KPort) graphElem2EditPartMap.inverse().get(sourceObj);
                 if (sourcePort == null) {
                     continue;
                 }
@@ -671,18 +667,18 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 sourcePort.getEdges().add(edge);
                 sourceNode = sourcePort.getNode();
             } else if (sourceObj instanceof ConnectionEditPart) {
-                KGraphElement connElem = editPart2GraphElemMap.get(((ConnectionEditPart) sourceObj)
-                    .getSource());
+                KGraphElement connElem = graphElem2EditPartMap.inverse()
+                        .get(((ConnectionEditPart) sourceObj).getSource());
                 if (!(connElem instanceof KNode)) {
-                    connElem = editPart2GraphElemMap.get(((ConnectionEditPart) sourceObj)
-                        .getTarget());
+                    connElem = graphElem2EditPartMap.inverse()
+                            .get(((ConnectionEditPart) sourceObj).getTarget());
                 }
                 if (!(connElem instanceof KNode)) {
                     continue;
                 }
                 sourceNode = (KNode) connElem;
             } else {
-                sourceNode = (KNode) editPart2GraphElemMap.get(sourceObj);
+                sourceNode = (KNode) graphElem2EditPartMap.inverse().get(sourceObj);
                 if (sourceNode == null) {
                     continue;
                 }
@@ -703,7 +699,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 // find a proper target node and target port
                 EditPart targetObj = connection.getTarget();
                 if (targetObj instanceof AbstractBorderItemEditPart) {
-                    targetPort = (KPort) editPart2GraphElemMap.get(targetObj);
+                    targetPort = (KPort) graphElem2EditPartMap.inverse().get(targetObj);
                     if (targetPort == null) {
                         continue;
                     }
@@ -711,18 +707,18 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     targetPort.getEdges().add(edge);
                     targetNode = targetPort.getNode();
                 } else if (targetObj instanceof ConnectionEditPart) {
-                    KGraphElement connElem = editPart2GraphElemMap
+                    KGraphElement connElem = graphElem2EditPartMap.inverse()
                         .get(((ConnectionEditPart) targetObj).getTarget());
                     if (!(connElem instanceof KNode)) {
-                        connElem = editPart2GraphElemMap.get(((ConnectionEditPart) targetObj)
-                            .getSource());
+                        connElem = graphElem2EditPartMap.inverse()
+                                .get(((ConnectionEditPart) targetObj).getSource());
                     }
                     if (!(connElem instanceof KNode)) {
                         continue;
                     }
                     targetNode = (KNode) connElem;
                 } else {
-                    targetNode = (KNode) editPart2GraphElemMap.get(targetObj);
+                    targetNode = (KNode) graphElem2EditPartMap.inverse().get(targetObj);
                     if (targetNode == null) {
                         continue;
                     }
@@ -731,7 +727,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 edge.setSource(sourceNode);
                 edge.setTarget(targetNode);
                 graphElem2EditPartMap.put(edge, connection);
-                editPart2GraphElemMap.put(connection, edge);
 
                 // store the current coordinates of the edge
                 KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);

@@ -11,4 +11,5 @@ Require-Bundle: de.cau.cs.kieler.kiml.ui,
  org.eclipse.gmf.runtime.diagram.ui;bundle-version="1.2.0";visibility:=reexport,
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.ui,
- de.cau.cs.kieler.core.model
+ de.cau.cs.kieler.core.model,
+ com.google.collect;bundle-version="0.8.0"
