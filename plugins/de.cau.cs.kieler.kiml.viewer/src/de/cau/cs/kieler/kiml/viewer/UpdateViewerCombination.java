@@ -15,6 +15,8 @@ package de.cau.cs.kieler.kiml.viewer;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
+import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 import de.cau.cs.kieler.kiml.ui.triggers.LayoutGraphTriggerState;
 
 /**
@@ -27,12 +29,19 @@ public class UpdateViewerCombination extends AbstractCombination {
     /**
      * Update the viewer.
      * 
-     * @param trigger
-     *            the state of the trigger
+     * @param effectTrigger the layout effect trigger
+     * @param layoutGraphTrigger the layout graph trigger
      */
-    public void execute(final LayoutGraphTriggerState trigger) {
-        KNode graph = trigger.getLayoutGraph();
-        String state = trigger.getState();
-        new UpdateViewerEffect(graph, state).execute();
+    public void execute(final EffectTriggerState<LayoutEffect> effectTrigger,
+            final LayoutGraphTriggerState layoutGraphTrigger) {
+        if (effectTrigger.getSequenceNumber() > layoutGraphTrigger.getSequenceNumber()) {
+            LayoutEffect layoutEffect = effectTrigger.getEffect();
+            schedule(new UpdateViewerEffect(layoutEffect.getManager().getLayoutGraph(),
+                    UpdateViewerEffect.POST_LAYOUT));
+        } else {
+            KNode graph = layoutGraphTrigger.getLayoutGraph();
+            String state = layoutGraphTrigger.getState();
+            schedule(new UpdateViewerEffect(graph, state));
+        }
     }
 }
