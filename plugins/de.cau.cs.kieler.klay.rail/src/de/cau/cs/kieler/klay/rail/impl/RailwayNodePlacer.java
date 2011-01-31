@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.rail.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -121,7 +122,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                             }
                             nextNodes.push(target);
                             int offset = 0;
-                            /*if (port.getNode().getProperty(Properties.NODE_TYPE)
+                            if (port.getNode().getProperty(Properties.NODE_TYPE)
                                     .equals(NodeType.SWITCH_LEFT)) {
                                 offset -= getConflictDistanceLeft(
                                         getMaxNewPosByLayer(target, layerCount),
@@ -131,7 +132,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                                 offset += getConflictDistanceRight(
                                         getMinNewPosByLayer(target, layerCount),
                                         getMaxPosByLayer(layeredGraph));
-                            }*/
+                            }
                             putTargetInGrid(target, offset + getPositionForNode(targetPort, port));
                         }
                     }
@@ -250,6 +251,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
         List<Integer> result = new LinkedList<Integer>();
         List<LNode> knownNodes = new LinkedList<LNode>();
         Stack<LNode> next = new Stack<LNode>();
+        HashMap<LNode, Integer> placement = new HashMap<LNode, Integer>();
         for (int i = 0; i < layerCount; i++) {
             result.add(Integer.MAX_VALUE);
         }
@@ -278,6 +280,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                     next.push(target);
                     int layerNo = target.getLayer().getIndex();
                     int newPos = getPositionForNode(targetPort, port);
+                    placement.put(target, newPos);
                     if (result.get(layerNo) < newPos) {
                         result.set(layerNo, newPos);
                     }
@@ -298,7 +301,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                             }
                             next.push(target);
                             int layerNo = target.getLayer().getIndex();
-                            int newPos = getPositionForNode(targetPort, port);
+                            int newPos = getPositionForNode(targetPort, port, placement.get(walker));
                             if (result.get(layerNo) < newPos) {
                                 result.set(layerNo, newPos);
                             }
@@ -316,6 +319,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
         List<Integer> result = new LinkedList<Integer>();
         List<LNode> knownNodes = new LinkedList<LNode>();
         Stack<LNode> next = new Stack<LNode>();
+        HashMap<LNode, Integer> placement = new HashMap<LNode, Integer>();
         for (int i = 0; i < layerCount; i++) {
             result.add(0);
         }
@@ -343,7 +347,8 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                     }
                     next.push(target);
                     int layerNo = target.getLayer().getIndex();
-                    int newPos = getPositionForNode(targetPort, port);
+                    int newPos = getPositionForNode(targetPort, port, placement.get(walker));
+                    placement.put(target, newPos);
                     if (result.get(layerNo) > newPos) {
                         result.set(layerNo, newPos);
                     }
@@ -378,6 +383,11 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
     }
 
     private int getPositionForNode(final LPort targetPort, final LPort sourcePort) {
+        return getPositionForNode(targetPort, sourcePort, Integer.MIN_VALUE);
+    }
+
+    private int getPositionForNode(final LPort targetPort, final LPort sourcePort,
+            final int sourcePosition) {
         RailRow targetRow;
         RailRow sourceRow;
         LNode source = sourcePort.getNode();
@@ -388,36 +398,39 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
         } else {
             throw new IllegalArgumentException("Only works with RailLayers!");
         }
+        int sourcePos = sourcePosition;
+        if (sourcePos != Integer.MIN_VALUE) {
+            sourcePos = sourceRow.getPosition(source);
+        }
         switch (source.getProperty(Properties.NODE_TYPE)) {
         case BREACH_OR_CLOSE:
             switch (target.getProperty(Properties.NODE_TYPE)) {
             case BREACH_OR_CLOSE:
-                return patterns.breachBreach(targetRow.getOccupiedPositions(),
-                        sourceRow.getPosition(source));
+                return patterns.breachBreach(targetRow.getOccupiedPositions(), sourcePos);
             case SWITCH_LEFT:
                 switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                 case BRANCH:
                     return patterns.breachSwitchLeftBranch(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 case STRAIGHT:
                     return patterns.breachSwitchLeftStraight(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 case STUMP:
                     return patterns.breachSwitchLeftStump(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 }
                 break;
             case SWITCH_RIGHT:
                 switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                 case BRANCH:
                     return patterns.breachSwitchRightBranch(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 case STRAIGHT:
                     return patterns.breachSwitchRightStraight(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 case STUMP:
                     return patterns.breachSwitchRightStump(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 }
                 break;
             }
@@ -428,31 +441,31 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                 switch (target.getProperty(Properties.NODE_TYPE)) {
                 case BREACH_OR_CLOSE:
                     return patterns.switchLeftBranchBreach(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 case SWITCH_LEFT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchLeftBranchSwitchLeftBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchLeftBranchSwitchLeftStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchLeftBranchSwitchLeftStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 case SWITCH_RIGHT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchLeftBranchSwitchRightBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchLeftBranchSwitchRightStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchLeftBranchSwitchRightStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 }
@@ -461,31 +474,31 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                 switch (target.getProperty(Properties.NODE_TYPE)) {
                 case BREACH_OR_CLOSE:
                     return patterns.switchLeftStraightBreach(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 case SWITCH_LEFT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchLeftStraightSwitchLeftBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchLeftStraightSwitchLeftStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchLeftStraightSwitchLeftStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 case SWITCH_RIGHT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchLeftStraightSwitchRightBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchLeftStraightSwitchRightStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchLeftStraightSwitchRightStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 }
@@ -494,31 +507,31 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                 switch (target.getProperty(Properties.NODE_TYPE)) {
                 case BREACH_OR_CLOSE:
                     return patterns.switchLeftStumpBreach(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 case SWITCH_LEFT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchLeftStumpSwitchLeftBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchLeftStumpSwitchLeftStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchLeftStumpSwitchLeftStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 case SWITCH_RIGHT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchLeftStumpSwitchRightBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchLeftStumpSwitchRightStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchLeftStumpSwitchRightStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 }
@@ -531,31 +544,31 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                 switch (target.getProperty(Properties.NODE_TYPE)) {
                 case BREACH_OR_CLOSE:
                     return patterns.switchRightBranchBreach(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 case SWITCH_LEFT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchRightBranchSwitchLeftBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchRightBranchSwitchLeftStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchRightBranchSwitchLeftStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 case SWITCH_RIGHT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchRightBranchSwitchRightBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchRightBranchSwitchRightStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchRightBranchSwitchRightStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 }
@@ -564,31 +577,31 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                 switch (target.getProperty(Properties.NODE_TYPE)) {
                 case BREACH_OR_CLOSE:
                     return patterns.switchRightStraightBreach(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 case SWITCH_LEFT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchRightStraightSwitchLeftBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchRightBranchSwitchLeftStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchRightBranchSwitchLeftStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 case SWITCH_RIGHT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchRightStraightSwitchRightBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchRightBranchSwitchRightStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchRightBranchSwitchRightStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 }
@@ -597,31 +610,31 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                 switch (target.getProperty(Properties.NODE_TYPE)) {
                 case BREACH_OR_CLOSE:
                     return patterns.switchRightStumpBreach(targetRow.getOccupiedPositions(),
-                            sourceRow.getPosition(source));
+                            sourcePos);
                 case SWITCH_LEFT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchRightStumpSwitchLeftBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchRightStumpSwitchLeftStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchRightStumpSwitchLeftStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 case SWITCH_RIGHT:
                     switch (targetPort.getProperty(Properties.PORT_TYPE)) {
                     case BRANCH:
                         return patterns.switchRightStumpSwitchRightBranch(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STRAIGHT:
                         return patterns.switchRightStumpSwitchRightStraight(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     case STUMP:
                         return patterns.switchRightStumpSwitchRightStump(
-                                targetRow.getOccupiedPositions(), sourceRow.getPosition(source));
+                                targetRow.getOccupiedPositions(), sourcePos);
                     }
                     break;
                 }
