@@ -51,22 +51,7 @@
       </wizard>
    </extension>
 
-   <extension point="org.eclipse.ui.popupMenus" id="init-diagram-action">
-      <?gmfgen generated="true"?>
-      <objectContribution
-            id="de.cau.cs.kieler.kaom.diagram.InitDiagram"
-            nameFilter="*.kaom"
-            objectClass="org.eclipse.core.resources.IFile">
-         <action
-               label="%initDiagramActionLabel"
-               class="de.cau.cs.kieler.kaom.diagram.part.KaomInitDiagramFileAction"
-               menubarPath="additions"
-               enablesFor="1"
-               id="de.cau.cs.kieler.kaom.diagram.InitDiagramAction">
-         </action>
-      </objectContribution>
-   </extension>
-	
+   	
    <extension point="org.eclipse.gmf.runtime.common.ui.services.action.globalActionHandlerProviders" id="global-actions">
       <?gmfgen generated="true"?>
       <GlobalActionHandlerProvider
