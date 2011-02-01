@@ -12,7 +12,7 @@
          <knownOption
                option="de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.planar.planarity.PlanarityTestStrategy"

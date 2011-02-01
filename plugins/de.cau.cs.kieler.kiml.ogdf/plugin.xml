@@ -93,7 +93,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -127,7 +127,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -157,7 +157,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -187,7 +187,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -211,7 +211,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -235,7 +235,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -265,7 +265,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -289,7 +289,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
@@ -313,7 +313,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
    </extension>
 
 </plugin>

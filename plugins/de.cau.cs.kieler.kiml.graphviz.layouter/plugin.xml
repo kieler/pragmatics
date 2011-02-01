@@ -64,7 +64,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.debugMode">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
@@ -109,7 +109,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.debugMode">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
@@ -154,7 +154,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.debugMode">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
@@ -189,7 +189,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.debugMode">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
@@ -224,7 +224,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.debugMode">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutOption
             appliesTo="edges"
             default="1.0"

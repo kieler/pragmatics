@@ -8,7 +8,7 @@
             class="de.cau.cs.kieler.kiml.client.RemoteLayoutProvider"
             id="de.cau.cs.kieler.kiml.remote"
             name="Layout Server">
-      </layoutProvider>
+      </layoutAlgorithm>
    </extension>
 
 </plugin>

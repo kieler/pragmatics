@@ -61,7 +61,7 @@
          <knownOption
                option="de.cau.cs.kieler.layout.options.alignment">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy"

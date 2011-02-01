@@ -31,7 +31,7 @@
          <knownOption
                option="de.cau.cs.kieler.klodd.interactive">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klodd.hierarchical.InteractionLevel"

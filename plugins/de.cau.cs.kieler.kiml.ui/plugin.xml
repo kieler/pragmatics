@@ -193,7 +193,7 @@ point="org.eclipse.ui.menus">
        <knownOption
              option="de.cau.cs.kieler.layout.options.fixedSize">
        </knownOption>
-    </layoutProvider>
+    </layoutAlgorithm>
  </extension>
  <extension
        point="org.eclipse.ui.views">
