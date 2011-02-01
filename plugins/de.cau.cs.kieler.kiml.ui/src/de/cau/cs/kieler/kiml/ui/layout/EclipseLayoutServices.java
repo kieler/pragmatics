@@ -63,8 +63,8 @@ public class EclipseLayoutServices extends LayoutServices {
     public static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutInfo";
     /** identifier of the extension point for layout managers. */
     public static final String EXTP_ID_LAYOUT_MANAGERS = "de.cau.cs.kieler.kiml.ui.layoutManagers";
-    /** name of the 'layoutProvider' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_LAYOUT_PROVIDER = "layoutProvider";
+    /** name of the 'layoutAlgorithm' element in the 'layout providers' extension point. */
+    public static final String ELEMENT_LAYOUT_ALGORITHM = "layoutAlgorithm";
     /** name of the 'layoutType' element in the 'layout providers' extension point. */
     public static final String ELEMENT_LAYOUT_TYPE = "layoutType";
     /** name of the 'category' element in the 'layout providers' extension point. */
@@ -337,7 +337,7 @@ public class EclipseLayoutServices extends LayoutServices {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
         for (IConfigurationElement element : extensions) {
-            if (ELEMENT_LAYOUT_PROVIDER.equals(element.getName())) {
+            if (ELEMENT_LAYOUT_ALGORITHM.equals(element.getName())) {
                 int providerIndex = layoutProviderList.indexOf(element.getAttribute(ATTRIBUTE_ID));
                 if (providerIndex >= 0) {
                     for (IConfigurationElement child : element.getChildren()) {
@@ -489,7 +489,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
 
         for (IConfigurationElement element : extensions) {
-            if (ELEMENT_LAYOUT_PROVIDER.equals(element.getName())) {
+            if (ELEMENT_LAYOUT_ALGORITHM.equals(element.getName())) {
                 try {
                     // register a layout provider from the extension
                     AbstractLayoutProvider layoutProvider = (AbstractLayoutProvider) element
