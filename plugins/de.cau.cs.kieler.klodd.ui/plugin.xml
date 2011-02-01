@@ -3,7 +3,7 @@
 <plugin>
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
-      <layoutProvider
+      <layoutAlgorithm
             class="de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider"
             category="de.cau.cs.kieler"
             id="de.cau.cs.kieler.klodd.hierarchical"

@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Default implementation of the layout configuration interface. This configuration handles the
- * default values of layout providers and layout options.
+ * default values of layout algorithms and layout options.
  *
  * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
@@ -34,10 +34,10 @@ public class DefaultLayoutConfig implements ILayoutConfig {
 
     /** list of layout option data. */
     private List<LayoutOptionData<?>> optionDataList;
-    /** layout provider data for the element's content. */
-    private LayoutProviderData contentLayouterData;
-    /** layout provider data of the containing element. */
-    private LayoutProviderData containerLayouterData;
+    /** layout algorithm data for the element's content. */
+    private LayoutAlgorithmData contentLayouterData;
+    /** layout algorithm data of the containing element. */
+    private LayoutAlgorithmData containerLayouterData;
     
     /**
      * Initialize the configuration with a layout hint. This is only done if the given
@@ -62,14 +62,14 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     public final void initialize(final LayoutOptionData.Target targetType,
             final String layoutHint, final String diagramType) {
         LayoutServices layoutServices = LayoutServices.getInstance();
-        LayoutProviderData layouterData = getLayouterData(layoutHint, diagramType);
+        LayoutAlgorithmData layouterData = getLayouterData(layoutHint, diagramType);
         if (targetType == LayoutOptionData.Target.PARENTS) {
             contentLayouterData = layouterData;
         } else {
             containerLayouterData = layouterData;
         }
         if (layouterData != null) {
-            List<LayoutOptionData<?>> options = layoutServices.getLayoutOptions(
+            List<LayoutOptionData<?>> options = layoutServices.getOptions(
                     layouterData, targetType);
             if (optionDataList == null) {
                 optionDataList = options;
@@ -135,7 +135,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
         // check default value of the content layout provider
         if (contentLayouterData != null && optionData != null
                 && optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
-            result = contentLayouterData.getInstance().getProperty(optionData);
+            result = contentLayouterData.getProvider().getProperty(optionData);
             if (result != null) {
                 return result;
             }
@@ -143,7 +143,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
 
         // check default value of the container layout provider
         if (containerLayouterData != null) {
-            result = containerLayouterData.getInstance().getProperty(optionData);
+            result = containerLayouterData.getProvider().getProperty(optionData);
             if (result != null) {
                 return result;
             }
@@ -172,21 +172,21 @@ public class DefaultLayoutConfig implements ILayoutConfig {
     /**
      * {@inheritDoc}
      */
-    public LayoutProviderData getContentLayouterData() {
+    public LayoutAlgorithmData getContentLayouterData() {
         return contentLayouterData;
     }
 
     /**
      * {@inheritDoc}
      */
-    public LayoutProviderData getContainerLayouterData() {
+    public LayoutAlgorithmData getContainerLayouterData() {
         return containerLayouterData;
     }
     
     /**
      * {@inheritDoc}
      */
-    public LayoutProviderData getLayouterData(final String theLayoutHint, final String diagramType) {
+    public LayoutAlgorithmData getLayouterData(final String theLayoutHint, final String diagramType) {
         LayoutServices layoutServices = LayoutServices.getInstance();
         String layoutHint = theLayoutHint;
         // check whether a specific provider is registered for the diagram type
@@ -196,16 +196,16 @@ public class DefaultLayoutConfig implements ILayoutConfig {
         }
         
         // try to get a specific provider for the given hint
-        LayoutProviderData directHitData = layoutServices.getLayoutProviderData(layoutHint);
+        LayoutAlgorithmData directHitData = layoutServices.getAlgorithmData(layoutHint);
         if (directHitData != null) {
             return directHitData;
         }
 
         // look for the provider with highest priority, interpreting the hint as layout type
-        LayoutProviderData bestProvider = null;
-        int bestPrio = LayoutProviderData.MIN_PRIORITY;
+        LayoutAlgorithmData bestProvider = null;
+        int bestPrio = LayoutAlgorithmData.MIN_PRIORITY;
         boolean matchesLayoutType = false, matchesDiagramType = false, matchesGeneralDiagram = false;
-        for (LayoutProviderData providerData : layoutServices.getLayoutProviderData()) {
+        for (LayoutAlgorithmData providerData : layoutServices.getAlgorithmData()) {
             int currentPrio = providerData.getSupportedPriority(diagramType);
             if (matchesLayoutType) {
                 if (providerData.getType().equals(layoutHint)) {
@@ -215,7 +215,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                             bestPrio = currentPrio;
                         }
                     } else {
-                        if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                        if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
                             bestProvider = providerData;
                             bestPrio = currentPrio;
                             matchesDiagramType = true;
@@ -229,7 +229,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                                     bestPrio = currentPrio;
                                 }
                             } else {
-                                if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                                if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
                                     bestProvider = providerData;
                                     bestPrio = currentPrio;
                                     matchesGeneralDiagram = true;
@@ -244,7 +244,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                 if (providerData.getType().equals(layoutHint)) {
                     bestProvider = providerData;
                     matchesLayoutType = true;
-                    if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                    if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
                         bestPrio = currentPrio;
                         matchesDiagramType = true;
                         matchesGeneralDiagram = false;
@@ -252,7 +252,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                         matchesDiagramType = false;
                         currentPrio = providerData.getSupportedPriority(
                                 LayoutServices.DIAGRAM_TYPE_GENERAL);
-                        if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                        if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
                             bestPrio = currentPrio;
                             matchesGeneralDiagram = true;
                         } else {
@@ -266,7 +266,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                             bestPrio = currentPrio;
                         }
                     } else {
-                        if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                        if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
                             bestProvider = providerData;
                             bestPrio = currentPrio;
                             matchesDiagramType = true;
@@ -280,7 +280,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
                                     bestPrio = currentPrio;
                                 }
                             } else {
-                                if (currentPrio > LayoutProviderData.MIN_PRIORITY) {
+                                if (currentPrio > LayoutAlgorithmData.MIN_PRIORITY) {
                                     bestProvider = providerData;
                                     bestPrio = currentPrio;
                                     matchesGeneralDiagram = true;

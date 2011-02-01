@@ -41,10 +41,10 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
-import de.cau.cs.kieler.kiml.ui.EclipseLayoutProviderData;
+import de.cau.cs.kieler.kiml.ui.EclipseLayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 
@@ -331,7 +331,7 @@ public class EclipseLayoutServices extends LayoutServices {
         List<String> layoutProviderList = Arrays.asList(layoutProviders);
         List<String> diagramTypesList = Arrays.asList(diagramTypes);
         for (int i = 0; i < layoutProviders.length; i++) {
-            Arrays.fill(priorityData[i], LayoutProviderData.MIN_PRIORITY);
+            Arrays.fill(priorityData[i], LayoutAlgorithmData.MIN_PRIORITY);
         }
 
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
@@ -413,7 +413,7 @@ public class EclipseLayoutServices extends LayoutServices {
         for (String[] optionArray : defaultOptions) {
             String className = optionArray[0];
             String optionId = optionArray[1];
-            LayoutOptionData<?> optionData = getInstance().getLayoutOptionData(optionId);
+            LayoutOptionData<?> optionData = getInstance().getOptionData(optionId);
             if (optionData != null) {
                 String valueString = optionArray[2];
                 Object value = optionData.parseValue(valueString);
@@ -435,7 +435,7 @@ public class EclipseLayoutServices extends LayoutServices {
     public Object getDefault(final String className, final String optionId) {
         for (String[] optionArray : defaultOptions) {
             if (optionArray[0].equals(className) && optionArray[1].equals(optionId)) {
-                LayoutOptionData<?> optionData = getInstance().getLayoutOptionData(optionId);
+                LayoutOptionData<?> optionData = getInstance().getOptionData(optionId);
                 if (optionData != null) {
                     String valueString = optionArray[2];
                     return optionData.parseValue(valueString);
@@ -453,9 +453,9 @@ public class EclipseLayoutServices extends LayoutServices {
      * @param optionName user-friendly name of a layout option
      * @return the corresponding layout option data
      */
-    public LayoutOptionData<?> getOptionData(final LayoutProviderData providerData,
+    public LayoutOptionData<?> getOptionData(final LayoutAlgorithmData providerData,
             final String optionName) {
-        for (LayoutOptionData<?> data : getLayoutOptionData()) {
+        for (LayoutOptionData<?> data : getOptionData()) {
             if (data.getName().equals(optionName) && providerData.knowsOption(data.getId())) {
                 return data;
             }
@@ -495,8 +495,8 @@ public class EclipseLayoutServices extends LayoutServices {
                     AbstractLayoutProvider layoutProvider = (AbstractLayoutProvider) element
                             .createExecutableExtension(ATTRIBUTE_CLASS);
                     if (layoutProvider != null) {
-                        EclipseLayoutProviderData providerData = new EclipseLayoutProviderData();
-                        providerData.setInstance(layoutProvider);
+                        EclipseLayoutAlgorithmData providerData = new EclipseLayoutAlgorithmData();
+                        providerData.setProvider(layoutProvider);
                         String layouterId = element.getAttribute(ATTRIBUTE_ID);
                         if (layouterId == null || layouterId.length() == 0) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
@@ -517,7 +517,7 @@ public class EclipseLayoutServices extends LayoutServices {
                         if (layoutType == null) {
                             layoutType = "";
                         }
-                        LayoutTypeData typeData = getLayoutTypeData(layoutType);
+                        LayoutTypeData typeData = getTypeData(layoutType);
                         if (typeData == null) {
                             typeData = new LayoutTypeData();
                             typeData.setId(layoutType);
@@ -726,7 +726,7 @@ public class EclipseLayoutServices extends LayoutServices {
         
         // load default options for diagram types
         List<Pair<String, String>> diagramTypes = getDiagramTypes();
-        Collection<LayoutOptionData<?>> layoutOptionData = getLayoutOptionData();
+        Collection<LayoutOptionData<?>> layoutOptionData = getOptionData();
         for (Pair<String, String> diagramType : diagramTypes) {
             for (LayoutOptionData<?> data : layoutOptionData) {
                 String preference = getPreferenceName(diagramType.getFirst(), data.getId());

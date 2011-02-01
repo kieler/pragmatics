@@ -26,7 +26,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -81,13 +81,13 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                 LayoutServices layoutServices = LayoutServices.getInstance();
                 if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
                     String layoutHint = (String) element;
-                    LayoutTypeData layoutType = layoutServices.getLayoutTypeData(layoutHint);
+                    LayoutTypeData layoutType = layoutServices.getTypeData(layoutHint);
                     if (layoutType != null) {
                         return layoutType.toString();
                     }
-                    LayoutProviderData providerData = layoutServices.getLayoutProviderData(layoutHint);
-                    if (providerData != null) {
-                        return providerData.toString();
+                    LayoutAlgorithmData layouterData = layoutServices.getAlgorithmData(layoutHint);
+                    if (layouterData != null) {
+                        return layouterData.toString();
                     }
                     return Messages.getString("kiml.ui.8");
                 } else {

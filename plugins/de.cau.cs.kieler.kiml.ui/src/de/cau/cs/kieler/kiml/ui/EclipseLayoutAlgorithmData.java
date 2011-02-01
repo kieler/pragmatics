@@ -15,16 +15,16 @@ package de.cau.cs.kieler.kiml.ui;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 
 /**
- * An extension of layout provider data that supports preview images.
+ * An extension of layout algorithm data that supports preview images.
  *
  * @kieler.rating 2011-02-01 yellow
  *     reviewed by cmot, soh
  * @author msp
  */
-public class EclipseLayoutProviderData extends LayoutProviderData {
+public class EclipseLayoutAlgorithmData extends LayoutAlgorithmData {
     
     /** the preview image. */
     private ImageDescriptor previewImage;

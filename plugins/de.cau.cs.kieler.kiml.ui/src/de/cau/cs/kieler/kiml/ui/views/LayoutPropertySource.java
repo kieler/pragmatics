@@ -21,7 +21,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -75,7 +75,7 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public Object getPropertyValue(final Object id) {
         EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
-        LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData((String) id);
+        LayoutOptionData<?> optionData = layoutServices.getOptionData((String) id);
         Object value;
         if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
             value = layoutConfig.getContentLayouterData().getId();
@@ -130,7 +130,7 @@ public class LayoutPropertySource implements IPropertySource {
             public void run() {
                 Object value = thevalue;
                 LayoutOptionData<?> optionData = LayoutServices.getInstance()
-                        .getLayoutOptionData((String) id);
+                        .getOptionData((String) id);
                 switch (optionData.getType()) {
                 case STRING:
                     break;
@@ -166,7 +166,7 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public boolean isPropertySet(final Object id) {
-        LayoutOptionData<?> optionData = LayoutServices.getInstance().getLayoutOptionData((String) id);
+        LayoutOptionData<?> optionData = LayoutServices.getInstance().getOptionData((String) id);
         return !layoutConfig.isDefault(optionData);
     }
 
@@ -175,7 +175,7 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public void resetPropertyValue(final Object id) {
         final LayoutOptionData<?> optionData = LayoutServices.getInstance()
-                .getLayoutOptionData((String) id);
+                .getOptionData((String) id);
         Runnable modelChange = new Runnable() {
             public void run() {
                 layoutConfig.setProperty(optionData, null);
@@ -202,16 +202,16 @@ public class LayoutPropertySource implements IPropertySource {
         // look for a matching layout provider
         String bestHint = null;
         int bestLength = 0;
-        for (LayoutProviderData providerData : LayoutServices.getInstance().getLayoutProviderData()) {
-            String name = providerData.getName();
+        for (LayoutAlgorithmData layouterData : LayoutServices.getInstance().getAlgorithmData()) {
+            String name = layouterData.getName();
             if (displayedName.startsWith(name) && name.length() > bestLength) {
-                bestHint = providerData.getId();
+                bestHint = layouterData.getId();
                 bestLength = name.length();
             }
         }
         if (bestHint == null) {
             // look for a matching layout type
-            for (LayoutTypeData layoutType : LayoutServices.getInstance().getLayoutTypeData()) {
+            for (LayoutTypeData layoutType : LayoutServices.getInstance().getTypeData()) {
                 String typeId = layoutType.getId();
                 String typeName = layoutType.getName();
                 if (displayedName.startsWith(typeName) && typeName.length() > bestLength) {

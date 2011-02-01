@@ -88,7 +88,7 @@ public class DiagramDefaultAction extends Action {
     private void applyOption(final EditingDomain editingDomain,
             final ILayoutConfig config, final IPropertySheetEntry entry) {
         final LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(
-                layoutView.getCurrentProviderData(), entry.getDisplayName());
+                layoutView.getCurrentLayouterData(), entry.getDisplayName());
         if (optionData == null) {
             return;
         }

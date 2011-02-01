@@ -312,7 +312,7 @@ public class NewOptionDialog extends Dialog {
             }
         });
         Collection<LayoutOptionData<?>> data = EclipseLayoutServices
-                .getInstance().getLayoutOptionData();
+                .getInstance().getOptionData();
         SelectionData[] input = new SelectionData[data.size()];
         int i = 0;
         for (LayoutOptionData<?> optionData : data) {
@@ -345,7 +345,7 @@ public class NewOptionDialog extends Dialog {
                 int dotIndex = elementValue.lastIndexOf('.');
                 name = elementValue.substring(dotIndex + 1);
             }
-            LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(optionValue);
+            LayoutOptionData<?> optionData = layoutServices.getOptionData(optionValue);
             if (optionData != null) {
                 Object value = optionData.getDefault();
                 if (value == null) {

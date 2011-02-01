@@ -35,7 +35,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -171,10 +171,10 @@ public class SelectionInfoAction extends Action {
             }
         }
         
-        LayoutProviderData[] providerData = layoutView.getCurrentProviderData();
-        if (providerData != null && providerData.length > 0) {
+        LayoutAlgorithmData[] layouterData = layoutView.getCurrentLayouterData();
+        if (layouterData != null && layouterData.length > 0) {
             builder.append("<b>Involved layout providers</b><ul>");
-            for (LayoutProviderData data : providerData) {
+            for (LayoutAlgorithmData data : layouterData) {
                 if (data != null) {
                     builder.append("<li>" + data.getName());
                     String category = layoutServices.getCategoryName(data.getCategory());
@@ -191,7 +191,7 @@ public class SelectionInfoAction extends Action {
         if (!selectedOptions.isEmpty()) {
             builder.append("<b>Selected options</b><ul>");
             for (IPropertySheetEntry entry : selectedOptions) {
-                final LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(providerData,
+                final LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(layouterData,
                         entry.getDisplayName());
                 if (optionData != null) {
                     builder.append("<li>" + optionData.getName() + " (" + optionData.getType().literal()

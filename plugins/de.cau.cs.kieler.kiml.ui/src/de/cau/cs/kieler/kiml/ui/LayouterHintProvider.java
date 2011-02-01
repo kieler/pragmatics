@@ -19,7 +19,7 @@ import java.util.Map;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 
@@ -52,7 +52,7 @@ public class LayouterHintProvider implements ITreeContentProvider {
         if (inputElement instanceof LayoutServices) {
             layoutServices = (LayoutServices) inputElement;
         }
-        return layoutServices.getLayoutTypeData().toArray();
+        return layoutServices.getTypeData().toArray();
     }
 
     /**
@@ -70,9 +70,9 @@ public class LayouterHintProvider implements ITreeContentProvider {
      * {@inheritDoc}
      */
     public Object getParent(final Object element) {
-        if (element instanceof LayoutProviderData) {
-            LayoutProviderData layouterData = (LayoutProviderData) element;
-            return layoutServices.getLayoutTypeData(layouterData.getType());
+        if (element instanceof LayoutAlgorithmData) {
+            LayoutAlgorithmData layouterData = (LayoutAlgorithmData) element;
+            return layoutServices.getTypeData(layouterData.getType());
         }
         return null;
     }
@@ -121,7 +121,7 @@ public class LayouterHintProvider implements ITreeContentProvider {
                     LayoutTypeData typeData = (LayoutTypeData) element;
                     result = typeData.getName().toLowerCase().contains(filterValue);
                     if (result) {
-                        for (LayoutProviderData layouterData : typeData.getLayouters()) {
+                        for (LayoutAlgorithmData layouterData : typeData.getLayouters()) {
                             filterMap.put(layouterData, Boolean.TRUE);
                         }
                         if (bestFilterMatch == null) {
@@ -131,13 +131,13 @@ public class LayouterHintProvider implements ITreeContentProvider {
                         }
                     } else {
                         boolean hasFilteredChild = false;
-                        for (LayoutProviderData layouterData : typeData.getLayouters()) {
+                        for (LayoutAlgorithmData layouterData : typeData.getLayouters()) {
                             hasFilteredChild |= applyFilter(layouterData);
                         }
                         result = hasFilteredChild;
                     }
-                } else if (element instanceof LayoutProviderData) {
-                    LayoutProviderData layouterData = (LayoutProviderData) element;
+                } else if (element instanceof LayoutAlgorithmData) {
+                    LayoutAlgorithmData layouterData = (LayoutAlgorithmData) element;
                     if (layouterData.getName().toLowerCase().contains(filterValue)) {
                         result = Boolean.TRUE;
                         if (bestFilterMatch == null) {

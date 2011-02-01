@@ -45,8 +45,8 @@ public class LayoutServices {
     /** the instance of the registry class. */
     private Registry registry = null;
     /** mapping of layout provider identifiers to their data instances. */
-    private Map<String, LayoutProviderData> layoutProviderMap
-            = new LinkedHashMap<String, LayoutProviderData>();
+    private Map<String, LayoutAlgorithmData> layoutAlgorithmMap
+            = new LinkedHashMap<String, LayoutAlgorithmData>();
     /** mapping of layout option identifiers to their data instances. */
     private Map<String, LayoutOptionData<?>> layoutOptionMap
             = new LinkedHashMap<String, LayoutOptionData<?>>();
@@ -131,11 +131,11 @@ public class LayoutServices {
          * 
          * @param providerData data instance of the layout provider to register
          */
-        public void addLayoutProvider(final LayoutProviderData providerData) {
-            if (layoutProviderMap.containsKey(providerData.getId())) {
-                layoutProviderMap.remove(providerData.getId());
+        public void addLayoutProvider(final LayoutAlgorithmData providerData) {
+            if (layoutAlgorithmMap.containsKey(providerData.getId())) {
+                layoutAlgorithmMap.remove(providerData.getId());
             }
-            layoutProviderMap.put(providerData.getId(), providerData);
+            layoutAlgorithmMap.put(providerData.getId(), providerData);
         }
 
         /**
@@ -220,24 +220,24 @@ public class LayoutServices {
     }
 
     /**
-     * Returns the layout provider data associated with the given identifier.
+     * Returns the layout algorithm data associated with the given identifier.
      * 
      * @param id layout provider identifier
-     * @return the corresponding layout provider data, or {@code null} if there
-     *         is no provider with the given identifier
+     * @return the corresponding layout algorithm data, or {@code null} if there
+     *         is no algorithm with the given identifier
      */
-    public final LayoutProviderData getLayoutProviderData(final String id) {
-        return layoutProviderMap.get(id);
+    public final LayoutAlgorithmData getAlgorithmData(final String id) {
+        return layoutAlgorithmMap.get(id);
     }
 
     /**
-     * Returns a data collection for all registered layout providers. The collection
+     * Returns a data collection for all registered layout algorithms. The collection
      * is unmodifiable.
      * 
-     * @return collection of registered layout providers
+     * @return collection of registered layout algorithms
      */
-    public final Collection<LayoutProviderData> getLayoutProviderData() {
-        return Collections.unmodifiableCollection(layoutProviderMap.values());
+    public final Collection<LayoutAlgorithmData> getAlgorithmData() {
+        return Collections.unmodifiableCollection(layoutAlgorithmMap.values());
     }
 
     /**
@@ -247,7 +247,7 @@ public class LayoutServices {
      * @return the corresponding layout option data, or {@code null} if there is
      *         no option with the given identifier
      */
-    public final LayoutOptionData<?> getLayoutOptionData(final String id) {
+    public final LayoutOptionData<?> getOptionData(final String id) {
         return layoutOptionMap.get(id);
     }
 
@@ -257,7 +257,7 @@ public class LayoutServices {
      * 
      * @return collection of registered layout options
      */
-    public final Collection<LayoutOptionData<?>> getLayoutOptionData() {
+    public final Collection<LayoutOptionData<?>> getOptionData() {
         return Collections.unmodifiableCollection(layoutOptionMap.values());
     }
 
@@ -270,7 +270,7 @@ public class LayoutServices {
      * @param targetType type of layout option target
      * @return list of suitable layout options
      */
-    public final List<LayoutOptionData<?>> getLayoutOptions(final LayoutProviderData providerData,
+    public final List<LayoutOptionData<?>> getOptions(final LayoutAlgorithmData providerData,
             final LayoutOptionData.Target targetType) {
         List<LayoutOptionData<?>> optionDataList = new LinkedList<LayoutOptionData<?>>();
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
@@ -291,7 +291,7 @@ public class LayoutServices {
      * @return layout type data instance with given identifier, or {@code null} if the layout
      *         type is not registered
      */
-    public final LayoutTypeData getLayoutTypeData(final String id) {
+    public final LayoutTypeData getTypeData(final String id) {
         return layoutTypeMap.get(id);
     }
     
@@ -301,7 +301,7 @@ public class LayoutServices {
      * 
      * @return a list of all layout types
      */
-    public final Collection<LayoutTypeData> getLayoutTypeData() {
+    public final Collection<LayoutTypeData> getTypeData() {
         return Collections.unmodifiableCollection(layoutTypeMap.values());
     }
 

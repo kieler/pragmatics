@@ -28,7 +28,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -153,9 +153,9 @@ public final class KimlUiUtil {
      * @param displayName display name of the layout option as seen by the user
      * @return the most suitable layout option data
      */
-    public static LayoutOptionData<?> getOptionData(final LayoutProviderData[] providerDataArray,
+    public static LayoutOptionData<?> getOptionData(final LayoutAlgorithmData[] providerDataArray,
             final String displayName) {
-        for (LayoutProviderData providerData : providerDataArray) {
+        for (LayoutAlgorithmData providerData : providerDataArray) {
             LayoutOptionData<?> optionData = EclipseLayoutServices.getInstance().getOptionData(
                     providerData, displayName);
             if (optionData != null) {
@@ -163,7 +163,7 @@ public final class KimlUiUtil {
             }
         }
         // the only option data that is added without explicit support by layouters is layout hint
-        return LayoutServices.getInstance().getLayoutOptionData(LayoutOptions.LAYOUTER_HINT_ID);
+        return LayoutServices.getInstance().getOptionData(LayoutOptions.LAYOUTER_HINT_ID);
     }
     
     

@@ -81,7 +81,7 @@ public class DiagramTypeDefaultAction extends Action {
      */
     private void setDefault(final String diagramType, final IPropertySheetEntry entry) {
         LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(
-                layoutView.getCurrentProviderData(), entry.getDisplayName());
+                layoutView.getCurrentLayouterData(), entry.getDisplayName());
         
         if (optionData != null) {
             String valueString = entry.getValueAsString();

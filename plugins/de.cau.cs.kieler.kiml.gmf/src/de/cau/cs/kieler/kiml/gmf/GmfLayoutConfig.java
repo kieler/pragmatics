@@ -308,7 +308,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
                     partLayoutHint = koption.getValue();
                 }
                 LayoutOptionData<?> optionData = LayoutServices.getInstance()
-                        .getLayoutOptionData(koption.getKey());
+                        .getOptionData(koption.getKey());
                 if (optionData != null) {
                     koptionMap.put(optionData, koption);
                 }
@@ -590,7 +590,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         if (optionStyle != null) {
             for (KOption option : optionStyle.getOptions()) {
                 if (!onlyDefault || option.isDefault()) {
-                    LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(
+                    LayoutOptionData<?> optionData = layoutServices.getOptionData(
                             option.getKey());
                     if (optionData != null) {
                         Object value = optionData.parseValue(option.getValue());

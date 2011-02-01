@@ -86,7 +86,7 @@ public class SetOptionsEffect extends AbstractEffect {
                     public void run() {
                         for (Map.Entry<String, Object> entry : optionMap.entrySet()) {
                             LayoutOptionData<?> optionData = layoutServices
-                                    .getLayoutOptionData(entry.getKey());
+                                    .getOptionData(entry.getKey());
                             layoutConfig.setProperty(optionData, entry.getValue());
                         }
                     }

@@ -28,7 +28,7 @@ import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
@@ -186,7 +186,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             Object id = gene.getId();
             System.out.println(id + ": " + value);
 
-            LayoutOptionData<?> data = layoutServices.getLayoutOptionData((String) id);
+            LayoutOptionData<?> data = layoutServices.getOptionData((String) id);
             assert data != null : "No layout option data for " + id;
 
             // Treat layout hint.
@@ -266,7 +266,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         String oldLayoutHintId = targetGraphData.getProperty(data);
         assert oldLayoutHintId != null;
 
-        LayoutProviderData providerData =
+        LayoutAlgorithmData providerData =
                 new DefaultLayoutConfig().getLayouterData(newLayoutHintId, null);
 
         String newType = providerData.getType();

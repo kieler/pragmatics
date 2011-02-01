@@ -22,19 +22,19 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Data type used to store information for a layout provider.
+ * Data type used to store information for a layout algorithm.
  * 
  * @kieler.rating 2011-02-01 yellow
  *     reviewed by cmot, soh
  * @author msp
  */
-public class LayoutProviderData implements ILayoutData {
+public class LayoutAlgorithmData implements ILayoutData {
 
     /** The minimal allowed priority value. Values less or equal to this value
      *  are treated as 'not supported'. */
     public static final int MIN_PRIORITY = Integer.MIN_VALUE >> 2;
-    /** default name for layout providers for which no name is given. */
-    public static final String DEFAULT_PROVIDER_NAME = "<Unnamed Layouter>";
+    /** default name for layout algorithms for which no name is given. */
+    public static final String DEFAULT_LAYOUTER_NAME = "<Unnamed Layouter>";
 
     /** internal data type for storage of supported diagram information. */
     private static final class SupportedDiagram {
@@ -49,10 +49,10 @@ public class LayoutProviderData implements ILayoutData {
     
     /** identifier of the layout provider. */
     private String id = "";
-    /** user friendly name of the layout provider. */
+    /** user friendly name of the layout algorithm. */
     private String name = "";
-    /** runtime instance of the layout provider. */
-    private AbstractLayoutProvider instance;
+    /** runtime instance of the layout algorithm. */
+    private AbstractLayoutProvider provider;
     /** layout type identifier. */
     private String type = "";
     /** category identifier. */
@@ -69,8 +69,8 @@ public class LayoutProviderData implements ILayoutData {
      * {@inheritDoc}
      */
     public boolean equals(final Object obj) {
-        if (obj instanceof LayoutProviderData) {
-            return this.id.equals(((LayoutProviderData) obj).id);
+        if (obj instanceof LayoutAlgorithmData) {
+            return this.id.equals(((LayoutAlgorithmData) obj).id);
         }
         return false;
     }
@@ -95,7 +95,7 @@ public class LayoutProviderData implements ILayoutData {
                 return name + " (" + categoryName + ")";
             }
         } else {
-            return DEFAULT_PROVIDER_NAME;
+            return DEFAULT_LAYOUTER_NAME;
         }
     }
     
@@ -103,7 +103,7 @@ public class LayoutProviderData implements ILayoutData {
      * Sets the knowledge status of the given layout option.
      * 
      * @param layoutOption identifier of layout option
-     * @param known indicates whether the layout provider should know
+     * @param known indicates whether the layout algorithm should know
      *     the option
      */
     public void setOption(final String layoutOption, final boolean known) {
@@ -117,7 +117,7 @@ public class LayoutProviderData implements ILayoutData {
     }
 
     /**
-     * Returns a collection of all known options of this layout provider.
+     * Returns a collection of all known options of this layout algorithm.
      * 
      * @return the known options
      */
@@ -126,11 +126,11 @@ public class LayoutProviderData implements ILayoutData {
     }
     
     /**
-     * Determines whether the layout provider knows the given
+     * Determines whether the layout algorithm knows the given
      * layout option.
      * 
      * @param layoutOption identifier of layout option
-     * @return true if the associated layout provider know the option
+     * @return true if the associated layout algorithm knows the option
      */
     public boolean knowsOption(final String layoutOption) {
         return knownOptions.contains(layoutOption);
@@ -216,7 +216,7 @@ public class LayoutProviderData implements ILayoutData {
      */
     public void setName(final String thename) {
         if (thename == null || thename.length() == 0) {
-            this.name = DEFAULT_PROVIDER_NAME;
+            this.name = DEFAULT_LAYOUTER_NAME;
         } else {
             this.name = thename;
         }
@@ -254,21 +254,21 @@ public class LayoutProviderData implements ILayoutData {
     }
 
     /**
-     * Sets the instance.
+     * Sets the layout provider that can execute the associated algorithm.
      *
-     * @param theinstance the instance to set
+     * @param theprovider the layout provider to set
      */
-    public void setInstance(final AbstractLayoutProvider theinstance) {
-        this.instance = theinstance;
+    public void setProvider(final AbstractLayoutProvider theprovider) {
+        this.provider = theprovider;
     }
 
     /**
-     * Returns the instance.
+     * Returns the layout provider that can execute the associated algorithm.
      *
-     * @return the instance
+     * @return the layout provider
      */
-    public AbstractLayoutProvider getInstance() {
-        return instance;
+    public AbstractLayoutProvider getProvider() {
+        return provider;
     }
 
     /**

@@ -34,7 +34,7 @@ import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.genetic.Distribution;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
@@ -141,7 +141,7 @@ final class GenomeFactory {
             // Get the layout option data, so we know what kind of gene to
             // produce.
             LayoutOptionData<?> layoutOptionData =
-                    LayoutServices.getInstance().getLayoutOptionData((String) theId);
+                    LayoutServices.getInstance().getOptionData((String) theId);
             if (layoutOptionData == null) {
                 throw new IllegalArgumentException("No layout option data for " + theId);
             }
@@ -533,7 +533,7 @@ final class GenomeFactory {
             String id = (String) p.getId();
             // check property descriptor id
             if (!LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
-                LayoutOptionData<?> data = layoutServices.getLayoutOptionData(id);
+                LayoutOptionData<?> data = layoutServices.getOptionData(id);
                 assert data != null : "Layout option not registered: " + id;
 
                 Type type = data.getType();
@@ -819,7 +819,7 @@ final class GenomeFactory {
         // default, but what about the others?
         String hintId = (String) layoutHintIds.iterator().next();
 
-        LayoutProviderData providerData = new DefaultLayoutConfig().getLayouterData(hintId, null);
+        LayoutAlgorithmData providerData = new DefaultLayoutConfig().getLayouterData(hintId, null);
 
         if (providerData == null) {
             // no provider for the given layout hint
@@ -895,7 +895,7 @@ final class GenomeFactory {
             if (!presentIds.contains(optionId)) {
                 EvolPlugin.logStatus("Creating extra gene for " + optionId);
                 LayoutOptionData<?> optionData =
-                        LayoutServices.getInstance().getLayoutOptionData(optionId);
+                        LayoutServices.getInstance().getOptionData(optionId);
 
                 if (optionData == null) {
                     throw new KielerException("Could not get layout option data: " + optionId);
@@ -927,7 +927,7 @@ final class GenomeFactory {
 
         Set<String> knownOptionIds = new HashSet<String>();
         for (final String id : providerIds) {
-            LayoutProviderData provider = LayoutServices.getInstance().getLayoutProviderData(id);
+            LayoutAlgorithmData provider = LayoutServices.getInstance().getAlgorithmData(id);
             for (final String optionId : this.learnableOptions) {
                 if (provider.knowsOption(optionId)) {
                     knownOptionIds.add(optionId);

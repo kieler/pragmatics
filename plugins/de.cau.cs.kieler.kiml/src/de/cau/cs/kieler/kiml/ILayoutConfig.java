@@ -55,18 +55,18 @@ public interface ILayoutConfig extends IPropertyHolder {
     List<LayoutOptionData<?>> getOptionData();
     
     /**
-     * Returns the layout provider descriptor for the content of the associated element.
+     * Returns the layout algorithm descriptor for the content of the associated element.
      * 
-     * @return the layout provider data for the element's content
+     * @return the layout algorithm data for the element's content
      */
-    LayoutProviderData getContentLayouterData();
+    LayoutAlgorithmData getContentLayouterData();
 
     /**
-     * Returns the layout provider descriptor for the container of the associated element.
+     * Returns the layout algorithm descriptor for the container of the associated element.
      * 
-     * @return the layout provider data for the element's container
+     * @return the layout algorithm data for the element's container
      */
-    LayoutProviderData getContainerLayouterData();
+    LayoutAlgorithmData getContainerLayouterData();
     
     /**
      * Remove all stored layout options.
@@ -82,12 +82,12 @@ public interface ILayoutConfig extends IPropertyHolder {
     void setDiagramDefault(LayoutOptionData<?> optionData, Object value);
     
     /**
-     * Returns the most appropriate layout provider for the given layout hint and diagram type.
+     * Returns the most appropriate layout algorithm for the given layout hint and diagram type.
      * 
      * @param layoutHint identifier of either a layout provider or a layout type
      * @param diagramType identifier of a diagram type
-     * @return the most appropriate layout provider, or {@code null}
+     * @return the most appropriate layout algorithm, or {@code null}
      */
-    LayoutProviderData getLayouterData(final String layoutHint, final String diagramType);
+    LayoutAlgorithmData getLayouterData(final String layoutHint, final String diagramType);
 
 }

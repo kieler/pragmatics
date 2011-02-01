@@ -84,7 +84,7 @@ public class EditPartDefaultAction extends Action {
      */
     private void setDefault(final EditPart editPart, final IPropertySheetEntry entry) {
         LayoutOptionData<?> optionData = KimlUiUtil.getOptionData(
-                layoutView.getCurrentProviderData(), entry.getDisplayName());
+                layoutView.getCurrentLayouterData(), entry.getDisplayName());
 
         if (optionData != null) {
             String valueString = entry.getValueAsString();

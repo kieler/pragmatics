@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -58,7 +57,7 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
@@ -82,8 +81,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     /** preference identifier for enabling advanced options. */
     public static final String PREF_ADVANCED = "view.advanced";
     
-    /** default layout provider array, which is empty. */
-    private static final LayoutProviderData[] DEFAULT_PROVIDER_DATA = new LayoutProviderData[0];
+    /** default layout algorithm array, which is empty. */
+    private static final LayoutAlgorithmData[] DEFAULT_LAYOUTER_DATA = new LayoutAlgorithmData[0];
     
     /** the form container for the property sheet page. */
     private ScrolledForm form;
@@ -96,7 +95,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     /** the currently examined edit part. */
     private EditPart currentEditPart;
     /** the layout provider data for the currently displayed options. */
-    private LayoutProviderData[] currentProviderData = DEFAULT_PROVIDER_DATA;
+    private LayoutAlgorithmData[] currentLayouterData = DEFAULT_LAYOUTER_DATA;
     
     /**
      * Finds the active layout view, if it exists.
@@ -145,17 +144,17 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 EditingDomain editingDomain = currentManager.getBridge().getEditingDomain(object);
                 if (layoutConfig != null && editingDomain instanceof TransactionalEditingDomain) {
                     currentEditPart = currentManager.getBridge().getEditPart(object);
-                    LayoutProviderData contentProvider = layoutConfig.getContentLayouterData();
-                    LayoutProviderData containerProvider = layoutConfig.getContainerLayouterData();
-                    if (contentProvider == null && containerProvider == null) {
-                        currentProviderData = DEFAULT_PROVIDER_DATA;
-                    } else if (contentProvider == null) {
-                        currentProviderData = new LayoutProviderData[] { containerProvider };
-                    } else if (containerProvider == null) {
-                        currentProviderData = new LayoutProviderData[] { contentProvider };
+                    LayoutAlgorithmData contentLayouter = layoutConfig.getContentLayouterData();
+                    LayoutAlgorithmData containerLayouter = layoutConfig.getContainerLayouterData();
+                    if (contentLayouter == null && containerLayouter == null) {
+                        currentLayouterData = DEFAULT_LAYOUTER_DATA;
+                    } else if (contentLayouter == null || contentLayouter.equals(containerLayouter)) {
+                        currentLayouterData = new LayoutAlgorithmData[] { containerLayouter };
+                    } else if (containerLayouter == null) {
+                        currentLayouterData = new LayoutAlgorithmData[] { contentLayouter };
                     } else {
-                        currentProviderData = new LayoutProviderData[] {
-                                contentProvider, containerProvider };
+                        currentLayouterData = new LayoutAlgorithmData[] {
+                                contentLayouter, containerLayouter };
                     }
                     return new LayoutPropertySource(layoutConfig,
                             (TransactionalEditingDomain) editingDomain);
@@ -512,12 +511,12 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     }
 
     /**
-     * Returns the current layout provider data.
+     * Returns the current layout algorithm data.
      * 
-     * @return the current layout provider data
+     * @return the current layout algorithm data
      */
-    public LayoutProviderData[] getCurrentProviderData() {
-        return currentProviderData;
+    public LayoutAlgorithmData[] getCurrentLayouterData() {
+        return currentLayouterData;
     }
 
     /**

@@ -34,8 +34,8 @@ public class LayoutTypeData implements ILayoutData {
     private String name = "";
     /** detail description. */
     private String description = "";
-    /** the list of layout providers that are registered for this type. */
-    private List<LayoutProviderData> layouters = new LinkedList<LayoutProviderData>();
+    /** the list of layout algorithms that are registered for this type. */
+    private List<LayoutAlgorithmData> layouters = new LinkedList<LayoutAlgorithmData>();
     
     /**
      * {@inheritDoc}
@@ -71,11 +71,11 @@ public class LayoutTypeData implements ILayoutData {
     }
     
     /**
-     * Returns the list of layout providers that are registered for this type.
+     * Returns the list of layout algorithms that are registered for this type.
      * 
      * @return the layouters
      */
-    public List<LayoutProviderData> getLayouters() {
+    public List<LayoutAlgorithmData> getLayouters() {
         return layouters;
     }
 

@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.ui.LayouterHintDialog;
@@ -108,13 +108,13 @@ public class LayouterHintCellEditor extends CellEditor {
             this.value = (String) thevalue;
             String newText;
             LayoutServices layoutServices = LayoutServices.getInstance();
-            LayoutTypeData layoutType = layoutServices.getLayoutTypeData(value);
+            LayoutTypeData layoutType = layoutServices.getTypeData(value);
             if (layoutType != null) {
                 newText = layoutType.toString();
             } else {
-                LayoutProviderData providerData = layoutServices.getLayoutProviderData(value);
-                if (providerData != null) {
-                    newText = providerData.toString();
+                LayoutAlgorithmData layouterData = layoutServices.getAlgorithmData(value);
+                if (layouterData != null) {
+                    newText = layouterData.toString();
                 } else {
                     newText = Messages.getString("kiml.ui.8");
                 }

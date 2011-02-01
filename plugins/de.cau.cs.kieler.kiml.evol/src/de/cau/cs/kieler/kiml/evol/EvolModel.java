@@ -28,7 +28,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.evol.alg.BasicEvolutionaryAlgorithm;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.Population;
@@ -354,7 +354,7 @@ public final class EvolModel {
             monitor.beginTask("Resetting the model.", totalWork * scale);
 
             // Get the ID of the current layout provider.
-            LayoutProviderData providerData = getCurrentLayoutProviderDataSync();
+            LayoutAlgorithmData providerData = getCurrentLayoutProviderDataSync();
             this.layoutProviderId = providerData != null ? providerData.getId() : null;
 
             // Get the editors.
@@ -462,18 +462,18 @@ public final class EvolModel {
      * @return the current layout provider data, or {@code null} if none can be
      *         found
      */
-    private LayoutProviderData getCurrentLayoutProviderDataSync() {
-        final Maybe<LayoutProviderData> maybeProviderData = new Maybe<LayoutProviderData>();
+    private LayoutAlgorithmData getCurrentLayoutProviderDataSync() {
+        final Maybe<LayoutAlgorithmData> maybeProviderData = new Maybe<LayoutAlgorithmData>();
         Runnable runnable = new Runnable() {
             public void run() {
                 IEditorPart editor = EvolUtil.getCurrentEditor();
                 EditPart part = EvolUtil.getCurrentEditPart(editor);
-                LayoutProviderData providerData = EvolUtil.getLayoutProviderData(editor, part);
+                LayoutAlgorithmData providerData = EvolUtil.getLayoutProviderData(editor, part);
                 maybeProviderData.set(providerData);
             }
         };
         MonitoredOperation.runInUI(runnable, true /* synch */);
-        LayoutProviderData providerData = maybeProviderData.get();
+        LayoutAlgorithmData providerData = maybeProviderData.get();
         return providerData;
     }
     

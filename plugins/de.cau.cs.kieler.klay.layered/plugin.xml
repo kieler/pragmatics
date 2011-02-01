@@ -3,7 +3,7 @@
 <plugin>
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
-      <layoutProvider
+      <layoutAlgorithm
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klay.layered.LayeredLayoutProvider"
             id="de.cau.cs.kieler.klay.layered"

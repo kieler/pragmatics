@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
@@ -114,8 +114,8 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
             if (hintGene instanceof ListItemGene) {
                 final String hintId = hintGene.toString();
 
-                final LayoutProviderData provider =
-                        LayoutServices.getInstance().getLayoutProviderData(hintId);
+                final LayoutAlgorithmData provider =
+                        LayoutServices.getInstance().getAlgorithmData(hintId);
                 if (provider != null) {
                     providerName = provider.getName();
                 }

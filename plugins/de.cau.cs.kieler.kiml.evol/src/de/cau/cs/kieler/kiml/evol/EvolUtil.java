@@ -42,6 +42,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -52,7 +53,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
@@ -131,8 +132,8 @@ public final class EvolUtil {
             // presuming layoutServices != null
 
             // Get the expected layout type id.
-            LayoutProviderData expectedProviderData =
-                    layoutServices.getLayoutProviderData(expectedLayoutProviderId);
+            LayoutAlgorithmData expectedProviderData =
+                    layoutServices.getAlgorithmData(expectedLayoutProviderId);
             assert expectedProviderData != null;
             String expectedLayoutTypeId = expectedProviderData.getType();
             assert expectedLayoutTypeId != null;
@@ -152,7 +153,7 @@ public final class EvolUtil {
                 System.out.println();
                 System.out.print("--- Editor: " + editor.getTitle() + " ");
 
-                LayoutProviderData data = getLayoutProviderData(editor);
+                LayoutAlgorithmData data = getLayoutProviderData(editor);
 
                 // Check if we can handle its type.
                 String layoutTypeId = data.getType();
@@ -177,11 +178,11 @@ public final class EvolUtil {
          *            an editor
          * @return a layout provider or {@code null} if none can be found
          */
-        private static LayoutProviderData getLayoutProviderData(final IEditorPart editor) {
+        private static LayoutAlgorithmData getLayoutProviderData(final IEditorPart editor) {
             EditPart editPart = getCurrentEditPart(editor);
 
             // See which layout provider suits for the editor.
-            LayoutProviderData data = EvolUtil.getLayoutProviderData(editor, editPart);
+            LayoutAlgorithmData data = EvolUtil.getLayoutProviderData(editor, editPart);
 
             String layoutProviderId;
             if (data == null) {
@@ -787,9 +788,9 @@ public final class EvolUtil {
         // UI thread).
         LayoutViewPart layoutViewPart = LayoutViewPart.findView();
         if (layoutViewPart != null) {
-            IEditorPart editor = layoutViewPart.getCurrentEditor();
-            if (editor != null) {
-                return editor;
+            IWorkbenchPart editor = layoutViewPart.getCurrentEditor();
+            if (editor instanceof IEditorPart) {
+                return (IEditorPart) editor;
             }
         }
 
@@ -875,10 +876,10 @@ public final class EvolUtil {
      *            a {@link IEditorPart}
      * @param editPart
      *            an {@link EditPart}
-     * @return the {@link LayoutProviderData} of the layout provider, or
+     * @return the {@link LayoutAlgorithmData} of the layout provider, or
      *         {@code null} if none can be found.
      */
-    public static LayoutProviderData getLayoutProviderData(
+    public static LayoutAlgorithmData getLayoutProviderData(
             final IEditorPart editor, final EditPart editPart) {
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, editPart);
@@ -907,7 +908,7 @@ public final class EvolUtil {
 
         LayoutServices layoutServices = LayoutServices.getInstance();
 
-        for (final LayoutProviderData data : layoutServices.getLayoutProviderData()) {
+        for (final LayoutAlgorithmData data : layoutServices.getAlgorithmData()) {
             if (data.getType().equalsIgnoreCase(layoutType)) {
                 result.add(data.getId());
             }
@@ -932,7 +933,7 @@ public final class EvolUtil {
 
         LayoutServices layoutServices = LayoutServices.getInstance();
         // presuming layoutServices != null
-        LayoutProviderData providerData = layoutServices.getLayoutProviderData(providerId);
+        LayoutAlgorithmData providerData = layoutServices.getAlgorithmData(providerId);
         // presuming providerData != null
         String newTypeId = providerData.getType();
 
@@ -1065,7 +1066,7 @@ public final class EvolUtil {
             final List<ILayoutConfig> configs, final String id) {
         Set<Object> result = new LinkedHashSet<Object>();
         LayoutServices layoutServices = LayoutServices.getInstance();
-        LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(id);
+        LayoutOptionData<?> optionData = layoutServices.getOptionData(id);
 
         for (final ILayoutConfig config : configs) {
             Object value = config.getProperty(optionData);
@@ -1089,7 +1090,7 @@ public final class EvolUtil {
                 // But we want the layout hint identifier instead of its
                 // index.
 
-                LayoutProviderData provider = config.getContentLayouterData();
+                LayoutAlgorithmData provider = config.getContentLayouterData();
                 if (provider != null) {
                     result.add(provider.getId());
                 }

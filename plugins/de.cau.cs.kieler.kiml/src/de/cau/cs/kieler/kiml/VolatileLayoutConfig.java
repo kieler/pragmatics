@@ -127,20 +127,20 @@ public class VolatileLayoutConfig implements ILayoutConfig {
     }
 
     /**
-     * Returns {@code null}, since this layout configuration is not connected to a layout provider.
+     * Returns {@code null}, since this layout configuration is not connected to a layout algorithm.
      * 
      * @return {@code null}
      */
-    public LayoutProviderData getContentLayouterData() {
+    public LayoutAlgorithmData getContentLayouterData() {
         return null;
     }
 
     /**
-     * Returns {@code null}, since this layout configuration is not connected to a layout provider.
+     * Returns {@code null}, since this layout configuration is not connected to a layout algorithm.
      * 
      * @return {@code null}
      */
-    public LayoutProviderData getContainerLayouterData() {
+    public LayoutAlgorithmData getContainerLayouterData() {
         return null;
     }
 
@@ -163,7 +163,7 @@ public class VolatileLayoutConfig implements ILayoutConfig {
      * @param diagramType a diagram type
      * @return nothing
      */
-    public LayoutProviderData getLayouterData(final String layoutHint, final String diagramType) {
+    public LayoutAlgorithmData getLayouterData(final String layoutHint, final String diagramType) {
         throw new UnsupportedOperationException();
     }
 

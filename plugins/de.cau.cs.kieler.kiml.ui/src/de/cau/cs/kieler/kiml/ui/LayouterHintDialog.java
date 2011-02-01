@@ -41,11 +41,11 @@ import org.eclipse.swt.widgets.Text;
 
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.ILayoutData;
-import de.cau.cs.kieler.kiml.LayoutProviderData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 
 /**
- * A dialog to browse and select layout providers or layout types.
+ * A dialog to browse and select layout algorithms or layout types.
  *
  * @kieler.rating 2011-01-24 proposed yellow msp
  * @author msp
@@ -112,9 +112,9 @@ public class LayouterHintDialog extends Dialog {
      */
     private void updateValue(final String value) {
         LayoutServices layoutServices = LayoutServices.getInstance();
-        ILayoutData layoutData = layoutServices.getLayoutProviderData(value);
+        ILayoutData layoutData = layoutServices.getAlgorithmData(value);
         if (layoutData == null) {
-            layoutData = layoutServices.getLayoutTypeData(value);
+            layoutData = layoutServices.getTypeData(value);
         }
         if (layoutData != null) {
             treeViewer.setSelection(new StructuredSelection(layoutData));
@@ -131,7 +131,7 @@ public class LayouterHintDialog extends Dialog {
     private void updateValue(final ILayoutData layoutData) {
         String name = layoutData.getName();
         if (name == null || name.length() == 0) {
-            name = layoutData instanceof LayoutProviderData
+            name = layoutData instanceof LayoutAlgorithmData
                     ? Messages.getString("kiml.ui.61")
                     : Messages.getString("kiml.ui.8");
         }
@@ -142,8 +142,8 @@ public class LayouterHintDialog extends Dialog {
         }
         descriptionLabel.setText(description);
         Image newImage = null;
-        if (layoutData instanceof EclipseLayoutProviderData) {
-            ImageDescriptor descriptor = ((EclipseLayoutProviderData) layoutData).getPreviewImage();
+        if (layoutData instanceof EclipseLayoutAlgorithmData) {
+            ImageDescriptor descriptor = ((EclipseLayoutAlgorithmData) layoutData).getPreviewImage();
             if (descriptor != null) {
                 newImage = descriptor.createImage();
             }

@@ -21,7 +21,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
- * Performs layout in a graph with hierarchy by executing a layout provider on
+ * Performs layout in a graph with hierarchy by executing a layout algorithm on
  * each level of the hierarchy. This is done recursively from the leafs to the
  * root of the nodes in the graph, using size information from lower levels in
  * the levels above.
@@ -134,11 +134,11 @@ public class RecursiveLayouterEngine {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
         String layoutHint = nodeLayout.getProperty(LayoutOptions.LAYOUTER_HINT);
         String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
-        LayoutProviderData providerData = layoutConfig.getLayouterData(layoutHint, diagramType);
-        if (providerData != null) {
-            return providerData.getInstance();
+        LayoutAlgorithmData algorithmData = layoutConfig.getLayouterData(layoutHint, diagramType);
+        if (algorithmData != null) {
+            return algorithmData.getProvider();
         } else {
-            throw new KielerException("No registered layout provider is available.");
+            throw new KielerException("No registered layout algorithm is available.");
         }
     }
     

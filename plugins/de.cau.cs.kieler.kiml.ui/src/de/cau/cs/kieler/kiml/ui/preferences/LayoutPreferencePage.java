@@ -128,7 +128,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         elementGroup.setText(Messages.getString("kiml.ui.28")); //$NON-NLS-1$
         IPreferenceStore preferenceStore = getPreferenceStore();
         LayoutServices layoutServices = LayoutServices.getInstance();
-        Collection<LayoutOptionData<?>> layoutOptionData = layoutServices.getLayoutOptionData();
+        Collection<LayoutOptionData<?>> layoutOptionData = layoutServices.getOptionData();
         optionEntries = new LinkedList<OptionsTableProvider.DataEntry>();
 
         // add options for edit parts and domain model elements

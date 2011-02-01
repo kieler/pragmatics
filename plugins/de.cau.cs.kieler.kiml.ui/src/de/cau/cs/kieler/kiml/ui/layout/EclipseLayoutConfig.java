@@ -269,7 +269,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         if (diagramType != null) {
             for (Entry<String, Object> entry : layoutServices.getOptions(diagramType).entrySet()) {
                 if (entry.getValue() != null) {
-                    LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(entry.getKey());
+                    LayoutOptionData<?> optionData = layoutServices.getOptionData(entry.getKey());
                     options.put(optionData, entry.getValue());
                 }
             }
@@ -280,7 +280,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
             String clazzName = modelElement.eClass().getInstanceTypeName();
             for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
                 if (entry.getValue() != null) {
-                    LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(entry.getKey());
+                    LayoutOptionData<?> optionData = layoutServices.getOptionData(entry.getKey());
                     options.put(optionData, entry.getValue());
                 }
             }
@@ -291,7 +291,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
             String clazzName = focusEditPart.getClass().getName();
             for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
                 if (entry.getValue() != null) {
-                    LayoutOptionData<?> optionData = layoutServices.getLayoutOptionData(entry.getKey());
+                    LayoutOptionData<?> optionData = layoutServices.getOptionData(entry.getKey());
                     options.put(optionData, entry.getValue());
                 }
             }

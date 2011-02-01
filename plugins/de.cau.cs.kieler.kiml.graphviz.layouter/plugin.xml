@@ -23,7 +23,7 @@
             id="de.cau.cs.kieler.kiml.categories.graphviz"
             name="Graphviz">
       </category>
-      <layoutProvider
+      <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             description="Layered drawings of directed graphs. The algorithm aims edges in the same direction (top to bottom, or left to right) and then attempts to avoid edge crossings and reduce edge length."
@@ -65,7 +65,7 @@
                option="de.cau.cs.kieler.layout.options.debugMode">
          </knownOption>
       </layoutProvider>
-      <layoutProvider
+      <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             description="Spring model layouts. Neato attempts to minimize a global energy function, which is equivalent to statistical multi-dimensional scaling. The solution is achieved using stress majorization, though the older Kamada-Kawai algorithm, using steepest descent, is also available."
@@ -110,7 +110,7 @@
                option="de.cau.cs.kieler.layout.options.debugMode">
          </knownOption>
       </layoutProvider>
-      <layoutProvider
+      <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             description="Spring model layouts similar to those of Neato, but does this by reducing forces rather than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a multigrid solver that handles larger graphs and clustered undirected graphs."
@@ -155,7 +155,7 @@
                option="de.cau.cs.kieler.layout.options.debugMode">
          </knownOption>
       </layoutProvider>
-      <layoutProvider
+      <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             description="Radial layouts, after Graham and Wills &apos;97. The nodes are placed on concentric circles depending on their distance from a given root node."
@@ -190,7 +190,7 @@
                option="de.cau.cs.kieler.layout.options.debugMode">
          </knownOption>
       </layoutProvider>
-      <layoutProvider
+      <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             description="Circular layout, after Six and Tollis &apos;99, Kaufmann and Wiese &apos;02. This is suitable for certain diagrams of multiple cyclic structures such as certain telecommunications networks."

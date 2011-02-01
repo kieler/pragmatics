@@ -411,7 +411,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
      */
     private String getLayoutHint(final PictogramElement pictogramElement) {
         LayoutOptionData<?> layoutHintData =
-                LayoutServices.getInstance().getLayoutOptionData(
+                LayoutServices.getInstance().getOptionData(
                         LayoutOptions.LAYOUTER_HINT_ID);
         String result =
                 (String) getOption(layoutHintData, PREFIX, pictogramElement);
@@ -487,7 +487,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         LayoutServices layoutServices = LayoutServices.getInstance();
         for (Property option : props) {
             LayoutOptionData<?> optionData =
-                    layoutServices.getLayoutOptionData(option.getKey());
+                    layoutServices.getOptionData(option.getKey());
             if (optionData != null) {
                 Object value = optionData.parseValue(option.getValue());
                 if (value != null) {

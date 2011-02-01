@@ -7,7 +7,7 @@
             id="de.cau.cs.kieler.kiml.categories.zest"
             name="Zest">
       </category>
-      <layoutProvider
+      <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.zest.spring"
@@ -19,7 +19,7 @@
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
       </layoutProvider>
-      <layoutProvider
+      <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.zest.grid"
@@ -30,7 +30,7 @@
                type="de.cau.cs.kieler.layout.diagrams.boxes">
          </supportedDiagram>
       </layoutProvider>
-      <layoutProvider
+      <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
             id="de.cau.cs.kieler.kiml.zest.radial"

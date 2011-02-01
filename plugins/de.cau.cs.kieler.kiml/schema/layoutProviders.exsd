@@ -20,7 +20,7 @@ Layout providers can be grouped using categories, and they can be given a type t
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="layoutProvider"/>
+            <element ref="layoutAlgorithm"/>
             <element ref="layoutType"/>
             <element ref="category"/>
             <element ref="layoutOption"/>
@@ -52,10 +52,10 @@ Layout providers can be grouped using categories, and they can be given a type t
       </complexType>
    </element>
 
-   <element name="layoutProvider">
+   <element name="layoutAlgorithm">
       <annotation>
          <documentation>
-            A layout provider, that is an implementation of a layout algorithm that is able to process the &lt;code&gt;KGraph&lt;/code&gt; data structure. A library that provides multiple different layout algorithms should create one &lt;code&gt;layoutProvider&lt;/code&gt; element for each algorithm.
+            A layout algorithm implementation that is able to process the &lt;code&gt;KGraph&lt;/code&gt; data structure. A library that provides multiple different layout algorithms should have one &lt;code&gt;layoutAlgorithm&lt;/code&gt; element for each algorithm and one &lt;code&gt;AbstractLayoutProvider&lt;/code&gt; implementation that accepts different parameters for initialization.
          </documentation>
       </annotation>
       <complexType>
