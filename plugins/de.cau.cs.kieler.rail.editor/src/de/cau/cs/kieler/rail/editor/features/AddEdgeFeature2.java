@@ -46,6 +46,7 @@ public class AddEdgeFeature2 extends AbstractAddFeature {
 	 * @return The Pictogram Element for the Edge (a line for source to target)
 	 */
     public PictogramElement add(IAddContext context) {
+    	System.out.println("add Edge");
     	IPeCreateService peCreateService = Graphiti.getPeCreateService();
     	
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
@@ -100,7 +101,8 @@ public class AddEdgeFeature2 extends AbstractAddFeature {
     public boolean canAdd(IAddContext context) {
         // return true if given business object is an EReference
         // note, that the context must be an instance of IAddConnectionContext
-        if (context instanceof IAddConnectionContext
+    	System.out.println("add Edge");
+    	if (context instanceof IAddConnectionContext
         		//TODO Edge (before it was Link) really????
             && context.getNewObject() instanceof Edge) {
             return true;

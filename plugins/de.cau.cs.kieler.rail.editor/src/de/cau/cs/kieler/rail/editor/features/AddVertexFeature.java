@@ -15,6 +15,7 @@ import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
+import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -84,6 +85,7 @@ public class AddVertexFeature extends AbstractAddFeature {
      */
     public PictogramElement add(final IAddContext context) {
         PictogramElement pe = null;
+        IPeCreateService peCreateService = Graphiti.getPeCreateService();
         switch (type) {
         case BREANCH:
             pe = addBreach(context);
@@ -98,6 +100,7 @@ public class AddVertexFeature extends AbstractAddFeature {
             pe = addSwitchVertex(context, EOrientation.RECHTS);
             break;
         }
+        peCreateService.createChopboxAnchor((Shape) pe);
         layoutPictogramElement(pe);
         return pe;
     }
@@ -218,10 +221,10 @@ public class AddVertexFeature extends AbstractAddFeature {
         }
 
         // add a chopbox anchor to the shape
-        peCreateService.createChopboxAnchor(containerShape);
+        //peCreateService.createChopboxAnchor(containerShape);
 
         // call the layout feature
-        layoutPictogramElement(containerShape);
+        //layoutPictogramElement(containerShape);
 
         return containerShape;
     }

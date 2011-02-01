@@ -48,6 +48,9 @@ public class AddEdgeFeature extends AbstractAddFeature {
     public PictogramElement add(IAddContext context) {
     	IPeCreateService peCreateService = Graphiti.getPeCreateService();
     	
+    	
+    	System.out.println("add Edge X: " +context.getX() + " Y: " + context.getY());
+    	
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
        
         // CONNECTION WITH POLYLINE
@@ -61,7 +64,7 @@ public class AddEdgeFeature extends AbstractAddFeature {
         Polyline polyline = gaService.createPolyline(connection);
         polyline.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
  
-        // create link and wire it
+        // create link and write it
         if (((EObject) context.getNewObject()).eResource() == null) {
             getDiagram().eResource().getContents().add((EObject) context.getNewObject());
         }
