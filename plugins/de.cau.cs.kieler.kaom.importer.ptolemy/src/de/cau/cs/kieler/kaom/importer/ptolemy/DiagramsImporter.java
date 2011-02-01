@@ -64,6 +64,7 @@ import de.cau.cs.kieler.core.model.util.XtendStatus;
 import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kaom.KaomPackage;
+import de.cau.cs.kieler.kaom.diagram.custom.commands.ReInitKaomDiagramCommand;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
 import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorUtil;
@@ -539,7 +540,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         // Check if everything went fine
         int severity = status.getSeverity();
         maxSeverity = Math.max(maxSeverity, severity);
-        
+         
         if (severity == XtendStatus.WARNING || severity == XtendStatus.ERROR) {
             throw new CoreException(new MultiStatus(
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
@@ -593,51 +594,9 @@ public class DiagramsImporter implements IRunnableWithProgress {
         Resource sourceResource = resourceSet.getResource(sourceFileURI, true);
         EObject diagramRoot = (EObject) sourceResource.getContents().get(0);
         
-        // Create the diagram
-        final Diagram diagram = ViewService.createDiagram(
-                diagramRoot,
-                EntityEditPart.MODEL_ID,
-                KaomDiagramEditorPlugin.DIAGRAM_PREFERENCES_HINT);
+        // create and save diagram
+        ReInitKaomDiagramCommand diagramInitializer = new ReInitKaomDiagramCommand();
+        diagramInitializer.createNewDiagram(diagramRoot, editingDomain, targetFile, null);
         
-        // Add the diagram to the resource. This requires a proper transaction, so get
-        // ready for some verbose transaction code action! (this has nothing to do with
-        // music; that would be a TranceAction...) (sorry...)
-        List<IFile> affectedFiles = new ArrayList<IFile>();
-        affectedFiles.add(targetFile);
-        AbstractTransactionalCommand command = new AbstractTransactionalCommand(
-                editingDomain,
-                "", //$NON-NLS-1$
-                affectedFiles) {
-            
-            @Override
-            protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
-                    final IAdaptable info) throws ExecutionException {
-
-                targetResource.getContents().add(diagram);
-                return CommandResult.newOKCommandResult();
-            }
-        };
-        
-        try {
-            OperationHistoryFactory.getOperationHistory().execute(command, null, null);
-        } catch (ExecutionException e) {
-            throw new CoreException(new Status(
-                    IStatus.ERROR,
-                    KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    Messages.DiagramsImporter_exception_diagramInitialization + targetFileName,
-                    e));
-        }
-        
-        
-        // Try to save the diagram
-        try {
-            targetResource.save(KaomDiagramEditorUtil.getSaveOptions());
-        } catch (IOException e) {
-            throw new CoreException(new Status(
-                    IStatus.ERROR,
-                    KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    Messages.DiagramsImporter_exception_diagramInitialization + targetFileName,
-                    e));
-        }
     }
 }
