@@ -292,7 +292,7 @@ public class SimplePatternsImpl implements IPatterns {
     }
 
     public int switchRightBranchSwitchLeftStump(List<Integer> occupiedPlaces, int origin) {
-        int firstGuess = origin;
+        int firstGuess = origin + 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
         }

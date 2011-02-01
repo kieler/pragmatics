@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.rail.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -116,6 +117,109 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                             if (!helper.allNeighborsKnown(walker, known)) {
                                 nextNodes.push(walker);
                             }
+                            int offset = 0;
+                            if (port.getNode().getProperty(Properties.NODE_TYPE)
+                                    .equals(NodeType.SWITCH_LEFT)) {
+                                if (target.getProperty(Properties.NODE_TYPE).equals(
+                                        NodeType.SWITCH_LEFT)
+                                        || target.getProperty(Properties.NODE_TYPE).equals(
+                                                NodeType.SWITCH_RIGHT)) {
+                                    offset -= helper.getConflictDistanceLeft(target, layerCount);
+                                }
+                            } else if (port.getNode().getProperty(Properties.NODE_TYPE)
+                                    .equals(NodeType.SWITCH_RIGHT)) {
+                                if (target.getProperty(Properties.NODE_TYPE).equals(
+                                        NodeType.SWITCH_LEFT)
+                                        || target.getProperty(Properties.NODE_TYPE).equals(
+                                                NodeType.SWITCH_RIGHT)) {
+                                    offset += helper.getConflictDistanceRight(target, layerCount);
+                                }
+                            }
+                            System.out.println("Placing " + target.getName() + " at pos "
+                                    + (offset + helper.getPositionForNode(targetPort, port)));
+                            putTargetInGrid(target,
+                                    offset + helper.getPositionForNode(targetPort, port));
+                            if (walker.getProperty(Properties.NODE_TYPE).equals(
+                                    NodeType.SWITCH_LEFT)) {
+                                placeLeftFromTrunk(target, walker, layerCount);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        // apply grid to graph
+        for (Layer layer : layeredGraph.getLayers()) {
+            if (layer instanceof RailLayer) {
+                gridToAbsolutePosition((RailLayer) layer, getMinimalPosition(layeredGraph));
+            } else {
+                throw new IllegalArgumentException("Only works with RailLayers!");
+            }
+        }
+        getMonitor().done();
+    }
+
+    private void placeLeftFromTrunk(final LNode first, final LNode pre, final int layerCount) {
+        List<LNode> known = new LinkedList<LNode>();
+        Stack<LNode> nextNodes = new Stack<LNode>();
+        NodePlacerHelper helper = new NodePlacerHelper(new SimplePatternsImpl());
+        LNode walker = first;
+        nextNodes.push(walker);
+        known.add(walker);
+        known.add(pre);
+
+        while (!nextNodes.isEmpty()) {
+            walker = nextNodes.pop();
+            boolean found = false;
+            if (helper.allNeighborsKnown(walker, known)) {
+                continue;
+            }
+            for (LPort port : walker.getPorts()) {
+                LNode target = port.getEdges().get(0).getTarget().getNode();
+                LPort targetPort = port.getEdges().get(0).getTarget();
+                if ((port.getNode().getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_RIGHT)
+                        && port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH))
+                        && !known.contains(target)) {
+                    found = true;
+                    known.add(target);
+                    if (!helper.allNeighborsKnown(walker, known)) {
+                        nextNodes.push(walker);
+                    }
+                    nextNodes.push(target);
+                    int offset = 0;
+                    if (port.getNode().getProperty(Properties.NODE_TYPE)
+                            .equals(NodeType.SWITCH_LEFT)) {
+                        if (target.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)
+                                || target.getProperty(Properties.NODE_TYPE).equals(
+                                        NodeType.SWITCH_RIGHT)) {
+                            offset -= helper.getConflictDistanceLeft(target, layerCount);
+                        }
+                    } else if (port.getNode().getProperty(Properties.NODE_TYPE)
+                            .equals(NodeType.SWITCH_RIGHT)) {
+                        if (target.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)
+                                || target.getProperty(Properties.NODE_TYPE).equals(
+                                        NodeType.SWITCH_RIGHT)) {
+                            offset += helper.getConflictDistanceRight(target, layerCount);
+                        }
+                    }
+                    System.out.println("Placing " + target.getName() + " at pos "
+                            + (offset + helper.getPositionForNode(targetPort, port)));
+                    putTargetInGrid(target, offset + helper.getPositionForNode(targetPort, port));
+                    break;
+                }
+            }
+            if (!found) {
+                for (LPort port : walker.getPorts()) {
+                    LNode target = port.getEdges().get(0).getTarget().getNode();
+                    LPort targetPort = port.getEdges().get(0).getTarget();
+                    if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
+                        if (!known.contains(target)) {
+                            known.add(target);
+                            if (!helper.allNeighborsKnown(walker, known)) {
+                                nextNodes.push(walker);
+                            }
                             nextNodes.push(target);
                             int offset = 0;
                             if (port.getNode().getProperty(Properties.NODE_TYPE)
@@ -135,24 +239,26 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                                     offset += helper.getConflictDistanceRight(target, layerCount);
                                 }
                             }
+                            System.out.println("Placing " + target.getName() + " at pos "
+                                    + (offset + helper.getPositionForNode(targetPort, port)));
                             putTargetInGrid(target,
                                     offset + helper.getPositionForNode(targetPort, port));
+                        }
+                    } else {
+                        if (!known.contains(target)) {
+                            known.add(target);
+                            if (!helper.allNeighborsKnown(walker, known)) {
+                                nextNodes.push(walker);
+                            }
+                            nextNodes.push(target);
+                            putTargetInGrid(target, helper.getPositionForNode(targetPort, port));
+                            break;
                         }
                     }
                 }
             }
 
         }
-
-        // apply grid to graph
-        for (Layer layer : layeredGraph.getLayers()) {
-            if (layer instanceof RailLayer) {
-                gridToAbsolutePosition((RailLayer) layer, getMinimalPosition(layeredGraph));
-            } else {
-                throw new IllegalArgumentException("Only works with RailLayers!");
-            }
-        }
-        getMonitor().done();
     }
 
     private void putTargetInGrid(final LNode target, final int position) {
