@@ -12,4 +12,4 @@ Require-Bundle: de.cau.cs.kieler.kiml.ui,
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.core.model,
- com.google.collect;bundle-version="0.8.0"
+ com.google.collect;bundle-version="1.0.0"
