@@ -64,6 +64,7 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Edit policy used to apply layout. This edit policy creates a
@@ -208,10 +209,15 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KNode sourceNode = kedge.getSource();
         KNode targetNode = kedge.getTarget();
 
+        KPoint sourcePoint = edgeLayout.getSourcePoint();
+        KPoint targetPoint = edgeLayout.getTargetPoint();
+        List<KPoint> kBendPoints = edgeLayout.getBendPoints();
+
         KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
         KPort sourcePort = kedge.getSourcePort();
         INodeEditPart sourceEditPart =
                 (INodeEditPart) connectionEditPart.getSource();
+        PrecisionPoint sourceOffset = null;
         if (sourcePort != null) {
             KShapeLayout portLayout = sourcePort.getData(KShapeLayout.class);
             sourceExt =
@@ -221,11 +227,12 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                             (int) (portLayout.getYpos() + sourceLayout
                                     .getYpos()), (int) portLayout.getWidth(),
                             (int) portLayout.getHeight());
-            if (sourceNode.eContents().contains(targetNode)) {
-                // Point first = bendPoints.getFirstPoint();
-                // first.setLocation(first.x,
-                // (int) (first.y + portLayout.getHeight() / 2.0f));
-                // bendPoints.setPoint(first, 0);
+            if (KimlUtil.isDescendant(targetNode, sourceNode)) {
+                // connection anchor point on port is wrong, override terminal
+                KPoint target =
+                        kBendPoints.size() > 0 ? kBendPoints.get(0)
+                                : targetPoint;
+                sourceOffset = calculateTerminal(sourcePoint, target);
             }
         } else {
             sourceExt =
@@ -251,14 +258,21 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         ConnectionAnchor sourceAnchor =
                 ((IAnchorableFigure) sourceFigure)
                         .getSourceConnectionAnchorAt(sourceAnchorReference);
-        String sourceTerminal =
-                sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
+        String sourceTerminal = null;
+        if (sourceOffset != null) {
+            // connection anchor point on port is wrong, override terminal
+            sourceTerminal = buildTerminal(sourceOffset);
+        } else {
+            sourceTerminal =
+                    sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
+        }
 
         KShapeLayout targetLayout =
                 kedge.getTarget().getData(KShapeLayout.class);
         KPort targetPort = kedge.getTargetPort();
         INodeEditPart targetEditPart =
                 (INodeEditPart) connectionEditPart.getTarget();
+        PrecisionPoint targetOffset = null;
         if (targetPort != null) {
             KShapeLayout portLayout = targetPort.getData(KShapeLayout.class);
             targetExt =
@@ -268,8 +282,12 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                             (int) (portLayout.getYpos() + targetLayout
                                     .getYpos()), (int) portLayout.getWidth(),
                             (int) portLayout.getHeight());
-            if (targetNode.eContents().contains(sourceNode)) {
-                // bendPoints.getLastPoint().y += portLayout.getHeight() / 2.0f;
+            if (KimlUtil.isDescendant(sourceNode, targetNode)) {
+                // connection anchor point on port is wrong, override terminal
+                int size = kBendPoints.size();
+                KPoint source =
+                        size > 0 ? kBendPoints.get(size - 1) : sourcePoint;
+                targetOffset = calculateTerminal(targetPoint, source);
             }
         } else {
             targetExt =
@@ -295,8 +313,14 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         ConnectionAnchor targetAnchor =
                 ((IAnchorableFigure) targetFigure)
                         .getTargetConnectionAnchorAt(targetAnchorReference);
-        String targetTerminal =
-                targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
+        String targetTerminal = null;
+        if (targetOffset != null) {
+            // connection anchor point on port is wrong, override terminal
+            targetTerminal = buildTerminal(targetOffset);
+        } else {
+            targetTerminal =
+                    targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
+        }
 
         // check whether the connection is a note attachment to an edge
         if (sourceEditPart instanceof ConnectionEditPart
@@ -307,6 +331,47 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
         command.addEdgeLayout((Edge) connectionEditPart.getModel(), bendPoints,
                 sourceTerminal, targetTerminal);
+    }
+
+    /**
+     * Build the terminal String. Taken from BaseSlidableAnchor.
+     * 
+     * @param p
+     *            the Point.
+     * @return
+     */
+    private String buildTerminal(final PrecisionPoint p) {
+        StringBuffer s = new StringBuffer();
+        s.append('('); // 1 char
+        s.append(p.preciseX); // 10 chars
+        s.append(','); // 1 char
+        s.append(p.preciseY); // 10 chars
+        s.append(')'); // 1 char
+        return s.toString();
+    }
+
+    /**
+     * Determine a new Terminal for points only that are on edges that cross
+     * hierarchy levels.
+     * 
+     * @param source
+     *            the source point
+     * @param target
+     *            the next point
+     * @return the new Terminal
+     */
+    private PrecisionPoint calculateTerminal(final KPoint source,
+            final KPoint target) {
+        PrecisionPoint sourceOffset;
+        double xOffset = 0.0f;
+        double yOffset = 0.0f;
+        if (source.getX() == target.getX()) {
+            xOffset = 1.0 / 2.0;
+        } else if (source.getY() == target.getY()) {
+            yOffset = 1.0 / 2.0;
+        }
+        sourceOffset = new PrecisionPoint(xOffset, yOffset);
+        return sourceOffset;
     }
 
     /** see LabelViewConstants.TARGET_LOCATION. */
