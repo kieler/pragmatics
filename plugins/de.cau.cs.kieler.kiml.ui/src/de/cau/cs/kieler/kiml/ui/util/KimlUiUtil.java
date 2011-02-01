@@ -88,7 +88,7 @@ public final class KimlUiUtil {
             result.top = containerBounds.y - parentBounds.y;
         }
         result.right = parentBounds.width - containerBounds.width - result.left;
-        result.bottom = parentBounds.height - containerBounds.height - result.left;
+        result.bottom = parentBounds.height - containerBounds.height - result.top;
         return result;
     }
     

@@ -30,7 +30,6 @@ import org.eclipse.gmf.runtime.diagram.ui.editpolicies.CreationEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.DragDropEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
-import org.eclipse.gmf.runtime.draw2d.ui.figures.ConstrainedToolbarLayout;
 import org.eclipse.gmf.runtime.emf.type.core.IElementType;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
@@ -38,7 +37,6 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.swt.graphics.Color;
 
 import de.cau.cs.kieler.core.ui.figures.layout.LabelLocator;
-import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.custom.EntityLayout;
 import de.cau.cs.kieler.kaom.diagram.edit.policies.Entity2CanonicalEditPolicy;
 import de.cau.cs.kieler.kaom.diagram.edit.policies.Entity2ItemSemanticEditPolicy;
@@ -215,8 +213,7 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
      */
     protected IFigure setupContentPane(IFigure nodeShape) {
         if (nodeShape.getLayoutManager() == null) {
-            ConstrainedToolbarLayout layout = new ConstrainedToolbarLayout();
-            layout.setSpacing(5);
+            EntityLayout layout = new EntityLayout();
             nodeShape.setLayoutManager(layout);
         }
         return nodeShape; // use nodeShape itself as contentPane
