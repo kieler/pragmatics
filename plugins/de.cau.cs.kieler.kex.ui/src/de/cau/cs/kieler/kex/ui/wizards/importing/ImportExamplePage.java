@@ -280,11 +280,11 @@ public class ImportExamplePage extends WizardPage {
             if (element instanceof Pair) {
                 Pair<Category, List<Object>> pair = (Pair<Category, List<Object>>) element;
                 Category first = pair.getFirst();
-                if (first.getIconPath() != null) {
-                    return computeImage(first.getIconPath(), first.getNamespaceId(), 16, 16);
-                } else {
-                    return noPreviewPic();
-                }
+                // if (first.getIconPath() != null) {
+                return computeImage(first.getIconPath(), first.getNamespaceId(), 16, 16);
+                // } else {
+                // return noPreviewPic();
+                // }
             }
             if (element instanceof Example) {
                 return computeImage(((Example) element).getOverviewPic(),
