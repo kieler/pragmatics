@@ -48,8 +48,10 @@ public final class ExampleImport {
 
     private static final String WORKSPACE_LOCATION = Platform.getLocation().toString();
 
-    private static final String STANDARD_PIC_PATH = "files/noPreview.png";
+    private static final String EMPTY_PIC_PATH = "files/noPreview.png";
     private static final String KEX_NAMESPACE_ID = "de.cau.cs.kieler.kex";
+
+    private static InputStream emptyPicStream;
 
     private ExampleImport() {
         // should not called
@@ -186,20 +188,22 @@ public final class ExampleImport {
     }
 
     /**
-     * loads the standard picture of an example.
+     * Loads the empty picture, often called when no example image exists.
      * 
      * @return {@link InputStream}
      */
-    public static InputStream loadStandardPic() {
-        Bundle bundle = Platform.getBundle(ExampleImport.KEX_NAMESPACE_ID);
-        URL entry = bundle.getEntry(ExampleImport.STANDARD_PIC_PATH);
-        try {
-            return entry.openStream();
-        } catch (IOException e) {
-            // should not happen at runtime
-            e.printStackTrace();
+    public static InputStream getEmptyPic() {
+        if (emptyPicStream == null) {
+            Bundle bundle = Platform.getBundle(ExampleImport.KEX_NAMESPACE_ID);
+            URL entry = bundle.getEntry(ExampleImport.EMPTY_PIC_PATH);
+            try {
+                emptyPicStream = entry.openStream();
+            } catch (IOException e) {
+                // FIXME think about a useful exception handling, this case should not happen at
+                // runtime
+            }
         }
-        return null;
+        return emptyPicStream;
     }
 
     /**

@@ -280,7 +280,11 @@ public class ImportExamplePage extends WizardPage {
             if (element instanceof Pair) {
                 Pair<Category, List<Object>> pair = (Pair<Category, List<Object>>) element;
                 Category first = pair.getFirst();
-                return computeImage(first.getIconPath(), first.getNamespaceId(), -1, -1);
+                if (first.getIconPath() != null) {
+                    return computeImage(first.getIconPath(), first.getNamespaceId(), 16, 16);
+                } else {
+                    return noPreviewPic();
+                }
             }
             if (element instanceof Example) {
                 return computeImage(((Example) element).getOverviewPic(),
@@ -353,7 +357,7 @@ public class ImportExamplePage extends WizardPage {
                                 | SWT.H_SCROLL));
                         // berechnung muss vorher geschehen. hier ist point.x == null
                         Image image = computeImage(selectedExample.getOverviewPic(),
-                                selectedExample.getNamespaceId(), this.point.x, this.point.y);
+                                selectedExample.getNamespaceId(), DIALOG_WIDTH, DIALOG_HEIGHT);
                         bounds = image.getBounds();
                         imgLabel.setImage(image);
                         imgLabel.pack();
@@ -491,7 +495,7 @@ public class ImportExamplePage extends WizardPage {
      * @return "no preview" picture
      */
     private Image noPreviewPic() {
-        return new Image(this.previewComp.getDisplay(), ExampleManager.get().loadStandardPic());
+        return new Image(this.previewComp.getDisplay(), ExampleManager.get().getEmptyPic());
     }
 
     /**

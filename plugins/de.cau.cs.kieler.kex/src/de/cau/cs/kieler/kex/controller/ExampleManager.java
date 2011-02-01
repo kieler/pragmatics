@@ -209,12 +209,12 @@ public final class ExampleManager {
     }
 
     /**
-     * Loads the standard picture.
+     * Loads a default picture.
      * 
      * @return {@link InputStream}
      */
-    public InputStream loadStandardPic() {
-        return ExampleImport.loadStandardPic();
+    public InputStream getEmptyPic() {
+        return ExampleImport.getEmptyPic();
     }
 
     /**
