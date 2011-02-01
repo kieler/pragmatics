@@ -124,14 +124,24 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                             int offset = 0;
                             if (port.getNode().getProperty(Properties.NODE_TYPE)
                                     .equals(NodeType.SWITCH_LEFT)) {
-                                offset -= getConflictDistanceLeft(
-                                        getMaxNewPosByLayer(target, layerCount),
-                                        getMinPosByLayer(layeredGraph));
+                                if (target.getProperty(Properties.NODE_TYPE).equals(
+                                        NodeType.SWITCH_LEFT)
+                                        || target.getProperty(Properties.NODE_TYPE).equals(
+                                                NodeType.SWITCH_RIGHT)) {
+                                    offset -= getConflictDistanceLeft(
+                                            getMaxNewPosByLayer(target, layerCount),
+                                            getMinPosByLayer(layeredGraph)) + 1;
+                                }
                             } else if (port.getNode().getProperty(Properties.NODE_TYPE)
                                     .equals(NodeType.SWITCH_RIGHT)) {
-                                offset += getConflictDistanceRight(
-                                        getMinNewPosByLayer(target, layerCount),
-                                        getMaxPosByLayer(layeredGraph));
+                                if (target.getProperty(Properties.NODE_TYPE).equals(
+                                        NodeType.SWITCH_LEFT)
+                                        || target.getProperty(Properties.NODE_TYPE).equals(
+                                                NodeType.SWITCH_RIGHT)) {
+                                    offset += getConflictDistanceRight(
+                                            getMinNewPosByLayer(target, layerCount),
+                                            getMaxPosByLayer(layeredGraph)) - 1;
+                                }
                             }
                             putTargetInGrid(target, offset + getPositionForNode(targetPort, port));
                         }
@@ -259,6 +269,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
 
         next.push(walker);
         knownNodes.add(walker);
+        placement.put(walker, 0);
 
         while (!next.isEmpty()) {
             walker = next.pop();
@@ -279,7 +290,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                     }
                     next.push(target);
                     int layerNo = target.getLayer().getIndex();
-                    int newPos = getPositionForNode(targetPort, port);
+                    int newPos = getPositionForNode(targetPort, port, placement.get(walker));
                     placement.put(target, newPos);
                     if (result.get(layerNo) < newPos) {
                         result.set(layerNo, newPos);
@@ -302,6 +313,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                             next.push(target);
                             int layerNo = target.getLayer().getIndex();
                             int newPos = getPositionForNode(targetPort, port, placement.get(walker));
+                            placement.put(target, newPos);
                             if (result.get(layerNo) < newPos) {
                                 result.set(layerNo, newPos);
                             }
@@ -327,6 +339,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
 
         next.push(walker);
         knownNodes.add(walker);
+        placement.put(walker, 0);
 
         while (!next.isEmpty()) {
             walker = next.pop();
@@ -369,7 +382,8 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
                             }
                             next.push(target);
                             int layerNo = target.getLayer().getIndex();
-                            int newPos = getPositionForNode(targetPort, port);
+                            int newPos = getPositionForNode(targetPort, port, placement.get(walker));
+                            placement.put(target, newPos);
                             if (result.get(layerNo) > newPos) {
                                 result.set(layerNo, newPos);
                             }
@@ -399,7 +413,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer 
             throw new IllegalArgumentException("Only works with RailLayers!");
         }
         int sourcePos = sourcePosition;
-        if (sourcePos != Integer.MIN_VALUE) {
+        if (sourcePos == Integer.MIN_VALUE) {
             sourcePos = sourceRow.getPosition(source);
         }
         switch (source.getProperty(Properties.NODE_TYPE)) {
