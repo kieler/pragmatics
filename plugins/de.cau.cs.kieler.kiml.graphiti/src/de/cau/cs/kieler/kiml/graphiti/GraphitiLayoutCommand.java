@@ -208,13 +208,25 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         KVector offset = new KVector();
         KimlUtil.toAbsolute(offset, parent);
 
+        List<ConnectionDecorator> decorators = conn.getConnectionDecorators();
+        boolean hasTailDecorator = false;
+        boolean hasHeadDecorator = false;
+        for (ConnectionDecorator dec : decorators) {
+            if (dec.getLocation() == 1.0) {
+                hasHeadDecorator = true;
+            } else if (dec.getLocation() == 0.0) {
+                hasTailDecorator = true;
+            }
+        }
+
         // gather the bend points of the edge
         KVectorChain allPoints = new KVectorChain();
         if (conn.getStart() instanceof ChopboxAnchor) {
             KPoint sourcePoint = edgeLayout.getSourcePoint();
             allPoints.add(sourcePoint.getX(), sourcePoint.getY());
             moveBendpointOutofNode(kedge.getSource(), allPoints.get(0), offset);
-        } else if (conn.getStart() instanceof BoxRelativeAnchor) {
+        } else if (conn.getStart() instanceof BoxRelativeAnchor
+                && !hasTailDecorator) {
             KPoint sourcePoint = edgeLayout.getSourcePoint();
             allPoints.add(sourcePoint.getX(), sourcePoint.getY());
             fixFirstBendPoint(allPoints.get(0),
@@ -240,8 +252,10 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                     last.y--;
                 }
             }
-            // allPoints.add(edgeLayout.getTargetPoint().getX(), edgeLayout
-            // .getTargetPoint().getY());
+            if (!hasHeadDecorator) {
+                allPoints.add(edgeLayout.getTargetPoint().getX(), edgeLayout
+                        .getTargetPoint().getY());
+            }
         }
 
         // transform spline control points into approximated bend points
