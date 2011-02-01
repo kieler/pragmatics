@@ -57,11 +57,13 @@ public class KiVi {
     private Map<Class<?>, ITriggerState> triggerStates = new HashMap<Class<?>, ITriggerState>();
 
     private List<CombinationDescriptor> availableCombinations = new ArrayList<CombinationDescriptor>();
+    private Collection<ICombination> combinations = new ArrayList<ICombination>();
 
     private Map<ITrigger, Collection<ICombination>> combinationsByTrigger;
     // haf: here a mapping from Trigger*States* to Combinations is more important
     private Map<Class<? extends ITriggerState>, Collection<ICombination>> combinationsByTriggerStates;
 
+    
     private boolean active = false;
 
     private boolean initialized = false;
@@ -203,6 +205,8 @@ public class KiVi {
         for (ICombination c : toActivate) {
             c.setActive(true);
         }
+        
+        printCombinations();
     }
 
     /**
@@ -319,10 +323,11 @@ public class KiVi {
             try {
                 Object o = element.createExecutableExtension("class");
                 if (o instanceof ICombination) {
-                    ICombination c = (ICombination) o;
+                    ICombination combination = (ICombination) o;
+                    this.combinations.add(combination);
                     CombinationDescriptor descriptor = new CombinationDescriptor(
                             element.getAttribute("name"), element.getAttribute("description"),
-                            c.getClass());
+                            combination.getClass());
                     availableCombinations.add(descriptor);
                     if ("true".equals(element.getAttribute("active"))) {
                         preferenceStore.setDefault(descriptor.getClazz().getCanonicalName()
@@ -331,10 +336,10 @@ public class KiVi {
                     }
                     if (preferenceStore.getBoolean(descriptor.getClazz().getCanonicalName()
                             + ".active")) {
-                        c.setActive(true);
+                        combination.setActive(true);
                         descriptor.setActive(true);
                     }
-                    CombinationParameter[] parameters = CombinationParameter.getParameters(c
+                    CombinationParameter[] parameters = CombinationParameter.getParameters(combination
                             .getClass());
                     for (CombinationParameter parameter : parameters) {
                         parameter.initialize();
@@ -506,6 +511,11 @@ public class KiVi {
                         combinationsByTrigger.remove(toRemove.getKey());
                         toRemove.getKey().setActive(false);
                     }
+                    // also remove combination from TriggerState map
+                    Collection<ICombination> combs = combinationsByTriggerStates.get(clazz);
+                    if(combs!=null && !combs.isEmpty()){
+                        combs.remove(combination);
+                    }
                 }
             }
         } catch (InstantiationException e) {
@@ -602,5 +612,11 @@ public class KiVi {
      */
     public void removeEffectsListener(final IEffectsListener listener) {
         effectsWorker.removeEffectsListener(listener);
+    }
+    
+    private void printCombinations(){
+        for (ICombination combination : this.combinations) {
+            System.out.println(combination.isActive() + " " + combination.getClass().getName());
+        }
     }
 }

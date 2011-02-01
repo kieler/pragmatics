@@ -115,34 +115,25 @@ public class KiviContributionItem extends CompoundContributionItem implements
         // make sure to initialize KiVi so all MenuContributions from the combinations are made.
         KiVi.getInstance().initialize();
 
+        /*
+         * haf: Tried to add a lot of caching for ContributionItems and Commands, but this seems
+         * very problematic with the Eclipse Command framework. Concrete problems: - old Commands
+         * may get "undefinded" randomly between calls of getContributionItems - old
+         * CommandContributionItems sometimes keep their "widget", sometimes it gets reset to null.
+         * Only if it is null, the fill method (see below) will actually do something. So sometimes
+         * the widget seems to be not correctly reset Therefore for now, any caching is removed,
+         * which also requires to clear the local memories.
+         */
+        buttons.clear();
+        buttonsHandlerMap.clear();
+
         List<ButtonConfiguration> buttonConfigurations = KiviMenuContributionService.INSTANCE
                 .getButtonConfigurations();
         for (ButtonConfiguration config : buttonConfigurations) {
 
-            IContributionItem item;
-            // first look for a cached button
-            item = idButtonMap.get(config.getId());
-            
-            // have to check whether the commands have been undefined in the meantime
-            boolean isCommandDefined = false;
-            try {
-                if (item != null && item instanceof CommandContributionItem
-                        && ((CommandContributionItem) item).getCommand().getCommand().isDefined()) {
-                    System.out.println(item + "parent: " + ((CommandContributionItem) item).getParent()); 
-                    isCommandDefined = true;
-                }
-            } catch (NullPointerException npe) {
-                /* nothing */
-            }
+            // only create a button if the corresponding combination is active
+            if (config.getResponsiveCombination().isActive()) {
 
-            /*
-             * ContributionItems schould be defined only once. However, their corresponding Commands
-             * might get "undefined" again later on by the Command persistence framework and then
-             * the platform requests this method again, where the Commands need to be created again,
-             * while the ContributionItems should not. And also visibility may not be registered
-             * again.
-             */
-            if (!isCommandDefined) {
                 // get a command and register the Kivi ButtonHandler for it
                 Command cmd = commandService.getCommand(config.getId());
                 Category category = commandService.getCategory("de.cau.cs.kieler");
@@ -159,65 +150,53 @@ public class KiviContributionItem extends CompoundContributionItem implements
                         new HashMap<String, String>(), config.getIcon(), null, null,
                         config.getLabel(), null, config.getTooltip(), config.getStyle(), null,
                         false);
-                // create button only if it was not created before
-                // (while Command might need definition multiple times)
-                if (item == null) {
-                    // this is the button
-                    item = new CommandContributionItem(parameter);
-                    // remember some relations between button, its handler and the
-                    // corresponding
-                    // configuration
-                    idButtonMap.put(config.getId(), item);
-                    buttons.add(item);
+                // this is the button
+                IContributionItem item;
+                item = new CommandContributionItem(parameter);
+                // remember some relations between button, its handler and the
+                // corresponding configuration
+                idButtonMap.put(config.getId(), item);
+                buttonsHandlerMap.put(item, buttonHandler);
+                buttons.add(item);
 
-                    // specify visibility
-                    Expression visibilityExpression = null;
-                    // specify visibility for active editors
-
-                    if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
-                        CompositeExpression or = new OrExpression();
-                        visibilityExpression = or;
-                        for (String editorId : config.getActiveEditors()) {
-                            CompositeExpression with = new WithExpression("activeEditorId");
-                            Expression equals = new EqualsExpression(editorId);
-                            with.add(equals);
-                            or.add(with);
-                        }
-                    }
-                    // specify visibility for a given core expression
-                    if (config.getVisibilityExpression() != null) {
-                        if (visibilityExpression == null) {
-                            visibilityExpression = config.getVisibilityExpression();
-                        } else {
-                            // there are some active editor specifications already
-                            CompositeExpression and = new AndExpression();
-                            and.add(visibilityExpression);
-                            and.add(config.getVisibilityExpression());
-                        }
-                    }
-                    if (visibilityExpression != null) {
-                        menuService.registerVisibleWhen(item, visibilityExpression, null, null);
-                        // request evaluation of all visibility expressions registered for a certain
-                        // variable. This must be done to show buttons also from the beginning,
-                        // because
-                        // expressions are always false in the beginning
-                        if (evaluationService != null) {
-                            evaluationService.requestEvaluation("activeEditorId");
-                        }
-
+                // specify visibility
+                Expression visibilityExpression = null;
+                // specify visibility for active editors
+                if (config.getActiveEditors() != null && config.getActiveEditors().length > 0) {
+                    CompositeExpression or = new OrExpression();
+                    visibilityExpression = or;
+                    for (String editorId : config.getActiveEditors()) {
+                        CompositeExpression with = new WithExpression("activeEditorId");
+                        Expression equals = new EqualsExpression(editorId);
+                        with.add(equals);
+                        or.add(with);
                     }
                 }
-                buttonsHandlerMap.put(item, buttonHandler);
-            }
-            // change the visibility if some combination has changed its active
-            // state (e.g. from
-            // prefs)
-            if (!config.getResponsiveCombination().isActive()) {
-                item.setVisible(false);
-            } else {
-                item.setVisible(true);
+                // specify visibility for a given core expression
+                if (config.getVisibilityExpression() != null) {
+                    if (visibilityExpression == null) {
+                        visibilityExpression = config.getVisibilityExpression();
+                    } else {
+                        // there are some active editor specifications already
+                        CompositeExpression and = new AndExpression();
+                        and.add(visibilityExpression);
+                        and.add(config.getVisibilityExpression());
+                    }
+                }
+                if (visibilityExpression != null) {
+                    menuService.registerVisibleWhen(item, visibilityExpression, null, null);
+                }
+                // if (!config.getResponsiveCombination().isActive()) {
+                // item.setVisible(false);
+                // } else {
+                // item.setVisible(true);
+                // }
             }
         }
+        // request evaluation of all visibility expressions registered for a certain
+        // variable. This must be done to show buttons also from the beginning,
+        // because
+        // expressions are always false in the beginning
         if (evaluationService != null) {
             evaluationService.requestEvaluation("activeEditorId");
         }

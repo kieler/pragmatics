@@ -65,8 +65,8 @@ public class KiviMenuContributionService {
     public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String label, final String tooltip, final ImageDescriptor icon, final int style,
             final Expression visibilityExpression, final String... activeEditors) {
-        buttonConfigurations.add(new ButtonConfiguration(responsibleCombination, id, label,
-                tooltip, icon, style, visibilityExpression, activeEditors));
+        addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, label, tooltip,
+                icon, style, visibilityExpression, activeEditors));
     }
 
     /**
@@ -90,7 +90,7 @@ public class KiviMenuContributionService {
      */
     public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String tooltip, final ImageDescriptor icon, final String... activeEditors) {
-        buttonConfigurations.add(new ButtonConfiguration(responsibleCombination, id, "KiviButton",
+        addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, "KiviButton",
                 tooltip, icon, SWT.PUSH, null, activeEditors));
     }
 
@@ -109,15 +109,45 @@ public class KiviMenuContributionService {
      */
     public void addToolbarButton(final ICombination responsibleCombination, final String id,
             final String label) {
-        buttonConfigurations.add(new ButtonConfiguration(responsibleCombination, id, label, null,
+        addButtonConfiguration(new ButtonConfiguration(responsibleCombination, id, label, null,
                 null, SWT.PUSH, null, null));
     }
 
-    /** Get the list of registered ButtonConfigurations. 
-     * @returns all registered ButtonConfigurations
+    /**
+     * Get the list of registered ButtonConfigurations.
+     * 
+     * @return all registered ButtonConfigurations
      */
     public List<ButtonConfiguration> getButtonConfigurations() {
         return buttonConfigurations;
+    }
+
+    /* Add a button config, replace an old one with the same ID */
+    private void addButtonConfiguration(final ButtonConfiguration b) {
+        ButtonConfiguration existing = this.getButtonConfiguration(b.id);
+        if (existing == null) {
+            this.buttonConfigurations.add(b);
+        } else {
+            int existingIndex = this.buttonConfigurations.indexOf(existing);
+            this.buttonConfigurations.remove(existing);
+            this.buttonConfigurations.add(existingIndex, b);
+        }
+    }
+
+    /**
+     * Get a ButtonCnfiguration with the given ID.
+     * 
+     * @param id
+     *            given ID
+     * @return null if there is no config registered for the given ID
+     */
+    public ButtonConfiguration getButtonConfiguration(final String id) {
+        for (ButtonConfiguration config : buttonConfigurations) {
+            if (config != null && config.getId() != null && config.getId().equals(id)) {
+                return config;
+            }
+        }
+        return null;
     }
 
     /**
@@ -206,6 +236,10 @@ public class KiviMenuContributionService {
          */
         public ICombination getResponsiveCombination() {
             return responsiveCombination;
+        }
+        
+        public String toString(){
+            return "B:"+this.id;
         }
 
     }
