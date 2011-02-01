@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * An abstract holder class for properties that uses a hash map.
  *
- * @kieler.rating 2011-01-17 proposed yellow
+ * @kieler.rating 2011-01-17 yellow
  *     reviewed by haf, cmot, soh
  * @author msp
  */

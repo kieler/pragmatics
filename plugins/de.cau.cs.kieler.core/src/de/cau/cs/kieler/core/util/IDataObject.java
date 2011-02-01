@@ -17,10 +17,11 @@ import de.cau.cs.kieler.core.KielerException;
 
 /**
  * An interface for data types, which should be serializable using {@link #toString()} and
- * parsable using {@link #parse(String)}. The default constructor should always be
+ * parsable using {@link #parse(String)}. The default constructor must always be
  * accessible and create an instance with default content.
  *
- * @kieler.rating 2011-01-13 proposed yellow msp
+ * @kieler.rating 2011-02-01 yellow
+ *     reviewed by cmot, soh
  * @author msp
  */
 public interface IDataObject {

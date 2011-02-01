@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Interface for holders of property values.
  *
- * @kieler.rating 2011-01-17 proposed yellow
+ * @kieler.rating 2011-01-17 yellow
  *     reviewed by haf, cmot, soh
  * @author msp
  */

@@ -20,7 +20,8 @@ import de.cau.cs.kieler.kiml.LayoutProviderData;
 /**
  * An extension of layout provider data that supports preview images.
  *
- * @kieler.rating 2009-12-24 proposed yellow msp
+ * @kieler.rating 2011-02-01 yellow
+ *     reviewed by cmot, soh
  * @author msp
  */
 public class EclipseLayoutProviderData extends LayoutProviderData {

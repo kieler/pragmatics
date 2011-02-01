@@ -24,7 +24,8 @@ import java.util.TreeSet;
 /**
  * Data type used to store information for a layout provider.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @kieler.rating 2011-02-01 yellow
+ *     reviewed by cmot, soh
  * @author msp
  */
 public class LayoutProviderData implements ILayoutData {
