@@ -22,18 +22,4 @@
          </description>
       </wizard>
    </extension>
-<!-- haf: this is now moved to org.ptolemy.moml
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <package
-            uri="platform:/resource/de.cau.cs.kieler.sim.ptolemy/moml.xsd"
-            class="ptolemy.Moml.MomlPackage"
-            genModel="models/moml.genmodel"/>
-   </extension>
-
-   <extension point="org.eclipse.emf.ecore.extension_parser">
-      <parser
-            type="moml"
-            class="ptolemy.Moml.util.MomlResourceFactoryImpl"/>
-   </extension>
--->
 </plugin>
