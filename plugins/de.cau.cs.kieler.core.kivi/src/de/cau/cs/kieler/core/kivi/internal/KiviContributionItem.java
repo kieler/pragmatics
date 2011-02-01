@@ -122,24 +122,25 @@ public class KiviContributionItem extends CompoundContributionItem implements
             IContributionItem item;
             // first look for a cached button
             item = idButtonMap.get(config.getId());
-
+            
             // have to check whether the commands have been undefined in the meantime
             boolean isCommandDefined = false;
             try {
                 if (item != null && item instanceof CommandContributionItem
                         && ((CommandContributionItem) item).getCommand().getCommand().isDefined()) {
+                    System.out.println(item + "parent: " + ((CommandContributionItem) item).getParent()); 
                     isCommandDefined = true;
                 }
             } catch (NullPointerException npe) {
                 /* nothing */
             }
 
-            /* 
-             * ContributionItems schould be defined only once. However, their corresponding
-             * Commands might get "undefined" again later on by the Command persistence framework
-             * and then the platform requests this method again, where the Commands need to be
-             * created again, while the ContributionItems should not. And also visibility
-             * may not be registered again.
+            /*
+             * ContributionItems schould be defined only once. However, their corresponding Commands
+             * might get "undefined" again later on by the Command persistence framework and then
+             * the platform requests this method again, where the Commands need to be created again,
+             * while the ContributionItems should not. And also visibility may not be registered
+             * again.
              */
             if (!isCommandDefined) {
                 // get a command and register the Kivi ButtonHandler for it
@@ -158,7 +159,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
                         new HashMap<String, String>(), config.getIcon(), null, null,
                         config.getLabel(), null, config.getTooltip(), config.getStyle(), null,
                         false);
-                // create button only if it was not created before 
+                // create button only if it was not created before
                 // (while Command might need definition multiple times)
                 if (item == null) {
                     // this is the button
@@ -213,9 +214,13 @@ public class KiviContributionItem extends CompoundContributionItem implements
             // prefs)
             if (!config.getResponsiveCombination().isActive()) {
                 item.setVisible(false);
+            } else {
+                item.setVisible(true);
             }
         }
-
+        if (evaluationService != null) {
+            evaluationService.requestEvaluation("activeEditorId");
+        }
         // return list of menu contributions in the correct order
         return buttons.toArray(new IContributionItem[buttonsHandlerMap.size()]);
     }
