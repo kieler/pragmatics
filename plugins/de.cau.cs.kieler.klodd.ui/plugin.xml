@@ -4,10 +4,12 @@
    <extension
          point="de.cau.cs.kieler.kiml.layoutProviders">
       <layoutAlgorithm
-            class="de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider"
             category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider"
+            description="This layer-based algorithm is the main contribution of the &apos;KIELER Layout of Dataflow Diagrams&apos; project, which expores approaches for the layout of actor oriented networks. Such networks are found in Ptolemy, Simulink, LabView, SCADE, ASCET, and many other modeling tools that emphasize the flow of data in a system. The main differences to normal graphs are the port constraints given by the input and output ports of each actor and the implicit hyperedges that occur when multiple connections leave a single output port. KLoDD is the result of KIELER&apos;s first approach to solve these special problems, and is also able to handle hierarchical dataflow diagrams."
             id="de.cau.cs.kieler.klodd.hierarchical"
             name="KLoDD Hierarchical"
+            preview="images/hierarchical.png"
             type="de.cau.cs.kieler.layout.types.layered">
          <supportedDiagram
                priority="10"
