@@ -24,7 +24,7 @@
          <knownOption
                option="de.cau.cs.kieler.klay.rail.portType">
          </knownOption>
-      </layoutProvider>
+      </layoutAlgorithm>
       <layoutOption
             appliesTo="nodes"
             class="de.cau.cs.kieler.klay.rail.options.NodeType"
