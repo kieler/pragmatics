@@ -63,41 +63,6 @@ public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
     /** File extension for model files. */
     private static final String MODEL_EXTENSION = "kaom";
 
-    // /** Delay for the auto layout. */
-    // private static final long AUTO_LAYOUT_DELAY = 1000;
-    //
-    // /**
-    // * Perform actions after the reinit.
-    // *
-    // * @param path
-    // * the file
-    // * @param partners
-    // * the partner files
-    // * @param monitor
-    // * the progress monitor
-    // */
-    // @Override
-    // protected void performPostOperationAction(final IFile path,
-    // final List<IFile> partners, final IProgressMonitor monitor) {
-    // WorkbenchJob job = new WorkbenchJob("") {
-    //
-    // @Override
-    // public IStatus runInUIThread(final IProgressMonitor monitor) {
-    // // perform auto layout
-    // IEditorPart editor = EditorUtils.getLastActiveEditor();
-    // EditPart part = null;
-    // if (editor != null) {
-    // EclipseLayoutServices.getInstance().layout(editor, part,
-    // false, true);
-    // }
-    // return new Status(IStatus.OK,
-    // "de.cau.cs.kieler.synccharts.diagram.custom", "Done");
-    // }
-    // };
-    //
-    // job.schedule(AUTO_LAYOUT_DELAY);
-    // }
-
     /**
      * 
      * {@inheritDoc}
@@ -189,8 +154,8 @@ public class ReInitKaomDiagramCommand extends AbstractReInitDiagramCommand {
                 }
             }
         });
-        
-        //display some annotations
+
+        // display some annotations
         IEditorPart editorPart = result.get();
         AnnotationDisplayer.displayAnnotations(editorPart);
         return editorPart;

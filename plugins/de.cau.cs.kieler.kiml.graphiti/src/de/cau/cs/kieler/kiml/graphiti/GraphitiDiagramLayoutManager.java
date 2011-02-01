@@ -32,6 +32,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -260,7 +261,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                         shapeHasPorts = true;
                         try {
                             addPort(containerGa, childnode,
-                                    (BoxRelativeAnchor) anchor);
+                                    (BoxRelativeAnchor) anchor, layoutConfig);
                         } catch (ElementMissingException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -318,10 +319,13 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
      *            the parent node
      * @param bra
      *            the anchor
+     * @param layoutConfig
+     *            the layout config
      * @throws ElementMissingException
      */
     private void addPort(final GraphicsAlgorithm containerGa,
-            final KNode childnode, final BoxRelativeAnchor bra)
+            final KNode childnode, final BoxRelativeAnchor bra,
+            final GraphitiLayoutConfig layoutConfig)
             throws ElementMissingException {
         KPort port = KimlUtil.createInitializedPort();
         port.setNode(childnode);
@@ -370,6 +374,11 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
         portLayout.setWidth(bra.getGraphicsAlgorithm().getWidth());
         portLayout.setHeight(bra.getGraphicsAlgorithm().getHeight());
+
+        // set user defined layout options
+        layoutConfig
+                .setFocus(diagramEditor.getEditPartForPictogramElement(bra));
+        portLayout.copyProperties(layoutConfig);
     }
 
     /**

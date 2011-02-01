@@ -11,26 +11,26 @@ import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
  * @generated
  */
 public class EntityEntityCompartmentItemSemanticEditPolicy extends
-		KaomBaseItemSemanticEditPolicy {
+        KaomBaseItemSemanticEditPolicy {
 
-	/**
-	 * @generated
-	 */
-	public EntityEntityCompartmentItemSemanticEditPolicy() {
-		super(KaomElementTypes.Entity_2001);
-	}
+    /**
+     * @generated
+     */
+    public EntityEntityCompartmentItemSemanticEditPolicy() {
+        super(KaomElementTypes.Entity_2001);
+    }
 
-	/**
-	 * @generated
-	 */
-	protected Command getCreateCommand(CreateElementRequest req) {
-		if (KaomElementTypes.Entity_3002 == req.getElementType()) {
-			return getGEFWrapper(new Entity2CreateCommand(req));
-		}
-		if (KaomElementTypes.Relation_3003 == req.getElementType()) {
-			return getGEFWrapper(new Relation2CreateCommand(req));
-		}
-		return super.getCreateCommand(req);
-	}
+    /**
+     * @generated
+     */
+    protected Command getCreateCommand(CreateElementRequest req) {
+        if (KaomElementTypes.Entity_3002 == req.getElementType()) {
+            return getGEFWrapper(new Entity2CreateCommand(req));
+        }
+        if (KaomElementTypes.Relation_3003 == req.getElementType()) {
+            return getGEFWrapper(new Relation2CreateCommand(req));
+        }
+        return super.getCreateCommand(req);
+    }
 
 }

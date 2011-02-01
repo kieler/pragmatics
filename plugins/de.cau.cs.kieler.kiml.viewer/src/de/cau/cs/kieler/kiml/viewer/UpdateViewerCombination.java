@@ -29,15 +29,18 @@ public class UpdateViewerCombination extends AbstractCombination {
     /**
      * Update the viewer.
      * 
-     * @param effectTrigger the layout effect trigger
-     * @param layoutGraphTrigger the layout graph trigger
+     * @param effectTrigger
+     *            the layout effect trigger
+     * @param layoutGraphTrigger
+     *            the layout graph trigger
      */
     public void execute(final EffectTriggerState<LayoutEffect> effectTrigger,
             final LayoutGraphTriggerState layoutGraphTrigger) {
-        if (effectTrigger.getSequenceNumber() > layoutGraphTrigger.getSequenceNumber()) {
+        if (effectTrigger.getSequenceNumber() > layoutGraphTrigger
+                .getSequenceNumber()) {
             LayoutEffect layoutEffect = effectTrigger.getEffect();
-            schedule(new UpdateViewerEffect(layoutEffect.getManager().getLayoutGraph(),
-                    UpdateViewerEffect.POST_LAYOUT));
+            schedule(new UpdateViewerEffect(layoutEffect.getManager()
+                    .getLayoutGraph(), UpdateViewerEffect.POST_LAYOUT));
         } else {
             KNode graph = layoutGraphTrigger.getLayoutGraph();
             String state = layoutGraphTrigger.getState();

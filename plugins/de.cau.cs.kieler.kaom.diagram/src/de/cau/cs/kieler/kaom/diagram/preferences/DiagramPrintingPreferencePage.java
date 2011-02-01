@@ -9,11 +9,11 @@ import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
  */
 public class DiagramPrintingPreferencePage extends PrintingPreferencePage {
 
-	/**
-	 * @generated
-	 */
-	public DiagramPrintingPreferencePage() {
-		setPreferenceStore(KaomDiagramEditorPlugin.getInstance()
-				.getPreferenceStore());
-	}
+    /**
+     * @generated
+     */
+    public DiagramPrintingPreferencePage() {
+        setPreferenceStore(KaomDiagramEditorPlugin.getInstance()
+                .getPreferenceStore());
+    }
 }
