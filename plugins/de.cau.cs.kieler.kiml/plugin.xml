@@ -33,10 +33,11 @@
          </knownOption>
       </layoutProvider>
       <layoutProvider
-            class="de.cau.cs.kieler.kiml.util.BoxLayoutProvider"
             category="de.cau.cs.kieler"
+            class="de.cau.cs.kieler.kiml.util.BoxLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.boxLayout"
-            name="Box Layout">
+            name="Box Layout"
+            preview="images/box_layout.png">
          <supportedDiagram
                priority="10"
                type="de.cau.cs.kieler.layout.diagrams.boxes">
@@ -64,7 +65,8 @@
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kiml.util.RandomLayoutProvider"
             id="de.cau.cs.kieler.kiml.layouter.random"
-            name="Randomizer">
+            name="Randomizer"
+            preview="images/random.png">
          <knownOption
                option="de.cau.cs.kieler.layout.options.randomSeed">
          </knownOption>

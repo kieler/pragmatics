@@ -26,6 +26,7 @@
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
+            description="Layered drawings of directed graphs. The algorithm aims edges in the same direction (top to bottom, or left to right) and then attempts to avoid edge crossings and reduce edge length."
             id="de.cau.cs.kieler.kiml.graphviz.dot"
             name="Dot"
             parameter="dot"
@@ -67,6 +68,7 @@
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
+            description="Spring model layouts. Neato attempts to minimize a global energy function, which is equivalent to statistical multi-dimensional scaling. The solution is achieved using stress majorization, though the older Kamada-Kawai algorithm, using steepest descent, is also available."
             id="de.cau.cs.kieler.kiml.graphviz.neato"
             name="Neato"
             parameter="neato"
@@ -111,6 +113,7 @@
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
+            description="Spring model layouts similar to those of Neato, but does this by reducing forces rather than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a multigrid solver that handles larger graphs and clustered undirected graphs."
             id="de.cau.cs.kieler.kiml.graphviz.fdp"
             name="FDP"
             parameter="fdp"
@@ -155,9 +158,11 @@
       <layoutProvider
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
+            description="Radial layouts, after Graham and Wills &apos;97. The nodes are placed on concentric circles depending on their distance from a given root node."
             id="de.cau.cs.kieler.kiml.graphviz.twopi"
             name="Twopi"
             parameter="twopi"
+            preview="images/twopi.png"
             type="de.cau.cs.kieler.layout.types.radial">
          <supportedDiagram
                priority="6"
