@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.rail.editor.features;
 
 import java.util.Iterator;
@@ -22,15 +35,31 @@ import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 
 /**
+ * Update feature for the switch It updates the lines for the ports.
  * 
- * @author hdw Update feature for the switch It updates the lines for the ports.
+ * @author hdw
  */
 public class UpdateSwitchFeature extends AbstractUpdateFeature {
 
+    private static final int[] SPITZE_STAMM_DEFAULT = { 0, 0, 0, 0 };
+
+    private static final int[] MITTE_ABZWEIG_DEFAULT = { 25, 25, 0, 0 };
+
+    private static final int SPITZE_X = 0;
+    private static final int SPITZE_Y = 1;
+    private static final int STAMM_X = 2;
+    private static final int STAMM_Y = 3;
+
+    private static final int MITTE_X = 0;
+    private static final int MITTE_Y = 1;
+    private static final int ABZWEIG_X = 2;
+    private static final int ABZWEIG_Y = 3;
+
     /**
-     * Updater for the switch
+     * Updater for the switch.
      * 
      * @param fp
+     *            the feature provider
      */
     public UpdateSwitchFeature(final IFeatureProvider fp) {
         super(fp);
@@ -74,23 +103,24 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
         }
 
         // update needed, if names are different
-        boolean updateNameNeeded =
-                ((pictogramName == null && businessName != null) || (pictogramName != null && !pictogramName
-                        .equals(businessName)));
+        boolean noPicNameButBusName =
+                pictogramName == null && businessName != null;
+        boolean picNameButOutOfDate =
+                pictogramName != null && !pictogramName.equals(businessName);
+        boolean updateNameNeeded = noPicNameButBusName || picNameButOutOfDate;
         if (updateNameNeeded) {
             return Reason.createFalseReason();
             // return Reason.createTrueReason("Name is out of date");
-        } else {
-            return Reason.createFalseReason();
         }
+        return Reason.createFalseReason();
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean update(final IUpdateContext context) {
-        int[] spitzeStammXY = { 0, 0, 0, 0 };
-        int[] mitteAbzweigXY = { 25, 25, 0, 0 };
+        int[] spitzeStammXY = SPITZE_STAMM_DEFAULT.clone();
+        int[] mitteAbzweigXY = MITTE_ABZWEIG_DEFAULT.clone();
         List<Polyline> polylines = new LinkedList<Polyline>();
 
         PictogramElement pictogramElement = context.getPictogramElement();
@@ -127,27 +157,31 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                     int boxHeight = anchor.getGraphicsAlgorithm().getWidth();
                     switch (port.getName()) {
                     case SPITZE:
-                        spitzeStammXY[0] =
+                        spitzeStammXY[SPITZE_X] =
                                 (int) (width * (box.getRelativeWidth()) - boxWidth / 2);
-                        spitzeStammXY[1] =
+                        spitzeStammXY[SPITZE_Y] =
                                 (int) (height * (box.getRelativeHeight()) + boxHeight / 2);
                         break;
                     case STAMM:
-                        spitzeStammXY[2] =
+                        spitzeStammXY[STAMM_X] =
                                 (int) (width * (box.getRelativeWidth()) + boxWidth / 2);
-                        spitzeStammXY[3] =
+                        spitzeStammXY[STAMM_Y] =
                                 (int) (height * (box.getRelativeHeight()) + boxHeight / 2);
                         break;
                     case ABZWEIG:
                         System.out.println("Abzweig");
-                        mitteAbzweigXY[2] =
+                        mitteAbzweigXY[ABZWEIG_X] =
                                 (int) (width * (box.getRelativeWidth()) + boxWidth / 2);
                         System.out.println("relativ width: "
                                 + box.getRelativeWidth());
-                        mitteAbzweigXY[3] =
+                        mitteAbzweigXY[ABZWEIG_Y] =
                                 (int) (height * (box.getRelativeHeight()) + boxHeight / 2);
                         System.out.println("relativ height: "
                                 + box.getRelativeHeight());
+                        break;
+                    case ENDE:
+                    default:
+                        break;
                     }
                 }
             }
@@ -163,7 +197,9 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             }
             System.out.println();
 
-            mitteAbzweigXY[1] = getY_from_Array(mitteAbzweigXY, 25);
+            mitteAbzweigXY[MITTE_Y] =
+                    getYFromArray(mitteAbzweigXY,
+                            MITTE_ABZWEIG_DEFAULT[MITTE_X]);
 
             for (int i = 0; i < 2; i++) {
                 for (int j = 0; j < 2; j++) {
@@ -185,12 +221,13 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                             .get(j)
                             .setY(i == 0 ? spitzeStammXY[1 + j * 2]
                                     : mitteAbzweigXY[1 + j * 2]);
-                    /*if(j==1){
-                    	polylines.get(i).getPoints().get(j).setY(0);
-                    	polylines.get(i).getPoints().get(j).setX(0);
-                    }*/
+                    // if (j == 1) {
+                    // polylines.get(i).getPoints().get(j).setY(0);
+                    // polylines.get(i).getPoints().get(j).setX(0);
+                    // }
                 }
             }
+            getDiagramEditor().refresh();
         }
 
         return false;
@@ -199,17 +236,19 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
     // TODO better comment
     /**
      * Calculate the Y pos for the straight line (port Stamm to port Ende) for a
-     * x pos
+     * x pos.
      * 
      * @param mitteAbzweigXY
+     *            the position array
      * @param x
-     * @return
+     *            the x position
+     * @return the y position
      */
-    private int getY_from_Array(final int[] mitteAbzweigXY, final int x) {
+    private int getYFromArray(final int[] mitteAbzweigXY, final int x) {
         double m =
-                (mitteAbzweigXY[3] - mitteAbzweigXY[1])
-                        / (mitteAbzweigXY[2] - mitteAbzweigXY[0]);
-        double b = mitteAbzweigXY[1] - m * mitteAbzweigXY[0];
+                (mitteAbzweigXY[ABZWEIG_Y] - mitteAbzweigXY[MITTE_Y])
+                        / (mitteAbzweigXY[ABZWEIG_X] - mitteAbzweigXY[MITTE_X]);
+        double b = mitteAbzweigXY[MITTE_Y] - m * mitteAbzweigXY[MITTE_X];
         return (int) (m * x + b);
 
     }
