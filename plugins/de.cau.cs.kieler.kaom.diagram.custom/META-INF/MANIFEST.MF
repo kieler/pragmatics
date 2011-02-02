@@ -4,7 +4,7 @@ Bundle-Name: KAOM Diagram Custom
 Bundle-SymbolicName: de.cau.cs.kieler.kaom.diagram.custom;singleton:=true
 Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.kaom.diagram.custom.KaomDiagramCustomPlugin
-Bundle-Vendor: Christian-Albrechts-Universität, Kiel
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  de.cau.cs.kieler.kaom.diagram;bundle-version="0.1.0",
