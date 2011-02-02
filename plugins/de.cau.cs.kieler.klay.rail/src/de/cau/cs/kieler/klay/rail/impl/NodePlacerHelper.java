@@ -24,6 +24,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.rail.IPatterns;
+import de.cau.cs.kieler.klay.rail.IPlacement;
 import de.cau.cs.kieler.klay.rail.Properties;
 import de.cau.cs.kieler.klay.rail.graph.RailLayer;
 import de.cau.cs.kieler.klay.rail.graph.RailRow;
@@ -32,13 +33,9 @@ import de.cau.cs.kieler.klay.rail.options.PortType;
 
 public class NodePlacerHelper {
     
-    private IPatterns patterns;
-    
     private HashMap<LNode, Integer> placement;
     
-    public NodePlacerHelper(IPatterns pat) {
-        patterns = pat;
-    }
+    public NodePlacerHelper() {}
     
     public boolean allNeighborsKnown(final LNode node, final List<LNode> known) {
         boolean result = true;
@@ -47,8 +44,83 @@ public class NodePlacerHelper {
         }
         return result;
     }
-
     
+    public void placeNodesDFS(final LNode first, final int layerCount, final IPlacement place) {
+        LNode walker = first;
+        List<LNode> known = new LinkedList<LNode>();
+        Stack<LNode> nextNodes = new Stack<LNode>();
+        
+        nextNodes.push(walker);
+        known.add(walker);
+        List<LNode> trunk = new LinkedList<LNode>();
+        boolean stillTrunk = true;
+
+        while (!nextNodes.isEmpty()) {
+            walker = nextNodes.pop();
+            boolean found = false;
+            if (allNeighborsKnown(walker, known)) {
+                continue;
+            }
+            for (LPort port : walker.getPorts()) {
+                LNode target = port.getEdges().get(0).getTarget().getNode();
+                LPort targetPort = port.getEdges().get(0).getTarget();
+                if ((port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT) || port
+                        .getProperty(Properties.PORT_TYPE).equals(PortType.STUMP))
+                        && !known.contains(target)) {
+                    found = true;
+                    known.add(target);
+                    if (!allNeighborsKnown(walker, known)) {
+                        nextNodes.push(walker);
+                    }
+                    if (stillTrunk) {
+                        trunk.add(walker);
+                    }
+                    nextNodes.push(target);
+                    place.place(targetPort, port);
+                    //putTargetInGrid(target, getPositionForNode(targetPort, port));
+                    break;
+                }
+            }
+            if (!found) {
+                for (LPort port : walker.getPorts()) {
+                    LNode target = port.getEdges().get(0).getTarget().getNode();
+                    LPort targetPort = port.getEdges().get(0).getTarget();
+                    if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)
+                            && !known.contains(target)) {
+                        stillTrunk = false;
+                        if (!known.contains(target)) {
+                            known.add(target);
+                            if (!allNeighborsKnown(walker, known)) {
+                                nextNodes.push(walker);
+                            }
+                            nextNodes.push(target);
+                            int offset = 0;
+                            if (port.getNode().getProperty(Properties.NODE_TYPE)
+                                    .equals(NodeType.SWITCH_LEFT)) {
+                                if (target.getProperty(Properties.NODE_TYPE).equals(
+                                        NodeType.SWITCH_LEFT)
+                                        || target.getProperty(Properties.NODE_TYPE).equals(
+                                                NodeType.SWITCH_RIGHT)) {
+                                    offset -= getConflictDistanceLeft(target, layerCount);
+                                }
+                            } else if (port.getNode().getProperty(Properties.NODE_TYPE)
+                                    .equals(NodeType.SWITCH_RIGHT)) {
+                                if (target.getProperty(Properties.NODE_TYPE).equals(
+                                        NodeType.SWITCH_LEFT)
+                                        || target.getProperty(Properties.NODE_TYPE).equals(
+                                                NodeType.SWITCH_RIGHT)) {
+                                    offset += getConflictDistanceRight(target, layerCount);
+                                }
+                            }
+                            place.place(targetPort, port);
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
     public int getConflictDistanceLeft(final LNode first, final int layerCount) {
         placement = new HashMap<LNode, Integer>();
         List<Integer> maxNewPosByLayer = getMaxNewPosByLayer(first, layerCount);
@@ -137,7 +209,7 @@ public class NodePlacerHelper {
                     }
                     next.push(target);
                     int layerNo = target.getLayer().getIndex();
-                    int newPos = getPositionForNode(targetPort, port, placement.get(walker));
+                    int newPos = NodePlacerHelper.getPositionForNode(targetPort, port, placement.get(walker), new SimplePatternsImpl());
                     placement.put(target, newPos);
                     if (result.get(layerNo) > newPos) {
                         result.set(layerNo, newPos);
@@ -159,7 +231,7 @@ public class NodePlacerHelper {
                             }
                             next.push(target);
                             int layerNo = target.getLayer().getIndex();
-                            int newPos = getPositionForNode(targetPort, port, placement.get(walker));
+                            int newPos = NodePlacerHelper.getPositionForNode(targetPort, port, placement.get(walker), new SimplePatternsImpl());
                             int offset = 0;
                             if (port.getNode().getProperty(Properties.NODE_TYPE)
                                     .equals(NodeType.SWITCH_LEFT)) {
@@ -227,7 +299,7 @@ public class NodePlacerHelper {
                     }
                     next.push(target);
                     int layerNo = target.getLayer().getIndex();
-                    int newPos = getPositionForNode(targetPort, port, placement.get(walker));
+                    int newPos = NodePlacerHelper.getPositionForNode(targetPort, port, placement.get(walker), new SimplePatternsImpl());
                     placement.put(target, newPos);
                     if (result.get(layerNo) < newPos) {
                         result.set(layerNo, newPos);
@@ -249,7 +321,7 @@ public class NodePlacerHelper {
                             }
                             next.push(target);
                             int layerNo = target.getLayer().getIndex();
-                            int newPos = getPositionForNode(targetPort, port, placement.get(walker));
+                            int newPos = NodePlacerHelper.getPositionForNode(targetPort, port, placement.get(walker), new SimplePatternsImpl());
                             int offset = 0;
                             if (port.getNode().getProperty(Properties.NODE_TYPE)
                                     .equals(NodeType.SWITCH_LEFT)) {
@@ -281,12 +353,12 @@ public class NodePlacerHelper {
         return result;
     }
     
-    public int getPositionForNode(final LPort targetPort, final LPort sourcePort) {
-        return getPositionForNode(targetPort, sourcePort, Integer.MIN_VALUE);
+    public static int getPositionForNode(final LPort targetPort, final LPort sourcePort, IPatterns patterns) {
+        return NodePlacerHelper.getPositionForNode(targetPort, sourcePort, Integer.MIN_VALUE, patterns);
     }
 
-    public int getPositionForNode(final LPort targetPort, final LPort sourcePort,
-            final int sourcePosition) {
+    public static int getPositionForNode(final LPort targetPort, final LPort sourcePort,
+            final int sourcePosition, IPatterns patterns) {
         RailRow targetRow;
         RailRow sourceRow;
         LNode source = sourcePort.getNode();
