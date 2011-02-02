@@ -56,6 +56,8 @@ public class AddVertexFeature extends AbstractAddFeature {
 
     private static final int PORT_SIZE = 10;
 
+	private static final int WIDTH_BREACH = 50;
+
     private TypeFeatures type;
 
     public AddVertexFeature(final IFeatureProvider fp,
@@ -143,7 +145,7 @@ public class AddVertexFeature extends AbstractAddFeature {
                 peCreateService.createContainerShape(targetDiagram, true);
 
         // define a default size for the shape
-        int width = 50;
+        int width = WIDTH_BREACH;
         int height = 50;
         IGaService gaService = Graphiti.getGaService();
 
@@ -212,7 +214,7 @@ public class AddVertexFeature extends AbstractAddFeature {
             Rectangle rec = gaService.createRectangle(boxAnchor);
             rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
 
-            gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
+            gaService.setLocationAndSize(rec, -PORT_SIZE/2, -PORT_SIZE/2, PORT_SIZE, PORT_SIZE);
 
             link(boxAnchor, port);
             // PORT
@@ -424,11 +426,10 @@ public class AddVertexFeature extends AbstractAddFeature {
                     (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
             }
             boxAnchor.getProperties().add(properPort);
-            //containerShape.getProperties().add(properPort);
 
             boxAnchor.setReferencedGraphicsAlgorithm(R);
 
-            createGraphicalPort(boxAnchor,gaService);
+            createGraphicalPort(boxAnchor, peCreateService, peCreateService.createShape(containerShape, false));
 
             link(boxAnchor, port);
         }
@@ -465,11 +466,16 @@ public class AddVertexFeature extends AbstractAddFeature {
         return containerShape;
     }
 
-    private void createGraphicalPort(BoxRelativeAnchor boxAnchor, IGaService gaService) {
+	private void createGraphicalPort(BoxRelativeAnchor boxAnchor,
+			IPeCreateService peCreateService, Shape shape) {
+		IGaService gaService = Graphiti.getGaService();
+    	//Shape contShape = peCreateService.createContainerShape(containerShape, false);
     	Rectangle rec = gaService.createRectangle(boxAnchor);
-    	//Polyline rec = gaService.createPolyline(boxAnchor ,new int[]{0,PORT_SIZE/2,PORT_SIZE,PORT_SIZE/2});
+    	Polyline poly = gaService.createPolyline(shape ,new int[]{0,PORT_SIZE/2,PORT_SIZE,PORT_SIZE/2});
         rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
+        poly.setStyle(styleProvider.getStyle(StyleProvider.PORT));
         gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
+		
 	}
 
 	/**
