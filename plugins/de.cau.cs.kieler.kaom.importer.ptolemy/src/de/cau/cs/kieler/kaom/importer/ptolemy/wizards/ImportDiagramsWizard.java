@@ -223,7 +223,7 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
             return false;
         }
         
-        // The import wasn't cancelled, so check if it was otherwise successful
+        // Check if the import was successful enough to close the dialog
         IStatus importerStatus = importer.getStatus();
         if (importerStatus.getSeverity() == IStatus.OK && importer.isImportSuccessful()) {
             // Everything went fine
@@ -260,7 +260,8 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
             // Show the user the shortened error report
             StatusManager.getManager().handle(simplifiedStatus, StatusManager.BLOCK);
             
-            return false;
+            // If there were only warnings and no errors, we consider the import successful
+            return importerStatus.getSeverity() < IStatus.ERROR;
         }
     }
     
