@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.rail.graph.RailRow;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 import de.cau.cs.kieler.klay.rail.options.PortType;
 
-public class NodePlacerHelper {
+public class NodePlacerHelper implements IPlacement {
     
     private HashMap<LNode, Integer> placement;
     
@@ -76,7 +76,7 @@ public class NodePlacerHelper {
                         trunk.add(walker);
                     }
                     nextNodes.push(target);
-                    place.place(targetPort, port);
+                    place.place(targetPort, port, 0);
                     //putTargetInGrid(target, getPositionForNode(targetPort, port));
                     break;
                 }
@@ -112,7 +112,7 @@ public class NodePlacerHelper {
                                     offset += getConflictDistanceRight(target, layerCount);
                                 }
                             }
-                            place.place(targetPort, port);
+                            place.place(targetPort, port, offset);
                         }
                     }
                 }
@@ -614,5 +614,10 @@ public class NodePlacerHelper {
             break;
         }
         return 0;
+    }
+
+    public void place(LPort targetPort, LPort port, int offset) {
+        // TODO Auto-generated method stub
+        
     }
 }

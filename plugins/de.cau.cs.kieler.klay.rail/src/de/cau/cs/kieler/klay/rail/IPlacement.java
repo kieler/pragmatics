@@ -17,6 +17,6 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 
 public interface IPlacement {
     
-    public void place(LPort targetPort, LPort port);
+    public void place(LPort targetPort, LPort port, int offset);
 
 }

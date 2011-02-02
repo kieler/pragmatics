@@ -118,9 +118,10 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer,
         }
     }
 
-    public void place(LPort targetPort, LPort port) {
+    public void place(LPort targetPort, LPort port, int offset) {
         putTargetInGrid(targetPort.getNode(),
-                NodePlacerHelper.getPositionForNode(targetPort, port, new SimplePatternsImpl()));
+                NodePlacerHelper.getPositionForNode(targetPort, port, new SimplePatternsImpl())
+                        + offset);
     }
 
 }
