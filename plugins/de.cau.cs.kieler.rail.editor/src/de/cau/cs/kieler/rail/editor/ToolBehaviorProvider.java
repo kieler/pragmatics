@@ -128,8 +128,7 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
         // 1. set the generic context buttons
         // note, that we do not add 'remove' (just as an example)
-        setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE
-                | CONTEXT_BUTTON_UPDATE);
+        setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE);
 
         // 2. set the toggle button
         // if bo is a switch show COTEXT_BUTTON
