@@ -233,9 +233,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                 shapeLayout.setProperty(LayoutOptions.MIN_WIDTH, 40.0f);
                 shapeLayout.setProperty(LayoutOptions.MIN_HEIGHT, 40.0f);
 
-                ElementInfo info = new ElementInfo(childnode, shape);
-                pictElem2ElemInfoMap.put(shape, info);
-                graphElem2ElemInfoMap.put(childnode, info);
+                putElementIntoMap(shape, childnode);
 
                 boolean shapeHasChildren = false;
                 if (shape instanceof ContainerShape) {
@@ -270,22 +268,12 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     }
                     for (Connection c : anchor.getIncomingConnections()) {
                         ElementInfo.ConnectionInfo conInfo =
-                                (ElementInfo.ConnectionInfo) pictElem2ElemInfoMap
-                                        .get(c);
-                        if (conInfo == null) {
-                            conInfo = new ElementInfo.ConnectionInfo(null, c);
-                            pictElem2ElemInfoMap.put(c, conInfo);
-                        }
+                                getConnectionInfo(c);
                         conInfo.setTarget(anchor);
                     }
                     for (Connection c : anchor.getOutgoingConnections()) {
                         ElementInfo.ConnectionInfo conInfo =
-                                (ElementInfo.ConnectionInfo) pictElem2ElemInfoMap
-                                        .get(c);
-                        if (conInfo == null) {
-                            conInfo = new ElementInfo.ConnectionInfo(null, c);
-                            pictElem2ElemInfoMap.put(c, conInfo);
-                        }
+                                getConnectionInfo(c);
                         conInfo.setSrc(anchor);
                         connections.add(c);
                     }
@@ -313,6 +301,56 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
     }
 
     /**
+     * Get or create the ConnectionInfo for the given Connection.
+     * 
+     * @param c
+     *            the connection
+     * @return the ElementInfo
+     */
+    private ElementInfo.ConnectionInfo getConnectionInfo(final Connection c) {
+        ElementInfo.ConnectionInfo conInfo =
+                (ElementInfo.ConnectionInfo) pictElem2ElemInfoMap.get(c);
+        if (conInfo == null) {
+            conInfo = new ElementInfo.ConnectionInfo(null, c);
+            pictElem2ElemInfoMap.put(c, conInfo);
+        }
+        return conInfo;
+    }
+
+    /**
+     * Create a new ElementInfo and put it into both maps.
+     * 
+     * @param pe
+     *            the pictogram element
+     * @param ge
+     *            the graph element
+     * @return the created ElementInfo
+     * 
+     */
+    private ElementInfo putElementIntoMap(final PictogramElement pe,
+            final KGraphElement ge) {
+        ElementInfo info = new ElementInfo(ge, pe);
+        putIntoMap(pe, ge, info);
+        return info;
+    }
+
+    /**
+     * Put a tripplet into both maps.
+     * 
+     * @param pe
+     *            the pictogram element
+     * @param ge
+     *            the graph element
+     * @param info
+     *            the info
+     */
+    private void putIntoMap(final PictogramElement pe, final KGraphElement ge,
+            final ElementInfo info) {
+        pictElem2ElemInfoMap.put(pe, info);
+        graphElem2ElemInfoMap.put(ge, info);
+    }
+
+    /**
      * @param containerGa
      *            the containerGa
      * @param childnode
@@ -335,9 +373,8 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (ga == null) {
             throw new ElementMissingException();
         }
-        ElementInfo.PortInfo portInfo = new ElementInfo.PortInfo(port, bra);
-        pictElem2ElemInfoMap.put(bra, portInfo);
-        graphElem2ElemInfoMap.put(port, portInfo);
+        ElementInfo.PortInfo portInfo = putPortIntoMap(bra, port);
+
         double xoffset = bra.getGraphicsAlgorithm().getX();
         double yoffset = bra.getGraphicsAlgorithm().getY();
         if (containerGa != findVisibleGa(containerGa)) {
@@ -379,6 +416,22 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         layoutConfig
                 .setFocus(diagramEditor.getEditPartForPictogramElement(bra));
         portLayout.copyProperties(layoutConfig);
+    }
+
+    /**
+     * Creates a new PortInfo and puts the port into both maps.
+     * 
+     * @param bra
+     *            the anchor
+     * @param port
+     *            the corresponding port
+     * @return the port info
+     */
+    private ElementInfo.PortInfo putPortIntoMap(final BoxRelativeAnchor bra,
+            final KPort port) {
+        ElementInfo.PortInfo portInfo = new ElementInfo.PortInfo(port, bra);
+        putIntoMap(bra, port, portInfo);
+        return portInfo;
     }
 
     /**
