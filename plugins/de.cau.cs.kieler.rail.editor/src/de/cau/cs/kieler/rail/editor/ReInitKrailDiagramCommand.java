@@ -13,10 +13,25 @@
  */
 package de.cau.cs.kieler.rail.editor;
 
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.RootEditPart;
+import org.eclipse.graphiti.mm.MmFactory;
+import org.eclipse.graphiti.mm.Property;
+import org.eclipse.graphiti.mm.pictograms.Diagram;
+import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.PictogramLink;
+import org.eclipse.graphiti.ui.internal.parts.DiagramEditPart;
+import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.model.graphiti.ui.AbstractReInitGraphitiDiagramCommand;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 
 /**
  * 
@@ -59,7 +74,76 @@ public class ReInitKrailDiagramCommand extends
             Edge e = (Edge) connection;
             return e.getEnd();
         }
+
         return null;
+    }
+
+    @SuppressWarnings("restriction")
+    @Override
+    protected void performPostOperationAction(final IFile path,
+            final List<IFile> partners, final IProgressMonitor monitor,
+            final IEditorPart newEditor) {
+        super.performPostOperationAction(path, partners, monitor, newEditor);
+        if (newEditor instanceof KrailDiagramEditor) {
+            KrailDiagramEditor editor = (KrailDiagramEditor) newEditor;
+            RootEditPart rep = editor.getGraphicalViewer().getRootEditPart();
+            EditPart ep = rep.getContents();
+            if (ep instanceof DiagramEditPart) {
+                DiagramEditPart dep = (DiagramEditPart) ep;
+                PictogramElement pe = dep.getPictogramElement();
+                if (pe instanceof Diagram) {
+                    final Diagram diag = (Diagram) pe;
+                    editor.getEditingDomain()
+                            .getCommandStack()
+                            .execute(
+                                    new RecordingCommand(editor
+                                            .getEditingDomain()) {
+
+                                        @Override
+                                        protected void doExecute() {
+                                            KrailNewWizard
+                                                    .addLayoutDefaultsToDiagram(diag);
+
+                                            setEntryPoint(diag);
+
+                                        }
+                                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * Each Graph needs one Entry point for the layouter to work. Since the
+     * entry point is not yet specified in the model file the first
+     * 'Einbruchsknoten' will be selected as entry point.
+     * 
+     * @param diag
+     *            the diagram
+     */
+    private void setEntryPoint(final Diagram diag) {
+        List<EObject> contents = diag.eContents();
+        PictogramElement result = null;
+        for (EObject e : contents) {
+            if (e instanceof PictogramElement) {
+                PictogramElement pe = (PictogramElement) e;
+                PictogramLink link = pe.getLink();
+                if (link != null) {
+                    List<?> bo = link.getBusinessObjects();
+                    if (bo != null && bo.size() > 0) {
+                        Object mm = bo.get(0);
+                        if (mm instanceof Einbruchsknoten) {
+                            result = pe;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        Property p2 = MmFactory.eINSTANCE.createProperty();
+        p2.setKey("layout:de.cau.cs.kieler.klay.rail.entryPoint");
+        p2.setValue("true");
+        result.getProperties().add(p2);
     }
 
     /**

@@ -21,6 +21,16 @@ public class KrailNewWizard extends GraphitiNewWizard {
      */
     @Override
     protected void configureDiagram(final Diagram diagram) {
+        addLayoutDefaultsToDiagram(diagram);
+    }
+
+    /**
+     * Set the right layouter and proper minimal object spacing.
+     * 
+     * @param diagram
+     *            the diagram
+     */
+    public static void addLayoutDefaultsToDiagram(final Diagram diagram) {
         Property p = MmFactory.eINSTANCE.createProperty();
         p.setKey("layout:de.cau.cs.kieler.layout.options.layoutHint");
         p.setValue("de.cau.cs.kieler.klay.rail");

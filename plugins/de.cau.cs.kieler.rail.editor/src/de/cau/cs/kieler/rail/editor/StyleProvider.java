@@ -25,23 +25,24 @@ import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 
 /**
  * A provider for styles of diagram elements.
- *
+ * 
  * @author hdw
  */
 public class StyleProvider implements IStyleProvider {
 
     /** the diagram type provider for which this style provider is operating. */
     private IDiagramTypeProvider diagramTypeProvider;
-    
+
     /**
      * Creates a style provider for a given diagram type provider.
      * 
-     * @param provider the diagram type provider
+     * @param provider
+     *            the diagram type provider
      */
     public StyleProvider(final IDiagramTypeProvider provider) {
         this.diagramTypeProvider = provider;
     }
-    
+
     /**
      * Returns the default style.
      * 
@@ -50,11 +51,12 @@ public class StyleProvider implements IStyleProvider {
     public Style getStyle() {
         return getStyle(DEFAULT_STYLE);
     }
-    
+
     /**
      * Fetch the style with given identifier.
      * 
-     * @param id the style identifier
+     * @param id
+     *            the style identifier
      * @return a style instance, or {@code null} if the id is unknown
      */
     public Style getStyle(final String id) {
@@ -65,20 +67,22 @@ public class StyleProvider implements IStyleProvider {
         }
         return style;
     }
-    
+
     /**
      * Look recursively for an appropriate style.
      * 
-     * @param container a style container
-     * @param id the style identifier
+     * @param container
+     *            a style container
+     * @param id
+     *            the style identifier
      * @return a style instance, or {@code null} if the style could not be found
      */
     private Style getStyle(final StyleContainer container, final String id) {
         Style style = null;
         for (Style diagramStyle : container.getStyles()) {
             if (id.equals(diagramStyle.getId())) {
-                 style = diagramStyle;
-                 break;
+                style = diagramStyle;
+                break;
             }
             style = getStyle(diagramStyle, id);
             if (style != null) {
@@ -87,49 +91,55 @@ public class StyleProvider implements IStyleProvider {
         }
         return style;
     }
-    
+
     /** the default style id for KAOM diagrams. */
     public static final String DEFAULT_STYLE = "default";
     /** style id for items with solid color fill. */
     public static final String SOLID_STYLE = "solid";
-    //TODO new one.
-    /** style id for Breach (Einbruchsstelle)*/
+    // TODO new one.
+    /** style id for Breach (Einbruchsstelle) */
     public static final String BREACH = "breach";
-    /** style id for Breach (Einbruchsstelle)*/
+    /** style id for Breach (Einbruchsstelle) */
     public static final String PORT = "port";
-    
+
     /**
      * Create the style with given identifier.
      * 
-     * @param diagram the diagram
-     * @param id the style identifier
+     * @param diagram
+     *            the diagram
+     * @param id
+     *            the style identifier
      * @return a new style instance, or {@code null} if the id is unknown
      */
     private Style createStyle(final Diagram diagram, final String id) {
         IGaService gaService = Graphiti.getGaService();
         if (DEFAULT_STYLE.equals(id)) {
             Style style = gaService.createStyle(diagram, id);
-            style.setForeground(gaService.manageColor(diagram, ColorConstant.BLACK));
-            style.setBackground(gaService.manageColor(diagram, ColorConstant.WHITE));
+            style.setForeground(gaService.manageColor(diagram,
+                    ColorConstant.BLACK));
+            style.setBackground(gaService.manageColor(diagram,
+                    ColorConstant.WHITE));
             return style;
         } else if (SOLID_STYLE.equals(id)) {
             Style defaultStyle = getStyle(DEFAULT_STYLE);
             Style style = gaService.createStyle(defaultStyle, id);
             style.setFilled(true);
             return style;
-        } else if (BREACH.equals(id)){ 
-        	Style style = gaService.createStyle(diagram, id);
-        	//TODO has to fix.
-        	return style;
-        } else if (PORT.equals(id)){  
-        	Style style = gaService.createStyle(diagram, id);
-        	style.setForeground(gaService.manageColor(diagram, ColorConstant.WHITE));
-        	style.setBackground(gaService.manageColor(diagram, ColorConstant.WHITE));
-        	style.setFilled(false);
-        	style.setTransparency(1.0);
-    	return style;
-    }
+        } else if (BREACH.equals(id)) {
+            Style style = gaService.createStyle(diagram, id);
+            // TODO has to fix.
+            return style;
+        } else if (PORT.equals(id)) {
+            Style style = gaService.createStyle(diagram, id);
+            style.setForeground(gaService.manageColor(diagram,
+                    ColorConstant.WHITE));
+            style.setBackground(gaService.manageColor(diagram,
+                    ColorConstant.WHITE));
+            style.setFilled(false);
+            style.setTransparency(1.0);
+            return style;
+        }
         return null;
     }
-    
+
 }
