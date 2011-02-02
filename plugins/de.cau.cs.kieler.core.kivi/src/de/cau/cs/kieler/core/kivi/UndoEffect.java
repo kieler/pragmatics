@@ -69,5 +69,10 @@ public class UndoEffect extends AbstractEffect {
     public IEffect getEffect() {
         return effect;
     }
+    
+    @Override
+    public String toString(){
+        return "Undo"+effect; 
+    }
 
 }

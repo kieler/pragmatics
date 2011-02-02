@@ -30,6 +30,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+
 import de.cau.cs.kieler.core.KielerNotSupportedException;
 import de.cau.cs.kieler.core.kivi.internal.CombinationsWorker;
 import de.cau.cs.kieler.core.kivi.internal.EffectsWorker;
@@ -50,30 +55,59 @@ public class KiVi {
      */
     public static final String PROPERTY_ACTIVE = KiVi.class.getCanonicalName() + ".active";
 
+    /**
+     * Worker Thread that distributes incoming TriggerStates.
+     */
     private CombinationsWorker combinationsWorker = new CombinationsWorker();
-
+    /**
+     * Worker Thread that controls the execution of effects.
+     */
     private EffectsWorker effectsWorker = new EffectsWorker();
 
+    /**
+     * Storage for all Trigger instances in form of a map to guarantee there's only one Trigger for
+     * a Trigger class. Similar to singleton pattern.
+     */
+    private Map<Class<?>, ITrigger> triggers = new HashMap<Class<?>, ITrigger>();
+
+    /**
+     * Storage for all TriggerState instances in form of a map to guarantee there's only one
+     * TriggerState for a TriggerState class. Similar to singleton pattern.
+     */
     private Map<Class<?>, ITriggerState> triggerStates = new HashMap<Class<?>, ITriggerState>();
 
+    /**
+     * List of all available contributions registered via the extension point.
+     */
     private List<CombinationDescriptor> availableCombinations = new ArrayList<CombinationDescriptor>();
-    private Collection<ICombination> combinations = new ArrayList<ICombination>();
 
-    private Map<ITrigger, Collection<ICombination>> combinationsByTrigger;
-    // haf: here a mapping from Trigger*States* to Combinations is more important
-    private Map<Class<? extends ITriggerState>, Collection<ICombination>> combinationsByTriggerStates;
+    /**
+     * List of all combinations that have been seen by KiVi, hence also combos that have been
+     * programmatically used via the registerCombination method.
+     */
+    private Collection<ICombination> combinations = new HashSet<ICombination>();
 
-    
+    /**
+     * A mapping of ITriggerState classes to active Combinations that listen to that TriggerStates.
+     * Is updated when combinations are de-/activated.
+     */
+    private Multimap<Class<? extends ITriggerState>, ICombination> triggerStates2Combinations = Multimaps
+            .newHashMultimap();
+
+    /**
+     * View Management can be disabled at a whole.
+     */
     private boolean active = false;
 
+    /**
+     * KiVi should only be initialized once.
+     */
     private boolean initialized = false;
 
     /**
      * Instantiate the singleton class.
      */
     public KiVi() {
-        combinationsByTrigger = new HashMap<ITrigger, Collection<ICombination>>();
-        combinationsByTriggerStates = new HashMap<Class<? extends ITriggerState>, Collection<ICombination>>();
         combinationsWorker.start();
         effectsWorker.start();
     }
@@ -113,25 +147,26 @@ public class KiVi {
      */
     public void setActive(final boolean a) {
         if (active && !a) {
-            // deactivate triggers
-            synchronized (combinationsByTrigger) {
-                for (ITrigger t : combinationsByTrigger.keySet()) {
+            // deactivate all triggers
+            synchronized (triggerStates2Combinations) {
+                for (ITrigger t : triggers.values()) {
                     t.setActive(false);
                 }
                 // undo combinations
-                Set<ICombination> cs = new HashSet<ICombination>();
-                for (Collection<ICombination> l : combinationsByTrigger.values()) {
-                    cs.addAll(l);
-                }
-                for (ICombination c : cs) {
+                for (ICombination c : triggerStates2Combinations.values()) {
                     c.undo();
                 }
             }
         } else if (!active && a) {
-            // activate triggers
-            synchronized (combinationsByTrigger) {
-                for (ITrigger t : combinationsByTrigger.keySet()) {
-                    t.setActive(true);
+            // activate only triggers that are used by an active combination
+            synchronized (triggerStates2Combinations) {
+                // active combos are in the triggerStates2Combinations map
+                for (Class<? extends ITriggerState> stateClass : triggerStates2Combinations
+                        .keySet()) {
+                    // search the corresponding trigger
+                    ITriggerState state = triggerStates.get(stateClass);
+                    ITrigger trigger = triggers.get(state);
+                    trigger.setActive(true);
                 }
             }
         }
@@ -164,48 +199,21 @@ public class KiVi {
      * Update activity state for each combination after preference page submit.
      */
     public void loadActiveStates() {
-        List<ICombination> toActivate = new ArrayList<ICombination>();
-        List<ICombination> toDeactivate = new ArrayList<ICombination>();
-        // split up to avoid breaking the loops by modifying combinationsByTrigger
-        synchronized (combinationsByTrigger) {
+        synchronized (combinations) {
             for (CombinationDescriptor d : availableCombinations) {
-                if (d.isActive()) {
-                    boolean found = false;
-                    outer: for (Collection<ICombination> l : combinationsByTrigger.values()) {
-                        for (ICombination c : l) {
-                            if (d.getClazz().isInstance(c)) {
-                                found = true;
-                                break outer;
-                            }
-                        }
-                    }
-                    if (!found) {
-                        try {
-                            toActivate.add(d.getClazz().newInstance());
-                        } catch (InstantiationException e) {
-                            error(e);
-                        } catch (IllegalAccessException e) {
-                            error(e);
-                        }
-                    }
-                } else {
-                    for (Collection<ICombination> l : combinationsByTrigger.values()) {
-                        for (ICombination c : l) {
-                            if (d.getClazz().isInstance(c)) {
-                                toDeactivate.add(c);
-                            }
+                // iterate ALL combinations KiVi is aware of
+                for (ICombination combination : combinations) {
+                    if (d.getClazz().isInstance(combination)) {
+                        if (d.isActive()) {
+                            combination.setActive(true);
+                        } else {
+                            combination.setActive(false);
                         }
                     }
                 }
             }
+
         }
-        for (ICombination c : toDeactivate) {
-            c.setActive(false);
-        }
-        for (ICombination c : toActivate) {
-            c.setActive(true);
-        }
-        
         printCombinations();
     }
 
@@ -296,17 +304,21 @@ public class KiVi {
             ((AbstractTriggerState) triggerState).setSequenceNumber();
         }
 
-        // Collection<ICombination> cs = getCombinations(triggerState.getTriggerClass());
-        Collection<ICombination> cs = getCombinationsByTriggerState(triggerState.getClass());
-        for (ICombination c : cs) {
+        Collection<ICombination> relevantCombos = triggerStates2Combinations.get(triggerState
+                .getClass());
 
+        System.out.println(triggerState);
+        for (ICombination combo : relevantCombos) {
+            System.out.print(combo);
             try {
-                List<IEffect> effects = c.trigger(triggerState);
+                List<IEffect> effects = combo.trigger(triggerState);
                 for (IEffect effect : effects) {
+                    System.out.print(effect);
                     executeEffect(effect);
                 }
+                System.out.println();
             } catch (KielerNotSupportedException e) {
-                error(c, triggerState, e);
+                error(combo, triggerState, e);
             }
         }
         triggerState.finish();
@@ -316,89 +328,51 @@ public class KiVi {
      * Load all information from the combinations extension point.
      */
     private void loadCombinations() {
+        // read extension point
         IConfigurationElement[] elements = RegistryFactory.getRegistry()
                 .getConfigurationElementsFor("de.cau.cs.kieler.core.kivi.combinations");
+        // get preferences
         IPreferenceStore preferenceStore = KiViPlugin.getDefault().getPreferenceStore();
         for (IConfigurationElement element : elements) {
             try {
+                // instanciate new combination
                 Object o = element.createExecutableExtension("class");
-                if (o instanceof ICombination) {
-                    ICombination combination = (ICombination) o;
-                    this.combinations.add(combination);
-                    CombinationDescriptor descriptor = new CombinationDescriptor(
-                            element.getAttribute("name"), element.getAttribute("description"),
-                            combination.getClass());
-                    availableCombinations.add(descriptor);
-                    if ("true".equals(element.getAttribute("active"))) {
-                        preferenceStore.setDefault(descriptor.getClazz().getCanonicalName()
-                                + ".active", true);
-                        descriptor.setDefaultActive(true);
-                    }
-                    if (preferenceStore.getBoolean(descriptor.getClazz().getCanonicalName()
-                            + ".active")) {
-                        combination.setActive(true);
-                        descriptor.setActive(true);
-                    }
-                    CombinationParameter[] parameters = CombinationParameter.getParameters(combination
-                            .getClass());
-                    for (CombinationParameter parameter : parameters) {
-                        parameter.initialize();
-                    }
+                if (!(o instanceof ICombination)) {
+                    throw new KielerNotSupportedException("Load View Management Combination",
+                            "The class is no ICombination.", element.getAttribute("class"));
+                }
+                ICombination combination = (ICombination) o;
+                combinations.add(combination);
+                // create descriptor for a combination
+                CombinationDescriptor descriptor = new CombinationDescriptor(
+                        element.getAttribute("name"), element.getAttribute("description"),
+                        combination.getClass());
+                availableCombinations.add(descriptor);
+                // store the default activity value in preferences
+                if ("true".equals(element.getAttribute("active"))) {
+                    preferenceStore.setDefault(
+                            descriptor.getClazz().getCanonicalName() + ".active", true);
+                    descriptor.setDefaultActive(true);
+                }
+                // initially activate combination if is active
+                if (preferenceStore
+                        .getBoolean(descriptor.getClazz().getCanonicalName() + ".active")) {
+                    combination.setActive(true);
+                    descriptor.setActive(true);
+                }
+                CombinationParameter[] parameters = CombinationParameter.getParameters(combination
+                        .getClass());
+                for (CombinationParameter parameter : parameters) {
+                    parameter.initialize();
                 }
             } catch (InvalidRegistryObjectException e) {
                 error(e);
             } catch (CoreException e) {
                 error(e);
+            } catch (KielerNotSupportedException e) {
+                error(e);
             }
         }
-    }
-
-    /**
-     * Retrieve List of availableCombinations that are active and listening to the specified class
-     * of triggers.
-     * 
-     * @param trigger
-     *            class of triggers
-     * @return list of availableCombinations
-     */
-    private Collection<ICombination> getCombinations(final Class<?> trigger) {
-        synchronized (combinationsByTrigger) {
-            for (ITrigger t : combinationsByTrigger.keySet()) {
-                if (trigger.isInstance(t)) {
-                    Collection<ICombination> list = combinationsByTrigger.get(t);
-                    if (list != null) {
-                        return list;
-                    }
-                }
-            }
-        }
-        return new ArrayList<ICombination>();
-    }
-
-    /**
-     * Retrieve List of availableCombinations that are active and listening to the specified class
-     * of trigger states.
-     * 
-     * @author haf
-     * @param trigger
-     *            class of triggers
-     * @param triggerState
-     *            class of trigger state
-     * @return list of availableCombinations
-     */
-    private Collection<ICombination> getCombinationsByTriggerState(
-            final Class<? extends ITriggerState> triggerState) {
-        synchronized (combinationsByTrigger) {
-            // for (ITriggerState t : combinationsByTriggerStates.keySet()) {
-            // if (triggerState.isInstance(t)) {
-            Collection<ICombination> list = combinationsByTriggerStates.get(triggerState);
-            if (list != null) {
-                return list;
-            }
-            // }
-            // }
-        }
-        return new ArrayList<ICombination>();
     }
 
     /**
@@ -409,12 +383,10 @@ public class KiVi {
      * @return true if an active combination was found
      */
     public boolean isCombinationClassActive(final Class<?> clazz) {
-        synchronized (combinationsByTrigger) {
-            for (Collection<ICombination> l : combinationsByTrigger.values()) {
-                for (ICombination combination : l) {
-                    if (clazz.isInstance(combination)) {
-                        return true;
-                    }
+        synchronized (triggerStates2Combinations) {
+            for (ICombination combination : triggerStates2Combinations.values()) {
+                if (clazz.isInstance(combination)) {
+                    return true;
                 }
             }
         }
@@ -434,8 +406,8 @@ public class KiVi {
         try {
             ITriggerState triggerState = null;
             ITrigger trigger = null;
-            boolean oldList = true;
-            synchronized (combinationsByTrigger) {
+            boolean createdTrigger = false;
+            synchronized (triggerStates2Combinations) {
                 synchronized (triggerStates) {
                     // haf: add an instance of the trigger state to our current trigger state cache
                     triggerState = triggerStates.get(clazz);
@@ -447,28 +419,19 @@ public class KiVi {
 
                 // haf: remember which combinations listen to a trigger
                 // using multimap pattern here
-                oldList = addToList(combinationsByTriggerStates, clazz, combination);
-                if (!oldList) {
-                    trigger = triggerState.getTriggerClass().newInstance();
-                    addToList(combinationsByTrigger, trigger, combination);
-                }
+                triggerStates2Combinations.put(clazz, combination);
+                // a combination might have been registered from outside, however, remember it
+                combinations.add(combination);
 
-                // // first, see if there is already such map entry available and add it
-                // for (Map.Entry<ITrigger, Collection<ICombination>> entry : combinationsByTrigger
-                // .entrySet()) {
-                // if (triggerState.getTriggerClass().isInstance(entry.getKey())) {
-                // entry.getValue().add(combination);
-                // return;
-                // }
-                // }
-                // // trigger not found, add new list for new trigger
-                // trigger = triggerState.getTriggerClass().newInstance();
-                // Set<ICombination> set = new LinkedHashSet<ICombination>();
-                // set.add(combination);
-                // combinationsByTrigger.put(trigger, set);
+                trigger = triggers.get(triggerState.getTriggerClass());
+                if (trigger == null) {
+                    trigger = triggerState.getTriggerClass().newInstance();
+                    triggers.put(triggerState.getTriggerClass(), trigger);
+                    createdTrigger = true;
+                }
             }
             // moved outside the synchronized to avoid deadlock by foreign trigger code
-            if (!oldList) {
+            if (createdTrigger) {
                 // activate any trigger seen for the first time
                 trigger.setActive(isActive());
             }
@@ -489,66 +452,13 @@ public class KiVi {
      */
     private void removeCombination(final Class<? extends ITriggerState> clazz,
             final ICombination combination) {
-        try {
-            synchronized (combinationsByTrigger) {
-                synchronized (triggerStates) {
-                    ITriggerState triggerState = triggerStates.get(clazz);
-                    if (triggerState == null) {
-                        triggerState = clazz.newInstance();
-                    }
-                    Map.Entry<ITrigger, Collection<ICombination>> toRemove = null;
-                    for (Map.Entry<ITrigger, Collection<ICombination>> entry : combinationsByTrigger
-                            .entrySet()) {
-                        if (triggerState.getTriggerClass().isInstance(entry.getKey())) {
-                            entry.getValue().remove(combination);
-                            if (entry.getValue().size() == 0) {
-                                toRemove = entry;
-                            }
-                            break;
-                        }
-                    }
-                    if (toRemove != null) {
-                        combinationsByTrigger.remove(toRemove.getKey());
-                        toRemove.getKey().setActive(false);
-                    }
-                    // also remove combination from TriggerState map
-                    Collection<ICombination> combs = combinationsByTriggerStates.get(clazz);
-                    if(combs!=null && !combs.isEmpty()){
-                        combs.remove(combination);
-                    }
-                }
+        synchronized (triggerStates2Combinations) {
+            // check here to avoid endless loop with setActive method ob AbstractCombination
+            if(triggerStates2Combinations.containsEntry(clazz, combination)){
+                triggerStates2Combinations.remove(clazz, combination);
+                combination.setActive(false);
             }
-        } catch (InstantiationException e) {
-            error(e);
-        } catch (IllegalAccessException e) {
-            error(e);
         }
-    }
-
-    /**
-     * Add an item to a map, where the map uses the MultiMap pattern (see google.collections). Used
-     * here to avoid using the google library. If the library is officially introduced to KIELER,
-     * this could be changed.
-     * 
-     * @author haf
-     * @param map
-     * @param key
-     * @param item
-     * @returns initialized
-     */
-    private <S, T> boolean addToList(Map<S, Collection<T>> map, S key, T item) {
-        // first see whether the entry already exists
-        Collection<T> list = map.get(key);
-        boolean initialized = true;
-        if (list == null) {
-            // if not, add a new entry
-            list = new ArrayList<T>();
-            map.put(key, list);
-            initialized = false;
-        }
-        // now add the new item to the list
-        list.add(item);
-        return initialized;
     }
 
     /**
@@ -613,10 +523,14 @@ public class KiVi {
     public void removeEffectsListener(final IEffectsListener listener) {
         effectsWorker.removeEffectsListener(listener);
     }
-    
-    private void printCombinations(){
+
+    private void printCombinations() {
         for (ICombination combination : this.combinations) {
-            System.out.println(combination.isActive() + " " + combination.getClass().getName());
+            if (combination.isActive()) {
+                System.out.println("active " + combination);
+            } else {
+                System.out.println(" off   " + combination);
+            }
         }
     }
 }

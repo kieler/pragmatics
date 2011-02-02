@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.core.kivi.combinations">
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.core.kivi.examples.combinations.ShowHierarchyCombination"
+            description="Show the hierarchy levels of a diagram by painting each level in a different color."
+            name="Show Hierarchy Levels">
+      </combination>
+      <combination
+            active="true"
+            class="de.cau.cs.kieler.core.kivi.examples.combinations.ManualFocusCombination"
+            description="Focus&amp;Context by manual selection of elements in the focus or hierarchy levels that should be visible."
+            name="Manual Focus (Semantic Zoom)">
+      </combination>
+<!--      <combination
+            active="true"
+            class="de.cau.cs.kieler.core.model.combinations.SynchronizeViewsCombination"
+            description="Synchronize Notation model views with semantical operations from KSBASE"
+            name="Synchronize Notation Model">
+      </combination>
+      -->
+   </extension>
+
+</plugin>

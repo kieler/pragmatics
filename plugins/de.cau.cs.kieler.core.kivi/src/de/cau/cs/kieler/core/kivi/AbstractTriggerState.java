@@ -60,4 +60,11 @@ public abstract class AbstractTriggerState implements ITriggerState {
     public Class<?> getKeyClass() {
         return getClass();
     }
+    
+    @Override
+    public String toString() {
+        String name = this.getClass().getName();
+        int index = name.lastIndexOf(".");
+        return "TriggerState[" + name.substring(index) + "]";
+    }
 }

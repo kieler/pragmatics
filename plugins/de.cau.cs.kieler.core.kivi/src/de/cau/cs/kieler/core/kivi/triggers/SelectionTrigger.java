@@ -43,6 +43,12 @@ import de.cau.cs.kieler.core.util.Maybe;
 public class SelectionTrigger extends AbstractTrigger implements ISelectionListener {
 
     /**
+     * Remember old selection to avoid triggering KiVi every time the user clicks on the same
+     * element.
+     */
+    List<EObject> oldSelection;
+
+    /**
      * Create a new SelectionTrigger.
      */
     public SelectionTrigger() {
@@ -87,7 +93,11 @@ public class SelectionTrigger extends AbstractTrigger implements ISelectionListe
                     list.add(((View) ((EditPart) o).getModel()).getElement());
                 }
             }
-            trigger(new SelectionState(list, (DiagramEditor) p));
+            // make sure to trigger only if selection has changed
+            if (!list.equals(oldSelection)) {
+                oldSelection = list;
+                trigger(new SelectionState(list, (DiagramEditor) p));
+            }
         }
     }
 

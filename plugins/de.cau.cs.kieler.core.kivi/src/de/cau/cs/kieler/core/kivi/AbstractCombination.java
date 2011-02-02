@@ -41,7 +41,7 @@ public abstract class AbstractCombination implements ICombination {
     private boolean doNothing = false;
 
     private boolean noUndo = false;
-    
+
     private ITriggerState triggeringState;
 
     /**
@@ -90,7 +90,7 @@ public abstract class AbstractCombination implements ICombination {
             KiVi.error(e);
         } catch (InvocationTargetException e) {
             KiVi.error(e);
-        }  
+        }
         if (doNothing) {
             doNothing = false;
             effects = toUndo; // keep old effects
@@ -167,14 +167,15 @@ public abstract class AbstractCombination implements ICombination {
             return (Class<? extends ITriggerState>[]) execute.getParameterTypes();
         }
     }
-    
+
     /**
-     * Convenience method to obtain the ITriggerState that actually caused the
-     * execute method to be invoked. This can be used to conceptually go back
-     * from the states to the event, to find out, which state was constructed last.
+     * Convenience method to obtain the ITriggerState that actually caused the execute method to be
+     * invoked. This can be used to conceptually go back from the states to the event, to find out,
+     * which state was constructed last.
+     * 
      * @return the trigger state that was constructed last
      */
-    protected ITriggerState getTriggerState(){
+    protected ITriggerState getTriggerState() {
         return triggeringState;
     }
 
@@ -235,11 +236,20 @@ public abstract class AbstractCombination implements ICombination {
      */
     public void setActive(final boolean a) {
         if (active && !a) {
+            active = a;
             undo();
+            // haf: potential stack overflow by infinite loop of register-setActive
             KiVi.getInstance().registerCombination(this, false);
         } else if (!active && a) {
+            active = a;
             KiVi.getInstance().registerCombination(this, true);
         }
-        active = a;
+    }
+
+    @Override
+    public String toString() {
+        String name = this.getClass().getName();
+        int index = name.lastIndexOf(".");
+        return "Combination[" + name.substring(index) + "]";
     }
 }

@@ -143,7 +143,7 @@ public class KiviContributionItem extends CompoundContributionItem implements
                 ButtonHandler buttonHandler = new ButtonHandler();
                 cmd.setHandler(buttonHandler);
 
-                System.out.println("Created command " + cmd.getId() + " " + cmd.isDefined());
+                //System.out.println("Created command " + cmd.getId() + " " + cmd.isDefined());
                 // now specify the button
                 CommandContributionItemParameter parameter = new CommandContributionItemParameter(
                         serviceLocator, config.getId(), config.getId(),

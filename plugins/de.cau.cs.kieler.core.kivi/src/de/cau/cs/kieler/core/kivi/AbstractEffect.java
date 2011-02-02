@@ -58,4 +58,11 @@ public abstract class AbstractEffect implements IEffect {
         return null;
     }
     
+    @Override
+    public String toString() {
+        String name = this.getClass().getName();
+        int index = name.lastIndexOf(".");
+        return "Effect[" + name.substring(index) + "]";
+    }
+    
 }

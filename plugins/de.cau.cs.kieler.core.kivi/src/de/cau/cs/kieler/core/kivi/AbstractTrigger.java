@@ -58,5 +58,7 @@ public abstract class AbstractTrigger implements ITrigger {
      * {@inheritDoc}
      */
     public abstract void unregister();
+    
+    
 
 }

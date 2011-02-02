@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.model.combinations;
+package de.cau.cs.kieler.core.kivi.examples.combinations;
 
 import java.util.List;
 
@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.IEffect;
+import de.cau.cs.kieler.core.kivi.examples.KiViExamplesPlugin;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
@@ -30,6 +31,7 @@ import de.cau.cs.kieler.core.model.effects.CompartmentCollapseExpandEffect;
 import de.cau.cs.kieler.core.model.effects.FocusContextEffect;
 import de.cau.cs.kieler.core.model.trigger.DiagramTrigger.DiagramState;
 import de.cau.cs.kieler.core.model.trigger.ModelChangeTrigger.ActiveEditorState;
+import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 
 /**
  * @author haf
@@ -44,21 +46,23 @@ public class ManualFocusCombination extends AbstractCombination {
     /*
      * Add editor ID here to enable this button also for other editors.
      */
-    private final static String[] editorIDs = { "de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID" };
+    private final static String[] editorIDs = { 
+        "de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID",
+        "de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID"};
 
-    private static final int DEFAULT_ZOOM_LEVEL = 0;
+    private static final int DEFAULT_ZOOM_LEVEL = 1;
     private int zoomLevel = DEFAULT_ZOOM_LEVEL;
 
     /**
      * Default Constructor defining some Buttons.
      */
     public ManualFocusCombination() {
-        ImageDescriptor iconFC = CoreModelPlugin.imageDescriptorFromPlugin(
-                CoreModelPlugin.PLUGIN_ID, "icons/focusContext.png");
-        ImageDescriptor iconPlus = CoreModelPlugin.imageDescriptorFromPlugin(
-                CoreModelPlugin.PLUGIN_ID, "icons/focusContextPlus.png");
-        ImageDescriptor iconMinus = CoreModelPlugin.imageDescriptorFromPlugin(
-                CoreModelPlugin.PLUGIN_ID, "icons/focusContextMinus.png");
+        ImageDescriptor iconFC = KiViExamplesPlugin.imageDescriptorFromPlugin(
+                KiViExamplesPlugin.PLUGIN_ID, "icons/focusContext.png");
+        ImageDescriptor iconPlus = KiViExamplesPlugin.imageDescriptorFromPlugin(
+                KiViExamplesPlugin.PLUGIN_ID, "icons/focusContextPlus.png");
+        ImageDescriptor iconMinus = KiViExamplesPlugin.imageDescriptorFromPlugin(
+                KiViExamplesPlugin.PLUGIN_ID, "icons/focusContextMinus.png");
 
         KiviMenuContributionService.INSTANCE.addToolbarButton(this, selectionFocusButtonId,
                 "focusSelect", "Focus selected model objects and do a semantic zooming.", iconFC,
@@ -104,6 +108,9 @@ public class ManualFocusCombination extends AbstractCombination {
             for (IEffect effect : focusEffect.getPrimitiveEffects()) {
                 this.schedule(effect);
             }
+            
+            this.schedule(new LayoutEffect(diagram.getDiagramPart(), null, true));
+            
         } else {
             // reset zoom level if not active
             zoomLevel = DEFAULT_ZOOM_LEVEL;

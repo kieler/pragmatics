@@ -117,5 +117,10 @@ public class EffectTrigger extends AbstractTrigger implements IEffectsListener {
             }
         }
 
+        @Override
+        public String toString() {
+            return super.toString() + "(" + effect + ")";
+        }
+
     }
 }
