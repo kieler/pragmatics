@@ -42,7 +42,9 @@ public class CreateEdgeFeature extends
         // return true if both anchors belong to an EClass
         // and those EClasses are not identical
     	
-        //TODO Vertex or Object???
+        
+    	System.out.println("canCreate");
+    	
     	Object source = null;//getEClass(context.getSourceAnchor());
         Object target = null;//getEClass(context.getTargetAnchor());
         Anchor sourceAnchor = context.getSourceAnchor();
@@ -58,30 +60,19 @@ public class CreateEdgeFeature extends
         	source=source;
         }
         
-        //TODO What instead of Linkable
-        /*
-        System.out.println("### canCreate ###");
-        System.out.println("canCreate Source: " + source);
-        System.out.println("canCreate sourceAnchor: " + sourceAnchor);
-        System.out.println("canCreate target:" + target);
-        System.out.println("canCreate targetAnchor:" + targetAnchor);
-        
-        System.out.println((sourceAnchor != null || source instanceof Vertex)
-        	&& (targetAnchor != null || target instanceof Vertex));
-        
-        System.out.println("### canCreate ###");
-        */
         return (sourceAnchor != null || source instanceof Vertex)
         	&& (targetAnchor != null || target instanceof Vertex);
     }
  
     public boolean canStartConnection(ICreateConnectionContext context) {
+    	System.out.println("#canStartConnection#");
     	return (context.getSourceAnchor() != null
                 && getBusinessObjectForPictogramElement(
                 context.getSourceAnchor().getParent()) != null);
     }
  
     public Connection create(ICreateConnectionContext context) {
+    	System.out.println("create");
     	Anchor sourceAnchor = context.getSourceAnchor();
  
         // get Vertex which should be connected

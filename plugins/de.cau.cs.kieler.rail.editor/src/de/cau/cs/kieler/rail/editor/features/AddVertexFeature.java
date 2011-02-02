@@ -22,6 +22,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
+import org.eclipse.graphiti.services.IGaLayoutService;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.util.ColorConstant;
@@ -100,7 +101,7 @@ public class AddVertexFeature extends AbstractAddFeature {
             pe = addSwitchVertex(context, EOrientation.RECHTS);
             break;
         }
-        peCreateService.createChopboxAnchor((Shape) pe);
+        //peCreateService.createChopboxAnchor((Shape) pe);
         layoutPictogramElement(pe);
         return pe;
     }
@@ -427,10 +428,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 
             boxAnchor.setReferencedGraphicsAlgorithm(R);
 
-            Rectangle rec = gaService.createRectangle(boxAnchor);
-            rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
-
-            gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
+            createGraphicalPort(boxAnchor,gaService);
 
             link(boxAnchor, port);
         }
@@ -467,7 +465,14 @@ public class AddVertexFeature extends AbstractAddFeature {
         return containerShape;
     }
 
-    /**
+    private void createGraphicalPort(BoxRelativeAnchor boxAnchor, IGaService gaService) {
+    	//Rectangle rec = gaService.createRectangle(boxAnchor);
+    	Polyline rec = gaService.createPolyline(boxAnchor ,new int[]{0,PORT_SIZE/2,PORT_SIZE,PORT_SIZE/2});
+        rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
+        gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
+	}
+
+	/**
      * Create a port that is bound to an vertex's boundary.
      * 
      * @param container

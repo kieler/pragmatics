@@ -49,7 +49,11 @@ public class AddEdgeFeature extends AbstractAddFeature {
     	IPeCreateService peCreateService = Graphiti.getPeCreateService();
     	
     	
-    	System.out.println("add Edge X: " +context.getX() + " Y: " + context.getY());
+    	//ONLY NOW
+    	
+    	//ONLY NOW
+    	
+    	System.out.println("add Edge X: " + context.getX() + " Y: " + context.getY());
     	
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
        
