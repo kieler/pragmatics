@@ -15,12 +15,13 @@ package de.cau.cs.kieler.kiml.ui.views;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
@@ -58,16 +59,25 @@ public class LayouterHintCellEditor extends CellEditor {
         label = new Label(parent, SWT.LEFT);
         label.setFont(parent.getFont());
         label.setBackground(parent.getBackground());
-        label.addMouseListener(new MouseListener() {
-            public void mouseDoubleClick(final MouseEvent e) {
-            }
-            public void mouseDown(final MouseEvent e) {
-            }
+        Menu menu = LayoutViewPart.findView().getControl().getMenu();
+        label.setMenu(menu);
+        label.addMouseListener(new MouseAdapter() {
             public void mouseUp(final MouseEvent e) {
-                showDialog();
+                if (e.button == 1) {
+                    showDialog();
+                }
             }
         });
         return label;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() {
+        label.setMenu(null);
+        super.dispose();
     }
 
     /**

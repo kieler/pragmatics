@@ -34,6 +34,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -247,6 +248,15 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     @Override
     public void setFocus() {
         page.setFocus();
+    }
+    
+    /**
+     * Returns the control that is handled by this view part.
+     * 
+     * @return the control
+     */
+    public Control getControl() {
+        return page.getControl();
     }
     
     /**
