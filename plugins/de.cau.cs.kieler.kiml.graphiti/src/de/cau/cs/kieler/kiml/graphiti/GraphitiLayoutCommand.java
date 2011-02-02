@@ -23,6 +23,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.impl.LayoutContext;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
 import org.eclipse.graphiti.mm.pictograms.ConnectionDecorator;
@@ -196,8 +197,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             applyEdgeLayout(final KEdge kedge, final PictogramElement pelem) {
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
         FreeFormConnection conn = (FreeFormConnection) pelem;
-        List<org.eclipse.graphiti.mm.algorithms.styles.Point> pointList =
-                conn.getBendpoints();
+        List<Point> pointList = conn.getBendpoints();
         pointList.clear();
 
         // determine the offset for all bend points
@@ -268,7 +268,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
 
         // add the bend points to the connection
         for (KVector kpoint : allPoints) {
-            org.eclipse.graphiti.mm.algorithms.styles.Point point =
+            Point point =
                     Graphiti.getGaService().createPoint(
                             (int) Math.round(kpoint.x + offset.x),
                             (int) Math.round(kpoint.y + offset.y));
