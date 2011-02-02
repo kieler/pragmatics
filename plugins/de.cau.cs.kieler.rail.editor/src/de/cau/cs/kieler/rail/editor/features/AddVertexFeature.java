@@ -466,8 +466,8 @@ public class AddVertexFeature extends AbstractAddFeature {
     }
 
     private void createGraphicalPort(BoxRelativeAnchor boxAnchor, IGaService gaService) {
-    	//Rectangle rec = gaService.createRectangle(boxAnchor);
-    	Polyline rec = gaService.createPolyline(boxAnchor ,new int[]{0,PORT_SIZE/2,PORT_SIZE,PORT_SIZE/2});
+    	Rectangle rec = gaService.createRectangle(boxAnchor);
+    	//Polyline rec = gaService.createPolyline(boxAnchor ,new int[]{0,PORT_SIZE/2,PORT_SIZE,PORT_SIZE/2});
         rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
         gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
 	}
