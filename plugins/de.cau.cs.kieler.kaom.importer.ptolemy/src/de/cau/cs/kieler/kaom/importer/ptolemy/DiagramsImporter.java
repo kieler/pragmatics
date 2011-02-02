@@ -24,8 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -33,7 +31,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -48,11 +45,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmf.runtime.common.core.command.CommandResult;
-import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
-import org.eclipse.gmf.runtime.emf.commands.core.command.AbstractTransactionalCommand;
 import org.eclipse.gmf.runtime.emf.core.GMFEditingDomainFactory;
-import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -65,9 +58,6 @@ import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.diagram.custom.commands.ReInitKaomDiagramCommand;
-import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEditPart;
-import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorPlugin;
-import de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorUtil;
 import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
 import de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard;
 
@@ -513,8 +503,11 @@ public class DiagramsImporter implements IRunnableWithProgress {
                     e));
         }
         
-        // Prepare target file
+        // Prepare target file and delete it if it already exists
         IFile targetFile = targetContainer.getFile(new Path(targetFileName));
+        if (targetFile.exists()) {
+            targetFile.delete(true, null);
+        }
         
         // Prepare URIs
         sourceFileURI = URI.createFileURI(realSourceFile.getAbsolutePath());
@@ -571,7 +564,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
                     Messages.DiagramsImporter_exception_modelFileNotFound + sourceFileName));
         }
         
-        // Get the target file
+        // Get the target file and delete it if it already exists
         IFile targetFile = targetContainer.getFile(new Path(targetFileName));
         if (targetFile.exists()) {
             targetFile.delete(true, null);
@@ -580,23 +573,19 @@ public class DiagramsImporter implements IRunnableWithProgress {
         // Prepare the file URIs
         URI sourceFileURI = URI.createPlatformResourceURI(
                 sourceFile.getFullPath().toString(), true);
-        URI targetFileURI = URI.createPlatformResourceURI(
-                targetFile.getFullPath().toString(), true);
         
         // Create an editing domain and a resource to save the diagram into
         TransactionalEditingDomain editingDomain =
             GMFEditingDomainFactory.INSTANCE.createEditingDomain();
         
         ResourceSet resourceSet = editingDomain.getResourceSet();
-        final Resource targetResource = resourceSet.createResource(targetFileURI);
         
         // Get the model's root element
         Resource sourceResource = resourceSet.getResource(sourceFileURI, true);
         EObject diagramRoot = (EObject) sourceResource.getContents().get(0);
         
-        // create and save diagram
+        // Create and save diagram
         ReInitKaomDiagramCommand diagramInitializer = new ReInitKaomDiagramCommand();
         diagramInitializer.createNewDiagram(diagramRoot, editingDomain, targetFile, null);
-        
     }
 }
