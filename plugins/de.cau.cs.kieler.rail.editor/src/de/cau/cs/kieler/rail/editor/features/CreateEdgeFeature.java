@@ -76,51 +76,17 @@ public class CreateEdgeFeature extends
     }
  
     public boolean canStartConnection(ICreateConnectionContext context) {
-    	System.out.println("##canStartConnection##");
-    	System.out.println(context.getSourceAnchor());
-    	System.out.println(context.getSourceAnchor());
-    	System.out.println(getFeatureProvider().getBusinessObjectForPictogramElement(context.getSourceAnchor()));
-    	
-    	//Property p = MmFactory.eINSTANCE.createProperty();
-        //p.getValue();// "layout:de.cau.cs.kieler.klay.rail.portType");
-    	
-        for (Property p : context.getSourceAnchor().getProperties()){
-        	System.out.println(p.getValue());
-        }
-    	
-    	//layout:de.cau.cs.kieler.klay.rail.portType
-    	
-    	if(context.getSourceAnchor() != null){
-    		System.out.println(getBusinessObjectForPictogramElement(context.getSourceAnchor().getParent()));
-    	}
-    	else{
-    		System.out.println(getBusinessObjectForPictogramElement(
-                    context.getSourceAnchor()));
-    		System.out.println("source Anchor");
-    		System.out.println(context.getSourceAnchor());
-    		System.out.println("source PictElem");
-    		System.out.println(context.getSourcePictogramElement());
-    	}
-    	System.out.println("##canStartConnection##");
     	return (context.getSourceAnchor() != null
                 && getBusinessObjectForPictogramElement(
                 context.getSourceAnchor().getParent()) != null);
     }
  
     public Connection create(ICreateConnectionContext context) {
-    	System.out.println("create");
     	Anchor sourceAnchor = context.getSourceAnchor();
  
         // get Vertex which should be connected
         Object source = null;
         Object target=null;
- 
-        System.out.println("#create#");
-        System.out.println("source Anchor");
-        System.out.println(getBusinessObjectForPictogramElement(context.getSourceAnchor()));
-        System.out.println(context.getTargetAnchor());
-        System.out.println(getBusinessObjectForPictogramElement(context.getTargetAnchor()));
-        System.out.println("#create#");
         
         if (sourceAnchor instanceof BoxRelativeAnchor) {
             source =  getBusinessObjectForPictogramElement(context.getSourceAnchor());
@@ -141,16 +107,6 @@ public class CreateEdgeFeature extends
         
         if (source instanceof Port && target instanceof Port) {
         	Edge link = BasegraphFactory.eINSTANCE.createEdge();
-        	//Port link = BasegraphFactory.eINSTANCE.createPort();
-        	//Port sourcePort =  BasegraphFactory.eINSTANCE.createPort();
-        	//source.setVertex((Vertex) source);
-        	
-        	//Port targetPort =  BasegraphFactory.eINSTANCE.createPort();
-        	//targetPort.setVertex((Vertex) target);
-        	
-        	
-            //link.setBegin(source);
-            //link.setEnd(target);
         	link.setBegin((Port) source);
         	link.setEnd((Port) target);
             
@@ -165,49 +121,6 @@ public class CreateEdgeFeature extends
             addContext.setNewObject(link);
             return (Connection) getFeatureProvider().addIfPossible(addContext);
         }
-        
-        
-        /*
-        if (source != null && target != null) {
-            // create new business object
-            EReference eReference = createEReference(source, target);
-            // add connection for business object
-            AddConnectionContext addContext =
-                new AddConnectionContext(context.getSourceAnchor(), context
-                    .getTargetAnchor());
-            addContext.setNewObject(eReference);
-            newConnection =
-                (Connection) getFeatureProvider().addIfPossible(addContext);
-        }
-       
-        return newConnection;*/
         return null;
     }
- 
-    /**
-     * Returns the EClass belonging to the anchor, or null if not available.
-     */
-    private EClass getEClass(Anchor anchor) {
-        if (anchor != null) {
-            Object object =
-                getBusinessObjectForPictogramElement(anchor.getParent());
-            if (object instanceof EClass) {
-                return (EClass) object;
-            }
-        }
-        return null;
-    }
- 
-    /**
-    * Creates a EReference between two EClasses.
-    */
-    private EReference createEReference(EClass source, EClass target) {
-        EReference eReference = EcoreFactory.eINSTANCE.createEReference();
-        eReference.setName("new EReference");
-        eReference.setEType(target);
-        eReference.setLowerBound(0);
-        eReference.setUpperBound(1);
-        source.getEStructuralFeatures().add(eReference);
-        return eReference;
-   }
 }
