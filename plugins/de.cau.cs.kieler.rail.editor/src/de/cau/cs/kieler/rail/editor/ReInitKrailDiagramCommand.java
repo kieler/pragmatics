@@ -140,10 +140,12 @@ public class ReInitKrailDiagramCommand extends
                 }
             }
         }
-        Property p2 = MmFactory.eINSTANCE.createProperty();
-        p2.setKey("layout:de.cau.cs.kieler.klay.rail.entryPoint");
-        p2.setValue("true");
-        result.getProperties().add(p2);
+        if (result != null) {
+            Property p2 = MmFactory.eINSTANCE.createProperty();
+            p2.setKey("layout:de.cau.cs.kieler.klay.rail.entryPoint");
+            p2.setValue("true");
+            result.getProperties().add(p2);
+        }
     }
 
     /**
