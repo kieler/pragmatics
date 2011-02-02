@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.HashBiMap;
+
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
@@ -28,19 +30,19 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 public class RailRow {
 
-    private HashMap<Integer, LNode> rowNodes = new HashMap<Integer, LNode>();
-    private HashMap<LNode, Integer> nodeRows = new HashMap<LNode, Integer>();
+    private HashBiMap<LNode, Integer> nodesWithPosition;
 
     public RailRow() {
+        nodesWithPosition = HashBiMap.create();
     }
 
     public int getPosition(LNode node) {
-        return nodeRows.get(node);
+        return nodesWithPosition.get(node);
     }
 
     public int getMinimalPosition() {
         int result = Integer.MAX_VALUE;
-        for (Integer i : rowNodes.keySet()) {
+        for (Integer i : nodesWithPosition.values()) {
             if (i < result) {
                 result = i;
             }
@@ -50,7 +52,7 @@ public class RailRow {
 
     public int getMaximalPosition() {
         int result = Integer.MIN_VALUE;
-        for (Integer i : rowNodes.keySet()) {
+        for (Integer i : nodesWithPosition.values()) {
             if (i > result) {
                 result = i;
             }
@@ -59,31 +61,30 @@ public class RailRow {
     }
 
     public boolean isPositionOccupied(int position) {
-        return rowNodes.containsKey(position);
+        return nodesWithPosition.containsValue(position);
     }
 
     public List<Integer> getOccupiedPositions() {
-        return new LinkedList<Integer>(rowNodes.keySet());
+        return new LinkedList<Integer>(nodesWithPosition.values());
     }
 
     public void addNodeAtPosition(LNode node, int position) {
-        if (rowNodes.containsKey(position)) {
+        if (nodesWithPosition.containsValue(position)) {
             throw new IllegalArgumentException("Position is already occupied.");
         }
-        if (nodeRows.containsKey(node)) {
+        if (nodesWithPosition.containsKey(node)) {
             throw new IllegalArgumentException("Node is already in grid.");
         }
-        rowNodes.put(position, node);
-        nodeRows.put(node, position);
+        nodesWithPosition.put(node, position);
     }
 
     public List<LNode> getNodesOrderedByPosition() {
-        Set<Integer> keySet = rowNodes.keySet();
-        List<Integer> keyList = new LinkedList<Integer>(keySet);
-        Collections.sort(keyList);
-        List<LNode> result = new ArrayList<LNode>(rowNodes.size());
-        for (int i : keyList) {
-            result.add(rowNodes.get(i));
+        Set<Integer> posSet = nodesWithPosition.values();
+        List<Integer> posList = new LinkedList<Integer>(posSet);
+        Collections.sort(posList);
+        List<LNode> result = new ArrayList<LNode>(nodesWithPosition.size());
+        for (int i : posList) {
+            result.add(nodesWithPosition.inverse().get(i));
         }
         return result;
     }

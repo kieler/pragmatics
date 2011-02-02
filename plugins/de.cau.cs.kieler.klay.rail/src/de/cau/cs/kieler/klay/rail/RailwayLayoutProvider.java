@@ -38,10 +38,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.ICycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.ILayerer;
-import de.cau.cs.kieler.klay.layered.p3order.ICrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p4nodes.INodePlacer;
 import de.cau.cs.kieler.klay.layered.p5edges.IEdgeRouter;
-import de.cau.cs.kieler.klay.rail.impl.RailwayCrossingMinimizer;
 import de.cau.cs.kieler.klay.rail.impl.RailwayEdgeRouter;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNodePlacer;
@@ -64,12 +62,9 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     private ICycleBreaker cycleBreaker = new GreedyCycleBreaker();
     /** phase 2: layering module. */
     private ILayerer layerer = new RailwayNetworkSimplexLayerer();
-    /** phase 3: crossing minimization module. */
-    private ICrossingMinimizer crossingMinimizer =
-            new RailwayCrossingMinimizer();
-    /** phase 4: node placement module. */
+    /** phase 3: node placement module. */
     private INodePlacer nodePlacer = new RailwayNodePlacer();
-    /** phase 5: Edge routing module. */
+    /** phase 4: Edge routing module. */
     private IEdgeRouter edgeRouter = new RailwayEdgeRouter();
 
     private static final int SWITCH_PORTS = 3;
@@ -164,13 +159,10 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         layerer.reset(monitor.subTask(1));
         layerer.layer(nodes, layeredGraph);
         layeredGraph.splitEdges();
-        // phase 3: crossing minimization
-        crossingMinimizer.reset(monitor.subTask(1));
-        crossingMinimizer.minimizeCrossings(layeredGraph);
-        // phase 4: node placement
+        // phase 3: node placement
         nodePlacer.reset(monitor.subTask(1));
         nodePlacer.placeNodes(layeredGraph);
-        // phase 5: edge routing
+        // phase 4: edge routing
         edgeRouter.reset(monitor.subTask(1));
         edgeRouter.routeEdges(layeredGraph);
 
