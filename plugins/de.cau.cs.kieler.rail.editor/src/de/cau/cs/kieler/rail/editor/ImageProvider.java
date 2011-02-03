@@ -17,6 +17,6 @@ public class ImageProvider extends AbstractImageProvider {
     protected void addAvailableImages() {
         // register the path for each image identifier
         addImageFilePath(IMG_TOGGLE, "/icons/toggle_icon.ico");
-        addImageFilePath(IMG_TOGGLE, "/icons/rotate_icon.ico");
+        addImageFilePath(IMG_ROTATE, "/icons/rotate_icon.ico");
     }
 }

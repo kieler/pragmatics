@@ -152,11 +152,11 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
                     toogleButton.setIconId(ImageProvider.IMG_TOGGLE);
 
                     data.getGenericContextButtons().add(toogleButton);
-                }else if (cf[i].getName() == RotateSwitchFeature.NAME){
-                	ContextButtonEntry toogleButton =
+                }else if (cf[i].getName() == RotateSwitchFeature.NAME) {
+                ContextButtonEntry toogleButton =
                         new ContextButtonEntry(cf[i], ccContextButon);
 
-                	toogleButton.setText("Weiche um 90° drehen");
+                	toogleButton.setText("Weiche um 180° drehen");
 	                toogleButton.setIconId(ImageProvider.IMG_ROTATE);
 	
 	                data.getGenericContextButtons().add(toogleButton);
