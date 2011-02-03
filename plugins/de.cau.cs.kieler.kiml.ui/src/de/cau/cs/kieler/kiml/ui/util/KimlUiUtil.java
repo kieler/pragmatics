@@ -82,7 +82,14 @@ public final class KimlUiUtil {
             currentParent = currentChild.getParent();
         }
         Rectangle parentBounds = parent.getBounds();
-        Rectangle containerBounds = child.getParent().getBounds();
+        currentParent = child.getParent();
+        Rectangle containerBounds = currentParent.getBounds();
+        while (currentParent != parent
+                && (containerBounds.width > parentBounds.width
+                || containerBounds.height > parentBounds.height)) {
+            currentParent = currentParent.getParent();
+            containerBounds = currentParent.getBounds();
+        }
         if (!isRelative) {
             result.left = containerBounds.x - parentBounds.x;
             result.top = containerBounds.y - parentBounds.y;
