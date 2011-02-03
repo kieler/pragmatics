@@ -160,7 +160,6 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
             }
 
         }
-
         return data;
     }
 }

@@ -61,6 +61,8 @@ import de.cau.cs.kieler.rail.editor.features.UpdateSwitchFeature;
 public class FeatureProvider extends DefaultFeatureProvider {
     private static final int BREANCH_HEIGHT = 50;
     private static final int BREANCH_WIDTH = 50;
+	private static final int SWITCH_HEIGHT = 50;
+	private static final int SWITCH_WIDTH = 50;
     /** the style provider that is used by the features. */
     private IStyleProvider styleProvider;
 
@@ -191,6 +193,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
                 return new ResizeFeature(this, TypeFeatures.SWITCHVERTEX_LEFT);
             case RECHTS:
                 return new ResizeFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT);
+			default:
+				break;
             }
         }
         return super.getResizeShapeFeature(context);
@@ -213,10 +217,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
             switch (E) {
             case LINKS:
                 return new LayoutFeature(this, TypeFeatures.SWITCHVERTEX_LEFT,
-                        50, 50);
+                        SWITCH_HEIGHT, SWITCH_WIDTH);
             case RECHTS:
                 return new LayoutFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT,
-                        50, 50);
+                		SWITCH_HEIGHT, SWITCH_WIDTH);
             }
         }
         return super.getLayoutFeature(context);

@@ -24,13 +24,13 @@ import org.eclipse.graphiti.ui.internal.editor.DiagramEditorInternal;
 /**
  * The class DiagramEditor is for extension by clients if they need their own
  * editor class.
- * 
  */
 
 public class DiagramEditor extends DiagramEditorInternal {
 	/**
 	 * The Constant DIAGRAM_EDITOR_ID.
 	 */
-	public static final String DIAGRAM_EDITOR_ID = "org.eclipse.graphiti.ui.editor.DiagramEditor"; //$NON-NLS-1$
+	public static final String DIAGRAM_EDITOR_ID = 
+	"org.eclipse.graphiti.ui.editor.DiagramEditor"; //$NON-NLS-1$
 
 }
