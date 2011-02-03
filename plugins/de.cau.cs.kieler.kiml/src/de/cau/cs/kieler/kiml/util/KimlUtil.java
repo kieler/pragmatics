@@ -445,7 +445,7 @@ public final class KimlUtil {
     }
 
     /** minimal size of a node. */
-    private static final float MIN_NODE_SIZE = 7.0f;
+    private static final float MIN_NODE_SIZE = 16.0f;
     /** minimal distance of two ports on each side of a node. */
     private static final float MIN_PORT_DISTANCE = 4.0f;
     /** maximal aspect ratio of node sizes. */
