@@ -194,7 +194,6 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
                         new ArrayList<RelativeBendpoint>(
                                 edgeLayout.bends.size());
                 Point sourcePoint = edgeLayout.bends.getFirstPoint();
-                sourcePoint.setLocation(sourcePoint.x, sourcePoint.y);
                 Point targetPoint = edgeLayout.bends.getLastPoint();
                 for (int i = 0; i < edgeLayout.bends.size(); i++) {
                     Point bend = edgeLayout.bends.getPoint(i);

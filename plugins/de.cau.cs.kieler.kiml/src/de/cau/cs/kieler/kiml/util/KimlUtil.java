@@ -31,6 +31,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -606,8 +607,9 @@ public final class KimlUtil {
         KNode node = parent;
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            point.x += nodeLayout.getXpos();
-            point.y += nodeLayout.getYpos();
+            KInsets insets = nodeLayout.getProperty(LayoutOptions.INSETS);
+            point.x += nodeLayout.getXpos() + insets.getLeft();
+            point.y += nodeLayout.getYpos() + insets.getTop();
             node = node.getParent();
         }
     }
@@ -622,8 +624,9 @@ public final class KimlUtil {
         KNode node = parent;
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            point.x -= nodeLayout.getXpos();
-            point.y -= nodeLayout.getYpos();
+            KInsets insets = nodeLayout.getProperty(LayoutOptions.INSETS);
+            point.x -= nodeLayout.getXpos() + insets.getLeft();
+            point.y -= nodeLayout.getYpos() + insets.getTop();
             node = node.getParent();
         }
     }

@@ -38,10 +38,10 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.INodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
-import org.eclipse.gmf.runtime.draw2d.ui.figures.IAnchorableFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.geometry.LineSeg;
 import org.eclipse.gmf.runtime.draw2d.ui.geometry.PointListUtilities;
 import org.eclipse.gmf.runtime.emf.core.util.EObjectAdapter;
+import org.eclipse.gmf.runtime.gef.ui.figures.SlidableAnchor;
 import org.eclipse.gmf.runtime.notation.Edge;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -51,6 +51,7 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.ui.figures.SplineConnection;
 import de.cau.cs.kieler.core.ui.util.SplineUtilities;
 import de.cau.cs.kieler.core.util.Pair;
@@ -67,9 +68,8 @@ import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
- * Edit policy used to apply layout. This edit policy creates a
- * {@link GmfLayoutCommand} to directly manipulate layout data in the GMF
- * notation model.
+ * Edit policy used to apply layout. This edit policy creates a {@link GmfLayoutCommand} to directly
+ * manipulate layout data in the GMF notation model.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
@@ -80,8 +80,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public class GmfLayoutEditPolicy extends AbstractEditPolicy {
 
     /** map of edge layouts to existing point lists. */
-    private Map<KEdgeLayout, PointList> pointListMap =
-            new HashMap<KEdgeLayout, PointList>();
+    private Map<KEdgeLayout, PointList> pointListMap = new HashMap<KEdgeLayout, PointList>();
 
     /**
      * {@inheritDoc}
@@ -99,13 +98,10 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         if (ApplyLayoutRequest.REQ_APPLY_LAYOUT.equals(request.getType())) {
             if (request instanceof ApplyLayoutRequest) {
                 ApplyLayoutRequest layoutRequest = (ApplyLayoutRequest) request;
-                IGraphicalEditPart hostEditPart =
-                        (IGraphicalEditPart) getHost();
-                GmfLayoutCommand command =
-                        new GmfLayoutCommand(hostEditPart.getEditingDomain(),
-                                Messages.getString("kiml.ui.5"), //$NON-NLS-1$
-                                new EObjectAdapter(
-                                        (View) hostEditPart.getModel()));
+                IGraphicalEditPart hostEditPart = (IGraphicalEditPart) getHost();
+                GmfLayoutCommand command = new GmfLayoutCommand(hostEditPart.getEditingDomain(),
+                        Messages.getString("kiml.ui.5"), //$NON-NLS-1$
+                        new EObjectAdapter((View) hostEditPart.getModel()));
                 float xbound = layoutRequest.getXBound();
                 float ybound = layoutRequest.getYBound();
 
@@ -114,27 +110,25 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 for (Pair<KGraphElement, GraphicalEditPart> layoutPair : layoutRequest
                         .getElements()) {
                     if (layoutPair.getFirst() instanceof KNode) {
-                        addShapeLayout(command, layoutPair.getFirst(),
-                                layoutPair.getSecond(), null);
+                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(), null);
                     } else if (layoutPair.getFirst() instanceof KPort) {
-                        addShapeLayout(command, layoutPair.getFirst(),
+                        addShapeLayout(
+                                command,
+                                layoutPair.getFirst(),
                                 layoutPair.getSecond(),
-                                ((KPort) layoutPair.getFirst()).getNode()
-                                        .getData(KShapeLayout.class));
+                                ((KPort) layoutPair.getFirst()).getNode().getData(
+                                        KShapeLayout.class));
                     } else if (layoutPair.getFirst() instanceof KEdge) {
                         addEdgeLayout(command, (KEdge) layoutPair.getFirst(),
                                 (ConnectionEditPart) layoutPair.getSecond());
                     } else if (layoutPair.getFirst() instanceof KLabel) {
-                        addEdgeLabelLayout(command,
-                                (KLabel) layoutPair.getFirst(),
-                                (LabelEditPart) layoutPair.getSecond(), xbound,
-                                ybound);
+                        addEdgeLabelLayout(command, (KLabel) layoutPair.getFirst(),
+                                (LabelEditPart) layoutPair.getSecond(), xbound, ybound);
                     }
                 }
 
                 // set further options
-                IPreferenceStore preferenceStore =
-                        KimlUiPlugin.getDefault().getPreferenceStore();
+                IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
                 command.setObliqueRouting(preferenceStore
                         .getBoolean(EclipseLayoutServices.PREF_OBLIQUE_ROUTE));
 
@@ -158,29 +152,21 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param editPart
      *            edit part to which layout is applied
      * @param offsetLayout
-     *            layout data of the graph element whose position is added as
-     *            offset to the current shape, or {@code null} if no offset
-     *            shall be added
+     *            layout data of the graph element whose position is added as offset to the current
+     *            shape, or {@code null} if no offset shall be added
      */
-    private void addShapeLayout(final GmfLayoutCommand command,
-            final KGraphElement kgraphElement,
+    private void addShapeLayout(final GmfLayoutCommand command, final KGraphElement kgraphElement,
             final GraphicalEditPart editPart, final KShapeLayout offsetLayout) {
         KShapeLayout layoutData = kgraphElement.getData(KShapeLayout.class);
         Rectangle oldBounds = editPart.getFigure().getBounds();
-        Point newLocation =
-                new Point((int) layoutData.getXpos(),
-                        (int) layoutData.getYpos());
+        Point newLocation = new Point((int) layoutData.getXpos(), (int) layoutData.getYpos());
         int offsetx = offsetLayout == null ? 0 : (int) offsetLayout.getXpos();
         int offsety = offsetLayout == null ? 0 : (int) offsetLayout.getYpos();
-        if (newLocation.x + offsetx == oldBounds.x
-                && newLocation.y + offsety == oldBounds.y) {
+        if (newLocation.x + offsetx == oldBounds.x && newLocation.y + offsety == oldBounds.y) {
             newLocation = null;
         }
-        Dimension newSize =
-                new Dimension((int) layoutData.getWidth(),
-                        (int) layoutData.getHeight());
-        if (newSize.width == oldBounds.width
-                && newSize.height == oldBounds.height) {
+        Dimension newSize = new Dimension((int) layoutData.getWidth(), (int) layoutData.getHeight());
+        if (newSize.width == oldBounds.width && newSize.height == oldBounds.height) {
             newSize = null;
         }
         if (newLocation != null || newSize != null) {
@@ -199,179 +185,87 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param connectionEditPart
      *            edit part to which layout is applied
      */
-    private void addEdgeLayout(final GmfLayoutCommand command,
-            final KEdge kedge, final ConnectionEditPart connectionEditPart) {
+    private void addEdgeLayout(final GmfLayoutCommand command, final KEdge kedge,
+            final ConnectionEditPart connectionEditPart) {
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        PointList bendPoints =
-                getBendPoints(edgeLayout, connectionEditPart.getFigure());
-        Rectangle sourceExt, targetExt;
+        KNode sourceNode = kedge.getSource(), targetNode = kedge.getTarget();
 
-        KNode sourceNode = kedge.getSource();
-        KNode targetNode = kedge.getTarget();
-
+        // create source terminal identifier
         KPoint sourcePoint = edgeLayout.getSourcePoint();
-        KPoint targetPoint = edgeLayout.getTargetPoint();
-        List<KPoint> kBendPoints = edgeLayout.getBendPoints();
-
+        float sourceRelX = sourcePoint.getX();
+        float sourceRelY = sourcePoint.getY();
         KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
-        KPort sourcePort = kedge.getSourcePort();
-        INodeEditPart sourceEditPart =
-                (INodeEditPart) connectionEditPart.getSource();
-        PrecisionPoint sourceOffset = null;
-        if (sourcePort != null) {
-            KShapeLayout portLayout = sourcePort.getData(KShapeLayout.class);
-            sourceExt =
-                    new Rectangle(
-                            (int) (portLayout.getXpos() + sourceLayout
-                                    .getXpos()),
-                            (int) (portLayout.getYpos() + sourceLayout
-                                    .getYpos()), (int) portLayout.getWidth(),
-                            (int) portLayout.getHeight());
-            if (KimlUtil.isDescendant(targetNode, sourceNode)) {
-                // connection anchor point on port is wrong, override terminal
-                KPoint target =
-                        kBendPoints.size() > 0 ? kBendPoints.get(0)
-                                : targetPoint;
-                sourceOffset = calculateTerminal(sourcePoint, target);
+        if (sourceNode != targetNode.getParent()) {
+            sourceRelX -= sourceLayout.getXpos();
+            sourceRelY -= sourceLayout.getYpos();
+        }
+        if (kedge.getSourcePort() != null) {
+            KShapeLayout portLayout = kedge.getSourcePort().getData(KShapeLayout.class);
+            if (portLayout.getWidth() == 0) {
+                sourceRelX = 0;
+            } else {
+                sourceRelX = (sourceRelX - portLayout.getXpos()) / portLayout.getWidth();
+            }
+            if (portLayout.getHeight() == 0) {
+                sourceRelY = 0;
+            } else {
+                sourceRelY = (sourceRelY - portLayout.getYpos()) / portLayout.getHeight();
             }
         } else {
-            sourceExt =
-                    new Rectangle((int) sourceLayout.getXpos(),
-                            (int) sourceLayout.getYpos(),
-                            (int) sourceLayout.getWidth(),
-                            (int) sourceLayout.getHeight());
+            sourceRelX /= sourceLayout.getWidth();
+            sourceRelY /= sourceLayout.getHeight();
         }
-        PrecisionPoint sourceRatio =
-                new PrecisionPoint(
-                        (edgeLayout.getSourcePoint().getX() - sourceExt.preciseX())
-                                / sourceExt.preciseWidth(),
-                        (edgeLayout.getSourcePoint().getY() - sourceExt
-                                .preciseY()) / sourceExt.preciseHeight());
-        IFigure sourceFigure = sourceEditPart.getFigure();
-        Rectangle sourceBounds = sourceFigure.getBounds();
-        Point sourceAnchorReference =
-                new PrecisionPoint(sourceBounds.preciseX()
-                        + sourceRatio.preciseX() * sourceBounds.preciseWidth(),
-                        sourceBounds.preciseY() + sourceRatio.preciseY()
-                                * sourceBounds.preciseHeight());
-        sourceFigure.translateToAbsolute(sourceAnchorReference);
-        ConnectionAnchor sourceAnchor =
-                ((IAnchorableFigure) sourceFigure)
-                        .getSourceConnectionAnchorAt(sourceAnchorReference);
-        String sourceTerminal = null;
-        if (sourceOffset != null) {
-            // connection anchor point on port is wrong, override terminal
-            sourceTerminal = buildTerminal(sourceOffset);
+        INodeEditPart sourceEditPart = (INodeEditPart) connectionEditPart.getSource();
+        ConnectionAnchor sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure(),
+                new PrecisionPoint(sourceRelX, sourceRelY));
+        String sourceTerminal = sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
+        
+        // create target terminal identifier
+        KPoint targetPoint = edgeLayout.getTargetPoint();
+        float targetRelX, targetRelY;
+        KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
+        if (sourceNode.getParent() == targetNode.getParent() || sourceNode == targetNode.getParent()) {
+            targetRelX = targetPoint.getX() - targetLayout.getXpos();
+            targetRelY = targetPoint.getY() - targetLayout.getYpos();
         } else {
-            sourceTerminal =
-                    sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
+            KVector p = new KVector(targetPoint.getX(), targetPoint.getY());
+            KimlUtil.toAbsolute(p, sourceNode.getParent());
+            KimlUtil.toRelative(p, targetNode.getParent());
+            targetRelX = (float) p.x - targetLayout.getXpos();
+            targetRelY = (float) p.y - targetLayout.getYpos();
         }
-
-        KShapeLayout targetLayout =
-                kedge.getTarget().getData(KShapeLayout.class);
-        KPort targetPort = kedge.getTargetPort();
-        INodeEditPart targetEditPart =
-                (INodeEditPart) connectionEditPart.getTarget();
-        PrecisionPoint targetOffset = null;
-        if (targetPort != null) {
-            KShapeLayout portLayout = targetPort.getData(KShapeLayout.class);
-            targetExt =
-                    new Rectangle(
-                            (int) (portLayout.getXpos() + targetLayout
-                                    .getXpos()),
-                            (int) (portLayout.getYpos() + targetLayout
-                                    .getYpos()), (int) portLayout.getWidth(),
-                            (int) portLayout.getHeight());
-            if (KimlUtil.isDescendant(sourceNode, targetNode)) {
-                // connection anchor point on port is wrong, override terminal
-                int size = kBendPoints.size();
-                KPoint source =
-                        size > 0 ? kBendPoints.get(size - 1) : sourcePoint;
-                targetOffset = calculateTerminal(targetPoint, source);
+        if (kedge.getTargetPort() != null) {
+            KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
+            if (portLayout.getWidth() == 0) {
+                targetRelX = 0;
+            } else {
+                targetRelX = (targetRelX - portLayout.getXpos()) / portLayout.getWidth();
+            }
+            if (portLayout.getHeight() == 0) {
+                targetRelY = 0;
+            } else {
+                targetRelY = (targetRelY - portLayout.getYpos()) / portLayout.getHeight();
             }
         } else {
-            targetExt =
-                    new Rectangle((int) targetLayout.getXpos(),
-                            (int) targetLayout.getYpos(),
-                            (int) targetLayout.getWidth(),
-                            (int) targetLayout.getHeight());
+            targetRelX /= targetLayout.getWidth();
+            targetRelY /= targetLayout.getHeight();
         }
-        PrecisionPoint targetRatio =
-                new PrecisionPoint(
-                        (edgeLayout.getTargetPoint().getX() - targetExt.preciseX())
-                                / targetExt.preciseWidth(),
-                        (edgeLayout.getTargetPoint().getY() - targetExt
-                                .preciseY()) / targetExt.preciseHeight());
-        IFigure targetFigure = targetEditPart.getFigure();
-        Rectangle targetBounds = targetFigure.getBounds();
-        Point targetAnchorReference =
-                new PrecisionPoint(targetBounds.preciseX()
-                        + targetRatio.preciseX() * targetBounds.preciseWidth(),
-                        targetBounds.preciseY() + targetRatio.preciseY()
-                                * targetBounds.preciseHeight());
-        targetFigure.translateToAbsolute(targetAnchorReference);
-        ConnectionAnchor targetAnchor =
-                ((IAnchorableFigure) targetFigure)
-                        .getTargetConnectionAnchorAt(targetAnchorReference);
-        String targetTerminal = null;
-        if (targetOffset != null) {
-            // connection anchor point on port is wrong, override terminal
-            targetTerminal = buildTerminal(targetOffset);
-        } else {
-            targetTerminal =
-                    targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
-        }
+        INodeEditPart targetEditPart = (INodeEditPart) connectionEditPart.getTarget();
+        ConnectionAnchor targetAnchor = new SlidableAnchor(targetEditPart.getFigure(),
+                new PrecisionPoint(targetRelX, targetRelY));
+        String targetTerminal = targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
 
-        // check whether the connection is a note attachment to an edge
+        PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
+        
+        // check whether the connection is a note attachment to an edge, then remove bend points
         if (sourceEditPart instanceof ConnectionEditPart
                 || targetEditPart instanceof ConnectionEditPart) {
             while (bendPoints.size() > 2) {
                 bendPoints.removePoint(1);
             }
         }
-        command.addEdgeLayout((Edge) connectionEditPart.getModel(), bendPoints,
-                sourceTerminal, targetTerminal);
-    }
-
-    /**
-     * Build the terminal String. Taken from BaseSlidableAnchor.
-     * 
-     * @param p
-     *            the Point.
-     * @return
-     */
-    private String buildTerminal(final PrecisionPoint p) {
-        StringBuffer s = new StringBuffer();
-        s.append('('); // 1 char
-        s.append(p.preciseX); // 10 chars
-        s.append(','); // 1 char
-        s.append(p.preciseY); // 10 chars
-        s.append(')'); // 1 char
-        return s.toString();
-    }
-
-    /**
-     * Determine a new Terminal for points only that are on edges that cross
-     * hierarchy levels.
-     * 
-     * @param source
-     *            the source point
-     * @param target
-     *            the next point
-     * @return the new Terminal
-     */
-    private PrecisionPoint calculateTerminal(final KPoint source,
-            final KPoint target) {
-        PrecisionPoint sourceOffset;
-        double xOffset = 0.0f;
-        double yOffset = 0.0f;
-        if (source.getX() == target.getX()) {
-            xOffset = 1.0 / 2.0;
-        } else if (source.getY() == target.getY()) {
-            yOffset = 1.0 / 2.0;
-        }
-        sourceOffset = new PrecisionPoint(xOffset, yOffset);
-        return sourceOffset;
+        command.addEdgeLayout((Edge) connectionEditPart.getModel(), bendPoints, sourceTerminal,
+                targetTerminal);
     }
 
     /** see LabelViewConstants.TARGET_LOCATION. */
@@ -391,54 +285,42 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param labelEditPart
      *            edit part to which layout is applied
      */
-    private void addEdgeLabelLayout(final GmfLayoutCommand command,
-            final KLabel klabel, final LabelEditPart labelEditPart,
-            final float xbound, final float ybound) {
+    private void addEdgeLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
+            final LabelEditPart labelEditPart, final float xbound, final float ybound) {
         // get zoom level for offset compensation
         double zoomLevel = 1.0;
         if (labelEditPart.getRoot() instanceof DiagramRootEditPart) {
-            zoomLevel =
-                    ((DiagramRootEditPart) labelEditPart.getRoot())
-                            .getZoomManager().getZoom();
+            zoomLevel = ((DiagramRootEditPart) labelEditPart.getRoot()).getZoomManager().getZoom();
         }
 
         // calculate direct new location of the label
         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-        ConnectionEditPart connectionEditPart =
-                (ConnectionEditPart) labelEditPart.getParent();
-        IFigure sourceFigure =
-                ((GraphicalEditPart) connectionEditPart.getSource())
-                        .getFigure();
-        Point newLocation =
-                new Point(labelLayout.getXpos(), labelLayout.getYpos());
+        ConnectionEditPart connectionEditPart = (ConnectionEditPart) labelEditPart.getParent();
+        IFigure sourceFigure = ((GraphicalEditPart) connectionEditPart.getSource()).getFigure();
+        Point newLocation = new Point(labelLayout.getXpos(), labelLayout.getYpos());
         sourceFigure.translateToAbsolute(newLocation);
         newLocation.scale(1 / zoomLevel);
         if (newLocation.x <= 0 || newLocation.y <= 0 || newLocation.x > xbound
                 || newLocation.y > ybound) {
             // empty labels are just positioned near their reference point
-            command.addShapeLayout((View) labelEditPart.getModel(),
-                    new Point(), null);
+            command.addShapeLayout((View) labelEditPart.getModel(), new Point(), null);
             return;
         }
-        Rectangle targetBounds =
-                new Rectangle(labelEditPart.getFigure().getBounds());
+        Rectangle targetBounds = new Rectangle(labelEditPart.getFigure().getBounds());
         targetBounds.x = newLocation.x;
         targetBounds.y = newLocation.y;
 
         // get new bend points for the parent edge
         KEdge kedge = (KEdge) klabel.getParent();
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        PointList bendPoints =
-                getBendPoints(edgeLayout, connectionEditPart.getFigure());
-        EObject modelElement =
-                connectionEditPart.getNotationView().getElement();
-        EdgeLabelPlacement labelPlacement =
-                labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+        PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
+        EObject modelElement = connectionEditPart.getNotationView().getElement();
+        EdgeLabelPlacement labelPlacement = labelLayout
+                .getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
         PointList absoluteBendPoints = new PointList();
         // for labels of the opposite reference of an ecore reference,
         // the list of bend points must be reversed
-        if (modelElement instanceof EReference
-                && labelPlacement == EdgeLabelPlacement.TAIL) {
+        if (modelElement instanceof EReference && labelPlacement == EdgeLabelPlacement.TAIL) {
             for (int i = bendPoints.size() - 1; i >= 0; i--) {
                 Point point = bendPoints.getPoint(i);
                 sourceFigure.translateToAbsolute(point);
@@ -465,26 +347,21 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             fromEnd = MIDDLE_LOCATION;
             break;
         }
-        Point refPoint =
-                PointListUtilities.calculatePointRelativeToLine(
-                        absoluteBendPoints, 0, fromEnd, true);
+        Point refPoint = PointListUtilities.calculatePointRelativeToLine(absoluteBendPoints, 0,
+                fromEnd, true);
 
         // get the new relative location
-        Point normalPoint =
-                offsetFromRelativeCoordinate(targetBounds, absoluteBendPoints,
-                        refPoint);
+        Point normalPoint = offsetFromRelativeCoordinate(targetBounds, absoluteBendPoints, refPoint);
         if (normalPoint != null) {
-            command.addShapeLayout((View) labelEditPart.getModel(),
-                    normalPoint, null);
+            command.addShapeLayout((View) labelEditPart.getModel(), normalPoint, null);
             // invalidate the figure to be sure that it is redrawn
             labelEditPart.getFigure().invalidate();
         }
     }
 
     /**
-     * Transform the bend points of the given edge layout into a point list,
-     * reusing existing ones if possible. The source and target points of the
-     * edge layout are included in the point list.
+     * Transform the bend points of the given edge layout into a point list, reusing existing ones
+     * if possible. The source and target points of the edge layout are included in the point list.
      * 
      * @param edgeLayout
      *            the edge layout
@@ -492,16 +369,14 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      *            indicates whether the connection supports splines
      * @return point list with the bend points of the edge layout
      */
-    private PointList getBendPoints(final KEdgeLayout edgeLayout,
-            final IFigure edgeFigure) {
+    private PointList getBendPoints(final KEdgeLayout edgeLayout, final IFigure edgeFigure) {
         PointList pointList = pointListMap.get(edgeLayout);
         if (pointList == null) {
             KPoint sourcePoint = edgeLayout.getSourcePoint();
             KPoint targetPoint = edgeLayout.getTargetPoint();
             List<KPoint> bendPoints = edgeLayout.getBendPoints();
 
-            EdgeRouting edgeRouting =
-                    edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+            EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
             boolean splineActive = false;
             if (edgeFigure instanceof SplineConnection) {
                 if (((SplineConnection) edgeFigure).getSplineMode() != SplineConnection.SPLINE_OFF) {
@@ -510,30 +385,23 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             }
             // for connections that support splines the control points are
             // passed without change
-            if (edgeRouting == EdgeRouting.SPLINES && bendPoints.size() >= 1
-                    && !splineActive) {
+            if (edgeRouting == EdgeRouting.SPLINES && bendPoints.size() >= 1 && !splineActive) {
                 // treat the edge points as control points for splines
                 PointList control = new PointList(bendPoints.size() + 2);
-                control.addPoint(new Point(sourcePoint.getX(), sourcePoint
-                        .getY()));
+                control.addPoint(new Point(sourcePoint.getX(), sourcePoint.getY()));
                 for (KPoint bendPoint : bendPoints) {
-                    control.addPoint(new Point(bendPoint.getX(), bendPoint
-                            .getY()));
+                    control.addPoint(new Point(bendPoint.getX(), bendPoint.getY()));
                 }
-                control.addPoint(new Point(targetPoint.getX(), targetPoint
-                        .getY()));
+                control.addPoint(new Point(targetPoint.getX(), targetPoint.getY()));
                 pointList = SplineUtilities.approximateSpline(control);
             } else {
                 // treat the edge points as normal bend points
                 pointList = new PointList();
-                pointList.addPoint((int) sourcePoint.getX(),
-                        (int) sourcePoint.getY());
+                pointList.addPoint((int) sourcePoint.getX(), (int) sourcePoint.getY());
                 for (KPoint bendPoint : bendPoints) {
-                    pointList.addPoint((int) bendPoint.getX(),
-                            (int) bendPoint.getY());
+                    pointList.addPoint((int) bendPoint.getX(), (int) bendPoint.getY());
                 }
-                pointList.addPoint((int) targetPoint.getX(),
-                        (int) targetPoint.getY());
+                pointList.addPoint((int) targetPoint.getX(), (int) targetPoint.getY());
             }
 
             pointListMap.put(edgeLayout, pointList);
@@ -542,19 +410,19 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     }
 
     /**
-     * Calculates the label offset from the reference point given the label
-     * bounds and a points list.
+     * Calculates the label offset from the reference point given the label bounds and a points
+     * list.
      * 
      * @param bounds
      *            the {@code Rectangle} that is the bounding box of the label
      * @param points
      *            the {@code PointList} that the label offset is relative to
      * @param therefPoint
-     *            the {@code Point} that is the reference point that the offset
-     *            is based on, or {@code null}
-     * @return a {@code Point} which represents a value offset from the
-     *         {@code refPoint} point oriented based on the nearest line
-     *         segment, or {@code null} if no such point can be determined
+     *            the {@code Point} that is the reference point that the offset is based on, or
+     *            {@code null}
+     * @return a {@code Point} which represents a value offset from the {@code refPoint} point
+     *         oriented based on the nearest line segment, or {@code null} if no such point can be
+     *         determined
      */
     public static Point offsetFromRelativeCoordinate(final Rectangle bounds,
             final PointList points, final Point therefPoint) {
@@ -572,9 +440,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             return offset;
         } else if (points.size() >= 2) {
             // this is an edge...
-            int index =
-                    PointListUtilities.findNearestLineSegIndexOfPoint(points,
-                            refPoint);
+            int index = PointListUtilities.findNearestLineSegIndexOfPoint(points, refPoint);
             @SuppressWarnings("rawtypes")
             List segmentsList = PointListUtilities.getLineSegments(points);
             int segIndex = index;
@@ -605,15 +471,10 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 }
             } else {
                 Point offsetRefPoint = refPoint.getTranslated(offset);
-                LineSeg parallelSeg =
-                        segment.getParallelLineSegThroughPoint(offsetRefPoint);
+                LineSeg parallelSeg = segment.getParallelLineSegThroughPoint(offsetRefPoint);
                 Point p1 = parallelSeg.perpIntersect(refPoint.x, refPoint.y);
-                double dx =
-                        p1.getDistance(offsetRefPoint)
-                                * ((p1.x > offsetRefPoint.x) ? -1 : 1);
-                double dy =
-                        p1.getDistance(refPoint)
-                                * ((p1.y < refPoint.y) ? -1 : 1);
+                double dx = p1.getDistance(offsetRefPoint) * ((p1.x > offsetRefPoint.x) ? -1 : 1);
+                double dy = p1.getDistance(refPoint) * ((p1.y < refPoint.y) ? -1 : 1);
                 Point orth = new Point(dx, dy);
                 // reflection in the y axis
                 if (segment.getOrigin().x > segment.getTerminus().x) {
