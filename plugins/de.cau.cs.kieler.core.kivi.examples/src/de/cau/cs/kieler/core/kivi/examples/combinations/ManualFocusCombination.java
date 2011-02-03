@@ -13,24 +13,25 @@
  */
 package de.cau.cs.kieler.core.kivi.examples.combinations;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.IEffect;
+import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.kivi.examples.KiViExamplesPlugin;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
+import de.cau.cs.kieler.core.kivi.menu.MenuItemEnableStateEffect;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
-import de.cau.cs.kieler.core.model.CoreModelPlugin;
-import de.cau.cs.kieler.core.model.effects.CompartmentCollapseExpandEffect;
 import de.cau.cs.kieler.core.model.effects.FocusContextEffect;
 import de.cau.cs.kieler.core.model.trigger.DiagramTrigger.DiagramState;
-import de.cau.cs.kieler.core.model.trigger.ModelChangeTrigger.ActiveEditorState;
 import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
 
 /**
@@ -39,24 +40,26 @@ import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
  */
 public class ManualFocusCombination extends AbstractCombination {
 
-    private final static String selectionFocusButtonId = "de.cau.cs.kieler.core.kivi.selectionFocus";
-    private final static String focusPlusButtonId = "de.cau.cs.kieler.core.kivi.focusPlus";
-    private final static String focusMinusButtonId = "de.cau.cs.kieler.core.kivi.focusMinus";
+    private static final String FOCUS_BUTTON_ID = "de.cau.cs.kieler.core.kivi.selectionFocus";
+    private static final String PLUS_BUTTON_ID = "de.cau.cs.kieler.core.kivi.focusPlus";
+    private static final String MINUS_BUTTON_ID = "de.cau.cs.kieler.core.kivi.focusMinus";
 
     /*
      * Add editor ID here to enable this button also for other editors.
      */
-    private final static String[] editorIDs = { 
-        "de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID",
-        "de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID"};
-
+    private static final ArrayList<String> editorIDs = Lists.newArrayList("de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID",
+            "de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID");
+    
     private static final int DEFAULT_ZOOM_LEVEL = 1;
     private int zoomLevel = DEFAULT_ZOOM_LEVEL;
+    private boolean enabled = false;
 
     /**
      * Default Constructor defining some Buttons.
      */
     public ManualFocusCombination() {
+        KiVi.getInstance().setDebug(false);
+        
         ImageDescriptor iconFC = KiViExamplesPlugin.imageDescriptorFromPlugin(
                 KiViExamplesPlugin.PLUGIN_ID, "icons/focusContext.png");
         ImageDescriptor iconPlus = KiViExamplesPlugin.imageDescriptorFromPlugin(
@@ -64,16 +67,16 @@ public class ManualFocusCombination extends AbstractCombination {
         ImageDescriptor iconMinus = KiViExamplesPlugin.imageDescriptorFromPlugin(
                 KiViExamplesPlugin.PLUGIN_ID, "icons/focusContextMinus.png");
 
-        KiviMenuContributionService.INSTANCE.addToolbarButton(this, selectionFocusButtonId,
+        KiviMenuContributionService.INSTANCE.addToolbarButton(this, FOCUS_BUTTON_ID,
                 "focusSelect", "Focus selected model objects and do a semantic zooming.", iconFC,
-                SWT.CHECK, null, editorIDs);
+                SWT.CHECK, null, editorIDs.toArray(new String[2]));
 
-        KiviMenuContributionService.INSTANCE.addToolbarButton(this, focusPlusButtonId, "focusPlus",
-                "Increase Focus/Context zoom level.", iconPlus, SWT.PUSH, null, editorIDs);
+        KiviMenuContributionService.INSTANCE.addToolbarButton(this, PLUS_BUTTON_ID, "focusPlus",
+                "Increase Focus/Context zoom level.", iconPlus, SWT.PUSH, null, editorIDs.toArray(new String[2]));
 
-        KiviMenuContributionService.INSTANCE.addToolbarButton(this, focusMinusButtonId,
+        KiviMenuContributionService.INSTANCE.addToolbarButton(this, MINUS_BUTTON_ID,
                 "focusMinus", "Decrease Focus/Context zoom level.", iconMinus, SWT.PUSH, null,
-                editorIDs);
+                editorIDs.toArray(new String[2]));
     }
 
     /**
@@ -88,32 +91,54 @@ public class ManualFocusCombination extends AbstractCombination {
      */
     public void execute(final ButtonState button, final SelectionState selection,
             final DiagramState diagram) {
+        // first check buttons
         if (this.getTriggerState() instanceof ButtonState) {
-            if (button.getButtonId().equals(focusPlusButtonId)) {
+            if (button.getButtonId().equals(PLUS_BUTTON_ID)) {
                 zoomLevel++;
-            } else if (button.getButtonId().equals(focusMinusButtonId)) {
+            } else if (button.getButtonId().equals(MINUS_BUTTON_ID)) {
                 zoomLevel--;
-            }
+            } 
         }
-        if (button.isPushedIn(selectionFocusButtonId)) {
+        
+        this.enable(button.isPushedIn(FOCUS_BUTTON_ID),diagram);
+        
+        // if enabled, do something
+        if (this.enabled) {
             List<EObject> focus = selection.getSelectedEObjects();
             // if nothing is selected, use the model root as the focus
             if (focus.isEmpty()) {
                 focus.add(diagram.getSemanticModel());
             }
-
             FocusContextEffect focusEffect = new FocusContextEffect(diagram.getDiagramPart());
             focusEffect.addFocus(focus, zoomLevel);
 
             for (IEffect effect : focusEffect.getPrimitiveEffects()) {
                 this.schedule(effect);
             }
-            
             this.schedule(new LayoutEffect(diagram.getDiagramPart(), null, true));
-            
-        } else {
-            // reset zoom level if not active
+        }
+    }
+
+    /**
+     * Enable or disable this functionality by graying out buttons.
+     * 
+     * @param enable
+     *            true if enabled
+     * @param diagram 
+     */
+    private void enable(boolean enable, DiagramState diagram) {
+        boolean validDiagram = editorIDs.contains(diagram.getDiagramType());
+        if (this.enabled && (!enable || !validDiagram)) {
+            this.schedule(new MenuItemEnableStateEffect(PLUS_BUTTON_ID, false));
+            this.schedule(new MenuItemEnableStateEffect(MINUS_BUTTON_ID, false));
+            this.undo();
+            this.enabled = enable;
+        } else if (!this.enabled && enable && validDiagram) {
+            this.schedule(new MenuItemEnableStateEffect(PLUS_BUTTON_ID, true));
+            this.schedule(new MenuItemEnableStateEffect(MINUS_BUTTON_ID, true));
+            // reset zoom level
             zoomLevel = DEFAULT_ZOOM_LEVEL;
+            this.enabled = enable;
         }
     }
 

@@ -105,6 +105,26 @@ public class KiVi {
     private boolean initialized = false;
 
     /**
+     * debug flag to get detailed kivi internal outputs.
+     */
+    private boolean debug = false;
+
+    /**
+     * @return the debug
+     */
+    public boolean isDebug() {
+        return debug;
+    }
+
+    /**
+     * @param debug
+     *            the debug to set
+     */
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    /**
      * Instantiate the singleton class.
      */
     public KiVi() {
@@ -214,7 +234,9 @@ public class KiVi {
             }
 
         }
-        printCombinations();
+        if (debug) {
+            printCombinations();
+        }
     }
 
     /**
@@ -304,21 +326,21 @@ public class KiVi {
             ((AbstractTriggerState) triggerState).setSequenceNumber();
         }
 
-        Collection<ICombination> relevantCombos = triggerStates2Combinations.get(triggerState
-                .getClass());
-
-        System.out.println(triggerState);
-        for (ICombination combo : relevantCombos) {
-            System.out.print(combo);
-            try {
-                List<IEffect> effects = combo.trigger(triggerState);
-                for (IEffect effect : effects) {
-                    System.out.print(effect);
-                    executeEffect(effect);
+        synchronized (triggerStates2Combinations) {
+            Collection<ICombination> relevantCombos = triggerStates2Combinations.get(triggerState
+                    .getClass());
+            if (debug) {
+                System.out.println(triggerState);
+            }
+            for (ICombination combo : relevantCombos) {
+                try {
+                    List<IEffect> effects = combo.trigger(triggerState);
+                    for (IEffect effect : effects) {
+                        executeEffect(effect);
+                    }
+                } catch (KielerNotSupportedException e) {
+                    error(combo, triggerState, e);
                 }
-                System.out.println();
-            } catch (KielerNotSupportedException e) {
-                error(combo, triggerState, e);
             }
         }
         triggerState.finish();
@@ -431,8 +453,7 @@ public class KiVi {
                 }
             }
             // moved outside the synchronized to avoid deadlock by foreign trigger code
-            if (createdTrigger) {
-                // activate any trigger seen for the first time
+            if (!trigger.isActive()) {
                 trigger.setActive(isActive());
             }
         } catch (InstantiationException e) {
@@ -454,7 +475,7 @@ public class KiVi {
             final ICombination combination) {
         synchronized (triggerStates2Combinations) {
             // check here to avoid endless loop with setActive method ob AbstractCombination
-            if(triggerStates2Combinations.containsEntry(clazz, combination)){
+            if (triggerStates2Combinations.containsEntry(clazz, combination)) {
                 triggerStates2Combinations.remove(clazz, combination);
                 combination.setActive(false);
             }

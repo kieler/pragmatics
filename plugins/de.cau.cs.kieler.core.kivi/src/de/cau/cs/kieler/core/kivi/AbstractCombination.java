@@ -48,6 +48,8 @@ public abstract class AbstractCombination implements ICombination {
      * {@inheritDoc}
      */
     public List<IEffect> trigger(final ITriggerState triggerState) {
+        boolean debug = KiVi.getInstance().isDebug();
+
         this.triggeringState = triggerState;
         boolean found = true;
         if (triggerState instanceof EffectTriggerState<?>) {
@@ -83,6 +85,9 @@ public abstract class AbstractCombination implements ICombination {
         List<IEffect> toUndo = effects;
         effects = new ArrayList<IEffect>();
         try {
+            if (debug) {
+                System.out.println(this);
+            }
             execute.invoke(this, states);
         } catch (IllegalArgumentException e) {
             KiVi.error(e);
@@ -122,6 +127,14 @@ public abstract class AbstractCombination implements ICombination {
             result.add(effect);
         }
         effects.removeAll(toRemove);
+        if (debug) {
+            for (IEffect effect : result) {
+                System.out.print(effect);
+            }
+            if (!effects.isEmpty()) {
+                System.out.println();
+            }
+        }
         return result;
     }
 
