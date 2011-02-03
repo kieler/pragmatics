@@ -60,8 +60,14 @@ public class AddVertexFeature extends AbstractAddFeature {
     private static final int PORT_SIZE = 10;
 
 	private static final int WIDTH_BREACH = 50;
-
 	private static final int HEIGHT_BREACH = 50;
+	
+	private static final int WIDTH_DEADEND = 50;
+	private static final int HEIGHT_DEADEND = 50;
+
+	private static final int HEIGHT_SWITCH = 50;
+
+	private static final int WIDTH_SWITCH = 50;
 
     private TypeFeatures type;
 
@@ -256,8 +262,8 @@ public class AddVertexFeature extends AbstractAddFeature {
 
         // define a default size for the shape
         // TODO make constants (50)
-        int width = context.getWidth() != 50 ? 50 : context.getWidth();
-        int height = context.getHeight() != 50 ? 50 : context.getHeight();
+        int width = context.getWidth() != WIDTH_DEADEND ? WIDTH_DEADEND : context.getWidth();
+        int height = context.getHeight() != WIDTH_DEADEND ? WIDTH_DEADEND : context.getHeight();
         IGaService gaService = Graphiti.getGaService();
 
         Rectangle portContainer =
@@ -331,7 +337,6 @@ public class AddVertexFeature extends AbstractAddFeature {
             // direct editing shall be opened after object creation
             directEditingInfo.setPictogramElement(shapeLabel);
             directEditingInfo.setGraphicsAlgorithm(text);
-            
             */
 
         }
@@ -468,7 +473,7 @@ public class AddVertexFeature extends AbstractAddFeature {
                 gaService.createPolyline(shapep, spitzeStammXY); //{ 0, 25, 25, 25 });
 
         // Line (30°)
-        mitteAbzweigXY[1] = getY_from_Array(mitteAbzweigXY, 25);
+        mitteAbzweigXY[1] = getYFromArray(mitteAbzweigXY, 25);
         Shape shapep30 = peCreateService.createShape(containerShape, false);
         //mitteAbzweigXY
         Polyline polyline30 =
@@ -486,7 +491,7 @@ public class AddVertexFeature extends AbstractAddFeature {
         else{
         	polyXY[2] = 50-32;
         }
-        polyXY[3] = getY_from_Array(mitteAbzweigXY, polyXY[2]);
+        polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
     	polyXY[4] = polyXY[2];
         polyXY[5] = 25;
 
@@ -505,7 +510,7 @@ public class AddVertexFeature extends AbstractAddFeature {
         layoutPictogramElement(containerShape);
         
         gaService.setLocationAndSize(containerShape.getGraphicsAlgorithm(),
-                context.getX(), context.getY(), 50, 50);
+                context.getX(), context.getY(), HEIGHT_SWITCH, WIDTH_SWITCH);
         link(containerShape, switchVertex);
 
         //updatePictogramElement(containerShape);
@@ -513,21 +518,29 @@ public class AddVertexFeature extends AbstractAddFeature {
         return containerShape;
     }
 
-    private void createGraphicalPort(BoxRelativeAnchor boxAnchor, EPort portType) {
+    /**
+     * create the graphical port with a sideffect.
+     * @param boxAnchor The BoxRelativeAnchor witch is connected with the port.
+     * @param portType The port type is imported for the drawing (only White, line, etc.)
+     */
+    private void createGraphicalPort(final BoxRelativeAnchor boxAnchor,
+    final EPort portType) {
 
 		IGaService gaService = Graphiti.getGaService();
 		Style style = styleProvider.getStyle();
 
 		switch (portType) {
 			case ENDE:
-				style = styleProvider.getStyle(StyleProvider.PORT_END);
+				style = styleProvider.
+				getStyle(StyleProvider.PORT_END);
 				break;
 			default:
-				style = styleProvider.getStyle(StyleProvider.PORT);
+				style = styleProvider.
+				getStyle(StyleProvider.PORT);
 		}
 
     	Rectangle rec = gaService.createRectangle(boxAnchor);
-		//Polyline poly = gaService.createPolyline(boxAnchor ,new int[]{0,PORT_SIZE/2,PORT_SIZE,PORT_SIZE/2});
+		//Polyline poly = gaService.createPolyline(boxAnchor ,new int[]{0, PORT_SIZE / 2, PORT_SIZE, PORT_SIZE / 2});
         rec.setStyle(style);
         //poly.setStyle(style);
         gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
@@ -535,85 +548,16 @@ public class AddVertexFeature extends AbstractAddFeature {
 
 	}
 
-	/**
-     * Create a port that is bound to an vertex's boundary.
-     *
-     * @param container
-     *            the container shape of the parent entity
-     * @param x
-     *            the x position
-     * @param y
-     *            the y position
-     * @return a new PictogramElement for the port
-     */
-    private PictogramElement createBoundPort(final ContainerShape container,
-            final int x, final int y) {
-        int nodeWidth = container.getGraphicsAlgorithm().getWidth();
-        int nodeHeight = container.getGraphicsAlgorithm().getHeight();
-        float widthPercent = (float) x / nodeWidth;
-        float heightPercent = (float) y / nodeHeight;
-
-        // TODO DEBUG
-        System.out.println(widthPercent);
-        System.out.println(nodeWidth);
-        System.out.println(heightPercent);
-        System.out.println(nodeHeight);
-
-        if (widthPercent + heightPercent <= 1
-                && widthPercent - heightPercent <= 0) {
-            // port is put to the left
-            widthPercent = 0;
-        } else if (widthPercent + heightPercent >= 1
-                && widthPercent - heightPercent >= 0) {
-            // port is put to the right
-            widthPercent = 1;
-        } else if (heightPercent < 1.0f / 2) {
-            // port is put to the top
-            heightPercent = 0;
-        } else {
-            // port is put to the bottom
-            heightPercent = 1;
-        }
-
-        // TODO DEBUG
-        heightPercent = 1;
-        heightPercent = 1;
-
-        IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        BoxRelativeAnchor boxAnchor =
-                peCreateService.createBoxRelativeAnchor(container);
-        boxAnchor.setRelativeWidth(widthPercent);
-        boxAnchor.setRelativeHeight(heightPercent);
-        boxAnchor.setActive(true);
-
-        IGaService gaService = Graphiti.getGaService();
-        // look for the actual rectangle that represents the parent entity
-        for (GraphicsAlgorithm ga : container.getGraphicsAlgorithm()
-                .getGraphicsAlgorithmChildren()) {
-            if (ga instanceof Rectangle) {
-                boxAnchor.setReferencedGraphicsAlgorithm(ga);
-                break;
-            }
-        }
-
-        Rectangle rectangleShape = gaService.createRectangle(boxAnchor);
-        rectangleShape.setStyle(styleProvider
-                .getStyle(StyleProvider.SOLID_STYLE));
-        gaService.setLocationAndSize(rectangleShape, -PORT_SIZE, -PORT_SIZE,
-                PORT_SIZE, PORT_SIZE);
-
-        return boxAnchor;
-    }
     /**
      * Calculate the Y pos for the straight line (port Stamm to port Ende) for a
      * x pos
      * 
-     * @param mitteAbzweigXY
-     * @param x
-     * @return
+     * @param mitteAbzweigXY The data witch is necessary for the linear function (x1,y1,x2,y2)
+     * @param x the x position for the calculated function
+     * @return f(x)
      */
-    private int getY_from_Array(final int[] mitteAbzweigXY, final int x) {
-        double m =
+    private int getYFromArray(final int[] mitteAbzweigXY, final int x) {
+    	double m =
                 (mitteAbzweigXY[3] - mitteAbzweigXY[1])
                         / (mitteAbzweigXY[2] - mitteAbzweigXY[0]);
         double b = mitteAbzweigXY[1] - m * mitteAbzweigXY[0];
