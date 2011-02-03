@@ -66,6 +66,9 @@ public class CreateEdgeFeature extends
  
     public boolean canStartConnection(ICreateConnectionContext context) {
     	System.out.println("#canStartConnection#");
+    	System.out.println(context.getSourceAnchor());
+    	System.out.println(getBusinessObjectForPictogramElement(
+                context.getSourceAnchor().getParent()));
     	return (context.getSourceAnchor() != null
                 && getBusinessObjectForPictogramElement(
                 context.getSourceAnchor().getParent()) != null);

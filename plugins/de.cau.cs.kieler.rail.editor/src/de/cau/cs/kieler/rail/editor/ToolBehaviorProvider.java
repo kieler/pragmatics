@@ -33,6 +33,7 @@ import org.eclipse.graphiti.tb.IContextButtonPadData;
 
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
+import de.cau.cs.kieler.rail.editor.features.RotateSwitchFeature;
 import de.cau.cs.kieler.rail.editor.features.ToggleSwitchFeature;
 
 /**
@@ -129,23 +130,18 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
         // 2. set the toggle button
         // if bo is a switch show COTEXT_BUTTON
         if (bo instanceof Weichenknoten) {
-            CustomContext ccToogle =
+            CustomContext ccContextButon =
                     new CustomContext(new PictogramElement[] {pe});
-            ccToogle.setInnerPictogramElement(pe);
+            ccContextButon.setInnerPictogramElement(pe);
             ICustomFeature[] cf =
-                    getFeatureProvider().getCustomFeatures(ccToogle);
+                    getFeatureProvider().getCustomFeatures(ccContextButon);
 
             // catch the right feature
             for (int i = 0; i < cf.length; i++) {
 
                 if (cf[i].getName() == ToggleSwitchFeature.NAME) {
-                    // instanceof
-                    // possible
-                    // too
-                    System.out.println(cf[i].getName() + " 3");
-
                     ContextButtonEntry toogleButton =
-                            new ContextButtonEntry(cf[i], ccToogle);
+                            new ContextButtonEntry(cf[i], ccContextButon);
 
                     if (((Weichenknoten) bo).getAbzweigendeLage()
                     == EOrientation.LINKS) {
@@ -156,6 +152,14 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
                     toogleButton.setIconId(ImageProvider.IMG_TOGGLE);
 
                     data.getGenericContextButtons().add(toogleButton);
+                }else if (cf[i].getName() == RotateSwitchFeature.NAME){
+                	ContextButtonEntry toogleButton =
+                        new ContextButtonEntry(cf[i], ccContextButon);
+
+                	toogleButton.setText("Weiche um 90° drehen");
+	                toogleButton.setIconId(ImageProvider.IMG_ROTATE);
+	
+	                data.getGenericContextButtons().add(toogleButton);
                 }
             }
 

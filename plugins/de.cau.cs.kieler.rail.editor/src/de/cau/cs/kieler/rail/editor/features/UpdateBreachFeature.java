@@ -22,15 +22,15 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 public class UpdateBreachFeature extends AbstractUpdateFeature {
 	/**
 	 * 
-	 * @param fp
+	 * @param fp The FeatureProvider
 	 */
-    public UpdateBreachFeature(IFeatureProvider fp) {
+    public UpdateBreachFeature(final IFeatureProvider fp){
         super(fp);
     }
     /**
      * {@inheritDoc}
      */
-    public boolean canUpdate(IUpdateContext context) {
+    public final boolean canUpdate(final IUpdateContext context) {
         // return true, if linked business object is a EClass
         Object bo =
             getBusinessObjectForPictogramElement(context.getPictogramElement());
@@ -39,7 +39,7 @@ public class UpdateBreachFeature extends AbstractUpdateFeature {
     /**
      * {@inheritDoc}
      */
-    public IReason updateNeeded(IUpdateContext context) {
+    public final IReason updateNeeded(final IUpdateContext context) {
         // retrieve name from pictogram model
         String pictogramName = null;
         PictogramElement pictogramElement = context.getPictogramElement();
@@ -74,7 +74,7 @@ public class UpdateBreachFeature extends AbstractUpdateFeature {
     /**
      * {@inheritDoc}
      */
-    public boolean update(IUpdateContext context) {
+    public final boolean update(final IUpdateContext context) {
         // retrieve name from business model
         String businessName = null;
         PictogramElement pictogramElement = context.getPictogramElement();

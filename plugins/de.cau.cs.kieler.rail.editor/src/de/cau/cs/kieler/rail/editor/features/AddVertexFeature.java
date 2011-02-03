@@ -245,7 +245,7 @@ public class AddVertexFeature extends AbstractAddFeature {
      */
     // BREACH_OR_CLOSE
     private PictogramElement addDeadEndVertex(final IAddContext context) {
-        Stumpfgleisknoten addedClass =
+        Stumpfgleisknoten deadEndVertex =
                 (Stumpfgleisknoten) context.getNewObject();
         Diagram targetDiagram = (Diagram) context.getTargetContainer();
 
@@ -273,8 +273,8 @@ public class AddVertexFeature extends AbstractAddFeature {
             // if added Class has no resource we add it to the resource
             // of the diagram
             // in a real scenario the business model would have its own resource
-            if (addedClass.eResource() == null) {
-                getDiagram().eResource().getContents().add(addedClass);
+            if (deadEndVertex.eResource() == null) {
+                getDiagram().eResource().getContents().add(deadEndVertex);
             }
             // create link and wire it
             // link(containerShape, addedClass);
@@ -302,10 +302,16 @@ public class AddVertexFeature extends AbstractAddFeature {
                     peCreateService.createShape(containerShape, false);
 
             // create and set text graphics algorithm
-            addedClass.setName("Test");
+            String ans = deadEndVertex.getName();
+            if (ans == null) {
+                ans = ExampleUtil.askString("", "Enter Label", "");
+                // ans = JOptionPane.showInputDialog(null, "Enter Label");
+                deadEndVertex.setName(ans); // TODO ???
+            }
+            
             Text text =
                     gaService.createDefaultText(shapeLabel,
-                            addedClass.getName());
+                            deadEndVertex.getName());
             text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
@@ -313,7 +319,7 @@ public class AddVertexFeature extends AbstractAddFeature {
             gaService.setLocationAndSize(text, 0, 0, width, 20);
 
             // create link and wire it
-            link(shapeLabel, addedClass);
+            link(shapeLabel, deadEndVertex);
 
             /*
 
@@ -331,9 +337,26 @@ public class AddVertexFeature extends AbstractAddFeature {
 
         }
 
+     // PORT
+        Port port = deadEndVertex.getPorts().get(0);
+        final BoxRelativeAnchor boxAnchor =
+                peCreateService.createBoxRelativeAnchor(containerShape);
+        boxAnchor.setActive(true);
+        boxAnchor.setRelativeHeight(0.5);
+        boxAnchor.setRelativeWidth(0.5);
+        boxAnchor.setReferencedGraphicsAlgorithm(portContainer);
+        Rectangle rec = gaService.createRectangle(boxAnchor);
+        rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
+        
+        gaService.setLocationAndSize(rec, -PORT_SIZE/2, -PORT_SIZE/2, PORT_SIZE, PORT_SIZE);
+
+        link(boxAnchor, port);
+        // PORT
+        
+        
         // TODO maybe to delete (at the other places maybe too)
         // add a chopbox anchor to the shape
-        peCreateService.createChopboxAnchor(containerShape);
+        //peCreateService.createChopboxAnchor(containerShape);
 
         // TODO maybe kick out
         // call the layout feature

@@ -42,27 +42,25 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     public boolean canCreate(ICreateContext context) {
         return context.getTargetContainer() instanceof Diagram;
     }
- 
+
+    
     public Object[] create(ICreateContext context) {
     	Vertex vertex = getVertex();
-    	
+
         KrailDiagramEditor kde = ((KrailDiagramEditor) getDiagramEditor());
         ContainerShape tc = context.getTargetContainer();
         Model model = kde.fetchModel(tc);
-        
-        model.getVertices().add(vertex);  
-        
+
+        model.getVertices().add(vertex);
+
         // do the add
-        
         vertex.getPorts().addAll(addGraphicalRepresentationForPorts(vertex));
         PictogramElement vertexPE = addGraphicalRepresentation(context, vertex);
-        
-    	
-    	
+
         // return newly created business object(s)
-        return new Object[] { vertex };
+        return new Object[] {vertex};
     }
-    
+
     /**
      * Creates the ports and addGraphicalRepresentation for them.
      * @param context
@@ -72,7 +70,7 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
      */
     private EList<Port> addGraphicalRepresentationForPorts(Object vertex){
     	EList<Port> ports=new BasicEList<Port>();
-    	
+
     	switch (type){
     		case SWITCHVERTEX_LEFT:
     		case SWITCHVERTEX_RIGHT:

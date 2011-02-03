@@ -4,16 +4,21 @@ import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
+import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+
+import de.cau.cs.kieler.rail.Topologie.Basegraph.EPort;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 
 public class RotateSwitchFeature extends AbstractCustomFeature {
  
-    public RotateSwitchFeature(IFeatureProvider fp) {
+    public static final String NAME = "Rotate Switch";
+	public RotateSwitchFeature(IFeatureProvider fp) {
         super(fp);
     }
     /**
@@ -21,7 +26,7 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
      */
     @Override
     public String getName() {
-        return "Rotate Switch";
+        return NAME;
     }
     /**
      * {@inheritDoc}
@@ -50,24 +55,41 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
     /**
      * {@inheritDoc}
      */
-    public void execute(ICustomContext context) {
+    public void execute(final ICustomContext context) {
+
         PictogramElement[] pes = context.getPictogramElements();
         if (pes != null && pes.length == 1) {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
             if (bo instanceof Weichenknoten) {
-            	Weichenknoten weichenknoten = (Weichenknoten) bo;
+                Weichenknoten weichenknoten = (Weichenknoten) bo;
                 String currentName = weichenknoten.getName();
-                
-                PictogramElement pictogramElement = context.getInnerPictogramElement();
-                ContainerShape cs = (ContainerShape) pictogramElement;
-                
-                updatePictogramElement(pictogramElement);
-                
-                // ask user for a new class name
-                String newName =ExampleUtil.askString(getName(), getDescription(),
-                        currentName);
-                if (newName != null) {
-                    weichenknoten.setName(newName);
+
+                PictogramElement pictogramElement =
+                        context.getInnerPictogramElement();
+
+                // rotate
+                if (pictogramElement instanceof ContainerShape) {
+                    ContainerShape cs = (ContainerShape) pictogramElement;
+                    for (Anchor anchor : cs.getAnchors()) {
+                        if (anchor instanceof BoxRelativeAnchor) {
+                            Port port =
+                                    (Port) getBusinessObjectForPictogramElement(anchor);
+                            BoxRelativeAnchor box =
+                                    (BoxRelativeAnchor) anchor
+                                            .getGraphicsAlgorithm()
+                                            .getPictogramElement();
+                            int boxWidth =
+                                    anchor.getGraphicsAlgorithm().getWidth();
+                            int boxHeight =
+                                    anchor.getGraphicsAlgorithm().getWidth();
+                            if (port.getName() == EPort.ABZWEIG) {
+                                box.setRelativeHeight(Math.abs(1 - box
+                                        .getRelativeHeight()));
+                            }
+                        }
+                    }
+                   
+                    updatePictogramElement(pictogramElement);
                 }
             }
         }
