@@ -86,10 +86,12 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     			ports.add(stamm);
     			ports.add(spitze);
     			break;
+    		case DEADENDVERTEX:
     		case BREANCH:
     			Port ende = BasegraphFactory.eINSTANCE.createPort();
     	    	ende.setName(EPort.ENDE);
     	    	ports.add(ende);
+    	    	break;
     	}
     	return ports;
     }

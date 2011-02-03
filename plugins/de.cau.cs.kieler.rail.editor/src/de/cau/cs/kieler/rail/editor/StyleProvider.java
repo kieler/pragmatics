@@ -101,6 +101,7 @@ public class StyleProvider implements IStyleProvider {
     public static final String BREACH = "breach";
     /** style id for Breach (Einbruchsstelle) */
     public static final String PORT = "port";
+    public static final String PORT_END = "port end";
 
     /**
      * Create the style with given identifier.
@@ -133,6 +134,15 @@ public class StyleProvider implements IStyleProvider {
             Style style = gaService.createStyle(diagram, id);
             style.setForeground(gaService.manageColor(diagram,
                     ColorConstant.BLACK));
+            style.setBackground(gaService.manageColor(diagram,
+                    ColorConstant.WHITE));
+            style.setFilled(false);
+            style.setTransparency(1.0);
+            return style;
+        } else if (PORT_END.equals(id)) {
+            Style style = gaService.createStyle(diagram, id);
+            style.setForeground(gaService.manageColor(diagram,
+                    ColorConstant.WHITE));
             style.setBackground(gaService.manageColor(diagram,
                     ColorConstant.WHITE));
             style.setFilled(false);

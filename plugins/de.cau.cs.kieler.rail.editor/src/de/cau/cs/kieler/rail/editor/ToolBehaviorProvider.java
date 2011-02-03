@@ -7,7 +7,7 @@
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *     
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -27,8 +27,6 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.palette.IPaletteCompartmentEntry;
 import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
-import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
-import org.eclipse.graphiti.palette.impl.StackEntry;
 import org.eclipse.graphiti.tb.ContextButtonEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
 import org.eclipse.graphiti.tb.IContextButtonPadData;
@@ -39,14 +37,12 @@ import de.cau.cs.kieler.rail.editor.features.ToggleSwitchFeature;
 
 /**
  * @author hdw
- * 
  */
 public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
     /**
-     * 
+     *
      * Creates a new ToolBehaviorProvider.
-     * 
      * @param diagramTypeProvider
      *            the diagram type provider
      */
@@ -69,13 +65,14 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
         }
 
         // add new compartment at the end of the existing compartments
+        /* don't need
         PaletteCompartmentEntry compartmentEntry =
                 new PaletteCompartmentEntry("Stacked", null);
         ret.add(compartmentEntry);
 
         // add new stack entry to new compartment
         StackEntry stackEntry = new StackEntry("EObject", "EObject", null);
-        compartmentEntry.addToolEntry(stackEntry);
+        compartmentEntry.addToolEntry(stackEntry);*/
 
         // add all create-features to the new stack-entry
         IFeatureProvider featureProvider = getFeatureProvider();
@@ -85,7 +82,7 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
                     new ObjectCreationToolEntry(cf.getCreateName(),
                             cf.getCreateDescription(), cf.getCreateImageId(),
                             cf.getCreateLargeImageId(), cf);
-            stackEntry.addCreationToolEntry(objectCreationToolEntry);
+            //stackEntry.addCreationToolEntry(objectCreationToolEntry);
         }
 
         // add all create-connection-features to the new stack-entry
@@ -97,9 +94,8 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
                             cf.getCreateDescription(), cf.getCreateImageId(),
                             cf.getCreateLargeImageId());
             connectionCreationToolEntry.addCreateConnectionFeature(cf);
-            stackEntry.addCreationToolEntry(connectionCreationToolEntry);
+            //stackEntry.addCreationToolEntry(connectionCreationToolEntry);
         }
-
         return ret.toArray(new IPaletteCompartmentEntry[ret.size()]);
     }
 
@@ -134,7 +130,7 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
         // if bo is a switch show COTEXT_BUTTON
         if (bo instanceof Weichenknoten) {
             CustomContext ccToogle =
-                    new CustomContext(new PictogramElement[] { pe });
+                    new CustomContext(new PictogramElement[] {pe});
             ccToogle.setInnerPictogramElement(pe);
             ICustomFeature[] cf =
                     getFeatureProvider().getCustomFeatures(ccToogle);
@@ -151,7 +147,8 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
                     ContextButtonEntry toogleButton =
                             new ContextButtonEntry(cf[i], ccToogle);
 
-                    if (((Weichenknoten) bo).getAbzweigendeLage() == EOrientation.LINKS) {
+                    if (((Weichenknoten) bo).getAbzweigendeLage()
+                    == EOrientation.LINKS) {
                         toogleButton.setText("links Weiche -> rechts Weiche");
                     } else {
                         toogleButton.setText("rechts Weiche -> links Weiche");

@@ -115,8 +115,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
                 new CreateVertexFeature(this, TypeFeatures.BREANCH),
                 new CreateVertexFeature(this, TypeFeatures.DEADENDVERTEX),
                 new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_LEFT),
-                new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT),
-                new CreatePortFeature(this)};
+                new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT)};//,
+                //new CreatePortFeature(this)};
     }
 
     /**
@@ -124,7 +124,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
-        return new ICreateConnectionFeature[] { new CreateEdgeFeature(this),new CreateEdgeFeature2(this) };
+        return new ICreateConnectionFeature[] { new CreateEdgeFeature(this) };
     }
 
     /*
@@ -230,7 +230,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
             final IMoveAnchorContext context) {
         System.out.println(getBusinessObjectForPictogramElement(context
                 .getAnchor()));
-        if (getBusinessObjectForPictogramElement(context.getAnchor()) instanceof Port) {
+        if (getBusinessObjectForPictogramElement(context.getAnchor())
+        instanceof Port) {
             return new MovePortFeature(this);
         }
         return super.getMoveAnchorFeature(context);
@@ -245,7 +246,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public ICustomFeature[] getCustomFeatures(final ICustomContext context) {
-        return new ICustomFeature[] { new RotateSwitchFeature(this),
+        return new ICustomFeature[] {new RotateSwitchFeature(this),
                 new ToggleSwitchFeature(this) };
     }
 

@@ -124,6 +124,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
         int[] spitzeStammXY = SPITZE_STAMM_DEFAULT.clone();
         int[] mitteAbzweigXY = MITTE_ABZWEIG_DEFAULT.clone();
         List<Polyline> polylines = new LinkedList<Polyline>();
+        Polygon trianglePolygon=null;
 
         PictogramElement pictogramElement = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pictogramElement);
@@ -140,19 +141,8 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             System.out.println(shape);
             GraphicsAlgorithm graphicsAlgorithm = shape.getGraphicsAlgorithm();
             System.out.println(graphicsAlgorithm);
-            if (graphicsAlgorithm instanceof Polygon){
-            	int[] polyXY = new int[]{mitteAbzweigXY[0],mitteAbzweigXY[1],0,0,0,0};
-                
-                if(((Weichenknoten)bo).getAbzweigendeLage() == EOrientation.LINKS){
-                	polyXY[2] = 32;
-                }
-                else{
-                	polyXY[2] = 50-32;
-                }
-                polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
-            	polyXY[4] = polyXY[2];
-                polyXY[5] = 25;
-                setPolygonPoints((Polygon)graphicsAlgorithm,polyXY);
+            if (graphicsAlgorithm instanceof Polygon) {
+            	trianglePolygon = (Polygon) graphicsAlgorithm;
             }else if (graphicsAlgorithm instanceof Polyline) {
                 polylines.add((Polyline) graphicsAlgorithm);
             } 
@@ -174,24 +164,30 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                     switch (port.getName()) {
                     case SPITZE:
                         spitzeStammXY[SPITZE_X] =
-                                (int) (width * (box.getRelativeWidth()) - boxWidth / 2);
+                                (int) (width * (box.getRelativeWidth()) 
+                                		- boxWidth / 2);
                         spitzeStammXY[SPITZE_Y] =
-                                (int) (height * (box.getRelativeHeight()) + boxHeight / 2);
+                                (int) (height * (box.getRelativeHeight()) 
+                                		+ boxHeight / 2);
                         break;
                     case STAMM:
                         spitzeStammXY[STAMM_X] =
-                                (int) (width * (box.getRelativeWidth()) + boxWidth / 2);
+                                (int) (width * (box.getRelativeWidth()) 
+                                		+ boxWidth / 2);
                         spitzeStammXY[STAMM_Y] =
-                                (int) (height * (box.getRelativeHeight()) + boxHeight / 2);
+                                (int) (height * (box.getRelativeHeight()) 
+                                		+ boxHeight / 2);
                         break;
                     case ABZWEIG:
                         System.out.println("Abzweig");
                         mitteAbzweigXY[ABZWEIG_X] =
-                                (int) (width * (box.getRelativeWidth()) + boxWidth / 2);
+                                (int) (width * (box.getRelativeWidth()) 
+                                		+ boxWidth / 2);
                         System.out.println("relativ width: "
                                 + box.getRelativeWidth());
                         mitteAbzweigXY[ABZWEIG_Y] =
-                                (int) (height * (box.getRelativeHeight()) + boxHeight / 2);
+                                (int) (height * (box.getRelativeHeight()) 
+                                		+ boxHeight / 2);
                         System.out.println("relativ height: "
                                 + box.getRelativeHeight());
                         break;
@@ -243,18 +239,53 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                     // }
                 }
             }
+            
+            //triangle refresh
+            if (trianglePolygon != null) {
+	            int[] polyXY = new int[] {mitteAbzweigXY[0], 
+	        			mitteAbzweigXY[1], 0, 0, 0, 0};
+	            
+	            if (((Weichenknoten)bo).getAbzweigendeLage() == EOrientation.LINKS) {
+	            	polyXY[2] = 32;
+	            }
+	            else {
+	            	polyXY[2] = 50-32;
+	            }
+	            polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
+	        	polyXY[4] = polyXY[2];
+	            polyXY[5] = 25;
+	            setPolygonPoints(trianglePolygon,polyXY);
+	            System.out.println("polyline: " + arrayToString(polyXY));
+            }
+            //triangle refresh
+            
             getDiagramEditor().refresh();
         }
 
         return false;
     }
-
-    private void setPolygonPoints(Polygon polygon, int[] polyXY) {
-    	for(int i = 0; i < polygon.getPoints().size();i++){
-    		polygon.getPoints().get(i).setX(polyXY[i*2]);
-    		polygon.getPoints().get(i).setY(polyXY[i*2+1]);
+    /**
+     *makes a string out of an array
+     * @param polyXY the array
+     * @return The numbers of the array divided by a ,
+     */
+    private String arrayToString(final int[] polyXY) {
+		String ret = "";
+		for (int i : polyXY) {
+			ret += (i + ", ");
+		}
+		return ret;
+	}
+    /**
+     * Set a polygon with the XY pos from the array.
+     * @param polygon The polygon witch the pos are set for.
+     * @param polyXY The points in an array
+     */
+	private void setPolygonPoints(Polygon polygon, final int[] polyXY) {
+    	for (int i = 0; i < polygon.getPoints().size(); i++) {
+    		polygon.getPoints().get(i).setX(polyXY[i * 2]);
+    		polygon.getPoints().get(i).setY(polyXY[i * 2 + 1]);
     	}
-		
 	}
 
 	// TODO better comment
@@ -274,6 +305,5 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                         / (mitteAbzweigXY[ABZWEIG_X] - mitteAbzweigXY[MITTE_X]);
         double b = mitteAbzweigXY[MITTE_Y] - m * mitteAbzweigXY[MITTE_X];
         return (int) (m * x + b);
-
     }
 }

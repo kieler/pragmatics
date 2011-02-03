@@ -16,6 +16,7 @@ import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
+import org.eclipse.graphiti.mm.algorithms.styles.Style;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -30,6 +31,7 @@ import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
+import de.cau.cs.kieler.rail.Topologie.Basegraph.EPort;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
@@ -432,7 +434,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 
             boxAnchor.setReferencedGraphicsAlgorithm(R);
 
-            createGraphicalPort(boxAnchor);
+            createGraphicalPort(boxAnchor, port.getName());
 
             link(boxAnchor, port);
         }
@@ -465,10 +467,10 @@ public class AddVertexFeature extends AbstractAddFeature {
         polyXY[3] = getY_from_Array(mitteAbzweigXY, polyXY[2]);
     	polyXY[4] = polyXY[2];
         polyXY[5] = 25;
-        
+
         Polygon polygon=gaService.createPolygon(shapeptriangle, polyXY) ;
-        
-        
+
+
 
         Shape shape = peCreateService.createShape(containerShape, false);
 
@@ -489,21 +491,31 @@ public class AddVertexFeature extends AbstractAddFeature {
         return containerShape;
     }
 
-	private void createGraphicalPort(BoxRelativeAnchor boxAnchor) {
-		
+    private void createGraphicalPort(BoxRelativeAnchor boxAnchor, EPort portType) {
+
 		IGaService gaService = Graphiti.getGaService();
+		Style style = styleProvider.getStyle();
+
+		switch (portType) {
+			case ENDE:
+				style = styleProvider.getStyle(StyleProvider.PORT_END);
+				break;
+			default:
+				style = styleProvider.getStyle(StyleProvider.PORT);
+		}
 
     	Rectangle rec = gaService.createRectangle(boxAnchor);
 		//Polyline poly = gaService.createPolyline(boxAnchor ,new int[]{0,PORT_SIZE/2,PORT_SIZE,PORT_SIZE/2});
-        rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
-        //poly.setStyle(styleProvider.getStyle(StyleProvider.PORT));
+        rec.setStyle(style);
+        //poly.setStyle(style);
         gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
         //gaService.setLocationAndSize(poly, 0, 0, PORT_SIZE, PORT_SIZE);
+
 	}
 
 	/**
      * Create a port that is bound to an vertex's boundary.
-     * 
+     *
      * @param container
      *            the container shape of the parent entity
      * @param x
