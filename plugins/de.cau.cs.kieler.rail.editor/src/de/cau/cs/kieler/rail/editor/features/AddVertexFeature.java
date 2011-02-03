@@ -163,8 +163,7 @@ public class AddVertexFeature extends AbstractAddFeature {
             ellipse = gaService.createEllipse(containerShape);
             ellipse.setLineWidth(3);
             ellipse.setFilled(false);
-            ellipse.setForeground(manageColor(0, 0, 0));
-            ellipse.setBackground(manageColor(255, 255, 255));
+            ellipse.setStyle(styleProvider.getStyle(StyleProvider.BREACH));
 
             gaService.setLocationAndSize(ellipse, context.getX(),
                     context.getY() + 10, width, height - 10);
@@ -217,7 +216,7 @@ public class AddVertexFeature extends AbstractAddFeature {
             boxAnchor.setRelativeWidth(0.5);
             boxAnchor.setReferencedGraphicsAlgorithm(ellipse);
             Rectangle rec = gaService.createRectangle(boxAnchor);
-            rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
+            rec.setStyle(styleProvider.getStyle(StyleProvider.PORT_END));
 
             gaService.setLocationAndSize(rec, -PORT_SIZE/2, -PORT_SIZE/2, PORT_SIZE, PORT_SIZE);
 
@@ -277,7 +276,7 @@ public class AddVertexFeature extends AbstractAddFeature {
                 getDiagram().eResource().getContents().add(deadEndVertex);
             }
             // create link and wire it
-            // link(containerShape, addedClass);
+            link(containerShape, deadEndVertex);
         }
 
         // SHAPE WITH LINE
@@ -504,7 +503,7 @@ public class AddVertexFeature extends AbstractAddFeature {
         text.setY(context.getY());
 
         layoutPictogramElement(containerShape);
-
+        
         gaService.setLocationAndSize(containerShape.getGraphicsAlgorithm(),
                 context.getX(), context.getY(), 50, 50);
         link(containerShape, switchVertex);

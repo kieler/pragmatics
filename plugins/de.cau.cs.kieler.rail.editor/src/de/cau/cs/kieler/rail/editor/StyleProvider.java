@@ -128,7 +128,11 @@ public class StyleProvider implements IStyleProvider {
             return style;
         } else if (BREACH.equals(id)) {
             Style style = gaService.createStyle(diagram, id);
-            // TODO has to fix.
+            style.setForeground(gaService.manageColor(diagram,
+                    ColorConstant.BLACK));
+            style.setBackground(gaService.manageColor(diagram,
+                    ColorConstant.GRAY));
+            style.setFilled(true);
             return style;
         } else if (PORT.equals(id)) {
             Style style = gaService.createStyle(diagram, id);
