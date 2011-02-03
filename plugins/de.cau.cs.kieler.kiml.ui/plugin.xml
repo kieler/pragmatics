@@ -44,6 +44,12 @@
                optional="true">
          </commandParameter>
       </command>
+      <command
+            categoryId="de.cau.cs.kieler"
+            defaultHandler="de.cau.cs.kieler.kiml.ui.views.ShowLayoutViewHandler"
+            id="de.cau.cs.kieler.kiml.ui.command.showLayoutView"
+            name="%command.name.1">
+      </command>
    </extension>
    
    <extension
@@ -61,7 +67,6 @@ point="org.eclipse.ui.menus">
          <with
                variable="activeEditor">
             <test
-                  forcePluginActivation="false"
                   property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
             </test>
          </with>
@@ -81,7 +86,6 @@ point="org.eclipse.ui.menus">
          <with
                variable="activeEditor">
             <test
-                  forcePluginActivation="false"
                   property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
             </test>
          </with>
@@ -122,7 +126,6 @@ point="org.eclipse.ui.menus">
             <with
                   variable="activeEditor">
                <test
-                     forcePluginActivation="false"
                      property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
                </test>
             </with>
@@ -148,11 +151,29 @@ point="org.eclipse.ui.menus">
             <with
                   variable="activeEditor">
                <test
-                     forcePluginActivation="false"
                      property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
                </test>
             </with>
          </and>
+      </visibleWhen>
+   </command>
+</menuContribution>
+<menuContribution
+      locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+   <command
+         commandId="de.cau.cs.kieler.kiml.ui.command.showLayoutView"
+         icon="icons/view16/layout.gif"
+         label="%command.label.3"
+         mnemonic="%command.mnemonic.0"
+         style="push">
+      <visibleWhen
+            checkEnabled="false">
+         <with
+               variable="activeEditor">
+            <test
+                  property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+            </test>
+         </with>
       </visibleWhen>
    </command>
 </menuContribution>

@@ -85,6 +85,7 @@ public class LayouterHintCellEditor extends CellEditor {
      */
     @Override
     protected void doSetFocus() {
+        label.setFocus();
         showDialog();
     }
     
