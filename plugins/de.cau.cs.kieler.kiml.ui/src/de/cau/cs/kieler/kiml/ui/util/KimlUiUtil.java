@@ -81,21 +81,24 @@ public final class KimlUiUtil {
             currentChild = currentParent;
             currentParent = currentChild.getParent();
         }
-        Rectangle parentBounds = parent.getBounds();
-        currentParent = child.getParent();
-        Rectangle containerBounds = currentParent.getBounds();
-        while (currentParent != parent
-                && (containerBounds.width > parentBounds.width
-                || containerBounds.height > parentBounds.height)) {
-            currentParent = currentParent.getParent();
-            containerBounds = currentParent.getBounds();
-        }
         if (!isRelative) {
+            Rectangle parentBounds = parent.getBounds();
+            currentParent = child.getParent();
+            Rectangle containerBounds = currentParent.getBounds();
+//            while (currentParent != parent
+//                    && (containerBounds.width + result.left > parentBounds.width
+//                    || containerBounds.height + result.top > parentBounds.height)) {
+//                currentParent = currentParent.getParent();
+//                containerBounds = currentParent.getBounds();
+//            }
             result.left = containerBounds.x - parentBounds.x;
             result.top = containerBounds.y - parentBounds.y;
         }
-        result.right = parentBounds.width - containerBounds.width - result.left;
-        result.bottom = parentBounds.height - containerBounds.height - result.top;
+        // FIXME in theory it would be better to get the bottom and right insets from the size;
+        // however, due to the inpredictability of Draw2D layout managers, this leads to
+        // bad results in many cases, so a fixed insets value is better
+        result.right = result.left;
+        result.bottom = result.left;
         return result;
     }
     
