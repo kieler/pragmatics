@@ -83,6 +83,7 @@ create Entity this transform(DocumentRoot root) :
         default :
             null
     } ->
+    
     // Optimize the resulting model
     this.optimize()
 ;
@@ -102,6 +103,7 @@ create Entity this transform(moml::EntityType entity) :
     // Add annotations pointing to Ptolemy
     this.addStringAnnotation("language", "ptolemy") ->
     this.addStringAnnotation("ptolemyClass", entity.class1) ->
+    
     // Add the entity's properties, ports, entities, relations and links
     addProperties(this, entity.property) ->
     addChildPorts(this) ->
@@ -539,7 +541,13 @@ Void optimize(Entity entity) :
     // it fixes link directions
     optimizeStates(entity) ->
     optimizeSingleRelations(entity) ->
-    optimizeAnnotationRepresentation(entity)
+    
+    // Certain annotations have to be transformed to entities
+    optimizeAnnotationRepresentation(entity) ->
+    
+    // Iterate through all comments and check if they should be attached to
+    // any entity
+    optimizeCommentAttachment(entity)
 ;
 
 
@@ -952,158 +960,6 @@ Boolean randomizeLinkInRelation(Relation relation) :
 
 
 //-----------------------------------------------------------------------------
-// Optimization Of Single Relations
-//-----------------------------------------------------------------------------
-
-/**
- * Optimizes relations that connect only two ports. Such relations have two
- * links, one incoming and one outgoing. The given entity's relations are
- * optimized, then the entity's child entities are recursively treated.
- * 
- * @param entity entity whose child relations to optimize recursively.
- */
-Void optimizeSingleRelations(Entity entity) :
-    // Optimize the entity's direct child relations; this may leave
-    // relations marked for removal
-    entity.childRelations.optimizeSingleRelation() ->
-    
-    // Remove the relations that can be removed (this is done in a
-    // second iteration to avoid concurrent modification exceptions)
-    entity.childRelations.select(a | a.isMarkedAsRemovable()).remove() ->
-    
-    // Recursively optimize the relations of the entity's child entities
-    entity.childEntities.optimizeSingleRelations()
-;
-
-/**
- * Replaces the given relation by a single link, if possible. If that is
- * indeed possible, the relation is marked as being removable, and one of
- * the links is removed.
- * 
- * @param relation the relation to be optimized.
- */
-Void optimizeSingleRelation(Relation relation):
-    // Find the first of the relation's incoming and outgoing links 
-    let inLink  = relation.incomingLinks.first() :
-    let outLink = relation.outgoingLinks.first() :
-    
-    // If the relation has only one incoming and outgoing link, it can be
-    // optimized away
-    if ((relation.incomingLinks.size == 1) && (relation.outgoingLinks.size == 1))
-        then (
-            inLink.setTarget(outLink.target) -> 
-            relation.markAsRemovable() ->
-            remove(outLink)
-        )
-        else
-            null    
-;
-
-
-//-----------------------------------------------------------------------------
-// Transform Special Annotations To Visible Entities
-//-----------------------------------------------------------------------------
-
-/**
- * Transforms special annotations of the given entity and, recursively, its
- * children to visible entities.
- * 
- * @param the entity whose annotations to transform.
- */
-Void optimizeAnnotationRepresentation(Entity entity) :
-    // Transform annotations
-    entity.annotations.optimizeAnnotationRepresentation() ->
-    // Remove those annoations that were transformed (this is done in a
-    // second iteration to avoid concurrent modification exceptions)
-    entity.annotations.removeAll(
-        entity.annotations.select(a | a.isMarkedAsRemovable())) ->
-    
-    // Recursively treat child entities
-    entity.childEntities.optimizeAnnotationRepresentation()  
-;
-
-/**
- * Try to transform the given annotation into a visible entity. If this is
- * successful, the annotation is annotated as being ready for removal and
- * should be removed after executing this extension. This must be done in a
- * separate step to avoid concurrent modification exceptions. Entities that
- * result from transforming annotations are annotated with "annotationNode".
- * 
- * @param annotation the annotation to be transformed, if possible.
- */
-Void optimizeAnnotationRepresentation(Annotation annotation) :
-    // Check, 
-    let isTopLevel = Entity.isInstance(annotation.eContainer) :
-    let topLevel = (Entity) annotation.eContainer :
-    
-    let isTypedStringAnnotation = TypedStringAnnotation.isInstance(annotation):
-    
-    // If the annotation is transformed into a new entity, this will be it
-    let newEntity = new Entity :
-    
-    // Clone the attribute to avoid concurrent modification (remove while iterating)
-    let clonedAnnotation = annotation.clone() :
-    
-    // Annotations for the new entity and for the old annotation if the
-    // transformation is successful
-    let annotationNodeAnnotation = new Annotation :
-    switch {
-        case topLevel.getAnnotation("annotationNode") != null :
-            // If the entity already is an annotation representation, don't do anything
-            null           
-        case isTopLevel && isTypedStringAnnotation && annotation.type.matches(".*Director") : (
-            // The director is an annotation of the top level entity. Turn it
-            // into its own separate entity 
-            newEntity.setName(annotation.getName()) ->
-            
-            newEntity.addStringAnnotation("language", "ptolemy") ->
-            newEntity.addAnnotation("Director") ->
-            
-            // Add an "annotationNode" annotation to the new entity
-            annotationNodeAnnotation.setName("annotationNode") ->
-            newEntity.annotations.add(annotationNodeAnnotation) ->
-            
-            // Annotate the new entity with a copy of the original
-            // annotation the new entity is the transformed result of
-            newEntity.annotations.add(clonedAnnotation) ->
-            
-            // Add the new entity to the top level
-            topLevel.childEntities.add(newEntity) //->
-            
-            // Mark the original annotation for removal
-            //annotation.markAsRemovable()
-        )
-        /*
-        case isTopLevel && isTypedStringAnnotation && annotation.type.matches(
-            "ptolemy.vergil.kernel.attributes.TextAttribute") : (
-            // Comments / large text boxes are annotations of the top level
-            // entity. (Ptolemy calls these Annotations at the UI level) Turn
-            // them into their own entities.
-            // TODO We need a better way to display large amounts of text
-            newEntity.setName(annotation.getAnnotation("text").value) ->
-            // Add an "annotationNode" annotation to the new entity
-            annotationNodeAnnotation.setName("annotationNode") ->
-            newEntity.annotations.add(annotationNodeAnnotation) ->
-            
-            // Annotate the new entity with a copy of the original
-            // annotation the new entity is the transformed result of
-            newEntity.annotations.add(clonedAnnotation) ->
-            
-            // Add the new entity to the top level
-            topLevel.childEntities.add(newEntity) //->
-            
-            // Mark the original annotation for removal
-            //annotation.markAsRemovable()
-        )
-        */
-            
-        default :
-            null    
-    }
-;
-
-
-//-----------------------------------------------------------------------------
 // Transform Links Of States
 //-----------------------------------------------------------------------------
 
@@ -1188,6 +1044,186 @@ Void moveLinkUp(Link link, Port port) :
     if (link.source == port) 
         then link.setSource(port.eContainer)
         else link.setTarget(port.eContainer)
+;
+
+
+//-----------------------------------------------------------------------------
+// Optimization Of Single Relations
+//-----------------------------------------------------------------------------
+
+/**
+ * Optimizes relations that connect only two ports. Such relations have two
+ * links, one incoming and one outgoing. The given entity's relations are
+ * optimized, then the entity's child entities are recursively treated.
+ * 
+ * @param entity entity whose child relations to optimize recursively.
+ */
+Void optimizeSingleRelations(Entity entity) :
+    // Optimize the entity's direct child relations; this may leave
+    // relations marked for removal
+    entity.childRelations.optimizeSingleRelation() ->
+    
+    // Remove the relations that can be removed (this is done in a
+    // second iteration to avoid concurrent modification exceptions)
+    entity.childRelations.select(a | a.isMarkedAsRemovable()).remove() ->
+    
+    // Recursively optimize the relations of the entity's child entities
+    entity.childEntities.optimizeSingleRelations()
+;
+
+/**
+ * Replaces the given relation by a single link, if possible. If that is
+ * indeed possible, the relation is marked as being removable, and one of
+ * the links is removed.
+ * 
+ * @param relation the relation to be optimized.
+ */
+Void optimizeSingleRelation(Relation relation):
+    // Find the first of the relation's incoming and outgoing links 
+    let inLink  = relation.incomingLinks.first() :
+    let outLink = relation.outgoingLinks.first() :
+    
+    // If the relation has only one incoming and outgoing link, it can be
+    // optimized away
+    if ((relation.incomingLinks.size == 1) && (relation.outgoingLinks.size == 1))
+        then (
+            inLink.setTarget(outLink.target) -> 
+            relation.markAsRemovable() ->
+            remove(outLink)
+        )
+        else
+            null    
+;
+
+
+//-----------------------------------------------------------------------------
+// Transform Special Annotations To Visible Entities
+//-----------------------------------------------------------------------------
+
+/**
+ * Transforms special annotations of the given entity and, recursively, its
+ * children to visible entities.
+ * 
+ * @param the entity whose annotations to transform.
+ */
+Void optimizeAnnotationRepresentation(Entity entity) :
+    // Transform annotations
+    entity.annotations.optimizeAnnotationRepresentation() ->
+    
+    // Remove those annoations that were transformed (this is done in a
+    // second iteration to avoid concurrent modification exceptions)
+    entity.annotations.removeAll(
+        entity.annotations.select(a | a.isMarkedAsRemovable())) ->
+    
+    // Recursively treat child entities
+    entity.childEntities.optimizeAnnotationRepresentation()  
+;
+
+/**
+ * Transforms the given annotation into a visible entity, if desirable. This
+ * is desirable for directors, mainly. Annotations representing comments in
+ * the model are not converted, although they are marked as being a comment.
+ * 
+ * If an annotation was transformed into an entity, the original annotation
+ * is annotated as being ready for removal and should be removed after executing
+ * this extension. This must be done in a separate step to avoid concurrent
+ * modification exceptions. Entities that result from transforming annotations
+ * are annotated with "annotationNode".
+ * 
+ * @param annotation the annotation to be transformed, if possible.
+ */
+Void optimizeAnnotationRepresentation(Annotation annotation) :
+    // Whether the annotation directly annotates an entity, or rather another
+    // element
+    let isTopLevel = Entity.isInstance(annotation.eContainer) :
+    let topLevel = (Entity) annotation.eContainer :
+    
+    // Whether the annotation is a TypedStringAnnotation
+    let isTypedStringAnnotation = TypedStringAnnotation.isInstance(annotation):
+    
+    // If the annotation is transformed into a new entity, this will be it
+    let newEntity = new Entity :
+    
+    // Clone the attribute to avoid concurrent modification (remove while iterating)
+    let clonedAnnotation = annotation.clone() :
+    
+    // Annotations for the new entity and for the old annotation if the
+    // transformation is successful
+    let annotationNodeAnnotation = new Annotation :
+    
+    switch {
+        case topLevel.getAnnotation("annotationNode") != null :
+            // If the entity already is an annotation representation, don't do anything
+            null
+            
+        case isTopLevel && isTypedStringAnnotation && annotation.type.matches(".*Director") : (
+            // The director is an annotation of the top level entity. Turn it
+            // into its own separate entity 
+            newEntity.setName(annotation.getName()) ->
+            
+            newEntity.addStringAnnotation("language", "ptolemy") ->
+            newEntity.addAnnotation("Director") ->
+            
+            // Add an "annotationNode" annotation to the new entity
+            annotationNodeAnnotation.setName("annotationNode") ->
+            newEntity.annotations.add(annotationNodeAnnotation) ->
+            
+            // Annotate the new entity with a copy of the original
+            // annotation the new entity is the transformed result of
+            newEntity.annotations.add(clonedAnnotation) ->
+            
+            // Add the new entity to the top level
+            topLevel.childEntities.add(newEntity) ->
+            
+            // Mark the original annotation for removal
+            annotation.markAsRemovable()
+        )
+        
+        case isTopLevel && isTypedStringAnnotation
+            && annotation.type == "ptolemy.vergil.kernel.attributes.TextAttribute" : (
+            
+            // The annotation represents a comment, so mark it as such
+            annotation.markAsComment()
+            
+            // TODO: The more fancy comment annotations need to be treated somehow
+        )
+        
+        default :
+            null    
+    }
+;
+
+
+//-----------------------------------------------------------------------------
+// Assign Comment Annotations to Entities
+//-----------------------------------------------------------------------------
+
+/**
+ * Attaches the entity's comment annotations to a child entity they are closest
+ * to by some metric. Recursively calls itself on the entity's child entities.
+ * 
+ * @param the entity whose comments to assign.
+ */
+Void optimizeCommentAttachment(Entity entity) :
+    // Assign comments
+    entity.annotations.optimizeAnnotationRepresentation() ->
+    
+    // Recursively treat child entities
+    entity.childEntities.optimizeCommentAttachment()  
+;
+
+/**
+ * Attaches the given annotation to the entity it's closest to, if possible.
+ * If the annotation is not a comment, nothing is done. (comment annotations
+ * are annotated by an "isComment" annotation.) If there is no entity close
+ * enough to the annotation, nothing is done. Only child entities of the
+ * annotation's parent entity are considered.
+ * 
+ * @param annotation an annotation annotating an entity.
+ */
+Void attachComment(Annotation annotation) :
+    // TODO Implement.
+    null
 ;
 
 
@@ -1563,6 +1599,25 @@ Void markAsRemovable(Annotatable annotatable) :
  */
 Boolean isMarkedAsRemovable(Annotatable annotatable) :
     hasAnnotation(annotatable, "toBeRemoved")
+;
+
+/**
+ * Marks the given object as being a comment.
+ * 
+ * @param annotatable the object to mark.
+ */
+Void markAsComment(Annotatable annotatable) :
+    addAnnotation(annotatable, "isComment")
+;
+
+/**
+ * Checks whether the given object is marked as being a comment.
+ * 
+ * @param annotatable the object to check.
+ * @return true if the object is marked as being a comment, false otherwise.
+ */
+Boolean isMarkedAsComment(Annotatable annotatable) :
+    hasAnnotation(annotatable, "isComment")
 ;
 
 
