@@ -37,7 +37,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
     /** the bounds of a line's slope in which it is not bent. */
     public static final double SLOPE_TOLERANCE = 0.01f;
     /** the desired bend angle. will be converted to radians later. might be a layout option. */
-    public static final double BEND_ANGLE = 30;
+    public static final double BEND_ANGLE = 150;
 
     /**
      * {@inheritDoc}
@@ -80,20 +80,24 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
                             // System.out.println("a is: " + a);
                             double b = p0.distance(pOrth);
                             // System.out.println("b is: " + b);
-                            double sineBeta = a / b;
-                            // System.out.println("sine beta is: " + sineBeta);
-                            double beta = Math.asin(sineBeta);
+                            double sineAlpha = a / b;
+                            // System.out.println("sine alpha is: " + sineBeta);
+                            double alpha = Math.asin(sineAlpha);
                             // System.out.println("beta is: " + Math.toDegrees(beta));
-                            double alpha = Math.toRadians(BEND_ANGLE);
+                            double beta = Math.toRadians(BEND_ANGLE);
                             // System.out.println("alpha is: " + Math.toDegrees(alpha));
                             double gamma = (2 * Math.PI) - (alpha + beta);
                             // System.out.println("gamma is: " + Math.toDegrees(gamma));
 
-                            double c = (a * Math.sin(gamma)) / Math.sin(alpha);
+                            double c = (b * Math.sin(gamma)) / Math.sin(beta);
                             // System.out.println("c is: " + c);
 
                             KVector bendPoint = new KVector(p1.x - c + xpos, pOrth.y);
                             edge.getBendPoints().add(bendPoint);
+                            
+                            if (p1.x - c + xpos > p1.x) {
+                                layer.getSize().x += p1.x - c;
+                            }
                         }
                     }
                 }
