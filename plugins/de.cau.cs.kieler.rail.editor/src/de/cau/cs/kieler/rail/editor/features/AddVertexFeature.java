@@ -11,6 +11,7 @@ import org.eclipse.graphiti.mm.MmFactory;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -57,6 +58,8 @@ public class AddVertexFeature extends AbstractAddFeature {
     private static final int PORT_SIZE = 10;
 
 	private static final int WIDTH_BREACH = 50;
+
+	private static final int HEIGHT_BREACH = 50;
 
     private TypeFeatures type;
 
@@ -146,7 +149,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 
         // define a default size for the shape
         int width = WIDTH_BREACH;
-        int height = 50;
+        int height = HEIGHT_BREACH;
         IGaService gaService = Graphiti.getGaService();
 
         System.out.println(context.getHeight());
@@ -429,7 +432,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 
             boxAnchor.setReferencedGraphicsAlgorithm(R);
 
-            createGraphicalPort(boxAnchor, peCreateService, peCreateService.createShape(containerShape, false));
+            createGraphicalPort(boxAnchor);
 
             link(boxAnchor, port);
         }
@@ -443,9 +446,29 @@ public class AddVertexFeature extends AbstractAddFeature {
         // Line (30°)
         mitteAbzweigXY[1] = getY_from_Array(mitteAbzweigXY, 25);
         Shape shapep30 = peCreateService.createShape(containerShape, false);
+        //mitteAbzweigXY
         Polyline polyline30 =
-                gaService.createPolyline(shapep30, mitteAbzweigXY);//new int[] { 20, 25, 0,
+                gaService.createPolyline(shapep30,mitteAbzweigXY);//new int[] { 20, 25, 0,
                         //(int) (25 * 0.577350269) });
+        //polyline30.getPoints().get(0).setX(mitteAbzweigXY[0]);
+        
+        //triangle
+        Shape shapeptriangle = peCreateService.createShape(containerShape, false);
+        int[] polyXY = new int[]{mitteAbzweigXY[0],mitteAbzweigXY[1],0,0,0,0};
+        
+        if(orientatin == EOrientation.LINKS){
+        	polyXY[2] = 32;
+        }
+        else{
+        	polyXY[2] = 50-32;
+        }
+        polyXY[3] = getY_from_Array(mitteAbzweigXY, polyXY[2]);
+    	polyXY[4] = polyXY[2];
+        polyXY[5] = 25;
+        
+        Polygon polygon=gaService.createPolygon(shapeptriangle, polyXY) ;
+        
+        
 
         Shape shape = peCreateService.createShape(containerShape, false);
 
@@ -461,21 +484,21 @@ public class AddVertexFeature extends AbstractAddFeature {
                 context.getX(), context.getY(), 50, 50);
         link(containerShape, switchVertex);
 
-        updatePictogramElement(containerShape);
+        //updatePictogramElement(containerShape);
 
         return containerShape;
     }
 
-	private void createGraphicalPort(BoxRelativeAnchor boxAnchor,
-			IPeCreateService peCreateService, Shape shape) {
-		IGaService gaService = Graphiti.getGaService();
-    	//Shape contShape = peCreateService.createContainerShape(containerShape, false);
-    	Rectangle rec = gaService.createRectangle(boxAnchor);
-    	Polyline poly = gaService.createPolyline(shape ,new int[]{0,PORT_SIZE/2,PORT_SIZE,PORT_SIZE/2});
-        rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
-        poly.setStyle(styleProvider.getStyle(StyleProvider.PORT));
-        gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
+	private void createGraphicalPort(BoxRelativeAnchor boxAnchor) {
 		
+		IGaService gaService = Graphiti.getGaService();
+
+    	Rectangle rec = gaService.createRectangle(boxAnchor);
+		//Polyline poly = gaService.createPolyline(boxAnchor ,new int[]{0,PORT_SIZE/2,PORT_SIZE,PORT_SIZE/2});
+        rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
+        //poly.setStyle(styleProvider.getStyle(StyleProvider.PORT));
+        gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
+        //gaService.setLocationAndSize(poly, 0, 0, PORT_SIZE, PORT_SIZE);
 	}
 
 	/**

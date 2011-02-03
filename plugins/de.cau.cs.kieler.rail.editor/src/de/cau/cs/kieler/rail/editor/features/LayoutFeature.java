@@ -93,11 +93,11 @@ public class LayoutFeature extends AbstractLayoutFeature {
                  gaService.calculateSize(graphicsAlgorithm);
             if (containerWidth != size.getWidth()) {
                 if (graphicsAlgorithm instanceof Polyline) {
-                    Polyline polyline = (Polyline) graphicsAlgorithm;
-                    Point secondPoint = polyline.getPoints().get(1);
-                    Point newSecondPoint =
-                        gaService.createPoint(containerWidth, secondPoint.getY());
-                    polyline.getPoints().set(1, newSecondPoint);
+//                    Polyline polyline = (Polyline) graphicsAlgorithm;
+//                    Point secondPoint = polyline.getPoints().get(1);
+//                    Point newSecondPoint =
+//                        gaService.createPoint(containerWidth, secondPoint.getY());
+//                    polyline.getPoints().set(1, newSecondPoint);
                     anythingChanged = true;
                 } else {
                     gaService.setWidth(graphicsAlgorithm,

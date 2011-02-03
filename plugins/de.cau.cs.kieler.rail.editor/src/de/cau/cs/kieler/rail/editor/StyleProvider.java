@@ -134,7 +134,7 @@ public class StyleProvider implements IStyleProvider {
             style.setForeground(gaService.manageColor(diagram,
                     ColorConstant.BLACK));
             style.setBackground(gaService.manageColor(diagram,
-                    ColorConstant.BLACK));
+                    ColorConstant.WHITE));
             style.setFilled(false);
             style.setTransparency(1.0);
             return style;

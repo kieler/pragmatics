@@ -23,6 +23,7 @@ import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.AbstractUpdateFeature;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Polygon;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
@@ -32,6 +33,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
+import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 
 /**
@@ -124,7 +126,8 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
         List<Polyline> polylines = new LinkedList<Polyline>();
 
         PictogramElement pictogramElement = context.getPictogramElement();
-
+        Object bo = getBusinessObjectForPictogramElement(pictogramElement);
+        
         int width = pictogramElement.getGraphicsAlgorithm().getWidth();
         int height = pictogramElement.getGraphicsAlgorithm().getHeight();
 
@@ -137,9 +140,22 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             System.out.println(shape);
             GraphicsAlgorithm graphicsAlgorithm = shape.getGraphicsAlgorithm();
             System.out.println(graphicsAlgorithm);
-            if (graphicsAlgorithm instanceof Polyline) {
+            if (graphicsAlgorithm instanceof Polygon){
+            	int[] polyXY = new int[]{mitteAbzweigXY[0],mitteAbzweigXY[1],0,0,0,0};
+                
+                if(((Weichenknoten)bo).getAbzweigendeLage() == EOrientation.LINKS){
+                	polyXY[2] = 32;
+                }
+                else{
+                	polyXY[2] = 50-32;
+                }
+                polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
+            	polyXY[4] = polyXY[2];
+                polyXY[5] = 25;
+                setPolygonPoints((Polygon)graphicsAlgorithm,polyXY);
+            }else if (graphicsAlgorithm instanceof Polyline) {
                 polylines.add((Polyline) graphicsAlgorithm);
-            }
+            } 
         }
         // Polylines end
 
@@ -233,7 +249,15 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
         return false;
     }
 
-    // TODO better comment
+    private void setPolygonPoints(Polygon polygon, int[] polyXY) {
+    	for(int i = 0; i < polygon.getPoints().size();i++){
+    		polygon.getPoints().get(i).setX(polyXY[i*2]);
+    		polygon.getPoints().get(i).setY(polyXY[i*2+1]);
+    	}
+		
+	}
+
+	// TODO better comment
     /**
      * Calculate the Y pos for the straight line (port Stamm to port Ende) for a
      * x pos.
