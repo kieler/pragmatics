@@ -93,6 +93,37 @@ public class PtolemyHelper implements IExecutionContextAware {
     }
     
     /**
+     * Checks if the given annotation represents a comment.
+     * 
+     * @param annotation the annotation to check.
+     * @return {@code true} if the annotation represents a comment, {@code false}
+     *         otherwise.
+     */
+    public boolean isComment(final Annotation annotation) {
+        // We're only considering top-level annotations (annotations directly
+        // annotating entities)
+        if (!(annotation.eContainer() instanceof Entity)) {
+            return false;
+        }
+        
+        // We're only considering TypedStringAnnotations
+        if (!(annotation instanceof TypedStringAnnotation)) {
+            return false;
+        }
+        
+        TypedStringAnnotation tsAnnotation = (TypedStringAnnotation) annotation;
+        
+        if (tsAnnotation.getType().equals("ptolemy.vergil.kernel.attributes.TextAttribute")) {
+            return true;
+        } else if (tsAnnotation.getType().equals("ptolemy.vergil.kernel.attributes.Attribute")) {
+            // TODO: Implement
+            return false;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Returns a list of all the ports of the given entity types or class types.
      * 
      * @param entities the entity or class types whose ports to return.

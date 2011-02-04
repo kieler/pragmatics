@@ -1214,11 +1214,13 @@ Void optimizeCommentAttachment(Entity entity) :
  */
 Void attachComment(Annotation annotation) :
     // Find the nearest entity
-    let nearestEntity = if (isComment(annotation))
+    let comment = isComment(annotation) :
+    let nearestEntity = if (comment)
         then findNearestEntity(annotation)
         else null :
     
-    if (isComment(annotation))
+    info("HULLU HULLU: " + comment) ->
+    if (comment)
         then (
 		    // Prepare a reference annotation
 		    let refAnno = new ReferenceAnnotation :
@@ -1362,26 +1364,6 @@ List[Real] getLocation(Annotatable annotatable) :
         ) else (
             convertLocation(location)
         )
-;
-
-/**
- * Checks whether or not the given annotation represents a comment.
- * 
- * @param annotation the annotation to check.
- * @return true if the annotation represents a comment, false otherwise.
- */
-Boolean isComment(Annotation annotation) :
-    // Whether the annotation directly annotates an entity, or rather another
-    // element
-    let isTopLevel = Entity.isInstance(annotation.eContainer) :
-    let topLevel = (Entity) annotation.eContainer :
-    
-    // Whether the annotation is a TypedStringAnnotation
-    let isTypedStringAnnotation = TypedStringAnnotation.isInstance(annotation) :
-    
-    isTopLevel
-        && isTypedStringAnnotation
-        && annotation.type == "ptolemy.vergil.kernel.attributes.TextAttribute"
 ;
 
 
@@ -1822,4 +1804,15 @@ Void setReferenceAnnotationTarget(ReferenceAnnotation annotation, Entity target)
     JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.setReferenceAnnotationTarget(
         de.cau.cs.kieler.core.annotations.ReferenceAnnotation,
         de.cau.cs.kieler.kaom.Entity)
+;
+
+/**
+ * Checks whether or not the given annotation represents a comment.
+ * 
+ * @param annotation the annotation to check.
+ * @return true if the annotation represents a comment, false otherwise.
+ */
+Boolean isComment(Annotation annotation) :
+    JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.isComment(
+        de.cau.cs.kieler.core.annotations.Annotation)
 ;
