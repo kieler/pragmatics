@@ -51,8 +51,9 @@ extension org::eclipse::xtend::util::stdlib::issues;      // pass messages back 
 // The second step is the optimization of the resulting model. In this step,
 // link directions are computed, relations that only connect two ports are
 // replaced by a single link, special annotations are replaced by entities,
-// (the Ptolemy director, text attributes, ...) and links of states are
-// changed.
+// (the Ptolemy director, ...), links of states are changed and annotations
+// representing comments are attached to entities they are possibly commenting
+// on.
 // 
 //=============================================================================
 
@@ -1121,8 +1122,7 @@ Void optimizeAnnotationRepresentation(Entity entity) :
 
 /**
  * Transforms the given annotation into a visible entity, if desirable. This
- * is desirable for directors, mainly. Annotations representing comments in
- * the model are not converted, although they are marked as being a comment.
+ * is currently only desirable for directors.
  * 
  * If an annotation was transformed into an entity, the original annotation
  * is annotated as being ready for removal and should be removed after executing
@@ -1139,7 +1139,7 @@ Void optimizeAnnotationRepresentation(Annotation annotation) :
     let topLevel = (Entity) annotation.eContainer :
     
     // Whether the annotation is a TypedStringAnnotation
-    let isTypedStringAnnotation = TypedStringAnnotation.isInstance(annotation):
+    let isTypedStringAnnotation = TypedStringAnnotation.isInstance(annotation) :
     
     // If the annotation is transformed into a new entity, this will be it
     let newEntity = new Entity :
@@ -1179,15 +1179,6 @@ Void optimizeAnnotationRepresentation(Annotation annotation) :
             annotation.markAsRemovable()
         )
         
-        case isTopLevel && isTypedStringAnnotation
-            && annotation.type == "ptolemy.vergil.kernel.attributes.TextAttribute" : (
-            
-            // The annotation represents a comment, so mark it as such
-            annotation.markAsComment()
-            
-            // TODO: The more fancy comment annotations need to be treated somehow
-        )
-        
         default :
             null    
     }
@@ -1205,8 +1196,8 @@ Void optimizeAnnotationRepresentation(Annotation annotation) :
  * @param the entity whose comments to assign.
  */
 Void optimizeCommentAttachment(Entity entity) :
-    // Assign comments
-    entity.annotations.optimizeAnnotationRepresentation() ->
+    // Attach comments
+    entity.annotations.attachComment() ->
     
     // Recursively treat child entities
     entity.childEntities.optimizeCommentAttachment()  
@@ -1222,8 +1213,175 @@ Void optimizeCommentAttachment(Entity entity) :
  * @param annotation an annotation annotating an entity.
  */
 Void attachComment(Annotation annotation) :
-    // TODO Implement.
-    null
+    // Find the nearest entity
+    let nearestEntity = if (isComment(annotation))
+        then findNearestEntity(annotation)
+        else null :
+    
+    if (isComment(annotation))
+        then (
+		    // Prepare a reference annotation
+		    let refAnno = new ReferenceAnnotation :
+		    
+		    refAnno.setName("attachedTo") ->
+		    
+		    // This works around a quirk in Xtend that keeps us from just calling
+		    // .setObject(...) on the reference annotation
+		    setReferenceAnnotationTarget(refAnno, nearestEntity) ->
+		    
+		    annotation.annotations.add(refAnno)
+        ) else (
+            null
+        )
+;
+
+/**
+ * Finds the nearest entity. If there is no entity closer to the annotation
+ * than specified by the maximum attachment value, no entity is returned.
+ * 
+ * @param annotation the annotation.
+ * @param entities the list of entities to go through.
+ * @param nearest currently nearest entity.
+ * @return the nearest entity, if any.
+ */
+Entity findNearestEntity(Annotation annotation) :
+    recursivelyDoFindNearestEntity(annotation,
+        ((Entity) annotation.eContainer).childEntities,
+        {null, maximumAttachmentDistance() + 1.0})
+;
+
+/**
+ * Finds the nearest entity. If there is no entity closer to the annotation
+ * than specified by the maximum attachment value, no entity is returned.
+ * 
+ * This method works by recursing down a list of entities, all the while
+ * keeping track of the closest entity encountered so far in the parameter
+ * {@code nearest}.
+ * 
+ * @param annotation the annotation.
+ * @param entities the list of entities to go through.
+ * @param nearest currently nearest entity.
+ * @return the nearest entity, if any.
+ */
+Entity recursivelyDoFindNearestEntity(Annotation annotation, List[Entity] entities,
+    List[Object] nearest) :
+    
+    // Calculate the distance between the annotation and the first entity
+    // in the list
+    let entity = entities.first() :
+    let distance = if (entity == null)
+        then 0.0
+        else computeDistance(annotation, entity) :
+    
+    // Check if there actually is a first entity in the list
+    if (entity == null)
+        then (
+            // There is not. In this case, nearest contains the overall
+            // nearest entity, if any; return that
+            nearest.get(0)
+        ) else (
+            if (distance < ((Real) nearest.get(1)) && distance <= maximumAttachmentDistance())
+                then (
+                    // The current entity is the nearest so far
+                    recursivelyDoFindNearestEntity(
+                        annotation,
+                        entities.withoutFirst(),
+                        {entity, distance})
+                ) else (
+                    // The current entity is not the nearest encountered so far
+                    recursivelyDoFindNearestEntity(
+                        annotation,
+                        entities.withoutFirst(),
+                        nearest)
+                )
+        )
+;
+
+/**
+ * Computes the distance between the given annotation and the given entity.
+ * The distance can be used to decide which entity to attach the annotation
+ * to. Note that the actual metric used to compute the distance is completely
+ * irrelevant as long as a lower value corresponds to a smaller distance. Thus,
+ * the metric used to compute distances is interchangeable.
+ * 
+ * @param annotation the annotation.
+ * @param entity the entity.
+ * @return distance according to some metric.
+ */
+Real computeDistance(Annotation annotation, Entity entity) :
+    // Get the locations
+    let annotationLocation = getLocation(annotation) :
+    let entityLocation = getLocation(entity) :
+    
+    // Check if we now know both locations
+    if (annotationLocation == null || entityLocation == null)
+        then (
+            maximumAttachmentDistance() + 1.0
+        ) else (
+            // Standard euclidian distance squared
+               (annotationLocation.get(0) - entityLocation.get(0))
+             * (annotationLocation.get(0) * entityLocation.get(0))
+             + (annotationLocation.get(1) - entityLocation.get(1))
+             * (annotationLocation.get(1) * entityLocation.get(1))
+        )
+;
+
+/**
+ * Returns the maximum distance between an annotation and an entity for the
+ * annotation to be attached to the entity.
+ * 
+ * @return maximum distance.
+ */
+Real maximumAttachmentDistance() :
+    10000.0
+;
+
+/**
+ * Returns the given Annotatable's location, if any is specified.
+ * 
+ * @param annotatable the Annotatable whose location to return.
+ * @return the location information, or {@code null}.
+ */
+List[Real] getLocation(Annotatable annotatable) :
+    /* There's some regular expressions going on here. Location information
+     * are saved in one of the following forms:
+     *   "[140.0, 20.0]"    "{140.0, 20.0}"    "140.0 20.0"
+     * The idea is to get an array with only the two numbers. Sadly, with the
+     * first two forms, the array has three elements with the first being the
+     * empty string, while with the third form a two-element array is returned.
+     * So we need to filter out empty strings.
+     */
+    let locationAnnotation = annotatable.getAnnotation("_location") :
+    let location = if (locationAnnotation == null)
+        then null
+        else locationAnnotation.value.split("[\\s,\\[\\]{}]+").select(e | e != "") :
+    
+    if (location == null)
+        then (
+            null
+        ) else (
+            convertLocation(location)
+        )
+;
+
+/**
+ * Checks whether or not the given annotation represents a comment.
+ * 
+ * @param annotation the annotation to check.
+ * @return true if the annotation represents a comment, false otherwise.
+ */
+Boolean isComment(Annotation annotation) :
+    // Whether the annotation directly annotates an entity, or rather another
+    // element
+    let isTopLevel = Entity.isInstance(annotation.eContainer) :
+    let topLevel = (Entity) annotation.eContainer :
+    
+    // Whether the annotation is a TypedStringAnnotation
+    let isTypedStringAnnotation = TypedStringAnnotation.isInstance(annotation) :
+    
+    isTopLevel
+        && isTypedStringAnnotation
+        && annotation.type == "ptolemy.vergil.kernel.attributes.TextAttribute"
 ;
 
 
@@ -1601,25 +1759,6 @@ Boolean isMarkedAsRemovable(Annotatable annotatable) :
     hasAnnotation(annotatable, "toBeRemoved")
 ;
 
-/**
- * Marks the given object as being a comment.
- * 
- * @param annotatable the object to mark.
- */
-Void markAsComment(Annotatable annotatable) :
-    addAnnotation(annotatable, "isComment")
-;
-
-/**
- * Checks whether the given object is marked as being a comment.
- * 
- * @param annotatable the object to check.
- * @return true if the object is marked as being a comment, false otherwise.
- */
-Boolean isMarkedAsComment(Annotatable annotatable) :
-    hasAnnotation(annotatable, "isComment")
-;
-
 
 //-----------------------------------------------------------------------------
 // Logging
@@ -1660,4 +1799,27 @@ List reportWarningAndReturn(List input) :
  */
 List getPorts(List[EntityType] entities) :
     JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.getPorts(java.util.List) 
+;
+
+/**
+ * Converts a list of strings to a list of doubles.
+ * 
+ * @param location list of strings.
+ * @return corresponding list of doubles.
+ */
+List[Real] convertLocation(List[String] location) :
+    JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.convertLocation(java.util.List)
+;
+
+/**
+ * Sets the target of a reference annotation. This is necessary to work around some
+ * weird quirk in Xtend.
+ * 
+ * @param annotation the annotation whose target to set.
+ * @param target the target.
+ */
+Void setReferenceAnnotationTarget(ReferenceAnnotation annotation, Entity target) :
+    JAVA de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper.setReferenceAnnotationTarget(
+        de.cau.cs.kieler.core.annotations.ReferenceAnnotation,
+        de.cau.cs.kieler.kaom.Entity)
 ;

@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kaom.importer.ptolemy;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,6 +38,7 @@ import com.microstar.xml.XmlException;
 
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
+import de.cau.cs.kieler.core.annotations.ReferenceAnnotation;
 import de.cau.cs.kieler.core.annotations.TypedStringAnnotation;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Port;
@@ -54,7 +56,41 @@ public class PtolemyHelper implements IExecutionContextAware {
      */
     public PtolemyHelper() {
     }
+    
+    
+    /**
+     * Takes the given list of strings and converts them to doubles.
+     * 
+     * @param location array of strings.
+     * @return corresponding array of doubles.
+     */
+    public List<Double> convertLocation(final List<String> location) {
+        List<Double> result = new ArrayList<Double>(location.size());
 
+        try {
+            for (String coordinate : location) {
+                double d = Double.parseDouble(coordinate);
+                result.add(d);
+            }
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Sets the target of a reference annotation. This is necessary to work around some
+     * weird quirk in Xtend.
+     * 
+     * @param annotation the annotation whose target to set.
+     * @param target the target.
+     */
+    public void setReferenceAnnotationTarget(final ReferenceAnnotation annotation,
+            final de.cau.cs.kieler.kaom.Entity target) {
+        
+        annotation.setObject(target);
+    }
     
     /**
      * Returns a list of all the ports of the given entity types or class types.
