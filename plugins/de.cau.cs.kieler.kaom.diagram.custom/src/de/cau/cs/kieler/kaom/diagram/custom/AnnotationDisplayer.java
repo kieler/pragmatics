@@ -122,8 +122,8 @@ public final class AnnotationDisplayer {
                                     if (viewObj instanceof ViewDescriptor) {
                                         Object adaptable = ((ViewDescriptor) viewObj)
                                                 .getAdapter(Shape.class);
-                                        if (adaptable instanceof ShapeImpl) {
-                                            ShapeImpl shape = (ShapeImpl) adaptable;
+                                        if (adaptable instanceof Shape) {
+                                            Shape shape = (Shape) adaptable;
                                             shape.setDescription(textAnnotation.getValue());
                                         }
                                     }
@@ -158,11 +158,8 @@ public final class AnnotationDisplayer {
         List<Pair<Annotation, EObject>> foundAnnotations = new LinkedList<Pair<Annotation, EObject>>();
         List<Annotation> annotationList = root.getAnnotations();
         for (Annotation annotation : annotationList) {
-            if (annotation instanceof TypedStringAnnotation) {
-                if (((TypedStringAnnotation) annotation).getType().equals(
-                        "ptolemy.vergil.kernel.attributes.TextAttribute")) {
+            if (annotation.getAnnotation("isComment") != null) {
                     foundAnnotations.add(new Pair<Annotation, EObject>(annotation, root));
-                }
             }
         }
         for (Entity child : root.getChildEntities()) {
