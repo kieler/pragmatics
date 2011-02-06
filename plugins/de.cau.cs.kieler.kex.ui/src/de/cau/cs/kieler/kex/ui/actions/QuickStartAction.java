@@ -75,8 +75,8 @@ public class QuickStartAction implements IIntroAction {
             return;
         }
 
-        String exampleTitle = params.getProperty("exampleTitle");
-        if (exampleTitle == null) {
+        String exampleId = params.getProperty("exampleId");
+        if (exampleId == null) {
             showError("Introtag Error", "Missing property exampleTitle.");
             return;
         }
@@ -88,17 +88,13 @@ public class QuickStartAction implements IIntroAction {
 
         Example quickStarter = null;
         try {
-            // TODO editorabh�ngig suchen, d.h. pluginid aus link mit
-            // reinreichen und dann suchen, da exampleTitle
-            // nicht unbedingt eindeutig,
-            // TODO hier auch die id statt des titles zu verwenden.
-            quickStarter = ExampleManager.get().getExample(sourcetype, exampleTitle);
+            quickStarter = ExampleManager.get().getExample(sourcetype, exampleId);
         } catch (KielerException e) {
             showError("Example loading error", e.getMessage());
             return;
         }
         if (quickStarter == null) {
-            showError("Example loading error", "Could not find example with title " + exampleTitle);
+            showError("Example loading error", "Could not find example with id " + exampleId);
             return;
         }
         ArrayList<Example> examples = new ArrayList<Example>();
