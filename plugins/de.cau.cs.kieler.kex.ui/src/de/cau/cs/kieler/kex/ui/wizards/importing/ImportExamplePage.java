@@ -17,7 +17,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
@@ -32,9 +34,12 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
@@ -54,6 +59,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.osgi.framework.Bundle;
 
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Category;
@@ -69,9 +75,6 @@ import de.cau.cs.kieler.kex.ui.util.ImageConverter;
  * 
  */
 public class ImportExamplePage extends WizardPage {
-
-    private static final int IMAGE_MAX_WIDTH = 800;
-    private static final int IMAGE_MAX_HEIGHT = 600;
 
     private static final int IMAGE_PRE_WIDTH = 240;
     private static final int IMAGE_PRE_HEIGHT = 135;
@@ -133,7 +136,8 @@ public class ImportExamplePage extends WizardPage {
         // create tree viewer
         treeViewer = new CheckboxTreeViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER
                 | SWT.H_SCROLL);
-        treeViewer.setContentProvider(new ExampleContentProvider());
+        final ExampleContentProvider contentProvider = new ExampleContentProvider();
+        treeViewer.setContentProvider(contentProvider);
         treeViewer.setLabelProvider(new ExampleLabelProvider());
         treeViewer.setSorter(new ViewerSorter());
         treeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -160,6 +164,31 @@ public class ImportExamplePage extends WizardPage {
             }
         });
         treeViewer.expandAll();
+        final Maybe<Boolean> filterChanged = new Maybe<Boolean>(Boolean.FALSE);
+        filterText.addModifyListener(new ModifyListener() {
+            public void modifyText(final ModifyEvent e) {
+                if (!filterChanged.get()) {
+                    filterChanged.set(Boolean.TRUE);
+                    filterText.setForeground(null);
+                    int pos = filterText.getCaretPosition();
+                    String newText = filterText.getText(pos - 1, pos - 1);
+                    filterText.setText(newText);
+                    filterText.setSelection(pos);
+                } else {
+                    contentProvider.updateFilter(filterText.getText());
+                    treeViewer.refresh();
+                    treeViewer.expandAll();
+                }
+            }
+        });
+        treeViewer.addFilter(new ViewerFilter() {
+            @Override
+            public boolean select(final Viewer viewer, final Object parentElement,
+                    final Object element) {
+                return contentProvider.applyFilter(element);
+            }
+        });
+
     }
 
     private Image computeImage(String imagePath, String nameSpaceId, int imageWidth, int imageHeight) {
@@ -219,8 +248,30 @@ public class ImportExamplePage extends WizardPage {
 
         // Maybe use treeElements which are implemented in an revision before.
         List<Pair<Category, List<Object>>> input;
+        /** the filter map that stores visibility information. */
+        private final Map<Object, Boolean> filterMap = new HashMap<Object, Boolean>();
+        /** the current filter value. */
+        private String filterValue;
+
+        // /** the current best filter match. */
+        // private String bestFilterMatch;
 
         public void dispose() {
+        }
+
+        /**
+         * Update the filter value for this provider.
+         * 
+         * @param filter
+         *            the new filter value
+         */
+        public void updateFilter(final String filter) {
+            this.filterValue = filter;
+            if (filterValue != null) {
+                filterValue = filterValue.toLowerCase();
+            }
+            filterMap.clear();
+            // bestFilterMatch = null;
         }
 
         public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
@@ -244,9 +295,8 @@ public class ImportExamplePage extends WizardPage {
 
         public Object getParent(final Object element) {
             if (element instanceof Example) {
-                for (Pair pair : input) {
-                    if (((Category) pair.getFirst()).getId().equals(
-                            ((Example) element).getCategoryId()))
+                for (Pair<Category, List<Object>> pair : input) {
+                    if ((pair.getFirst()).getId().equals(((Example) element).getCategoryId()))
                         return pair.getFirst();
                 }
             }
@@ -255,6 +305,68 @@ public class ImportExamplePage extends WizardPage {
 
         public boolean hasChildren(Object element) {
             return getChildren(element).length > 0;
+        }
+
+        /**
+         * Apply the current filter to the given element.
+         * 
+         * @param element
+         *            an element from the content
+         * @return true if the filter admits the element
+         */
+        @SuppressWarnings("unchecked")
+        public boolean applyFilter(final Object element) {
+            Boolean result = filterMap.get(element);
+            if (result == null) {
+                if (filterValue != null && filterValue.length() > 0) {
+                    if (element instanceof Pair) {
+                        Pair<Category, ArrayList<Object>> pair = (Pair<Category, ArrayList<Object>>) element;
+                        Category category = ((Pair<Category, ArrayList<Object>>) element)
+                                .getFirst();
+                        result = category.getTitle().toLowerCase().contains(filterValue);
+                        if (result) {
+                            for (Object ob : pair.getSecond()) {
+                                filterMap.put(ob, Boolean.TRUE);
+                            }
+                            // if (bestFilterMatch == null) {
+                            // bestFilterMatch = category.getId();
+                            // } else {
+                            // bestFilterMatch = "";
+                            // }
+                        } else {
+                            boolean hasFilteredChild = false;
+                            for (Object ob : pair.getSecond()) {
+                                // ob can only be a new pair (for category with
+                                // its childs) or an example.
+                                hasFilteredChild |= applyFilter(ob);
+                            }
+                            result = hasFilteredChild;
+                        }
+                    } else if (element instanceof Example) {
+                        Example example = (Example) element;
+                        if (example.getTitle().toLowerCase().contains(filterValue)) {
+                            result = Boolean.TRUE;
+                            // if (bestFilterMatch == null) {
+                            // bestFilterMatch = example.getId();
+                            // } else {
+                            // bestFilterMatch = "";
+                            // }
+                        } else {
+                            result = Boolean.FALSE;
+                            // String category = LayoutServices
+                            // .getInstance()
+                            // .getCategoryName(layouterData.getCategory());
+                            // result = category != null
+                            // && category.toLowerCase().contains(
+                            // filterValue);
+                        }
+                    }
+                } else {
+                    result = Boolean.TRUE;
+                }
+                filterMap.put(element, result);
+            }
+            return result;
         }
 
     }
@@ -309,7 +421,6 @@ public class ImportExamplePage extends WizardPage {
      * @param controlComp
      */
     private void createPreviewComp(final Composite composite) {
-        // TODO check where previewComp is used!?
         previewComp = composite;
         previewDesc = new Label(composite, SWT.NONE);
         previewDesc.setText("Example Preview");
@@ -355,7 +466,6 @@ public class ImportExamplePage extends WizardPage {
                                 | SWT.H_SCROLL);
                         imgLabel.setLayoutData(new GridData(GridData.CENTER | SWT.V_SCROLL
                                 | SWT.H_SCROLL));
-                        // berechnung muss vorher geschehen. hier ist point.x == null
                         Image image = computeImage(selectedExample.getOverviewPic(),
                                 selectedExample.getNamespaceId(), DIALOG_WIDTH, DIALOG_HEIGHT);
                         bounds = image.getBounds();
@@ -440,10 +550,13 @@ public class ImportExamplePage extends WizardPage {
     }
 
     // /**
-    // * Loads image. The parameters define the max width and heigt of an image. The loaded image
+    // * Loads image. The parameters define the max width and heigt of an image.
+    // The loaded image
     // will
-    // * scaled to the parameter values, while keeping the imageformat. If fullSize is true,
-    // * imageWidth and imageHeight will ignore and the image will load with its normal size.
+    // * scaled to the parameter values, while keeping the imageformat. If
+    // fullSize is true,
+    // * imageWidth and imageHeight will ignore and the image will load with its
+    // normal size.
     // *
     // * @param fullSize
     // * , set false, if imageWidth and imageHeight should used for scaling
@@ -451,7 +564,8 @@ public class ImportExamplePage extends WizardPage {
     // * @param image_height
     // * @return
     // */
-    // private Image loadImage(boolean fullSize, final double imageWidth, final double imageHeight)
+    // private Image loadImage(boolean fullSize, final double imageWidth, final
+    // double imageHeight)
     // {
     // final String previewPicPath = selectedExample.getOverviewPic();
     // if (previewPicPath != null && previewPicPath.length() > 1) {

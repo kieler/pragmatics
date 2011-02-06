@@ -51,7 +51,7 @@ public final class PluginConstants {
     }
 
     public final class Resource {
-        public static final String EXAMPLE_RESOURCE = "example_resource";
+        public static final String EXAMPLE_RESOURCE = "resource";
         public static final String LOCAL_PATH = "local_path";
         public static final String DIRECT_OPEN = "direct_open";
         public static final String RESOURCE_TYPE = "resource_type";
