@@ -120,7 +120,7 @@ public class EvolView extends ViewPart {
         /**
          * Synchronously sets the specified population as input for the
          * specified table viewer.
-         * 
+         *
          * @param pop
          *            the population
          * @param tv
@@ -396,7 +396,7 @@ public class EvolView extends ViewPart {
 
         column.setText("Genome");
         column2.setText("Rating");
-        column3.setText("Layout Provider");
+        column3.setText("Layout Algorithm");
 
         table.setHeaderVisible(true);
         table.setLinesVisible(true);

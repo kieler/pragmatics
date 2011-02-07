@@ -52,8 +52,8 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.genetic.Genome;
 import de.cau.cs.kieler.kiml.evol.genetic.IGene;
@@ -118,13 +118,13 @@ public final class EvolUtil {
          *
          * @param individual
          *            a {@link Genome}; must not be {@code null}
-         * @param expectedLayoutProviderId
-         *            the ID of the expected layout provider; must not be
+         * @param expectedLayoutAlgorithmId
+         *            the ID of the expected layout algorithm; must not be
          *            {@code null}
          */
         private static void applyIndividual(
-                final Genome individual, final String expectedLayoutProviderId) {
-            if ((individual == null) || (expectedLayoutProviderId == null)) {
+                final Genome individual, final String expectedLayoutAlgorithmId) {
+            if ((individual == null) || (expectedLayoutAlgorithmId == null)) {
                 throw new IllegalArgumentException();
             }
 
@@ -132,10 +132,10 @@ public final class EvolUtil {
             // presuming layoutServices != null
 
             // Get the expected layout type id.
-            LayoutAlgorithmData expectedProviderData =
-                    layoutServices.getAlgorithmData(expectedLayoutProviderId);
-            assert expectedProviderData != null;
-            String expectedLayoutTypeId = expectedProviderData.getType();
+            LayoutAlgorithmData expectedAlgorithmData =
+                    layoutServices.getAlgorithmData(expectedLayoutAlgorithmId);
+            assert expectedAlgorithmData != null;
+            String expectedLayoutTypeId = expectedAlgorithmData.getType();
             assert expectedLayoutTypeId != null;
 
             // Get the appropriate editors.
@@ -153,46 +153,54 @@ public final class EvolUtil {
                 System.out.println();
                 System.out.print("--- Editor: " + editor.getTitle() + " ");
 
-                LayoutAlgorithmData data = getLayoutProviderData(editor);
+                // Find a layout algorithm for the editor.
+                LayoutAlgorithmData data = getLayoutAlgorithmData(editor);
+                if (data == null) {
+                    // no layout algorithm found --> skip editor
+                    continue;
+                }
 
                 // Check if we can handle its type.
                 String layoutTypeId = data.getType();
-                if (!expectedLayoutTypeId.equalsIgnoreCase(layoutTypeId) && !useDifferentType) {
+
+                if (!useDifferentType
+                        && !isCompatibleLayoutAlgorithm(data.getId(), expectedLayoutTypeId)) {
                     // The type in the editor is not compatible to the current
                     // population. We skip this editor.
 
-                    System.err.println("The editor " + editor.getTitle() + " is set to "
+                    EvolPlugin.showError("The editor " + editor.getTitle() + " is set to "
                             + layoutTypeId + ". Expecting an editor for " + expectedLayoutTypeId
-                            + ".");
+                            + ".", null);
                     continue;
                 }
+                assert expectedLayoutTypeId.equalsIgnoreCase(layoutTypeId) || useDifferentType;
 
                 DiagramLayoutManager manager = adoptAndApplyLayout(individual, editor);
             }
         }
 
         /**
-         * Tries to find a layout provider for the given editor.
+         * Tries to find a layout algorithm for the given editor.
          *
          * @param editor
          *            an editor
-         * @return a layout provider or {@code null} if none can be found
+         * @return a layout algorithm or {@code null} if none can be found
          */
-        private static LayoutAlgorithmData getLayoutProviderData(final IEditorPart editor) {
+        private static LayoutAlgorithmData getLayoutAlgorithmData(final IEditorPart editor) {
             EditPart editPart = getCurrentEditPart(editor);
 
-            // See which layout provider suits for the editor.
-            LayoutAlgorithmData data = EvolUtil.getLayoutProviderData(editor, editPart);
+            // See which layout algorithm suits for the editor.
+            LayoutAlgorithmData data = EvolUtil.getLayoutAlgorithmData(editor, editPart);
 
-            String layoutProviderId;
             if (data == null) {
-                // no layout provider found --> skip this editor
-                System.err.println("Could not find a layout provider for the editor '"
-                        + editor.getTitle() + "'.");
+                // no layout algorithm found --> skip this editor
+                EvolPlugin.showError("Could not find a layout algorithm for the editor '"
+                        + editor.getTitle() + "'.", null);
                 return null;
             }
-            layoutProviderId = data.getId();
-            System.out.println("(" + layoutProviderId + ")");
+
+            String layoutAlgorithmId = data.getId();
+            System.out.println("(" + layoutAlgorithmId + ")");
 
             return data;
         }
@@ -201,27 +209,30 @@ public final class EvolUtil {
          * Creates a new {@link IndividualApplierRunnable} instance.
          *
          * @param theIndividual
-         * @param theLayoutProviderId
+         * @param theLayoutAlgorithmId
          */
-        IndividualApplierRunnable(final Genome theIndividual, final String theLayoutProviderId) {
-            this.layoutProviderId = theLayoutProviderId;
+        IndividualApplierRunnable(final Genome theIndividual, final String theLayoutAlgorithmId) {
+            this.layoutAlgorithmId = theLayoutAlgorithmId;
             this.individual = theIndividual;
         }
 
         /**
-         * The expected layout provider ID.
+         * The expected layout algorithm ID.
          */
-        private final String layoutProviderId;
+        private final String layoutAlgorithmId;
 
         /**
          * The individual.
          */
         private final Genome individual;
 
+        /**
+         * {@inheritDoc}
+         */
         public void run() {
             // Adopt the given individual and apply its layout in the
             // appropriate editor(s).
-            applyIndividual(this.individual, this.layoutProviderId);
+            applyIndividual(this.individual, this.layoutAlgorithmId);
         }
 
     }
@@ -600,6 +611,9 @@ public final class EvolUtil {
         /** The population of weights genomes. */
         private final Population weightsGenomes;
 
+        /**
+         * {@inheritDoc}
+         */
         public void run() {
             // Must be run in the UI thread.
 
@@ -658,10 +672,14 @@ public final class EvolUtil {
             // nothing to do here.
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void run() {
             LayoutViewPart layoutView = LayoutViewPart.findView();
             if (layoutView != null) {
-                layoutView.refresh(); // async!
+                // Refresh the layout view asynchronously.
+                layoutView.refresh();
             }
         }
     }
@@ -681,12 +699,12 @@ public final class EvolUtil {
         Genome individual = model.getCurrentIndividual();
         assert individual != null;
 
-        // Get the expected layout provider id.
-        String expectedLayoutProviderId = model.getLayoutProviderId();
-        assert expectedLayoutProviderId != null;
+        // Get the expected layout algorithm id.
+        String expectedLayoutAlgorithmId = model.getLayoutAlgorithmId();
+        assert expectedLayoutAlgorithmId != null;
 
         // Adopt and layout the current individual.
-        syncApplyIndividual(individual, expectedLayoutProviderId);
+        syncApplyIndividual(individual, expectedLayoutAlgorithmId);
 
         // Refresh the layout view.
         asyncRefreshLayoutView();
@@ -869,17 +887,17 @@ public final class EvolUtil {
     }
 
     /**
-     * Finds a layout provider for the given {@link IEditorPart} and
+     * Tries to find a layout algorithm for the given {@link IEditorPart} and
      * {@link EditPart}.
      *
      * @param editor
      *            a {@link IEditorPart}
      * @param editPart
      *            an {@link EditPart}
-     * @return the {@link LayoutAlgorithmData} of the layout provider, or
+     * @return the {@link LayoutAlgorithmData} of the layout algorithm, or
      *         {@code null} if none can be found.
      */
-    public static LayoutAlgorithmData getLayoutProviderData(
+    public static LayoutAlgorithmData getLayoutAlgorithmData(
             final IEditorPart editor, final EditPart editPart) {
         final DiagramLayoutManager manager =
                 EclipseLayoutServices.getInstance().getManager(editor, editPart);
@@ -891,15 +909,15 @@ public final class EvolUtil {
     }
 
     /**
-     * Return a list of the IDs of all layout providers that can handle the
+     * Return a list of the IDs of all layout algorithms that can handle the
      * specified layout type.
      *
      * @param layoutType
      *            the type id to look for; must not be {@code null}
-     * @return a list of layout provider IDs of all layout providers of the
+     * @return a list of layout algorithm IDs of all layout algorithms of the
      *         given type; may be empty.
      */
-    public static List<String> getLayoutProviderIds(final String layoutType) {
+    public static List<String> getLayoutAlgorithmIds(final String layoutType) {
         if (layoutType == null) {
             throw new IllegalArgumentException();
         }
@@ -918,24 +936,25 @@ public final class EvolUtil {
     }
 
     /**
-     * Checks if the given layout provider is of the given type.
+     * Checks if the given layout algorithm is of the given type.
      *
-     * @param providerId
-     *            layout provider ID; must not be {@code null}
+     * @param algorithmId
+     *            layout algorithm ID; must not be {@code null}
      * @param typeId
      *            layout type ID
-     * @return {@code true} iff the given layout provider is of the given type
+     * @return {@code true} iff the given layout algorithm is of the given type
      */
-    public static boolean isCompatibleLayoutProvider(final String providerId, final String typeId) {
-        if (providerId == null) {
+    public static boolean isCompatibleLayoutAlgorithm(
+            final String algorithmId, final String typeId) {
+        if (algorithmId == null) {
             throw new IllegalArgumentException();
         }
 
         LayoutServices layoutServices = LayoutServices.getInstance();
         // presuming layoutServices != null
-        LayoutAlgorithmData providerData = layoutServices.getAlgorithmData(providerId);
-        // presuming providerData != null
-        String newTypeId = providerData.getType();
+        LayoutAlgorithmData algorithmData = layoutServices.getAlgorithmData(algorithmId);
+        // presuming algorithmData != null
+        String newTypeId = algorithmData.getType();
 
         boolean result = typeId.equalsIgnoreCase(newTypeId);
 
@@ -952,12 +971,12 @@ public final class EvolUtil {
      *
      * @param individual
      *            the {@link Genome}
-     * @param providerId
-     *            the expected layout provider id
+     * @param algorithmId
+     *            the expected layout algorithm id
      */
-    public static void syncApplyIndividual(final Genome individual, final String providerId) {
+    public static void syncApplyIndividual(final Genome individual, final String algorithmId) {
         MonitoredOperation
-                .runInUI(new IndividualApplierRunnable(individual, providerId), true /* synch */);
+                .runInUI(new IndividualApplierRunnable(individual, algorithmId), true /* synch */);
     }
 
     /**
@@ -1053,8 +1072,9 @@ public final class EvolUtil {
     }
 
     /**
-     * Retrieve the values of the given IDs in from the given layout inspectors.
-     * For layout hint, the (non-null) layout hint identifiers are returned.
+     * Retrieve the values of the given IDs from the given layout
+     * configurations. For layout hint, the (non-null) layout hint identifiers
+     * are returned.
      *
      * @param configs
      *            list of layout configurations
@@ -1070,7 +1090,6 @@ public final class EvolUtil {
 
         for (final ILayoutConfig config : configs) {
             Object value = config.getProperty(optionData);
-            // value = source.getPropertyValue(id);
 
             if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                 if (value == null) {
@@ -1078,26 +1097,13 @@ public final class EvolUtil {
                     continue;
                 }
 
-                if (value instanceof String) {
-                    // we can use this
-                    result.add(value);
-                    continue;
-                }
-
-                System.out.println("layouter hint: " + value.toString());
-
-                // Legacy "Layout hint" options have an index as value.
-                // But we want the layout hint identifier instead of its
-                // index.
-
-                LayoutAlgorithmData provider = config.getContentLayouterData();
-                if (provider != null) {
-                    result.add(provider.getId());
-                }
-            } else {
-                // normal option
+                // we can use this
+                assert value instanceof String;
                 result.add(value);
+                continue;
             }
+            // normal option
+            result.add(value);
         }
 
         return result;

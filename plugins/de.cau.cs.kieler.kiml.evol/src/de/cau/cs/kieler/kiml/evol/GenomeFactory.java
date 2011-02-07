@@ -32,9 +32,9 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
-import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.evol.genetic.Distribution;
 import de.cau.cs.kieler.kiml.evol.genetic.EnumGene;
@@ -529,8 +529,8 @@ final class GenomeFactory {
         Set<IPropertyDescriptor> result = new HashSet<IPropertyDescriptor>();
 
         // Iterate the given property descriptors.
-        for (final IPropertyDescriptor p : descriptors) {
-            String id = (String) p.getId();
+        for (final IPropertyDescriptor descriptor : descriptors) {
+            String id = (String) descriptor.getId();
             // check property descriptor id
             if (!LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
                 LayoutOptionData<?> data = layoutServices.getOptionData(id);
@@ -544,7 +544,7 @@ final class GenomeFactory {
                 case FLOAT:
                     if (accepted.contains(id)) {
                         // learnable --> collect it
-                        result.add(p);
+                        result.add(descriptor);
                     }
                     break;
                 default:
@@ -598,24 +598,25 @@ final class GenomeFactory {
     /**
      * Creates a layout hint gene.
      *
-     * @param providerIds
-     *            list of layout provider IDs; must not be {@code null}
+     * @param algorithmIds
+     *            list of layout algorithm IDs; must not be {@code null}
      * @param defaultEntry
-     *            index of the default provider ID; must be a valid index of
-     *            {@code providerIds}
-     * @return a gene that mutates over given the providers
+     *            index of the default algorithm ID; must be a valid index of
+     *            {@code algorithmIds}
+     *
+     * @return a gene that can mutate over the given algorithms
      */
     private static ListItemGene createLayoutHintGene(
-            final List<String> providerIds, final int defaultEntry) {
-        if (providerIds == null) {
+            final List<String> algorithmIds, final int defaultEntry) {
+        if (algorithmIds == null) {
             throw new IllegalArgumentException();
         }
 
-        if ((defaultEntry < 0) || (defaultEntry >= providerIds.size())) {
+        if ((defaultEntry < 0) || (defaultEntry >= algorithmIds.size())) {
             throw new IllegalArgumentException("Index out of range: " + defaultEntry);
         }
 
-        ListItemTypeInfo typeInfo = new ListItemTypeInfo(defaultEntry, providerIds);
+        ListItemTypeInfo typeInfo = new ListItemTypeInfo(defaultEntry, algorithmIds);
         double prob = DEFAULT_LAYOUT_HINT_GENE_MUTATION_PROBABILITY;
         MutationInfo mutationInfo = new MutationInfo(prob);
 
@@ -628,23 +629,23 @@ final class GenomeFactory {
     /**
      * Creates a layout hint gene.
      *
-     * @param providerIds
-     *            a list of layout provider identifiers
-     * @param defaultProviderId
-     *            the identifier of the default layout provider
-     * @return a gene that mutates over the given layout providers
+     * @param algorithmIds
+     *            a list of layout algorithm identifiers
+     * @param defaultAlgorithmId
+     *            the identifier of the default layout algorithm
+     * @return a gene that can mutate over the given layout algorithms
      */
     private static ListItemGene createLayoutHintGene(
-            final List<String> providerIds, final String defaultProviderId) {
-        // presuming providerIds != null
-        if (providerIds.isEmpty() || (defaultProviderId == null)) {
+            final List<String> algorithmIds, final String defaultAlgorithmId) {
+        // presuming algorithmIds != null
+        if (algorithmIds.isEmpty() || (defaultAlgorithmId == null)) {
             throw new IllegalArgumentException();
         }
 
-        int indexOfProviderId = providerIds.indexOf(defaultProviderId);
-        assert indexOfProviderId >= 0;
+        int indexOfAlgorithmId = algorithmIds.indexOf(defaultAlgorithmId);
+        assert indexOfAlgorithmId >= 0;
 
-        ListItemGene result = createLayoutHintGene(providerIds, indexOfProviderId);
+        ListItemGene result = createLayoutHintGene(algorithmIds, indexOfAlgorithmId);
         return result;
     }
 
@@ -747,10 +748,10 @@ final class GenomeFactory {
 
         /*
          * TODO: Discuss: If more than one ILayoutInspector is contained in the given list,
-         * they may stem from different editors containing different layout providers.
-         * Should the genes from different layout providers
+         * they may stem from different editors set to different layout algorithms.
+         * Should the genes from different layout algorithms
          *   - be pooled without hierarchy?
-         *   - be mapped to their layout provider id?
+         *   - be mapped to their layout algorithm id?
          *   - or be grouped together as "chromosomes" in the individual?
          * What about duplicate properties?
          * */
@@ -819,28 +820,29 @@ final class GenomeFactory {
         // default, but what about the others?
         String hintId = (String) layoutHintIds.iterator().next();
 
-        LayoutAlgorithmData providerData = new DefaultLayoutConfig().getLayouterData(hintId, null);
+        LayoutAlgorithmData algorithmData =
+                new DefaultLayoutConfig().getLayouterData(hintId, null);
 
-        if (providerData == null) {
-            // no provider for the given layout hint
+        if (algorithmData == null) {
+            // no algorithm for the given layout hint
             return null;
         }
 
         // Get the type of the provider.
-        String typeId = providerData.getType();
+        String typeId = algorithmData.getType();
 
-        // Get the IDs of all suitable providers for this type.
-        List<String> providerIds = EvolUtil.getLayoutProviderIds(typeId);
+        // Get the IDs of all suitable algorithms for this type.
+        List<String> algorithmIds = EvolUtil.getLayoutAlgorithmIds(typeId);
 
-        String providerId = providerData.getId();
+        String algorithmId = algorithmData.getId();
 
         // Create the layout hint gene.
-        ListItemGene hintGene = createLayoutHintGene(providerIds, providerId);
+        ListItemGene hintGene = createLayoutHintGene(algorithmIds, algorithmId);
         result.add(hintGene);
 
         // Collect all learnable layout options that are known by the
-        // providers.
-        Set<String> knownOptionIds = getLearnableKnownOptions(providerIds);
+        // algorithms.
+        Set<String> knownOptionIds = getLearnableKnownOptions(algorithmIds);
 
         // Add extra genes for the suitable options that have not been
         // added yet.
@@ -913,23 +915,23 @@ final class GenomeFactory {
 
     /**
      * Determines which of the registered layout options are known by the
-     * specified providers.
+     * specified algorithms.
      *
-     * @param providerIds
-     *            a list of layout provider IDs; must not be {@code null}
+     * @param algorithmIds
+     *            a list of layout algorithm IDs; must not be {@code null}
      * @return a set containing the IDs of the layout options that are known by
-     *         the specified providers and that are registered as evolutionData
+     *         the specified algorithms and that are registered as evolutionData
      */
-    private Set<String> getLearnableKnownOptions(final List<String> providerIds) {
-        if (providerIds == null) {
+    private Set<String> getLearnableKnownOptions(final List<String> algorithmIds) {
+        if (algorithmIds == null) {
             throw new IllegalArgumentException();
         }
 
         Set<String> knownOptionIds = new HashSet<String>();
-        for (final String id : providerIds) {
-            LayoutAlgorithmData provider = LayoutServices.getInstance().getAlgorithmData(id);
+        for (final String id : algorithmIds) {
+            LayoutAlgorithmData algorithm = LayoutServices.getInstance().getAlgorithmData(id);
             for (final String optionId : this.learnableOptions) {
-                if (provider.knowsOption(optionId)) {
+                if (algorithm.knowsOption(optionId)) {
                     knownOptionIds.add(optionId);
                 }
             }

@@ -26,9 +26,9 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
-import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
@@ -228,14 +228,14 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         return graph;
     }
-
+    
     /**
-     * Sets the layout provider hint.
-     *
+     * Sets the layout algorithm hint.
+     * 
      * @param gene
      *            the gene that encodes the value to set
      * @param targetGraphData
-     *            the graph data for which the layout provider shall be set
+     *            the graph data for which the layout algorithm shall be set
      */
     private static void handleLayouterHint(final IGene<?> gene, final KGraphData targetGraphData) {
 
@@ -264,15 +264,17 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         IProperty<String> data = LayoutOptions.LAYOUTER_HINT;
 
         String oldLayoutHintId = targetGraphData.getProperty(data);
-        assert oldLayoutHintId != null;
+        if (oldLayoutHintId == null) {
+            System.err.println("Layout hint was null");
+        }
 
-        LayoutAlgorithmData providerData =
+        LayoutAlgorithmData algorithmData =
                 new DefaultLayoutConfig().getLayouterData(newLayoutHintId, null);
 
-        String newType = providerData.getType();
+        String newType = algorithmData.getType();
 
-        if (!canSetForDifferentType
-                && !EvolUtil.isCompatibleLayoutProvider(oldLayoutHintId, newType)) {
+        if ((oldLayoutHintId != null) && !canSetForDifferentType
+                && !EvolUtil.isCompatibleLayoutAlgorithm(oldLayoutHintId, newType)) {
             // we are not allowed do this
             System.err.println("Attempt to set the layout hint to incompatible type: "
                     + newLayoutHintId);

@@ -58,14 +58,13 @@ public final class EvolModel {
     private BasicEvolutionaryAlgorithm predictorsEvolAlg;
 
     /** Index of the currently selected individual. */
-
     private int position;
-
+    
     /**
-     * The ID of the layout provider that the current population was created
+     * The ID of the layout algorithm that the current population was created
      * for.
      */
-    private String layoutProviderId;
+    private String layoutAlgorithmId;
 
     /** The list of listeners to the model. */
     private final List<IEvolModelListener> listeners = new LinkedList<IEvolModelListener>();
@@ -240,14 +239,14 @@ public final class EvolModel {
 
         return pop.get(pos);
     }
-
+    
     /**
-     * Returns the layout provider ID that the population was created for.
-     *
-     * @return the layout provider id
+     * Returns the layout algorithm ID that the population was created for.
+     * 
+     * @return the layout algorithm id
      */
-    public String getLayoutProviderId() {
-        return this.layoutProviderId;
+    public String getLayoutAlgorithmId() {
+        return this.layoutAlgorithmId;
     }
 
     /**
@@ -316,11 +315,11 @@ public final class EvolModel {
 
         return true;
     }
-    
+
     /**
      * Removes the specified model listener, if present. Requests to remove
      * non-existent listeners are ignored.
-     * 
+     *
      * @param listener
      *            the {@link IEvolModelListener} to remove
      */
@@ -353,9 +352,9 @@ public final class EvolModel {
         try {
             monitor.beginTask("Resetting the model.", totalWork * scale);
 
-            // Get the ID of the current layout provider.
-            LayoutAlgorithmData providerData = getCurrentLayoutProviderDataSync();
-            this.layoutProviderId = providerData != null ? providerData.getId() : null;
+            // Get the ID of the current layout algorithm.
+            LayoutAlgorithmData algorithmData = getCurrentLayoutAlgorithmDataSync();
+            this.layoutAlgorithmId = algorithmData != null ? algorithmData.getId() : null;
 
             // Get the editors.
             Set<IEditorPart> editors = getEditorsSync();
@@ -455,31 +454,31 @@ public final class EvolModel {
         }
         return result;
     }
-    
+
     /**
-     * Synchronously get the layout provider of the current editor.
-     * 
-     * @return the current layout provider data, or {@code null} if none can be
+     * Synchronously get the layout algorithm of the current editor.
+     *
+     * @return the current layout algorithm data, or {@code null} if none can be
      *         found
      */
-    private LayoutAlgorithmData getCurrentLayoutProviderDataSync() {
-        final Maybe<LayoutAlgorithmData> maybeProviderData = new Maybe<LayoutAlgorithmData>();
+    private LayoutAlgorithmData getCurrentLayoutAlgorithmDataSync() {
+        final Maybe<LayoutAlgorithmData> maybeAlgorithmData = new Maybe<LayoutAlgorithmData>();
         Runnable runnable = new Runnable() {
             public void run() {
                 IEditorPart editor = EvolUtil.getCurrentEditor();
                 EditPart part = EvolUtil.getCurrentEditPart(editor);
-                LayoutAlgorithmData providerData = EvolUtil.getLayoutProviderData(editor, part);
-                maybeProviderData.set(providerData);
+                LayoutAlgorithmData algorithmData = EvolUtil.getLayoutAlgorithmData(editor, part);
+                maybeAlgorithmData.set(algorithmData);
             }
         };
         MonitoredOperation.runInUI(runnable, true /* synch */);
-        LayoutAlgorithmData providerData = maybeProviderData.get();
-        return providerData;
+        LayoutAlgorithmData algorithmData = maybeAlgorithmData.get();
+        return algorithmData;
     }
-    
+
     /**
      * Synchronously gets the set of visible graphical editors.
-     * 
+     *
      * @return set of visible graphical editors; may be empty
      */
     private Set<IEditorPart> getEditorsSync() {
@@ -489,14 +488,14 @@ public final class EvolModel {
                 maybeEditors.set(EvolUtil.getEditors());
             }
         }, true /* synch */);
-        
+
         Set<IEditorPart> editors = maybeEditors.get();
         return editors;
     }
-    
+
     /**
      * Checks whether the predictors model is valid.
-     * 
+     *
      * @return {@code true} iff predictors model is valid
      */
     private boolean isPredictorsAlgValid() {
@@ -504,14 +503,14 @@ public final class EvolModel {
             EvolPlugin.logStatus("Weights algorithm is not set.");
             return false;
         }
-        
+
         if (this.predictorsEvolAlg.getPopulation().isEmpty()) {
             EvolPlugin.logStatus("Predictor population is empty.");
             return false;
         }
         return true;
     }
-    
+
     /**
      * Selects an interesting individual.
      */
