@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kaom.diagram.custom;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
@@ -26,20 +27,23 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.requests.CreateConnectionViewRequest;
+import org.eclipse.gmf.runtime.diagram.ui.requests.CreateConnectionViewRequest.ConnectionViewDescriptor;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewRequest;
 import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewRequest.ViewDescriptor;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.gmf.runtime.diagram.ui.type.DiagramNotationType;
 import org.eclipse.gmf.runtime.notation.Node;
 import org.eclipse.gmf.runtime.notation.Shape;
-import org.eclipse.gmf.runtime.notation.impl.ShapeImpl;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.annotations.Annotation;
+import de.cau.cs.kieler.core.annotations.ReferenceAnnotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
-import de.cau.cs.kieler.core.annotations.TypedStringAnnotation;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kaom.Entity;
 
@@ -77,7 +81,7 @@ public final class AnnotationDisplayer {
      */
     private static void displayTextAsNote(final IEditorPart editorPart) {
         if (editorPart instanceof DiagramDocumentEditor) {
-            DiagramDocumentEditor dde = (DiagramDocumentEditor) editorPart;
+            final DiagramDocumentEditor dde = (DiagramDocumentEditor) editorPart;
             EObject rootElement = dde.getDiagramEditPart().getNotationView().getElement();
             if (rootElement instanceof Entity) {
                 Entity rootEntity = (Entity) rootElement;
@@ -86,7 +90,7 @@ public final class AnnotationDisplayer {
 
                     final StringAnnotation textAnnotation = (StringAnnotation) ann.getFirst()
                             .getAnnotation("text");
-                    EditPart nodeParentPart = dde.getDiagramEditPart().findEditPart(
+                    final EditPart nodeParentPart = dde.getDiagramEditPart().findEditPart(
                             dde.getDiagramEditPart(), ann.getSecond());
                     // we want to add the note to the compartment
                     CompartmentEditPart compartmentPart = null;
@@ -103,11 +107,43 @@ public final class AnnotationDisplayer {
                                 DiagramNotationType.NOTE.getSemanticHint(), dde
                                         .getDiagramEditPart().getDiagramPreferencesHint());
                         final CreateViewRequest noteRequest = new CreateViewRequest(viewDescriptor);
-
+                        final IAdaptable noteViewAdapter = (IAdaptable) ((List) noteRequest
+                                .getNewObject()).get(0);
                         Command createNoteCmd = compartmentPart.getCommand(noteRequest);
 
                         // execute the command
                         dde.getDiagramEditDomain().getDiagramCommandStack().execute(createNoteCmd);
+
+                        // attach the note to something
+                        Object adaptable = ((ViewDescriptor) noteViewAdapter)
+                                .getAdapter(Shape.class);
+                        if (adaptable instanceof Shape) {
+                            Shape shape = (Shape) adaptable;
+                            EditPartViewer viewer = dde.getDiagramGraphicalViewer();
+                            Map epRegistry = viewer.getEditPartRegistry();
+                            ReferenceAnnotation targetAnnotation = (ReferenceAnnotation) ann.getFirst().getAnnotation("attachedTo");
+                            EditPart target = null;
+                            if (targetAnnotation != null) {
+                                EObject targetObject = targetAnnotation.getObject();
+                                if (targetObject != null) {
+                                    target = dde.getDiagramEditPart().findEditPart(
+                                            dde.getDiagramEditPart(), targetObject);
+                                //target = (EditPart) epRegistry.get(targetObject);
+                                }
+                            }
+                            IGraphicalEditPart source = (IGraphicalEditPart) epRegistry
+                                    .get(shape);             
+                            if ((target != null) && (source != null)){
+                            ConnectionViewDescriptor connectionViewDescriptor = new ConnectionViewDescriptor(
+                                    null, DiagramNotationType.NOTE_ATTACHMENT.getSemanticHint(),
+                                    dde.getDiagramEditPart().getDiagramPreferencesHint());
+                            CreateConnectionViewRequest createRequest = new CreateConnectionViewRequest(
+                                    connectionViewDescriptor);
+                            Command attachCmd = CreateConnectionViewRequest.getCreateCommand(
+                                    createRequest, source, target);
+                            dde.getDiagramEditDomain().getDiagramCommandStack().execute(attachCmd);
+                            }
+                        }
 
                         // make an operation to throw the right text into our new note
                         AbstractEMFOperation emfOp = new AbstractEMFOperation(dde
@@ -158,8 +194,8 @@ public final class AnnotationDisplayer {
         List<Pair<Annotation, EObject>> foundAnnotations = new LinkedList<Pair<Annotation, EObject>>();
         List<Annotation> annotationList = root.getAnnotations();
         for (Annotation annotation : annotationList) {
-            if (annotation.getAnnotation("isComment") != null) {
-                    foundAnnotations.add(new Pair<Annotation, EObject>(annotation, root));
+            if (annotation.getAnnotation("attachedTo") != null) {
+                foundAnnotations.add(new Pair<Annotation, EObject>(annotation, root));
             }
         }
         for (Entity child : root.getChildEntities()) {
