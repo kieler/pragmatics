@@ -71,7 +71,7 @@ public class ListItemGene extends AbstractGene<Integer> {
         super(theId, theValue, theTypeInfo, theMutationInfo);
     }
 
-    /** The cached has value. */
+    /** The cached hash value. */
     private Integer cachedHash;
 
     @Override
@@ -112,7 +112,7 @@ public class ListItemGene extends AbstractGene<Integer> {
         Integer value = this.getValue().intValue();
         int newInt = value.intValue();
         if (random.nextDouble() < prob) {
-            newInt = (random.nextInt((upperBound - lowerBound + 1)) + lowerBound);
+            newInt = random.nextInt(upperBound - lowerBound + 1) + lowerBound;
         }
 
         result =
@@ -151,8 +151,8 @@ public class ListItemGene extends AbstractGene<Integer> {
 
         final ListItemGene other = (ListItemGene) theObj;
 
-        return (other.getTypeInfo().getList().equals(this.getTypeInfo().getList())
-                && (other.getId().equals(this.getId())) && other.getValue().equals(
-                this.getValue()));
+        return other.getTypeInfo().getList().equals(this.getTypeInfo().getList())
+                && (other.getId().equals(this.getId()))
+                && other.getValue().equals(this.getValue());
     }
 }

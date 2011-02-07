@@ -69,15 +69,15 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
     protected void crossOver() {
         System.out.println("*** cross over");
         if (!selection.isEmpty()) {
-            int proposal = (int) Math.round(selection.size() * CROSS_OVER_RATIO);
 
             // pad minimum population
             int lacking =
-                    ((population.size() < MIN_SURVIVORS) ? MIN_SURVIVORS - population.size() : 0);
+                    (population.size() < MIN_SURVIVORS) ? MIN_SURVIVORS - population.size() : 0;
 
-            int min = MIN_CROSS_OVERS + lacking;
-            int max = MAX_CROSS_OVERS;
-            int crossOvers = ((proposal < min) ? min : (proposal > max) ? max : proposal);
+            int crossOvers =
+                    boundMultiple(selection.size(), CROSS_OVER_RATIO, MIN_CROSS_OVERS + lacking,
+                            MAX_CROSS_OVERS);
+
             offspring = new Population();
             System.out.println(" -- generate " + crossOvers + " out of " + selection.size());
 
@@ -169,10 +169,7 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
 
         // Only some are allowed to generate offspring
         // These are selected by truncation.
-        int min = MIN_SELECT;
-        int max = MAX_SELECT;
-        int proposal = (int) Math.round(individuals.length * SELECTION_RATIO);
-        int select = ((proposal < min) ? min : (proposal > max ? max : proposal));
+        int select = boundMultiple(individuals.length, SELECTION_RATIO, MIN_SELECT, MAX_SELECT);
 
         System.out.println(" -- select " + select + " of " + count);
         for (final Genome ind : individuals) {
@@ -195,24 +192,33 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         Arrays.sort(individuals, Genome.DESCENDING_RATING_COMPARATOR);
 
         // only some survive
-        int min = MIN_SURVIVORS;
-        int max = MAX_SURVIVORS;
-        int proposal = (int) Math.round(count * SURVIVAL_RATIO);
-        int keep = (proposal < min) ? min : (proposal > max ? max : proposal);
+        int keep = boundMultiple(count, SURVIVAL_RATIO, MIN_SURVIVORS, MAX_SURVIVORS);
+        assert keep > 0;
         double minDist = individuals[0].size() * 0.2;
         Population survivors = new Population();
         Population victims = new Population(population);
 
         System.out.println(" -- keep " + keep + " of " + count);
         for (final Genome ind : individuals) {
-            // in order to keep some variety, prevent too similar genomes from
-            // surviving
-            if (survivors.size() < keep) {
-                Genome comp = survivors.pick();
-                Genome comp2 = survivors.pick();
-                if ((comp == null)
-                        || ((Genome.distance(ind, comp) > minDist) && ((comp == comp2) || (Genome
-                                .distance(ind, comp2) > minDist)))) {
+            // prevent too similar genomes from surviving
+            if (survivors.size() == 0) {
+                survivors.add(ind);
+                victims.remove(ind);
+                System.out.println(" -- keep: " + ind.toString());
+            } else if (survivors.size() < keep) {
+                // compare individual to random samples from other survivors
+                Genome sample1 = survivors.pick();
+                Genome sample2 = survivors.pick();
+
+                double dist1 = Genome.distance(ind, sample1);
+                double dist2;
+                if (sample1 == sample2) {
+                    dist2 = dist1;
+                } else {
+                    dist2 = Genome.distance(ind, sample2);
+                }
+
+                if ((dist1 > minDist) && ((dist2 > minDist))) {
                     survivors.add(ind);
                     victims.remove(ind);
                     System.out.println(" -- keep: " + ind.toString());
@@ -227,6 +233,30 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
         population = new Population(survivors);
         System.out.println(" -- dying out: ");
         System.out.println(victims);
+    }
+
+    /**
+     * Calculates a rounded multiple of the given number, and ensures that it is
+     * within the given bounds.
+     *
+     * @param number
+     *            the number
+     * @param factor
+     *            the factor
+     * @param min
+     *            lower bound
+     * @param max
+     *            upper bound. Must be greater or equal to lower bound.
+     * @return rounded fraction of the number, if it is within the bounds.
+     *         Otherwise, the nearest of the bounds is returned.
+     */
+    private int boundMultiple(final int number, final double factor, final int min, final int max) {
+        assert min <= max;
+
+        int proposal = (int) Math.round(number * factor);
+        int result = (proposal < min) ? min : (proposal > max ? max : proposal);
+
+        return result;
     }
 
     // private fields
@@ -257,7 +287,10 @@ public class BasicEvolutionaryAlgorithm extends AbstractEvolutionaryAlgorithm {
      */
     private static final double MUTATION_APPLICATION_PROBABILITY = 0.6;
 
-    /** The survival ratio. This indicates the ratio of surviving individuals. */
+    /**
+     * The survival ratio. This indicates the ratio of surviving individuals,
+     * relative to the population size.
+     */
     private static final double SURVIVAL_RATIO = 0.54;
 
     // To obtain a constant population size, the following condition must hold:

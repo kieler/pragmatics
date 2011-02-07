@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.evol.ui;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -78,14 +77,13 @@ public class EvolPreferencePage extends FieldEditorPreferencePage
     @Override
     protected void createFieldEditors() {
         Composite parent = getFieldEditorParent();
-        
+
         // parameters for evolution
         Group algorithmGroup = new Group(parent, SWT.NONE);
         algorithmGroup.setText("Evolution parameters");
         IntegerFieldEditor popSizeEditor =
                 new IntegerFieldEditor(EvolPlugin.PREF_POPULATION_SIZE, "Population size:",
                         algorithmGroup, TEXT_LIMIT);
-        popSizeEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_FOCUS_LOST);
         popSizeEditor.setValidRange(1, EvolPlugin.MAX_POPULATION_SIZE);
         addField(popSizeEditor);
 

@@ -204,11 +204,13 @@ public class EvolveHandler extends AbstractHandler {
 
         return null;
     }
-
+    
     /**
-     *
+     * 
      * @param i
+     *            step
      * @param p
+     *            number of steps before auto-rating
      * @return {@code true} iff step i is an auto-rating step.
      */
     private boolean isAutoRatingStep(final int i, final int p) {
