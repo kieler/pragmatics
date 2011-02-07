@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.EvolUtil;
@@ -55,11 +56,15 @@ public class EvolveHandler extends AbstractHandler {
         private final EvolModel model;
         private final boolean isAutoRatingEnabled;
 
-        /** Creates a new {@link EvolutionJobChangeAdapter} instance.
-         *
-         * @param theEvolveJob
+        /**
+         * Creates a new {@link EvolutionJobChangeAdapter} instance.
+         * 
          * @param theMonitor
+         *            progress monitor
          * @param theModel
+         *            the evolutionary model
+         * @param wantAutoRating
+         *            auto-rating on/off
          */
         EvolutionJobChangeAdapter(
                 final IProgressMonitor theMonitor,
@@ -81,7 +86,7 @@ public class EvolveHandler extends AbstractHandler {
                     // Calculate auto-rating in the current editor for
                     // all individuals.
                     final int ticks = 100;
-                    this.model.autoRateAll(new SubProgressMonitor(this.monitor, ticks));
+                    this.model.autoRateAll(new KielerProgressMonitor(this.monitor, ticks));
                 }
 
                 assert this.model.getPopulation() != null;
@@ -204,9 +209,9 @@ public class EvolveHandler extends AbstractHandler {
 
         return null;
     }
-    
+
     /**
-     * 
+     *
      * @param i
      *            step
      * @param p

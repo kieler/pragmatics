@@ -20,10 +20,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
@@ -46,7 +46,7 @@ public class AutoRateAllHandler extends AbstractHandler {
         /**
          * Creates a new {@link AutoRateAllJob} instance. It rates all
          * individuals of the specified model in the appropriate editors.
-         * 
+         *
          * @param name
          *            name of the job
          * @param theModel
@@ -77,7 +77,8 @@ public class AutoRateAllHandler extends AbstractHandler {
                 // SubProgressMonitor manages the work.
                 monitor.subTask("Determining Individual Rating");
 
-                this.model.autoRateAll(new SubProgressMonitor(monitor, autoRatingWork * scale));
+                this.model
+                        .autoRateAll(new KielerProgressMonitor(monitor, autoRatingWork * scale));
 
                 if (monitor.isCanceled()) {
                     return new Status(IStatus.CANCEL, EvolPlugin.PLUGIN_ID,

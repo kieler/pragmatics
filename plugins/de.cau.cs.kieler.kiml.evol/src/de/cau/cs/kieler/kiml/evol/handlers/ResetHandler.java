@@ -20,10 +20,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kiml.evol.EvolModel;
 import de.cau.cs.kieler.kiml.evol.EvolPlugin;
 import de.cau.cs.kieler.kiml.evol.ui.EvolView;
@@ -74,7 +74,7 @@ public class ResetHandler extends AbstractHandler {
                 monitor.beginTask("Resetting the model.", totalWork * scale);
 
                 // Reset the model. SubProgressMonitor manages the work.
-                this.model.reset(new SubProgressMonitor(monitor, resettingWork * scale));
+                this.model.reset(new KielerProgressMonitor(monitor, resettingWork * scale));
 
                 return new Status(IStatus.INFO, EvolPlugin.PLUGIN_ID, 0, "OK", null);
 

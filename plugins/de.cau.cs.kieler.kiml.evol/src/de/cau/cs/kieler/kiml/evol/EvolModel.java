@@ -20,11 +20,12 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.KielerException;
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.core.util.FilteredIterator;
 import de.cau.cs.kieler.core.util.Maybe;
@@ -59,7 +60,7 @@ public final class EvolModel {
 
     /** Index of the currently selected individual. */
     private int position;
-    
+
     /**
      * The ID of the layout algorithm that the current population was created
      * for.
@@ -93,7 +94,7 @@ public final class EvolModel {
      * @param theMonitor
      *            a progress monitor; may be {@code null}
      */
-    public void autoRateAll(final IProgressMonitor theMonitor) {
+    public void autoRateAll(final IKielerProgressMonitor theMonitor) {
 
         Population population = getPopulation();
         assert population != null;
@@ -198,7 +199,7 @@ public final class EvolModel {
 
             Runnable runnable = new Runnable() {
                 public void run() {
-                    EvolUtil.autoRate(unrated, new SubProgressMonitor(monitor, 1 * scale),
+                    EvolUtil.autoRate(unrated, new KielerProgressMonitor(monitor, 1 * scale),
                             predictors);
                 }
             };
@@ -239,10 +240,10 @@ public final class EvolModel {
 
         return pop.get(pos);
     }
-    
+
     /**
      * Returns the layout algorithm ID that the population was created for.
-     * 
+     *
      * @return the layout algorithm id
      */
     public String getLayoutAlgorithmId() {
@@ -333,15 +334,17 @@ public final class EvolModel {
      * @param theMonitor
      *            a progress monitor; may be {@code null}
      */
-    public void reset(final IProgressMonitor theMonitor) {
+    public void reset(final IKielerProgressMonitor theMonitor) {
 
         this.position = 0;
         this.evolAlg = null;
         this.predictorsEvolAlg = null;
 
-        final IProgressMonitor monitor;
+        final IKielerProgressMonitor monitor;
         // Ensure there is a monitor of some sort.
-        monitor = (theMonitor != null) ? theMonitor : new NullProgressMonitor();
+        monitor =
+                (theMonitor != null) ? theMonitor : new KielerProgressMonitor(
+                        new NullProgressMonitor());
 
         int layoutOptionsWork = 1;
         int ratingPredictorsWork = 1;
@@ -350,7 +353,7 @@ public final class EvolModel {
         final int scale = 100;
 
         try {
-            monitor.beginTask("Resetting the model.", totalWork * scale);
+            monitor.begin("Resetting the model.", totalWork * scale);
 
             // Get the ID of the current layout algorithm.
             LayoutAlgorithmData algorithmData = getCurrentLayoutAlgorithmDataSync();

@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.gef.EditPart;
@@ -50,6 +49,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
@@ -728,22 +728,24 @@ public final class EvolUtil {
      *            a population of genomes encoding the metric weights
      */
     public static void autoRate(
-            final ListIterator<Genome> thePopulationIterator, final IProgressMonitor theMonitor,
-            final Population theWeightsGenomes) {
+            final ListIterator<Genome> thePopulationIterator,
+            final IKielerProgressMonitor theMonitor, final Population theWeightsGenomes) {
         // TODO: move code into a class RatingPopulation extends Population.
         if (thePopulationIterator == null) {
             throw new IllegalArgumentException();
         }
 
         // Ensure there is a monitor of some sort.
-        IProgressMonitor monitor = (theMonitor != null) ? theMonitor : new NullProgressMonitor();
+        IKielerProgressMonitor monitor =
+                (theMonitor != null) ? theMonitor : new KielerProgressMonitor(
+                        new NullProgressMonitor());
 
         // size of the iterator is unknown
         // int total = size;
         final int scale = 100;
 
         try {
-            monitor.beginTask("Auto-rating individuals.", IProgressMonitor.UNKNOWN);
+            monitor.begin("Auto-rating individuals.", IKielerProgressMonitor.UNKNOWN_WORK);
 
             // Calculate auto-rating for each individual.
             while (thePopulationIterator.hasNext()) {
