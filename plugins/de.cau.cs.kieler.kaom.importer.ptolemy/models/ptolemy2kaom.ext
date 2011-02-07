@@ -316,10 +316,10 @@ Void addProperties(Annotatable annotatable, List[PropertyType] properties) :
     let property = properties.first() :
     let typedAnnotation = new TypedStringAnnotation :
     
-    // If there are still properties left in the list, transform them,
+    // If there are still properties left in the list..., transform them,
     // add them to the annotatable and recursively add the property's
     // properties and the remaining properties in the list
-    if(properties.isEmpty)
+    if (properties.isEmpty)
         then null
         else (
             // Save the name, value and class of the annotation
@@ -328,13 +328,30 @@ Void addProperties(Annotatable annotatable, List[PropertyType] properties) :
             typedAnnotation.setType(property.class) ->
             
             // Add the annotation
-            annotatable.annotations.add(typedAnnotation)->
+            annotatable.annotations.add(typedAnnotation) ->
+            
+            // Add the property's configuration children
+            addPropertyConfigurations(typedAnnotation, property.configure) ->
             
             // Recursively add the property's properties
             addProperties(typedAnnotation, property.property) ->
             
             // Recursively add the remaining properties in the list
             addProperties(annotatable, properties.withoutFirst())
+        )
+;
+
+Void addPropertyConfigurations(Annotatable annotatable, List[ConfigureType] configurations) :
+    let config = configurations.first() :
+    let typedAnnotation = new TypedStringAnnotation :
+    
+    if (configurations.isEmpty)
+        then null
+        else (
+            // Set the annotations properties
+            typedAnnotation.setName("configuration") ->
+            typedAnnotation.setType("configuration") ->
+            typedAnnotation.setValue(config.source)
         )
 ;
 
@@ -1219,7 +1236,6 @@ Void attachComment(Annotation annotation) :
         then findNearestEntity(annotation)
         else null :
     
-    info("HULLU HULLU: " + comment) ->
     if (comment)
         then (
 		    // Prepare a reference annotation
@@ -1272,7 +1288,7 @@ Entity recursivelyDoFindNearestEntity(Annotation annotation, List[Entity] entiti
     // in the list
     let entity = entities.first() :
     let distance = if (entity == null)
-        then 0.0
+        then maximumAttachmentDistance() + 1.0
         else computeDistance(annotation, entity) :
     
     // Check if there actually is a first entity in the list
@@ -1322,9 +1338,9 @@ Real computeDistance(Annotation annotation, Entity entity) :
         ) else (
             // Standard euclidian distance squared
                (annotationLocation.get(0) - entityLocation.get(0))
-             * (annotationLocation.get(0) * entityLocation.get(0))
+             * (annotationLocation.get(0) - entityLocation.get(0))
              + (annotationLocation.get(1) - entityLocation.get(1))
-             * (annotationLocation.get(1) * entityLocation.get(1))
+             * (annotationLocation.get(1) - entityLocation.get(1))
         )
 ;
 
