@@ -330,28 +330,11 @@ Void addProperties(Annotatable annotatable, List[PropertyType] properties) :
             // Add the annotation
             annotatable.annotations.add(typedAnnotation) ->
             
-            // Add the property's configuration children
-            addPropertyConfigurations(typedAnnotation, property.configure) ->
-            
             // Recursively add the property's properties
             addProperties(typedAnnotation, property.property) ->
             
             // Recursively add the remaining properties in the list
             addProperties(annotatable, properties.withoutFirst())
-        )
-;
-
-Void addPropertyConfigurations(Annotatable annotatable, List[ConfigureType] configurations) :
-    let config = configurations.first() :
-    let typedAnnotation = new TypedStringAnnotation :
-    
-    if (configurations.isEmpty)
-        then null
-        else (
-            // Set the annotations properties
-            typedAnnotation.setName("configuration") ->
-            typedAnnotation.setType("configuration") ->
-            typedAnnotation.setValue(config.source)
         )
 ;
 

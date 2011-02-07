@@ -115,7 +115,7 @@ public class PtolemyHelper implements IExecutionContextAware {
         
         if (tsAnnotation.getType().equals("ptolemy.vergil.kernel.attributes.TextAttribute")) {
             return true;
-        } else if (tsAnnotation.getType().equals("ptolemy.vergil.kernel.attributes.Attribute")) {
+        } else if (tsAnnotation.getType().equals("ptolemy.kernel.util.Attribute")) {
             // TODO: Implement
             return false;
         }
