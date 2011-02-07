@@ -5,10 +5,13 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.Property;
+import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
+import org.eclipse.graphiti.mm.pictograms.Shape;
 
 import de.cau.cs.kieler.rail.Topologie.Basegraph.EPort;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
@@ -70,6 +73,7 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
                 // rotate
                 if (pictogramElement instanceof ContainerShape) {
                     ContainerShape cs = (ContainerShape) pictogramElement;
+                    
                     for (Anchor anchor : cs.getAnchors()) {
                         if (anchor instanceof BoxRelativeAnchor) {
                             Port port =
@@ -87,6 +91,14 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
                                         .getRelativeHeight()));
                             }
                         }
+                    }
+                    
+                    for(Shape shape : cs.getChildren()){
+                    	GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
+                    	if(ga instanceof Text){
+                    		((Text) ga).setY(Math.abs(30
+                    		- ((Text) ga).getY()));     //TODO add const
+                    	}
                     }
                    
                     updatePictogramElement(pictogramElement);

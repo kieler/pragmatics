@@ -164,12 +164,24 @@ public class AddVertexFeature extends AbstractAddFeature {
         System.out.println(context.getHeight());
         System.out.println(context.getWidth());
 
+        
+        Rectangle rect = gaService.createRectangle(containerShape);
+        rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+        rect.setForeground(manageColor(255, 255, 255));
+        
+        
         Ellipse ellipse;
         {
             // Create Ellipse
+        	
             ellipse = gaService.createEllipse(containerShape);
+            ellipse.setWidth(40);
+            ellipse.setHeight(40);
+            ellipse.setX(5);
+            ellipse.setY(10);
+            
             ellipse.setLineWidth(3);
-            ellipse.setFilled(false);
+            ellipse.setFilled(true);
             ellipse.setStyle(styleProvider.getStyle(StyleProvider.BREACH));
 
             gaService.setLocationAndSize(ellipse, context.getX(),
@@ -370,6 +382,12 @@ public class AddVertexFeature extends AbstractAddFeature {
         return containerShape;
     }
 
+    /**
+     * Creates the Graphic representation for a switch
+     * @param context  The context witch is use to create the pictorgram element
+     * @param orientatin left or right switch
+     * @return The pictorgram Element with the switch.
+     */
     private PictogramElement addSwitchVertex(final IAddContext context,
             final EOrientation orientatin) {
 
@@ -503,13 +521,27 @@ public class AddVertexFeature extends AbstractAddFeature {
 
 
 
+     // create shape for text
         Shape shape = peCreateService.createShape(containerShape, false);
 
-        switchVertex.setName("");
-        Text text = gaService.createDefaultText(shape, switchVertex.getName());
-        text.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-        text.setX(context.getX());
-        text.setY(context.getY());
+        // create and set text graphics algorithm
+        // Compromise only
+        String ans = switchVertex.getName();
+        // only ask for name if none is set already
+        if (ans == null) {
+            ans = ExampleUtil.askString("", "Enter Label", "");
+            // ans = JOptionPane.showInputDialog(null, "Enter Label");
+            switchVertex.setName(ans); // TODO ???
+        }
+        Text text =
+                gaService.createDefaultText(shape,
+                        switchVertex.getName()); // addedClass.getName()
+        text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
+        text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
+        text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
+        text.getFont().setBold(true);
+        gaService.setLocationAndSize(text, 0, 30, width, 20);
+        //TEXT
 
         layoutPictogramElement(containerShape);
         
