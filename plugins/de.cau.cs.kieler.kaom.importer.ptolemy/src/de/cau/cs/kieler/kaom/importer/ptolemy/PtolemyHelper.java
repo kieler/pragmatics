@@ -102,7 +102,7 @@ public class PtolemyHelper implements IExecutionContextAware {
     public boolean isComment(final Annotation annotation) {
         // We're only considering top-level annotations (annotations directly
         // annotating entities)
-        if (!(annotation.eContainer() instanceof Entity)) {
+        if (!(annotation.eContainer() instanceof de.cau.cs.kieler.kaom.Entity)) {
             return false;
         }
         
