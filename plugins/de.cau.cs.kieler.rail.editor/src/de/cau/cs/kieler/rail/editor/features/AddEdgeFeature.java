@@ -74,6 +74,7 @@ public class AddEdgeFeature extends AbstractAddFeature {
 
         Polyline polyline = gaService.createPolyline(connection);
         polyline.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+        
 
         // create link and write it
         if (((EObject) context.getNewObject()).eResource() == null) {

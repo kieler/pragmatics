@@ -37,6 +37,7 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
+import de.cau.cs.kieler.rail.editor.Geometry;
 import de.cau.cs.kieler.rail.editor.StyleProvider;
 
 /**
@@ -371,10 +372,10 @@ public class AddVertexFeature extends AbstractAddFeature {
 
     private PictogramElement addSwitchVertex(final IAddContext context,
             final EOrientation orientatin) {
-    	
+
     	int[] spitzeStammXY = { 0, 0, 0, 0 };
         int[] mitteAbzweigXY = { 25, 25, 0, 0 };
-    	
+
         // create Switch from source
         Weichenknoten switchVertex = (Weichenknoten) context.getNewObject();
         switchVertex.setAbzweigendeLage(orientatin);
@@ -402,14 +403,13 @@ public class AddVertexFeature extends AbstractAddFeature {
         IGaService gaService = Graphiti.getGaService();
 
         // virtual Rectangle
-        Rectangle R = gaService.createRectangle(containerShape);
-        R.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-        R.setForeground(manageColor(255, 255, 255));
+        Rectangle rect = gaService.createRectangle(containerShape);
+        rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+        rect.setForeground(manageColor(255, 255, 255));
 
         // PORT
-        
-        int width =50;// containerShape.getGraphicsAlgorithm().getWidth();
-        int height =50;// containerShape.getGraphicsAlgorithm().getHeight();
+        int width= 50;// containerShape.getGraphicsAlgorithm().getWidth();
+        int height= 50;// containerShape.getGraphicsAlgorithm().getHeight();
         
         for (Port port : switchVertex.getPorts()) {
             final BoxRelativeAnchor boxAnchor =
@@ -418,12 +418,14 @@ public class AddVertexFeature extends AbstractAddFeature {
 
             double portWidth = PORT_SIZE / 50;
 
+            //for the Layouter
             Property properPort = MmFactory.eINSTANCE.createProperty();
             properPort.setKey("layout:de.cau.cs.kieler.klay.rail.portType");
 
             boxAnchor.setRelativeHeight(0.4);// (0.5-portWidth);
             
             
+
             int boxWidth = PORT_SIZE;
             int boxHeight = PORT_SIZE;
             
@@ -447,9 +449,11 @@ public class AddVertexFeature extends AbstractAddFeature {
             case ABZWEIG:
                 properPort.setValue("BRANCH");
                 if (orientatin == EOrientation.LINKS) {
-                    boxAnchor.setRelativeWidth(0.8);
+                    //boxAnchor.setRelativeWidth(0.8);
+                    boxAnchor.setRelativeWidth(Geometry.getRelativWeight(0.5, Geometry.degreeToRad(30), 1.0));
                 } else {
-                    boxAnchor.setRelativeWidth(0.2);
+                    //boxAnchor.setRelativeWidth(0.2);
+                    boxAnchor.setRelativeWidth(Geometry.getRelativWeight(0.5, Geometry.degreeToRad(90+30), 1.0));
                 }
                 boxAnchor.setRelativeHeight(0.0);
                 mitteAbzweigXY[2] =
@@ -459,7 +463,7 @@ public class AddVertexFeature extends AbstractAddFeature {
             }
             boxAnchor.getProperties().add(properPort);
 
-            boxAnchor.setReferencedGraphicsAlgorithm(R);
+            boxAnchor.setReferencedGraphicsAlgorithm(rect);
 
             createGraphicalPort(boxAnchor, port.getName());
 

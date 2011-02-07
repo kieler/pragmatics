@@ -166,4 +166,11 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
         }
         return data;
     }
+    /**
+     * don't draw it roundet
+     */
+    public boolean isDefaultBendPointRenderingActive(){
+    	return false;
+    }
+    
 }
