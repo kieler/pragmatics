@@ -203,6 +203,19 @@ public class LayoutEffect extends AbstractEffect {
     }
 
     /**
+     * Undo a layout effect. For now, only a new layout is executed. This leads to correct
+     * behavior if a list of effects is undone sequentially and the last one was a layout effect.
+     * However, this is not really undoing that layout.
+     * 
+     * TODO: implement real undoing of layout, best with animation. Using the standard command
+     * undo functionality will not do any animation.
+     */
+    @Override
+    public void undo() {
+        this.execute();
+    }
+    
+    /**
      * Returns the diagram layout manager that was used for this layout effect, or {@code null} if
      * the effect has not been executed yet.
      * 

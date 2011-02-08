@@ -40,6 +40,7 @@ import de.cau.cs.kieler.core.KielerNotSupportedException;
 import de.cau.cs.kieler.core.kivi.internal.CombinationsWorker;
 import de.cau.cs.kieler.core.kivi.internal.EffectsWorker;
 import de.cau.cs.kieler.core.kivi.internal.IEffectsListener;
+import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
 
 /**
  * Core controller for the view management.
@@ -333,7 +334,7 @@ public class KiVi {
             relevantCombos = Lists.newArrayList(triggerStates2Combinations.get(triggerState
                     .getClass()));
         }
-            if (debug) {
+            if (debug && !(triggerState instanceof EffectTriggerState)) {
                 System.out.println(triggerState);
             }
             for (ICombination combo : relevantCombos) {

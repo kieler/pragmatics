@@ -166,8 +166,17 @@ public class ButtonTrigger extends AbstractTrigger {
          */
         @Override
         public void merge(ITriggerState previous) {
+            /* a button even creates only information about this specific button, therefore
+             * this information has to be merged with the previous state to get the settings
+             * for the other buttons. Therefore only entries that are not set in this state are
+             * older and may be safely overriden.
+             */
             if (previous instanceof ButtonState) {
-                this.buttonStatusMap.putAll(((ButtonState) previous).buttonStatusMap);
+                for(String id : ((ButtonState) previous).buttonStatusMap.keySet()){
+                    if(! this.buttonStatusMap.containsKey(id)){
+                        this.buttonStatusMap.put(id, ((ButtonState) previous).buttonStatusMap.get(id));
+                    }
+                }
             }
         }
 

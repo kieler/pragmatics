@@ -58,7 +58,7 @@ public class ManualFocusCombination extends AbstractCombination {
      * Default Constructor defining some Buttons.
      */
     public ManualFocusCombination() {
-        KiVi.getInstance().setDebug(false);
+        KiVi.getInstance().setDebug(true);
         
         ImageDescriptor iconFC = KiViExamplesPlugin.imageDescriptorFromPlugin(
                 KiViExamplesPlugin.PLUGIN_ID, "icons/focusContext.png");
@@ -111,10 +111,7 @@ public class ManualFocusCombination extends AbstractCombination {
             }
             FocusContextEffect focusEffect = new FocusContextEffect(diagram.getDiagramPart());
             focusEffect.addFocus(focus, zoomLevel);
-
-            for (IEffect effect : focusEffect.getPrimitiveEffects()) {
-                this.schedule(effect);
-            }
+            this.schedule(focusEffect);
             this.schedule(new LayoutEffect(diagram.getDiagramPart(), null, true));
         }
     }
@@ -128,12 +125,15 @@ public class ManualFocusCombination extends AbstractCombination {
      */
     private void enable(boolean enable, DiagramState diagram) {
         boolean validDiagram = editorIDs.contains(diagram.getDiagramType());
-        if (this.enabled && (!enable || !validDiagram)) {
+        if(!validDiagram){
+            this.enabled = false;
+            return;
+        }
+        if (this.enabled && !enable) {
             this.schedule(new MenuItemEnableStateEffect(PLUS_BUTTON_ID, false));
             this.schedule(new MenuItemEnableStateEffect(MINUS_BUTTON_ID, false));
-            this.undo();
             this.enabled = enable;
-        } else if (!this.enabled && enable && validDiagram) {
+        } else if (!this.enabled && enable) {
             this.schedule(new MenuItemEnableStateEffect(PLUS_BUTTON_ID, true));
             this.schedule(new MenuItemEnableStateEffect(MINUS_BUTTON_ID, true));
             // reset zoom level
