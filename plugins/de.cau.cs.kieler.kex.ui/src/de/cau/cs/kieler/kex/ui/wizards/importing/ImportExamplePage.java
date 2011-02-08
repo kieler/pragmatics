@@ -263,27 +263,50 @@ public class ImportExamplePage extends WizardPage {
     }
 
     private void fillTreeViewer() {
-        List<Pair<Category, List<Object>>> viewElement = new ArrayList<Pair<Category, List<Object>>>();
+        ArrayList<Pair<Category, ArrayList<Object>>> viewElement = new ArrayList<Pair<Category, ArrayList<Object>>>();
         List<Category> categories = ExampleManager.get().getCategories();
         Collection<Example> values = ExampleManager.get().getExamples().values();
+        ArrayList<Pair<Category, ArrayList<Object>>> categoryPairList = new ArrayList<Pair<Category, ArrayList<Object>>>();
 
-        // TODO build subCategories
+        // create categories
         for (Category category : categories) {
-            Pair<Category, List<Object>> categoryPair = new Pair<Category, List<Object>>();
-            List<Object> categoryList = new ArrayList<Object>();
-            for (Example example : values) {
-                if (example.getCategoryId().equals(category.getId())) {
-                    categoryList.add(example);
-                }
-            }
-            if (category.getParentId() == null) {
-                categoryPair.setFirst(category);
-                categoryPair.setSecond(categoryList);
+            Pair<Category, ArrayList<Object>> categoryPair = new Pair<Category, ArrayList<Object>>();
+            ArrayList<Object> categoryList = new ArrayList<Object>();
+            categoryPair.setFirst(category);
+            categoryPair.setSecond(categoryList);
+            categoryPairList.add(categoryPair);
+        }
+
+        // structure categories
+        for (Pair<Category, ArrayList<Object>> categoryPair : categoryPairList) {
+            String parentId = categoryPair.getFirst().getParentId();
+            if (parentId == null) {
                 viewElement.add(categoryPair);
+            } else {
+                getParent(parentId, categoryPairList).getSecond().add(categoryPair);
+            }
+        }
+
+        // fill with examples
+        for (Pair<Category, ArrayList<Object>> categoryPair : categoryPairList) {
+            for (Example example : values) {
+                if (example.getCategoryId().equals(categoryPair.getFirst().getId())) {
+                    categoryPair.getSecond().add(example);
+                }
             }
         }
         treeViewer.setInput(viewElement);
 
+    }
+
+    private Pair<Category, ArrayList<Object>> getParent(final String parentId,
+            final ArrayList<Pair<Category, ArrayList<Object>>> categoryPairList) {
+        for (Pair<Category, ArrayList<Object>> pair : categoryPairList) {
+            if (pair.getFirst().getId().equals(parentId)) {
+                return pair;
+            }
+        }
+        return null;
     }
 
     /**
