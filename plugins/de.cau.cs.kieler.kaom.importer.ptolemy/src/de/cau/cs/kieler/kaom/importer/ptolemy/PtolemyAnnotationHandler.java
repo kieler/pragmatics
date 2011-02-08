@@ -402,7 +402,7 @@ public class PtolemyAnnotationHandler extends TransformationWorkflowHook {
                 DocumentRoot specificElement = (DocumentRoot) currentElement;
                 EntityType candidate = specificElement.getEntity();
                 
-                if (candidate.getName().equals(pathElement)) {
+                if (candidate != null && candidate.getName().equals(pathElement)) {
                     currentElement = candidate;
                     continue;
                 } else {
