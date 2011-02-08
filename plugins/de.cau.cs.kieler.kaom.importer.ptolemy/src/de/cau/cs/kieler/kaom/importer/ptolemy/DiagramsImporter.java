@@ -528,6 +528,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 entryFunction,
                 sourceFileURI,
                 targetFileURI,
+                new PtolemyAnnotationHandler(),
                 p1, p2, p3);
         
         // Check if everything went fine
