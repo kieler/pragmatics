@@ -32,6 +32,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
@@ -326,9 +327,12 @@ public class KiVi {
             ((AbstractTriggerState) triggerState).setSequenceNumber();
         }
 
+        Collection<ICombination> relevantCombos;
+        // get a copy of the list to avoid race conditions and deadlock
         synchronized (triggerStates2Combinations) {
-            Collection<ICombination> relevantCombos = triggerStates2Combinations.get(triggerState
-                    .getClass());
+            relevantCombos = Lists.newArrayList(triggerStates2Combinations.get(triggerState
+                    .getClass()));
+        }
             if (debug) {
                 System.out.println(triggerState);
             }
@@ -341,7 +345,7 @@ public class KiVi {
                 } catch (KielerNotSupportedException e) {
                     error(combo, triggerState, e);
                 }
-            }
+            
         }
         triggerState.finish();
     }

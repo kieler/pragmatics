@@ -148,6 +148,19 @@ public abstract class AbstractCombination implements ICombination {
     protected void schedule(final IEffect effect) {
         effects.add(effect);
     }
+    
+    /**
+     * Schedule a compound effect for execution, performs merging against all other effects 
+     * scheduled during
+     * this execution before actually executing the effect. This is equivalent to schedule all
+     * primitive effects of an ICompoundEffect.
+     * 
+     * @param compoundEffect
+     *            the compound effect to schedule
+     */
+    protected void schedule(final ICompoundEffect compoundEffect){
+            effects.addAll(compoundEffect.getPrimitiveEffects());
+    }
 
     /**
      * Called by execute() to make sure previous effects are not undone when an execution wants to

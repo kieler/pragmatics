@@ -17,6 +17,10 @@ package de.cau.cs.kieler.core.kivi;
  * An effect executes some type of view management action, usually a visual change of the graphical
  * model.
  * 
+ * haf: The execute and undo methods get called by the EffectsWorker thread and are expected
+ * to do something on the UI thread. Avoid working on the UI thread in an Effects *Constructor*, as
+ * it will be called in another thread causing an UI-thread Deadlock!
+ * 
  * @author mmu
  * 
  */
