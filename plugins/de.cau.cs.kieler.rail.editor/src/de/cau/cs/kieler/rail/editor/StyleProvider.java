@@ -102,6 +102,7 @@ public class StyleProvider implements IStyleProvider {
     /** style id for Breach (Einbruchsstelle) */
     public static final String PORT = "port";
     public static final String PORT_END = "port end";
+    public static final String POLYLINE = "polyline";
 
     /**
      * Create the style with given identifier.
@@ -151,6 +152,12 @@ public class StyleProvider implements IStyleProvider {
                     ColorConstant.WHITE));
             style.setFilled(false);
             style.setTransparency(1.0);
+            return style;
+        } else if (POLYLINE.equals(id)) {
+            Style style = gaService.createStyle(diagram, id);
+            style.setForeground(gaService.manageColor(diagram,
+                    ColorConstant.BLACK));
+            style.setLineWidth(2);
             return style;
         }
         return null;

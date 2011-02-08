@@ -493,6 +493,7 @@ public class AddVertexFeature extends AbstractAddFeature {
         Shape shapep = peCreateService.createShape(containerShape, false);
         Polyline polyline =
                 gaService.createPolyline(shapep, spitzeStammXY); //{ 0, 25, 25, 25 });
+        polyline.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
 
         // Line (30°)
         mitteAbzweigXY[1] = getYFromArray(mitteAbzweigXY, 25);
@@ -500,6 +501,7 @@ public class AddVertexFeature extends AbstractAddFeature {
         //mitteAbzweigXY
         Polyline polyline30 =
                 gaService.createPolyline(shapep30,mitteAbzweigXY);//new int[] { 20, 25, 0,
+        polyline30.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
                         //(int) (25 * 0.577350269) });
         //polyline30.getPoints().get(0).setX(mitteAbzweigXY[0]);
         
