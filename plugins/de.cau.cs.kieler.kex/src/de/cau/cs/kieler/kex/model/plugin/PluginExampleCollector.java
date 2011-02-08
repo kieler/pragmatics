@@ -58,10 +58,7 @@ public class PluginExampleCollector extends ExampleCollector {
      */
     @Override
     public void load() throws KielerException {
-        if (this.categoryPool == null) {
-            this.categoryPool = new ArrayList<Category>();
-            loadCategories();
-        }
+        getCategories();
         // TODO rebuild,that first loadcategories and then loadexamples
         IConfigurationElement[] configElements = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(PluginConstants.KEX_EXT_POINT);
@@ -80,6 +77,7 @@ public class PluginExampleCollector extends ExampleCollector {
                     try {
                         example = toExample(element);
                     } catch (Exception e) {
+                        // if an example could not load correctly take the next one.
                         continue;
                     }
                     this.examplePool.put(exampleTitle, example);
@@ -93,11 +91,6 @@ public class PluginExampleCollector extends ExampleCollector {
                         + element.getAttribute(PluginConstants.Example.ID) + "\". "
                         + e1.getLocalizedMessage());
             }
-            // catch (KielerException e2) {
-            // throw new KielerException("Error while loading example \""
-            // + element.getAttribute(PluginConstants.ID) + "\". "
-            // + e2.getLocalizedMessage());
-            // }
         }
     }
 
@@ -118,8 +111,7 @@ public class PluginExampleCollector extends ExampleCollector {
         String iconPath = categoryElement.getAttribute(PluginConstants.Category.ICON);
         String parentId = categoryElement.getAttribute(PluginConstants.Category.PARENT);
         Category category = new Category(id, title, description, iconPath, parentId);
-        String exNamespaceId = categoryElement.getNamespaceIdentifier();
-        category.setNamespaceId(exNamespaceId);
+        category.setNamespaceId(categoryElement.getNamespaceIdentifier());
         categoryPool.add(category);
     }
 
