@@ -21,8 +21,13 @@ import java.util.List;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.LayoutManager;
+import org.eclipse.draw2d.PolygonShape;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.PointList;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
@@ -30,6 +35,7 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
+import org.eclipse.swt.graphics.Color;
 
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.NamedObj;
@@ -83,37 +89,37 @@ public class KaomPortProvider implements IRenderingProvider {
                             ptolemy.kernel.Port ptolemyPort = entity.getPort(name);
                             if (ptolemyPort instanceof ptolemy.actor.parameters.ParameterPort) {
                                 if (input.equals("UP")) {
-                                    return createSvg(getUpwardsPortSvgString("gray"));
+                                    return getUpwardsPortSvgString(ColorConstants.gray);
                                 } else if (input.equals("DOWN")) {
-                                    return createSvg(getDownwardsPortSvgString("gray"));
+                                    return getDownwardsPortSvgString(ColorConstants.gray);
                                 } else {
-                                    return createSvg(getPortSvgString("gray"));
+                                    return getPortSvgString(ColorConstants.gray);
                                 }
                             } else if (ptolemyPort instanceof ptolemy.actor.IOPort) {
                                 if (((ptolemy.actor.IOPort) (ptolemyPort)).isMultiport()) {
                                     if (input.equals("UP")) {
-                                        return createSvg(getUpwardsPortSvgString("white"));
+                                        return getUpwardsPortSvgString(ColorConstants.white);
                                     } else if (input.equals("DOWN")) {
-                                        return createSvg(getDownwardsPortSvgString("white"));
+                                        return getDownwardsPortSvgString(ColorConstants.white);
                                     } else {
-                                        return createSvg(getPortSvgString("white"));
+                                        return getPortSvgString(ColorConstants.white);
                                     }
                                 } else {
                                     if (input.equals("UP")) {
-                                        return createSvg(getUpwardsPortSvgString("black"));
+                                        return getUpwardsPortSvgString(ColorConstants.black);
                                     } else if (input.equals("DOWN")) {
-                                        return createSvg(getDownwardsPortSvgString("black"));
+                                        return getDownwardsPortSvgString(ColorConstants.black);
                                     } else {
-                                        return createSvg(getPortSvgString("black"));
+                                        return getPortSvgString(ColorConstants.black);
                                     }
                                 }
                             } else {
                                 if (input.equals("UP")) {
-                                    return createSvg(getUpwardsPortSvgString("black"));
+                                    return getUpwardsPortSvgString(ColorConstants.black);
                                 } else if (input.equals("DOWN")) {
-                                    return createSvg(getDownwardsPortSvgString("black"));
+                                    return getDownwardsPortSvgString(ColorConstants.black);
                                 } else {
-                                    return createSvg(getPortSvgString("black"));
+                                    return getPortSvgString(ColorConstants.black);
                                 }
                             }
                         }
@@ -147,42 +153,69 @@ public class KaomPortProvider implements IRenderingProvider {
     }
 
     /**
-     * Holds an svg image description of a triangle pointing east.
+     * Holds a figure of a triangle pointing east.
      * 
      * @param color
-     *            a css compatible color name
-     * @return the svg description
+     *            an swt compatible color name
+     * @return the port figure
      */
-    private String getPortSvgString(final String color) {
-        return "<svg width=\"7.5\" height=\"7.5\">"
-                + "<polygon points=\"0,7 0,0 7,3.5 0,7\" style=\"fill:" + color
-                + ";stroke:black;stroke-width:1\" />" + "</svg>";
+    private IFigure getPortSvgString(final Color color) {
+        PointList pointList = new PointList();
+        pointList.addPoint(0,7);
+        pointList.addPoint(0,0);
+        pointList.addPoint(new Point(7, 3.5));
+        pointList.addPoint(0,7);
+        PolygonShape figure = new PolygonShape();
+        figure.setPoints(pointList);
+        figure.setBackgroundColor(color);
+        figure.setForegroundColor(ColorConstants.black);
+        figure.setLineWidth(1);
+        figure.getBounds().setSize(8,8);
+        return figure;
     }
 
     /**
-     * Holds an svg image description of a triangle pointing south.
+     * Holds a figure of a triangle pointing south.
      * 
      * @param color
-     *            a css compatible color name
-     * @return the svg description
+     *            an swt compatible color name
+     * @return the port figure 
      */
-    private String getDownwardsPortSvgString(final String color) {
-        return "<svg width=\"7.5\" height=\"7.5\">"
-                + "<polygon points=\"0,0 7,0 3.5,7 0,0\" style=\"fill:" + color
-                + ";stroke:black;stroke-width:1\" />" + "</svg>";
+    private IFigure getDownwardsPortSvgString(final Color color) {
+        PointList pointList = new PointList();
+        pointList.addPoint(0,0);
+        pointList.addPoint(7,0);
+        pointList.addPoint(new Point(3.5, 7));
+        pointList.addPoint(0,0);
+        PolygonShape figure = new PolygonShape();
+        figure.setPoints(pointList);
+        figure.setBackgroundColor(color);
+        figure.setForegroundColor(ColorConstants.black);
+        figure.setLineWidth(1);
+        figure.getBounds().setSize(8,8);
+        return figure;
     }
 
     /**
-     * Holds an svg image description of a triangle pointing north.
+     * Holds a figure of a triangle pointing north.
      * 
      * @param color
-     *            a css compatible color name
-     * @return the svg description
+     *            a swt compatible color name
+     * @return the port figure
      */
-    private String getUpwardsPortSvgString(final String color) {
-        return "<svg width=\"7.5\" height=\"7.5\">"
-                + "<polygon points=\"0,7 7,7 3.5,0 0,7\" style=\"fill:" + color
-                + ";stroke:black;stroke-width:1\" />" + "</svg>";
+    private IFigure getUpwardsPortSvgString(final Color color) {
+        PointList pointList = new PointList();
+        pointList.addPoint(0,7);
+        pointList.addPoint(7,7);
+        pointList.addPoint(new Point(3.5, 0));
+        pointList.addPoint(0,7);
+        PolygonShape figure = new PolygonShape();
+        figure.setPoints(pointList);
+        figure.setBackgroundColor(color);
+        figure.setForegroundColor(ColorConstants.black);
+        figure.setLineWidth(1);
+        figure.getBounds().setSize(8,8);
+        return figure;
     }
 
     /**

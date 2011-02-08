@@ -5,7 +5,7 @@
          point="de.cau.cs.kieler.karma">
       <configuration
             Priority="2"
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomFigureProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomRenderingProvider">
          <conditions>
             <customCondition
                   condition="de.cau.cs.kieler.karma.AnnotationCondition"
@@ -129,7 +129,7 @@
       </configuration>
       <configuration
             Priority="3"
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomFigureProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomRenderingProvider">
          <conditions>
             <compoundCondition
                   figureParam="Director"
@@ -447,7 +447,7 @@
          </editPart>
       </configuration>
       <configuration
-            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomFigureProvider">
+            RenderingProvider="de.cau.cs.kieler.kaom.karma.renderingprovider.KaomRenderingProvider">
          <conditions>
             <compoundCondition
                   figureParam="stateConnection">
