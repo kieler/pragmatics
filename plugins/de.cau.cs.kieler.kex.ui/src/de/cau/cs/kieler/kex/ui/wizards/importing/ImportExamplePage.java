@@ -25,7 +25,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -85,6 +87,9 @@ public class ImportExamplePage extends WizardPage {
     private static final int IMG_PADDINGS_WIDTH = 40;
     private static final int IMG_PADDINGS_HEIGHT = 120;
 
+    private static final int WIZARD_MIN_WIDTH = 540;
+    private static final int WIZARD_MIN_HEIGHT = 600;
+
     private Text exampleDescField;
 
     private Label imageLabel;
@@ -111,7 +116,14 @@ public class ImportExamplePage extends WizardPage {
         setDescription(Messages.MainPage_pageDescription);
     }
 
-    public void createControl(Composite parent) {
+    /**
+     * Creates the control composite of the wizardpage. Devides the components of the page into
+     * left(treeviewer) and right(previewpicture + description).
+     * 
+     * @param parent
+     *            , Composite
+     */
+    public void createControl(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 2;
@@ -120,10 +132,10 @@ public class ImportExamplePage extends WizardPage {
         setControl(composite);
         createLeft(composite);
         createRight(composite);
-        getShell().setMinimumSize(540, 600);
+        getShell().setMinimumSize(WIZARD_MIN_WIDTH, WIZARD_MIN_HEIGHT);
     }
 
-    private void createLeft(Composite parent) {
+    private void createLeft(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -145,7 +157,7 @@ public class ImportExamplePage extends WizardPage {
         treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
             @SuppressWarnings("unchecked")
-            public void selectionChanged(SelectionChangedEvent event) {
+            public void selectionChanged(final SelectionChangedEvent event) {
                 TreeSelection treeEvent = (TreeSelection) event.getSelection();
                 Object firstElement = treeEvent.getFirstElement();
                 if (firstElement instanceof Pair) {
@@ -161,6 +173,11 @@ public class ImportExamplePage extends WizardPage {
                     updateImageLabel(computeImage != null ? computeImage : noPreviewPic());
 
                 }
+            }
+        });
+        treeViewer.addCheckStateListener(new ICheckStateListener() {
+            public void checkStateChanged(final CheckStateChangedEvent event) {
+                treeViewer.setSubtreeChecked(event.getElement(), event.getChecked());
             }
         });
         treeViewer.expandAll();
@@ -191,7 +208,8 @@ public class ImportExamplePage extends WizardPage {
 
     }
 
-    private Image computeImage(String imagePath, String nameSpaceId, int imageWidth, int imageHeight) {
+    private Image computeImage(final String imagePath, final String nameSpaceId,
+            final int imageWidth, final int imageHeight) {
         if (imagePath != null && imagePath.length() > 0) {
             Bundle bundle = Platform.getBundle(nameSpaceId);
             URL resource = bundle.getEntry(imagePath);
@@ -244,10 +262,16 @@ public class ImportExamplePage extends WizardPage {
 
     }
 
+    /**
+     * Contentprovider for the example treeviewer.
+     * 
+     * @author pkl
+     * 
+     */
     private class ExampleContentProvider implements ITreeContentProvider {
 
         // Maybe use treeElements which are implemented in an revision before.
-        List<Pair<Category, List<Object>>> input;
+        private List<Pair<Category, List<Object>>> input;
         /** the filter map that stores visibility information. */
         private final Map<Object, Boolean> filterMap = new HashMap<Object, Boolean>();
         /** the current filter value. */
@@ -296,14 +320,15 @@ public class ImportExamplePage extends WizardPage {
         public Object getParent(final Object element) {
             if (element instanceof Example) {
                 for (Pair<Category, List<Object>> pair : input) {
-                    if ((pair.getFirst()).getId().equals(((Example) element).getCategoryId()))
+                    if ((pair.getFirst()).getId().equals(((Example) element).getCategoryId())) {
                         return pair.getFirst();
+                    }
                 }
             }
             return null;
         }
 
-        public boolean hasChildren(Object element) {
+        public boolean hasChildren(final Object element) {
             return getChildren(element).length > 0;
         }
 
@@ -371,7 +396,16 @@ public class ImportExamplePage extends WizardPage {
 
     }
 
+    /**
+     * Labelprovider for the example treeviewer.
+     * 
+     * @author pkl
+     * 
+     */
     private class ExampleLabelProvider extends LabelProvider implements ILabelProvider {
+
+        private static final int ICON_WIDTH = 16;
+        private static final int ICON_HEIGHT = 16;
 
         @SuppressWarnings("unchecked")
         @Override
@@ -393,20 +427,21 @@ public class ImportExamplePage extends WizardPage {
                 Pair<Category, List<Object>> pair = (Pair<Category, List<Object>>) element;
                 Category first = pair.getFirst();
                 // if (first.getIconPath() != null) {
-                return computeImage(first.getIconPath(), first.getNamespaceId(), 16, 16);
+                return computeImage(first.getIconPath(), first.getNamespaceId(), ICON_WIDTH,
+                        ICON_HEIGHT);
                 // } else {
                 // return noPreviewPic();
                 // }
             }
             if (element instanceof Example) {
                 return computeImage(((Example) element).getOverviewPic(),
-                        ((Example) element).getNamespaceId(), 16, 16);
+                        ((Example) element).getNamespaceId(), ICON_WIDTH, ICON_HEIGHT);
             }
             return null;
         }
     }
 
-    private void createRight(Composite parent) {
+    private void createRight(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -445,8 +480,8 @@ public class ImportExamplePage extends WizardPage {
 
                     private Rectangle bounds;
 
-                    private final int DIALOG_WIDTH = 800;
-                    private final int DIALOG_HEIGHT = 600;
+                    private static final int DIALOG_WIDTH = 800;
+                    private static final int DIALOG_HEIGHT = 600;
 
                     private Point point;
 
@@ -633,10 +668,11 @@ public class ImportExamplePage extends WizardPage {
     public List<Example> getCheckedExamples() {
         List<Example> result = new ArrayList<Example>();
         Object[] checkedElements = this.treeViewer.getCheckedElements();
-        for (Object ob : checkedElements)
+        for (Object ob : checkedElements) {
             if (ob instanceof Example) {
                 result.add((Example) ob);
             }
+        }
         return result;
     }
 
