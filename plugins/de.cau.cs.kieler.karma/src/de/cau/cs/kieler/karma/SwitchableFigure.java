@@ -94,7 +94,7 @@ public class SwitchableFigure extends Shape {
     public void setCurrentFigure(final IFigure figure) {
         currentFigure = figure;
         currentFigure.setParent(this.getParent());
-        currentFigure.setBounds(super.getBounds());
+        //currentFigure.setBounds(super.getBounds());
         
 
         if (this.getParent() instanceof DefaultSizeNodeFigure
