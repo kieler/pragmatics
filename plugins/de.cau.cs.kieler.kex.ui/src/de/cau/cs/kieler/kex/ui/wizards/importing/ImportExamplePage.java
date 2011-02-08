@@ -177,7 +177,31 @@ public class ImportExamplePage extends WizardPage {
         });
         treeViewer.addCheckStateListener(new ICheckStateListener() {
             public void checkStateChanged(final CheckStateChangedEvent event) {
+                // TODO test if under subcategory funzt
                 treeViewer.setSubtreeChecked(event.getElement(), event.getChecked());
+                // TODO category uncheck if no childs selected and category check one child is
+                // selected.
+                // isCategoryElementChecked(event.getElement(), false);
+            }
+
+            private boolean isCategoryElementChecked(final Object element, final boolean isChecked) {
+                boolean result = false;
+                if (element instanceof Pair) {
+                    @SuppressWarnings("unchecked")
+                    Pair<Category, ArrayList<Object>> pair = (Pair<Category, ArrayList<Object>>) element;
+                    for (Object categoryElement : pair.getSecond()) {
+                        if (treeViewer.getChecked(categoryElement)) {
+                            result = true;
+                        }
+                        if (categoryElement instanceof Pair) {
+                            boolean categoryElementChecked = isCategoryElementChecked(
+                                    categoryElement, false);
+                            treeViewer.setChecked(categoryElement, categoryElementChecked);
+                            result |= categoryElementChecked;
+                        }
+                    }
+                }
+                return result;
             }
         });
         treeViewer.expandAll();
@@ -555,22 +579,6 @@ public class ImportExamplePage extends WizardPage {
         this.exampleDescField.setLayoutData(descData);
     }
 
-    private void updateCategory(final SelectionChangedEvent e) {
-        // if (e.detail != SWT.CHECK) {
-        return;
-        // }
-        // TreeItem parentItem = ((TreeItem) e.item).getParentItem();
-        // TreeItem[] items = parentItem.getItems();
-        // boolean selectedAll = true;
-        // for (TreeItem treeItem : items) {
-        // if (!treeItem.getChecked()) {
-        // selectedAll = false;
-        // break;
-        // }
-        // }
-        // parentItem.setChecked(selectedAll);
-    }
-
     /**
      * Updates the label of preview picture.
      * 
@@ -583,47 +591,6 @@ public class ImportExamplePage extends WizardPage {
         imageLabel.setSize(bounds.width + IMG_PADDINGS_WIDTH, bounds.height + IMG_PADDINGS_HEIGHT);
         imageLabel.pack();
     }
-
-    // /**
-    // * Loads image. The parameters define the max width and heigt of an image.
-    // The loaded image
-    // will
-    // * scaled to the parameter values, while keeping the imageformat. If
-    // fullSize is true,
-    // * imageWidth and imageHeight will ignore and the image will load with its
-    // normal size.
-    // *
-    // * @param fullSize
-    // * , set false, if imageWidth and imageHeight should used for scaling
-    // * @param image_width
-    // * @param image_height
-    // * @return
-    // */
-    // private Image loadImage(boolean fullSize, final double imageWidth, final
-    // double imageHeight)
-    // {
-    // final String previewPicPath = selectedExample.getOverviewPic();
-    // if (previewPicPath != null && previewPicPath.length() > 1) {
-    // try {
-    // ImageData imgData = new ImageData(ExampleManager.get().loadOverviewPic(
-    // selectedExample));
-    // if (!fullSize) {
-    // double tempSize = Math.max(imgData.width / imageWidth, imgData.height
-    // / imageHeight);
-    // imgData = ImageConverter.scaleSWTImage(imgData,
-    // (int) (imgData.width / tempSize), (int) (imgData.height / tempSize),
-    // java.awt.Image.SCALE_SMOOTH);
-    // }
-    // return new Image(previewComp.getDisplay(), imgData);
-    //
-    // } catch (final KielerException e) {
-    // e.printStackTrace();
-    // return noPreviewPic();
-    // }
-    // }
-    // return noPreviewPic();
-    //
-    // }
 
     private void updateDescriptionLabel(final Example example) {
         StringBuilder sb = new StringBuilder();

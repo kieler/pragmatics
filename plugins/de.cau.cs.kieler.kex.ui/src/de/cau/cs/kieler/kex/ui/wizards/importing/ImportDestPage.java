@@ -132,12 +132,10 @@ public class ImportDestPage extends WizardResourceImportPage {
             IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
             IPath projectPath = containerPath.removeLastSegments(containerPath.segmentCount() - 1);
 
-            if (workspace.getRoot().exists(projectPath)) {
-                return true;
+            if (!workspace.getRoot().exists(projectPath)) {
+                setMessage(IDEWorkbenchMessages.WizardImportPage_projectNotExist,
+                        IMessageProvider.WARNING);
             }
-            setMessage(IDEWorkbenchMessages.WizardImportPage_projectNotExist,
-                    IMessageProvider.WARNING);
-            return false;
         }
         if (!container.isAccessible()) {
             setMessage(IDEWorkbenchMessages.WizardImportPage_folderMustExist,
