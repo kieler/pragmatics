@@ -513,7 +513,7 @@ public class ImportExamplePage extends WizardPage {
         Label descriptionLabel = new Label(composite, SWT.NONE);
         descriptionLabel.setText("Example Description");
         this.exampleDescField = new Text(composite, SWT.NONE | SWT.MULTI | SWT.V_SCROLL
-                | SWT.BORDER);
+                | SWT.H_SCROLL | SWT.BORDER);
         GridData descData = new GridData(GridData.FILL_HORIZONTAL);
         descData.heightHint = DESC_HEIGHT_HINT;
         descData.minimumHeight = DESC_MIN_HEIGHT;
