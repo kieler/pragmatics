@@ -14,7 +14,6 @@
 
 package de.cau.cs.kieler.kaom.importer.ptolemy;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,7 +37,6 @@ import com.microstar.xml.XmlException;
 
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
-import de.cau.cs.kieler.core.annotations.ReferenceAnnotation;
 import de.cau.cs.kieler.core.annotations.TypedStringAnnotation;
 import de.cau.cs.kieler.kaom.KaomFactory;
 import de.cau.cs.kieler.kaom.Port;
