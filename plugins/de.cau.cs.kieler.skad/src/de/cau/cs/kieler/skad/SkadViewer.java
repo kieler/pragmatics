@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolox.swt.PSWTCanvas;
 
 /**
@@ -29,7 +28,6 @@ import edu.umd.cs.piccolox.swt.PSWTCanvas;
  * @author msp
  */
 public class SkadViewer extends Viewer {
-
     /** the canvas used for drawing. */
     private PSWTCanvas canvas;
     
@@ -50,8 +48,6 @@ public class SkadViewer extends Viewer {
      */
     public SkadViewer(final Composite parent, final int style) {
         canvas = new PSWTCanvas(parent, style);
-        PNode child = new PText("Test");
-        canvas.getLayer().addChild(child);
     }
     
     /**
@@ -67,7 +63,9 @@ public class SkadViewer extends Viewer {
      */
     @Override
     public Object getInput() {
-        // TODO Auto-generated method stub
+        if (canvas.getLayer().getChildrenCount() > 0) {
+            return canvas.getLayer().getChild(0);
+        }
         return null;
     }
 
@@ -75,9 +73,11 @@ public class SkadViewer extends Viewer {
      * {@inheritDoc}
      */
     @Override
-    public ISelection getSelection() {
-        // TODO Auto-generated method stub
-        return null;
+    public void setInput(final Object input) {
+        if (input instanceof PNode) {
+            canvas.getLayer().removeAllChildren();
+            canvas.getLayer().addChild((PNode) input);
+        }
     }
 
     /**
@@ -93,9 +93,9 @@ public class SkadViewer extends Viewer {
      * {@inheritDoc}
      */
     @Override
-    public void setInput(final Object input) {
+    public ISelection getSelection() {
         // TODO Auto-generated method stub
-
+        return null;
     }
 
     /**

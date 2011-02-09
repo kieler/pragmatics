@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import de.cau.cs.kieler.skad.SkadViewer;
+import edu.umd.cs.piccolo.PNode;
 
 /**
  * A view part for scalable diagrams.
@@ -34,6 +35,9 @@ public class SkadViewPart extends ViewPart {
     @Override
     public void createPartControl(final Composite parent) {
         viewer = new SkadViewer(parent);
+        
+        ShowDiagramAction showDiagramAction = new ShowDiagramAction(this, getSite().getPage());
+        getViewSite().getActionBars().getToolBarManager().add(showDiagramAction);
     }
 
     /**
@@ -42,6 +46,15 @@ public class SkadViewPart extends ViewPart {
     @Override
     public void setFocus() {
         viewer.getControl().setFocus();
+    }
+    
+    /**
+     * Show the given Piccolo node in the viewer.
+     * 
+     * @param piccoloNode a Piccolo node
+     */
+    public void showNode(final PNode piccoloNode) {
+        viewer.setInput(piccoloNode);
     }
 
 }
