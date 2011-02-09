@@ -47,8 +47,8 @@ import de.cau.cs.kieler.kaom.Entity;
  * Handles Ptolemy annotations and attaches them to the entity they are most
  * likely annotating.
  * 
- * In Ptolemy, annotations in a model are like comments in source code. There
- * are two ways how they can be represented in MOML:
+ * In Ptolemy, certain annotations in a model are like comments in source code.
+ * There are two ways how they can be represented in MOML:
  * 
  *   1. Using a property of type "ptolemy.vergil.kernel.attributes.TextAttribute"
  *      with another property named "text", as follows:
@@ -96,27 +96,28 @@ import de.cau.cs.kieler.kaom.Entity;
  * It's the latter version that causes a whole lot of problems when transforming
  * the Ptolemy model into a KAOM model. The {@code configure} element is a mixed
  * element, which means that it can contain anything, not just XML. However, it
- * does contain XML (the {@code svg} element and its children), which disturbs
- * the quiet peace of the parser. Thus, the {@code configure} element and its
- * children are dropped during the transformation and are added to the list of
- * unknown features. That's where this handler comes in.
+ * does contain XML (usually an {@code svg} element and its children), which
+ * disturbs the quiet peace of the parser. Which, in turn, disturbs my quiet peace.
+ * Thus, the {@code configure} element and its children are dropped by the parser
+ * during the transformation and are added to a list of unknown features. That's
+ * where this handler comes in.
  * 
  * The handler is hooked into the transformation workflow just before the
  * transformed model is written to a file. It takes a look at the transformed
  * model and looks for unknown elements. If it finds anything matching the second
  * comment style, it adds a {@code TypedStringAnnotation} to the transformed
- * model element that contains the annotation's text, thus making it a proper
- * comment annotation.
+ * model element that contains the annotation's text, thus preserving the comment's
+ * text even in the face of severely hopeless circumstances. Hurray!
  * 
- * After that's done, we apply a heuristic to each comment annotation, trying
+ * After that's done, it applies a heuristic to each comment annotation, trying
  * to find the entity it is probably annotating. If we find any, the comment is
  * attached to it by means of a {@code ReferenceAnnotation} named {@code attachedTo}.
  * If we don't find one, that {@code ReferenceAnnotation} is still added to the
  * comment, but with an empty reference; thus, the presence of this annotation
  * can be used to find out if an annotation represents a comment or not.
  * 
- * THIS STUFF IS HIGHLY EXPERIMENTAL!! APPROACH WITH CAUTION IN COMPANY OF
- * AT LEAST ONE ADULT TRAINED IN MARTIAL ARTS OR WITH GUNS!! LOTS OF GUNS!!
+ * This is still kind of experimental. It does work, but the heuristic is quite
+ * simpllistic and doesn't always give correct results.
  * 
  * @author cds
  */
@@ -349,19 +350,21 @@ public class PtolemyAnnotationHandler extends TransformationWorkflowHook {
         } else if (!(locationAnnotation instanceof TypedStringAnnotation)) {
             return null;
         } else {
-            // Split the location string into an array of components
+            // Split the location string into an array of components. Locations have
+            // one of the following three representations:
+            //   "[140.0, 20.0]"     "{140.0, 20.0}"     "140.0, 20.0"
             String locationString = ((TypedStringAnnotation) locationAnnotation).getValue();
             String[] locationArray = locationString.split("[\\s,\\[\\]{}]+");
             
-            // There must be exactly three components: an empty first string, and the
-            // x and y values.
-            if (locationArray.length == 3) {
+            // There must be two or three components: an optional empty first string,
+            // (occurs with the first two representations outlined above) and the x
+            // and y values.
+            int locationArrayLength = locationArray.length;
+            if (locationArrayLength == 2 || locationArrayLength == 3) {
                 try {
                     Point2D.Double result = new Point2D.Double();
-                    result.x = Double.valueOf(locationArray[1]);
-                    result.y = Double.valueOf(locationArray[2]);
-                    
-                    System.out.println(result);
+                    result.x = Double.valueOf(locationArray[locationArrayLength - 2]);
+                    result.y = Double.valueOf(locationArray[locationArrayLength - 1]);
                     
                     return result;
                 } catch (NumberFormatException e) {
