@@ -125,22 +125,22 @@ public class DiagramsImporter implements IRunnableWithProgress {
     /**
      * Constructs a new instance with the given configuration.
      * 
-     * @param theWizard the wizard using this importer.
-     * @param theSourceFiles the list of source files to import.
-     * @param theTargetContainerPath the possibly non-existent container to import them to.
-     * @param bInitializeDiagramFiles whether to initialize KAOD diagram files.
-     * @param bOverwriteWithoutWarning whether existing files should be overwritten without
+     * @param wizard the wizard using this importer.
+     * @param sourceFiles the list of source files to import.
+     * @param targetContainerPath the possibly non-existent container to import them to.
+     * @param initializeDiagramFiles whether to initialize KAOD diagram files.
+     * @param overwriteWithoutWarning whether existing files should be overwritten without
      *                                 warning.
      */
-    public DiagramsImporter(final ImportDiagramsWizard theWizard, final List<File> theSourceFiles,
-            final IPath theTargetContainerPath, final boolean bInitializeDiagramFiles,
-            final boolean bOverwriteWithoutWarning) {
+    public DiagramsImporter(final ImportDiagramsWizard wizard, final List<File> sourceFiles,
+            final IPath targetContainerPath, final boolean initializeDiagramFiles,
+            final boolean overwriteWithoutWarning) {
         
-        wizard = theWizard;
-        sourceFiles = theSourceFiles;
-        targetContainerPath = theTargetContainerPath;
-        initializeDiagramFiles = bInitializeDiagramFiles;
-        overwriteWithoutWarning = bOverwriteWithoutWarning;
+        this.wizard = wizard;
+        this.sourceFiles = sourceFiles;
+        this.targetContainerPath = targetContainerPath;
+        this.initializeDiagramFiles = initializeDiagramFiles;
+        this.overwriteWithoutWarning = overwriteWithoutWarning;
     }
     
     

@@ -48,14 +48,14 @@ public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
     /**
      * Constructs a new instance.
      * 
-     * @param theSelection the selection the wizard was called on.
+     * @param selection the selection the wizard was called on.
      */
-    public ImportDiagramsWorkspaceSourcesPage(final IStructuredSelection theSelection) {
+    public ImportDiagramsWorkspaceSourcesPage(final IStructuredSelection selection) {
         super(PAGE_NAME, true, PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS);
         
         this.setMessage(Messages.ImportDiagramsWorkspaceSourcesPage_message);
         
-        selection = theSelection;
+        this.selection = selection;
     }
     
     
