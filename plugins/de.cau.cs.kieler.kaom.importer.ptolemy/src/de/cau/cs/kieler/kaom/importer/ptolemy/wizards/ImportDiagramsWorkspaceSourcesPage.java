@@ -41,9 +41,6 @@ public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
     // CONSTANTS
     private static final String PAGE_NAME = "importDiagramsWorkspaceSourcesPage"; //$NON-NLS-1$
     
-    // VARIABLES
-    private IStructuredSelection selection;
-    
     
     /**
      * Constructs a new instance.
@@ -51,11 +48,9 @@ public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
      * @param selection the selection the wizard was called on.
      */
     public ImportDiagramsWorkspaceSourcesPage(final IStructuredSelection selection) {
-        super(PAGE_NAME, true, PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS);
+        super(PAGE_NAME, true, PtolemyImporterConstants.PTOLEMY_FILE_EXTENSIONS, selection);
         
         this.setMessage(Messages.ImportDiagramsWorkspaceSourcesPage_message);
-        
-        this.selection = selection;
     }
     
     
@@ -89,6 +84,7 @@ public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
         super.initializeControls();
         
         // Set the initial target container name
+        IStructuredSelection selection = this.getWorkspaceSelection();
         if (!selection.isEmpty()) {
             Object element = selection.getFirstElement();
             
