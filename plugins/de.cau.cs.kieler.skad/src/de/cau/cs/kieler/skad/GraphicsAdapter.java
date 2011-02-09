@@ -13,16 +13,19 @@
  */
 package de.cau.cs.kieler.skad;
 
+import java.awt.BasicStroke;
 import java.awt.Polygon;
 import java.awt.Shape;
+import java.awt.Stroke;
 
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.PointList;
-import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 import edu.umd.cs.piccolox.swt.SWTGraphics2D;
 
@@ -39,8 +42,20 @@ public class GraphicsAdapter extends Graphics {
      * @param r a Draw2D rectangle
      * @return an AWT rectangle
      */
-    public static Shape toShape(final Rectangle r) {
+    public static Shape toShape(final org.eclipse.draw2d.geometry.Rectangle r) {
         return new java.awt.Rectangle(r.x, r.y, r.width, r.height);
+    }
+    
+    /**
+     * Transform the given AWT shape to a Draw2D rectangle.
+     * 
+     * @param s an AWT shape
+     * @return a Draw2D rectangle
+     */
+    public static org.eclipse.draw2d.geometry.Rectangle toRectangle(final Shape s) {
+        java.awt.Rectangle bounds = s.getBounds();
+        return new org.eclipse.draw2d.geometry.Rectangle(bounds.x, bounds.y,
+                bounds.width, bounds.height);
     }
     
     /**
@@ -72,6 +87,30 @@ public class GraphicsAdapter extends Graphics {
         }
         return result;
     }
+    
+    /**
+     * Transform the given SWT color into an AWT color.
+     * 
+     * @param color an SWT color
+     * @return an AWT color
+     */
+    public static java.awt.Color toAWTColor(final org.eclipse.swt.graphics.Color color) {
+        return new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    /**
+     * Transform the given AWT color into an SWT color.
+     * 
+     * @param device the device for which to create the color
+     * @param color an AWT color
+     * @return an SWT color
+     */
+    public static org.eclipse.swt.graphics.Color toSWTColor(final Device device,
+            java.awt.Color color) {
+        // FIXME handle reuse and disposal of colors
+        return new org.eclipse.swt.graphics.Color(device, color.getRed(), color.getGreen(),
+                color.getBlue());
+    }
 
     /** the Piccolo wrapper for SWT graphics. */
     private SWTGraphics2D pg;
@@ -89,7 +128,7 @@ public class GraphicsAdapter extends Graphics {
      * {@inheritDoc}
      */
     @Override
-    public void clipRect(final Rectangle r) {
+    public void clipRect(final org.eclipse.draw2d.geometry.Rectangle r) {
         pg.setClip(toShape(r));
     }
 
@@ -179,7 +218,8 @@ public class GraphicsAdapter extends Graphics {
      * {@inheritDoc}
      */
     @Override
-    public void drawRoundRectangle(final Rectangle r, final int arcWidth, final int arcHeight) {
+    public void drawRoundRectangle(final org.eclipse.draw2d.geometry.Rectangle r,
+            final int arcWidth, final int arcHeight) {
         pg.drawRoundRect(r.x, r.y, r.width, r.height, arcWidth, arcHeight);
     }
 
@@ -245,7 +285,8 @@ public class GraphicsAdapter extends Graphics {
      * {@inheritDoc}
      */
     @Override
-    public void fillRoundRectangle(final Rectangle r, final int arcWidth, final int arcHeight) {
+    public void fillRoundRectangle(final org.eclipse.draw2d.geometry.Rectangle r,
+            final int arcWidth, final int arcHeight) {
         pg.fillRoundRect(r.x, r.y, r.width, r.height, arcWidth, arcHeight);
     }
 
@@ -254,8 +295,9 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void fillString(final String s, final int x, final int y) {
-        // TODO Auto-generated method stub
-
+        org.eclipse.swt.graphics.Point extent = pg.stringExtent(s);
+        pg.fillRect(x, y, extent.x, extent.y);
+        pg.drawString(s, x, y);
     }
 
     /**
@@ -263,26 +305,27 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void fillText(final String s, final int x, final int y) {
-        // TODO Auto-generated method stub
-
+        org.eclipse.swt.graphics.Point extent = pg.textExtent(s);
+        pg.fillRect(x, y, extent.x, extent.y);
+        pg.drawText(s, x, y);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Color getBackgroundColor() {
-        // TODO Auto-generated method stub
-        return null;
+    public org.eclipse.swt.graphics.Color getBackgroundColor() {
+        return toSWTColor(Display.getDefault(), pg.getBackground());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Rectangle getClip(final Rectangle rect) {
-        // TODO Auto-generated method stub
-        return null;
+    public org.eclipse.draw2d.geometry.Rectangle getClip(
+            final org.eclipse.draw2d.geometry.Rectangle rect) {
+        org.eclipse.draw2d.geometry.Rectangle clip = toRectangle(pg.getClip());
+        return rect.intersect(clip);
     }
 
     /**
@@ -290,8 +333,7 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public Font getFont() {
-        // TODO Auto-generated method stub
-        return null;
+        return pg.getSWTFont();
     }
 
     /**
@@ -299,17 +341,15 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public FontMetrics getFontMetrics() {
-        // TODO Auto-generated method stub
-        return null;
+        return pg.getSWTFontMetrics();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Color getForegroundColor() {
-        // TODO Auto-generated method stub
-        return null;
+    public org.eclipse.swt.graphics.Color getForegroundColor() {
+        return toSWTColor(Display.getDefault(), pg.getColor());
     }
 
     /**
@@ -317,8 +357,7 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public int getLineStyle() {
-        // TODO Auto-generated method stub
-        return 0;
+        return SWT.LINE_SOLID;
     }
 
     /**
@@ -326,8 +365,11 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public int getLineWidth() {
-        // TODO Auto-generated method stub
-        return 0;
+        Stroke stroke = pg.getStroke();
+        if (stroke instanceof BasicStroke) {
+            return (int) ((BasicStroke) stroke).getLineWidth();
+        }
+        return 1;
     }
 
     /**
@@ -335,8 +377,11 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public float getLineWidthFloat() {
-        // TODO Auto-generated method stub
-        return 0;
+        Stroke stroke = pg.getStroke();
+        if (stroke instanceof BasicStroke) {
+            return ((BasicStroke) stroke).getLineWidth();
+        }
+        return 1;
     }
 
     /**
@@ -388,7 +433,7 @@ public class GraphicsAdapter extends Graphics {
      * {@inheritDoc}
      */
     @Override
-    public void setBackgroundColor(final Color rgb) {
+    public void setBackgroundColor(final org.eclipse.swt.graphics.Color rgb) {
         // TODO Auto-generated method stub
 
     }
@@ -397,7 +442,7 @@ public class GraphicsAdapter extends Graphics {
      * {@inheritDoc}
      */
     @Override
-    public void setClip(final Rectangle r) {
+    public void setClip(final org.eclipse.draw2d.geometry.Rectangle r) {
         // TODO Auto-generated method stub
 
     }
@@ -415,7 +460,7 @@ public class GraphicsAdapter extends Graphics {
      * {@inheritDoc}
      */
     @Override
-    public void setForegroundColor(final Color rgb) {
+    public void setForegroundColor(final org.eclipse.swt.graphics.Color rgb) {
         // TODO Auto-generated method stub
 
     }
