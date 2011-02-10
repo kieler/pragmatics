@@ -60,7 +60,6 @@ public class ShowDiagramAction extends Action {
         if (diagramEditPart instanceof GraphicalEditPart) {
             IFigure diagramFigure = ((GraphicalEditPart) diagramEditPart).getFigure();
             Draw2DNode diagramNode = new Draw2DNode(diagramFigure);
-            diagramNode.refreshChildren();
             viewPart.showNode(diagramNode);
         }
     }

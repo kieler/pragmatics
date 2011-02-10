@@ -17,15 +17,17 @@ import java.awt.BasicStroke;
 import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
+import java.util.LinkedList;
 
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.graphics.LineAttributes;
+import org.eclipse.swt.graphics.Path;
 
 import edu.umd.cs.piccolox.swt.SWTGraphics2D;
 
@@ -35,6 +37,44 @@ import edu.umd.cs.piccolox.swt.SWTGraphics2D;
  * @author msp
  */
 public class GraphicsAdapter extends Graphics {
+    
+    /** The state data class. */
+    private static class State {
+        private Shape clip;
+        private AffineTransform transform;
+        private org.eclipse.swt.graphics.Color foreground;
+        private org.eclipse.swt.graphics.Color background;
+        private Font font;
+        private double lineWidth;
+        
+        /**
+         * Stores the state data of the given graphics into a new state.
+         * 
+         * @param g an SWT graphics wrapper
+         */
+        State(final SWTGraphics2D g) {
+            this.clip = g.getClip();
+            this.transform = g.getTransform();
+            this.foreground = g.getSWTColor();
+            this.background = g.getSWTBackground();
+            this.font = g.getSWTFont();
+            this.lineWidth = g.getLineWidth();
+        }
+        
+        /**
+         * Clones the state data object.
+         * 
+         * @param other a state data object
+         */
+        State(final State other) {
+            this.clip = other.clip.getBounds();
+            this.transform = new AffineTransform(other.transform);
+            this.foreground = other.foreground;
+            this.background = other.background;
+            this.font = other.font;
+            this.lineWidth = other.lineWidth;
+        }
+    }
     
     /**
      * Transform the given Draw2D rectangle to an AWT rectangle.
@@ -97,23 +137,24 @@ public class GraphicsAdapter extends Graphics {
     public static java.awt.Color toAWTColor(final org.eclipse.swt.graphics.Color color) {
         return new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue());
     }
-
+    
     /**
-     * Transform the given AWT color into an SWT color.
+     * Transform the given SWT line attributes into an AWT stroke.
      * 
-     * @param device the device for which to create the color
-     * @param color an AWT color
-     * @return an SWT color
+     * @param la line attributes
+     * @return an AWT stroke
      */
-    public static org.eclipse.swt.graphics.Color toSWTColor(final Device device,
-            java.awt.Color color) {
-        // FIXME handle reuse and disposal of colors
-        return new org.eclipse.swt.graphics.Color(device, color.getRed(), color.getGreen(),
-                color.getBlue());
+    public static Stroke toStroke(final LineAttributes la) {
+        return new BasicStroke(la.width, la.cap, la.join, la.miterLimit, la.dash, la.dashOffset);
     }
+    
 
     /** the Piccolo wrapper for SWT graphics. */
     private SWTGraphics2D pg;
+    /** the current state of the graphics adapter. */
+    private State currentState;
+    /** the stack of graphics states. */
+    private LinkedList<State> stack = new LinkedList<State>();
     
     /**
      * Creates a Draw2D graphics adapter.
@@ -122,14 +163,7 @@ public class GraphicsAdapter extends Graphics {
      */
     public GraphicsAdapter(final SWTGraphics2D graphics) {
         this.pg = graphics;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void clipRect(final org.eclipse.draw2d.geometry.Rectangle r) {
-        pg.setClip(toShape(r));
+        this.currentState = new State(graphics);
     }
 
     /**
@@ -137,7 +171,7 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void dispose() {
-        // do nothing, since this is just an adapter
+        stack.clear();
     }
 
     /**
@@ -147,14 +181,6 @@ public class GraphicsAdapter extends Graphics {
     public void drawArc(final int x, final int y, final int w, final int h, final int offset,
             final int length) {
         pg.drawArc(x, y, w, h, offset, length);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void drawFocus(final int x, final int y, final int w, final int h) {
-        // TODO not yet implemented
     }
 
     /**
@@ -188,6 +214,14 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void drawOval(final int x, final int y, final int w, final int h) {
         pg.drawOval(x, y, w, h);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void drawPath(final Path path) {
+        pg.drawPath(path);
     }
 
     /**
@@ -238,6 +272,14 @@ public class GraphicsAdapter extends Graphics {
     public void drawText(final String s, final int x, final int y) {
         pg.drawText(s, x, y);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void drawText(final String s, final int x, final int y, final int style) {
+        pg.drawText(s, x, y, style);
+    }
 
     /**
      * {@inheritDoc}
@@ -263,6 +305,14 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void fillOval(final int x, final int y, final int w, final int h) {
         pg.fillOval(x, y, w, h);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void fillPath(final Path path) {
+        pg.fillPath(path);
     }
 
     /**
@@ -315,7 +365,7 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public org.eclipse.swt.graphics.Color getBackgroundColor() {
-        return toSWTColor(Display.getDefault(), pg.getBackground());
+        return pg.getSWTBackground();
     }
 
     /**
@@ -326,6 +376,22 @@ public class GraphicsAdapter extends Graphics {
             final org.eclipse.draw2d.geometry.Rectangle rect) {
         org.eclipse.draw2d.geometry.Rectangle clip = toRectangle(pg.getClip());
         return rect.intersect(clip);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getLineWidth() {
+        return (int) pg.getLineWidth();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public float getLineWidthFloat() {
+        return (float) pg.getLineWidth();
     }
 
     /**
@@ -349,75 +415,16 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public org.eclipse.swt.graphics.Color getForegroundColor() {
-        return toSWTColor(Display.getDefault(), pg.getColor());
+        return pg.getSWTColor();
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public int getLineStyle() {
-        return SWT.LINE_SOLID;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getLineWidth() {
-        Stroke stroke = pg.getStroke();
-        if (stroke instanceof BasicStroke) {
-            return (int) ((BasicStroke) stroke).getLineWidth();
-        }
-        return 1;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public float getLineWidthFloat() {
-        Stroke stroke = pg.getStroke();
-        if (stroke instanceof BasicStroke) {
-            return ((BasicStroke) stroke).getLineWidth();
-        }
-        return 1;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean getXORMode() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void popState() {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void pushState() {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void restoreState() {
-        // TODO Auto-generated method stub
-
+    public void rotate(final float degrees) {
+        pg.rotate(degrees);
+        currentState.transform.rotate(degrees);
     }
 
     /**
@@ -425,8 +432,8 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void scale(final double amount) {
-        // TODO Auto-generated method stub
-
+        pg.scale(amount, amount);
+        currentState.transform.scale(amount, amount);
     }
 
     /**
@@ -434,8 +441,8 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void setBackgroundColor(final org.eclipse.swt.graphics.Color rgb) {
-        // TODO Auto-generated method stub
-
+        pg.setBackground(rgb);
+        currentState.background = rgb;
     }
 
     /**
@@ -443,8 +450,16 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void setClip(final org.eclipse.draw2d.geometry.Rectangle r) {
-        // TODO Auto-generated method stub
-
+        currentState.clip = toShape(r);
+        pg.setClip(currentState.clip);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clipRect(final org.eclipse.draw2d.geometry.Rectangle r) {
+        setClip(r);
     }
 
     /**
@@ -452,8 +467,8 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void setFont(final Font f) {
-        // TODO Auto-generated method stub
-
+        pg.setFont(f);
+        currentState.font = f;
     }
 
     /**
@@ -461,17 +476,16 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void setForegroundColor(final org.eclipse.swt.graphics.Color rgb) {
-        // TODO Auto-generated method stub
-
+        pg.setColor(rgb);
+        currentState.foreground = rgb;
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setLineStyle(final int style) {
-        // TODO Auto-generated method stub
-
+    public void setLineAttributes(final LineAttributes attributes) {
+        pg.setStroke(toStroke(attributes));
     }
 
     /**
@@ -479,8 +493,8 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void setLineWidth(final int width) {
-        // TODO Auto-generated method stub
-
+        pg.setLineWidth(width);
+        currentState.lineWidth = width;
     }
 
     /**
@@ -488,26 +502,8 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void setLineWidthFloat(final float width) {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setLineMiterLimit(final float miterLimit) {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setXORMode(final boolean b) {
-        // TODO Auto-generated method stub
-
+        pg.setLineWidth(width);
+        currentState.lineWidth = width;
     }
 
     /**
@@ -515,8 +511,112 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void translate(final int dx, final int dy) {
-        // TODO Auto-generated method stub
+        pg.translate(dx, dy);
+        currentState.transform.translate(dx, dy);
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void drawFocus(final int x, final int y, final int w, final int h) {
+        // TODO not yet implemented
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setAdvanced(final boolean advanced) {
+        // TODO not yet implemented
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setAlpha(final int alpha) {
+        // TODO not yet implemented
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setAntialias(final int value) {
+        // TODO not yet implemented
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean getXORMode() {
+        // TODO not yet implemented
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setXORMode(final boolean b) {
+        // TODO not yet implemented
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getLineStyle() {
+        // TODO not yet implemented
+        return SWT.LINE_SOLID;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLineStyle(final int style) {
+        // TODO not yet implemented
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLineMiterLimit(final float miterLimit) {
+        // TODO not yet implemented
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void pushState() {
+        stack.push(new State(currentState));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void popState() {
+        restoreState();
+        stack.pop();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void restoreState() {
+        currentState = stack.peek();
+        pg.setClip(currentState.clip);
+        pg.setTransform(currentState.transform);
+        pg.setColor(currentState.foreground);
+        pg.setBackground(currentState.background);
+        pg.setLineWidth(currentState.lineWidth);
     }
 
 }

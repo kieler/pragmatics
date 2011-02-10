@@ -29,6 +29,7 @@ public class Draw2DNode extends PNode {
     /** the serial version UID. */
     private static final long serialVersionUID = -1948310925725969628L;
     
+    
     /** the figure that is displayed by this node. */
     private IFigure figure;
     
@@ -39,17 +40,9 @@ public class Draw2DNode extends PNode {
      */
     public Draw2DNode(final IFigure figure) {
         this.figure = figure;
-    }
-    
-    /**
-     * Refresh the children of this node. This may effectively remove child nodes and
-     * create new ones. 
-     */
-    public void refreshChildren() {
-        removeAllChildren();
-        for (Object child : figure.getChildren()) {
-            addChild(new Draw2DNode((IFigure) child));
-        }
+        org.eclipse.draw2d.geometry.Rectangle bounds = figure.getBounds();
+        this.setBounds(bounds.preciseX(), bounds.preciseY(), bounds.preciseWidth(),
+                bounds.preciseHeight());
     }
     
     /**
