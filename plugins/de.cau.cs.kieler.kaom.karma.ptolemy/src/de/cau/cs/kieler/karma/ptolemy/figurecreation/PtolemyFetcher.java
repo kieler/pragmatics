@@ -19,8 +19,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -29,6 +32,7 @@ import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper;
+import de.cau.cs.kieler.kaom.karma.ptolemy.Activator;
 
 import ptolemy.data.expr.XMLParser;
 import ptolemy.kernel.CompositeEntity;
@@ -308,7 +312,7 @@ public final class PtolemyFetcher {
     }
     
     /**
-     * Get an instance of a Ptolemy class according to an EObjects annotation
+     * Get an instance of a Ptolemy class according to an EObjects annotation.
      * @param object the object representing an ptolemy object. Should have an "ptolemyClass" annotation.
      * @return a ptolemy instance of the object.
      */
@@ -348,11 +352,12 @@ public final class PtolemyFetcher {
                         return nObj;
                     }
                 } catch (Exception e) {
-                    //e.printStackTrace();
+                    Status myStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, "ptolemy instance failed to load", e);
+                    StatusManager.getManager().handle(myStatus, StatusManager.SHOW);
                 }
             }
         }
-        throw new RuntimeException("initializing svg from ptolemyClass failed");
+        return null;
     }
 
 }

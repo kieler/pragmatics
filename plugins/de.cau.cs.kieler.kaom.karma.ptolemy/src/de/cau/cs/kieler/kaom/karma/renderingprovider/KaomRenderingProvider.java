@@ -65,7 +65,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
     /**
      * Radius of the rounded edges. 
      */
-    private static final int ROUNDED_BENDPOINTS_RADIUS = 10;
+    private static final int ROUNDED_BENDPOINTS_RADIUS = 9;
     
     
     /**
@@ -80,7 +80,6 @@ public class KaomRenderingProvider implements IRenderingProvider {
      */
     public IFigure getFigureByString(final String input, final IFigure oldFigure,
             final EObject object, final EditPart part) {
-        //ElementTypeRegistry etr = ElementTypeRegistry.getInstance();
         if (input.equals("_IconDescription")) {
             return createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
         } else if (input.equals("MonitorValue")) {
@@ -99,7 +98,6 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 connection.setLineWidthFloat(LINE_WIDTH);
                 connection.setSplineMode(SplineConnection.SPLINE_OFF);
                 final ConnectionEditPart cPart = (ConnectionEditPart) part;
-
                 AbstractEMFOperation emfOp = new AbstractEMFOperation(cPart.getEditingDomain(),
                         "line routing setting") {
                     @Override
@@ -107,7 +105,6 @@ public class KaomRenderingProvider implements IRenderingProvider {
                             throws ExecutionException {
                         RoutingStyle style = (RoutingStyle) ((View) cPart.getModel())
                                 .getStyle(NotationPackage.Literals.ROUTING_STYLE);
-                        //style.setRouting(Routing.RECTILINEAR_LITERAL); // or Routing.TREE_LITERAL
                         style.setRoundedBendpointsRadius(ROUNDED_BENDPOINTS_RADIUS);
                         style.setSmoothness(Smoothness.NONE_LITERAL);
                         return Status.OK_STATUS;

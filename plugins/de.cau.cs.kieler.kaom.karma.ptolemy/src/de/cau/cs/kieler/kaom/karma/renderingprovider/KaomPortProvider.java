@@ -24,10 +24,8 @@ import org.eclipse.draw2d.LayoutManager;
 import org.eclipse.draw2d.PolygonShape;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
-import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
@@ -39,7 +37,6 @@ import org.eclipse.swt.graphics.Color;
 
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.util.NamedObj;
-
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
@@ -131,13 +128,6 @@ public class KaomPortProvider implements IRenderingProvider {
                 }
             }
         }
-        /*
-         * if (input.equals("UP")) { return createSvg(getUpwardsPortSvgString("black")); } else if
-         * (input.equals("DOWN")) { return createSvg(getDownwardsPortSvgString("white")); } else if
-         * (input.equals("white")) { return createSvg(getPortSvgString("white")); } else if
-         * (input.equals("gray")) { return createSvg(getPortSvgString("gray")); } else { return
-         * createSvg(getPortSvgString("black")); }
-         */
         return null;
     }
 
