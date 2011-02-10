@@ -14,9 +14,9 @@
          <command
             categoryId="de.cau.cs.kieler"
             defaultHandler="de.cau.cs.kieler.kaom.diagram.custom.commands.ReInitKaomDiagramCommand"
-            description="Reinitialize the diagram for the selected kaom file overwriting the olds kaod file."
+            description="(Re)Initialize the diagram for the selected KAOM file, overwriting any old KAOD file."
             id="de.cau.cs.kieler.kaom.ui.reinitDiagram"
-            name="Reinitialize and save kaod diagram from model">
+            name="Initialize KAOD diagram">
       </command>
          </extension>
             <extension
@@ -26,40 +26,21 @@
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <command
                commandId="de.cau.cs.kieler.kaom.ui.reinitDiagram"
-               label="Reinitialize and save kaod diagram from model"
+               label="Initialize KAOD diagram"
                style="push"
-               tooltip="Reinitialize the diagram for the selected kaom file overwriting the olds kaod file.">
+               tooltip="(Re)Initialize the diagram for the selected KAOM file, overwriting any old KAOD file.">
             <visibleWhen
                   checkEnabled="false">
-               <or>
-                  <with
-                        variable="activeEditor">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
                      <test
                            forcePluginActivation="false"
-                           property="de.cau.cs.kieler.kaom.activeKaomEditor">
+                           property="org.eclipse.core.resources.name"
+                           value="*.kaom">
                      </test>
-                  </with>
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <test
-                              forcePluginActivation="false"
-                              property="org.eclipse.core.resources.name"
-                              value="*.kaod">
-                        </test>
-                     </adapt>
-                  </iterate>
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <test
-                              forcePluginActivation="false"
-                              property="org.eclipse.core.resources.name"
-                              value="*.kaom">
-                        </test>
-                     </adapt>
-                  </iterate>
-               </or>
+                  </adapt>
+               </iterate>
             </visibleWhen>
          </command>
                      </menuContribution>
