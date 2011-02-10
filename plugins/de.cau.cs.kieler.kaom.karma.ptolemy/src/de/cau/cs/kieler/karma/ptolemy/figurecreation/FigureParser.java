@@ -108,7 +108,9 @@ public final class FigureParser {
                     Float r = Float.parseFloat(childElement.getAttribute("r"));
                     String style = (String) childElement.getAttribute("style");
                     CircleFigure figure = new CircleFigure(r.intValue());
-                    figure.getBounds().setLocation(x.intValue(), y.intValue());
+                    figure.getBounds().setLocation((x.intValue() + 1 - r.intValue()),
+                            (x.intValue() + 1 - r.intValue()));
+                    figure.getBounds().setSize((r.intValue() * 2), (r.intValue() * 2));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                 } else if (tag.equals("ellipse")) {
