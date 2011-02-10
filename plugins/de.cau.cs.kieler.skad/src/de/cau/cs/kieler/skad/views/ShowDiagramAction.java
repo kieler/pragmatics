@@ -56,9 +56,9 @@ public class ShowDiagramAction extends Action {
         IEditorPart editorPart = workbenchPage.getActiveEditor();
         IGraphicalFrameworkBridge bridge = GraphicalFrameworkService.getInstance()
                 .getBridge(editorPart);
-        EditPart diagramEditPart = bridge.getEditPart(editorPart);
-        if (diagramEditPart instanceof GraphicalEditPart) {
-            IFigure diagramFigure = ((GraphicalEditPart) diagramEditPart).getFigure();
+        EditPart editPart = bridge.getEditPart(editorPart);
+        if (editPart instanceof GraphicalEditPart) {
+            IFigure diagramFigure = ((GraphicalEditPart) editPart).getFigure();
             Draw2DNode diagramNode = new Draw2DNode(diagramFigure);
             viewPart.showNode(diagramNode);
         }

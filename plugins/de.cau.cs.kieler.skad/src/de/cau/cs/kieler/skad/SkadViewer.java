@@ -48,6 +48,7 @@ public class SkadViewer extends Viewer {
      */
     public SkadViewer(final Composite parent, final int style) {
         canvas = new PSWTCanvas(parent, style);
+        canvas.setDoubleBuffered(false);
     }
     
     /**

@@ -13,7 +13,10 @@
  */
 package de.cau.cs.kieler.skad;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PPaintContext;
@@ -28,7 +31,6 @@ public class Draw2DNode extends PNode {
 
     /** the serial version UID. */
     private static final long serialVersionUID = -1948310925725969628L;
-    
     
     /** the figure that is displayed by this node. */
     private IFigure figure;
@@ -50,8 +52,15 @@ public class Draw2DNode extends PNode {
      */
     @Override
     protected void paint(final PPaintContext paintContext) {
-        GraphicsAdapter graphics = new GraphicsAdapter((SWTGraphics2D) paintContext.getGraphics());
-        figure.paint(graphics);
+        try {
+            GraphicsAdapter graphics = new GraphicsAdapter((SWTGraphics2D) paintContext.getGraphics());
+            figure.paint(graphics);
+        } catch (Throwable throwable) {
+            IStatus status = new Status(IStatus.ERROR, "de.cau.cs.kieler.skad",
+                    "Error while drawing the selected diagram.", throwable);
+            StatusManager.getManager().handle(status, StatusManager.SHOW);
+            throwable.printStackTrace();
+        }
     }
 
 }

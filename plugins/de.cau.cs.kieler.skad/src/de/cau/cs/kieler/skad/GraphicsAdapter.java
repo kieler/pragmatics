@@ -60,20 +60,6 @@ public class GraphicsAdapter extends Graphics {
             this.font = g.getSWTFont();
             this.lineWidth = g.getLineWidth();
         }
-        
-        /**
-         * Clones the state data object.
-         * 
-         * @param other a state data object
-         */
-        State(final State other) {
-            this.clip = other.clip.getBounds();
-            this.transform = new AffineTransform(other.transform);
-            this.foreground = other.foreground;
-            this.background = other.background;
-            this.font = other.font;
-            this.lineWidth = other.lineWidth;
-        }
     }
     
     /**
@@ -151,8 +137,6 @@ public class GraphicsAdapter extends Graphics {
 
     /** the Piccolo wrapper for SWT graphics. */
     private SWTGraphics2D pg;
-    /** the current state of the graphics adapter. */
-    private State currentState;
     /** the stack of graphics states. */
     private LinkedList<State> stack = new LinkedList<State>();
     
@@ -163,7 +147,6 @@ public class GraphicsAdapter extends Graphics {
      */
     public GraphicsAdapter(final SWTGraphics2D graphics) {
         this.pg = graphics;
-        this.currentState = new State(graphics);
     }
 
     /**
@@ -424,7 +407,6 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void rotate(final float degrees) {
         pg.rotate(degrees);
-        currentState.transform.rotate(degrees);
     }
 
     /**
@@ -433,7 +415,6 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void scale(final double amount) {
         pg.scale(amount, amount);
-        currentState.transform.scale(amount, amount);
     }
 
     /**
@@ -442,7 +423,6 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void setBackgroundColor(final org.eclipse.swt.graphics.Color rgb) {
         pg.setBackground(rgb);
-        currentState.background = rgb;
     }
 
     /**
@@ -450,8 +430,7 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void setClip(final org.eclipse.draw2d.geometry.Rectangle r) {
-        currentState.clip = toShape(r);
-        pg.setClip(currentState.clip);
+        pg.setClip(toShape(r));
     }
     
     /**
@@ -468,7 +447,6 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void setFont(final Font f) {
         pg.setFont(f);
-        currentState.font = f;
     }
 
     /**
@@ -477,7 +455,6 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void setForegroundColor(final org.eclipse.swt.graphics.Color rgb) {
         pg.setColor(rgb);
-        currentState.foreground = rgb;
     }
     
     /**
@@ -494,7 +471,6 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void setLineWidth(final int width) {
         pg.setLineWidth(width);
-        currentState.lineWidth = width;
     }
 
     /**
@@ -503,7 +479,6 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void setLineWidthFloat(final float width) {
         pg.setLineWidth(width);
-        currentState.lineWidth = width;
     }
 
     /**
@@ -512,7 +487,6 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void translate(final int dx, final int dy) {
         pg.translate(dx, dy);
-        currentState.transform.translate(dx, dy);
     }
 
     /**
@@ -537,6 +511,15 @@ public class GraphicsAdapter extends Graphics {
     @Override
     public void setAlpha(final int alpha) {
         // TODO not yet implemented
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getAntialias() {
+        // TODO not yet implemented
+        return SWT.DEFAULT;
     }
     
     /**
@@ -594,7 +577,7 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void pushState() {
-        stack.push(new State(currentState));
+        stack.push(new State(pg));
     }
 
     /**
@@ -602,8 +585,10 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void popState() {
-        restoreState();
-        stack.pop();
+        if (!stack.isEmpty()) {
+            restoreState();
+            stack.pop();
+        }
     }
 
     /**
@@ -611,12 +596,15 @@ public class GraphicsAdapter extends Graphics {
      */
     @Override
     public void restoreState() {
-        currentState = stack.peek();
-        pg.setClip(currentState.clip);
-        pg.setTransform(currentState.transform);
-        pg.setColor(currentState.foreground);
-        pg.setBackground(currentState.background);
-        pg.setLineWidth(currentState.lineWidth);
+        State lastState = stack.peek();
+        if (lastState != null) {
+            pg.setClip(lastState.clip);
+            pg.setTransform(lastState.transform);
+            pg.setColor(lastState.foreground);
+            pg.setBackground(lastState.background);
+            pg.setFont(lastState.font);
+            pg.setLineWidth(lastState.lineWidth);
+        }
     }
 
 }
