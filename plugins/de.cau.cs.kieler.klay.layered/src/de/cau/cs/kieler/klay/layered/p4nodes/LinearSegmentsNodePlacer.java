@@ -497,22 +497,31 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     private boolean noNewTouchingRegions(final LayeredGraph layeredGraph) {
         boolean ready = true;
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        
         for (Layer layer : layeredGraph.getLayers()) {
             List<LNode> nodes = layer.getNodes();
+            
             for (LNode node : nodes) {
-            	if (node.getIndex() < nodes.size() - 1) {
+                if (node.getIndex() < nodes.size() - 1) {
                     // Test if nodes have different regions
                     LNode neighbor = nodes.get(node.getIndex() + 1);
-                    if (node.getProperty(Properties.REGION) 
+                    if (node.getProperty(Properties.REGION)
                             != neighbor.getProperty(Properties.REGION)) {
+                        
                         // Test if the nodes are touching
-                        if (node.getPos().y + node.getSize().y + spacing 
+                        if (node.getPos().y + node.getSize().y + spacing
                                 > neighbor.getPos().y - 1.0f) {
-                        	double overlay = node.getPos().y + node.getSize().y + spacing - neighbor.getPos().y;
-                        	// Adjust position for every member of the neighbors region
-                        	for (LNode toAdjust : neighbor.getProperty(Properties.REGION).getNodes()) {
-                        		toAdjust.getPos().y = toAdjust.getPos().y + overlay;
-                        	}
+                            
+                            double overlay = node.getPos().y + node.getSize().y
+                                + spacing - neighbor.getPos().y;
+                            
+                            // Adjust position for every member of the neighbors region
+                            for (LNode toAdjust : neighbor.getProperty(
+                                    Properties.REGION).getNodes()) {
+                                
+                                toAdjust.getPos().y = toAdjust.getPos().y + overlay;
+                            }
+                            
                             // Union the regions of the neighbors
                             node.getProperty(Properties.REGION).union(
                                     neighbor.getProperty(Properties.REGION));

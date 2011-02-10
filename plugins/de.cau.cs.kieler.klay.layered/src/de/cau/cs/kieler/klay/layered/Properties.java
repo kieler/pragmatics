@@ -119,8 +119,9 @@ public final class Properties {
     /** option identifier for crossing minimization. */
     public static final String CROSS_MIN_ID = "de.cau.cs.kieler.klay.layered.crossingMinimization";
     /** property to choose a crossing minimization strategy. */
-    public static final IProperty<CrossingMinimizationStrategy> CROSS_MIN = new Property<CrossingMinimizationStrategy>(
-            CROSS_MIN_ID, CrossingMinimizationStrategy.LAYER_SWEEP);
+    public static final IProperty<CrossingMinimizationStrategy> CROSS_MIN =
+            new Property<CrossingMinimizationStrategy>(
+                    CROSS_MIN_ID, CrossingMinimizationStrategy.LAYER_SWEEP);
     
     /** option identifier for thoroughness. */
     public static final String THOROUGHNESS_ID = "de.cau.cs.kieler.klay.layered.thoroughness";
