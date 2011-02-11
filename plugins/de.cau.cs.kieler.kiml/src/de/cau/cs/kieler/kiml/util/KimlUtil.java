@@ -449,8 +449,6 @@ public final class KimlUtil {
     private static final float MIN_NODE_SIZE = 16.0f;
     /** minimal distance of two ports on each side of a node. */
     private static final float MIN_PORT_DISTANCE = 4.0f;
-    /** maximal aspect ratio of node sizes. */
-    private static final float MAX_SIZE_RATIO = 3.0f;
 
     /**
      * Sets the size of a given node, depending on the minimal size, the number of ports
@@ -513,11 +511,6 @@ public final class KimlUtil {
                 MIN_NODE_SIZE, minNorth, minSouth);
         float newHeight = KielerMath.maxf(nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT),
                 MIN_NODE_SIZE, minEast, minWest);
-        if (newHeight < newWidth / MAX_SIZE_RATIO) {
-            newHeight = newWidth / MAX_SIZE_RATIO;
-        } else if (newWidth < newHeight / MAX_SIZE_RATIO) {
-            newWidth = newHeight / MAX_SIZE_RATIO;
-        }
         float oldWidth = nodeLayout.getWidth();
         float oldHeight = nodeLayout.getHeight();
         nodeLayout.setWidth(newWidth);

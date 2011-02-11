@@ -312,6 +312,9 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
 
         // get new bend points for the parent edge
         KEdge kedge = (KEdge) klabel.getParent();
+        if (kedge == null) {
+            return;
+        }
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
         PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
         EObject modelElement = connectionEditPart.getNotationView().getElement();
@@ -354,8 +357,6 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         Point normalPoint = offsetFromRelativeCoordinate(targetBounds, absoluteBendPoints, refPoint);
         if (normalPoint != null) {
             command.addShapeLayout((View) labelEditPart.getModel(), normalPoint, null);
-            // invalidate the figure to be sure that it is redrawn
-            labelEditPart.getFigure().invalidate();
         }
     }
 
