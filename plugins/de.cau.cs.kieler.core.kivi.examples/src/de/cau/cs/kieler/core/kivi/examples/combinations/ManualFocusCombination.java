@@ -113,6 +113,8 @@ public class ManualFocusCombination extends AbstractCombination {
             focusEffect.addFocus(focus, zoomLevel);
             this.schedule(focusEffect);
             this.schedule(new LayoutEffect(diagram.getDiagramPart(), null, true));
+        }else{
+            doNothing();
         }
     }
 

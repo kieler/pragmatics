@@ -15,6 +15,12 @@
             description="Focus&amp;Context by manual selection of elements in the focus or hierarchy levels that should be visible."
             name="Manual Focus (Semantic Zoom)">
       </combination>
+      <combination
+            active="false"
+            class="de.cau.cs.kieler.core.kivi.examples.combinations.RandomLayoutCombination"
+            description="Apply a random layout on all components of the model. Can be used to experiment with other layouters afterwards,"
+            name="Random Layout">
+      </combination>
 <!--      <combination
             active="true"
             class="de.cau.cs.kieler.core.model.combinations.SynchronizeViewsCombination"
