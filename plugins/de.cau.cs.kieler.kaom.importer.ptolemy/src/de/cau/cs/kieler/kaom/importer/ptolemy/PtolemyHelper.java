@@ -29,7 +29,6 @@ import ptolemy.actor.TypedCompositeActor;
 import ptolemy.kernel.CompositeEntity;
 import ptolemy.kernel.Entity;
 import ptolemy.kernel.util.Attribute;
-import ptolemy.kernel.util.IllegalActionException;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.kernel.util.StringAttribute;
 import ptolemy.moml.MoMLParser;
@@ -276,8 +275,8 @@ public class PtolemyHelper implements IExecutionContextAware {
 
         kaomAnnotation.setName(ptolemyAttribute.getName());
         kaomAnnotation.setType(ptolemyAttribute.getClassName());
-        if (ptolemyAttribute instanceof StringAttribute ) {
-            kaomAnnotation.setValue(((StringAttribute)ptolemyAttribute).getValueAsString());
+        if (ptolemyAttribute instanceof StringAttribute) {
+            kaomAnnotation.setValue(((StringAttribute) ptolemyAttribute).getValueAsString());
         }
 
         for (Object childAttribute : ptolemyAttribute.attributeList()) {
