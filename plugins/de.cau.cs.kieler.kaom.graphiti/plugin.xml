@@ -102,16 +102,24 @@
          point="org.eclipse.ui.menus">
             <menuContribution
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <menu
-               id="de.cau.cs.kieler"
-               label="KIELER"
-               mnemonic="K">
-         </menu>
          <command
                commandId="de.cau.cs.kieler.kaom.graphiti.reinitDiagram"
-               label="Initialize Graphiti diagram file (kaog)"
+               label="Initialize Graphiti Diagram File (kaog)"
                style="push"
                tooltip="Reinitialize the diagram for the selected kaom file, overwriting the old kaog file.">
+           <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <test
+                           forcePluginActivation="false"
+                           property="org.eclipse.core.resources.name"
+                           value="*.kaom">
+                     </test>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>

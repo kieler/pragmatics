@@ -26,7 +26,7 @@
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <command
                commandId="de.cau.cs.kieler.kaom.ui.reinitDiagram"
-               label="Initialize KAOD diagram"
+               label="Initialize GMF Diagram File (kaod)"
                style="push"
                tooltip="(Re)Initialize the diagram for the selected KAOM file, overwriting any old KAOD file.">
             <visibleWhen
