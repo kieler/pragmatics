@@ -460,8 +460,8 @@ public final class KimlUtil {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 
         PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
-        float minNorth = MIN_PORT_DISTANCE, minEast = MIN_PORT_DISTANCE,
-                minSouth = MIN_PORT_DISTANCE, minWest = MIN_PORT_DISTANCE;
+        float minNorth = 2 * MIN_PORT_DISTANCE, minEast = 2 * MIN_PORT_DISTANCE,
+                minSouth = 2 * MIN_PORT_DISTANCE, minWest = 2 * MIN_PORT_DISTANCE;
         if (portConstraints == PortConstraints.FIXED_POS) {
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
@@ -484,24 +484,21 @@ public final class KimlUtil {
                     break;
                 }
             }
-            minNorth += MIN_PORT_DISTANCE;
-            minEast += MIN_PORT_DISTANCE;
-            minSouth += MIN_PORT_DISTANCE;
-            minWest += MIN_PORT_DISTANCE;
         } else {
             for (KPort port : node.getPorts()) {
-                switch (port.getData(KShapeLayout.class).getProperty(LayoutOptions.PORT_SIDE)) {
+                KShapeLayout portLayout = port.getData(KShapeLayout.class);
+                switch (portLayout.getProperty(LayoutOptions.PORT_SIDE)) {
                 case NORTH:
-                    minNorth += MIN_PORT_DISTANCE;
+                    minNorth += MIN_PORT_DISTANCE + portLayout.getWidth();
                     break;
                 case EAST:
-                    minEast += MIN_PORT_DISTANCE;
+                    minEast += MIN_PORT_DISTANCE + portLayout.getHeight();
                     break;
                 case SOUTH:
-                    minSouth += MIN_PORT_DISTANCE;
+                    minSouth += MIN_PORT_DISTANCE + portLayout.getWidth();
                     break;
                 case WEST:
-                    minWest += MIN_PORT_DISTANCE;
+                    minWest += MIN_PORT_DISTANCE + portLayout.getHeight();
                     break;
                 }
             }
@@ -527,6 +524,20 @@ public final class KimlUtil {
                 portLayout.setYpos(portLayout.getYpos() + newHeight - oldHeight);
                 break;
             }
+        }
+        // update label position
+        KShapeLayout labelLayout = node.getLabel().getData(KShapeLayout.class);
+        if (labelLayout.getXpos() > oldWidth) {
+            labelLayout.setXpos(labelLayout.getXpos() + newWidth - oldWidth);
+        } else {
+            float oldRelPos = (labelLayout.getXpos() + labelLayout.getWidth() / 2) / oldWidth;
+            labelLayout.setXpos(oldRelPos * newWidth - labelLayout.getWidth() / 2);
+        }
+        if (labelLayout.getYpos() > oldHeight) {
+            labelLayout.setYpos(labelLayout.getYpos() + newHeight - oldHeight);
+        } else {
+            float oldRelPos = (labelLayout.getYpos() + labelLayout.getHeight() / 2) / oldHeight;
+            labelLayout.setYpos(oldRelPos * newHeight - labelLayout.getHeight() / 2);
         }
     }
 

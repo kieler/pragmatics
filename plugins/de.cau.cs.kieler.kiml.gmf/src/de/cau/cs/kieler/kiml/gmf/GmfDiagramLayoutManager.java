@@ -600,7 +600,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             && !isCollapsed);
         // set default port constraints option
         if (hasPorts) {
-            if (hasChildNodes || hasChildCompartments) {
+            if (hasChildNodes || hasChildCompartments || isCollapsed) {
                 nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
             } else {
                 nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);

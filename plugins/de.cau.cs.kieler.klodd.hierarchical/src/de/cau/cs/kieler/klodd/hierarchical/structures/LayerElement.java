@@ -1016,9 +1016,9 @@ public class LayerElement {
                 } else {
                     xpos += offset;
                 }
-                ypos = pos;
+                ypos = pos - portLayout.getHeight() / 2;
             } else {
-                xpos = pos;
+                xpos = pos - portLayout.getWidth() / 2;
                 ypos =  startY;
                 if (subPortDim) {
                     ypos -= portLayout.getHeight() + offset;
