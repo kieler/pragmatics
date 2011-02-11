@@ -20,6 +20,7 @@
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="diagramType"/>
             <element ref="option"/>
+            <element ref="semanticOption"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -80,7 +81,7 @@
    <element name="option">
       <annotation>
          <documentation>
-            A layout option configuration for a specific model element or edit part.
+            A layout option configuration for a specific model element or edit part. This can be used to specify default layout option values.
          </documentation>
       </annotation>
       <complexType>
@@ -109,6 +110,26 @@
                <documentation>
                   Value of the layout option.
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="semanticOption">
+      <annotation>
+         <documentation>
+            A layout option configuration for semantic model elements, which can determine specific layout option values dynamically depending on a given model element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  An implementation of a semantic layout configuration, which can decide for each model element individually what layout option values are assigned.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="de.cau.cs.kieler.kiml.SemanticLayoutConfig:"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

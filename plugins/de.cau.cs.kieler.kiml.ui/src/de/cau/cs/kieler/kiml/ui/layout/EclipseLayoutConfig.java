@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 
@@ -72,8 +73,8 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         if (value != null) {
             return value;
         } else {
-            clazzName = modelElement == null ? null : modelElement.eClass().getInstanceTypeName();
-            return layoutServices.getOption(clazzName, optionId);
+            EClass eclazz = modelElement == null ? null : modelElement.eClass();
+            return layoutServices.getOption(eclazz, optionId);
         }    
     }
 

@@ -21,6 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EClass;
+
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -354,10 +356,10 @@ public class LayoutServices {
     }
 
     /**
-     * Retrieves the layout option with given identifier for an object identifier.
+     * Retrieves a layout option value for an object identifier.
      * 
      * @param objectId an object identifier
-     * @param optionId the layout option identifier
+     * @param optionId a layout option identifier
      * @return the preconfigured value of the option, or {@code null} if the
      *         option is not set for the given object
      */
@@ -368,6 +370,34 @@ public class LayoutServices {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Retrieves a layout option value for a domain model class. This involves options
+     * that are set for any superclass of the given one.
+     * 
+     * @param clazz a domain model class
+     * @param optionId a layout option identifier
+     * @return the option value for the class or a superclass, or {@code null} if the option
+     *     is not set for the class
+     */
+    public final Object getOption(final EClass clazz, final String optionId) {
+        if (clazz != null) {
+            LinkedList<EClass> classes = new LinkedList<EClass>();
+            classes.add(clazz);
+            do {
+                EClass c = classes.removeFirst();
+                Map<String, Object> optionsMap = id2OptionsMap.get(c.getInstanceTypeName());
+                if (optionsMap != null) {
+                    Object value = optionsMap.get(optionId);
+                    if (value != null) {
+                        return value;
+                    }
+                }
+                classes.addAll(c.getESuperTypes());
+            } while (!classes.isEmpty());
+        }
+        return null;
     }
 
 }
