@@ -73,7 +73,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
             ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
             while (nodeIter.hasNext()) {
                 LNode node = nodeIter.next();
-                curRun[layerIter.previousIndex()][nodeIter.previousIndex()] = node;
+                curRun[i][nodeIter.previousIndex()] = node;
                 node.id = nodeCount++;
                 boolean freePorts = node.getProperty(Properties.PORT_CONS) == PortConstraints.FREE;
                 for (LPort port : node.getPorts()) {
