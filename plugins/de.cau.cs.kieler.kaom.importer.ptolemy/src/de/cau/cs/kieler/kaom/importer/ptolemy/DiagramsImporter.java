@@ -437,7 +437,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
     /**
      * Returns a version of the source file with moml file extension.
      * 
-     * This is necessary because the import can only cope with moml files, not with the
+     * <p>This is necessary because the import can only cope with moml files, not with the
      * more common xml files. To work around this, xml files are copied to the temp
      * folder, using a file name with a moml extension.
      *  

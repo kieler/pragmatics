@@ -292,7 +292,7 @@ public class PtolemyHelper implements IExecutionContextAware {
      * Execution context is set by Xtend component from outside. It can be used
      * to obtain detailed information about the transformation.
      * 
-     * This implementation currently does nothing since the execution context is
+     * <p>This implementation currently does nothing since the execution context is
      * not used at the moment.
      * 
      * @param context the execution context.

@@ -47,12 +47,13 @@ import de.cau.cs.kieler.kaom.Entity;
  * Handles Ptolemy annotations and attaches them to the entity they are most
  * likely annotating.
  * 
- * In Ptolemy, certain annotations in a model are like comments in source code.
+ * <p>In Ptolemy, certain annotations in a model are like comments in source code.
  * There are two ways how they can be represented in MOML:
  * 
- *   1. Using a property of type "ptolemy.vergil.kernel.attributes.TextAttribute"
- *      with another property named "text", as follows:
- *      
+ * <ol>
+ *   <li>Using a property of type "ptolemy.vergil.kernel.attributes.TextAttribute"
+ *       with another property named "text", as follows:
+ *     <pre>
  *        &lt;property
  *              name="Annotation2"
  *              class="ptolemy.vergil.kernel.attributes.TextAttribute"&gt;
@@ -67,11 +68,13 @@ import de.cau.cs.kieler.kaom.Entity;
  *                      class="ptolemy.kernel.util.Location"
  *                      value="[140.0, 440.0]"&gt;
  *              &lt;/property&gt;
- *      &lt;/property&gt;
- *      
- *   2. Using a property of type "ptolemy.kernel.util.Attribute" with an SVG
- *      as its "_iconDescription" property, as follows:
- *      
+ *        &lt;/property&gt;
+ *     </pre>
+ *   </li>
+ *   
+ *   <li>Using a property of type "ptolemy.kernel.util.Attribute" with an SVG
+ *       as its "_iconDescription" property, as follows:
+ *     <pre>
  *        &lt;property
  *              name="annotation3"
  *              class="ptolemy.kernel.util.Attribute"&gt;
@@ -92,8 +95,11 @@ import de.cau.cs.kieler.kaom.Entity;
  *                      value="[325.0, 10.0]"&gt;
  *              &lt;/property&gt;
  *        &lt;/property&gt;
+ *     </pre>
+ *   </li>
+ * </ol>
  *      
- * It's the latter version that causes a whole lot of problems when transforming
+ * <p>It's the latter version that causes a whole lot of problems when transforming
  * the Ptolemy model into a KAOM model. The {@code configure} element is a mixed
  * element, which means that it can contain anything, not just XML. However, it
  * does contain XML (usually an {@code svg} element and its children), which
@@ -102,21 +108,21 @@ import de.cau.cs.kieler.kaom.Entity;
  * during the transformation and are added to a list of unknown features. That's
  * where this handler comes in.
  * 
- * The handler is hooked into the transformation workflow just before the
+ * <p>The handler is hooked into the transformation workflow just before the
  * transformed model is written to a file. It takes a look at the transformed
  * model and looks for unknown elements. If it finds anything matching the second
  * comment style, it adds a {@code TypedStringAnnotation} to the transformed
  * model element that contains the annotation's text, thus preserving the comment's
  * text even in the face of severely hopeless circumstances. Hurray!
  * 
- * After that's done, it applies a heuristic to each comment annotation, trying
+ * <p>After that's done, it applies a heuristic to each comment annotation, trying
  * to find the entity it is probably annotating. If we find any, the comment is
  * attached to it by means of a {@code ReferenceAnnotation} named {@code attachedTo}.
  * If we don't find one, that {@code ReferenceAnnotation} is still added to the
  * comment, but with an empty reference; thus, the presence of this annotation
  * can be used to find out if an annotation represents a comment or not.
  * 
- * This is still kind of experimental. It does work, but the heuristic is quite
+ * <p>This is still kind of experimental. It does work, but the heuristic is quite
  * simpllistic and doesn't always give correct results.
  * 
  * @author cds
@@ -311,7 +317,7 @@ public class PtolemyAnnotationHandler extends TransformationWorkflowHook {
     /**
      * Computes the distance between the given annotation and entity.
      * 
-     * This simple implementation just uses the annotation's and entity's locations
+     * <p>This simple implementation just uses the annotation's and entity's locations
      * and computes the squared euclidian distance. More sophisticated implementations
      * could take the annotation and entity sizes into account.
      * 
