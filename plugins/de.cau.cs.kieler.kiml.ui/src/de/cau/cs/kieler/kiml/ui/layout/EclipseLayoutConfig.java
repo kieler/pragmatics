@@ -27,6 +27,7 @@ import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 
@@ -39,19 +40,19 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 public class EclipseLayoutConfig extends DefaultLayoutConfig {
 
     /**
-     * Retrieves a layout option from the given edit part by using the layout inspector
+     * Retrieves a layout option from the given edit part by using the framework bridge
      * associated with the edit part type.
      * 
      * @param editPart an edit part
-     * @param optionId layout option identifier
+     * @param optionData layout option data
      * @return the current value for the given option, or {@code null}
      */
-    public static Object getOption(final EditPart editPart, final String optionId) {
+    public static Object getOption(final EditPart editPart, final IProperty<?> optionData) {
         IGraphicalFrameworkBridge bridge = EclipseLayoutServices.getInstance()
                 .getFrameworkBridge(editPart);
         if (bridge != null) {
             return getOption(bridge.getEditPart(editPart),
-                    bridge.getElement(editPart), optionId);
+                    bridge.getElement(editPart), optionData);
         }
         return null;
     }
@@ -62,20 +63,39 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * 
      * @param editPart an edit part
      * @param modelElement the corresponding model element
-     * @param optionId layout option identifier
+     * @param optionData layout option data
      * @return the current value for the given option, or {@code null}
      */
     public static Object getOption(final EditPart editPart, final EObject modelElement,
-            final String optionId) {
+            final IProperty<?> optionData) {
         LayoutServices layoutServices = LayoutServices.getInstance();
-        String clazzName = editPart == null ? null : editPart.getClass().getName();
-        Object value = layoutServices.getOption(clazzName, optionId);
-        if (value != null) {
-            return value;
-        } else {
-            EClass eclazz = modelElement == null ? null : modelElement.eClass();
-            return layoutServices.getOption(eclazz, optionId);
-        }    
+        if (editPart != null) {
+            // get option for the edit part class
+            String clazzName = editPart.getClass().getName();
+            Object value = layoutServices.getOption(clazzName, (String) optionData.getIdentifier());
+            if (value != null) {
+                return value;
+            }
+        }
+        if (modelElement != null) {
+            // get option for the domain model element class
+            EClass eclazz = modelElement.eClass();
+            Object value = layoutServices.getOption(eclazz, (String) optionData.getIdentifier());
+            if (value != null) {
+                return value;
+            }
+            if (optionData instanceof LayoutOptionData) {
+                // get option from the semantic layout configuration
+                for (SemanticLayoutConfig config : layoutServices.getSemanticConfigs(eclazz)) {
+                    config.setFocus(modelElement);
+                    value = config.getProperty(optionData);
+                    if (value != null) {
+                        return value;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /** the edit part for the selected element. */
@@ -138,7 +158,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      */
     public final void initialize(final LayoutOptionData.Target targetType,
             final EditPart editPart, final String theLayoutHint) {
-        String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE_ID);
+        String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
         if (targetType == LayoutOptionData.Target.PARENTS) {
             contentDiagramType = diagramType;
         } else {
@@ -146,7 +166,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         }
         String layoutHint = theLayoutHint;
         if (layoutHint == null) {
-            layoutHint = (String) getOption(editPart, LayoutOptions.LAYOUTER_HINT_ID);
+            layoutHint = (String) getOption(editPart, LayoutOptions.LAYOUTER_HINT);
         }
         initialize(targetType, layoutHint, diagramType);
     }
@@ -194,7 +214,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         Object result = null;
         
         // check default value set for the actual edit part or its model element
-        result = getOption(focusEditPart, modelElement, optionData.getId());
+        result = getOption(focusEditPart, modelElement, optionData);
         if (result != null) {
             return (T) result;
         }
@@ -266,7 +286,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
 
         // get default layout options for the diagram type
         String diagramType = (String) getOption(focusEditPart, modelElement,
-                LayoutOptions.DIAGRAM_TYPE_ID);
+                LayoutOptions.DIAGRAM_TYPE);
         if (diagramType != null) {
             for (Entry<String, Object> entry : layoutServices.getOptions(diagramType).entrySet()) {
                 if (entry.getValue() != null) {
@@ -276,10 +296,22 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
             }
         }
         
-        // get default layout options for the domain model element
         if (modelElement != null) {
-            String clazzName = modelElement.eClass().getInstanceTypeName();
-            for (Entry<String, Object> entry : layoutServices.getOptions(clazzName).entrySet()) {
+            // get layout options from the semantic layout configurations
+            for (SemanticLayoutConfig config : layoutServices.getSemanticConfigs(
+                    modelElement.eClass())) {
+                config.setFocus(modelElement);
+                for (LayoutOptionData<?> optionData : config.getOptionData()) {
+                    Object value = config.getProperty(optionData);
+                    if (value != null) {
+                        options.put(optionData, value);
+                    }
+                }
+            }
+            
+            // get default layout options for the domain model element
+            for (Entry<String, Object> entry : layoutServices.getOptions(
+                    modelElement.eClass()).entrySet()) {
                 if (entry.getValue() != null) {
                     LayoutOptionData<?> optionData = layoutServices.getOptionData(entry.getKey());
                     options.put(optionData, entry.getValue());

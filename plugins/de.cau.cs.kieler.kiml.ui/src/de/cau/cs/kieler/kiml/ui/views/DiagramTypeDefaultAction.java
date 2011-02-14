@@ -63,7 +63,7 @@ public class DiagramTypeDefaultAction extends Action {
         EditPart editPart = layoutView.getCurrentEditPart();
         if (editPart != null) {
             String diagramType = (String) EclipseLayoutConfig.getOption(editPart,
-                    LayoutOptions.DIAGRAM_TYPE_ID);
+                    LayoutOptions.DIAGRAM_TYPE);
             if (diagramType != null) {
                 for (IPropertySheetEntry entry : layoutView.getSelection()) {
                     setDefault(diagramType, entry);

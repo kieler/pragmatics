@@ -44,6 +44,7 @@ import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
 import de.cau.cs.kieler.kiml.LayoutTypeData;
+import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.EclipseLayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
@@ -63,28 +64,28 @@ public class EclipseLayoutServices extends LayoutServices {
     public static final String EXTP_ID_LAYOUT_INFO = "de.cau.cs.kieler.kiml.layoutInfo";
     /** identifier of the extension point for layout managers. */
     public static final String EXTP_ID_LAYOUT_MANAGERS = "de.cau.cs.kieler.kiml.ui.layoutManagers";
-    /** name of the 'layoutAlgorithm' element in the 'layout providers' extension point. */
+    /** name of the 'layout algorithm' element in the 'layout providers' extension point. */
     public static final String ELEMENT_LAYOUT_ALGORITHM = "layoutAlgorithm";
-    /** name of the 'layoutType' element in the 'layout providers' extension point. */
+    /** name of the 'layout type' element in the 'layout providers' extension point. */
     public static final String ELEMENT_LAYOUT_TYPE = "layoutType";
-    /** name of the 'category' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_CATEGORY = "category";
-    /** name of the 'manager' element in the 'layout managers' extension point. */
-    public static final String ELEMENT_MANAGER = "manager";
-    /** name of the 'layoutOption' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_LAYOUT_OPTION = "layoutOption";
-    /** name of the 'knownOption' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_KNOWN_OPTION = "knownOption";
-    /** name of the 'supportedDiagram' element in the 'layout providers' extension point. */
-    public static final String ELEMENT_SUPPORTED_DIAGRAM = "supportedDiagram";
-    /** name of the 'diagramType' element in the 'layout info' extension point. */
-    public static final String ELEMENT_DIAGRAM_TYPE = "diagramType";
     /** name of the 'binding' element in the 'layout info' extension point. */
     public static final String ELEMENT_BINDING = "binding";
+    /** name of the 'category' element in the 'layout providers' extension point. */
+    public static final String ELEMENT_CATEGORY = "category";
+    /** name of the 'diagram type' element in the 'layout info' extension point. */
+    public static final String ELEMENT_DIAGRAM_TYPE = "diagramType";
+    /** name of the 'known option' element in the 'layout providers' extension point. */
+    public static final String ELEMENT_KNOWN_OPTION = "knownOption";
+    /** name of the 'layout  option' element in the 'layout providers' extension point. */
+    public static final String ELEMENT_LAYOUT_OPTION = "layoutOption";
+    /** name of the 'manager' element in the 'layout managers' extension point. */
+    public static final String ELEMENT_MANAGER = "manager";
     /** name of the 'option' element in the 'layout info' extension point. */
     public static final String ELEMENT_OPTION = "option";
-    /** name of the 'layoutListener' element in the 'layout listeners' extension point. */
-    public static final String ELEMENT_LAYOUT_LISTENER = "layoutListener";
+    /** name of the 'semantic option' element in the 'layout info' extension point. */
+    public static final String ELEMENT_SEMANTIC_OPTION = "semanticOption";
+    /** name of the 'supported diagram' element in the 'layout providers' extension point. */
+    public static final String ELEMENT_SUPPORTED_DIAGRAM = "supportedDiagram";
     /** name of the 'advanced' attribute in the extension points. */
     public static final String ATTRIBUTE_ADVANCED = "advanced";
     /** name of the 'appliesTo' attribute in the extension points. */
@@ -93,6 +94,8 @@ public class EclipseLayoutServices extends LayoutServices {
     public static final String ATTRIBUTE_CATEGORY = "category";
     /** name of the 'class' attribute in the extension points. */
     public static final String ATTRIBUTE_CLASS = "class";
+    /** name of the 'config' attribute in the extension points. */
+    public static final String ATTRIBUTE_CONFIG = "config";
     /** name of the 'default' attribute in the extension points. */
     public static final String ATTRIBUTE_DEFAULT = "default";
     /** name of the 'description' attribute in the extension points. */
@@ -663,6 +666,20 @@ public class EclipseLayoutServices extends LayoutServices {
                     reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_OPTION, null);
                 } else {
                     defaultOptions.add(new String[] {clazz, option, value});
+                }
+            } else if (ELEMENT_SEMANTIC_OPTION.equals(element.getName())) {
+                // register a semantic layout configuration from the extension
+                try {
+                    SemanticLayoutConfig config = (SemanticLayoutConfig)
+                            element.createExecutableExtension(ATTRIBUTE_CONFIG);
+                    String clazz = element.getAttribute(ATTRIBUTE_CLASS);
+                    if (clazz == null || clazz.length() == 0) {
+                        reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, null);
+                    } else {
+                        registry().addSemanticConfig(clazz, config);
+                    }
+                } catch (CoreException exception) {
+                    StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
                 }
             }
         }

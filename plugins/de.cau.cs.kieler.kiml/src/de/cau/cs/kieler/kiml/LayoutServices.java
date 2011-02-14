@@ -62,6 +62,9 @@ public class LayoutServices {
     /** mapping of object identifiers to associated options. */
     private Map<String, Map<String, Object>> id2OptionsMap
             = new HashMap<String, Map<String, Object>>();
+    /** mapping of domain class names to semantic layout configurations. */
+    private Map<String, SemanticLayoutConfig> semanticConfigMap
+            = new HashMap<String, SemanticLayoutConfig>();
 
     /**
      * The default constructor is hidden to prevent others from instantiating
@@ -218,6 +221,16 @@ public class LayoutServices {
                 optionsMap.remove(optionId);
             }
         }
+        
+        /**
+         * Registers the given semantic layout configuration.
+         * 
+         * @param clazzName domain model class name for which to register the configuration
+         * @param config a semantic layout configuration
+         */
+        public void addSemanticConfig(final String clazzName, final SemanticLayoutConfig config) {
+            semanticConfigMap.put(clazzName, config);
+        }
 
     }
 
@@ -350,9 +363,8 @@ public class LayoutServices {
         Map<String, Object> optionsMap = id2OptionsMap.get(id);
         if (optionsMap != null) {
             return Collections.unmodifiableMap(optionsMap);
-        } else {
-            return Collections.emptyMap();
         }
+        return Collections.emptyMap();
     }
 
     /**
@@ -367,9 +379,33 @@ public class LayoutServices {
         Map<String, Object> optionsMap = id2OptionsMap.get(objectId);
         if (optionsMap != null) {
             return optionsMap.get(optionId);
-        } else {
-            return null;
         }
+        return null;
+    }
+    
+    /**
+     * Returns a map that contains all layout options for a domain model class. This
+     * involves options that are set for any superclass of the given one.
+     * 
+     * @param clazz a domain model class
+     * @return a map of layout option identifiers to their values
+     */
+    public final Map<String, Object> getOptions(final EClass clazz) {
+        if (clazz != null) {
+            HashMap<String, Object> options = new HashMap<String, Object>();
+            LinkedList<EClass> classes = new LinkedList<EClass>();
+            classes.add(clazz);
+            do {
+                EClass c = classes.removeFirst();
+                Map<String, Object> optionsMap = id2OptionsMap.get(c.getInstanceTypeName());
+                if (optionsMap != null) {
+                    options.putAll(optionsMap);
+                }
+                classes.addAll(c.getESuperTypes());
+            } while (!classes.isEmpty());
+            return options;
+        }
+        return Collections.emptyMap();
     }
     
     /**
@@ -398,6 +434,31 @@ public class LayoutServices {
             } while (!classes.isEmpty());
         }
         return null;
+    }
+    
+    /**
+     * Return the semantic layout configurations that are associated with the given domain model
+     * class. This involves configurations that are set for any superclass of the given one.
+     * 
+     * @param clazz a domain model class
+     * @return the semantic layout configurations for the class or a superclass
+     */
+    public final List<SemanticLayoutConfig> getSemanticConfigs(final EClass clazz) {
+        if (clazz != null) {
+            List<SemanticLayoutConfig> configs = new LinkedList<SemanticLayoutConfig>();
+            LinkedList<EClass> classes = new LinkedList<EClass>();
+            classes.add(clazz);
+            do {
+                EClass c = classes.removeFirst();
+                SemanticLayoutConfig config = semanticConfigMap.get(c.getInstanceTypeName());
+                if (config != null) {
+                    configs.add(config);
+                }
+                classes.addAll(c.getESuperTypes());
+            } while (!classes.isEmpty());
+            return configs;
+        }
+        return Collections.emptyList();
     }
 
 }

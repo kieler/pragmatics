@@ -39,7 +39,7 @@ public abstract class SemanticLayoutConfig implements ILayoutConfig {
      * @param semanticElem a semantic model element
      * @return the affected options
      */
-    public abstract List<LayoutOptionData<?>> getOptionData(EObject semanticElem);
+    protected abstract List<LayoutOptionData<?>> getOptionData(EObject semanticElem);
     
     /**
      * Determine the value of the given layout option from the semantic element.

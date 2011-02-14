@@ -116,7 +116,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         if (editPart instanceof IGraphicalEditPart) {
             Boolean result = (Boolean) getOption(editPart,
                     ((IGraphicalEditPart) editPart).getNotationView().getElement(),
-                    LayoutOptions.NO_LAYOUT_ID);
+                    LayoutOptions.NO_LAYOUT);
             if (result != null) {
                 return result;
             }

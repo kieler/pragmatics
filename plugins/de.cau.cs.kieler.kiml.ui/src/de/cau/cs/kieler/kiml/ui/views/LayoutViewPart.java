@@ -423,7 +423,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 IGraphicalFrameworkBridge editingProvider = currentManager.getBridge();
                 String diagramType = (String) EclipseLayoutConfig.getOption(
                         currentEditPart, editingProvider.getElement(currentEditPart),
-                        LayoutOptions.DIAGRAM_TYPE_ID);
+                        LayoutOptions.DIAGRAM_TYPE);
                 if (diagramType == null) {
                     if (diagramTypeDefaultItem != null) {
                         diagramTypeDefaultItem.setEnabled(false);

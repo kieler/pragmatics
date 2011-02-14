@@ -125,6 +125,16 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
+                  A domain model class for which to assign the layout configuration. This includes all subclasses of the given class.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.emf.ecore.EObject"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="config" type="string" use="required">
+            <annotation>
+               <documentation>
                   An implementation of a semantic layout configuration, which can decide for each model element individually what layout option values are assigned.
                </documentation>
                <appInfo>
