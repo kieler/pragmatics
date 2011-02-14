@@ -63,16 +63,17 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * 
      * @param editPart an edit part
      * @param modelElement the corresponding model element
-     * @param optionData layout option data
+     * @param property layout option data
      * @return the current value for the given option, or {@code null}
      */
     public static Object getOption(final EditPart editPart, final EObject modelElement,
-            final IProperty<?> optionData) {
+            final IProperty<?> property) {
         LayoutServices layoutServices = LayoutServices.getInstance();
+        String id = (String) property.getIdentifier();
         if (editPart != null) {
             // get option for the edit part class
             String clazzName = editPart.getClass().getName();
-            Object value = layoutServices.getOption(clazzName, (String) optionData.getIdentifier());
+            Object value = layoutServices.getOption(clazzName, id);
             if (value != null) {
                 return value;
             }
@@ -80,11 +81,12 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         if (modelElement != null) {
             // get option for the domain model element class
             EClass eclazz = modelElement.eClass();
-            Object value = layoutServices.getOption(eclazz, (String) optionData.getIdentifier());
+            Object value = layoutServices.getOption(eclazz, id);
             if (value != null) {
                 return value;
             }
-            if (optionData instanceof LayoutOptionData) {
+            LayoutOptionData<?> optionData = layoutServices.getOptionData(id);
+            if (optionData != null) {
                 // get option from the semantic layout configuration
                 for (SemanticLayoutConfig config : layoutServices.getSemanticConfigs(eclazz)) {
                     config.setFocus(modelElement);

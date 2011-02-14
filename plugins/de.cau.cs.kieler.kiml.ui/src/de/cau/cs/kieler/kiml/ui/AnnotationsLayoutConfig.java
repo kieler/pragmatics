@@ -27,9 +27,13 @@ import de.cau.cs.kieler.core.annotations.BooleanAnnotation;
 import de.cau.cs.kieler.core.annotations.FloatAnnotation;
 import de.cau.cs.kieler.core.annotations.IntAnnotation;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
+import de.cau.cs.kieler.kiml.ILayoutData;
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.LayoutServices;
+import de.cau.cs.kieler.kiml.LayoutTypeData;
 import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * A semantic layout configurations for annotations.
@@ -37,77 +41,6 @@ import de.cau.cs.kieler.kiml.SemanticLayoutConfig;
  * @author msp
  */
 public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
-
-    /**
-     * Return an annotation that matches the given identifier, if present.
-     * 
-     * @param annotatable an annotatable object
-     * @param optionId a layout option identifier
-     * @return an annotation, or {@code null}
-     */
-    public static Annotation getAnnotation(final Annotatable annotatable, final String optionId) {
-        Annotation result = annotatable.getAnnotation(optionId);
-        if (result != null) {
-            return result;
-        }
-        int dotIndex = optionId.lastIndexOf('.');
-        if (dotIndex >= 0) {
-            return annotatable.getAnnotation(optionId.substring(dotIndex + 1));
-        }
-        return null;
-    }
-    
-    /**
-     * Return the value of the given annotation.
-     * 
-     * @param annotation an annotation
-     * @param optionData the layout option data
-     * @return the annotation value, or {@code null}
-     */
-    public static Object getValue(final Annotation annotation, final LayoutOptionData<?> optionData) {
-        if (annotation instanceof StringAnnotation) {
-            return optionData.parseValue(((StringAnnotation) annotation).getValue());
-        } else if (annotation instanceof IntAnnotation) {
-            if (optionData.getType() == LayoutOptionData.Type.INT) {
-                return ((IntAnnotation) annotation).getValue();
-            }
-        } else if (annotation instanceof FloatAnnotation) {
-            if (optionData.getType() == LayoutOptionData.Type.FLOAT) {
-                return ((FloatAnnotation) annotation).getValue();
-            }
-        } else if (annotation instanceof BooleanAnnotation) {
-            if (optionData.getType() == LayoutOptionData.Type.BOOLEAN) {
-                return ((BooleanAnnotation) annotation).isValue();
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * Set the value of the given annotation.
-     * 
-     * @param annotation an annotation
-     * @param optionData the layout option data
-     * @param value the new annotation value
-     */
-    public static void setValue(final Annotation annotation, final LayoutOptionData<?> optionData,
-            final Object value) {
-        if (annotation instanceof StringAnnotation) {
-            ((StringAnnotation) annotation).setValue(value.toString());
-        } else if (annotation instanceof IntAnnotation) {
-            if (optionData.getType() == LayoutOptionData.Type.INT && value instanceof Integer) {
-                ((IntAnnotation) annotation).setValue((Integer) value);
-            }
-        } else if (annotation instanceof FloatAnnotation) {
-            if (optionData.getType() == LayoutOptionData.Type.FLOAT && value instanceof Float) {
-                ((FloatAnnotation) annotation).setValue((Float) value);
-            }
-        } else if (annotation instanceof BooleanAnnotation) {
-            if (optionData.getType() == LayoutOptionData.Type.BOOLEAN && value instanceof Boolean) {
-                ((BooleanAnnotation) annotation).setValue((Boolean) value);
-            }
-        }
-    }
     
     /** a caching map for layout option data. */
     private Map<String, LayoutOptionData<?>> optionDataMap;
@@ -152,6 +85,94 @@ public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
     }
 
     /**
+     * Return an annotation that matches the given identifier, if present.
+     * 
+     * @param annotatable an annotatable object
+     * @param optionId a layout option identifier
+     * @return an annotation, or {@code null}
+     */
+    private Annotation getAnnotation(final Annotatable annotatable, final String optionId) {
+        Annotation result = annotatable.getAnnotation(optionId);
+        if (result != null) {
+            return result;
+        }
+        int dotIndex = optionId.lastIndexOf('.');
+        if (dotIndex >= 0) {
+            return annotatable.getAnnotation(optionId.substring(dotIndex + 1));
+        }
+        return null;
+    }
+    
+    /**
+     * Return the value of the given annotation.
+     * 
+     * @param annotation an annotation
+     * @param optionData the layout option data
+     * @return the annotation value, or {@code null}
+     */
+    private Object getValue(final Annotation annotation, final LayoutOptionData<?> optionData) {
+        if (annotation instanceof StringAnnotation) {
+            String value = ((StringAnnotation) annotation).getValue();
+            if (optionData.getId().equals(LayoutOptions.LAYOUTER_HINT_ID)) {
+                ILayoutData layoutData = getAlgorithmData(value);
+                if (layoutData != null) {
+                    return layoutData.getId();
+                }
+            } else {
+                return optionData.parseValue(value);
+            }
+        } else if (annotation instanceof IntAnnotation) {
+            if (optionData.getType() == LayoutOptionData.Type.INT) {
+                return ((IntAnnotation) annotation).getValue();
+            }
+        } else if (annotation instanceof FloatAnnotation) {
+            if (optionData.getType() == LayoutOptionData.Type.FLOAT) {
+                return ((FloatAnnotation) annotation).getValue();
+            }
+        } else if (annotation instanceof BooleanAnnotation) {
+            if (optionData.getType() == LayoutOptionData.Type.BOOLEAN) {
+                return ((BooleanAnnotation) annotation).isValue();
+            }
+        }
+        return null;
+    }
+    
+    /** a caching map for layout algorithm data. */
+    private Map<String, ILayoutData> algorithmDataMap;
+    
+    /**
+     * Return a layout algorithm data for the given identifier.
+     * 
+     * @param id an identifier
+     * @return the corresponding algorithm data
+     */
+    private ILayoutData getAlgorithmData(final String id) {
+        if (algorithmDataMap == null) {
+            algorithmDataMap = new HashMap<String, ILayoutData>();
+            LayoutServices layoutServices = LayoutServices.getInstance();
+            // add layout type data to the cache
+            for (LayoutTypeData typeData : layoutServices.getTypeData()) {
+                String typeId = typeData.getId();
+                int dotIndex = typeId.lastIndexOf('.');
+                if (dotIndex >= 0) {
+                    algorithmDataMap.put(typeId.substring(dotIndex + 1), typeData);
+                }
+                algorithmDataMap.put(typeId, typeData);
+            }
+            // add layout algorithm data to the cache
+            for (LayoutAlgorithmData algorithmData : layoutServices.getAlgorithmData()) {
+                String algoId = algorithmData.getId();
+                int dotIndex = algoId.lastIndexOf('.');
+                if (dotIndex >= 0) {
+                    algorithmDataMap.put(algoId.substring(dotIndex + 1), algorithmData);
+                }
+                algorithmDataMap.put(algoId, algorithmData);
+            }
+        }
+        return algorithmDataMap.get(id);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -164,6 +185,32 @@ public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
             }
         }
         return null;
+    }
+    
+    /**
+     * Set the value of the given annotation.
+     * 
+     * @param annotation an annotation
+     * @param optionData the layout option data
+     * @param value the new annotation value
+     */
+    private void setValue(final Annotation annotation, final LayoutOptionData<?> optionData,
+            final Object value) {
+        if (annotation instanceof StringAnnotation) {
+            ((StringAnnotation) annotation).setValue(value.toString());
+        } else if (annotation instanceof IntAnnotation) {
+            if (optionData.getType() == LayoutOptionData.Type.INT && value instanceof Integer) {
+                ((IntAnnotation) annotation).setValue((Integer) value);
+            }
+        } else if (annotation instanceof FloatAnnotation) {
+            if (optionData.getType() == LayoutOptionData.Type.FLOAT && value instanceof Float) {
+                ((FloatAnnotation) annotation).setValue((Float) value);
+            }
+        } else if (annotation instanceof BooleanAnnotation) {
+            if (optionData.getType() == LayoutOptionData.Type.BOOLEAN && value instanceof Boolean) {
+                ((BooleanAnnotation) annotation).setValue((Boolean) value);
+            }
+        }
     }
 
     /**
