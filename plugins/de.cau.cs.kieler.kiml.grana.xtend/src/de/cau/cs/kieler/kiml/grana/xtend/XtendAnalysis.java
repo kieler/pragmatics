@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.Path;
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.transformation.TransformationException;
+import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
 import de.cau.cs.kieler.kiml.grana.AbstractSimpleInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 

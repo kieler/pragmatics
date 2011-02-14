@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.gef.Request;
 import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 
 /**
  * Request for the execution of a model transformation.

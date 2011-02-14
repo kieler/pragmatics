@@ -21,9 +21,9 @@ import java.util.List;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import de.cau.cs.kieler.core.model.transformation.AbstractTransformation;
-import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.transformation.xtend.XtendTransformationFramework;
+import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
+import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
 
 /**
  * A manager class for creating and managing xtend analyses.<br>

@@ -24,8 +24,8 @@ import java.util.Locale;
 
 import org.eclipse.core.runtime.IContributor;
 
-import de.cau.cs.kieler.core.model.transformation.AbstractTransformation;
-import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
+import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**

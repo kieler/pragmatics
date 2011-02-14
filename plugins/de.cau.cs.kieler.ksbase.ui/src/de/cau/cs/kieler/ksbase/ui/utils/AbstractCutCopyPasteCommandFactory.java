@@ -43,9 +43,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.transformation.xtend.XtendTransformationFramework;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
+import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
 import de.cau.cs.kieler.core.ui.handler.ICutCopyPasteCommandFactory;
 import de.cau.cs.kieler.ksbase.ui.handler.TransformationCommand;
 

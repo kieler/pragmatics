@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 
-import de.cau.cs.kieler.core.model.transformation.AbstractTransformation;
+import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
 
 /**
  * Provider class for the xtend analyses table.

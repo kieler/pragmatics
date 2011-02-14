@@ -14,8 +14,8 @@
  *****************************************************************************/
 package de.cau.cs.kieler.ksbase.core;
 
-import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.transformation.xtend.XtendTransformationFramework;
+import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
 
 /**
  * The transformation framework for KSBasE.

@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 
-import de.cau.cs.kieler.core.model.transformation.AbstractTransformation;
+import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
 import de.cau.cs.kieler.ksbase.KSBasEPlugin;
 
 /**
