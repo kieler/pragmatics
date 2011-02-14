@@ -39,16 +39,20 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.ImageFigureEx;
 import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
 import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.Workbench;
 import org.w3c.dom.Document;
 
+import ptolemy.vergil.icon.EditorIcon;
 import de.cau.cs.kieler.core.annotations.Annotatable;
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.NamedObject;
@@ -62,8 +66,6 @@ import de.cau.cs.kieler.kvid.datadistributor.IDataListener;
 import diva.canvas.CanvasUtilities;
 import diva.canvas.Figure;
 import diva.canvas.toolbox.ImageFigure;
-
-import ptolemy.vergil.icon.EditorIcon;
 
 /**
  * Class for generating draw2d Figures out of svg documents and EditorIcons.
@@ -368,22 +370,31 @@ public class FigureProvider {
             } else {
                 width = DEFAULT_WIDTH;
             }
-            Dimension dim = new Dimension(width, DEFAULT_HEIGHT);
-            constFigure.getBounds().setSize(dim);
+
+            Label valueLabel = new Label();
+            if (!valueAttribute.equals("null")) {
+                Annotation valueAnn = ((Annotatable) object).getAnnotation(valueAttribute);
+                String value = ((StringAnnotation) valueAnn).getValue();
+                valueLabel.setText(value);
+                FontData fd = new FontData();
+                fd.setStyle(SWT.NORMAL);
+                fd.setHeight(10);
+                Font font = new Font(Workbench.getInstance().getDisplay(), fd); // "Courier New", 12, SWT.NORMAL);
+                //fd.setHeight(12);
+                valueLabel.setFont(font);
+                valueLabel.getBounds().setLocation(LABELLOCATION_X, LABELLOCATION_Y);
+                valueLabel.getBounds().setSize(valueLabel.getTextBounds().getSize());
+                valueLabel.setLayoutManager(new BorderLayout());
+                /* width -5 *///LABELSIZE_WIDTH, LABELSIZE_HEIGHT));
+                constFigure.setLayoutManager(new BorderLayout());
+                constFigure.add(valueLabel);
+            }
+            Dimension dim = valueLabel.getBounds().getSize().expand(10, 10); //new Dimension(width, DEFAULT_HEIGHT);
+            constFigure.getBounds().setSize(dim.getCopy());
             constFigure.setMaximumSize(dim.getCopy());
             constFigure.setMinimumSize(dim.getCopy());
             constFigure.setPreferredSize(dim.getCopy());
 
-            if (!valueAttribute.equals("null")) {
-                Annotation valueAnn = ((Annotatable) object).getAnnotation(valueAttribute);
-                String value = ((StringAnnotation) valueAnn).getValue();
-                Label valueLabel = new Label();
-                valueLabel.setText(value);
-                valueLabel.setBounds(new Rectangle(LABELLOCATION_X, LABELLOCATION_Y,
-                /* width -5 */LABELSIZE_WIDTH, LABELSIZE_HEIGHT));
-                constFigure.setLayoutManager(new BorderLayout());
-                constFigure.add(valueLabel);
-            }
 
         }
         return constFigure;

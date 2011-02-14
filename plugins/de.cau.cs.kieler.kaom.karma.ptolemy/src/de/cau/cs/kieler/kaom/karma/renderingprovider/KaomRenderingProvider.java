@@ -65,7 +65,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
     /**
      * Radius of the rounded edges. 
      */
-    private static final int ROUNDED_BENDPOINTS_RADIUS = 9;
+    private static final int ROUNDED_BENDPOINTS_RADIUS = 10;
     
     
     /**
