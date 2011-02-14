@@ -19,7 +19,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.StringTokenizer;
 
+import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.Panel;
@@ -39,6 +41,7 @@ import org.eclipse.gmf.runtime.gef.ui.internal.figures.OvalFigure;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.Workbench;
 import org.w3c.dom.Document;
@@ -178,13 +181,17 @@ public final class FigureParser {
                     String text = childElement.getTextContent();
                     text = text.replaceAll("\n", "");
                     text = text.trim();
-                    Label figure = new Label(text);
-                    figure.setLabelAlignment(PositionConstants.LEFT);
-                    // figure.setTextPlacement(Label.WEST);
+                    Label figure = new Label();
+                    figure.setText(text);
                     applyStyle(figure, style);
+                    figure.getBounds().setLocation(x.intValue(), x.intValue());
+                    figure.getBounds().setSize(figure.getTextBounds().getSize());
+                    figure.setLayoutManager(new BorderLayout());
+                    //figure.setLabelAlignment(PositionConstants.LEFT);
+                    // figure.setTextPlacement(Label.WEST);
                     parentFigure.add(buildFigure(childElement, figure));
-                    figure.getBounds().setLocation(x.intValue(), y.intValue());
-                    figure.getBounds().setSize(figure.getParent().getBounds().width, 8);
+                    //figure.getBounds().setLocation(x.intValue(), y.intValue());
+                    //figure.getBounds().setSize(figure.getParent().getBounds().width, 8);
                     // figure.setTextPlacement(PositionConstants.EAST);
                     // figure.setTextAlignment(PositionConstants.TOP);
                 } else if (tag.equals("image")) {
@@ -254,6 +261,15 @@ public final class FigureParser {
                         ((NodeFigure) figure).setLineWidth(width.intValue());
                     }
 
+                } else if (name.equals("font-size")) {
+                    int size = Integer.parseInt(value);
+                    if (figure instanceof Label) {
+                        FontData fd = new FontData();
+                        fd.setStyle(SWT.NORMAL);
+                        fd.setHeight(size - 6);
+                        Font font = new Font(Workbench.getInstance().getDisplay(), fd);
+                        ((Label)figure).setFont(font);
+                    }
                 }
             }
         }
