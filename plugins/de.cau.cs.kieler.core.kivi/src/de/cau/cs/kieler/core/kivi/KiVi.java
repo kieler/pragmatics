@@ -17,10 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -31,10 +29,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 import de.cau.cs.kieler.core.KielerNotSupportedException;
 import de.cau.cs.kieler.core.kivi.internal.CombinationsWorker;
@@ -93,8 +89,8 @@ public class KiVi {
      * A mapping of ITriggerState classes to active Combinations that listen to that TriggerStates.
      * Is updated when combinations are de-/activated.
      */
-    private Multimap<Class<? extends ITriggerState>, ICombination> triggerStates2Combinations = Multimaps
-            .newHashMultimap();
+    private Multimap<Class<? extends ITriggerState>, ICombination> triggerStates2Combinations = 
+        HashMultimap.create();
 
     /**
      * View Management can be disabled at a whole.
@@ -334,19 +330,19 @@ public class KiVi {
             relevantCombos = Lists.newArrayList(triggerStates2Combinations.get(triggerState
                     .getClass()));
         }
-            if (debug && !(triggerState instanceof EffectTriggerState)) {
-                System.out.println(triggerState);
-            }
-            for (ICombination combo : relevantCombos) {
-                try {
-                    List<IEffect> effects = combo.trigger(triggerState);
-                    for (IEffect effect : effects) {
-                        executeEffect(effect);
-                    }
-                } catch (KielerNotSupportedException e) {
-                    error(combo, triggerState, e);
+        if (debug && !(triggerState instanceof EffectTriggerState)) {
+            System.out.println(triggerState);
+        }
+        for (ICombination combo : relevantCombos) {
+            try {
+                List<IEffect> effects = combo.trigger(triggerState);
+                for (IEffect effect : effects) {
+                    executeEffect(effect);
                 }
-            
+            } catch (KielerNotSupportedException e) {
+                error(combo, triggerState, e);
+            }
+
         }
         triggerState.finish();
     }
