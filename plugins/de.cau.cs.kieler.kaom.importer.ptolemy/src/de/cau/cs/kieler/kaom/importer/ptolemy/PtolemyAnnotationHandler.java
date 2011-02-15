@@ -103,8 +103,8 @@ import de.cau.cs.kieler.kaom.Entity;
  * the Ptolemy model into a KAOM model. The {@code configure} element is a mixed
  * element, which means that it can contain anything, not just XML. However, it
  * does contain XML (usually an {@code svg} element and its children), which
- * disturbs the quiet peace of the parser. Which, in turn, disturbs my quiet peace.
- * Thus, the {@code configure} element and its children are dropped by the parser
+ * disturbs the quiet peace of the parser. (which, in turn, disturbs my quiet peace.)
+ * The {@code configure} element and its children are then dropped by the parser
  * during the transformation and are added to a list of unknown features. That's
  * where this handler comes in.
  * 
@@ -116,7 +116,7 @@ import de.cau.cs.kieler.kaom.Entity;
  * text even in the face of severely hopeless circumstances. Hurray!
  * 
  * <p>After that's done, it applies a heuristic to each comment annotation, trying
- * to find the entity it is probably annotating. If we find any, the comment is
+ * to find the entity it is probably annotating. If it finds any, the comment is
  * attached to it by means of a {@code ReferenceAnnotation} named {@code attachedTo}.
  * If we don't find one, that {@code ReferenceAnnotation} is still added to the
  * comment, but with an empty reference; thus, the presence of this annotation
@@ -395,7 +395,7 @@ public class PtolemyAnnotationHandler extends TransformationWorkflowHook {
      * @param annotation the annotation whose original property to find.
      * @return the property, or {@code null} if it couldn't be found.
      */
-    public PropertyType findOriginalProperty(final Annotation annotation) {
+    private PropertyType findOriginalProperty(final Annotation annotation) {
         // Find the annotation's full path
         List<String> annotationPath = getFullPath(annotation);
         if (annotationPath == null) {
