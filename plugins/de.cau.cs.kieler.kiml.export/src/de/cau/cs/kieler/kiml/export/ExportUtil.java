@@ -37,9 +37,10 @@ import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.m2m.ITransformationContext;
+import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
+import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
 import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
-import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
 
 /**
  * A utility class for graph export.
@@ -138,34 +139,40 @@ public final class ExportUtil {
         URL url = FileLocator.find(bundle, path, null);
         String xtendFilePath = FileLocator.resolve(url).getFile();
         // initialize the xtend framework
-        ITransformationFramework transformationFramework =
-                new XtendTransformationFramework();
+        Object[] params = null;
         if (parameters != null && parameters.size() > 0) {
             // additional parameters
-            Object[] params = new Object[parameters.size() + 1];
+            params = new Object[parameters.size() + 1];
             params[0] = node;
             int i = 1;
             for (Object parameter : parameters) {
                 params[i++] = parameter;
             }
-            transformationFramework.setParameters(params);
         } else {
-            Object[] params = new Object[1];
+            params = new Object[1];
             params[0] = node;
-            transformationFramework.setParameters(params);
         }
-        // initialize the transformation
+        // assemble the list of required metamodels
         String[] metamodels = new String[involvedMetamodels.length + 1];
         metamodels[0] = "de.cau.cs.kieler.core.kgraph.KGraphPackage";
         int i = 1;
         for (String metamodel : involvedMetamodels) {
             metamodels[i++] = metamodel; 
         }
-        transformationFramework.initializeTransformation(xtendFilePath,
-                extension, metamodels);
+        // initialize the transformation
+        ITransformationContext transformationContext = new XtendTransformationContext(
+                xtendFilePath,
+                metamodels,
+                null,
+                null
+        );
+        TransformationDescriptor transformationDescriptor = new TransformationDescriptor(
+                extension,
+                params
+        );
         // execute the transformation
-        Object resultModel = null;
-        resultModel = transformationFramework.executeTransformation();
+        transformationContext.execute(transformationDescriptor);
+        Object resultModel = transformationDescriptor.getResult();
         monitor.worked(2);
         // serialize the model
         EObject model = null;
