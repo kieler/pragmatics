@@ -14,9 +14,11 @@
 package de.cau.cs.kieler.kex.ui.wizards.importing;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -593,10 +595,20 @@ public class ImportExamplePage extends WizardPage {
 
     private void updateDescriptionLabel(final Example example) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Title: ").append(example.getTitle()).append("\n").append("Author: ")
-                .append(example.getAuthor()).append("\n").append("Contact: ")
-                .append(example.getContact()).append("\n").append("\n")
-                .append(example.getDescription());
+        Date generationDate = example.getGenerationDate();
+        sb.append("Title: ")
+                .append(example.getTitle() != null ? example.getTitle() : "")
+                .append("\n")
+                .append("Author: ")
+                .append(example.getAuthor() != null ? example.getAuthor() : "")
+                .append("\n")
+                .append("Contact: ")
+                .append(example.getContact() != null ? example.getContact() : "")
+                .append("\n")
+                .append("Generated at: ")
+                .append(generationDate != null ? new SimpleDateFormat("yyyy-MM-dd")
+                        .format(generationDate) : "").append("\n").append("\n")
+                .append("Description: ").append(example.getDescription());
         getExampleDescField().setText(sb.toString());
     }
 
