@@ -119,11 +119,8 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
                     // split up the crossed hypernodes
                     if (path.get(pathNodeCounter).getType() == NodeType.HYPER) {
                         splitUpHypernodes(path, graph, pathNodeCounter);
-                    }
-
-                    // connecting new normal nodes
-                    else {
-
+                    } else {
+                        // connecting new normal nodes
                         INode src = path.get(pathNodeCounter);
                         INode dst = path.get(pathNodeCounter + 1);
 
@@ -147,7 +144,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param dualGraph
      *            , the dual graph of the given graph + 2 nodes
      */
-    private void extendDualGraph(IGraph graph, IGraph dualGraph) {
+    private void extendDualGraph(final IGraph graph, final IGraph dualGraph) {
         for (INode node : graph.getNodes()) {
             if (node.getType() == NodeType.HYPER) {
                 LinkedHashSet<INode> dualNodes = new LinkedHashSet<INode>();
@@ -186,23 +183,22 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      *            , the given graph
      * @return
      */
-    private ArrayList<INode> buildPathFromBorders(LinkedList<IEdge> crossingBorders, INode source,
-            INode target, IGraph graph) {
+    private ArrayList<INode> buildPathFromBorders(final LinkedList<IEdge> crossingBorders,
+            final INode source, final INode target, final IGraph graph) {
         ArrayList<INode> path = new ArrayList<INode>();
         path.add(source);
         for (IEdge crossingEdge : crossingBorders) {
 
-            // crossing a edge has hypernode as source
             if (crossingEdge.getSource().getType() == NodeType.HYPER) {
+                // crossing a edge has hypernode as source
                 path.add(crossingEdge.getSource());
             }
-            // crossing a edge has hypernode as target
-            if (crossingEdge.getTarget().getType() == NodeType.HYPER) {
-                path.add(crossingEdge.getTarget());
-            }
 
-            // crossing a normal edge
-            else {
+            if (crossingEdge.getTarget().getType() == NodeType.HYPER) {
+                // crossing a edge has hypernode as target
+                path.add(crossingEdge.getTarget());
+            } else {
+                // crossing a normal edge
                 INode newNode = graph.addNode(crossingEdge).getFirst();
                 path.add(newNode);
             }
@@ -218,7 +214,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      *            , the path of faces through the graph
      * @return
      */
-    private LinkedList<IEdge> findCrossingBorders(LinkedList<IFace> shortestFacePath) {
+    private LinkedList<IEdge> findCrossingBorders(final LinkedList<IFace> shortestFacePath) {
         LinkedList<IEdge> crossingBorders = new LinkedList<IEdge>();
         int faceCounter = 0;
         while (faceCounter < shortestFacePath.size() - 1) {
@@ -243,9 +239,11 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      * @param pathNodeCounter
      *            , the position on the path
      */
-    private void splitUpHypernodes(ArrayList<INode> path, IGraph graph, int pathNodeCounter) {
+    private void splitUpHypernodes(final ArrayList<INode> path, final IGraph graph,
+            final int pathNodeCounter) {
 
-        INode oldHyperNode = path.get(pathNodeCounter);
+        int counter = pathNodeCounter;
+        INode oldHyperNode = path.get(counter);
 
         // create new hypernode and connect this with the old one
         INode newHyperNode = graph.addNode();
@@ -266,23 +264,23 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
         INode midNode = graph.addNode(newHyperEdge).getFirst();
 
         // connect the new node
-        IEdge newEdge = graph.addEdge(midNode, path.get(pathNodeCounter + 1));
+        IEdge newEdge = graph.addEdge(midNode, path.get(counter + 1));
 
         // bring new edges at new node in right order
         IEdge preEdgeB = this.findFirstFaceEdge(newEdge, midNode);
         reinsertEdges(newEdge, preEdgeB, midNode);
-        pathNodeCounter++;
+        counter++;
 
     }
 
     /**
-     * builds a face path in the real graph, from a given edge path in the dual graph
+     * builds a face path in the real graph, from a given edge path in the dual graph.
      * 
      * @param dualEdgePath
      *            , a path of edges through the dual graph
      * @return shortestFacePath, a path of faces
      */
-    private LinkedList<IFace> getShortestFacePath(List<IEdge> dualEdgePath) {
+    private LinkedList<IFace> getShortestFacePath(final List<IEdge> dualEdgePath) {
         LinkedList<IFace> shortestFacePath = new LinkedList<IFace>();
 
         // same path with faces in the normal graph
@@ -303,7 +301,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
     }
 
     /**
-     * returns all pre edges at the source nodes of a path
+     * returns all pre edges at the source nodes of a path.
      * 
      * @param nodePath
      *            , the path of nodes
@@ -311,7 +309,9 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      *            , the path of faces adjacent to the nodes
      * @return sourcePreEdges, all pre edges at the source nodes
      */
-    private List<IEdge> getSourcePreEdges(ArrayList<INode> nodePath, LinkedList<IFace> facePath) {
+    private List<IEdge> getSourcePreEdges(final ArrayList<INode> nodePath,
+            final LinkedList<IFace> facePath) {
+
         LinkedList<IEdge> sourcePreEdges = new LinkedList<IEdge>();
         int i = 0;
         while (i < nodePath.size() - 1) {
@@ -337,7 +337,7 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
     }
 
     /**
-     * returns all pre edges at the target nodes of a path
+     * returns all pre edges at the target nodes of a path.
      * 
      * @param nodePath
      *            , the path of nodes
@@ -345,7 +345,9 @@ public class EdgeInsertionPlanarization extends AbstractAlgorithm implements IPl
      *            , the path of faces adjacent to the nodes
      * @return targetPreEdges, all pre edges at the target nodes
      */
-    private List<IEdge> getTargetPreEdges(ArrayList<INode> nodePath, LinkedList<IFace> facePath) {
+    private List<IEdge> getTargetPreEdges(final ArrayList<INode> nodePath,
+            final LinkedList<IFace> facePath) {
+
         LinkedList<IEdge> targetPreEdges = new LinkedList<IEdge>();
         int i = 0;
         while (i < nodePath.size() - 1) {

@@ -110,9 +110,9 @@ public class TidyRectangleCompactor extends AbstractAlgorithm implements ICompac
                 edges.push(edge);
                 direction.push(new Pair<Boolean, Boolean>(false, false));
                 while (!edges.isEmpty()) {
-                    IEdge current = edges.pop();
-                    Pair<Boolean, Boolean> dir = direction.pop();
                     // TODO create arcs
+                    // IEdge current = edges.pop();
+                    // Pair<Boolean, Boolean> dir = direction.pop();
 
                     List<INode> list = new LinkedList<INode>();
                     list.add(edge.getSource());
