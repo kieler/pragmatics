@@ -37,9 +37,9 @@ import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.transformation.TransformationException;
-import de.cau.cs.kieler.core.model.transformation.xtend.XtendTransformationFramework;
+import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
+import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
+import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
 
 /**
  * A utility class for graph export.
