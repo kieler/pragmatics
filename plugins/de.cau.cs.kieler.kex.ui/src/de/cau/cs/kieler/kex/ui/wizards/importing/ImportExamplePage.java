@@ -324,9 +324,6 @@ public class ImportExamplePage extends WizardPage {
         /** the current filter value. */
         private String filterValue;
 
-        // /** the current best filter match. */
-        // private String bestFilterMatch;
-
         public void dispose() {
         }
 
@@ -342,7 +339,6 @@ public class ImportExamplePage extends WizardPage {
                 filterValue = filterValue.toLowerCase();
             }
             filterMap.clear();
-            // bestFilterMatch = null;
         }
 
         public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
@@ -400,11 +396,6 @@ public class ImportExamplePage extends WizardPage {
                             for (Object ob : pair.getSecond()) {
                                 filterMap.put(ob, Boolean.TRUE);
                             }
-                            // if (bestFilterMatch == null) {
-                            // bestFilterMatch = category.getId();
-                            // } else {
-                            // bestFilterMatch = "";
-                            // }
                         } else {
                             boolean hasFilteredChild = false;
                             for (Object ob : pair.getSecond()) {
@@ -418,19 +409,8 @@ public class ImportExamplePage extends WizardPage {
                         Example example = (Example) element;
                         if (example.getTitle().toLowerCase().contains(filterValue)) {
                             result = Boolean.TRUE;
-                            // if (bestFilterMatch == null) {
-                            // bestFilterMatch = example.getId();
-                            // } else {
-                            // bestFilterMatch = "";
-                            // }
                         } else {
                             result = Boolean.FALSE;
-                            // String category = LayoutServices
-                            // .getInstance()
-                            // .getCategoryName(layouterData.getCategory());
-                            // result = category != null
-                            // && category.toLowerCase().contains(
-                            // filterValue);
                         }
                     }
                 } else {
@@ -473,12 +453,8 @@ public class ImportExamplePage extends WizardPage {
             if (element instanceof Pair) {
                 Pair<Category, List<Object>> pair = (Pair<Category, List<Object>>) element;
                 Category first = pair.getFirst();
-                // if (first.getIconPath() != null) {
                 return computeImage(first.getIconPath(), first.getNamespaceId(), ICON_WIDTH,
                         ICON_HEIGHT);
-                // } else {
-                // return noPreviewPic();
-                // }
             }
             if (element instanceof Example) {
                 return computeImage(((Example) element).getOverviewPic(),
@@ -625,7 +601,7 @@ public class ImportExamplePage extends WizardPage {
     }
 
     // TODO falls ein image nicht richtig geladen wird wegen format fehler oder
-    // so muss auf jeden fall eine meldung kommen... am besten schon beim export
+    // so muss auf jeden fall eine (dezente) meldung kommen... am besten schon beim export
     // darauf reagieren.
 
     /**
