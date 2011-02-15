@@ -53,8 +53,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.ptolemy.moml.MomlPackage;
 
 import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
-import de.cau.cs.kieler.core.model.util.XtendStatus;
-import de.cau.cs.kieler.core.model.util.XtendTransformationUtil;
+import de.cau.cs.kieler.core.model.xtend.util.XtendStatus;
+import de.cau.cs.kieler.core.model.xtend.util.XtendTransformationUtil;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.kaom.KaomPackage;
 import de.cau.cs.kieler.kaom.diagram.custom.commands.ReInitKaomDiagramCommand;

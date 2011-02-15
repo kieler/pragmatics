@@ -39,7 +39,7 @@ import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
 import de.cau.cs.kieler.core.annotations.AnnotationsPackage;
 import de.cau.cs.kieler.core.annotations.ReferenceAnnotation;
 import de.cau.cs.kieler.core.annotations.TypedStringAnnotation;
-import de.cau.cs.kieler.core.model.util.TransformationWorkflowHook;
+import de.cau.cs.kieler.core.model.xtend.util.TransformationWorkflowHook;
 import de.cau.cs.kieler.kaom.Entity;
 
 
