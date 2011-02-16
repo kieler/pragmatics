@@ -80,17 +80,17 @@ import de.cau.cs.kieler.kex.ui.util.ImageConverter;
  */
 public class ImportExamplePage extends WizardPage {
 
-    private static final int IMAGE_PRE_WIDTH = 240;
-    private static final int IMAGE_PRE_HEIGHT = 135;
+    private static final int IMAGE_PRE_WIDTH = 480;
+    private static final int IMAGE_PRE_HEIGHT = 270;
 
-    private static final int DESC_HEIGHT_HINT = 160;
-    private static final int DESC_MIN_HEIGHT = 120;
+    private static final int DESC_HEIGHT_HINT = 200;
+    private static final int DESC_MIN_HEIGHT = 160;
 
     private static final int IMG_PADDINGS_WIDTH = 40;
     private static final int IMG_PADDINGS_HEIGHT = 120;
 
     private static final int WIZARD_MIN_WIDTH = 540;
-    private static final int WIZARD_MIN_HEIGHT = 600;
+    private static final int WIZARD_MIN_HEIGHT = 720;
 
     private Text exampleDescField;
 
@@ -115,7 +115,7 @@ public class ImportExamplePage extends WizardPage {
 
     public ImportExamplePage(final String name, final IStructuredSelection selection) {
         super(name);
-        setDescription(Messages.MainPage_pageDescription);
+        setDescription(Messages.getString("importExamplePageDescription"));
     }
 
     /**
@@ -143,7 +143,7 @@ public class ImportExamplePage extends WizardPage {
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         // create filter text
         final Text filterText = new Text(composite, SWT.BORDER);
-        filterText.setText("type filter text");
+        filterText.setText(Messages.getString("initialFilterText"));
         filterText.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         filterText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 
@@ -166,7 +166,7 @@ public class ImportExamplePage extends WizardPage {
                     Pair<Category, ArrayList<Object>> pair = (Pair<Category, ArrayList<Object>>) firstElement;
                     String desc = pair.getFirst().getDescription();
                     getExampleDescField().setText(desc != null ? desc : "");
-                    updateImageLabel(noPreviewPic());
+                    updateImageLabel(initPreviewImage());
                 } else if (firstElement instanceof Example) {
                     selectedExample = (Example) firstElement;
                     updateDescriptionLabel((Example) firstElement);
@@ -483,7 +483,7 @@ public class ImportExamplePage extends WizardPage {
     private void createPreviewComp(final Composite composite) {
         previewComp = composite;
         previewDesc = new Label(composite, SWT.NONE);
-        previewDesc.setText("Example Preview");
+        previewDesc.setText(Messages.getString("previewLabel"));
         GridData previewDescData = new GridData(GridData.FILL_HORIZONTAL);
         previewDesc.setLayoutData(previewDescData);
         imageLabel = new Label(composite, SWT.BORDER);
@@ -554,7 +554,7 @@ public class ImportExamplePage extends WizardPage {
                     @Override
                     protected void configureShell(final Shell newShell) {
                         super.configureShell(newShell);
-                        newShell.setText("Preview Picture");
+                        newShell.setText(Messages.getString("previewImageDialogDescription"));
                     }
 
                 };
@@ -571,13 +571,14 @@ public class ImportExamplePage extends WizardPage {
 
     private void createDescriptionComp(final Composite composite) {
         Label descriptionLabel = new Label(composite, SWT.NONE);
-        descriptionLabel.setText("Example Description");
-        this.exampleDescField = new Text(composite, SWT.NONE | SWT.MULTI | SWT.V_SCROLL
+        descriptionLabel.setText(Messages.getString("descriptionLabel"));
+        this.exampleDescField = new Text(composite, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL
                 | SWT.H_SCROLL | SWT.BORDER);
         GridData descData = new GridData(GridData.FILL_HORIZONTAL);
         descData.heightHint = DESC_HEIGHT_HINT;
         descData.minimumHeight = DESC_MIN_HEIGHT;
         this.exampleDescField.setLayoutData(descData);
+        this.exampleDescField.setEditable(false);
     }
 
     /**
@@ -596,19 +597,20 @@ public class ImportExamplePage extends WizardPage {
     private void updateDescriptionLabel(final Example example) {
         StringBuilder sb = new StringBuilder();
         Date generationDate = example.getGenerationDate();
-        sb.append("Title: ")
+        sb.append(Messages.getString("title"))
                 .append(example.getTitle() != null ? example.getTitle() : "")
                 .append("\n")
-                .append("Author: ")
+                .append(Messages.getString("author"))
                 .append(example.getAuthor() != null ? example.getAuthor() : "")
                 .append("\n")
-                .append("Contact: ")
+                .append(Messages.getString("contact"))
                 .append(example.getContact() != null ? example.getContact() : "")
                 .append("\n")
-                .append("Generated at: ")
-                .append(generationDate != null ? new SimpleDateFormat("yyyy-MM-dd")
-                        .format(generationDate) : "").append("\n").append("\n")
-                .append("Description: ").append(example.getDescription());
+                .append(Messages.getString("generatedAt"))
+                .append(generationDate != null ? new SimpleDateFormat(Messages
+                        .getString("englishDataFormat")).format(generationDate) : "").append("\n")
+                .append("\n").append(Messages.getString("description"))
+                .append(example.getDescription() != null ? example.getDescription() : "");
         getExampleDescField().setText(sb.toString());
     }
 

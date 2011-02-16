@@ -1,47 +1,54 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.kex.ui.wizards.importing;
+
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.eclipse.osgi.util.NLS;
 
-public class Messages extends NLS {
+/**
+ * Bundle of Messages for the import of kex.ui plug-in.
+ * 
+ * @author pkl
+ * 
+ */
+public final class Messages extends NLS {
+    /** the bundle name. **/
     private static final String BUNDLE_NAME = "de.cau.cs.kieler.kex.ui.wizards.importing.messages"; //$NON-NLS-1$
 
-    public static String ExampleCategory_must_specify_connectorCategory_id;
+    /** the resource bundle instance. */
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-    public static String Message_with_cause;
-
-    public static String ClearButton_toolTip;
-
-    public static String ExampleAuthor;
-
-    public static String ClearButton_accessibleListener;
-
-    public static String FilterLabel;
-
-    public static String NoMatchingItems_withFilterText;
-
-    public static String NoMatchingItems_filteredType;
-
-    public static String NoMatchingItems_noFilter;
-
-    public static String Filter_description;
-
-    public static String Filter_category;
-
-    public static String UnexpectedException;
-
-    public static String Tooltip_showOverview;
-
-    public static String ToolTip_detailsLink;
-
-    public static String ToolTip_detailsLink_tooltip;
-
-    public static String MainPage_pageDescription;
-
-    static {
-        // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+    /**
+     * Hidden constructor.
+     */
+    private Messages() {
     }
 
-    private Messages() {
+    /**
+     * Returns the string associated with the given key.
+     * 
+     * @param key
+     *            key to look up in the {@code messages.properties} file
+     * @return the associated string
+     */
+    public static String getString(final String key) {
+        try {
+            return RESOURCE_BUNDLE.getString(key);
+        } catch (MissingResourceException e) {
+            return '!' + key + '!';
+        }
     }
 }
