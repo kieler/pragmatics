@@ -401,7 +401,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
             }
             
             // If ready, 2 more iterations are performed
-            if (ready && finalIterations <= 0) {
+            if (ready && finalIterations < 0) {
                 finalIterations = 2;
             }
         }
