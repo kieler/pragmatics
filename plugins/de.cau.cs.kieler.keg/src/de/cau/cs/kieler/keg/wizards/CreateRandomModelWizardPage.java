@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2011 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.keg.wizards;
 
 import org.eclipse.core.resources.IContainer;
@@ -19,6 +32,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
@@ -34,6 +48,12 @@ import de.cau.cs.kieler.keg.KEGPlugin;
  */
 public class CreateRandomModelWizardPage extends WizardPage {
 
+    /** number of decimal places for the floating point spinners. */
+    private static final int SPINNER_DECIMALS = 2;
+    
+    /** the value to divide the floating point spinner selections by. */
+    private static final float SPINNER_SELECTION_FACTOR = (float) Math.pow(10.0, SPINNER_DECIMALS);
+    
     /** extension for graph files. */
     public static final String FILE_EXT = "keg";
 
@@ -69,11 +89,11 @@ public class CreateRandomModelWizardPage extends WizardPage {
 
     private Text containerText;
     private Text fileText;
-    private Text nodeText;
-    private Text minConnectionText;
-    private Text maxConnectionText;
-    private Text hierarchyText;
-    private Text hyperNodeText;
+    private Spinner nodesSpinner;
+    private Spinner minConnectionSpinner;
+    private Spinner maxConnectionSpinner;
+    private Spinner hierarchySpinner;
+    private Spinner hyperNodeSpinner;
     private Button directedButton;
     private Button usePortsButton;
 
@@ -96,7 +116,8 @@ public class CreateRandomModelWizardPage extends WizardPage {
     public CreateRandomModelWizardPage(final ISelection theselection) {
         super("createRandomModelWizard");
         setTitle("Create Random Model");
-        setDescription("This wizard creates a new graphs model of given size with random initial content.");
+        setDescription("This wizard creates a new graphs model of given size "
+                + "with random initial content.");
         this.selection = theselection;
     }
 
@@ -104,6 +125,9 @@ public class CreateRandomModelWizardPage extends WizardPage {
      * {@inheritDoc}
      */
     public void createControl(final Composite parent) {
+        // Turn off magic number checking in GUI code.
+        // CHECKSTYLEOFF MagicNumber
+        
         IPreferenceStore preferenceStore = KEGPlugin.getDefault()
                 .getPreferenceStore();
         Composite container = new Composite(parent, SWT.NULL);
@@ -130,11 +154,12 @@ public class CreateRandomModelWizardPage extends WizardPage {
                 handleBrowse();
             }
         });
+        
         label = new Label(container, SWT.NULL);
         label.setText("&File name:");
 
         fileText = new Text(container, SWT.BORDER | SWT.SINGLE);
-        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd = new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1);
         fileText.setLayoutData(gd);
         fileText.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -143,7 +168,6 @@ public class CreateRandomModelWizardPage extends WizardPage {
         });
 
         // Specify number of Nodes
-        label = new Label(container, SWT.NULL); // empty label to fill grid
         label = new Label(container, SWT.NULL);
         label.setText("&Number of nodes:");
 
@@ -151,11 +175,11 @@ public class CreateRandomModelWizardPage extends WizardPage {
         if (nodes <= 0) {
             nodes = DEF_NODES;
         }
-        nodeText = new Text(container, SWT.BORDER | SWT.SINGLE);
-        nodeText.setText(Integer.toString(nodes));
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        nodeText.setLayoutData(gd);
-        nodeText.addModifyListener(new ModifyListener() {
+        nodesSpinner = new Spinner(container, SWT.BORDER);
+        nodesSpinner.setValues(nodes, 1, Integer.MAX_VALUE, 0, 1, 10);
+        gd = new GridData(GridData.BEGINNING);
+        nodesSpinner.setLayoutData(gd);
+        nodesSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 dialogChanged();
             }
@@ -170,11 +194,11 @@ public class CreateRandomModelWizardPage extends WizardPage {
         if (minConnections < 0) {
             minConnections = DEF_MIN_CONNECTIONS;
         }
-        minConnectionText = new Text(container, SWT.BORDER | SWT.SINGLE);
-        minConnectionText.setText(Integer.toString(minConnections));
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        minConnectionText.setLayoutData(gd);
-        minConnectionText.addModifyListener(new ModifyListener() {
+        minConnectionSpinner = new Spinner(container, SWT.BORDER);
+        minConnectionSpinner.setValues(minConnections, 0, Integer.MAX_VALUE, 0, 1, 5);
+        gd = new GridData(GridData.BEGINNING);
+        minConnectionSpinner.setLayoutData(gd);
+        minConnectionSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 dialogChanged();
             }
@@ -189,11 +213,11 @@ public class CreateRandomModelWizardPage extends WizardPage {
         if (maxConnections < minConnections) {
             maxConnections = Math.max(minConnections, DEF_MAX_CONNECTIONS);
         }
-        maxConnectionText = new Text(container, SWT.BORDER | SWT.SINGLE);
-        maxConnectionText.setText(Integer.toString(maxConnections));
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        maxConnectionText.setLayoutData(gd);
-        maxConnectionText.addModifyListener(new ModifyListener() {
+        maxConnectionSpinner = new Spinner(container, SWT.BORDER);
+        maxConnectionSpinner.setValues(maxConnections, 0, Integer.MAX_VALUE, 0, 1, 5);
+        gd = new GridData(GridData.BEGINNING);
+        maxConnectionSpinner.setLayoutData(gd);
+        maxConnectionSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 dialogChanged();
             }
@@ -208,11 +232,13 @@ public class CreateRandomModelWizardPage extends WizardPage {
         if (hierarchyProb < 0.0 || hierarchyProb > 1.0) {
             hierarchyProb = DEF_HIERARCHY;
         }
-        hierarchyText = new Text(container, SWT.BORDER | SWT.SINGLE);
-        hierarchyText.setText(Float.toString(hierarchyProb));
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        hierarchyText.setLayoutData(gd);
-        hierarchyText.addModifyListener(new ModifyListener() {
+        hierarchySpinner = new Spinner(container, SWT.BORDER);
+        hierarchySpinner.setValues(0, 0, (int) SPINNER_SELECTION_FACTOR,
+                SPINNER_DECIMALS, 1, 10);
+        hierarchySpinner.setSelection((int) (hierarchyProb * SPINNER_SELECTION_FACTOR));
+        gd = new GridData(GridData.BEGINNING);
+        hierarchySpinner.setLayoutData(gd);
+        hierarchySpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 dialogChanged();
             }
@@ -227,11 +253,13 @@ public class CreateRandomModelWizardPage extends WizardPage {
         if (hyperNodeProb < 0.0 || hyperNodeProb > 1.0) {
             hyperNodeProb = DEF_HYPER_NODE;
         }
-        hyperNodeText = new Text(container, SWT.BORDER | SWT.SINGLE);
-        hyperNodeText.setText(Float.toString(hyperNodeProb));
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        hyperNodeText.setLayoutData(gd);
-        hyperNodeText.addModifyListener(new ModifyListener() {
+        hyperNodeSpinner = new Spinner(container, SWT.BORDER);
+        hyperNodeSpinner.setValues(0, 0, (int) SPINNER_SELECTION_FACTOR,
+                SPINNER_DECIMALS, 1, 10);
+        hyperNodeSpinner.setSelection((int) (hyperNodeProb * SPINNER_SELECTION_FACTOR));
+        gd = new GridData(GridData.BEGINNING);
+        hyperNodeSpinner.setLayoutData(gd);
+        hyperNodeSpinner.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 dialogChanged();
             }
@@ -246,11 +274,11 @@ public class CreateRandomModelWizardPage extends WizardPage {
         gd = new GridData(SWT.LEFT);
         directedButton.setLayoutData(gd);
         directedButton.addSelectionListener(new SelectionListener() {
-            public void widgetDefaultSelected(SelectionEvent e) {
+            public void widgetDefaultSelected(final SelectionEvent e) {
                 dialogChanged();
                 
             }
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
                 dialogChanged();
             }
         });
@@ -265,11 +293,11 @@ public class CreateRandomModelWizardPage extends WizardPage {
         gd = new GridData(SWT.LEFT);
         usePortsButton.setLayoutData(gd);
         usePortsButton.addSelectionListener(new SelectionListener() {
-            public void widgetDefaultSelected(SelectionEvent e) {
+            public void widgetDefaultSelected(final SelectionEvent e) {
                 dialogChanged();
                 
             }
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
                 dialogChanged();
             }
         });
@@ -278,6 +306,8 @@ public class CreateRandomModelWizardPage extends WizardPage {
         initialize();
         dialogChanged();
         setControl(container);
+        
+        // CHECKSTYLEON MagicNumber
     }
 
     /**
@@ -357,55 +387,34 @@ public class CreateRandomModelWizardPage extends WizardPage {
                 return;
             }
         }
-        try {
-            nodes = Integer.parseInt(nodeText.getText());
-            if (nodes <= 0) {
-                throw new NumberFormatException();
-            }
-        } catch (NumberFormatException exc) {
+        nodes = nodesSpinner.getSelection();
+        if (nodes <= 0) {
             updateStatus("Number of nodes must be a positive integer!");
-            return;
         }
-        try {
-            minConnections = Integer.parseInt(minConnectionText.getText());
-            if (minConnections < 0) {
-                throw new NumberFormatException();
-            }
-        } catch (NumberFormatException exc) {
+        minConnections = minConnectionSpinner.getSelection();
+        if (minConnections < 0) {
             updateStatus("Minimal number of edges must be a non-negative integer!");
-            return;
         }
-        try {
-            maxConnections = Integer.parseInt(maxConnectionText.getText());
-            if (maxConnections < minConnections) {
-                throw new NumberFormatException();
-            }
-        } catch (NumberFormatException exc) {
+        maxConnections = maxConnectionSpinner.getSelection();
+        if (maxConnections < minConnections) {
             updateStatus("Maximal number of edges must be an integer greater or equal"
                     + " to the minimal number of edges!");
-            return;
         }
-        try {
-            float temp = Float.parseFloat(hierarchyText.getText());
-            if (temp >= 0 && temp <= 1 && temp + hyperNodeProb <= 1) {
-                hierarchyProb = temp;
-            } else {
-                throw new NumberFormatException("must be within 0 and 1");
-            }
-        } catch (NumberFormatException exc) {
-            updateStatus("Hierarchy Probability must be a float number in the range from 0.0 to 1.0 and the sum of the Hierarchy and the Hyper Node Propability must be <= 1");
-            return;
+        float temp = hierarchySpinner.getSelection() / SPINNER_SELECTION_FACTOR;
+        if (temp >= 0 && temp <= 1 && temp + hyperNodeProb <= 1) {
+            hierarchyProb = temp;
+        } else {
+            updateStatus("Hierarchy Probability must be a float number in the range "
+                    + "from 0.0 to 1.0 and the sum of the Hierarchy and the Hyper Node "
+                    + "Propability must be <= 1");
         }
-        try {
-            float temp = Float.parseFloat(hyperNodeText.getText());
-            if (temp >= 0 && temp <= 1 && temp + hierarchyProb <= 1) {
-                hyperNodeProb = temp;
-            } else {
-                throw new NumberFormatException("must be within 0 and 1");
-            }
-        } catch (NumberFormatException exc) {
-            updateStatus("Hyper Node Propability must be a float number in the range from 0.0 to 1.0 and the sum of the Hyper Node and the Hierarchy Probability must be <= 1");
-            return;
+        temp = hyperNodeSpinner.getSelection() / SPINNER_SELECTION_FACTOR;
+        if (temp >= 0 && temp <= 1 && temp + hierarchyProb <= 1) {
+            hyperNodeProb = temp;
+        } else {
+            updateStatus("Hierarchy Probability must be a float number in the range "
+                    + "from 0.0 to 1.0 and the sum of the Hierarchy and the Hyper Node "
+                    + "Propability must be <= 1");
         }
 
         directed = directedButton.getSelection();

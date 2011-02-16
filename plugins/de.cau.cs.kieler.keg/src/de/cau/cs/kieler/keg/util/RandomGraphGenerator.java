@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2011 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.keg.util;
 
 import java.util.LinkedList;
@@ -28,9 +41,9 @@ public class RandomGraphGenerator {
     private float hierarchyProb;
     /** propability that a hyper node will be created instead of a normal one. */
     private float hyperNodeProb;
-    /** true if edges are directed, false else */
+    /** true if edges are directed, false otherwise. */
     private boolean directed;
-    /** true if nodes are connected through ports, false else */
+    /** true if nodes are connected through ports, false otherwise. */
     private boolean usePorts;
     /** current index for new node. */
     private int nodeIndex;
@@ -44,18 +57,24 @@ public class RandomGraphGenerator {
      *            minimal number of outgoing connections per node
      * @param maxConnections
      *            maximal number of outgoing connections per node
-     * @param thehierarchyProb
+     * @param theHierarchyProb
      *            probability of new hierarchy level
+     * @param theHyperNodeProb
+     *            probability of new hyper nodes
+     * @param theDirected
+     *            whether a directed graph should be generated
+     * @param theUsePorts
+     *            whether edges should connect ports or nodes
      * @return a random graph model
      */
     public Node createModel(final int nodes, final int minConnections,
-            final int maxConnections, final float thehierarchyProb,
-            final float hyperNodeProb, final boolean directed,
-            final boolean usePorts) {
-        this.hierarchyProb = thehierarchyProb;
-        this.hyperNodeProb = hyperNodeProb;
-        this.directed = directed;
-        this.usePorts = usePorts;
+            final int maxConnections, final float theHierarchyProb,
+            final float theHyperNodeProb, final boolean theDirected,
+            final boolean theUsePorts) {
+        this.hierarchyProb = theHierarchyProb;
+        this.hyperNodeProb = theHyperNodeProb;
+        this.directed = theDirected;
+        this.usePorts = theUsePorts;
         this.nodeIndex = 0;
         Node graph = factory.createNode();
 
