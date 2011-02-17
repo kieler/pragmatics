@@ -34,7 +34,6 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.AbstractEditPolicy;
 import org.eclipse.gmf.runtime.diagram.ui.commands.ICommandProxy;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramRootEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.INodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.LabelEditPart;
@@ -287,54 +286,30 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      */
     private void addEdgeLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
             final LabelEditPart labelEditPart, final float xbound, final float ybound) {
-        // get zoom level for offset compensation
-        double zoomLevel = 1.0;
-        if (labelEditPart.getRoot() instanceof DiagramRootEditPart) {
-            zoomLevel = ((DiagramRootEditPart) labelEditPart.getRoot()).getZoomManager().getZoom();
-        }
-
         // calculate direct new location of the label
         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-        ConnectionEditPart connectionEditPart = (ConnectionEditPart) labelEditPart.getParent();
-        IFigure sourceFigure = ((GraphicalEditPart) connectionEditPart.getSource()).getFigure();
-        Point newLocation = new Point(labelLayout.getXpos(), labelLayout.getYpos());
-        sourceFigure.translateToAbsolute(newLocation);
-        newLocation.scale(1 / zoomLevel);
-        if (newLocation.x <= 0 || newLocation.y <= 0 || newLocation.x > xbound
-                || newLocation.y > ybound) {
+        Rectangle targetBounds = new Rectangle(labelEditPart.getFigure().getBounds());
+        targetBounds.x = (int) labelLayout.getXpos();
+        targetBounds.y = (int) labelLayout.getYpos();
+        KGraphElement kedge = klabel.getParent();
+        if (targetBounds.x < 0 || targetBounds.y < 0 || targetBounds.x > xbound
+                || targetBounds.y > ybound || !(kedge instanceof KEdge)) {
             // empty labels are just positioned near their reference point
             command.addShapeLayout((View) labelEditPart.getModel(), new Point(), null);
             return;
         }
-        Rectangle targetBounds = new Rectangle(labelEditPart.getFigure().getBounds());
-        targetBounds.x = newLocation.x;
-        targetBounds.y = newLocation.y;
-
-        // get new bend points for the parent edge
-        KEdge kedge = (KEdge) klabel.getParent();
-        if (kedge == null) {
-            return;
-        }
+        
         KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+        ConnectionEditPart connectionEditPart = (ConnectionEditPart) labelEditPart.getParent();
         PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
         EObject modelElement = connectionEditPart.getNotationView().getElement();
         EdgeLabelPlacement labelPlacement = labelLayout
                 .getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
-        PointList absoluteBendPoints = new PointList();
         // for labels of the opposite reference of an ecore reference,
         // the list of bend points must be reversed
         if (modelElement instanceof EReference && labelPlacement == EdgeLabelPlacement.TAIL) {
-            for (int i = bendPoints.size() - 1; i >= 0; i--) {
-                Point point = bendPoints.getPoint(i);
-                sourceFigure.translateToAbsolute(point);
-                absoluteBendPoints.addPoint(point.scale(1 / zoomLevel));
-            }
-        } else {
-            for (int i = 0; i < bendPoints.size(); i++) {
-                Point point = bendPoints.getPoint(i);
-                sourceFigure.translateToAbsolute(point);
-                absoluteBendPoints.addPoint(point.scale(1 / zoomLevel));
-            }
+            bendPoints = bendPoints.getCopy();
+            bendPoints.reverse();
         }
 
         // get the referencePoint for the label
@@ -350,11 +325,10 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             fromEnd = MIDDLE_LOCATION;
             break;
         }
-        Point refPoint = PointListUtilities.calculatePointRelativeToLine(absoluteBendPoints, 0,
-                fromEnd, true);
+        Point refPoint = PointListUtilities.calculatePointRelativeToLine(bendPoints, 0, fromEnd, true);
 
         // get the new relative location
-        Point normalPoint = offsetFromRelativeCoordinate(targetBounds, absoluteBendPoints, refPoint);
+        Point normalPoint = offsetFromRelativeCoordinate(targetBounds, bendPoints, refPoint);
         if (normalPoint != null) {
             command.addShapeLayout((View) labelEditPart.getModel(), normalPoint, null);
         }
@@ -431,20 +405,18 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         if (refPoint == null) {
             refPoint = points.getFirstPoint();
         }
-        Rectangle rect = new Rectangle(bounds);
         // compensate for the fact that we are using the figure center
-        rect.translate(rect.width / 2, rect.height / 2);
-        Point offset = new Point(rect.x - refPoint.x, rect.y - refPoint.y);
+        bounds.translate(bounds.width / 2, bounds.height / 2);
+        Point offset = new Point(bounds.x - refPoint.x, bounds.y - refPoint.y);
         // calculate slope of line
         if (points.size() == 1) {
             // this is a node...
             return offset;
         } else if (points.size() >= 2) {
             // this is an edge...
-            int index = PointListUtilities.findNearestLineSegIndexOfPoint(points, refPoint);
+            int segIndex = PointListUtilities.findNearestLineSegIndexOfPoint(points, refPoint);
             @SuppressWarnings("rawtypes")
             List segmentsList = PointListUtilities.getLineSegments(points);
-            int segIndex = index;
             if (segIndex <= 0) {
                 segIndex = 0;
             } else if (segIndex > segmentsList.size()) {
