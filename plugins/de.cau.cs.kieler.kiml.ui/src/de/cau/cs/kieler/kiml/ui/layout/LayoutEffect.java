@@ -31,7 +31,9 @@ import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
 
 /**
- * Performs automatic layout on a diagram editor for a given selection.
+ * Performs automatic layout on a diagram editor for a given selection. The layout
+ * can be customized using {@link #setOption(EObject, IProperty, Object)}, which
+ * sets specific layout options only for this instance of the layout effect.
  * 
  * @author mmu
  * @author msp
@@ -58,12 +60,13 @@ public class LayoutEffect extends AbstractEffect {
     private VolatileLayoutConfig layoutConfig;
 
     /**
-     * Create a new layout effect for the given diagram editor and EObject.
+     * Create a new layout effect for the given diagram editor and EObject. If {@code null}
+     * is given as top-level object, layout is performed for the whole diagram.
      * 
      * @param workbenchPart
      *            the workbench part containing the diagram to layout
      * @param object
-     *            the domain model object to layout
+     *            the top-level domain model object to layout, or {@code null}
      * @throws KielerNotSupportedException if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object)
@@ -74,12 +77,13 @@ public class LayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Create a new layout effect for the given diagram editor and EObject.
+     * Create a new layout effect for the given diagram editor and EObject. If {@code null}
+     * is given as top-level object, layout is performed for the whole diagram.
      * 
      * @param workbenchPart
      *            the workbench part containing the diagram to layout
      * @param object
-     *            the domain model object to layout
+     *            the top-level domain model object to layout, or {@code null}
      * @param zoomToFit
      *            whether zoom to fit shall be performed
      * @throws KielerNotSupportedException if layout is not supported for the given workbench part
@@ -91,12 +95,13 @@ public class LayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Create a new layout effect for the given diagram editor and EObject.
+     * Create a new layout effect for the given diagram editor and EObject. If {@code null}
+     * is given as top-level object, layout is performed for the whole diagram.
      * 
      * @param workbenchPart
      *            the workbench part containing the diagram to layout
      * @param object
-     *            the domain model object to layout
+     *            the top-level domain model object to layout, or {@code null}
      * @param zoomToFit
      *            whether zoom to fit shall be performed
      * @param progressBar
@@ -111,12 +116,13 @@ public class LayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Create a new layout effect for the given diagram editor and EObject.
+     * Create a new layout effect for the given diagram editor and EObject. If {@code null}
+     * is given as top-level object, layout is performed for the whole diagram.
      * 
      * @param workbenchPart
      *            the workbench part containing the diagram to layout
      * @param object
-     *            the domain model object to layout
+     *            the top-level domain model object to layout, or {@code null}
      * @param zoomToFit
      *            whether zoom to fit shall be performed
      * @param progressBar
@@ -135,12 +141,13 @@ public class LayoutEffect extends AbstractEffect {
     }
 
     /**
-     * Create a new layout effect for the given diagram editor and EObject.
+     * Create a new layout effect for the given diagram editor and EObject. If {@code null}
+     * is given as top-level object, layout is performed for the whole diagram.
      * 
      * @param workbenchPart
      *            the workbench part containing the diagram to layout
      * @param object
-     *            the domain model element to layout
+     *            the top-level domain model object to layout, or {@code null}
      * @param zoomToFit
      *            whether zoom to fit shall be performed
      * @param progressBar
