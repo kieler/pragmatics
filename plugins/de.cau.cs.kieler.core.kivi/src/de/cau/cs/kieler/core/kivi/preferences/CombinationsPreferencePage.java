@@ -25,7 +25,9 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -42,12 +44,15 @@ import de.cau.cs.kieler.core.ui.util.FloatFieldEditor;
  * Displays all available preferences for all registered combinations.
  * 
  * @author mmu
- * 
  */
 public class CombinationsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-
+    
+    /**
+     * List of generated field editors.
+     */
     private List<FieldEditor> parameterEditors = new ArrayList<FieldEditor>();
-
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -75,9 +80,14 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
 
     @Override
     protected Control createContents(final Composite parent) {
+        // Turn off magic numbers checking for GUI code
+        // CHECKSTYLEOFF MagicNumber
+        
         Font font = parent.getFont();
+        
         Composite main = new Composite(parent, SWT.NONE);
         main.setLayout(new GridLayout());
+        main.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         List<CombinationDescriptor> combinations = KiVi.getInstance().getAvailableCombinations();
         for (CombinationDescriptor descriptor : combinations) {
@@ -88,7 +98,7 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
                 group.setText(descriptor.getName());
                 group.setToolTipText(descriptor.getDescription());
                 group.setFont(font);
-                group.setLayout(new GridLayout());
+                group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
                 
                 for (CombinationParameter parameter : parameters) {
                     FieldEditor editor = createFieldEditor(parameter, group);
@@ -96,13 +106,56 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
                         parameterEditors.add(editor);
                     }
                 }
+                
+                /* Workaround!
+                 * 
+                 * Field editors each set their own layout on their parent control, which
+                 * may mess up the layout for other field editors sharing the same parent.
+                 * There are two ways to handle this:
+                 * 
+                 *  1. Give each field editor its own parent composite. This has the
+                 *     severe drawback of messing up the tabular layout. (the field editor
+                 *     controls being aligned with each other)
+                 *  
+                 *  2. Set a proper layout after the field editors have done their work.
+                 *     This results in a nice tabular layout, but assumes that every field
+                 *     editor needs a grid layout with two columns.
+                 * 
+                 * Having a nice tabular layout is important to usability, so we choose
+                 * the second plan. There is currently one field editor that only uses one
+                 * column: the BooleanFieldEditor. We go through the group's controls, look
+                 * for check boxes and make them span two columns to fix any layout problems
+                 * that might ensue.
+                 */
+                GridLayout layout = new GridLayout(2, false);
+                group.setLayout(layout);
+                
+                for (Control child : group.getChildren()) {
+                    if (child instanceof Button) {
+                        if ((child.getStyle() & SWT.CHECK) != 0) {
+                            child.setLayoutData(new GridData(
+                                    SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
+                        }
+                    }
+                }
             }
         }
-        return null;
+        
+        return main;
+        
+        // CHECKSTYLEON MagicNumber
     }
-
+    
+    /**
+     * Creates a field editor for the given combination parameter.
+     * 
+     * @param parameter the parameter to create a field editor for.
+     * @param parent the control to place the editor in.
+     * @return the generated field editor.
+     */
     private FieldEditor createFieldEditor(final CombinationParameter parameter,
             final Composite parent) {
+        
         FieldEditor editor = null;
         if (parameter.getType().equals(String.class)) {
             editor = new StringFieldEditor(parameter.getKey(), parameter.getName(), parent);
@@ -121,10 +174,9 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
                     + " (unknown type!)", parent);
         }
 
-        if (editor != null) {
-            editor.setPreferenceStore(parameter.getPreferenceStore());
-            editor.load();
-        }
+        editor.setPreferenceStore(parameter.getPreferenceStore());
+        editor.load();
+        
         return editor;
     }
 }
