@@ -123,7 +123,7 @@ public class KiViPreferencePage extends PreferencePage implements IWorkbenchPref
         Font font = parent.getFont();
 
         Composite mainComposite = new Composite(parent, SWT.NONE);
-        mainComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         // TODO check how much of all this layout stuff is actually needed
         GridLayout layout = new GridLayout();
