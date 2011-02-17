@@ -182,13 +182,9 @@ public class LayoutPropertySource implements IPropertySource {
             }
         };
         KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));
-        if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())
-                || optionData.getType() == LayoutOptionData.Type.BOOLEAN
-                || optionData.getType() == LayoutOptionData.Type.ENUM) {
-            LayoutViewPart layoutView = LayoutViewPart.findView();
-            if (layoutView != null) {
-                layoutView.refresh();
-            }
+        LayoutViewPart layoutView = LayoutViewPart.findView();
+        if (layoutView != null) {
+            layoutView.refresh();
         }
     }
     
