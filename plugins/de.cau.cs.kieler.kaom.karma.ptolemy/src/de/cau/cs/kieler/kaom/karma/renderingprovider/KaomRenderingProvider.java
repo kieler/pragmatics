@@ -34,7 +34,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.workspace.AbstractEMFOperation;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
+import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
+import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.NotationPackage;
 import org.eclipse.gmf.runtime.notation.RoutingStyle;
 import org.eclipse.gmf.runtime.notation.Smoothness;
@@ -43,11 +46,21 @@ import org.w3c.dom.Document;
 
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.vergil.icon.EditorIcon;
+import de.cau.cs.kieler.core.annotations.Annotatable;
+import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
+import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.core.ui.figures.SplineConnection;
+import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kaom.custom.EntityLayout;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
+import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEntityCompartment2EditPart;
+import de.cau.cs.kieler.kaom.impl.EntityImpl;
 import de.cau.cs.kieler.karma.IRenderingProvider;
+import de.cau.cs.kieler.karma.SwitchableFigure;
 import de.cau.cs.kieler.karma.ptolemy.figurecreation.FigureParser;
 import de.cau.cs.kieler.karma.ptolemy.figurecreation.FigureProvider;
 import de.cau.cs.kieler.karma.ptolemy.figurecreation.PtolemyFetcher;
+import de.cau.cs.kieler.karma.util.AdvancedRenderingEditPartUtil;
 
 /**
  * Karma rendering provider for rendering ptolemy diagrams in kaom.
@@ -61,20 +74,19 @@ public class KaomRenderingProvider implements IRenderingProvider {
      * Width of connection line.
      */
     private static final float LINE_WIDTH = 1.5f;
-    
+
     /**
-     * Radius of the rounded edges. 
+     * Radius of the rounded edges.
      */
     private static final int ROUNDED_BENDPOINTS_RADIUS = 10;
-    
-    
+
     /**
      * debug variable. If true svg graphics will be discarded. Simple rectangles are drawn instead.
      */
     private static boolean lightweightGraphics = false;
-    
+
     private FigureProvider figureProvider = new FigureProvider(lightweightGraphics);
-    
+
     /**
      * {@inheritDoc}
      */
@@ -84,6 +96,15 @@ public class KaomRenderingProvider implements IRenderingProvider {
             return createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
         } else if (input.equals("MonitorValue")) {
             return figureProvider.createMonitorValue(object);
+        } else if (input.equals("compound")) {
+            boolean collapsed = AdvancedRenderingEditPartUtil.checkCollapsed(part);
+            if (collapsed) {
+                IFigure figure = createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
+                return figure;
+            } else {
+                return figureProvider.getDefaultFigure();
+            }
+
         } else if (input.startsWith("valueDisplay")) {
             String[] parts = input.split("//");
             return figureProvider.createValueFigure(object, parts[1], part);
@@ -101,8 +122,8 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 AbstractEMFOperation emfOp = new AbstractEMFOperation(cPart.getEditingDomain(),
                         "line routing setting") {
                     @Override
-                    protected IStatus doExecute(final IProgressMonitor monitor, final IAdaptable info)
-                            throws ExecutionException {
+                    protected IStatus doExecute(final IProgressMonitor monitor,
+                            final IAdaptable info) throws ExecutionException {
                         RoutingStyle style = (RoutingStyle) ((View) cPart.getModel())
                                 .getStyle(NotationPackage.Literals.ROUTING_STYLE);
                         style.setRoundedBendpointsRadius(ROUNDED_BENDPOINTS_RADIUS);
@@ -114,7 +135,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 try {
                     OperationHistoryFactory.getOperationHistory().execute(emfOp, null, null);
                 } catch (ExecutionException e) {
-                    //e.printStackTrace();
+                    // e.printStackTrace();
                 }
 
                 return oldFigure;
@@ -128,6 +149,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 connection.setLineWidthFloat(LINE_WIDTH);
                 connection.setSplineMode(SplineConnection.SPLINE_CUBIC);
                 return oldFigure;
+
             } else {
                 return null;
             }
@@ -138,6 +160,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
 
     /**
      * builds a default figure for this diagram.
+     * 
      * @return the default figure
      */
     public static IFigure getDefaultFigure() {
@@ -153,6 +176,13 @@ public class KaomRenderingProvider implements IRenderingProvider {
      */
     public LayoutManager getLayoutManagerByString(final String input,
             final LayoutManager oldLayoutManager, final EObject object) {
+        if (input.equals("compound")) {
+            if (oldLayoutManager instanceof EntityLayout) {
+                EntityLayout el = (EntityLayout) oldLayoutManager;
+                el.setFixedMinSize(63, 43);
+            }
+            return oldLayoutManager;
+        }
         return null;
     }
 
@@ -203,12 +233,12 @@ public class KaomRenderingProvider implements IRenderingProvider {
         if (nObj == null) {
             return getDefaultFigure();
         } else {
-            List<EditorIcon> icons = PtolemyFetcher.fetchIcons(nObj);            
+            List<EditorIcon> icons = PtolemyFetcher.fetchIcons(nObj);
             if (icons.isEmpty()) {
                 Dimension lightweightSize = new Dimension();
                 Document doc = PtolemyFetcher.fetchSvgDoc(nObj, lightweightSize);
                 IFigure figure = FigureParser.createFigure(doc);
-                //IFigure figure = figureProvider.createFigureFromSvg(doc, lightweightSize);
+                // IFigure figure = figureProvider.createFigureFromSvg(doc, lightweightSize);
                 return figure;
             } else {
                 EditorIcon icon = icons.get(0);
@@ -220,5 +250,4 @@ public class KaomRenderingProvider implements IRenderingProvider {
 
     }
 
-    
 }

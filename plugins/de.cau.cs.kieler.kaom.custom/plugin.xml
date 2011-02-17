@@ -4,15 +4,14 @@
    <extension
          point="de.cau.cs.kieler.kiml.layoutInfo">
       <option
-            class="de.cau.cs.kieler.kaom.Entity"
-            option="de.cau.cs.kieler.layout.options.diagramType"
-            value="de.cau.cs.kieler.layout.diagrams.dataFlow">
-      </option>
-      <option
             class="de.cau.cs.kieler.kaom.Relation"
             option="de.cau.cs.kieler.layout.options.hypernode"
             value="true">
       </option>
+      <semanticOption
+            class="de.cau.cs.kieler.kaom.Entity"
+            config="de.cau.cs.kieler.kaom.custom.TypeLayoutConfig">
+      </semanticOption>
    </extension>
 
 </plugin>

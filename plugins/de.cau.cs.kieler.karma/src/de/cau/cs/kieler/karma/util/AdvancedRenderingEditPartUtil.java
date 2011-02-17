@@ -27,17 +27,22 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderedShapeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IBorderItemEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IResizableCompartmentEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.TopGraphicEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
+import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.IBorderItemLocator;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.notation.Bounds;
+import org.eclipse.gmf.runtime.notation.DrawerStyle;
 import org.eclipse.gmf.runtime.notation.IdentityAnchor;
 import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
 
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
+import de.cau.cs.kieler.karma.AdvancedRenderingShapeNodeEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 import de.cau.cs.kieler.karma.SwitchableFigure;
 
@@ -54,6 +59,8 @@ public class AdvancedRenderingEditPartUtil {
      * Container for the last positive condition. Used for performance optimizations.
      */
     private ICondition<EObject> lastCondition = null;
+
+    boolean isCollapsed = false;
 
     /**
      * The list of conditions and the corresponding string for generating the figure.
@@ -84,12 +91,19 @@ public class AdvancedRenderingEditPartUtil {
             final IFigure primaryShape, final EObject modelElement,
             final AbstractGraphicalEditPart editPart) {
         Object notifier = notification.getNotifier();
-        if (!(notification.isTouch()) && !(notifier instanceof Bounds)
+        boolean coll = AdvancedRenderingEditPartUtil.checkCollapsed(editPart);
+        if ((!(notification.isTouch()) && !(notifier instanceof Bounds) 
                 && !(notifier instanceof RelativeBendpoints)
-                && !(notifier instanceof IdentityAnchor)) {
+                && !(notifier instanceof IdentityAnchor)) || (coll != this.isCollapsed) ) {
             IFigure figure = primaryShape;
             if (figure != null) {
-                boolean changed = this.updateFigure(figure, modelElement, editPart, false);
+                boolean changed = false;
+                if (coll != this.isCollapsed) {
+                    changed = this.updateFigure(figure, modelElement, editPart, true);
+                    this.isCollapsed = coll;
+                } else {
+                    changed = this.updateFigure(figure, modelElement, editPart, false);
+                }
                 if (changed) {
                     LayoutManager layoutManager = figure.getLayoutManager();
                     if (layoutManager != null) {
@@ -129,7 +143,6 @@ public class AdvancedRenderingEditPartUtil {
                 @SuppressWarnings("unchecked")
                 ICondition<EObject> condition = (ICondition<EObject>) conditionElement
                         .get("condition");
-
                 if (condition.evaluate(modelElement)) {
                     if (lastCondition == condition && !forceUpdate) {
                         return false;
@@ -147,6 +160,7 @@ public class AdvancedRenderingEditPartUtil {
 
                         this.setFigure(renderingProvider, figureParam, oldFigure, modelElement,
                                 switchableFigure, editPart);
+                        figure.getBounds().setSize(60,40);
                         this.setLayoutManager(figure, renderingProvider, layoutParam, modelElement);
                         this.setBorderItemLocator(editPart, renderingProvider, borderItemParam,
                                 modelElement, figure);
@@ -297,6 +311,32 @@ public class AdvancedRenderingEditPartUtil {
             ((NodeFigure) figure.getParent()).setSize(figure.getSize().getCopy());
         }
         switchableFigure.setResizeable(false);
+    }
+
+    /**
+     * Method to check if all of the compartments are collapsed.
+     * @param part the editPart whose compartments to check
+     * @return true if all compartments are collapsed else false
+     */
+    public static boolean checkCollapsed(final EditPart part) {
+        if (part instanceof TopGraphicEditPart) {
+            TopGraphicEditPart ep = (TopGraphicEditPart) part;
+            List<EditPart> resizeableCompartments = ep.getResizableCompartments();
+            for (EditPart compartment : resizeableCompartments) {
+                if (compartment instanceof IResizableCompartmentEditPart) {
+                    IResizableCompartmentEditPart resizeComp = (IResizableCompartmentEditPart) compartment;
+                    if(resizeComp.getFigure() instanceof ResizableCompartmentFigure) {
+                        ResizableCompartmentFigure f = (ResizableCompartmentFigure) resizeComp.getFigure();
+                        boolean expanded = f.isExpanded();
+                        if (expanded) {
+                            return false;
+                     }
+                     }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
 }

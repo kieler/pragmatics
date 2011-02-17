@@ -34,6 +34,16 @@ public class EntityLayout extends AbstractHintLayout {
     public static final int MIN_HEIGHT = 5;
     
     /**
+     * user given min height.
+     */
+    private int fixedMinHeight = -1;
+    
+    /**
+     * user given min width.
+     */
+    private int fixedMinWidth = -1;
+    
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -62,7 +72,12 @@ public class EntityLayout extends AbstractHintLayout {
      */
     @Override
     public Dimension calculateMinimumSize(final IFigure container, final int wHint, final int hHint) {
-        return new Dimension(MIN_WIDTH, MIN_HEIGHT);
+        if (fixedMinHeight < 0 || fixedMinWidth < 0) {
+            return new Dimension(MIN_WIDTH, MIN_HEIGHT);
+        } else {
+            return new Dimension(fixedMinWidth, fixedMinHeight);
+        }
+        
     }
 
     /**
@@ -170,4 +185,14 @@ public class EntityLayout extends AbstractHintLayout {
         return new Dimension(width, height);
     }
 
+    /**
+     * Sets a different minimum size than the default.
+     * @param width new min width
+     * @param height new min height
+     */
+    public void setFixedMinSize(final int width, final int height) {
+        this.fixedMinHeight = height;
+        this.fixedMinWidth = width;
+    }
+    
 }

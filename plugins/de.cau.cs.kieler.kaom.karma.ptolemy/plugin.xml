@@ -15,9 +15,13 @@
                   layoutParam="ptolemy.actor.lib.MonitorValue"
                   value="ptolemy.actor.lib.MonitorValue">
             </customCondition>
-            <compoundCondition>
+            <compoundCondition
+                  figureParam="compound"
+                  layoutParam="compound">
                <listSizeCondition
                      feature="childEntities"
+                     figureParam="compound"
+                     layoutParam="compound"
                      size="&lt;0"
                      type="Entity">
                </listSizeCondition>

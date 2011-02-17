@@ -268,7 +268,7 @@ public final class FigureParser {
                         fd.setStyle(SWT.NORMAL);
                         fd.setHeight(size - 6);
                         Font font = new Font(Workbench.getInstance().getDisplay(), fd);
-                        ((Label)figure).setFont(font);
+                        ((Label) figure).setFont(font);
                     }
                 }
             }
