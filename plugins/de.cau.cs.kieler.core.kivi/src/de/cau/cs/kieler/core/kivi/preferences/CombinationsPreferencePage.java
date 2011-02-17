@@ -114,18 +114,20 @@ public class CombinationsPreferencePage extends PreferencePage implements IWorkb
                  * There are two ways to handle this:
                  * 
                  *  1. Give each field editor its own parent composite. This has the
-                 *     severe drawback of messing up the tabular layout. (the field editor
-                 *     controls being aligned with each other)
+                 *     severe drawback of messing up the tabular layout. Each composite
+                 *     will have its own layout with possibly two columns, but the column
+                 *     sizes will vary from composite to composite. The result is that
+                 *     controls will not be nicely aligned to each other.
                  *  
                  *  2. Set a proper layout after the field editors have done their work.
                  *     This results in a nice tabular layout, but assumes that every field
                  *     editor needs a grid layout with two columns.
                  * 
-                 * Having a nice tabular layout is important to usability, so we choose
-                 * the second plan. There is currently one field editor that only uses one
-                 * column: the BooleanFieldEditor. We go through the group's controls, look
-                 * for check boxes and make them span two columns to fix any layout problems
-                 * that might ensue.
+                 * Having a nice tabular layout is important to usability, so we go with
+                 * the second plan. There is currently one field editor that only uses (and
+                 * expects) one column: the BooleanFieldEditor. To handle that case, we
+                 * iterate through the group's controls looking for check boxes. When we
+                 * find one, we make it span two columns instead of just one.
                  */
                 GridLayout layout = new GridLayout(2, false);
                 group.setLayout(layout);
