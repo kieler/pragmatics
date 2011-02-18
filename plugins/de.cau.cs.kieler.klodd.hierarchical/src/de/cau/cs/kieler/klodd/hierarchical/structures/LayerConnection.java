@@ -26,7 +26,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutDirection;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 
 /**
@@ -104,28 +103,6 @@ public class LayerConnection {
                 : targetPort.getData(KShapeLayout.class));
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
 
-        // subtract insets values from bend points near fixed external ports
-        boolean subSourceXInset = false, subSourceYInset = false,
-                subTargetXInset = false, subTargetYInset = false;
-        if (layeredGraph.getExternalPortConstraints() == PortConstraints.FIXED_POS) {
-            if (sourcePort != null && sourcePort.getNode() == layeredGraph.getParentNode()) {
-                PortSide sourceSide = sourcePortLayout.getProperty(LayoutOptions.PORT_SIDE);
-                if (sourceSide == PortSide.NORTH || sourceSide == PortSide.SOUTH) {
-                    subSourceXInset = true;
-                } else {
-                    subSourceYInset = true;
-                }
-            }
-            if (targetPort != null && targetPort.getNode() == layeredGraph.getParentNode()) {
-                PortSide targetSide = targetPortLayout.getProperty(LayoutOptions.PORT_SIDE);
-                if (targetSide == PortSide.NORTH || targetSide == PortSide.SOUTH) {
-                    subTargetXInset = true;
-                } else {
-                    subTargetYInset = true;
-                }
-            }
-        }
-
         // set bend points
         for (KPoint point : bendPoints) {
             point.setX(point.getX() + offset.getX());
@@ -138,24 +115,10 @@ public class LayerConnection {
         if (sourcePort != null) {
             if (sourcePort.getNode() == layeredGraph.getParentNode()) {
                 sourcePoint.setX(sourceElement.getPosition().getX() + sourcePortLayout.getWidth() / 2);
-                if (subSourceXInset) {
-                    sourcePoint.setX(sourcePoint.getX() - insets.getLeft());
-                    if (!bendPoints.isEmpty()) {
-                        KPoint bendPoint = bendPoints.get(0);
-                        bendPoint.setX(bendPoint.getX() - insets.getLeft());
-                    }
-                }
                 sourcePoint.setY(sourceElement.getPosition().getY() + sourcePortLayout.getHeight() / 2);
-                if (subSourceYInset) {
-                    sourcePoint.setY(sourcePoint.getY() - insets.getTop());
-                    if (!bendPoints.isEmpty()) {
-                        KPoint bendPoint = bendPoints.get(0);
-                        bendPoint.setY(bendPoint.getY() - insets.getTop());
-                    }
-                }
                 float portOffset = sourcePortLayout.getProperty(LayoutOptions.OFFSET);
                 toExternalEndpoint(sourcePoint, sourcePortLayout.getProperty(LayoutOptions.PORT_SIDE),
-                        insets, portOffset);
+                        portOffset);
             } else {
                 sourcePoint.setX(sourcePortLayout.getXpos() + sourcePortLayout.getWidth() / 2
                         + sourceElement.getPosition().getX() + sourceElement.getPosOffset().getX());
@@ -181,24 +144,10 @@ public class LayerConnection {
         if (targetPort != null) {
             if (targetPort.getNode() == layeredGraph.getParentNode()) {
                 targetPoint.setX(targetElement.getPosition().getX() + targetPortLayout.getWidth() / 2);
-                if (subTargetXInset) {
-                    targetPoint.setX(targetPoint.getX() - insets.getLeft());
-                    if (!bendPoints.isEmpty()) {
-                        KPoint bendPoint = bendPoints.get(bendPoints.size() - 1);
-                        bendPoint.setX(bendPoint.getX() - insets.getLeft());
-                    }
-                }
                 targetPoint.setY(targetElement.getPosition().getY() + targetPortLayout.getHeight() / 2);
-                if (subTargetYInset) {
-                    targetPoint.setY(targetPoint.getY() - insets.getTop());
-                    if (!bendPoints.isEmpty()) {
-                        KPoint bendPoint = bendPoints.get(bendPoints.size() - 1);
-                        bendPoint.setY(bendPoint.getY() - insets.getTop());
-                    }
-                }
                 float portOffset = targetPortLayout.getProperty(LayoutOptions.OFFSET);
                 toExternalEndpoint(targetPoint, targetPortLayout.getProperty(LayoutOptions.PORT_SIDE),
-                        insets, portOffset);
+                        portOffset);
             } else {
                 targetPoint.setX(targetPortLayout.getXpos() + targetPortLayout.getWidth() / 2
                         + targetElement.getPosition().getX() + targetElement.getPosOffset().getX());
@@ -353,23 +302,22 @@ public class LayerConnection {
      * 
      * @param endpoint endpoint to align
      * @param portSide side of external port used as endpoint
-     * @param insets insets of the parent layout node
      * @param portOffset additional offset of the port
      */
     private void toExternalEndpoint(final KPoint endpoint, final PortSide portSide,
-            final KInsets insets, final float portOffset) {
+            final float portOffset) {
         switch (portSide) {
         case NORTH:
-            endpoint.setY(endpoint.getY() - insets.getTop() - portOffset);
+            endpoint.setY(endpoint.getY() - portOffset);
             break;
         case EAST:
-            endpoint.setX(endpoint.getX() + insets.getRight() + portOffset);
+            endpoint.setX(endpoint.getX() + portOffset);
             break;
         case SOUTH:
-            endpoint.setY(endpoint.getY() + insets.getBottom() + portOffset);
+            endpoint.setY(endpoint.getY() + portOffset);
             break;
         case WEST:
-            endpoint.setX(endpoint.getX() - insets.getLeft() - portOffset);
+            endpoint.setX(endpoint.getX() - portOffset);
             break;
         }
     }

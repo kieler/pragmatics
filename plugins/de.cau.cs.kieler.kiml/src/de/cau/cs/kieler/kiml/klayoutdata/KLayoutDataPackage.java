@@ -90,6 +90,15 @@ public interface KLayoutDataPackage extends EPackage {
     int KSHAPE_LAYOUT__PROPERTIES = KGraphPackage.KGRAPH_DATA__PROPERTIES;
 
     /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSHAPE_LAYOUT__PERSISTENT_ENTRIES = KGraphPackage.KGRAPH_DATA__PERSISTENT_ENTRIES;
+
+    /**
      * The feature id for the '<em><b>Xpos</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -152,6 +161,15 @@ public interface KLayoutDataPackage extends EPackage {
      * @ordered
      */
     int KEDGE_LAYOUT__PROPERTIES = KGraphPackage.KGRAPH_DATA__PROPERTIES;
+
+    /**
+     * The feature id for the '<em><b>Persistent Entries</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KEDGE_LAYOUT__PERSISTENT_ENTRIES = KGraphPackage.KGRAPH_DATA__PERSISTENT_ENTRIES;
 
     /**
      * The feature id for the '<em><b>Bend Points</b></em>' containment reference list.

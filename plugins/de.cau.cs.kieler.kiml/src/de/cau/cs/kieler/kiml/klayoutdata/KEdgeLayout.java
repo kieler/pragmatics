@@ -26,10 +26,10 @@ import org.eclipse.emf.common.util.EList;
  * <!-- begin-model-doc -->
  * This layout data contains special information for edges, such as bend points.
  * <p>
- * All layout coordinates for edges are defined to be relative to the position
- * of the parent of the source node, except when the target node is contained
- * in the source node, in which case all coordinates are relative to the
- * position of the source node.
+ * All layout coordinates for edges are defined to be relative to the parent of
+ * the source node, except when the target node is directly or indirectly contained
+ * in the source node, in which case all coordinates are relative to the source node
+ * itself. The insets of the reference node are not included in relative coordinates.
  * </p>
  * <!-- end-model-doc -->
  *

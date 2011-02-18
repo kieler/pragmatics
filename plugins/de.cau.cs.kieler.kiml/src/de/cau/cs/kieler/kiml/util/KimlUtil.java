@@ -612,8 +612,8 @@ public final class KimlUtil {
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             KInsets insets = nodeLayout.getProperty(LayoutOptions.INSETS);
-            point.x += nodeLayout.getXpos() + insets.getLeft();
-            point.y += nodeLayout.getYpos() + insets.getTop();
+            point.translate(nodeLayout.getXpos() + insets.getLeft(),
+                    nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
         }
     }
@@ -629,8 +629,8 @@ public final class KimlUtil {
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             KInsets insets = nodeLayout.getProperty(LayoutOptions.INSETS);
-            point.x -= nodeLayout.getXpos() + insets.getLeft();
-            point.y -= nodeLayout.getYpos() + insets.getTop();
+            point.translate(-nodeLayout.getXpos() - insets.getLeft(),
+                        -nodeLayout.getYpos() - insets.getTop());
             node = node.getParent();
         }
     }

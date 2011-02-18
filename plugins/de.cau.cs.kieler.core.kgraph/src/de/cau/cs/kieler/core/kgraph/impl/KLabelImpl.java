@@ -217,21 +217,16 @@ public class KLabelImpl extends KGraphElementImpl implements KLabel {
         }
         return super.eIsSet(featureID);
     }
-
+    
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     @Override
     public String toString() {
-        if (eIsProxy()) return super.toString();
-
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (text: ");
-        result.append(text);
-        result.append(')');
-        return result.toString();
+        if (text != null && text.length() > 0) {
+            return "KLabel \"" + text + "\"";
+        }
+        return super.toString();
     }
 
 } //KLabelImpl

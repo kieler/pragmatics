@@ -27,9 +27,11 @@ import de.cau.cs.kieler.core.kgraph.KGraphData;
  * This layout data contains information for graph elements for which rectangular
  * shape is assumed for layout, such as nodes, ports, and labels.
  * <p>
- * Layout coordinates for nodes, ports, and node labels are relative to the
- * position of the parent node. For edge labels the rules defined in
- * {@link KEdgeLayout} apply. Port labels are relative to their ports.
+ * Layout coordinates for nodes, ports, and node labels are relative to the parent
+ * node. The insets of the parent node are not included in the relative coordinates
+ * of child nodes, but they are included in the relative coordinates of ports and
+ * node labels. For edge labels the rules defined in {@link KEdgeLayout} apply.
+ * Port labels are relative to their ports.
  * </p>
  * <!-- end-model-doc -->
  *

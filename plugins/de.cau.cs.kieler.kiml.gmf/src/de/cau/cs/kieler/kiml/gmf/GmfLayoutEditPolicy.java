@@ -55,6 +55,7 @@ import de.cau.cs.kieler.core.ui.figures.SplineConnection;
 import de.cau.cs.kieler.core.ui.util.SplineUtilities;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
@@ -186,75 +187,21 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      */
     private void addEdgeLayout(final GmfLayoutCommand command, final KEdge kedge,
             final ConnectionEditPart connectionEditPart) {
-        KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        KNode sourceNode = kedge.getSource(), targetNode = kedge.getTarget();
-
         // create source terminal identifier
-        KPoint sourcePoint = edgeLayout.getSourcePoint();
-        float sourceRelX = sourcePoint.getX();
-        float sourceRelY = sourcePoint.getY();
-        KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
-        if (sourceNode != targetNode.getParent()) {
-            sourceRelX -= sourceLayout.getXpos();
-            sourceRelY -= sourceLayout.getYpos();
-        }
-        if (kedge.getSourcePort() != null) {
-            KShapeLayout portLayout = kedge.getSourcePort().getData(KShapeLayout.class);
-            if (portLayout.getWidth() == 0) {
-                sourceRelX = 0;
-            } else {
-                sourceRelX = (sourceRelX - portLayout.getXpos()) / portLayout.getWidth();
-            }
-            if (portLayout.getHeight() == 0) {
-                sourceRelY = 0;
-            } else {
-                sourceRelY = (sourceRelY - portLayout.getYpos()) / portLayout.getHeight();
-            }
-        } else {
-            sourceRelX /= sourceLayout.getWidth();
-            sourceRelY /= sourceLayout.getHeight();
-        }
+        KVector sourceRel = getRelativeSourcePoint(kedge);
         INodeEditPart sourceEditPart = (INodeEditPart) connectionEditPart.getSource();
         ConnectionAnchor sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure(),
-                new PrecisionPoint(sourceRelX, sourceRelY));
+                new PrecisionPoint(sourceRel.x, sourceRel.y));
         String sourceTerminal = sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
         
         // create target terminal identifier
-        KPoint targetPoint = edgeLayout.getTargetPoint();
-        float targetRelX, targetRelY;
-        KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
-        if (sourceNode.getParent() == targetNode.getParent() || sourceNode == targetNode.getParent()) {
-            targetRelX = targetPoint.getX() - targetLayout.getXpos();
-            targetRelY = targetPoint.getY() - targetLayout.getYpos();
-        } else {
-            KVector p = new KVector(targetPoint.getX(), targetPoint.getY());
-            KimlUtil.toAbsolute(p, sourceNode.getParent());
-            KimlUtil.toRelative(p, targetNode.getParent());
-            targetRelX = (float) p.x - targetLayout.getXpos();
-            targetRelY = (float) p.y - targetLayout.getYpos();
-        }
-        if (kedge.getTargetPort() != null) {
-            KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
-            if (portLayout.getWidth() == 0) {
-                targetRelX = 0;
-            } else {
-                targetRelX = (targetRelX - portLayout.getXpos()) / portLayout.getWidth();
-            }
-            if (portLayout.getHeight() == 0) {
-                targetRelY = 0;
-            } else {
-                targetRelY = (targetRelY - portLayout.getYpos()) / portLayout.getHeight();
-            }
-        } else {
-            targetRelX /= targetLayout.getWidth();
-            targetRelY /= targetLayout.getHeight();
-        }
+        KVector targetRel = getRelativeTargetPoint(kedge);
         INodeEditPart targetEditPart = (INodeEditPart) connectionEditPart.getTarget();
         ConnectionAnchor targetAnchor = new SlidableAnchor(targetEditPart.getFigure(),
-                new PrecisionPoint(targetRelX, targetRelY));
+                new PrecisionPoint(targetRel.x, targetRel.y));
         String targetTerminal = targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
 
-        PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
+        PointList bendPoints = getBendPoints(kedge, connectionEditPart.getFigure());
         
         // check whether the connection is a note attachment to an edge, then remove bend points
         if (sourceEditPart instanceof ConnectionEditPart
@@ -265,6 +212,133 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         }
         command.addEdgeLayout((Edge) connectionEditPart.getModel(), bendPoints, sourceTerminal,
                 targetTerminal);
+    }
+    
+    /**
+     * Create a vector that contains the relative position of the source point to the corresponding
+     * source node or port.
+     * 
+     * @param edge an edge
+     * @return the relative source point
+     */
+    private KVector getRelativeSourcePoint(final KEdge edge) {
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+        KNode sourceNode = edge.getSource(), targetNode = edge.getTarget();
+        KPoint sourcePoint = edgeLayout.getSourcePoint();
+        KVector sourceRel = new KVector(sourcePoint.getX(), sourcePoint.getY());
+        KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
+        
+        if (KimlUtil.isDescendant(targetNode, sourceNode)) {
+            // in this case the edge points are given without the source insets, so add them
+            KInsets insets = sourceLayout.getProperty(LayoutOptions.INSETS);
+            double width = Math.max(sourceLayout.getWidth() - insets.getLeft()
+                    - insets.getRight(), 1);
+            double widthPercent = sourceRel.x / width;
+            double height = Math.max(sourceLayout.getHeight() - insets.getTop()
+                    - insets.getBottom(), 1);
+            double heightPercent = sourceRel.y / height;
+            if (widthPercent + heightPercent <= 1
+                    && widthPercent - heightPercent <= 0) {
+                // source point is on the left
+                sourceRel.y += insets.getTop();
+            } else if (widthPercent + heightPercent >= 1
+                    && widthPercent - heightPercent >= 0) {
+                // source point is on the right
+                sourceRel.x += insets.getLeft() + insets.getRight();
+                sourceRel.y += insets.getTop();
+            } else if (heightPercent < 1.0f / 2) {
+                // source point is on the top
+                sourceRel.x += insets.getLeft();
+            } else {
+                // source point is on the bottom
+                sourceRel.x += insets.getLeft();
+                sourceRel.y += insets.getTop() + insets.getBottom();
+            }
+        } else {
+            sourceRel.translate(-sourceLayout.getXpos(), -sourceLayout.getYpos());
+        }
+        
+        if (edge.getSourcePort() != null) {
+            // calculate the relative position to the port size
+            KShapeLayout portLayout = edge.getSourcePort().getData(KShapeLayout.class);
+            if (portLayout.getWidth() == 0) {
+                sourceRel.x = 0;
+            } else {
+                sourceRel.x = (sourceRel.x - portLayout.getXpos()) / portLayout.getWidth();
+            }
+            if (portLayout.getHeight() == 0) {
+                sourceRel.y = 0;
+            } else {
+                sourceRel.y = (sourceRel.y - portLayout.getYpos()) / portLayout.getHeight();
+            }
+        } else {
+            // calculate the relative position to the node size, which is assumed to be greater than 0
+            sourceRel.x /= sourceLayout.getWidth();
+            sourceRel.y /= sourceLayout.getHeight();
+        }
+        return sourceRel;
+    }
+    
+    /**
+     * Create a vector that contains the relative position of the target point to the corresponding
+     * target node or port.
+     * 
+     * @param edge an edge
+     * @return the relative target point
+     */
+    private KVector getRelativeTargetPoint(final KEdge edge) {
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+        KNode sourceNode = edge.getSource(), targetNode = edge.getTarget();
+        KPoint targetPoint = edgeLayout.getTargetPoint();
+        KVector targetRel = new KVector(targetPoint.getX(), targetPoint.getY());
+        KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
+        
+        if (sourceNode.getParent() != targetNode.getParent() && sourceNode != targetNode.getParent()) {
+            // the reference point of the target is different from the source
+            KimlUtil.toAbsolute(targetRel, sourceNode.getParent());
+            KimlUtil.toRelative(targetRel, targetNode.getParent());
+        }
+        targetRel.translate(-targetLayout.getXpos(), -targetLayout.getYpos());
+        
+        if (KimlUtil.isDescendant(sourceNode, targetNode)) {
+            // in this case the edge points are given without the target insets, so add them
+            KInsets insets = targetLayout.getProperty(LayoutOptions.INSETS);
+            double width = Math.max(targetLayout.getWidth() - insets.getLeft()
+                    - insets.getRight(), 1);
+            double widthPercent = (targetRel.x - insets.getLeft()) / width;
+            double height = Math.max(targetLayout.getHeight() - insets.getTop()
+                    - insets.getBottom(), 1);
+            double heightPercent = (targetRel.y - insets.getTop()) / height;
+            if (widthPercent + heightPercent >= 1) {
+                if (widthPercent - heightPercent >= 0) {
+                    // target point is on the right
+                    targetRel.x += insets.getRight();
+                } else {
+                    // target point is on the bottom
+                    targetRel.y += insets.getBottom();
+                }
+            }
+        }
+        
+        if (edge.getTargetPort() != null) {
+            // calculate the relative position to the port size
+            KShapeLayout portLayout = edge.getTargetPort().getData(KShapeLayout.class);
+            if (portLayout.getWidth() == 0) {
+                targetRel.x = 0;
+            } else {
+                targetRel.x = (targetRel.x - portLayout.getXpos()) / portLayout.getWidth();
+            }
+            if (portLayout.getHeight() == 0) {
+                targetRel.y = 0;
+            } else {
+                targetRel.y = (targetRel.y - portLayout.getYpos()) / portLayout.getHeight();
+            }
+        } else {
+            // calculate the relative position to the node size, which is assumed to be greater than 0
+            targetRel.x /= targetLayout.getWidth();
+            targetRel.y /= targetLayout.getHeight();
+        }
+        return targetRel;
     }
 
     /** see LabelViewConstants.TARGET_LOCATION. */
@@ -299,9 +373,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             return;
         }
         
-        KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
         ConnectionEditPart connectionEditPart = (ConnectionEditPart) labelEditPart.getParent();
-        PointList bendPoints = getBendPoints(edgeLayout, connectionEditPart.getFigure());
+        PointList bendPoints = getBendPoints((KEdge) kedge, connectionEditPart.getFigure());
         EObject modelElement = connectionEditPart.getNotationView().getElement();
         EdgeLabelPlacement labelPlacement = labelLayout
                 .getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
@@ -338,13 +411,14 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * Transform the bend points of the given edge layout into a point list, reusing existing ones
      * if possible. The source and target points of the edge layout are included in the point list.
      * 
-     * @param edgeLayout
-     *            the edge layout
+     * @param edge
+     *            the edge for which to fetch bend points
      * @param isSplineEdge
      *            indicates whether the connection supports splines
      * @return point list with the bend points of the edge layout
      */
-    private PointList getBendPoints(final KEdgeLayout edgeLayout, final IFigure edgeFigure) {
+    private PointList getBendPoints(final KEdge edge, final IFigure edgeFigure) {
+        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         PointList pointList = pointListMap.get(edgeLayout);
         if (pointList == null) {
             KPoint sourcePoint = edgeLayout.getSourcePoint();
@@ -358,8 +432,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     splineActive = true;
                 }
             }
-            // for connections that support splines the control points are
-            // passed without change
+            // for connections that support splines the control points are passed without change
             if (edgeRouting == EdgeRouting.SPLINES && bendPoints.size() >= 1 && !splineActive) {
                 // treat the edge points as control points for splines
                 PointList control = new PointList(bendPoints.size() + 2);
@@ -369,19 +442,74 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 }
                 control.addPoint(new Point(targetPoint.getX(), targetPoint.getY()));
                 pointList = SplineUtilities.approximateSpline(control);
+                
             } else {
                 // treat the edge points as normal bend points
                 pointList = new PointList();
-                pointList.addPoint((int) sourcePoint.getX(), (int) sourcePoint.getY());
+                KNode sourceNode = edge.getSource(), targetNode = edge.getTarget();
+                if (KimlUtil.isDescendant(targetNode, sourceNode)) {
+                    // in this case the insets are not yet considered in the source point
+                    KVector point = new KVector(sourcePoint.getX(), sourcePoint.getY());
+                    translatePoint(point, point, sourceNode);
+                    pointList.addPoint((int) point.x, (int) point.y);
+                } else {
+                    pointList.addPoint((int) sourcePoint.getX(), (int) sourcePoint.getY());
+                }
                 for (KPoint bendPoint : bendPoints) {
                     pointList.addPoint((int) bendPoint.getX(), (int) bendPoint.getY());
                 }
-                pointList.addPoint((int) targetPoint.getX(), (int) targetPoint.getY());
+                if (KimlUtil.isDescendant(sourceNode, targetNode)) {
+                    // in this case the insets are not yet considered in the target point
+                    KVector point = new KVector(targetPoint.getX(), targetPoint.getY());
+                    KVector referencePoint = new KVector(point);
+                    KNode node = sourceNode;
+                    while (node.getParent() != targetNode) {
+                        node = node.getParent();
+                        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+                        KInsets insets = nodeLayout.getProperty(LayoutOptions.INSETS);
+                        referencePoint.translate(nodeLayout.getXpos() + insets.getLeft(),
+                                nodeLayout.getYpos() + insets.getTop());
+                    }
+                    translatePoint(referencePoint, point, targetNode);
+                    pointList.addPoint((int) point.x, (int) point.y);
+                } else {
+                    pointList.addPoint((int) targetPoint.getX(), (int) targetPoint.getY());
+                }
             }
 
             pointListMap.put(edgeLayout, pointList);
         }
         return pointList;
+    }
+    
+    /**
+     * Translate the given point by the parent insets towards the node border.
+     * 
+     * @param referencePoint the reference point relative to the given parent node
+     * @param objectPoint the point that shall be translated
+     * @param parentNode a parent node
+     */
+    private void translatePoint(final KVector referencePoint, final KVector objectPoint,
+            final KNode parentNode) {
+        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        double widthPercent = referencePoint.x / parentLayout.getWidth();
+        double heightPercent = referencePoint.y / parentLayout.getHeight();
+        if (widthPercent + heightPercent <= 1
+                && widthPercent - heightPercent <= 0) {
+            // point is on the left
+            objectPoint.x -= insets.getLeft();
+        } else if (widthPercent + heightPercent >= 1
+                && widthPercent - heightPercent >= 0) {
+            // point is on the right
+            objectPoint.x += insets.getRight();
+        } else if (heightPercent < 1.0f / 2) {
+            // point is on the top
+            objectPoint.y -= insets.getTop();
+        } else {
+            // point is on the bottom
+            objectPoint.y += insets.getBottom();
+        }
     }
 
     /**

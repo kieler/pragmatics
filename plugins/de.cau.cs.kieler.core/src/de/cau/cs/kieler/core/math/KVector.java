@@ -153,7 +153,7 @@ public class KVector implements IDataObject {
     /**
      * Set vector to (0,0).
      * 
-     * @return <code>this</code>
+     * @return {@code this}
      */
     public final KVector reset() {
         this.x = 0.0;
@@ -192,7 +192,7 @@ public class KVector implements IDataObject {
      * 
      * @param v
      *            vector to subtract
-     * @return <code>this</code>
+     * @return {@code this}
      */
     public final KVector sub(final KVector v) {
         this.x -= v.x;
@@ -218,18 +218,44 @@ public class KVector implements IDataObject {
      * 
      * @param scale
      *            scaling factor
-     * @return <code>this</code>
+     * @return {@code this}
      */
     public final KVector scale(final double scale) {
         this.x *= scale;
         this.y *= scale;
         return this;
     }
+    
+    /**
+     * Scale the vector with different values for X and Y coordinate.
+     * 
+     * @param scalex the x scaling factor
+     * @param scaley the y scaling factor
+     * @return {@code this}
+     */
+    public final KVector scale(final double scalex, final double scaley) {
+        this.x *= scalex;
+        this.y *= scaley;
+        return this;
+    }
+    
+    /**
+     * Translate the vector.
+     * 
+     * @param dx the x offset
+     * @param dy the y offset
+     * @return {@code this}
+     */
+    public final KVector translate(final double dx, final double dy) {
+        this.x += dx;
+        this.y += dy;
+        return this;
+    }
 
     /**
      * Normalize the vector.
      * 
-     * @return <code>this</code>
+     * @return {@code this}
      */
     public KVector normalize() {
         double length = this.getLength();
@@ -243,7 +269,7 @@ public class KVector implements IDataObject {
      * 
      * @param length
      *            length to scale to
-     * @return <code>this</code>
+     * @return {@code this}
      */
     public KVector scaleToLength(final double length) {
         this.normalize();
@@ -254,7 +280,7 @@ public class KVector implements IDataObject {
     /**
      * Negate the vector.
      * 
-     * @return <code>this</code>
+     * @return {@code this}
      */
     public KVector negate() {
         this.x = -this.x;
@@ -298,7 +324,7 @@ public class KVector implements IDataObject {
      * 
      * @param lambda
      *            scaling factor
-     * @return new vector which is <code>this</code> scaled by <code>lambda</code>
+     * @return new vector which is {@code this} scaled by {@code lambda}
      */
     public final KVector scaledCreate(final double lambda) {
         return new KVector(this).scale(lambda);
@@ -307,7 +333,7 @@ public class KVector implements IDataObject {
     /**
      * Create a normalized version of this vector.
      * 
-     * @return normalized copy of <code>this</code>
+     * @return normalized copy of {@code this}
      */
     public final KVector normalizedCreate() {
         return new KVector(this).normalize();
@@ -318,7 +344,7 @@ public class KVector implements IDataObject {
      * 
      * @param v
      *            second addend
-     * @return new vector which is the sum of <code>this</code> and <code>v</code>
+     * @return new vector which is the sum of {@code this} and {@code v}
      */
     public final KVector sumCreate(final KVector v) {
         return new KVector(this).add(v);
@@ -329,7 +355,7 @@ public class KVector implements IDataObject {
      * 
      * @param v
      *            subtrahend
-     * @return new vector which is the difference between <code>this</code> and <code>v</code>
+     * @return new vector which is the difference between {@code this} and {@code v}
      */
     public final KVector differenceCreate(final KVector v) {
         return new KVector(this).sub(v);

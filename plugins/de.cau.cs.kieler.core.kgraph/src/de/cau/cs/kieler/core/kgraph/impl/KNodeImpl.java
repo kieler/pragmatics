@@ -443,7 +443,7 @@ public class KNodeImpl extends KGraphElementImpl implements KNode {
         if (label != null) {
             String text = label.getText();
             if (text != null && text.length() > 0) {
-                return text;
+                return "KNode \"" + text + "\"";
             }
         }
         return super.toString();
