@@ -66,6 +66,8 @@ public class KRailGraphImporter implements IGraphImporter {
         importedNodes = transformGraph(knode);
         layeredGraph = new LayeredGraph();
         layeredGraph.setProperty(Properties.ORIGIN, knode);
+        KShapeLayout lay = knode.getData(KShapeLayout.class);
+        layeredGraph.setProperty(Properties.BEND_ANGLE, lay.getProperty(Properties.BEND_ANGLE));
     }
 
     /**

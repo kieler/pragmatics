@@ -14,8 +14,10 @@
 package de.cau.cs.kieler.klay.rail.impl;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -36,8 +38,6 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
     private float spacing;
     /** the bounds of a line's slope in which it is not bent. */
     public static final double SLOPE_TOLERANCE = 1f;
-    /** the desired bend angle. will be converted to radians later. might be a layout option. */
-    public static final double BEND_ANGLE = 60;
 
     /**
      * {@inheritDoc}
@@ -73,10 +73,21 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
                             }
 
                             if (Math.abs(slope) > SLOPE_TOLERANCE) {
-                                double newSlope = Math.tan(Math.toRadians(BEND_ANGLE));
+                                double newSlope = Math.tan(Math.toRadians(layeredGraph
+                                        .getProperty(Properties.BEND_ANGLE)));
 
                                 KVector bendPoint = new KVector(Math.abs(trgPos.y - srcPos.y)
                                         / newSlope + srcPos.x, trgPos.y);
+
+                                Object origin = port.getProperty(Properties.ORIGIN);
+//                                KVector portOffset = new KVector(0, 0);
+//                                if (origin instanceof KPort) {
+//                                    KShapeLayout shape = ((KPort) origin)
+//                                            .getData(KShapeLayout.class);
+//                                    portOffset.y = shape.getHeight() / 2;
+//                                }
+//                                bendPoint.add(portOffset);
+
                                 edge.getBendPoints().add(bendPoint);
                                 if (bendPoint.x > trgPos.x) {
                                     pushBackLayers(layer.getIndex() + 1, bendPoint.x - trgPos.x
@@ -91,6 +102,16 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
 
     }
 
+    /**
+     * Method to push back a layer and all that are following him by a certain amount.
+     * 
+     * @param startAtLayer
+     *            Which layer to start at
+     * @param amount
+     *            How far shall it be moved
+     * @param layeredGraph
+     *            The graph which holds the layer
+     */
     private void pushBackLayers(final int startAtLayer, final double amount,
             final LayeredGraph layeredGraph) {
         double xpos = amount
@@ -98,7 +119,9 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
         for (int i = startAtLayer; i < layeredGraph.getLayers().size(); i++) {
             Layer layer = layeredGraph.getLayers().get(i);
 
-            layer.placeNodes(xpos);
+            for (LNode node : layer.getNodes()) {
+                node.getPos().x = xpos;
+            }
             xpos += layer.getSize().x + spacing;
             layeredGraph.getSize().x = xpos;
         }

@@ -24,6 +24,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.rail.portType">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.rail.bendAngle">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="nodes"
@@ -50,6 +53,14 @@
             id="de.cau.cs.kieler.klay.rail.portType"
             name="Port Type"
             type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="60.0"
+            description="The angle which will be used to draw outgoing edges."
+            id="de.cau.cs.kieler.klay.rail.bendAngle"
+            name="Bend Angle"
+            type="float">
       </layoutOption>
    </extension>
 
