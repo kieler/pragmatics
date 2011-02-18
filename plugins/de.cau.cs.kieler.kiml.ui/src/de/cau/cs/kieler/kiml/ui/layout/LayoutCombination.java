@@ -30,12 +30,17 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  */
 public class LayoutCombination extends AbstractCombination {
 
+    /** parameter id for animation. */
+    private static final String ANIMATE = "de.cau.cs.kieler.kiml.animate";
     /** parameter id for zoom to fit. */
     private static final String ZOOM_TO_FIT = "de.cau.cs.kieler.kiml.zoomToFit";
     /** parameter id for progress bar. */
     private static final String PROGRESS_BAR = "de.cau.cs.kieler.kiml.progressBar";
     /** parameter array for this combination. */
     private static final CombinationParameter[] PARAMETERS = new CombinationParameter[] {
+            new CombinationParameter(ANIMATE, getPreferenceStore(), "Animate",
+                    "Animates the automatic layout of a graph.", true,
+                    CombinationParameter.BOOLEAN_TYPE),
             new CombinationParameter(ZOOM_TO_FIT, getPreferenceStore(), "Zoom to Fit",
                     "Perform zoom to fit with automatic layout.", true,
                     CombinationParameter.BOOLEAN_TYPE),
@@ -86,6 +91,7 @@ public class LayoutCombination extends AbstractCombination {
         }
 
         IPreferenceStore preferenceStore = getPreferenceStore();
+        boolean animate = preferenceStore.getBoolean(ANIMATE);
         boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);
         boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
         // check parameter for layout scope, default is diagram scope
@@ -93,10 +99,11 @@ public class LayoutCombination extends AbstractCombination {
         if (layoutScope instanceof String && layoutScope.equals(VAL_SELECTION)) {
             for (EObject selected : selection.getSelectedEObjects()) {
                 // merging of multiple selected objects is done by the layout effect
-                schedule(new LayoutEffect(button.getEditor(), selected, zoom, progressBar)); 
+                schedule(new LayoutEffect(button.getEditor(), selected, zoom, progressBar,
+                        false, animate)); 
             }
         } else {
-            schedule(new LayoutEffect(button.getEditor(), null, zoom, progressBar));
+            schedule(new LayoutEffect(button.getEditor(), null, zoom, progressBar, false, animate));
         }
     }
     
