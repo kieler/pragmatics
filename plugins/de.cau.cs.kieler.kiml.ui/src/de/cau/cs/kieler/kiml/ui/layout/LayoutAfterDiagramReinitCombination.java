@@ -28,6 +28,8 @@ import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
  */
 public class LayoutAfterDiagramReinitCombination extends AbstractCombination {
 
+    /** parameter id for animation. */
+    private static final String ANIMATE = "de.cau.cs.kieler.kiml.animate";
     /** parameter id for zoom to fit. */
     private static final String ZOOM_TO_FIT = "de.cau.cs.kieler.kiml.zoomToFit";
     /** parameter id for progress bar. */
@@ -45,11 +47,12 @@ public class LayoutAfterDiagramReinitCombination extends AbstractCombination {
         if (editor != null) {
             IPreferenceStore preferenceStore =
                     KimlUiPlugin.getDefault().getPreferenceStore();
+            boolean animate = preferenceStore.getBoolean(ANIMATE);
             boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);
             boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
 
             schedule(new LayoutEffect(trigger.getEditor(), null, zoom,
-                    progressBar)); 
+                    progressBar, false, animate)); 
         }
     }
 }
