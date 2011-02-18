@@ -80,8 +80,7 @@ public class KaomCreationWizard extends Wizard implements INewWizard {
     /**
      * @generated
      */
-    public void setOpenNewlyCreatedDiagramEditor(
-            boolean openNewlyCreatedDiagramEditor) {
+    public void setOpenNewlyCreatedDiagramEditor(boolean openNewlyCreatedDiagramEditor) {
         this.openNewlyCreatedDiagramEditor = openNewlyCreatedDiagramEditor;
     }
 
@@ -101,35 +100,30 @@ public class KaomCreationWizard extends Wizard implements INewWizard {
      * @generated
      */
     public void addPages() {
-        diagramModelFilePage =
-                new KaomCreationWizardPage(
-                        "DiagramModelFile", getSelection(), "kaod"); //$NON-NLS-1$ //$NON-NLS-2$
-        diagramModelFilePage
-                .setTitle(Messages.KaomCreationWizard_DiagramModelFilePageTitle);
+        diagramModelFilePage = new KaomCreationWizardPage(
+                "DiagramModelFile", getSelection(), "kaod"); //$NON-NLS-1$ //$NON-NLS-2$
+        diagramModelFilePage.setTitle(Messages.KaomCreationWizard_DiagramModelFilePageTitle);
         diagramModelFilePage
                 .setDescription(Messages.KaomCreationWizard_DiagramModelFilePageDescription);
         addPage(diagramModelFilePage);
 
-        domainModelFilePage =
-                new KaomCreationWizardPage(
-                        "DomainModelFile", getSelection(), "kaom") { //$NON-NLS-1$ //$NON-NLS-2$
+        domainModelFilePage = new KaomCreationWizardPage("DomainModelFile", getSelection(), "kaom") { //$NON-NLS-1$ //$NON-NLS-2$
 
-                    public void setVisible(boolean visible) {
-                        if (visible) {
-                            String fileName =
-                                    diagramModelFilePage.getFileName();
-                            fileName =
-                                    fileName.substring(0, fileName.length()
-                                            - ".kaod".length()); //$NON-NLS-1$
-                            setFileName(KaomDiagramEditorUtil
-                                    .getUniqueFileName(getContainerFullPath(),
-                                            fileName, "kaom")); //$NON-NLS-1$
-                        }
-                        super.setVisible(visible);
+            public void setVisible(boolean visible) {
+                if (visible) {
+
+                    String fileName = diagramModelFilePage.getFileName();
+                    if (fileName.endsWith(".kaod")) {
+                        fileName = fileName.substring(0, fileName.length() - ".kaod".length()); //$NON-NLS-1$
                     }
-                };
-        domainModelFilePage
-                .setTitle(Messages.KaomCreationWizard_DomainModelFilePageTitle);
+
+                    setFileName(KaomDiagramEditorUtil.getUniqueFileName(getContainerFullPath(),
+                            fileName, "kaom")); //$NON-NLS-1$
+                }
+                super.setVisible(visible);
+            }
+        };
+        domainModelFilePage.setTitle(Messages.KaomCreationWizard_DomainModelFilePageTitle);
         domainModelFilePage
                 .setDescription(Messages.KaomCreationWizard_DomainModelFilePageDescription);
         addPage(domainModelFilePage);
@@ -139,21 +133,26 @@ public class KaomCreationWizard extends Wizard implements INewWizard {
      * @generated
      */
     public boolean performFinish() {
+
+        if (domainModelFilePage.getFileName().matches("default\\d*.\\w*")) {
+            String name = diagramModelFilePage.getFileName();
+            String domainFileName = name.replace(".kaod", "");
+            domainFileName += ".kaom";
+            domainModelFilePage.setFileName(domainFileName);
+        }
+
         IRunnableWithProgress op = new WorkspaceModifyOperation(null) {
 
-            protected void execute(IProgressMonitor monitor)
-                    throws CoreException, InterruptedException {
-                diagram =
-                        KaomDiagramEditorUtil.createDiagram(
-                                diagramModelFilePage.getURI(),
-                                domainModelFilePage.getURI(), monitor);
+            protected void execute(IProgressMonitor monitor) throws CoreException,
+                    InterruptedException {
+                diagram = KaomDiagramEditorUtil.createDiagram(diagramModelFilePage.getURI(),
+                        domainModelFilePage.getURI(), monitor);
                 if (isOpenNewlyCreatedDiagramEditor() && diagram != null) {
                     try {
                         KaomDiagramEditorUtil.openDiagram(diagram);
                     } catch (PartInitException e) {
                         ErrorDialog.openError(getContainer().getShell(),
-                                Messages.KaomCreationWizardOpenEditorError,
-                                null, e.getStatus());
+                                Messages.KaomCreationWizardOpenEditorError, null, e.getStatus());
                     }
                 }
             }

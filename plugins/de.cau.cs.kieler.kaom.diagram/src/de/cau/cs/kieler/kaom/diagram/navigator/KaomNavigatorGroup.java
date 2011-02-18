@@ -79,8 +79,7 @@ public class KaomNavigatorGroup extends KaomAbstractNavigatorItem {
      */
     public boolean equals(Object obj) {
         if (obj instanceof de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorGroup) {
-            de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorGroup anotherGroup =
-                    (de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorGroup) obj;
+            de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorGroup anotherGroup = (de.cau.cs.kieler.kaom.diagram.navigator.KaomNavigatorGroup) obj;
             if (getGroupName().equals(anotherGroup.getGroupName())) {
                 return getParent().equals(anotherGroup.getParent());
             }

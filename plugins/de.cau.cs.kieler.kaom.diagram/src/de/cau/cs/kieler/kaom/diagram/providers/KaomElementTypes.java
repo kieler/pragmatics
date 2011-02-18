@@ -55,38 +55,31 @@ public class KaomElementTypes {
     /**
      * @generated
      */
-    public static final IElementType Entity_1000 =
-            getElementType("de.cau.cs.kieler.kaom.diagram.Entity_1000"); //$NON-NLS-1$
+    public static final IElementType Entity_1000 = getElementType("de.cau.cs.kieler.kaom.diagram.Entity_1000"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Entity_2001 =
-            getElementType("de.cau.cs.kieler.kaom.diagram.Entity_2001"); //$NON-NLS-1$
+    public static final IElementType Entity_2001 = getElementType("de.cau.cs.kieler.kaom.diagram.Entity_2001"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Relation_2002 =
-            getElementType("de.cau.cs.kieler.kaom.diagram.Relation_2002"); //$NON-NLS-1$
+    public static final IElementType Relation_2002 = getElementType("de.cau.cs.kieler.kaom.diagram.Relation_2002"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Port_3001 =
-            getElementType("de.cau.cs.kieler.kaom.diagram.Port_3001"); //$NON-NLS-1$
+    public static final IElementType Port_3001 = getElementType("de.cau.cs.kieler.kaom.diagram.Port_3001"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Entity_3002 =
-            getElementType("de.cau.cs.kieler.kaom.diagram.Entity_3002"); //$NON-NLS-1$
+    public static final IElementType Entity_3002 = getElementType("de.cau.cs.kieler.kaom.diagram.Entity_3002"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Relation_3003 =
-            getElementType("de.cau.cs.kieler.kaom.diagram.Relation_3003"); //$NON-NLS-1$
+    public static final IElementType Relation_3003 = getElementType("de.cau.cs.kieler.kaom.diagram.Relation_3003"); //$NON-NLS-1$
     /**
      * @generated
      */
-    public static final IElementType Link_4001 =
-            getElementType("de.cau.cs.kieler.kaom.diagram.Link_4001"); //$NON-NLS-1$
+    public static final IElementType Link_4001 = getElementType("de.cau.cs.kieler.kaom.diagram.Link_4001"); //$NON-NLS-1$
 
     /**
      * @generated
@@ -108,26 +101,22 @@ public class KaomElementTypes {
     /**
      * @generated
      */
-    private static ImageDescriptor getProvidedImageDescriptor(
-            ENamedElement element) {
+    private static ImageDescriptor getProvidedImageDescriptor(ENamedElement element) {
         if (element instanceof EStructuralFeature) {
             EStructuralFeature feature = ((EStructuralFeature) element);
             EClass eContainingClass = feature.getEContainingClass();
             EClassifier eType = feature.getEType();
             if (eContainingClass != null && !eContainingClass.isAbstract()) {
                 element = eContainingClass;
-            } else if (eType instanceof EClass
-                    && !((EClass) eType).isAbstract()) {
+            } else if (eType instanceof EClass && !((EClass) eType).isAbstract()) {
                 element = eType;
             }
         }
         if (element instanceof EClass) {
             EClass eClass = (EClass) element;
             if (!eClass.isAbstract()) {
-                return KaomDiagramEditorPlugin.getInstance()
-                        .getItemImageDescriptor(
-                                eClass.getEPackage().getEFactoryInstance()
-                                        .create(eClass));
+                return KaomDiagramEditorPlugin.getInstance().getItemImageDescriptor(
+                        eClass.getEPackage().getEFactoryInstance().create(eClass));
             }
         }
         // TODO : support structural features
@@ -157,8 +146,7 @@ public class KaomElementTypes {
         String key = getImageRegistryKey(element);
         Image image = getImageRegistry().get(key);
         if (image == null) {
-            ImageDescriptor imageDescriptor =
-                    getProvidedImageDescriptor(element);
+            ImageDescriptor imageDescriptor = getProvidedImageDescriptor(element);
             if (imageDescriptor == null) {
                 imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
             }

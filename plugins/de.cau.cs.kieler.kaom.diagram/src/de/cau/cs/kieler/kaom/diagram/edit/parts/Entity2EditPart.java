@@ -71,15 +71,11 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
      * @generated
      */
     protected void createDefaultEditPolicies() {
-        installEditPolicy(EditPolicyRoles.CREATION_ROLE,
-                new CreationEditPolicy());
+        installEditPolicy(EditPolicyRoles.CREATION_ROLE, new CreationEditPolicy());
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new Entity2ItemSemanticEditPolicy());
-        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE,
-                new DragDropEditPolicy());
-        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE,
-                new Entity2CanonicalEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new Entity2ItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.DRAG_DROP_ROLE, new DragDropEditPolicy());
+        installEditPolicy(EditPolicyRoles.CANONICAL_ROLE, new Entity2CanonicalEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
         // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
         // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -89,42 +85,38 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
      * @generated
      */
     protected LayoutEditPolicy createLayoutEditPolicy() {
-        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep =
-                new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
+        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep = new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
 
-                    protected EditPolicy createChildEditPolicy(EditPart child) {
-                        View childView = (View) child.getModel();
-                        switch (KaomVisualIDRegistry.getVisualID(childView)) {
-                        case EntityNameEditPart.VISUAL_ID:
-                            return new BorderItemSelectionEditPolicy() {
+            protected EditPolicy createChildEditPolicy(EditPart child) {
+                View childView = (View) child.getModel();
+                switch (KaomVisualIDRegistry.getVisualID(childView)) {
+                case EntityNameEditPart.VISUAL_ID:
+                    return new BorderItemSelectionEditPolicy() {
 
-                                protected List createSelectionHandles() {
-                                    MoveHandle mh =
-                                            new MoveHandle(
-                                                    (GraphicalEditPart) getHost());
-                                    mh.setBorder(null);
-                                    return Collections.singletonList(mh);
-                                }
-                            };
-                        case PortEditPart.VISUAL_ID:
-                            return new BorderItemSelectionEditPolicy();
+                        protected List createSelectionHandles() {
+                            MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
+                            mh.setBorder(null);
+                            return Collections.singletonList(mh);
                         }
-                        EditPolicy result =
-                                child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
-                        if (result == null) {
-                            result = new NonResizableEditPolicy();
-                        }
-                        return result;
-                    }
+                    };
+                case PortEditPart.VISUAL_ID:
+                    return new BorderItemSelectionEditPolicy();
+                }
+                EditPolicy result = child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (result == null) {
+                    result = new NonResizableEditPolicy();
+                }
+                return result;
+            }
 
-                    protected Command getMoveChildrenCommand(Request request) {
-                        return null;
-                    }
+            protected Command getMoveChildrenCommand(Request request) {
+                return null;
+            }
 
-                    protected Command getCreateCommand(CreateRequest request) {
-                        return null;
-                    }
-                };
+            protected Command getCreateCommand(CreateRequest request) {
+                return null;
+            }
+        };
         return lep;
     }
 
@@ -145,25 +137,21 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
     /**
      * @generated
      */
-    protected void addBorderItem(IFigure borderItemContainer,
-            IBorderItemEditPart borderItemEditPart) {
+    protected void addBorderItem(IFigure borderItemContainer, IBorderItemEditPart borderItemEditPart) {
         if (borderItemEditPart instanceof EntityNameEditPart) {
 
-            LabelLocator locator =
-                    new LabelLocator(getMainFigure(), PositionConstants.SOUTH);
+            LabelLocator locator = new LabelLocator(getMainFigure(), PositionConstants.SOUTH);
             locator.setBorderItemOffset(new Dimension(-4, -4));
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
         } else {
-            borderItemContainer.add(borderItemEditPart.getFigure(),
-                    new BorderItemLocator(getMainFigure()) {
-                        @Override
-                        protected Point locateOnBorder(Point suggestedLocation,
-                                int suggestedSide, int circuitCount,
-                                IFigure borderItem) {
-                            return locateOnParent(suggestedLocation,
-                                    suggestedSide, borderItem);
-                        }
-                    });
+            borderItemContainer.add(borderItemEditPart.getFigure(), new BorderItemLocator(
+                    getMainFigure()) {
+                @Override
+                protected Point locateOnBorder(Point suggestedLocation, int suggestedSide,
+                        int circuitCount, IFigure borderItem) {
+                    return locateOnParent(suggestedLocation, suggestedSide, borderItem);
+                }
+            });
         }
 
     }
@@ -269,8 +257,7 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
      * @generated
      */
     public EditPart getPrimaryChildEditPart() {
-        return getChildBySemanticHint(KaomVisualIDRegistry
-                .getType(EntityNameEditPart.VISUAL_ID));
+        return getChildBySemanticHint(KaomVisualIDRegistry.getType(EntityNameEditPart.VISUAL_ID));
     }
 
     /**
@@ -285,8 +272,7 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
     /**
      * @generated
      */
-    public List<IElementType> getMARelTypesOnSourceAndTarget(
-            IGraphicalEditPart targetEditPart) {
+    public List<IElementType> getMARelTypesOnSourceAndTarget(IGraphicalEditPart targetEditPart) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (targetEditPart instanceof de.cau.cs.kieler.kaom.diagram.edit.parts.Entity2EditPart) {
             types.add(KaomElementTypes.Link_4001);
@@ -309,8 +295,7 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
     /**
      * @generated
      */
-    public List<IElementType>
-            getMATypesForTarget(IElementType relationshipType) {
+    public List<IElementType> getMATypesForTarget(IElementType relationshipType) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (relationshipType == KaomElementTypes.Link_4001) {
             types.add(KaomElementTypes.Entity_2001);
@@ -334,8 +319,7 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
     /**
      * @generated
      */
-    public List<IElementType>
-            getMATypesForSource(IElementType relationshipType) {
+    public List<IElementType> getMATypesForSource(IElementType relationshipType) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (relationshipType == KaomElementTypes.Link_4001) {
             types.add(KaomElementTypes.Entity_2001);
@@ -358,9 +342,8 @@ public class Entity2EditPart extends AdvancedRenderingBorderedShapeEditPart {
         public EntityFigure() {
             this.setForegroundColor(ColorConstants.black);
             this.setBackgroundColor(ColorConstants.white);
-            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5),
-                    getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
-                    getMapMode().DPtoLP(5)));
+            this.setBorder(new MarginBorder(getMapMode().DPtoLP(5), getMapMode().DPtoLP(5),
+                    getMapMode().DPtoLP(5), getMapMode().DPtoLP(5)));
         }
 
     }

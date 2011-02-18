@@ -26,8 +26,7 @@ import de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry;
 /**
  * @generated
  */
-public class KaomParserProvider extends AbstractProvider implements
-        IParserProvider {
+public class KaomParserProvider extends AbstractProvider implements IParserProvider {
 
     /**
      * @generated
@@ -39,9 +38,8 @@ public class KaomParserProvider extends AbstractProvider implements
      */
     private IParser getEntityName_5004Parser() {
         if (entityName_5004Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { AnnotationsPackage.eINSTANCE
-                            .getNamedObject_Name() };
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                    .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             entityName_5004Parser = parser;
         }
@@ -58,9 +56,8 @@ public class KaomParserProvider extends AbstractProvider implements
      */
     private IParser getRelationName_5005Parser() {
         if (relationName_5005Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { AnnotationsPackage.eINSTANCE
-                            .getNamedObject_Name() };
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                    .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             relationName_5005Parser = parser;
         }
@@ -77,9 +74,8 @@ public class KaomParserProvider extends AbstractProvider implements
      */
     private IParser getPortName_5001Parser() {
         if (portName_5001Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { AnnotationsPackage.eINSTANCE
-                            .getNamedObject_Name() };
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                    .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             portName_5001Parser = parser;
         }
@@ -96,9 +92,8 @@ public class KaomParserProvider extends AbstractProvider implements
      */
     private IParser getEntityName_5003Parser() {
         if (entityName_5003Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { AnnotationsPackage.eINSTANCE
-                            .getNamedObject_Name() };
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                    .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             entityName_5003Parser = parser;
         }
@@ -115,9 +110,8 @@ public class KaomParserProvider extends AbstractProvider implements
      */
     private IParser getRelationName_5002Parser() {
         if (relationName_5002Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { AnnotationsPackage.eINSTANCE
-                            .getNamedObject_Name() };
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                    .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             relationName_5002Parser = parser;
         }
@@ -134,9 +128,8 @@ public class KaomParserProvider extends AbstractProvider implements
      */
     private IParser getLinkName_6001Parser() {
         if (linkName_6001Parser == null) {
-            EAttribute[] features =
-                    new EAttribute[] { AnnotationsPackage.eINSTANCE
-                            .getNamedObject_Name() };
+            EAttribute[] features = new EAttribute[] { AnnotationsPackage.eINSTANCE
+                    .getNamedObject_Name() };
             MessageFormatParser parser = new MessageFormatParser(features);
             linkName_6001Parser = parser;
         }
@@ -168,10 +161,8 @@ public class KaomParserProvider extends AbstractProvider implements
      * Utility method that consults ParserService
      * @generated
      */
-    public static IParser getParser(IElementType type, EObject object,
-            String parserHint) {
-        return ParserService.getInstance().getParser(
-                new HintAdapter(type, object, parserHint));
+    public static IParser getParser(IElementType type, EObject object, String parserHint) {
+        return ParserService.getInstance().getParser(new HintAdapter(type, object, parserHint));
     }
 
     /**

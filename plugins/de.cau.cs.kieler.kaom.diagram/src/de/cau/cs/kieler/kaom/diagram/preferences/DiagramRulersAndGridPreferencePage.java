@@ -13,7 +13,6 @@ public class DiagramRulersAndGridPreferencePage extends RulerGridPreferencePage 
      * @generated
      */
     public DiagramRulersAndGridPreferencePage() {
-        setPreferenceStore(KaomDiagramEditorPlugin.getInstance()
-                .getPreferenceStore());
+        setPreferenceStore(KaomDiagramEditorPlugin.getInstance().getPreferenceStore());
     }
 }

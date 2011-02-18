@@ -10,8 +10,7 @@ import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
 /**
  * @generated
  */
-public class EntityEntityCompartmentItemSemanticEditPolicy extends
-        KaomBaseItemSemanticEditPolicy {
+public class EntityEntityCompartmentItemSemanticEditPolicy extends KaomBaseItemSemanticEditPolicy {
 
     /**
      * @generated

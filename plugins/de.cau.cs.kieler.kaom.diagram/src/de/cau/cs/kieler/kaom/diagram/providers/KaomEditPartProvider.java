@@ -122,8 +122,7 @@ public class KaomEditPartProvider extends AbstractEditPartProvider {
     public synchronized boolean provides(IOperation operation) {
         if (operation instanceof CreateGraphicEditPartOperation) {
             View view = ((IEditPartOperation) operation).getView();
-            if (!EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry
-                    .getModelID(view))) {
+            if (!EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry.getModelID(view))) {
                 return false;
             }
             if (isAllowCaching() && getCachedPart(view) != null) {

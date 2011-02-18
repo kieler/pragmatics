@@ -17,9 +17,8 @@ public class KaomDomainNavigatorLabelProvider implements ICommonLabelProvider {
     /**
      * @generated
      */
-    private AdapterFactoryLabelProvider myAdapterFactoryLabelProvider =
-            new AdapterFactoryLabelProvider(KaomDiagramEditorPlugin
-                    .getInstance().getItemProvidersAdapterFactory());
+    private AdapterFactoryLabelProvider myAdapterFactoryLabelProvider = new AdapterFactoryLabelProvider(
+            KaomDiagramEditorPlugin.getInstance().getItemProvidersAdapterFactory());
 
     /**
      * @generated
@@ -32,8 +31,8 @@ public class KaomDomainNavigatorLabelProvider implements ICommonLabelProvider {
      */
     public Image getImage(Object element) {
         if (element instanceof KaomDomainNavigatorItem) {
-            return myAdapterFactoryLabelProvider
-                    .getImage(((KaomDomainNavigatorItem) element).getEObject());
+            return myAdapterFactoryLabelProvider.getImage(((KaomDomainNavigatorItem) element)
+                    .getEObject());
         }
         return null;
     }
@@ -43,8 +42,8 @@ public class KaomDomainNavigatorLabelProvider implements ICommonLabelProvider {
      */
     public String getText(Object element) {
         if (element instanceof KaomDomainNavigatorItem) {
-            return myAdapterFactoryLabelProvider
-                    .getText(((KaomDomainNavigatorItem) element).getEObject());
+            return myAdapterFactoryLabelProvider.getText(((KaomDomainNavigatorItem) element)
+                    .getEObject());
         }
         return null;
     }

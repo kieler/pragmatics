@@ -70,8 +70,7 @@ public class Relation2EditPart extends AdvancedRenderingBorderedShapeEditPart {
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new Relation2ItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new Relation2ItemSemanticEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, createLayoutEditPolicy());
         // XXX need an SCR to runtime to have another abstract superclass that would let children add reasonable editpolicies
         // removeEditPolicy(org.eclipse.gmf.runtime.diagram.ui.editpolicies.EditPolicyRoles.CONNECTION_HANDLES_ROLE);
@@ -81,40 +80,36 @@ public class Relation2EditPart extends AdvancedRenderingBorderedShapeEditPart {
      * @generated
      */
     protected LayoutEditPolicy createLayoutEditPolicy() {
-        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep =
-                new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
+        org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy lep = new org.eclipse.gmf.runtime.diagram.ui.editpolicies.LayoutEditPolicy() {
 
-                    protected EditPolicy createChildEditPolicy(EditPart child) {
-                        View childView = (View) child.getModel();
-                        switch (KaomVisualIDRegistry.getVisualID(childView)) {
-                        case RelationName2EditPart.VISUAL_ID:
-                            return new BorderItemSelectionEditPolicy() {
+            protected EditPolicy createChildEditPolicy(EditPart child) {
+                View childView = (View) child.getModel();
+                switch (KaomVisualIDRegistry.getVisualID(childView)) {
+                case RelationName2EditPart.VISUAL_ID:
+                    return new BorderItemSelectionEditPolicy() {
 
-                                protected List createSelectionHandles() {
-                                    MoveHandle mh =
-                                            new MoveHandle(
-                                                    (GraphicalEditPart) getHost());
-                                    mh.setBorder(null);
-                                    return Collections.singletonList(mh);
-                                }
-                            };
+                        protected List createSelectionHandles() {
+                            MoveHandle mh = new MoveHandle((GraphicalEditPart) getHost());
+                            mh.setBorder(null);
+                            return Collections.singletonList(mh);
                         }
-                        EditPolicy result =
-                                child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
-                        if (result == null) {
-                            result = new NonResizableEditPolicy();
-                        }
-                        return result;
-                    }
+                    };
+                }
+                EditPolicy result = child.getEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE);
+                if (result == null) {
+                    result = new NonResizableEditPolicy();
+                }
+                return result;
+            }
 
-                    protected Command getMoveChildrenCommand(Request request) {
-                        return null;
-                    }
+            protected Command getMoveChildrenCommand(Request request) {
+                return null;
+            }
 
-                    protected Command getCreateCommand(CreateRequest request) {
-                        return null;
-                    }
-                };
+            protected Command getCreateCommand(CreateRequest request) {
+                return null;
+            }
+        };
         return lep;
     }
 
@@ -135,25 +130,21 @@ public class Relation2EditPart extends AdvancedRenderingBorderedShapeEditPart {
     /**
      * @generated
      */
-    protected void addBorderItem(IFigure borderItemContainer,
-            IBorderItemEditPart borderItemEditPart) {
+    protected void addBorderItem(IFigure borderItemContainer, IBorderItemEditPart borderItemEditPart) {
         if (borderItemEditPart instanceof RelationName2EditPart) {
 
-            LabelLocator locator =
-                    new LabelLocator(getMainFigure(), PositionConstants.SOUTH);
+            LabelLocator locator = new LabelLocator(getMainFigure(), PositionConstants.SOUTH);
             locator.setBorderItemOffset(new Dimension(-4, -4));
             borderItemContainer.add(borderItemEditPart.getFigure(), locator);
         } else {
-            borderItemContainer.add(borderItemEditPart.getFigure(),
-                    new BorderItemLocator(getMainFigure()) {
-                        @Override
-                        protected Point locateOnBorder(Point suggestedLocation,
-                                int suggestedSide, int circuitCount,
-                                IFigure borderItem) {
-                            return locateOnParent(suggestedLocation,
-                                    suggestedSide, borderItem);
-                        }
-                    });
+            borderItemContainer.add(borderItemEditPart.getFigure(), new BorderItemLocator(
+                    getMainFigure()) {
+                @Override
+                protected Point locateOnBorder(Point suggestedLocation, int suggestedSide,
+                        int circuitCount, IFigure borderItem) {
+                    return locateOnParent(suggestedLocation, suggestedSide, borderItem);
+                }
+            });
         }
 
     }
@@ -255,8 +246,7 @@ public class Relation2EditPart extends AdvancedRenderingBorderedShapeEditPart {
      * @generated
      */
     public EditPart getPrimaryChildEditPart() {
-        return getChildBySemanticHint(KaomVisualIDRegistry
-                .getType(RelationName2EditPart.VISUAL_ID));
+        return getChildBySemanticHint(KaomVisualIDRegistry.getType(RelationName2EditPart.VISUAL_ID));
     }
 
     /**
@@ -271,8 +261,7 @@ public class Relation2EditPart extends AdvancedRenderingBorderedShapeEditPart {
     /**
      * @generated
      */
-    public List<IElementType> getMARelTypesOnSourceAndTarget(
-            IGraphicalEditPart targetEditPart) {
+    public List<IElementType> getMARelTypesOnSourceAndTarget(IGraphicalEditPart targetEditPart) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (targetEditPart instanceof Entity2EditPart) {
             types.add(KaomElementTypes.Link_4001);
@@ -295,8 +284,7 @@ public class Relation2EditPart extends AdvancedRenderingBorderedShapeEditPart {
     /**
      * @generated
      */
-    public List<IElementType>
-            getMATypesForTarget(IElementType relationshipType) {
+    public List<IElementType> getMATypesForTarget(IElementType relationshipType) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (relationshipType == KaomElementTypes.Link_4001) {
             types.add(KaomElementTypes.Entity_2001);
@@ -320,8 +308,7 @@ public class Relation2EditPart extends AdvancedRenderingBorderedShapeEditPart {
     /**
      * @generated
      */
-    public List<IElementType>
-            getMATypesForSource(IElementType relationshipType) {
+    public List<IElementType> getMATypesForSource(IElementType relationshipType) {
         LinkedList<IElementType> types = new LinkedList<IElementType>();
         if (relationshipType == KaomElementTypes.Link_4001) {
             types.add(KaomElementTypes.Entity_2001);
@@ -350,8 +337,7 @@ public class Relation2EditPart extends AdvancedRenderingBorderedShapeEditPart {
 
             this.setForegroundColor(ColorConstants.black);
             this.setBackgroundColor(ColorConstants.black);
-            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(10),
-                    getMapMode().DPtoLP(10)));
+            this.setPreferredSize(new Dimension(getMapMode().DPtoLP(10), getMapMode().DPtoLP(10)));
         }
 
         /**

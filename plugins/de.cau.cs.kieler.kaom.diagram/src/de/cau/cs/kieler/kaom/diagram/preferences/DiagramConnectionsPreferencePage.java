@@ -13,7 +13,6 @@ public class DiagramConnectionsPreferencePage extends ConnectionsPreferencePage 
      * @generated
      */
     public DiagramConnectionsPreferencePage() {
-        setPreferenceStore(KaomDiagramEditorPlugin.getInstance()
-                .getPreferenceStore());
+        setPreferenceStore(KaomDiagramEditorPlugin.getInstance().getPreferenceStore());
     }
 }

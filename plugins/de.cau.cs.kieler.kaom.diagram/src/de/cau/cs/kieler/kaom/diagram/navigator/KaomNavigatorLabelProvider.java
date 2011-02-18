@@ -38,20 +38,16 @@ import de.cau.cs.kieler.kaom.diagram.providers.KaomParserProvider;
 /**
  * @generated
  */
-public class KaomNavigatorLabelProvider extends LabelProvider implements
-        ICommonLabelProvider, ITreePathLabelProvider {
+public class KaomNavigatorLabelProvider extends LabelProvider implements ICommonLabelProvider,
+        ITreePathLabelProvider {
 
     /**
      * @generated
      */
     static {
-        KaomDiagramEditorPlugin
-                .getInstance()
-                .getImageRegistry()
+        KaomDiagramEditorPlugin.getInstance().getImageRegistry()
                 .put("Navigator?UnknownElement", ImageDescriptor.getMissingImageDescriptor()); //$NON-NLS-1$
-        KaomDiagramEditorPlugin
-                .getInstance()
-                .getImageRegistry()
+        KaomDiagramEditorPlugin.getInstance().getImageRegistry()
                 .put("Navigator?ImageNotFound", ImageDescriptor.getMissingImageDescriptor()); //$NON-NLS-1$
     }
 
@@ -74,8 +70,7 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
     public Image getImage(Object element) {
         if (element instanceof KaomNavigatorGroup) {
             KaomNavigatorGroup group = (KaomNavigatorGroup) element;
-            return KaomDiagramEditorPlugin.getInstance().getBundledImage(
-                    group.getIcon());
+            return KaomDiagramEditorPlugin.getInstance().getBundledImage(group.getIcon());
         }
 
         if (element instanceof KaomNavigatorItem) {
@@ -94,27 +89,27 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
      */
     public Image getImage(View view) {
         switch (KaomVisualIDRegistry.getVisualID(view)) {
+        case Entity3EditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Node?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_3002); //$NON-NLS-1$
         case Entity2EditPart.VISUAL_ID:
             return getImage(
                     "Navigator?TopLevelNode?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_2001); //$NON-NLS-1$
+        case Relation2EditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Node?http://kieler.cs.cau.de/KAOM?Relation", KaomElementTypes.Relation_3003); //$NON-NLS-1$
         case EntityEditPart.VISUAL_ID:
             return getImage(
                     "Navigator?Diagram?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_1000); //$NON-NLS-1$
         case RelationEditPart.VISUAL_ID:
             return getImage(
                     "Navigator?TopLevelNode?http://kieler.cs.cau.de/KAOM?Relation", KaomElementTypes.Relation_2002); //$NON-NLS-1$
-        case LinkEditPart.VISUAL_ID:
-            return getImage(
-                    "Navigator?Link?http://kieler.cs.cau.de/KAOM?Link", KaomElementTypes.Link_4001); //$NON-NLS-1$
-        case Entity3EditPart.VISUAL_ID:
-            return getImage(
-                    "Navigator?Node?http://kieler.cs.cau.de/KAOM?Entity", KaomElementTypes.Entity_3002); //$NON-NLS-1$
-        case Relation2EditPart.VISUAL_ID:
-            return getImage(
-                    "Navigator?Node?http://kieler.cs.cau.de/KAOM?Relation", KaomElementTypes.Relation_3003); //$NON-NLS-1$
         case PortEditPart.VISUAL_ID:
             return getImage(
                     "Navigator?Node?http://kieler.cs.cau.de/KAOM?Port", KaomElementTypes.Port_3001); //$NON-NLS-1$
+        case LinkEditPart.VISUAL_ID:
+            return getImage(
+                    "Navigator?Link?http://kieler.cs.cau.de/KAOM?Link", KaomElementTypes.Link_4001); //$NON-NLS-1$
         }
         return getImage("Navigator?UnknownElement", null); //$NON-NLS-1$
     }
@@ -123,8 +118,7 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private Image getImage(String key, IElementType elementType) {
-        ImageRegistry imageRegistry =
-                KaomDiagramEditorPlugin.getInstance().getImageRegistry();
+        ImageRegistry imageRegistry = KaomDiagramEditorPlugin.getInstance().getImageRegistry();
         Image image = imageRegistry.get(key);
         if (image == null && elementType != null
                 && KaomElementTypes.isKnownElementType(elementType)) {
@@ -167,20 +161,20 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
             return getUnresolvedDomainElementProxyText(view);
         }
         switch (KaomVisualIDRegistry.getVisualID(view)) {
+        case Entity3EditPart.VISUAL_ID:
+            return getEntity_3002Text(view);
         case Entity2EditPart.VISUAL_ID:
             return getEntity_2001Text(view);
+        case Relation2EditPart.VISUAL_ID:
+            return getRelation_3003Text(view);
         case EntityEditPart.VISUAL_ID:
             return getEntity_1000Text(view);
         case RelationEditPart.VISUAL_ID:
             return getRelation_2002Text(view);
-        case LinkEditPart.VISUAL_ID:
-            return getLink_4001Text(view);
-        case Entity3EditPart.VISUAL_ID:
-            return getEntity_3002Text(view);
-        case Relation2EditPart.VISUAL_ID:
-            return getRelation_3003Text(view);
         case PortEditPart.VISUAL_ID:
             return getPort_3001Text(view);
+        case LinkEditPart.VISUAL_ID:
+            return getLink_4001Text(view);
         }
         return getUnknownElementText(view);
     }
@@ -203,18 +197,16 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getEntity_2001Text(View view) {
-        IParser parser =
-                KaomParserProvider.getParser(KaomElementTypes.Entity_2001, view
-                        .getElement() != null ? view.getElement() : view,
-                        KaomVisualIDRegistry
-                                .getType(EntityNameEditPart.VISUAL_ID));
+        IParser parser = KaomParserProvider.getParser(KaomElementTypes.Entity_2001,
+                view.getElement() != null ? view.getElement() : view,
+                KaomVisualIDRegistry.getType(EntityNameEditPart.VISUAL_ID));
         if (parser != null) {
-            return parser.getPrintString(new EObjectAdapter(
-                    view.getElement() != null ? view.getElement() : view),
+            return parser.getPrintString(
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
                     ParserOptions.NONE.intValue());
         } else {
-            KaomDiagramEditorPlugin.getInstance().logError(
-                    "Parser was not found for label " + 5004); //$NON-NLS-1$
+            KaomDiagramEditorPlugin.getInstance()
+                    .logError("Parser was not found for label " + 5004); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -223,18 +215,16 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getRelation_2002Text(View view) {
-        IParser parser =
-                KaomParserProvider.getParser(KaomElementTypes.Relation_2002,
-                        view.getElement() != null ? view.getElement() : view,
-                        KaomVisualIDRegistry
-                                .getType(RelationNameEditPart.VISUAL_ID));
+        IParser parser = KaomParserProvider.getParser(KaomElementTypes.Relation_2002,
+                view.getElement() != null ? view.getElement() : view,
+                KaomVisualIDRegistry.getType(RelationNameEditPart.VISUAL_ID));
         if (parser != null) {
-            return parser.getPrintString(new EObjectAdapter(
-                    view.getElement() != null ? view.getElement() : view),
+            return parser.getPrintString(
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
                     ParserOptions.NONE.intValue());
         } else {
-            KaomDiagramEditorPlugin.getInstance().logError(
-                    "Parser was not found for label " + 5005); //$NON-NLS-1$
+            KaomDiagramEditorPlugin.getInstance()
+                    .logError("Parser was not found for label " + 5005); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -243,18 +233,16 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getPort_3001Text(View view) {
-        IParser parser =
-                KaomParserProvider.getParser(KaomElementTypes.Port_3001, view
-                        .getElement() != null ? view.getElement() : view,
-                        KaomVisualIDRegistry
-                                .getType(PortNameEditPart.VISUAL_ID));
+        IParser parser = KaomParserProvider.getParser(KaomElementTypes.Port_3001,
+                view.getElement() != null ? view.getElement() : view,
+                KaomVisualIDRegistry.getType(PortNameEditPart.VISUAL_ID));
         if (parser != null) {
-            return parser.getPrintString(new EObjectAdapter(
-                    view.getElement() != null ? view.getElement() : view),
+            return parser.getPrintString(
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
                     ParserOptions.NONE.intValue());
         } else {
-            KaomDiagramEditorPlugin.getInstance().logError(
-                    "Parser was not found for label " + 5001); //$NON-NLS-1$
+            KaomDiagramEditorPlugin.getInstance()
+                    .logError("Parser was not found for label " + 5001); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -263,18 +251,16 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getEntity_3002Text(View view) {
-        IParser parser =
-                KaomParserProvider.getParser(KaomElementTypes.Entity_3002, view
-                        .getElement() != null ? view.getElement() : view,
-                        KaomVisualIDRegistry
-                                .getType(EntityName2EditPart.VISUAL_ID));
+        IParser parser = KaomParserProvider.getParser(KaomElementTypes.Entity_3002,
+                view.getElement() != null ? view.getElement() : view,
+                KaomVisualIDRegistry.getType(EntityName2EditPart.VISUAL_ID));
         if (parser != null) {
-            return parser.getPrintString(new EObjectAdapter(
-                    view.getElement() != null ? view.getElement() : view),
+            return parser.getPrintString(
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
                     ParserOptions.NONE.intValue());
         } else {
-            KaomDiagramEditorPlugin.getInstance().logError(
-                    "Parser was not found for label " + 5003); //$NON-NLS-1$
+            KaomDiagramEditorPlugin.getInstance()
+                    .logError("Parser was not found for label " + 5003); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -283,18 +269,16 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getRelation_3003Text(View view) {
-        IParser parser =
-                KaomParserProvider.getParser(KaomElementTypes.Relation_3003,
-                        view.getElement() != null ? view.getElement() : view,
-                        KaomVisualIDRegistry
-                                .getType(RelationName2EditPart.VISUAL_ID));
+        IParser parser = KaomParserProvider.getParser(KaomElementTypes.Relation_3003,
+                view.getElement() != null ? view.getElement() : view,
+                KaomVisualIDRegistry.getType(RelationName2EditPart.VISUAL_ID));
         if (parser != null) {
-            return parser.getPrintString(new EObjectAdapter(
-                    view.getElement() != null ? view.getElement() : view),
+            return parser.getPrintString(
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
                     ParserOptions.NONE.intValue());
         } else {
-            KaomDiagramEditorPlugin.getInstance().logError(
-                    "Parser was not found for label " + 5002); //$NON-NLS-1$
+            KaomDiagramEditorPlugin.getInstance()
+                    .logError("Parser was not found for label " + 5002); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -303,18 +287,16 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private String getLink_4001Text(View view) {
-        IParser parser =
-                KaomParserProvider.getParser(KaomElementTypes.Link_4001, view
-                        .getElement() != null ? view.getElement() : view,
-                        KaomVisualIDRegistry
-                                .getType(LinkNameEditPart.VISUAL_ID));
+        IParser parser = KaomParserProvider.getParser(KaomElementTypes.Link_4001,
+                view.getElement() != null ? view.getElement() : view,
+                KaomVisualIDRegistry.getType(LinkNameEditPart.VISUAL_ID));
         if (parser != null) {
-            return parser.getPrintString(new EObjectAdapter(
-                    view.getElement() != null ? view.getElement() : view),
+            return parser.getPrintString(
+                    new EObjectAdapter(view.getElement() != null ? view.getElement() : view),
                     ParserOptions.NONE.intValue());
         } else {
-            KaomDiagramEditorPlugin.getInstance().logError(
-                    "Parser was not found for label " + 6001); //$NON-NLS-1$
+            KaomDiagramEditorPlugin.getInstance()
+                    .logError("Parser was not found for label " + 6001); //$NON-NLS-1$
             return ""; //$NON-NLS-1$
         }
     }
@@ -362,8 +344,7 @@ public class KaomNavigatorLabelProvider extends LabelProvider implements
      * @generated
      */
     private boolean isOwnView(View view) {
-        return EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry
-                .getModelID(view));
+        return EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry.getModelID(view));
     }
 
 }

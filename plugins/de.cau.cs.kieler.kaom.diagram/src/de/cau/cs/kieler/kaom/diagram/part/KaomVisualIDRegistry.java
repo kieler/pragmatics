@@ -36,8 +36,7 @@ public class KaomVisualIDRegistry {
     /**
      * @generated
      */
-    private static final String DEBUG_KEY =
-            "de.cau.cs.kieler.kaom.diagram/debug/visualID"; //$NON-NLS-1$
+    private static final String DEBUG_KEY = "de.cau.cs.kieler.kaom.diagram/debug/visualID"; //$NON-NLS-1$
 
     /**
      * @generated
@@ -50,8 +49,7 @@ public class KaomVisualIDRegistry {
                 return -1;
             }
         }
-        return de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry
-                .getVisualID(view.getType());
+        return de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry.getVisualID(view.getType());
     }
 
     /**
@@ -76,11 +74,9 @@ public class KaomVisualIDRegistry {
         try {
             return Integer.parseInt(type);
         } catch (NumberFormatException e) {
-            if (Boolean.TRUE.toString().equalsIgnoreCase(
-                    Platform.getDebugOption(DEBUG_KEY))) {
+            if (Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(DEBUG_KEY))) {
                 KaomDiagramEditorPlugin.getInstance().logError(
-                        "Unable to parse view type as a visualID number: "
-                                + type);
+                        "Unable to parse view type as a visualID number: " + type);
             }
         }
         return -1;
@@ -100,8 +96,7 @@ public class KaomVisualIDRegistry {
         if (domainElement == null) {
             return -1;
         }
-        if (KaomPackage.eINSTANCE.getEntity().isSuperTypeOf(
-                domainElement.eClass())
+        if (KaomPackage.eINSTANCE.getEntity().isSuperTypeOf(domainElement.eClass())
                 && isDiagram((Entity) domainElement)) {
             return EntityEditPart.VISUAL_ID;
         }
@@ -111,22 +106,19 @@ public class KaomVisualIDRegistry {
     /**
      * @generated
      */
-    public static int
-            getNodeVisualID(View containerView, EObject domainElement) {
+    public static int getNodeVisualID(View containerView, EObject domainElement) {
         if (domainElement == null) {
             return -1;
         }
-        String containerModelID =
-                de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry
-                        .getModelID(containerView);
+        String containerModelID = de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry
+                .getModelID(containerView);
         if (!EntityEditPart.MODEL_ID.equals(containerModelID)) {
             return -1;
         }
         int containerVisualID;
         if (EntityEditPart.MODEL_ID.equals(containerModelID)) {
-            containerVisualID =
-                    de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry
-                            .getVisualID(containerView);
+            containerVisualID = de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry
+                    .getVisualID(containerView);
         } else {
             if (containerView instanceof Diagram) {
                 containerVisualID = EntityEditPart.VISUAL_ID;
@@ -136,44 +128,36 @@ public class KaomVisualIDRegistry {
         }
         switch (containerVisualID) {
         case EntityEditPart.VISUAL_ID:
-            if (KaomPackage.eINSTANCE.getEntity().isSuperTypeOf(
-                    domainElement.eClass())) {
+            if (KaomPackage.eINSTANCE.getEntity().isSuperTypeOf(domainElement.eClass())) {
                 return Entity2EditPart.VISUAL_ID;
             }
-            if (KaomPackage.eINSTANCE.getRelation().isSuperTypeOf(
-                    domainElement.eClass())) {
+            if (KaomPackage.eINSTANCE.getRelation().isSuperTypeOf(domainElement.eClass())) {
                 return RelationEditPart.VISUAL_ID;
             }
             break;
         case Entity2EditPart.VISUAL_ID:
-            if (KaomPackage.eINSTANCE.getPort().isSuperTypeOf(
-                    domainElement.eClass())) {
+            if (KaomPackage.eINSTANCE.getPort().isSuperTypeOf(domainElement.eClass())) {
                 return PortEditPart.VISUAL_ID;
             }
             break;
         case Entity3EditPart.VISUAL_ID:
-            if (KaomPackage.eINSTANCE.getPort().isSuperTypeOf(
-                    domainElement.eClass())) {
+            if (KaomPackage.eINSTANCE.getPort().isSuperTypeOf(domainElement.eClass())) {
                 return PortEditPart.VISUAL_ID;
             }
             break;
         case EntityEntityCompartmentEditPart.VISUAL_ID:
-            if (KaomPackage.eINSTANCE.getEntity().isSuperTypeOf(
-                    domainElement.eClass())) {
+            if (KaomPackage.eINSTANCE.getEntity().isSuperTypeOf(domainElement.eClass())) {
                 return Entity3EditPart.VISUAL_ID;
             }
-            if (KaomPackage.eINSTANCE.getRelation().isSuperTypeOf(
-                    domainElement.eClass())) {
+            if (KaomPackage.eINSTANCE.getRelation().isSuperTypeOf(domainElement.eClass())) {
                 return Relation2EditPart.VISUAL_ID;
             }
             break;
         case EntityEntityCompartment2EditPart.VISUAL_ID:
-            if (KaomPackage.eINSTANCE.getEntity().isSuperTypeOf(
-                    domainElement.eClass())) {
+            if (KaomPackage.eINSTANCE.getEntity().isSuperTypeOf(domainElement.eClass())) {
                 return Entity3EditPart.VISUAL_ID;
             }
-            if (KaomPackage.eINSTANCE.getRelation().isSuperTypeOf(
-                    domainElement.eClass())) {
+            if (KaomPackage.eINSTANCE.getRelation().isSuperTypeOf(domainElement.eClass())) {
                 return Relation2EditPart.VISUAL_ID;
             }
             break;
@@ -185,17 +169,15 @@ public class KaomVisualIDRegistry {
      * @generated
      */
     public static boolean canCreateNode(View containerView, int nodeVisualID) {
-        String containerModelID =
-                de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry
-                        .getModelID(containerView);
+        String containerModelID = de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry
+                .getModelID(containerView);
         if (!EntityEditPart.MODEL_ID.equals(containerModelID)) {
             return false;
         }
         int containerVisualID;
         if (EntityEditPart.MODEL_ID.equals(containerModelID)) {
-            containerVisualID =
-                    de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry
-                            .getVisualID(containerView);
+            containerVisualID = de.cau.cs.kieler.kaom.diagram.part.KaomVisualIDRegistry
+                    .getVisualID(containerView);
         } else {
             if (containerView instanceof Diagram) {
                 containerVisualID = EntityEditPart.VISUAL_ID;
@@ -281,8 +263,7 @@ public class KaomVisualIDRegistry {
         if (domainElement == null) {
             return -1;
         }
-        if (KaomPackage.eINSTANCE.getLink().isSuperTypeOf(
-                domainElement.eClass())) {
+        if (KaomPackage.eINSTANCE.getLink().isSuperTypeOf(domainElement.eClass())) {
             return LinkEditPart.VISUAL_ID;
         }
         return -1;

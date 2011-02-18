@@ -15,8 +15,7 @@ public class ElementInitializers {
      * @generated
      */
     public static ElementInitializers getInstance() {
-        ElementInitializers cached =
-                KaomDiagramEditorPlugin.getInstance().getElementInitializers();
+        ElementInitializers cached = KaomDiagramEditorPlugin.getInstance().getElementInitializers();
         if (cached == null) {
             KaomDiagramEditorPlugin.getInstance().setElementInitializers(
                     cached = new ElementInitializers());

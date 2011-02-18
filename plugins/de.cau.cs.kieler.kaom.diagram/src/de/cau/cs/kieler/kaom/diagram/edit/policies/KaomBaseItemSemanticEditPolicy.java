@@ -73,13 +73,9 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      */
     public Command getCommand(Request request) {
         if (request instanceof ReconnectRequest) {
-            Object view =
-                    ((ReconnectRequest) request).getConnectionEditPart()
-                            .getModel();
+            Object view = ((ReconnectRequest) request).getConnectionEditPart().getModel();
             if (view instanceof View) {
-                Integer id =
-                        new Integer(
-                                KaomVisualIDRegistry.getVisualID((View) view));
+                Integer id = new Integer(KaomVisualIDRegistry.getVisualID((View) view));
                 request.getExtendedData().put(VISUAL_ID_KEY, id);
             }
         }
@@ -101,12 +97,11 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     protected Command getSemanticCommand(IEditCommandRequest request) {
         IEditCommandRequest completedRequest = completeRequest(request);
         Command semanticCommand = getSemanticCommandSwitch(completedRequest);
-        semanticCommand =
-                getEditHelperCommand(completedRequest, semanticCommand);
+        semanticCommand = getEditHelperCommand(completedRequest, semanticCommand);
         if (completedRequest instanceof DestroyRequest) {
             DestroyRequest destroyRequest = (DestroyRequest) completedRequest;
-            return shouldProceed(destroyRequest) ? addDeleteViewCommand(
-                    semanticCommand, destroyRequest) : null;
+            return shouldProceed(destroyRequest) ? addDeleteViewCommand(semanticCommand,
+                    destroyRequest) : null;
         }
         return semanticCommand;
     }
@@ -114,39 +109,30 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     /**
      * @generated
      */
-    protected Command addDeleteViewCommand(Command mainCommand,
-            DestroyRequest completedRequest) {
-        Command deleteViewCommand =
-                getGEFWrapper(new DeleteCommand(getEditingDomain(),
-                        (View) getHost().getModel()));
-        return mainCommand == null ? deleteViewCommand : mainCommand
-                .chain(deleteViewCommand);
+    protected Command addDeleteViewCommand(Command mainCommand, DestroyRequest completedRequest) {
+        Command deleteViewCommand = getGEFWrapper(new DeleteCommand(getEditingDomain(),
+                (View) getHost().getModel()));
+        return mainCommand == null ? deleteViewCommand : mainCommand.chain(deleteViewCommand);
     }
 
     /**
      * @generated
      */
-    private Command getEditHelperCommand(IEditCommandRequest request,
-            Command editPolicyCommand) {
+    private Command getEditHelperCommand(IEditCommandRequest request, Command editPolicyCommand) {
         if (editPolicyCommand != null) {
-            ICommand command =
-                    editPolicyCommand instanceof ICommandProxy ? ((ICommandProxy) editPolicyCommand)
-                            .getICommand()
-                            : new CommandProxy(editPolicyCommand);
-            request.setParameter(KaomBaseEditHelper.EDIT_POLICY_COMMAND,
-                    command);
+            ICommand command = editPolicyCommand instanceof ICommandProxy ? ((ICommandProxy) editPolicyCommand)
+                    .getICommand() : new CommandProxy(editPolicyCommand);
+            request.setParameter(KaomBaseEditHelper.EDIT_POLICY_COMMAND, command);
         }
         IElementType requestContextElementType = getContextElementType(request);
-        request.setParameter(KaomBaseEditHelper.CONTEXT_ELEMENT_TYPE,
-                requestContextElementType);
+        request.setParameter(KaomBaseEditHelper.CONTEXT_ELEMENT_TYPE, requestContextElementType);
         ICommand command = requestContextElementType.getEditCommand(request);
         request.setParameter(KaomBaseEditHelper.EDIT_POLICY_COMMAND, null);
         request.setParameter(KaomBaseEditHelper.CONTEXT_ELEMENT_TYPE, null);
         if (command != null) {
             if (!(command instanceof CompositeTransactionalCommand)) {
-                command =
-                        new CompositeTransactionalCommand(getEditingDomain(),
-                                command.getLabel()).compose(command);
+                command = new CompositeTransactionalCommand(getEditingDomain(), command.getLabel())
+                        .compose(command);
             }
             return new ICommandProxy(command);
         }
@@ -157,10 +143,9 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      * @generated
      */
     private IElementType getContextElementType(IEditCommandRequest request) {
-        IElementType requestContextElementType =
-                KaomElementTypes.getElementType(getVisualID(request));
-        return requestContextElementType != null ? requestContextElementType
-                : myElementType;
+        IElementType requestContextElementType = KaomElementTypes
+                .getElementType(getVisualID(request));
+        return requestContextElementType != null ? requestContextElementType : myElementType;
     }
 
     /**
@@ -203,8 +188,7 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     /**
      * @generated
      */
-    protected Command
-            getCreateRelationshipCommand(CreateRelationshipRequest req) {
+    protected Command getCreateRelationshipCommand(CreateRelationshipRequest req) {
         return null;
     }
 
@@ -268,8 +252,7 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
     /**
      * @generated
      */
-    protected Command getReorientRelationshipCommand(
-            ReorientRelationshipRequest req) {
+    protected Command getReorientRelationshipCommand(ReorientRelationshipRequest req) {
         return UnexecutableCommand.INSTANCE;
     }
 
@@ -294,8 +277,7 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      */
     protected void addDestroyShortcutsCommand(ICompositeCommand cmd, View view) {
         assert view.getEAnnotation("Shortcut") == null; //$NON-NLS-1$
-        for (Iterator it = view.getDiagram().getChildren().iterator(); it
-                .hasNext();) {
+        for (Iterator it = view.getDiagram().getChildren().iterator(); it.hasNext();) {
             View nextView = (View) it.next();
             if (nextView.getEAnnotation("Shortcut") == null || !nextView.isSetElement() || nextView.getElement() != view.getElement()) { //$NON-NLS-1$
                 continue;
@@ -308,11 +290,10 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
      * @generated
      */
     public static LinkConstraints getLinkConstraints() {
-        LinkConstraints cached =
-                KaomDiagramEditorPlugin.getInstance().getLinkConstraints();
+        LinkConstraints cached = KaomDiagramEditorPlugin.getInstance().getLinkConstraints();
         if (cached == null) {
-            KaomDiagramEditorPlugin.getInstance().setLinkConstraints(
-                    cached = new LinkConstraints());
+            KaomDiagramEditorPlugin.getInstance()
+                    .setLinkConstraints(cached = new LinkConstraints());
         }
         return cached;
     }
@@ -332,16 +313,15 @@ public class KaomBaseItemSemanticEditPolicy extends SemanticEditPolicy {
         /**
          * @generated
          */
-        public boolean canCreateLink_4001(Entity container, Linkable source,
-                Linkable target) {
+        public boolean canCreateLink_4001(Entity container, Linkable source, Linkable target) {
             return canExistLink_4001(container, null, source, target);
         }
 
         /**
          * @generated
          */
-        public boolean canExistLink_4001(Entity container, Link linkInstance,
-                Linkable source, Linkable target) {
+        public boolean canExistLink_4001(Entity container, Link linkInstance, Linkable source,
+                Linkable target) {
             return true;
         }
     }

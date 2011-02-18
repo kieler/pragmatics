@@ -37,8 +37,7 @@ public class LinkEditPart extends AdvancedRenderingConnectionEditPart implements
      */
     protected void createDefaultEditPolicies() {
         super.createDefaultEditPolicies();
-        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE,
-                new LinkItemSemanticEditPolicy());
+        installEditPolicy(EditPolicyRoles.SEMANTIC_ROLE, new LinkItemSemanticEditPolicy());
     }
 
     /**

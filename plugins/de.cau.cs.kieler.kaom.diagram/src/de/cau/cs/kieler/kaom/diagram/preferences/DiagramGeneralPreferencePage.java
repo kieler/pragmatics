@@ -13,7 +13,6 @@ public class DiagramGeneralPreferencePage extends DiagramsPreferencePage {
      * @generated
      */
     public DiagramGeneralPreferencePage() {
-        setPreferenceStore(KaomDiagramEditorPlugin.getInstance()
-                .getPreferenceStore());
+        setPreferenceStore(KaomDiagramEditorPlugin.getInstance().getPreferenceStore());
     }
 }

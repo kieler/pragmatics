@@ -15,8 +15,7 @@ import de.cau.cs.kieler.kaom.diagram.providers.KaomElementTypes;
 /**
  * @generated
  */
-public class KaomSheetLabelProvider extends BaseLabelProvider implements
-        ILabelProvider {
+public class KaomSheetLabelProvider extends BaseLabelProvider implements ILabelProvider {
 
     /**
      * @generated
@@ -72,9 +71,7 @@ public class KaomSheetLabelProvider extends BaseLabelProvider implements
             if (etype != null) {
                 return etype;
             }
-            view =
-                    view.eContainer() instanceof View ? (View) view
-                            .eContainer() : null;
+            view = view.eContainer() instanceof View ? (View) view.eContainer() : null;
         }
         return null;
     }

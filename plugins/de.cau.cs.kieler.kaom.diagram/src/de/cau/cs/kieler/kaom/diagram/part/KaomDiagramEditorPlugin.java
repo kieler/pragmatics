@@ -39,8 +39,7 @@ public class KaomDiagramEditorPlugin extends AbstractUIPlugin {
     /**
      * @generated
      */
-    public static final PreferencesHint DIAGRAM_PREFERENCES_HINT =
-            new PreferencesHint(ID);
+    public static final PreferencesHint DIAGRAM_PREFERENCES_HINT = new PreferencesHint(ID);
 
     /**
      * @generated
@@ -79,8 +78,7 @@ public class KaomDiagramEditorPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         instance = this;
-        PreferencesHint.registerPreferenceStore(DIAGRAM_PREFERENCES_HINT,
-                getPreferenceStore());
+        PreferencesHint.registerPreferenceStore(DIAGRAM_PREFERENCES_HINT, getPreferenceStore());
         adapterFactory = createAdapterFactory();
     }
 
@@ -134,9 +132,8 @@ public class KaomDiagramEditorPlugin extends AbstractUIPlugin {
      * @generated
      */
     public ImageDescriptor getItemImageDescriptor(Object item) {
-        IItemLabelProvider labelProvider =
-                (IItemLabelProvider) adapterFactory.adapt(item,
-                        IItemLabelProvider.class);
+        IItemLabelProvider labelProvider = (IItemLabelProvider) adapterFactory.adapt(item,
+                IItemLabelProvider.class);
         if (labelProvider != null) {
             return ExtendedImageRegistry.getInstance().getImageDescriptor(
                     labelProvider.getImage(item));
@@ -221,8 +218,7 @@ public class KaomDiagramEditorPlugin extends AbstractUIPlugin {
     /**
      * @generated
      */
-    public void setLinkConstraints(
-            KaomBaseItemSemanticEditPolicy.LinkConstraints lc) {
+    public void setLinkConstraints(KaomBaseItemSemanticEditPolicy.LinkConstraints lc) {
         this.linkConstraints = lc;
     }
 
@@ -255,8 +251,7 @@ public class KaomDiagramEditorPlugin extends AbstractUIPlugin {
             error = throwable.getMessage();
         }
         getLog().log(
-                new Status(IStatus.ERROR, KaomDiagramEditorPlugin.ID,
-                        IStatus.OK, error, throwable));
+                new Status(IStatus.ERROR, KaomDiagramEditorPlugin.ID, IStatus.OK, error, throwable));
         debug(error, throwable);
     }
 
@@ -275,8 +270,7 @@ public class KaomDiagramEditorPlugin extends AbstractUIPlugin {
             message = throwable.getMessage();
         }
         getLog().log(
-                new Status(IStatus.INFO, KaomDiagramEditorPlugin.ID,
-                        IStatus.OK, message, throwable));
+                new Status(IStatus.INFO, KaomDiagramEditorPlugin.ID, IStatus.OK, message, throwable));
         debug(message, throwable);
     }
 

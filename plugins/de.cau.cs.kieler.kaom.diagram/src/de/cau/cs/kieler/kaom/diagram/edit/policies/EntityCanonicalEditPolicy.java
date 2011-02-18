@@ -62,8 +62,8 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
     protected List getSemanticChildrenList() {
         View viewObject = (View) getHost().getModel();
         LinkedList<EObject> result = new LinkedList<EObject>();
-        List<KaomNodeDescriptor> childDescriptors =
-                KaomDiagramUpdater.getEntity_1000SemanticChildren(viewObject);
+        List<KaomNodeDescriptor> childDescriptors = KaomDiagramUpdater
+                .getEntity_1000SemanticChildren(viewObject);
         for (KaomNodeDescriptor d : childDescriptors) {
             result.add(d.getModelElement());
         }
@@ -73,10 +73,8 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
     /**
      * @generated
      */
-    protected boolean isOrphaned(Collection<EObject> semanticChildren,
-            final View view) {
-        return isMyDiagramElement(view)
-                && !semanticChildren.contains(view.getElement());
+    protected boolean isOrphaned(Collection<EObject> semanticChildren, final View view) {
+        return isMyDiagramElement(view) && !semanticChildren.contains(view.getElement());
     }
 
     /**
@@ -84,8 +82,7 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
      */
     private boolean isMyDiagramElement(View view) {
         int visualID = KaomVisualIDRegistry.getVisualID(view);
-        return visualID == Entity2EditPart.VISUAL_ID
-                || visualID == RelationEditPart.VISUAL_ID;
+        return visualID == Entity2EditPart.VISUAL_ID || visualID == RelationEditPart.VISUAL_ID;
     }
 
     /**
@@ -94,10 +91,8 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
     protected Set getFeaturesToSynchronize() {
         if (myFeaturesToSynchronize == null) {
             myFeaturesToSynchronize = new HashSet<EStructuralFeature>();
-            myFeaturesToSynchronize.add(KaomPackage.eINSTANCE
-                    .getEntity_ChildEntities());
-            myFeaturesToSynchronize.add(KaomPackage.eINSTANCE
-                    .getEntity_ChildRelations());
+            myFeaturesToSynchronize.add(KaomPackage.eINSTANCE.getEntity_ChildEntities());
+            myFeaturesToSynchronize.add(KaomPackage.eINSTANCE.getEntity_ChildRelations());
         }
         return myFeaturesToSynchronize;
     }
@@ -110,10 +105,8 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
             return;
         }
         LinkedList<IAdaptable> createdViews = new LinkedList<IAdaptable>();
-        List<KaomNodeDescriptor> childDescriptors =
-                KaomDiagramUpdater
-                        .getEntity_1000SemanticChildren((View) getHost()
-                                .getModel());
+        List<KaomNodeDescriptor> childDescriptors = KaomDiagramUpdater
+                .getEntity_1000SemanticChildren((View) getHost().getModel());
         LinkedList<View> orphaned = new LinkedList<View>();
         // we care to check only views we recognize as ours
         LinkedList<View> knownViewChildren = new LinkedList<View>();
@@ -127,8 +120,8 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
         // iteration happens over list of desired semantic elements, trying to find best matching View, while original CEP
         // iterates views, potentially losing view (size/bounds) information - i.e. if there are few views to reference same EObject, only last one 
         // to answer isOrphaned == true will be used for the domain element representation, see #cleanCanonicalSemanticChildren()
-        for (Iterator<KaomNodeDescriptor> descriptorsIterator =
-                childDescriptors.iterator(); descriptorsIterator.hasNext();) {
+        for (Iterator<KaomNodeDescriptor> descriptorsIterator = childDescriptors.iterator(); descriptorsIterator
+                .hasNext();) {
             KaomNodeDescriptor next = descriptorsIterator.next();
             String hint = KaomVisualIDRegistry.getType(next.getVisualID());
             LinkedList<View> perfectMatch = new LinkedList<View>(); // both semanticElement and hint match that of NodeDescriptor
@@ -153,17 +146,14 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
         // or those we have potential matches to, and thus need to be recreated, preserving size/location information.
         orphaned.addAll(knownViewChildren);
         //
-        ArrayList<CreateViewRequest.ViewDescriptor> viewDescriptors =
-                new ArrayList<CreateViewRequest.ViewDescriptor>(
-                        childDescriptors.size());
+        ArrayList<CreateViewRequest.ViewDescriptor> viewDescriptors = new ArrayList<CreateViewRequest.ViewDescriptor>(
+                childDescriptors.size());
         for (KaomNodeDescriptor next : childDescriptors) {
             String hint = KaomVisualIDRegistry.getType(next.getVisualID());
-            IAdaptable elementAdapter =
-                    new CanonicalElementAdapter(next.getModelElement(), hint);
-            CreateViewRequest.ViewDescriptor descriptor =
-                    new CreateViewRequest.ViewDescriptor(elementAdapter,
-                            Node.class, hint, ViewUtil.APPEND, false, host()
-                                    .getDiagramPreferencesHint());
+            IAdaptable elementAdapter = new CanonicalElementAdapter(next.getModelElement(), hint);
+            CreateViewRequest.ViewDescriptor descriptor = new CreateViewRequest.ViewDescriptor(
+                    elementAdapter, Node.class, hint, ViewUtil.APPEND, false, host()
+                            .getDiagramPreferencesHint());
             viewDescriptors.add(descriptor);
         }
 
@@ -172,8 +162,8 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
         CreateViewRequest request = getCreateViewRequest(viewDescriptors);
         Command cmd = getCreateViewCommand(request);
         if (cmd != null && cmd.canExecute()) {
-            SetViewMutabilityCommand.makeMutable(
-                    new EObjectAdapter(host().getNotationView())).execute();
+            SetViewMutabilityCommand.makeMutable(new EObjectAdapter(host().getNotationView()))
+                    .execute();
             executeCommand(cmd);
             @SuppressWarnings("unchecked")
             List<IAdaptable> nl = (List<IAdaptable>) request.getNewObject();
@@ -187,9 +177,8 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
 
         if (createdViews.size() > 1) {
             // perform a layout of the container
-            DeferredLayoutCommand layoutCmd =
-                    new DeferredLayoutCommand(host().getEditingDomain(),
-                            createdViews, host());
+            DeferredLayoutCommand layoutCmd = new DeferredLayoutCommand(host().getEditingDomain(),
+                    createdViews, host());
             executeCommand(new ICommandProxy(layoutCmd));
         }
 
@@ -212,17 +201,14 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
      */
     private Collection<IAdaptable> refreshConnections() {
         Map<EObject, View> domain2NotationMap = new HashMap<EObject, View>();
-        Collection<KaomLinkDescriptor> linkDescriptors =
-                collectAllLinks(getDiagram(), domain2NotationMap);
+        Collection<KaomLinkDescriptor> linkDescriptors = collectAllLinks(getDiagram(),
+                domain2NotationMap);
         Collection existingLinks = new LinkedList(getDiagram().getEdges());
-        for (Iterator linksIterator = existingLinks.iterator(); linksIterator
-                .hasNext();) {
+        for (Iterator linksIterator = existingLinks.iterator(); linksIterator.hasNext();) {
             Edge nextDiagramLink = (Edge) linksIterator.next();
-            int diagramLinkVisualID =
-                    KaomVisualIDRegistry.getVisualID(nextDiagramLink);
+            int diagramLinkVisualID = KaomVisualIDRegistry.getVisualID(nextDiagramLink);
             if (diagramLinkVisualID == -1) {
-                if (nextDiagramLink.getSource() != null
-                        && nextDiagramLink.getTarget() != null) {
+                if (nextDiagramLink.getSource() != null && nextDiagramLink.getTarget() != null) {
                     linksIterator.remove();
                 }
                 continue;
@@ -230,17 +216,13 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
             EObject diagramLinkObject = nextDiagramLink.getElement();
             EObject diagramLinkSrc = nextDiagramLink.getSource().getElement();
             EObject diagramLinkDst = nextDiagramLink.getTarget().getElement();
-            for (Iterator<KaomLinkDescriptor> linkDescriptorsIterator =
-                    linkDescriptors.iterator(); linkDescriptorsIterator
+            for (Iterator<KaomLinkDescriptor> linkDescriptorsIterator = linkDescriptors.iterator(); linkDescriptorsIterator
                     .hasNext();) {
-                KaomLinkDescriptor nextLinkDescriptor =
-                        linkDescriptorsIterator.next();
+                KaomLinkDescriptor nextLinkDescriptor = linkDescriptorsIterator.next();
                 if (diagramLinkObject == nextLinkDescriptor.getModelElement()
                         && diagramLinkSrc == nextLinkDescriptor.getSource()
-                        && diagramLinkDst == nextLinkDescriptor
-                                .getDestination()
-                        && diagramLinkVisualID == nextLinkDescriptor
-                                .getVisualID()) {
+                        && diagramLinkDst == nextLinkDescriptor.getDestination()
+                        && diagramLinkVisualID == nextLinkDescriptor.getVisualID()) {
                     linksIterator.remove();
                     linkDescriptorsIterator.remove();
                     break;
@@ -256,17 +238,14 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
      */
     private Collection<KaomLinkDescriptor> collectAllLinks(View view,
             Map<EObject, View> domain2NotationMap) {
-        if (!EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry
-                .getModelID(view))) {
+        if (!EntityEditPart.MODEL_ID.equals(KaomVisualIDRegistry.getModelID(view))) {
             return Collections.emptyList();
         }
-        LinkedList<KaomLinkDescriptor> result =
-                new LinkedList<KaomLinkDescriptor>();
+        LinkedList<KaomLinkDescriptor> result = new LinkedList<KaomLinkDescriptor>();
         switch (KaomVisualIDRegistry.getVisualID(view)) {
         case EntityEditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(KaomDiagramUpdater
-                        .getEntity_1000ContainedLinks(view));
+                result.addAll(KaomDiagramUpdater.getEntity_1000ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -276,8 +255,7 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
         }
         case Entity2EditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(KaomDiagramUpdater
-                        .getEntity_2001ContainedLinks(view));
+                result.addAll(KaomDiagramUpdater.getEntity_2001ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -287,8 +265,7 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
         }
         case RelationEditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(KaomDiagramUpdater
-                        .getRelation_2002ContainedLinks(view));
+                result.addAll(KaomDiagramUpdater.getRelation_2002ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -298,8 +275,7 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
         }
         case PortEditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(KaomDiagramUpdater
-                        .getPort_3001ContainedLinks(view));
+                result.addAll(KaomDiagramUpdater.getPort_3001ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -309,8 +285,7 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
         }
         case Entity3EditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(KaomDiagramUpdater
-                        .getEntity_3002ContainedLinks(view));
+                result.addAll(KaomDiagramUpdater.getEntity_3002ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -320,8 +295,7 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
         }
         case Relation2EditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(KaomDiagramUpdater
-                        .getRelation_3003ContainedLinks(view));
+                result.addAll(KaomDiagramUpdater.getRelation_3003ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -331,8 +305,7 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
         }
         case LinkEditPart.VISUAL_ID: {
             if (!domain2NotationMap.containsKey(view.getElement())) {
-                result.addAll(KaomDiagramUpdater
-                        .getLink_4001ContainedLinks(view));
+                result.addAll(KaomDiagramUpdater.getLink_4001ContainedLinks(view));
             }
             if (!domain2NotationMap.containsKey(view.getElement())
                     || view.getEAnnotation("Shortcut") == null) { //$NON-NLS-1$
@@ -341,14 +314,11 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
             break;
         }
         }
-        for (Iterator children = view.getChildren().iterator(); children
-                .hasNext();) {
-            result.addAll(collectAllLinks((View) children.next(),
-                    domain2NotationMap));
+        for (Iterator children = view.getChildren().iterator(); children.hasNext();) {
+            result.addAll(collectAllLinks((View) children.next(), domain2NotationMap));
         }
         for (Iterator edges = view.getSourceEdges().iterator(); edges.hasNext();) {
-            result.addAll(collectAllLinks((View) edges.next(),
-                    domain2NotationMap));
+            result.addAll(collectAllLinks((View) edges.next(), domain2NotationMap));
         }
         return result;
     }
@@ -357,28 +327,22 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
      * @generated
      */
     private Collection<IAdaptable> createConnections(
-            Collection<KaomLinkDescriptor> linkDescriptors,
-            Map<EObject, View> domain2NotationMap) {
+            Collection<KaomLinkDescriptor> linkDescriptors, Map<EObject, View> domain2NotationMap) {
         LinkedList<IAdaptable> adapters = new LinkedList<IAdaptable>();
         for (KaomLinkDescriptor nextLinkDescriptor : linkDescriptors) {
-            EditPart sourceEditPart =
-                    getEditPart(nextLinkDescriptor.getSource(),
-                            domain2NotationMap);
-            EditPart targetEditPart =
-                    getEditPart(nextLinkDescriptor.getDestination(),
-                            domain2NotationMap);
+            EditPart sourceEditPart = getEditPart(nextLinkDescriptor.getSource(),
+                    domain2NotationMap);
+            EditPart targetEditPart = getEditPart(nextLinkDescriptor.getDestination(),
+                    domain2NotationMap);
             if (sourceEditPart == null || targetEditPart == null) {
                 continue;
             }
-            CreateConnectionViewRequest.ConnectionViewDescriptor descriptor =
-                    new CreateConnectionViewRequest.ConnectionViewDescriptor(
-                            nextLinkDescriptor.getSemanticAdapter(),
-                            KaomVisualIDRegistry.getType(nextLinkDescriptor
-                                    .getVisualID()), ViewUtil.APPEND, false,
-                            ((IGraphicalEditPart) getHost())
-                                    .getDiagramPreferencesHint());
-            CreateConnectionViewRequest ccr =
-                    new CreateConnectionViewRequest(descriptor);
+            CreateConnectionViewRequest.ConnectionViewDescriptor descriptor = new CreateConnectionViewRequest.ConnectionViewDescriptor(
+                    nextLinkDescriptor.getSemanticAdapter(),
+                    KaomVisualIDRegistry.getType(nextLinkDescriptor.getVisualID()),
+                    ViewUtil.APPEND, false,
+                    ((IGraphicalEditPart) getHost()).getDiagramPreferencesHint());
+            CreateConnectionViewRequest ccr = new CreateConnectionViewRequest(descriptor);
             ccr.setType(RequestConstants.REQ_CONNECTION_START);
             ccr.setSourceEditPart(sourceEditPart);
             sourceEditPart.getCommand(ccr);
@@ -399,12 +363,10 @@ public class EntityCanonicalEditPolicy extends CanonicalEditPolicy {
     /**
      * @generated
      */
-    private EditPart getEditPart(EObject domainModelElement,
-            Map<EObject, View> domain2NotationMap) {
+    private EditPart getEditPart(EObject domainModelElement, Map<EObject, View> domain2NotationMap) {
         View view = (View) domain2NotationMap.get(domainModelElement);
         if (view != null) {
-            return (EditPart) getHost().getViewer().getEditPartRegistry()
-                    .get(view);
+            return (EditPart) getHost().getViewer().getEditPartRegistry().get(view);
         }
         return null;
     }

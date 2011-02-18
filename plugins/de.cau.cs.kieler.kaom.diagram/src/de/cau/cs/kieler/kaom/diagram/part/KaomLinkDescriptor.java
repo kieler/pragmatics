@@ -28,8 +28,7 @@ public class KaomLinkDescriptor extends KaomNodeDescriptor {
     /**
      * @generated
      */
-    private KaomLinkDescriptor(EObject source, EObject destination,
-            EObject linkElement, int linkVID) {
+    private KaomLinkDescriptor(EObject source, EObject destination, EObject linkElement, int linkVID) {
         super(linkElement, linkVID);
         mySource = source;
         myDestination = destination;
@@ -38,8 +37,8 @@ public class KaomLinkDescriptor extends KaomNodeDescriptor {
     /**
      * @generated
      */
-    public KaomLinkDescriptor(EObject source, EObject destination,
-            IElementType elementType, int linkVID) {
+    public KaomLinkDescriptor(EObject source, EObject destination, IElementType elementType,
+            int linkVID) {
         this(source, destination, (EObject) null, linkVID);
         final IElementType elementTypeCopy = elementType;
         mySemanticAdapter = new IAdaptable() {
@@ -55,8 +54,8 @@ public class KaomLinkDescriptor extends KaomNodeDescriptor {
     /**
      * @generated
      */
-    public KaomLinkDescriptor(EObject source, EObject destination,
-            EObject linkElement, IElementType elementType, int linkVID) {
+    public KaomLinkDescriptor(EObject source, EObject destination, EObject linkElement,
+            IElementType elementType, int linkVID) {
         this(source, destination, linkElement, linkVID);
         final IElementType elementTypeCopy = elementType;
         mySemanticAdapter = new EObjectAdapter(linkElement) {

@@ -36,15 +36,14 @@ public class PortItemSemanticEditPolicy extends KaomBaseItemSemanticEditPolicy {
      */
     protected Command getDestroyElementCommand(DestroyElementRequest req) {
         View view = (View) getHost().getModel();
-        CompositeTransactionalCommand cmd =
-                new CompositeTransactionalCommand(getEditingDomain(), null);
+        CompositeTransactionalCommand cmd = new CompositeTransactionalCommand(getEditingDomain(),
+                null);
         cmd.setTransactionNestingEnabled(false);
         for (Iterator<?> it = view.getTargetEdges().iterator(); it.hasNext();) {
             Edge incomingLink = (Edge) it.next();
             if (KaomVisualIDRegistry.getVisualID(incomingLink) == LinkEditPart.VISUAL_ID) {
-                DestroyElementRequest r =
-                        new DestroyElementRequest(incomingLink.getElement(),
-                                false);
+                DestroyElementRequest r = new DestroyElementRequest(incomingLink.getElement(),
+                        false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), incomingLink));
                 continue;
@@ -53,9 +52,8 @@ public class PortItemSemanticEditPolicy extends KaomBaseItemSemanticEditPolicy {
         for (Iterator<?> it = view.getSourceEdges().iterator(); it.hasNext();) {
             Edge outgoingLink = (Edge) it.next();
             if (KaomVisualIDRegistry.getVisualID(outgoingLink) == LinkEditPart.VISUAL_ID) {
-                DestroyElementRequest r =
-                        new DestroyElementRequest(outgoingLink.getElement(),
-                                false);
+                DestroyElementRequest r = new DestroyElementRequest(outgoingLink.getElement(),
+                        false);
                 cmd.add(new DestroyElementCommand(r));
                 cmd.add(new DeleteCommand(getEditingDomain(), outgoingLink));
                 continue;
@@ -76,23 +74,18 @@ public class PortItemSemanticEditPolicy extends KaomBaseItemSemanticEditPolicy {
     /**
      * @generated
      */
-    protected Command
-            getCreateRelationshipCommand(CreateRelationshipRequest req) {
-        Command command =
-                req.getTarget() == null ? getStartCreateRelationshipCommand(req)
-                        : getCompleteCreateRelationshipCommand(req);
-        return command != null ? command : super
-                .getCreateRelationshipCommand(req);
+    protected Command getCreateRelationshipCommand(CreateRelationshipRequest req) {
+        Command command = req.getTarget() == null ? getStartCreateRelationshipCommand(req)
+                : getCompleteCreateRelationshipCommand(req);
+        return command != null ? command : super.getCreateRelationshipCommand(req);
     }
 
     /**
      * @generated
      */
-    protected Command getStartCreateRelationshipCommand(
-            CreateRelationshipRequest req) {
+    protected Command getStartCreateRelationshipCommand(CreateRelationshipRequest req) {
         if (KaomElementTypes.Link_4001 == req.getElementType()) {
-            return getGEFWrapper(new LinkCreateCommand(req, req.getSource(),
-                    req.getTarget()));
+            return getGEFWrapper(new LinkCreateCommand(req, req.getSource(), req.getTarget()));
         }
         return null;
     }
@@ -100,11 +93,9 @@ public class PortItemSemanticEditPolicy extends KaomBaseItemSemanticEditPolicy {
     /**
      * @generated
      */
-    protected Command getCompleteCreateRelationshipCommand(
-            CreateRelationshipRequest req) {
+    protected Command getCompleteCreateRelationshipCommand(CreateRelationshipRequest req) {
         if (KaomElementTypes.Link_4001 == req.getElementType()) {
-            return getGEFWrapper(new LinkCreateCommand(req, req.getSource(),
-                    req.getTarget()));
+            return getGEFWrapper(new LinkCreateCommand(req, req.getSource(), req.getTarget()));
         }
         return null;
     }
@@ -115,8 +106,7 @@ public class PortItemSemanticEditPolicy extends KaomBaseItemSemanticEditPolicy {
      * 
      * @generated
      */
-    protected Command getReorientRelationshipCommand(
-            ReorientRelationshipRequest req) {
+    protected Command getReorientRelationshipCommand(ReorientRelationshipRequest req) {
         switch (getVisualID(req)) {
         case LinkEditPart.VISUAL_ID:
             return getGEFWrapper(new LinkReorientCommand(req));

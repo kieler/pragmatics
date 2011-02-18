@@ -21,8 +21,8 @@ public class KaomCreationWizardPage extends WizardNewFileCreationPage {
     /**
      * @generated
      */
-    public KaomCreationWizardPage(String pageName,
-            IStructuredSelection selection, String fileExtension) {
+    public KaomCreationWizardPage(String pageName, IStructuredSelection selection,
+            String fileExtension) {
         super(pageName, selection);
         this.fileExtension = fileExtension;
     }
@@ -54,6 +54,10 @@ public class KaomCreationWizardPage extends WizardNewFileCreationPage {
         String fileName = getFileName();
         if (fileName != null) {
             path = path.append(fileName);
+
+            if (path.getFileExtension() == null) {
+                path = path.addFileExtension(fileExtension);
+            }
         }
         return path;
     }
@@ -63,8 +67,8 @@ public class KaomCreationWizardPage extends WizardNewFileCreationPage {
      */
     public void createControl(Composite parent) {
         super.createControl(parent);
-        setFileName(KaomDiagramEditorUtil.getUniqueFileName(
-                getContainerFullPath(), getFileName(), getExtension()));
+        setFileName(KaomDiagramEditorUtil.getUniqueFileName(getContainerFullPath(), getFileName(),
+                getExtension()));
         setPageComplete(validatePage());
     }
 
@@ -76,10 +80,8 @@ public class KaomCreationWizardPage extends WizardNewFileCreationPage {
             return false;
         }
         String extension = getExtension();
-        if (extension != null
-                && !getFilePath().toString().endsWith("." + extension)) {
-            setErrorMessage(NLS.bind(
-                    Messages.KaomCreationWizardPageExtensionError, extension));
+        if (extension != null && !getFilePath().toString().endsWith("." + extension)) {
+            setErrorMessage(NLS.bind(Messages.KaomCreationWizardPageExtensionError, extension));
             return false;
         }
         return true;

@@ -15,8 +15,7 @@ public class KaomNavigatorItem extends KaomAbstractNavigatorItem {
      * @generated
      */
     static {
-        final Class[] supportedTypes =
-                new Class[] { View.class, EObject.class };
+        final Class[] supportedTypes = new Class[] { View.class, EObject.class };
         Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
             public Object getAdapter(Object adaptableObject, Class adapterType) {
