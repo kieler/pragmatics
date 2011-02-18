@@ -75,9 +75,13 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
                             if (Math.abs(slope) > SLOPE_TOLERANCE) {
                                 double newSlope = Math.tan(Math.toRadians(BEND_ANGLE));
 
-                                edge.getBendPoints().add(
-                                        new KVector(Math.abs(trgPos.y - srcPos.y) / newSlope
-                                                + srcPos.x, trgPos.y));
+                                KVector bendPoint = new KVector(Math.abs(trgPos.y - srcPos.y)
+                                        / newSlope + srcPos.x, trgPos.y);
+                                edge.getBendPoints().add(bendPoint);
+                                if (bendPoint.x > trgPos.x) {
+                                    pushBackLayers(layer.getIndex() + 1, bendPoint.x - trgPos.x
+                                            + spacing, layeredGraph);
+                                }
                             }
                         }
                     }
@@ -85,6 +89,19 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
             }
         }
 
+    }
+
+    private void pushBackLayers(final int startAtLayer, final double amount,
+            final LayeredGraph layeredGraph) {
+        double xpos = amount
+                + layeredGraph.getLayers().get(startAtLayer).getNodes().get(0).getPos().x;
+        for (int i = startAtLayer; i < layeredGraph.getLayers().size(); i++) {
+            Layer layer = layeredGraph.getLayers().get(i);
+
+            layer.placeNodes(xpos);
+            xpos += layer.getSize().x + spacing;
+            layeredGraph.getSize().x = xpos;
+        }
     }
 
 }
