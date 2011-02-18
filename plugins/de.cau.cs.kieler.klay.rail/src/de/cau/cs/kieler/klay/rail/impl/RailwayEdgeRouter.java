@@ -16,13 +16,13 @@ package de.cau.cs.kieler.klay.rail.impl;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p5edges.IEdgeRouter;
+import de.cau.cs.kieler.klay.rail.Properties;
 
 /**
  * 
@@ -35,17 +35,18 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
 
     private float spacing;
     /** the bounds of a line's slope in which it is not bent. */
-    public static final double SLOPE_TOLERANCE = 0.01f;
+    public static final double SLOPE_TOLERANCE = 1f;
     /** the desired bend angle. will be converted to radians later. might be a layout option. */
-    public static final double BEND_ANGLE = 150;
+    public static final double BEND_ANGLE = 60;
 
     /**
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
         spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
+        float borspacing = layeredGraph.getProperty(Properties.BOR_SPACING);
 
-        double xpos = 0.0f;
+        double xpos = borspacing;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 if (node.getSize().x > layer.getSize().x) {
@@ -53,58 +54,37 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
                 }
             }
             layer.placeNodes(xpos);
+            xpos += layer.getSize().x + spacing;
+            layeredGraph.getSize().x = xpos;
+        }
+
+        for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getEdges()) {
+                        if (edge.getSource() == port) {
+                            KVector srcPos = port.getPos().add(node.getPos());
+                            KVector trgPos = edge.getTarget().getPos()
+                                    .add(edge.getTarget().getNode().getPos());
 
-                        // compute slope of edge
-                        KVector p0 = edge.getSource().getPos();
-                        KVector p1 = edge.getTarget().getPos();
-                        double m = 0;
-                        if (p1.x - p0.x != 0) {
-                            m = (p1.y - p0.y) / (p1.x - p0.x);
-                        } else {
-                            m = Double.POSITIVE_INFINITY;
-                        }
+                            double slope = Double.POSITIVE_INFINITY;
+                            if (trgPos.x != srcPos.x) {
+                                slope = (trgPos.y - srcPos.y) / (trgPos.x - srcPos.x);
+                            }
 
-                        // can't draw edge straight (or nearly straight)?
-                        if (!(-SLOPE_TOLERANCE < m && m < SLOPE_TOLERANCE)) {
-                            // this point creates an orthogonal triangle with p0 and p1
-                            KVector pOrth = new KVector(p0.x + xpos, edge.getTarget().getNode()
-                                    .getPos().y
-                                    + p1.y);
-                            // System.out.println("otrh " + pOrth.toString());
-                            // System.out.println("p0 " + p0.toString());
+                            if (Math.abs(slope) > SLOPE_TOLERANCE) {
+                                double newSlope = Math.tan(Math.toRadians(BEND_ANGLE));
 
-                            double a = p0.distance(p1);
-                            // System.out.println("a is: " + a);
-                            double b = p0.distance(pOrth);
-                            // System.out.println("b is: " + b);
-                            double sineAlpha = a / b;
-                            // System.out.println("sine alpha is: " + sineBeta);
-                            double alpha = Math.asin(sineAlpha);
-                            // System.out.println("beta is: " + Math.toDegrees(beta));
-                            double beta = Math.toRadians(BEND_ANGLE);
-                            // System.out.println("alpha is: " + Math.toDegrees(alpha));
-                            double gamma = (2 * Math.PI) - (alpha + beta);
-                            // System.out.println("gamma is: " + Math.toDegrees(gamma));
-
-                            double c = (b * Math.sin(gamma)) / Math.sin(beta);
-                            // System.out.println("c is: " + c);
-
-                            KVector bendPoint = new KVector(p1.x - c + xpos, pOrth.y);
-                            edge.getBendPoints().add(bendPoint);
-                            
-                            if (p1.x - c + xpos > p1.x) {
-                                layer.getSize().x += p1.x - c;
+                                edge.getBendPoints().add(
+                                        new KVector(Math.abs(trgPos.y - srcPos.y) / newSlope
+                                                + srcPos.x, trgPos.y));
                             }
                         }
                     }
                 }
             }
-            xpos += layer.getSize().x + spacing;
         }
-        layeredGraph.getSize().x = xpos - spacing;
+
     }
 
 }
