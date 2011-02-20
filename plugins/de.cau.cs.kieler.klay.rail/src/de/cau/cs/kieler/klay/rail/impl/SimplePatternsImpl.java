@@ -17,9 +17,18 @@ import java.util.List;
 
 import de.cau.cs.kieler.klay.rail.IPatterns;
 
+/**
+ * Implementation with simple rules for node placement for railways.
+ * 
+ * @author jjc
+ * 
+ */
 public class SimplePatternsImpl implements IPatterns {
 
-    public int breachBreach(List<Integer> occupiedPlaces, int origin) {
+    // CHECKSTYLEOFF javadoc
+    // Cases are self-explanatory and Javadoc comments would be redundant
+
+    public int breachBreach(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -27,7 +36,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int breachSwitchLeftBranch(List<Integer> occupiedPlaces, int origin) {
+    public int breachSwitchLeftBranch(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin - 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -35,7 +44,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int breachSwitchLeftStraight(List<Integer> occupiedPlaces, int origin) {
+    public int breachSwitchLeftStraight(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -43,7 +52,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int breachSwitchLeftStump(List<Integer> occupiedPlaces, int origin) {
+    public int breachSwitchLeftStump(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -51,7 +60,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int breachSwitchRightBranch(List<Integer> occupiedPlaces, int origin) {
+    public int breachSwitchRightBranch(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -59,7 +68,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int breachSwitchRightStraight(List<Integer> occupiedPlaces, int origin) {
+    public int breachSwitchRightStraight(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -67,7 +76,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int breachSwitchRightStump(List<Integer> occupiedPlaces, int origin) {
+    public int breachSwitchRightStump(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -75,7 +84,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftBranchBreach(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftBranchBreach(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin - 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -83,7 +92,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftBranchSwitchRightBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftBranchSwitchRightBranch(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin + 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess++;
@@ -91,7 +101,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftBranchSwitchRightStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftBranchSwitchRightStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin + 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess++;
@@ -99,7 +110,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftBranchSwitchRightStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftBranchSwitchRightStump(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin - 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -107,7 +118,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftBranchSwitchLeftBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftBranchSwitchLeftBranch(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin + 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess++;
@@ -115,7 +126,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftBranchSwitchLeftStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftBranchSwitchLeftStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin + 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess++;
@@ -123,7 +135,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftBranchSwitchLeftStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftBranchSwitchLeftStump(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin - 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -131,7 +143,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStraightBreach(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStraightBreach(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -139,7 +151,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStraightSwitchRightBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStraightSwitchRightBranch(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -147,7 +160,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStraightSwitchRightStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStraightSwitchRightStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -155,7 +169,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStraightSwitchRightStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStraightSwitchRightStump(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -163,7 +178,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStraightSwitchLeftBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStraightSwitchLeftBranch(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -171,7 +187,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStraightSwitchLeftStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStraightSwitchLeftStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -179,7 +196,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStraightSwitchLeftStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStraightSwitchLeftStump(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess++;
@@ -187,7 +205,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStumpBreach(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStumpBreach(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -195,7 +213,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStumpSwitchRightBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStumpSwitchRightBranch(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -203,7 +221,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStumpSwitchRightStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStumpSwitchRightStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -211,7 +230,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStumpSwitchRightStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStumpSwitchRightStump(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -219,7 +238,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStumpSwitchLeftBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStumpSwitchLeftBranch(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -227,7 +246,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStumpSwitchLeftStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStumpSwitchLeftStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -235,7 +255,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftStumpSwitchLeftStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftStumpSwitchLeftStump(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -243,7 +263,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightBranchBreach(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightBranchBreach(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin + 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess++;
@@ -251,7 +271,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightBranchSwitchRightBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightBranchSwitchRightBranch(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -259,7 +280,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightBranchSwitchRightStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightBranchSwitchRightStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -267,7 +289,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightBranchSwitchRightStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightBranchSwitchRightStump(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -275,7 +298,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightBranchSwitchLeftBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightBranchSwitchLeftBranch(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -283,7 +307,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightBranchSwitchLeftStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightBranchSwitchLeftStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -291,7 +316,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightBranchSwitchLeftStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightBranchSwitchLeftStump(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin + 1;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -299,7 +324,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStraightBreach(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStraightBreach(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -307,7 +332,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStraightSwitchRightBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStraightSwitchRightBranch(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -315,7 +341,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStraightSwitchRightStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStraightSwitchRightStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -323,7 +350,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStraightSwitchRightStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStraightSwitchRightStump(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -331,7 +359,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStraightSwitchLeftBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStraightSwitchLeftBranch(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -339,7 +368,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStraightSwitchLeftStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStraightSwitchLeftStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -347,7 +377,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStraightSwitchLeftStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStraightSwitchLeftStump(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -355,7 +386,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStumpBreach(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStumpBreach(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -363,7 +394,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStumpSwitchRightBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStumpSwitchRightBranch(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -371,7 +403,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStumpSwitchRightStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStumpSwitchRightStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -379,7 +412,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStumpSwitchRightStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStumpSwitchRightStump(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -387,7 +420,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStumpSwitchLeftBranch(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStumpSwitchLeftBranch(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -395,7 +428,8 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStumpSwitchLeftStraight(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStumpSwitchLeftStraight(final List<Integer> occupiedPlaces,
+            final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -403,7 +437,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightStumpSwitchLeftStump(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightStumpSwitchLeftStump(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -411,7 +445,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchLeftBothSwitchRightBoth(List<Integer> occupiedPlaces, int origin) {
+    public int switchLeftBothSwitchRightBoth(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
@@ -419,7 +453,7 @@ public class SimplePatternsImpl implements IPatterns {
         return firstGuess;
     }
 
-    public int switchRightBothSwitchLeftBoth(List<Integer> occupiedPlaces, int origin) {
+    public int switchRightBothSwitchLeftBoth(final List<Integer> occupiedPlaces, final int origin) {
         int firstGuess = origin;
         while (occupiedPlaces.contains(firstGuess)) {
             firstGuess--;
