@@ -57,24 +57,24 @@ public class Example {
     /**
      * Creates a new example model.
      * 
-     * @param idParam
+     * @param id
      *            , {@link String}
-     * @param titleParam
+     * @param title
      *            , {@link String}
      * @param categoryParam
      *            , {@link Category}
      * @param sourceTypeParam
      *            , {@link SourceType}
      */
-    public Example(final String idParam, final String titleParam, final String categoryIdParam,
+    public Example(final String id, final String title, final String categoryId,
             final SourceType sourceTypeParam) {
-        Assert.isNotNull(idParam);
-        Assert.isNotNull(titleParam);
-        Assert.isNotNull(categoryIdParam);
+        Assert.isNotNull(id);
+        Assert.isNotNull(title);
+        Assert.isNotNull(categoryId);
         Assert.isNotNull(sourceTypeParam);
-        setId(idParam);
-        setTitle(titleParam);
-        setCategoryId(categoryIdParam);
+        setId(id);
+        setTitle(title);
+        setCategoryId(categoryId);
         setSourceType(sourceTypeParam);
     }
 

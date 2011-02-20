@@ -167,6 +167,7 @@ public final class ExampleExport {
 
         Example mappedExample = ExampleExport.mapToExample(properties);
 
+        // TODO hier the example image in images ordner einbauen!
         File destFile = new File(mappedExample.getRootDir());
         if (!destFile.exists()) {
             throw new KielerException(ErrorMessage.DESTFILE_NOT_EXIST + mappedExample.getRootDir());
@@ -179,6 +180,8 @@ public final class ExampleExport {
             extensionCreator.copyResources(destFile, exportResources, finishedResources);
             mappedExample.addResources(ExampleExport.mapToExampleResource(exportResources));
 
+            // TODO image in den "images" ordner des jeweiligen plugins kopieren, dafür vlt.
+            // namespace id herausfiltern.
             String absOverviewPic = copyOverviewPic(
                     (String) properties.get(ExampleElement.OVERVIEW_PIC), extensionCreator,
                     destFile, finishedResources);
@@ -211,18 +214,21 @@ public final class ExampleExport {
      * @param rootResource
      * @return Example
      */
-    @SuppressWarnings("unchecked")
     public static Example mapToExample(final Map<ExampleElement, Object> properties) {
-        Example result = new Example((String) properties.get(ExampleElement.ID),
-                (String) properties.get(ExampleElement.TITLE),
-                (String) properties.get(ExampleElement.CATEGORY),
-                (SourceType) properties.get(ExampleElement.SOURCETYPE));
+        String title = (String) properties.get(ExampleElement.TITLE);
+        String category = (String) properties.get(ExampleElement.CATEGORY);
+        Example result = new Example(ExampleExport.exampleIDCreator(category, title), category,
+                title, SourceType.KIELER);
         result.setDescription((String) properties.get(ExampleElement.DESCRIPTION));
         result.setContact((String) properties.get(ExampleElement.CONTACT));
         result.setAuthor((String) properties.get(ExampleElement.AUTHOR));
         result.setRootDir((String) properties.get(ExampleElement.DEST_LOCATION));
         result.setOverviewPic((String) properties.get(ExampleElement.OVERVIEW_PIC));
         return result;
+    }
+
+    private static String exampleIDCreator(String category, String title) {
+        return category + title.trim().replace(' ', '_');
     }
 
     private static List<ExampleResource> mapToExampleResource(

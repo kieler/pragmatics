@@ -187,27 +187,27 @@ public class ExampleExportPage extends WizardResourceImportPage {
             }
 
         });
-        final Button testButton = new Button(bottomGroup, SWT.NONE);
-        testButton.setText("mylyn adapter");
-        testButton.addSelectionListener(new SelectionAdapter() {
-            @SuppressWarnings("restriction")
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                super.widgetSelected(e);
-                // TODO Mylyn picture cutter
-                // TaskRepository taskRepository = new TaskRepository("local", "http://127.0.0.1");
-                // ITask task = TasksUiPlugin.getRepositoryModel()
-                // .createTask(taskRepository, "myTask");
-                // TaskAttributeMapper mapper = new TaskAttributeMapper(taskRepository);
-                // TaskData data = new TaskData(mapper, "local", "http://127.0.0.1", "myTask");
-                // TaskAttachmentWizard taskAttachmentWizard = new TaskAttachmentWizard(
-                // taskRepository, task, data.getRoot());
-                // taskAttachmentWizard.getModel().setAttachContext(true);
-                // taskAttachmentWizard.setMode(Mode.SCREENSHOT);
-                // new NewAttachmentWizardDialog(testButton.getShell(), taskAttachmentWizard, true)
-                // .open();
-            }
-        });
+        // final Button testButton = new Button(bottomGroup, SWT.NONE);
+        // testButton.setText("mylyn adapter");
+        // testButton.addSelectionListener(new SelectionAdapter() {
+        // @SuppressWarnings("restriction")
+        // @Override
+        // public void widgetSelected(SelectionEvent e) {
+        // super.widgetSelected(e);
+        // TODO Mylyn picture cutter
+        // TaskRepository taskRepository = new TaskRepository("local", "http://127.0.0.1");
+        // ITask task = TasksUiPlugin.getRepositoryModel()
+        // .createTask(taskRepository, "myTask");
+        // TaskAttributeMapper mapper = new TaskAttributeMapper(taskRepository);
+        // TaskData data = new TaskData(mapper, "local", "http://127.0.0.1", "myTask");
+        // TaskAttachmentWizard taskAttachmentWizard = new TaskAttachmentWizard(
+        // taskRepository, task, data.getRoot());
+        // taskAttachmentWizard.getModel().setAttachContext(true);
+        // taskAttachmentWizard.setMode(Mode.SCREENSHOT);
+        // new NewAttachmentWizardDialog(testButton.getShell(), taskAttachmentWizard, true)
+        // .open();
+        // }
+        // });
     }
 
     private void createButtonComposite(final Group middleGroup) {
@@ -265,7 +265,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
                 super.widgetSelected(e);
             }
         });
-
     }
 
     private void createBottomGroup(final Composite composite) {

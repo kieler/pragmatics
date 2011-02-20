@@ -117,7 +117,6 @@ public class ExampleResourcesPage extends WizardPage {
      */
     @SuppressWarnings("restriction")
     protected final void createResourcesGroup(final Composite parent) {
-
         List<Object> input = new ArrayList<Object>();
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
         for (int i = 0; i < projects.length; i++) {
