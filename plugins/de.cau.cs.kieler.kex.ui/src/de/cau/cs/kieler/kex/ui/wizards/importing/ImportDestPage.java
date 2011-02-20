@@ -131,7 +131,9 @@ public class ImportDestPage extends WizardResourceImportPage {
             // if it is does not exist be sure the project does
             IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
             IPath projectPath = containerPath.removeLastSegments(containerPath.segmentCount() - 1);
-
+            // FIXME: Bug when changing destiniation to unknown project.
+            // -> you can´t finish the wizard.
+            // but there is no problem, because kex supports to create new projects.
             if (workspace.getRoot().exists(projectPath)) {
                 return true;
             }
