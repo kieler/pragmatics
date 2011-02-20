@@ -79,6 +79,12 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer,
         getMonitor().done();
     }
 
+    /**
+     * Method for putting a node in the given position of the grid.
+     * 
+     * @param target The node to put.
+     * @param position The position to put at. Layer is given by the node's layer.
+     */
     private void putTargetInGrid(final LNode target, final int position) {
         RailRow targetRow;
         if (target.getLayer() instanceof RailLayer) {
@@ -89,6 +95,12 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer,
         targetRow.addNodeAtPosition(target, position);
     }
 
+    /**
+     * Gives the minimal position of a node in ALL layers.
+     * 
+     * @param graph The graph to inspect.
+     * @return An integer representing the minimal grid position.
+     */
     private int getMinimalPosition(final LayeredGraph graph) {
         int result = Integer.MAX_VALUE;
         for (Layer layer : graph.getLayers()) {
@@ -98,12 +110,18 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer,
                     result = i;
                 }
             } else {
-                // TODO: maybe validate once, gets annoying
+                throw new IllegalArgumentException("Only works with RailLayers!");
             }
         }
         return result;
     }
 
+    /**
+     * Places nodes to their final positions given by grid.
+     * 
+     * @param layer Nodes of which layer shall be placed?
+     * @param minPos The overall minimal position {@see #getMinimalPosition(LayeredGraph)}.
+     */
     private void gridToAbsolutePosition(final RailLayer layer, final int minPos) {
         float spacing = layer.getGraph().getProperty(Properties.OBJ_SPACING);
         float borspacing = layer.getGraph().getProperty(Properties.BOR_SPACING);
@@ -113,12 +131,13 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer,
             int offset = (-1) * minPos;
             value = offset * (node.getSize().y + spacing) + position * (node.getSize().y + spacing);
             node.getPos().y = value;
-            System.out.println("Setting y of " + node.toString() + " to " + value);
-            System.out.println("Position was " + position);
         }
     }
 
-    public void place(LPort targetPort, LPort port, int offset) {
+    /**
+     * {@inheritDoc}
+     */
+    public void place(final LPort targetPort, final LPort port, final int offset) {
         putTargetInGrid(targetPort.getNode(),
                 NodePlacerHelper.getPositionForNode(targetPort, port, new SimplePatternsImpl())
                         + offset);

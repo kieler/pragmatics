@@ -13,10 +13,6 @@
  */
 package de.cau.cs.kieler.klay.rail.graph;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 

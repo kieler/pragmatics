@@ -14,10 +14,7 @@
 package de.cau.cs.kieler.klay.rail.impl;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -78,15 +75,6 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
 
                                 KVector bendPoint = new KVector(Math.abs(trgPos.y - srcPos.y)
                                         / newSlope + srcPos.x, trgPos.y);
-
-                                Object origin = port.getProperty(Properties.ORIGIN);
-//                                KVector portOffset = new KVector(0, 0);
-//                                if (origin instanceof KPort) {
-//                                    KShapeLayout shape = ((KPort) origin)
-//                                            .getData(KShapeLayout.class);
-//                                    portOffset.y = shape.getHeight() / 2;
-//                                }
-//                                bendPoint.add(portOffset);
 
                                 edge.getBendPoints().add(bendPoint);
                                 if (bendPoint.x > trgPos.x) {
