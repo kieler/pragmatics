@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.rail.graph;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -25,21 +24,40 @@ import com.google.common.collect.HashBiMap;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
+ * A class introducing a vertical order additionally to the horizontal oder given by layers. Uses
+ * the zero position for the straight center and allows positive positions for node below and
+ * negative positions for nodes above.
+ * 
  * @author jjc
  * 
  */
 public class RailRow {
 
+    /** A bidirectional order of vertical positions and nodes. */
     private HashBiMap<LNode, Integer> nodesWithPosition;
 
+    /**
+     * Default constructor.
+     */
     public RailRow() {
         nodesWithPosition = HashBiMap.create();
     }
 
-    public int getPosition(LNode node) {
+    /**
+     * Gives the position associated with a node.
+     * 
+     * @param node The node from which will be searched.
+     * @return The position of the node.
+     */
+    public int getPosition(final LNode node) {
         return nodesWithPosition.get(node);
     }
 
+    /**
+     * Gives the lowest vertical position in this layer.
+     * 
+     * @return The lowest vertical position.
+     */
     public int getMinimalPosition() {
         int result = Integer.MAX_VALUE;
         for (Integer i : nodesWithPosition.values()) {
@@ -49,7 +67,12 @@ public class RailRow {
         }
         return result;
     }
-
+    
+    /**
+     * Gives the highest vertical position in this layer.
+     * 
+     * @return The highest vertical position.
+     */
     public int getMaximalPosition() {
         int result = Integer.MIN_VALUE;
         for (Integer i : nodesWithPosition.values()) {
@@ -60,15 +83,33 @@ public class RailRow {
         return result;
     }
 
-    public boolean isPositionOccupied(int position) {
+    /**
+     * Allows a check whether a given position is already in use.
+     * 
+     * @param position The position to check for.
+     * @return True if the position is already in use, false else
+     */
+    public boolean isPositionOccupied(final int position) {
         return nodesWithPosition.containsValue(position);
     }
 
+    /**
+     * Gives a list of all occupied positions in this layer.
+     * 
+     * @return A list of all occupied positions.
+     */
     public List<Integer> getOccupiedPositions() {
         return new LinkedList<Integer>(nodesWithPosition.values());
     }
 
-    public void addNodeAtPosition(LNode node, int position) {
+    /**
+     * Adds a node at a given position.
+     * Will throw an exception if node already has a position or the position was occupied.
+     * 
+     * @param node The node to place.
+     * @param position The position to place at.
+     */
+    public void addNodeAtPosition(final LNode node, final int position) {
         if (nodesWithPosition.containsValue(position)) {
             throw new IllegalArgumentException("Position is already occupied.");
         }
@@ -78,6 +119,11 @@ public class RailRow {
         nodesWithPosition.put(node, position);
     }
 
+    /**
+     * Gives a list of nodes arranged in this layer ordered ascending by their position.
+     *  
+     * @return A list of nodes arranged in this layer ordered ascending by their position.
+     */
     public List<LNode> getNodesOrderedByPosition() {
         Set<Integer> posSet = nodesWithPosition.values();
         List<Integer> posList = new LinkedList<Integer>(posSet);

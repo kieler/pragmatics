@@ -28,7 +28,6 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -53,10 +52,6 @@ import de.cau.cs.kieler.klay.rail.options.NodeType;
  * 
  */
 public class RailwayLayoutProvider extends AbstractLayoutProvider {
-
-    // Strategies for the 5 phases of layered layout, assuming this
-    // will use layered layout
-    // This is still open, though
 
     /** phase 1: cycle breaking module. */
     private ICycleBreaker cycleBreaker = new GreedyCycleBreaker();
@@ -148,8 +143,6 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         validateRailwayGraph(nodes);
         System.out.println("Redirecting ...");
         redirectEdges(nodes);
-        // System.out.println("Preprocessing ...");
-        // preprocess(nodes);
         System.out.println("Ready to start layout.");
 
         // phase 1: cycle breaking
@@ -272,86 +265,6 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Method to apply general conventions of the railway layout to nodes. These
-     * are, for example, the port positions on a node.
-     * 
-     * @param thenodes
-     *            A list of nodes to process
-     */
-    private void preprocess(final List<LNode> thenodes) {
-        for (LNode lNode : thenodes) {
-            if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
-                List<LPort> ports = lNode.getPorts();
-                // can do this because validation was done earlier
-                LPort port = ports.get(0);
-                port.setSide(PortSide.EAST);
-                port.getPos().x = port.getNode().getSize().x;
-                port.getPos().y = port.getNode().getSize().y / 2;
-            } else if (lNode.getProperty(Properties.NODE_TYPE).equals(
-                    NodeType.BREACH_OR_CLOSE)) {
-                List<LPort> ports = lNode.getPorts();
-                // same as above
-                LPort port = ports.get(0);
-                if (port.getType().equals(PortType.INPUT)) {
-                    port.setSide(PortSide.WEST);
-                    port.getPos().x = 0;
-                } else if (port.getType().equals(PortType.OUTPUT)) {
-                    port.setSide(PortSide.EAST);
-                    port.getPos().x = port.getNode().getSize().x;
-                } else {
-                    throw new IllegalArgumentException(
-                            "Railway layout doesn't allow undefined ports.");
-                }
-                port.getPos().y = port.getNode().getSize().y / 2;
-            } else if (lNode.getProperty(Properties.NODE_TYPE).equals(
-                    NodeType.SWITCH_LEFT)) {
-                List<LPort> ports = lNode.getPorts();
-                // same as above
-                int inputPorts = 0;
-                int outputPorts = 0;
-                for (LPort lPort : ports) {
-                    if (lPort.getType().equals(PortType.INPUT)) {
-                        inputPorts++;
-                    } else if (lPort.getType().equals(PortType.OUTPUT)) {
-                        outputPorts++;
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Railway layout doesn't allow undefined ports.");
-                    }
-                }
-                boolean flipped = (inputPorts == 2);
-                int flipOffset = 0;
-                for (LPort lPort : ports) {
-                    if (lPort.getType().equals(PortType.INPUT)) {
-                        lPort.setSide(PortSide.WEST);
-                        lPort.getPos().x = 0;
-                        if (flipped) {
-                            lPort.getPos().y =
-                                    lPort.getNode().getSize().y
-                                            / (7 - flipOffset);
-                            flipOffset = 3;
-                        } else {
-                            lPort.getPos().y = lPort.getNode().getSize().y / 5;
-                        }
-                    } else {
-                        lPort.setSide(PortSide.EAST);
-                        lPort.getPos().x = lPort.getNode().getSize().x;
-                        if (flipped) {
-                            lPort.getPos().y = lPort.getNode().getSize().y / 5;
-                        } else {
-                            lPort.getPos().y =
-                                    lPort.getNode().getSize().y
-                                            / (6 + flipOffset);
-                            flipOffset = 3;
-                        }
-                    }
-                }
-            }
-            // TODO: handling switches
-        }
-    }
-
-    /**
      * Swaps the direction of an edges and changes the port types while doing
      * so.
      * 
@@ -371,7 +284,6 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
 
     /**
      * Undo the swapping on all edges that were swapped.
-     * 
      */
     private void swapBackSwappedEdges() {
         Iterator<LEdge> iter = swappedEdges.iterator();
