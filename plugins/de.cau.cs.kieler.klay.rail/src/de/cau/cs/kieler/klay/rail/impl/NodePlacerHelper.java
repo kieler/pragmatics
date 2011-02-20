@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.rail.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -31,11 +30,29 @@ import de.cau.cs.kieler.klay.rail.graph.RailRow;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
 import de.cau.cs.kieler.klay.rail.options.PortType;
 
+/**
+ * Helper class for railway node placement.
+ * 
+ * @author jjc
+ * 
+ */
 public class NodePlacerHelper {
 
+    /**
+     * Empty default constructor.
+     */
     public NodePlacerHelper() {
     }
 
+    /**
+     * Helper method for DFS, check whether all neighbors where visited.
+     * 
+     * @param node
+     *            The node which neighbors have to be checked.
+     * @param known
+     *            The list of known nodes.
+     * @return True if all neighbors are known, false else.
+     */
     public boolean allNeighborsKnown(final LNode node, final List<LNode> known) {
         boolean result = true;
         for (LPort port : node.getPorts()) {
@@ -44,6 +61,16 @@ public class NodePlacerHelper {
         return result;
     }
 
+    /**
+     * Placement method which placed nodes in a DFS like manner.
+     * 
+     * @param first
+     *            The node to start from.
+     * @param layerCount
+     *            The amount of layers.
+     * @param place
+     *            The method for placement (e.g. real placement or simulated placement).
+     */
     public void placeNodesDFS(final LNode first, final int layerCount, final IPlacement place) {
         LNode walker = first;
         List<LNode> known = new LinkedList<LNode>();
@@ -119,6 +146,15 @@ public class NodePlacerHelper {
         }
     }
 
+    /**
+     * Method for looking ahead the deepmost node if in a left branch.
+     * 
+     * @param first
+     *            Node to start from.
+     * @param layerCount
+     *            Number of layers.
+     * @return The highest conflict with already existing layers.
+     */
     public int getConflictDistanceLeft(final LNode first, final int layerCount) {
         List<Integer> maxNewPosByLayer = getMaxNewPosByLayer(first, layerCount);
         List<Integer> minPosByLayer = getMinPosByLayer(first.getLayer().getGraph());
@@ -135,6 +171,15 @@ public class NodePlacerHelper {
         return result;
     }
 
+    /**
+     * Method for looking ahead the topmost node if in a left branch.
+     * 
+     * @param first
+     *            Node to start from.
+     * @param layerCount
+     *            Number of layers.
+     * @return The highest conflict with already existing layers.
+     */
     public int getConflictDistanceRight(final LNode first, final int layerCount) {
         List<Integer> minNewPosByLayer = getMinNewPosByLayer(first, layerCount);
         List<Integer> maxPosByLayer = getMaxPosByLayer(first.getLayer().getGraph());
@@ -151,6 +196,13 @@ public class NodePlacerHelper {
         return result;
     }
 
+    /**
+     * Method for finding the minimal position of nodes in each layer.
+     * 
+     * @param layeredGraph
+     *            The graph to investigate.
+     * @return A list with all minimal positions by layer.
+     */
     private List<Integer> getMinPosByLayer(final LayeredGraph layeredGraph) {
         List<Integer> result = new ArrayList<Integer>(layeredGraph.getLayers().size());
         for (Layer layer : layeredGraph.getLayers()) {
@@ -161,6 +213,13 @@ public class NodePlacerHelper {
         return result;
     }
 
+    /**
+     * Method for finding the maximal position of nodes in each layer.
+     * 
+     * @param layeredGraph
+     *            The graph to investigate.
+     * @return A list with all maximal positions by layer.
+     */
     private List<Integer> getMaxPosByLayer(final LayeredGraph layeredGraph) {
         List<Integer> result = new ArrayList<Integer>(layeredGraph.getLayers().size());
         for (Layer layer : layeredGraph.getLayers()) {
@@ -171,6 +230,13 @@ public class NodePlacerHelper {
         return result;
     }
 
+    /**
+     * A method for looking ahead the possible minimal position of a branch in each layer.
+     * 
+     * @param first The node to start from.
+     * @param layerCount The number of layers.
+     * @return A list with all possible new minimal positions by layer.
+     */
     private List<Integer> getMinNewPosByLayer(final LNode first, final int layerCount) {
         PlacementRight placement = new PlacementRight(first, layerCount);
 
@@ -179,6 +245,13 @@ public class NodePlacerHelper {
         return placement.getMinNewPosByLayer();
     }
 
+    /**
+     * A method for looking ahead the possible maximal position of a branch in each layer.
+     * 
+     * @param first The node to start from.
+     * @param layerCount The number of layers.
+     * @return A list with all possible new maximal positions by layer.
+     */
     private List<Integer> getMaxNewPosByLayer(final LNode first, final int layerCount) {
         PlacementLeft placement = new PlacementLeft(first, layerCount);
 
@@ -187,12 +260,30 @@ public class NodePlacerHelper {
         return placement.getMaxNewPosByLayer();
     }
 
+    /**
+     * Gives a position for a node, given by a certain pattern.
+     * 
+     * @param targetPort The node which shall be placed.
+     * @param sourcePort The predecessor node.
+     * @param patterns A pattern which gives rules to place the nodes.
+     * @return A position for the new node.
+     */
     public static int getPositionForNode(final LPort targetPort, final LPort sourcePort,
             final IPatterns patterns) {
         return NodePlacerHelper.getPositionForNode(targetPort, sourcePort, Integer.MIN_VALUE,
                 patterns);
     }
 
+    /**
+     * Gives a position for a node, given by a certain pattern.
+     * The method also assumes an estimated position for the predecessor node.
+     * 
+     * @param targetPort The node which shall be placed.
+     * @param sourcePort The predecessor node.
+     * @param patterns A pattern which gives rules to place the nodes.
+     * @param sourcePosition The estimated position (simulated placement) of the source node.
+     * @return A position for the new node.
+     */
     public static int getPositionForNode(final LPort targetPort, final LPort sourcePort,
             final int sourcePosition, final IPatterns patterns) {
         RailRow targetRow;
