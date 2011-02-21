@@ -78,7 +78,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
     /**
      * Radius of the rounded edges.
      */
-    private static final int ROUNDED_BENDPOINTS_RADIUS = 10;
+    private static final int ROUNDED_BENDPOINTS_RADIUS = 0;
 
     /**
      * debug variable. If true svg graphics will be discarded. Simple rectangles are drawn instead.
