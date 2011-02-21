@@ -78,12 +78,12 @@ public final class LayoutOptions {
     /** layout option key: minimal height (float). */
     public static final String MIN_HEIGHT_ID = "de.cau.cs.kieler.minHeight";
     /** minimal height property. */
-    public static final IProperty<Float> MIN_HEIGHT = new Property<Float>(MIN_HEIGHT_ID, 0f);
+    public static final IProperty<Float> MIN_HEIGHT = new Property<Float>(MIN_HEIGHT_ID, 0f, 0f);
     
     /** layout option key: minimal width (float). */
     public static final String MIN_WIDTH_ID = "de.cau.cs.kieler.minWidth";
     /** minimal width property. */
-    public static final IProperty<Float> MIN_WIDTH = new Property<Float>(MIN_WIDTH_ID, 0f);
+    public static final IProperty<Float> MIN_WIDTH = new Property<Float>(MIN_WIDTH_ID, 0f, 0f);
     
     /** layout option key: no layout (boolean). */
     public static final String NO_LAYOUT_ID = "de.cau.cs.kieler.noLayout";
@@ -93,7 +93,7 @@ public final class LayoutOptions {
     /** layout option key: offset of ports on the node border (float). */
     public static final String OFFSET_ID = "de.cau.cs.kieler.offset";
     /** offset property. */
-    public static final IProperty<Float> OFFSET = new Property<Float>(OFFSET_ID, 0.0f);
+    public static final IProperty<Float> OFFSET = new Property<Float>(OFFSET_ID, 0f);
     
     /** layout option key: side of a port on its node's boundary (enum). */
     public static final String PORT_SIDE_ID = "de.cau.cs.kieler.portSide";
@@ -128,7 +128,7 @@ public final class LayoutOptions {
     /** layout option key: aimed aspect ratio (float). */
     public static final String ASPECT_RATIO_ID = "de.cau.cs.kieler.aspectRatio";
     /** aspect ratio property. */
-    public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(ASPECT_RATIO_ID, 0.0f);
+    public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(ASPECT_RATIO_ID, 0f);
     
     /** layout option key: fixed bend points for edges (object). */
     public static final String BEND_POINTS_ID = "de.cau.cs.kieler.bendPoints";
@@ -211,7 +211,7 @@ public final class LayoutOptions {
     /** layout option key: minimal distance between elements (float). */
     public static final String SPACING_ID = "de.cau.cs.kieler.spacing";    
     /** overall object spacing property. */
-    public static final IProperty<Float> SPACING = new Property<Float>(SPACING_ID, -1.0f, 0.0f);
+    public static final IProperty<Float> SPACING = new Property<Float>(SPACING_ID, -1f, 0f);
 
 
     /**

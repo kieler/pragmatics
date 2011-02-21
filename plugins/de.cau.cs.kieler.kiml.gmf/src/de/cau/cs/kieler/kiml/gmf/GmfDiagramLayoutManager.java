@@ -45,6 +45,7 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -480,8 +481,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                             Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
                             labelLayout.setXpos(labelBounds.x - portBounds.x);
                             labelLayout.setYpos(labelBounds.y - portBounds.y);
-                            labelLayout.setWidth(labelFigure.getPreferredSize().width);
-                            labelLayout.setHeight(labelFigure.getPreferredSize().height);
+                            try {
+                                Dimension size = labelFigure.getPreferredSize();
+                                labelLayout.setWidth(size.width);
+                                labelLayout.setHeight(size.height);
+                            } catch (SWTException exception) {
+                                // ignore exception and leave the label size to (0, 0)
+                            }
                         }
                     }
                 }
@@ -526,9 +532,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     nodeLayout.setYpos(childBounds.y - containerBounds.y);
                     nodeLayout.setHeight(childBounds.height);
                     nodeLayout.setWidth(childBounds.width);
-                    Dimension minSize = nodeFigure.getMinimumSize();
-                    nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
-                    nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
+                    try {
+                        Dimension minSize = nodeFigure.getMinimumSize();
+                        nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
+                        nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
+                    } catch (SWTException exception) {
+                        // ignore exception and leave the default minimal size
+                    }
 
                     // set insets if not yet defined
                     if (kinsets == null) {
@@ -580,8 +590,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                         Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(parentFigure);
                         labelLayout.setXpos(labelBounds.x - nodeBounds.x);
                         labelLayout.setYpos(labelBounds.y - nodeBounds.y);
-                        labelLayout.setWidth(labelFigure.getPreferredSize().width);
-                        labelLayout.setHeight(labelFigure.getPreferredSize().height);
+                        try {
+                            Dimension size = labelFigure.getPreferredSize();
+                            labelLayout.setWidth(size.width);
+                            labelLayout.setHeight(size.height);
+                        } catch (SWTException exception) {
+                            // ignore exception and leave the label size to (0, 0)
+                        }
                         labelLayout.setProperty(LayoutOptions.FONT_NAME,
                             font.getFontData()[0].getName());
                         labelLayout.setProperty(LayoutOptions.FONT_SIZE,
@@ -792,7 +807,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 IFigure labelFigure = labelEditPart.getFigure();
                 Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
                 String labelText = null;
-                Font font = null;
                 Dimension iconBounds = null;
                 if (labelFigure instanceof WrappingLabel) {
                     WrappingLabel wrappingLabel = (WrappingLabel) labelFigure;
@@ -804,7 +818,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                         iconBounds.height = wrappingLabel.getIcon().getBounds().height;
                         labelText = "O " + labelText;
                     }
-                    font = wrappingLabel.getFont();
                 } else if (labelFigure instanceof Label) {
                     Label label = (Label) labelFigure;
                     labelText = label.getText();
@@ -813,7 +826,6 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                         iconBounds.width += label.getIconTextGap();
                         labelText = "O " + labelText;
                     }
-                    font = label.getFont();
                 }
                 if (labelText != null && labelText.length() > 0) {
                     KLabel label = KimlUtil.createInitializedLabel(edge);
@@ -836,10 +848,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     } else {
                         labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
                     }
-                    labelLayout.setProperty(LayoutOptions.FONT_NAME,
-                        font.getFontData()[0].getName());
-                    labelLayout.setProperty(LayoutOptions.FONT_SIZE,
-                        font.getFontData()[0].getHeight());
+                    Font font = labelFigure.getFont();
+                    if (font != null && !font.isDisposed()) {
+                        labelLayout.setProperty(LayoutOptions.FONT_NAME,
+                            font.getFontData()[0].getName());
+                        labelLayout.setProperty(LayoutOptions.FONT_SIZE,
+                            font.getFontData()[0].getHeight());
+                    }
                     labelLayout.setXpos(labelBounds.x - offsetx);
                     labelLayout.setYpos(labelBounds.y - offsety);
                     if (iconBounds != null) {

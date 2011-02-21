@@ -96,7 +96,7 @@ public class LayoutServices {
     /**
      * Returns the singleton instance of the layout services class.
      * 
-     * @return the singleton instance
+     * @return the singleton instance, or {@code null} if no instance has been created yet
      */
     public static LayoutServices getInstance() {
         return instance;
