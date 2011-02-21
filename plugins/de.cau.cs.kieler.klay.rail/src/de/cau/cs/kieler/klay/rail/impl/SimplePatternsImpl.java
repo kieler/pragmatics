@@ -291,9 +291,9 @@ public class SimplePatternsImpl implements IPatterns {
 
     public int switchRightBranchSwitchRightStump(final List<Integer> occupiedPlaces,
             final int origin) {
-        int firstGuess = origin;
+        int firstGuess = origin + 1;
         while (occupiedPlaces.contains(firstGuess)) {
-            firstGuess--;
+            firstGuess++;
         }
         return firstGuess;
     }

@@ -52,7 +52,7 @@ public final class Properties {
     public static final float DEF_SPACING = 20.0f;
     /** minimal spacing between objects. */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(
-            LayoutOptions.SPACING, DEF_SPACING);
+            LayoutOptions.OBJ_SPACING, DEF_SPACING);
 
     /** default value for border spacing. */
     public static final float DEF_BORDER = 10.0f;
