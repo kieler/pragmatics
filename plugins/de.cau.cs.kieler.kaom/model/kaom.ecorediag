@@ -215,8 +215,8 @@
   </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_-IriIS93EeC3f6ezyeDmow"/>
   <styles xmi:type="layoutoptions:LayoutOptionStyle" xmi:id="_LCDL0C95EeC3f6ezyeDmow">
-    <options xmi:type="layoutoptions:KOption" xmi:id="_LCDL0S95EeC3f6ezyeDmow" key="de.cau.cs.kieler.layout.options.minSpacing" value="25.0"/>
-    <options xmi:type="layoutoptions:KOption" xmi:id="_OstfsC95EeC3f6ezyeDmow" key="de.cau.cs.kieler.layout.options.randomSeed" value="56"/>
+    <options xmi:type="layoutoptions:KOption" xmi:id="_LCDL0S95EeC3f6ezyeDmow" key="de.cau.cs.kieler.spacing" value="25.0"/>
+    <options xmi:type="layoutoptions:KOption" xmi:id="_OstfsC95EeC3f6ezyeDmow" key="de.cau.cs.kieler.randomSeed" value="56"/>
   </styles>
   <element xmi:type="ecore:EPackage" href="kaom.ecore#/"/>
   <edges xmi:type="notation:Edge" xmi:id="_-KaAcC93EeC3f6ezyeDmow" type="3002" source="_-KQ2gC93EeC3f6ezyeDmow" target="_-KQ2gC93EeC3f6ezyeDmow">

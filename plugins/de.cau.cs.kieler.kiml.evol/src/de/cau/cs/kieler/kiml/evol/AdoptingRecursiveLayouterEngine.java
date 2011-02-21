@@ -163,7 +163,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         // The others are needed because otherwise, layout providers might
         // crash.
         IProperty<?>[] importantOptions =
-                new IProperty<?>[] { LayoutOptions.LAYOUTER_HINT, LayoutOptions.INSETS };
+                new IProperty<?>[] { LayoutOptions.ALGORITHM, LayoutOptions.INSETS };
         ILayoutConfig oldValues = new VolatileLayoutConfig();
         for (IProperty<?> property : importantOptions) {
             oldValues.setProperty(property, shapeLayout.getProperty(property));
@@ -190,7 +190,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             assert data != null : "No layout option data for " + id;
 
             // Treat layout hint.
-            if (LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id)) {
+            if (LayoutOptions.ALGORITHM_ID.equalsIgnoreCase((String) id)) {
                 handleLayouterHint(gene, shapeLayout);
                 continue;
             }
@@ -261,7 +261,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         String newLayoutHintId = gene.toString();
 
-        IProperty<String> data = LayoutOptions.LAYOUTER_HINT;
+        IProperty<String> data = LayoutOptions.ALGORITHM;
 
         String oldLayoutHintId = targetGraphData.getProperty(data);
         if (oldLayoutHintId == null) {
@@ -298,7 +298,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         Object value = gene.getValue();
         Object id = gene.getId();
 
-        assert !LayoutOptions.LAYOUTER_HINT_ID.equalsIgnoreCase((String) id);
+        assert !LayoutOptions.ALGORITHM_ID.equalsIgnoreCase((String) id);
 
         // a normal string option
         targetGraphData.setProperty(data, value.toString());

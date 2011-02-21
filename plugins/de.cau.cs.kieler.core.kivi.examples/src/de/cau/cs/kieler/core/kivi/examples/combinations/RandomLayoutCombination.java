@@ -63,7 +63,7 @@ public class RandomLayoutCombination extends AbstractCombination {
             while (iterator.hasNext()) {
                 Object object = iterator.next();
                 if (object instanceof EObject) {
-                    layout.setOption((EObject) object, LayoutOptions.LAYOUTER_HINT,
+                    layout.setOption((EObject) object, LayoutOptions.ALGORITHM,
                             RandomLayoutProvider.ID);
                 }
             }

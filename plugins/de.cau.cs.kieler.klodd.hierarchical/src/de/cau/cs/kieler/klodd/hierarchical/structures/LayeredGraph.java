@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -62,7 +62,7 @@ public class LayeredGraph {
     /** list of linear segments in this layered graph. */
     private List<LinearSegment> linearSegments = new LinkedList<LinearSegment>();
     /** layout direction for this layered graph: RIGHT or DOWN. */
-    private LayoutDirection layoutDirection;
+    private Direction layoutDirection;
     /** port constraints for the external ports. */
     private PortConstraints externalPortConstraints;
     /** position of this layered graph. */
@@ -81,9 +81,9 @@ public class LayeredGraph {
         // get layout options from the parent group
         this.parentNode = theparentNode;
         KGraphData layoutData = theparentNode.getData(KShapeLayout.class);
-        layoutDirection = layoutData.getProperty(LayoutOptions.LAYOUT_DIRECTION);
-        if (layoutDirection == LayoutDirection.UNDEFINED) {
-            layoutDirection = LayoutDirection.RIGHT;
+        layoutDirection = layoutData.getProperty(LayoutOptions.DIRECTION);
+        if (layoutDirection == Direction.UNDEFINED) {
+            layoutDirection = Direction.RIGHT;
         }
         externalPortConstraints = layoutData.getProperty(LayoutOptions.PORT_CONSTRAINTS);
     }
@@ -275,7 +275,7 @@ public class LayeredGraph {
         // update the size of the parent layout node
         float width = insets.getLeft() + insets.getRight();
         float height = insets.getTop() + insets.getBottom();
-        if (layoutDirection == LayoutDirection.DOWN) {
+        if (layoutDirection == Direction.DOWN) {
             width += crosswiseDim;
             height += lengthwiseDim;
         } else {
@@ -295,7 +295,7 @@ public class LayeredGraph {
      * 
      * @return the layout direction
      */
-    public LayoutDirection getLayoutDirection() {
+    public Direction getLayoutDirection() {
         return layoutDirection;
     }
 

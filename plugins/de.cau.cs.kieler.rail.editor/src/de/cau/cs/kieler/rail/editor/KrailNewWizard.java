@@ -32,11 +32,11 @@ public class KrailNewWizard extends GraphitiNewWizard {
      */
     public static void addLayoutDefaultsToDiagram(final Diagram diagram) {
         Property p = MmFactory.eINSTANCE.createProperty();
-        p.setKey("layout:de.cau.cs.kieler.layout.options.layoutHint");
+        p.setKey("layout:de.cau.cs.kieler.algorithm");
         p.setValue("de.cau.cs.kieler.klay.rail");
         diagram.getProperties().add(p);
         Property p2 = MmFactory.eINSTANCE.createProperty();
-        p2.setKey("layout:de.cau.cs.kieler.layout.options.minSpacing");
+        p2.setKey("layout:de.cau.cs.kieler.spacing");
         p2.setValue("100.0");
         diagram.getProperties().add(p2);
     }

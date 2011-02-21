@@ -7,42 +7,42 @@
          point="de.cau.cs.kieler.kiml.layoutInfo">
       <option
             class="org.eclipse.papyrus.diagram.clazz.edit.parts.ModelEditPart"
-            option="de.cau.cs.kieler.layout.options.diagramType"
+            option="de.cau.cs.kieler.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.classDiagram">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.clazz.edit.parts.ModelEditPart"
-            option="de.cau.cs.kieler.layout.options.minSpacing"
+            option="de.cau.cs.kieler.spacing"
             value="30.0">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.clazz.custom.edit.part.CPackageEditPart"
-            option="de.cau.cs.kieler.layout.options.diagramType"
+            option="de.cau.cs.kieler.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.classDiagram">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.clazz.custom.edit.part.CPackageEditPart"
-            option="de.cau.cs.kieler.layout.options.minSpacing"
+            option="de.cau.cs.kieler.spacing"
             value="30.0">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.clazz.custom.edit.part.CModelEditPart"
-            option="de.cau.cs.kieler.layout.options.diagramType"
+            option="de.cau.cs.kieler.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.classDiagram">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.clazz.custom.edit.part.CModelEditPart"
-            option="de.cau.cs.kieler.layout.options.minSpacing"
+            option="de.cau.cs.kieler.spacing"
             value="30.0">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.clazz.edit.parts.ComponentEditPart"
-            option="de.cau.cs.kieler.layout.options.diagramType"
+            option="de.cau.cs.kieler.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.classDiagram">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.clazz.edit.parts.ComponentEditPart"
-            option="de.cau.cs.kieler.layout.options.minSpacing"
+            option="de.cau.cs.kieler.spacing"
             value="30.0">
       </option>
    </extension>
@@ -52,47 +52,47 @@
          point="de.cau.cs.kieler.kiml.layoutInfo">
       <option
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.UseCaseDiagramEditPart"
-            option="de.cau.cs.kieler.layout.options.diagramType"
+            option="de.cau.cs.kieler.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.UseCaseDiagramEditPart"
-            option="de.cau.cs.kieler.layout.options.minSpacing"
+            option="de.cau.cs.kieler.spacing"
             value="40.0">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.UseCaseDiagramEditPart"
-            option="de.cau.cs.kieler.layout.options.borderSpacing"
+            option="de.cau.cs.kieler.borderSpacing"
             value="20.0">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPartTN"
-            option="de.cau.cs.kieler.layout.options.diagramType"
+            option="de.cau.cs.kieler.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPartTN"
-            option="de.cau.cs.kieler.layout.options.minSpacing"
+            option="de.cau.cs.kieler.spacing"
             value="40.0">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.ComponentEditPartTN"
-            option="de.cau.cs.kieler.layout.options.borderSpacing"
+            option="de.cau.cs.kieler.borderSpacing"
             value="20.0">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.PackageEditPartTN"
-            option="de.cau.cs.kieler.layout.options.diagramType"
+            option="de.cau.cs.kieler.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.PackageEditPartTN"
-            option="de.cau.cs.kieler.layout.options.minSpacing"
+            option="de.cau.cs.kieler.spacing"
             value="40.0">
       </option>
       <option
             class="org.eclipse.papyrus.diagram.usecase.edit.parts.PackageEditPartTN"
-            option="de.cau.cs.kieler.layout.options.borderSpacing"
+            option="de.cau.cs.kieler.borderSpacing"
             value="20.0">
       </option>
    </extension>
@@ -100,7 +100,7 @@
          point="de.cau.cs.kieler.kiml.layoutInfo">
       <option
             class="org.eclipse.papyrus.diagram.statemachine.custom.edit.part.CustomPackageEditPart"
-            option="de.cau.cs.kieler.layout.options.diagramType"
+            option="de.cau.cs.kieler.diagramType"
             value="de.cau.cs.kieler.layout.diagrams.boxes">
       </option>
    </extension>

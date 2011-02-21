@@ -28,7 +28,7 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -138,8 +138,8 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
      * Initialize default options of the layout provider.
      */
     public HierarchicalDataflowLayoutProvider() {
-        setProperty(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.RIGHT);
-        setProperty(LayoutOptions.OBJ_SPACING, DEF_MIN_DIST);
+        setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
+        setProperty(LayoutOptions.SPACING, DEF_MIN_DIST);
         setProperty(LayoutOptions.BORDER_SPACING, DEF_MIN_DIST);
         setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.UNDEFINED);
     }
@@ -157,7 +157,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         updateModules(parentLayout);
         // set option for minimal object spacing
-        float objSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float objSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (objSpacing < 0) {
             objSpacing = DEF_MIN_DIST;
         }
@@ -214,9 +214,9 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
             if (!(cycleRemover instanceof InteractiveCycleRemover)) {
                 cycleRemover = new InteractiveCycleRemover();
             }
-            LayoutDirection layoutDirection = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
+            Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
             ((InteractiveCycleRemover) cycleRemover).setVertical(
-                    layoutDirection == LayoutDirection.DOWN);
+                    layoutDirection == Direction.DOWN);
         } else if (preferenceStore != null
                 && preferenceStore.getString(PREF_CYCLE_REM).equals(VAL_DFS_CYCLE_REM)) {
             if (!(cycleRemover instanceof DFSCycleRemover)) {
@@ -295,7 +295,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
      */
     private void preProcess(final KNode parentNode) {
         KGraphData parentLayout = parentNode.getData(KShapeLayout.class);
-        LayoutDirection layoutDirection = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
+        Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
 
         for (KNode node : parentNode.getChildren()) {
             // fill port data for the child node

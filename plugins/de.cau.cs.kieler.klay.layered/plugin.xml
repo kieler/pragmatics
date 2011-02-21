@@ -9,15 +9,15 @@
             id="de.cau.cs.kieler.klay.layered"
             name="KLay Layered"
             preview="images/layered.png"
-            type="de.cau.cs.kieler.layout.types.layered">
+            type="de.cau.cs.kieler.type.layered">
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.priority">
+               option="de.cau.cs.kieler.priority">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.nodeLayering">
@@ -29,7 +29,7 @@
                option="de.cau.cs.kieler.klay.layered.edgeRouting">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.portConstraints">
+               option="de.cau.cs.kieler.portConstraints">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.straightEdges">
@@ -41,10 +41,10 @@
                option="de.cau.cs.kieler.klay.layered.distributeNodes">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.debugMode">
+               option="de.cau.cs.kieler.debugMode">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.segmentateLayering">
@@ -59,7 +59,7 @@
                option="de.cau.cs.kieler.klay.layered.layerConstraint">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.alignment">
+               option="de.cau.cs.kieler.alignment">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption

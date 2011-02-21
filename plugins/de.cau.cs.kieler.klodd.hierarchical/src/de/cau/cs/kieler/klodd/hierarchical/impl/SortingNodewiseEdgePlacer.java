@@ -24,7 +24,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klodd.hierarchical.modules.INodewiseEdgePlacer;
@@ -86,7 +86,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
     }
 
     /** layout direction configured for the given layered graph. */
-    private LayoutDirection layoutDirection;
+    private Direction layoutDirection;
 
     /**
      * {@inheritDoc}
@@ -257,7 +257,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
             }
 
             // process routing to other layers
-            if (layoutDirection == LayoutDirection.DOWN) {
+            if (layoutDirection == Direction.DOWN) {
                 switch (placement) {
                 case NORTH:
                     if (hasOutgoing(element, port1)) {
@@ -353,7 +353,7 @@ public class SortingNodewiseEdgePlacer extends AbstractAlgorithm implements INod
         element.setRanks(assignRanks(westSlots), PortSide.WEST);
 
         // calculate edge routing for all incoming or outgoing connections
-        if (layoutDirection == LayoutDirection.DOWN) {
+        if (layoutDirection == Direction.DOWN) {
             for (LayerConnection connection : element.getIncomingConnections()) {
                 KPort port = connection.getTargetPort();
                 if (port != null) {

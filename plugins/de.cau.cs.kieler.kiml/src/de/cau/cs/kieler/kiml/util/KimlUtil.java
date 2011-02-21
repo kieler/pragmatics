@@ -35,7 +35,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -63,7 +63,7 @@ public final class KimlUtil {
         /** indicates whether to treat ranks in forward direction. */
         private boolean forward;
         /** horizontal or vertical layout direction. */
-        private LayoutDirection layoutDirection;
+        private Direction layoutDirection;
 
         /**
          * Creates a port comparator for the given setting.
@@ -72,7 +72,7 @@ public final class KimlUtil {
          *            direction
          * @param thelayoutDirection horizontal or vertical layout direction
          */
-        public PortComparator(final boolean theforward, final LayoutDirection thelayoutDirection) {
+        public PortComparator(final boolean theforward, final Direction thelayoutDirection) {
             this.forward = theforward;
             this.layoutDirection = thelayoutDirection;
         }
@@ -88,10 +88,10 @@ public final class KimlUtil {
             PortSide side1 = layout1.getProperty(LayoutOptions.PORT_SIDE);
             PortSide side2 = layout2.getProperty(LayoutOptions.PORT_SIDE);
             if (side1 == side2) {
-                return layoutDirection == LayoutDirection.DOWN && !forward
-                        || layoutDirection == LayoutDirection.RIGHT && forward ? rank1 - rank2
+                return layoutDirection == Direction.DOWN && !forward
+                        || layoutDirection == Direction.RIGHT && forward ? rank1 - rank2
                         : rank2 - rank1;
-            } else if (layoutDirection == LayoutDirection.DOWN) {
+            } else if (layoutDirection == Direction.DOWN) {
                 if (forward) {
                     return side1 == PortSide.NORTH || side1 == PortSide.EAST
                             && (side2 == PortSide.SOUTH || side2 == PortSide.WEST)
@@ -218,8 +218,8 @@ public final class KimlUtil {
         }
 
         // determine port placement from the incident edges
-        LayoutDirection layoutDirection = port.getNode().getParent().getData(KShapeLayout.class)
-                .getProperty(LayoutOptions.LAYOUT_DIRECTION);
+        Direction layoutDirection = port.getNode().getParent().getData(KShapeLayout.class)
+                .getProperty(LayoutOptions.DIRECTION);
         int flow = calcFlow(port);
         switch (layoutDirection) {
         case DOWN:
@@ -353,7 +353,7 @@ public final class KimlUtil {
      * @param node node for which port data shall be created
      * @param layoutDirection layout direction
      */
-    public static void fillPortInfo(final KNode node, final LayoutDirection layoutDirection) {
+    public static void fillPortInfo(final KNode node, final Direction layoutDirection) {
         KGraphData layoutData = node.getData(KShapeLayout.class);
         PortConstraints portConstraints = layoutData.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         if (portConstraints == PortConstraints.FREE) {

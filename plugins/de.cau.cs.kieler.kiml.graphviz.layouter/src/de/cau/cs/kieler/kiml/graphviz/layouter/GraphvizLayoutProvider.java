@@ -19,7 +19,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -45,10 +45,10 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      * Initialize default options for the layout provider.
      */
     public GraphvizLayoutProvider() {
-        setProperty(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.RIGHT);
+        setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
         setProperty(LayoutOptions.BORDER_SPACING,
                 KGraphDotTransformation.DEF_MIN_SPACING / 2);
-        setProperty(LayoutOptions.OBJ_SPACING,
+        setProperty(LayoutOptions.SPACING,
                 KGraphDotTransformation.DEF_MIN_SPACING);
         setProperty(LayoutOptions.FIXED_SIZE, false);
         setProperty(LayoutOptions.RANDOM_SEED, 1);

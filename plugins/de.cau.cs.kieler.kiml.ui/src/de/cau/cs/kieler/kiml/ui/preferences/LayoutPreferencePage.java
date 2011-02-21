@@ -320,7 +320,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private void showEditDialog(final Shell shell, final OptionsTableProvider.DataEntry entry) {
         LayoutOptionData<?> optionData = entry.getOptionData();
         if (entry.getValue() != null) {
-            if (optionData.getId().equals(LayoutOptions.LAYOUTER_HINT_ID)) {
+            if (optionData.getId().equals(LayoutOptions.ALGORITHM_ID)) {
                 // show a selection dialog for a layouter hint
                 LayouterHintDialog dialog = new LayouterHintDialog(shell, null);
                 if (dialog.open() == LayouterHintDialog.OK) {

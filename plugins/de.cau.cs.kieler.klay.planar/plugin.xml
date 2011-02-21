@@ -6,11 +6,11 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klay.planar.PlanarLayoutProvider"
-            id="de.cau.cs.kieler.klay.planar.layouter.orthogonal"
-            name="Orthogonal Layouter"
-            type="de.cau.cs.kieler.layout.types.orthogonal">
+            id="de.cau.cs.kieler.klay.planar.orthogonal"
+            name="KLay Orthogonal"
+            type="de.cau.cs.kieler.type.orthogonal">
          <knownOption
-               option="de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm">
+               option="de.cau.cs.kieler.klay.planar.planarityTest">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -18,7 +18,7 @@
             class="de.cau.cs.kieler.klay.planar.planarity.PlanarityTestStrategy"
             default="BOYER_MYRVOLD_ALGORITHM"
             description="Defines which algorithm to use for planar testing."
-            id="de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm"
+            id="de.cau.cs.kieler.klay.planar.planarityTest"
             name="Planar Testing Algorithm"
             type="enum">
       </layoutOption>

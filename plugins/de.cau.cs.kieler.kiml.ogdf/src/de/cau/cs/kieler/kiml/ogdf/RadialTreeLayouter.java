@@ -39,7 +39,7 @@ public class RadialTreeLayouter extends OgdfLayouter {
 
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // get the minimum level distance
-        float minDist = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float minDist = parentLayout.getProperty(LayoutOptions.SPACING);
         if (minDist < 0) {
             minDist = DEF_MIN_DIST;
         }
@@ -63,6 +63,6 @@ public class RadialTreeLayouter extends OgdfLayouter {
     @Override
     public void initDefaults(final IPropertyHolder defaultsHolder) {
         super.initDefaults(defaultsHolder);
-        defaultsHolder.setProperty(LayoutOptions.OBJ_SPACING, DEF_MIN_DIST);
+        defaultsHolder.setProperty(LayoutOptions.SPACING, DEF_MIN_DIST);
     }
 }

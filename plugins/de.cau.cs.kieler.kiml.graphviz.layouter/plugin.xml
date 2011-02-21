@@ -27,11 +27,11 @@
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             description="Layered drawings of directed graphs. The algorithm aims edges in the same direction (top to bottom, or left to right) and then attempts to avoid edge crossings and reduce edge length."
-            id="de.cau.cs.kieler.kiml.graphviz.dot"
+            id="de.cau.cs.kieler.graphviz.dot"
             name="Dot"
             parameter="dot"
             preview="images/dot.png"
-            type="de.cau.cs.kieler.layout.types.layered">
+            type="de.cau.cs.kieler.type.layered">
          <supportedDiagram
                priority="10"
                type="de.cau.cs.kieler.layout.diagrams.general">
@@ -41,39 +41,39 @@
                type="de.cau.cs.kieler.layout.diagrams.stateMachine">
          </supportedDiagram>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.layoutDirection">
+               option="de.cau.cs.kieler.direction">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.fixedSize">
+               option="de.cau.cs.kieler.fixedSize">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.labelSpacing">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.graphviz.options.labelDistance">
+               option="de.cau.cs.kieler.graphviz.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.edgeRouting">
+               option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.debugMode">
+               option="de.cau.cs.kieler.debugMode">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             description="Spring model layouts. Neato attempts to minimize a global energy function, which is equivalent to statistical multi-dimensional scaling. The solution is achieved using stress majorization, though the older Kamada-Kawai algorithm, using steepest descent, is also available."
-            id="de.cau.cs.kieler.kiml.graphviz.neato"
+            id="de.cau.cs.kieler.graphviz.neato"
             name="Neato"
             parameter="neato"
             preview="images/neato.png"
-            type="de.cau.cs.kieler.layout.types.force">
+            type="de.cau.cs.kieler.type.force">
          <supportedDiagram
                priority="7"
                type="de.cau.cs.kieler.layout.diagrams.general">
@@ -83,42 +83,42 @@
                type="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
          </supportedDiagram>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.fixedSize">
+               option="de.cau.cs.kieler.fixedSize">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.interactive">
+               option="de.cau.cs.kieler.interactive">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.labelSpacing">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.graphviz.options.labelDistance">
+               option="de.cau.cs.kieler.graphviz.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.edgeRouting">
+               option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.debugMode">
+               option="de.cau.cs.kieler.debugMode">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             description="Spring model layouts similar to those of Neato, but does this by reducing forces rather than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a multigrid solver that handles larger graphs and clustered undirected graphs."
-            id="de.cau.cs.kieler.kiml.graphviz.fdp"
+            id="de.cau.cs.kieler.graphviz.fdp"
             name="FDP"
             parameter="fdp"
             preview="images/fdp.png"
-            type="de.cau.cs.kieler.layout.types.force">
+            type="de.cau.cs.kieler.type.force">
          <supportedDiagram
                priority="6"
                type="de.cau.cs.kieler.layout.diagrams.general">
@@ -128,108 +128,108 @@
                type="de.cau.cs.kieler.layout.diagrams.usecaseDiagram">
          </supportedDiagram>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.fixedSize">
+               option="de.cau.cs.kieler.fixedSize">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.interactive">
+               option="de.cau.cs.kieler.interactive">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.labelSpacing">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.graphviz.options.labelDistance">
+               option="de.cau.cs.kieler.graphviz.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.edgeRouting">
+               option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.debugMode">
+               option="de.cau.cs.kieler.debugMode">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
-            description="Radial layouts, after Graham and Wills &apos;97. The nodes are placed on concentric circles depending on their distance from a given root node."
-            id="de.cau.cs.kieler.kiml.graphviz.twopi"
+            description="Radial layouts, after Wills &apos;97. The nodes are placed on concentric circles depending on their distance from a given root node.node."
+            id="de.cau.cs.kieler.graphviz.twopi"
             name="Twopi"
             parameter="twopi"
             preview="images/twopi.png"
-            type="de.cau.cs.kieler.layout.types.radial">
+            type="de.cau.cs.kieler.type.tree">
          <supportedDiagram
                priority="6"
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.fixedSize">
+               option="de.cau.cs.kieler.fixedSize">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.labelSpacing">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.graphviz.options.labelDistance">
+               option="de.cau.cs.kieler.graphviz.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.edgeRouting">
+               option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.debugMode">
+               option="de.cau.cs.kieler.debugMode">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
             class="de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider"
             description="Circular layout, after Six and Tollis &apos;99, Kaufmann and Wiese &apos;02. This is suitable for certain diagrams of multiple cyclic structures such as certain telecommunications networks."
-            id="de.cau.cs.kieler.kiml.graphviz.circo"
+            id="de.cau.cs.kieler.graphviz.circo"
             name="Circo"
             parameter="circo"
             preview="images/circo.png"
-            type="de.cau.cs.kieler.layout.types.circle">
+            type="de.cau.cs.kieler.type.circle">
          <supportedDiagram
                priority="6"
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.fixedSize">
+               option="de.cau.cs.kieler.fixedSize">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.labelSpacing">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.graphviz.options.labelDistance">
+               option="de.cau.cs.kieler.graphviz.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.edgeRouting">
+               option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.debugMode">
+               option="de.cau.cs.kieler.debugMode">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="edges"
             default="1.0"
             description="Distance of edge labels to the source or target node"
-            id="de.cau.cs.kieler.kiml.graphviz.options.labelDistance"
+            id="de.cau.cs.kieler.graphviz.labelDistance"
             name="Label Distance"
             type="float">
       </layoutOption>

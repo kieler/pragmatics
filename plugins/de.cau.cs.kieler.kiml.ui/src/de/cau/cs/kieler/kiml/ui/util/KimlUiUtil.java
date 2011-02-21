@@ -173,7 +173,7 @@ public final class KimlUiUtil {
             }
         }
         // the only option data that is added without explicit support by layouters is layout hint
-        return LayoutServices.getInstance().getOptionData(LayoutOptions.LAYOUTER_HINT_ID);
+        return LayoutServices.getInstance().getOptionData(LayoutOptions.ALGORITHM_ID);
     }
     
     

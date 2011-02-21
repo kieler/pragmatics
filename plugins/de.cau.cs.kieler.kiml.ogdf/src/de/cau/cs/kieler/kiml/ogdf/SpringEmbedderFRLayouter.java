@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 public class SpringEmbedderFRLayouter extends OgdfLayouter {
 
     /** the iterations option identifier. */
-    private static final String ITERATIONS_ID = "de.cau.cs.kieler.kiml.ogdf.option.iterations";
+    private static final String ITERATIONS_ID = "de.cau.cs.kieler.ogdf.iterations";
     /** default value for the number of iterations. */
     private static final int DEF_ITERATIONS = 400;
     /** number of iterations property. */

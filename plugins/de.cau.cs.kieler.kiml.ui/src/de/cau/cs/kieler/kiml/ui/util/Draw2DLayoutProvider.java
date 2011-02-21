@@ -38,7 +38,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -65,9 +65,9 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
      * Initialize default options for the layout provider.
      */
     public Draw2DLayoutProvider() {
-        setProperty(LayoutOptions.OBJ_SPACING, DEF_MIN_SPACING);
+        setProperty(LayoutOptions.SPACING, DEF_MIN_SPACING);
         setProperty(LayoutOptions.BORDER_SPACING, DEF_MIN_SPACING);
-        setProperty(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.DOWN);
+        setProperty(LayoutOptions.DIRECTION, Direction.DOWN);
         setProperty(LayoutOptions.FIXED_SIZE, false);
     }
     
@@ -108,7 +108,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         
         // set layout options for the graph
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float minSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
@@ -118,7 +118,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
             borderSpacing = DEF_MIN_SPACING;
         }
         graph.setMargin(new Insets((int) borderSpacing));
-        LayoutDirection layoutDirection = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
+        Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
         switch (layoutDirection) {
         case RIGHT:
         case LEFT:

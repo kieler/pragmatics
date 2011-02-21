@@ -132,7 +132,7 @@ public class RecursiveLayouterEngine {
     private AbstractLayoutProvider getLayoutProvider(final KNode layoutNode)
             throws KielerException {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
-        String layoutHint = nodeLayout.getProperty(LayoutOptions.LAYOUTER_HINT);
+        String layoutHint = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
         String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
         LayoutAlgorithmData algorithmData = layoutConfig.getLayouterData(layoutHint, diagramType);
         if (algorithmData != null) {

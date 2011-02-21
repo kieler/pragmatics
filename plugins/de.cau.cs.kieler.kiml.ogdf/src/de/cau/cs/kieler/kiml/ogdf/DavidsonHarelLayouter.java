@@ -31,12 +31,12 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 public class DavidsonHarelLayouter extends OgdfLayouter {
 
     /** the costs option identifier. */
-    private static final String COSTS_ID = "de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs";
+    private static final String COSTS_ID = "de.cau.cs.kieler.ogdf.davidsonHarel.costs";
     /** costs property. */
     private static final IProperty<Costs> COSTS = new Property<Costs>(COSTS_ID, Costs.STANDARD);
     
     /** the speed option identifier. */
-    private static final String SPEED_ID = "de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed";
+    private static final String SPEED_ID = "de.cau.cs.kieler.ogdf.davidsonHarel.speed";
     /** speed property. */
     private static final IProperty<Speed> SPEED = new Property<Speed>(SPEED_ID, Speed.MEDIUM);
     
@@ -50,7 +50,7 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
 
         // get the minimum spacing
-        float desiredEdgeLength = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float desiredEdgeLength = parentLayout.getProperty(LayoutOptions.SPACING);
         if (desiredEdgeLength <= 0) {
             desiredEdgeLength = DEF_DESIRED_EDGE_LENGTH;
         }
@@ -94,7 +94,7 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
     @Override
     public void initDefaults(final IPropertyHolder defaultsHolder) {
         super.initDefaults(defaultsHolder);
-        defaultsHolder.setProperty(LayoutOptions.OBJ_SPACING, DEF_DESIRED_EDGE_LENGTH);
+        defaultsHolder.setProperty(LayoutOptions.SPACING, DEF_DESIRED_EDGE_LENGTH);
     }
     
 }

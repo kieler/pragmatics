@@ -64,7 +64,7 @@ public final class Properties {
     public static final float DEF_SPACING = 20.0f;
     /** minimal spacing between objects. */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(
-            LayoutOptions.OBJ_SPACING, DEF_SPACING);
+            LayoutOptions.SPACING, DEF_SPACING);
 
     /** priority of elements. */
     public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);

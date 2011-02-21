@@ -113,7 +113,7 @@ public class AnnotationsLayoutConfig extends SemanticLayoutConfig {
     private Object getValue(final Annotation annotation, final LayoutOptionData<?> optionData) {
         if (annotation instanceof StringAnnotation) {
             String value = ((StringAnnotation) annotation).getValue();
-            if (optionData.getId().equals(LayoutOptions.LAYOUTER_HINT_ID)) {
+            if (optionData.getId().equals(LayoutOptions.ALGORITHM_ID)) {
                 ILayoutData layoutData = getAlgorithmData(value);
                 if (layoutData != null) {
                     return layoutData.getId();

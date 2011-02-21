@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 
@@ -96,7 +96,7 @@ public class LayerConnection {
      */
     public void applyLayout(final KPoint offset, final KInsets insets) {
         LayeredGraph layeredGraph = sourceElement.getLayer().getLayeredGraph();
-        LayoutDirection layoutDirection = layeredGraph.getLayoutDirection();
+        Direction layoutDirection = layeredGraph.getLayoutDirection();
         KShapeLayout sourcePortLayout = (sourcePort == null ? null
                 : sourcePort.getData(KShapeLayout.class));
         KShapeLayout targetPortLayout = (targetPort == null ? null
@@ -130,11 +130,11 @@ public class LayerConnection {
             KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
             sourcePoint.setX(sourceElement.getPosition().getX()
                     + sourceElement.getPosOffset().getX()
-                    + (layoutDirection == LayoutDirection.DOWN ? sourceLayout.getWidth() / 2
+                    + (layoutDirection == Direction.DOWN ? sourceLayout.getWidth() / 2
                             : sourceLayout.getWidth()));
             sourcePoint.setY(sourceElement.getPosition().getY()
                     + sourceElement.getPosOffset().getY()
-                    + (layoutDirection == LayoutDirection.DOWN ? sourceLayout.getHeight()
+                    + (layoutDirection == Direction.DOWN ? sourceLayout.getHeight()
                             : sourceLayout.getHeight() / 2));
             edgeLayout.setSourcePoint(sourcePoint);
         }
@@ -160,12 +160,12 @@ public class LayerConnection {
             targetPoint
                     .setX(targetElement.getPosition().getX()
                             + targetElement.getPosOffset().getX()
-                            + (layoutDirection == LayoutDirection.DOWN ? targetLayout.getWidth() / 2
+                            + (layoutDirection == Direction.DOWN ? targetLayout.getWidth() / 2
                                     : 0.0f));
             targetPoint
                     .setY(targetElement.getPosition().getY()
                             + targetElement.getPosOffset().getY()
-                            + (layoutDirection == LayoutDirection.DOWN ? 0.0f : targetLayout
+                            + (layoutDirection == Direction.DOWN ? 0.0f : targetLayout
                                     .getHeight() / 2));
             edgeLayout.setTargetPoint(targetPoint);
         }
@@ -229,28 +229,28 @@ public class LayerConnection {
      */
     public float calcSourcePos(final float minDist) {
         LayeredGraph layeredGraph = sourceElement.getLayer().getLayeredGraph();
-        LayoutDirection layoutDirection = layeredGraph.getLayoutDirection();
-        sourceAnchorPos = layoutDirection == LayoutDirection.DOWN ? sourceElement.getPosition()
+        Direction layoutDirection = layeredGraph.getLayoutDirection();
+        sourceAnchorPos = layoutDirection == Direction.DOWN ? sourceElement.getPosition()
                 .getX() : sourceElement.getPosition().getY();
         if (sourceSidePos == 0) {
             if (sourcePort == null) {
                 // there is no source port, find appropriate anchor
-                sourceAnchorPos += layoutDirection == LayoutDirection.DOWN ? sourceElement
+                sourceAnchorPos += layoutDirection == Direction.DOWN ? sourceElement
                         .getRealWidth() / 2 : sourceElement.getRealHeight() / 2;
             } else {
                 // align the edge to the source port
                 KShapeLayout portLayout = sourcePort.getData(KShapeLayout.class);
-                sourceAnchorPos += layoutDirection == LayoutDirection.DOWN
+                sourceAnchorPos += layoutDirection == Direction.DOWN
                         ? portLayout.getWidth() / 2 : portLayout.getHeight() / 2;
                 if (sourcePort.getNode() != layeredGraph.getParentNode()) {
-                    sourceAnchorPos += layoutDirection == LayoutDirection.DOWN ? portLayout
+                    sourceAnchorPos += layoutDirection == Direction.DOWN ? portLayout
                             .getXpos()
                             + sourceElement.getPosOffset().getX() : portLayout.getYpos()
                             + sourceElement.getPosOffset().getY();
                 }
             }
         } else if (sourceSidePos > 0) {
-            sourceAnchorPos += (layoutDirection == LayoutDirection.DOWN ? sourceElement
+            sourceAnchorPos += (layoutDirection == Direction.DOWN ? sourceElement
                     .getRealWidth() : sourceElement.getRealHeight())
                     + sourceSidePos * minDist;
         } else if (sourceSidePos < 0) {
@@ -268,27 +268,27 @@ public class LayerConnection {
      */
     public float calcTargetPos(final float minDist) {
         LayeredGraph layeredGraph = sourceElement.getLayer().getLayeredGraph();
-        LayoutDirection layoutDirection = layeredGraph.getLayoutDirection();
-        targetAnchorPos = layoutDirection == LayoutDirection.DOWN ? targetElement.getPosition()
+        Direction layoutDirection = layeredGraph.getLayoutDirection();
+        targetAnchorPos = layoutDirection == Direction.DOWN ? targetElement.getPosition()
                 .getX() : targetElement.getPosition().getY();
         if (getTargetSidePos() == 0) {
             if (targetPort == null) {
                 // there is no source port, find appropriate anchor
-                targetAnchorPos += layoutDirection == LayoutDirection.DOWN ? targetElement
+                targetAnchorPos += layoutDirection == Direction.DOWN ? targetElement
                         .getRealWidth() / 2 : targetElement.getRealHeight() / 2;
             } else {
                 KShapeLayout portLayout = targetPort.getData(KShapeLayout.class);
-                targetAnchorPos += layoutDirection == LayoutDirection.DOWN
+                targetAnchorPos += layoutDirection == Direction.DOWN
                         ? portLayout.getWidth() / 2 : portLayout.getHeight() / 2;
                 if (targetPort.getNode() != layeredGraph.getParentNode()) {
-                    targetAnchorPos += layoutDirection == LayoutDirection.DOWN ? portLayout
+                    targetAnchorPos += layoutDirection == Direction.DOWN ? portLayout
                             .getXpos()
                             + targetElement.getPosOffset().getX() : portLayout.getYpos()
                             + targetElement.getPosOffset().getY();
                 }
             }
         } else if (getTargetSidePos() > 0) {
-            targetAnchorPos += (layoutDirection == LayoutDirection.DOWN ? targetElement
+            targetAnchorPos += (layoutDirection == Direction.DOWN ? targetElement
                     .getRealWidth() : targetElement.getRealHeight())
                     + getTargetSidePos() * minDist;
         } else if (getTargetSidePos() < 0) {

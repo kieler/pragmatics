@@ -412,7 +412,7 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
     private String getLayoutHint(final PictogramElement pictogramElement) {
         LayoutOptionData<?> layoutHintData =
                 LayoutServices.getInstance().getOptionData(
-                        LayoutOptions.LAYOUTER_HINT_ID);
+                        LayoutOptions.ALGORITHM_ID);
         String result =
                 (String) getOption(layoutHintData, PREFIX, pictogramElement);
         if (result == null && pictogramElement instanceof Shape) {

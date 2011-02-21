@@ -192,7 +192,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
         // check whether a specific provider is registered for the diagram type
         if (layoutHint == null && diagramType != null) {
             layoutHint = (String) layoutServices.getOption(diagramType,
-                    LayoutOptions.LAYOUTER_HINT_ID);
+                    LayoutOptions.ALGORITHM_ID);
         }
         
         // try to get a specific provider for the given hint

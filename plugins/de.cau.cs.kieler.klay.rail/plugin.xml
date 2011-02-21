@@ -8,12 +8,12 @@
             class="de.cau.cs.kieler.klay.rail.RailwayLayoutProvider"
             id="de.cau.cs.kieler.klay.rail"
             name="KLay Railway"
-            type="de.cau.cs.kieler.layout.types.layered">
+            type="de.cau.cs.kieler.type.layered">
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.rail.nodeType">

@@ -24,7 +24,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -51,7 +51,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
     /** spacing to the border. */
     private float borderSpacing;
     /** layout direction for this algorithm instance. */
-    private LayoutDirection layoutDirection;
+    private Direction layoutDirection;
     /** array of sorted segments. */
     private LinearSegment[] sortedSegments = null;
     /** amount of available spacing for each layer element. */
@@ -254,7 +254,7 @@ public class BasicNodePlacer extends AbstractAlgorithm implements INodePlacer {
                 KPoint position = element.getPosition();
                 position.setX(portLayout.getXpos());
                 position.setY(portLayout.getYpos());
-                if (layoutDirection == LayoutDirection.DOWN) {
+                if (layoutDirection == Direction.DOWN) {
                     layer.setLengthwiseDim(Math.max(layer.getLengthwiseDim(), element.getRealHeight()));
                     if (placement != PortSide.EAST && placement != PortSide.WEST) {
                         layer.setCrosswiseDim(Math.max(layer.getCrosswiseDim(),

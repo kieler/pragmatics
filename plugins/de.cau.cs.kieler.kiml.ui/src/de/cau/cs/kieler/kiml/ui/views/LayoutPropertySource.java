@@ -77,7 +77,7 @@ public class LayoutPropertySource implements IPropertySource {
         EclipseLayoutServices layoutServices = EclipseLayoutServices.getInstance();
         LayoutOptionData<?> optionData = layoutServices.getOptionData((String) id);
         Object value;
-        if (LayoutOptions.LAYOUTER_HINT_ID.equals(id)) {
+        if (LayoutOptions.ALGORITHM_ID.equals(id)) {
             value = layoutConfig.getContentLayouterData().getId();
         } else {
             value = layoutConfig.getProperty(optionData);
@@ -144,7 +144,7 @@ public class LayoutPropertySource implements IPropertySource {
                     value = optionData.parseValue((String) value);
                 }
                 layoutConfig.setProperty(optionData, value);
-                if (LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
+                if (LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
                     LayoutViewPart layoutView = LayoutViewPart.findView();
                     if (layoutView != null) {
                         layoutView.refresh();

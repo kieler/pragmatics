@@ -46,20 +46,13 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 public abstract class OgdfLayouter {
 
     /** default value for border spacing. */
-    public static final float DEF_BORDER_SPACING = 15;
-    
-    /** layout option identifier for label edge distance. */
-    public static final String LABEL_EDGE_DIST_ID
-            = "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance";
+    public static final float DEF_BORDER_SPACING = 15.0f;
     /** default value for label edge distance. */
     public static final float DEF_LABEL_EDGE_DIST = 15.0f;
-    /** label edge distance property. */
-    public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
-            LABEL_EDGE_DIST_ID, DEF_LABEL_EDGE_DIST);
     
     /** layout option identifier for label margin distance. */
     public static final String LABEL_MARGIN_DIST_ID
-            = "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance";
+            = "de.cau.cs.kieler.ogdf.labelDistance";
     /** default value for label margin distance. */
     public static final float DEF_LABEL_MARGIN_DIST = 15.0f;
     /** label margin distance property. */
@@ -179,7 +172,7 @@ public abstract class OgdfLayouter {
         Ogdf.createLabelLayouter();
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // TODO as soon as OGDF provides a better label layouter this should be reworked
-        float edgeDistance = parentLayout.getProperty(LABEL_EDGE_DIST);
+        float edgeDistance = parentLayout.getProperty(LayoutOptions.LABEL_SPACING);
         if (edgeDistance < 0) {
             edgeDistance = DEF_LABEL_EDGE_DIST;
         }

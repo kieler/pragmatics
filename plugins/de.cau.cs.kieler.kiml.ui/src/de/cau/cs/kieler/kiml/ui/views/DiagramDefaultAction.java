@@ -94,7 +94,7 @@ public class DiagramDefaultAction extends Action {
         }
 
         final Object value;
-        if (optionData.getId().equals(LayoutOptions.LAYOUTER_HINT_ID)) {
+        if (optionData.getId().equals(LayoutOptions.ALGORITHM_ID)) {
             value = LayoutPropertySource.getLayoutHint((String) entry.getValueAsString());
         } else {
             value = optionData.parseValue(entry.getValueAsString());

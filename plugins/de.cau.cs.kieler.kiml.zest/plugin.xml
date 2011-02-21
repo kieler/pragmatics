@@ -10,10 +10,10 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
-            id="de.cau.cs.kieler.kiml.zest.spring"
+            id="de.cau.cs.kieler.zest.spring"
             name="Spring Layout"
             parameter="SpringLayout"
-            type="de.cau.cs.kieler.layout.types.force">
+            type="de.cau.cs.kieler.type.force">
          <supportedDiagram
                priority="5"
                type="de.cau.cs.kieler.layout.diagrams.general">
@@ -22,7 +22,7 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
-            id="de.cau.cs.kieler.kiml.zest.grid"
+            id="de.cau.cs.kieler.zest.grid"
             name="Grid Layout"
             parameter="GridLayout">
          <supportedDiagram
@@ -33,10 +33,10 @@
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.zest"
             class="de.cau.cs.kieler.kiml.zest.ZestLayoutProvider"
-            id="de.cau.cs.kieler.kiml.zest.radial"
+            id="de.cau.cs.kieler.zest.radial"
             name="Radial Layout"
             parameter="RadialLayout"
-            type="de.cau.cs.kieler.layout.types.radial">
+            type="de.cau.cs.kieler.type.tree">
          <supportedDiagram
                priority="4"
                type="de.cau.cs.kieler.layout.diagrams.general">

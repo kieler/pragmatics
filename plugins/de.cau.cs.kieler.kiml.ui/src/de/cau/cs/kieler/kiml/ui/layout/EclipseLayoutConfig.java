@@ -168,7 +168,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         }
         String layoutHint = theLayoutHint;
         if (layoutHint == null) {
-            layoutHint = (String) getOption(editPart, LayoutOptions.LAYOUTER_HINT);
+            layoutHint = (String) getOption(editPart, LayoutOptions.ALGORITHM);
         }
         initialize(targetType, layoutHint, diagramType);
     }

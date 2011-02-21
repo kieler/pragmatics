@@ -24,7 +24,7 @@ import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klodd.hierarchical.modules.ILayerwiseEdgePlacer;
@@ -69,7 +69,7 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
      */
     public int placeEdges(final Layer layer, final float minDist) {
         getMonitor().begin("Edge routing (layer " + layer.getRank() + ")", 1);
-        LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
+        Direction layoutDirection = layer.getLayeredGraph().getLayoutDirection();
 
         // determine number of outgoing connections for each port
         Map<Object, Integer> outgoing = new HashMap<Object, Integer>();
@@ -111,7 +111,7 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 if (layer.getRank() == 0) {
                     PortSide placement = connection.getSourcePort().getData(KShapeLayout.class)
                             .getProperty(LayoutOptions.PORT_SIDE);
-                    if (layoutDirection == LayoutDirection.DOWN) {
+                    if (layoutDirection == Direction.DOWN) {
                         if (placement == PortSide.WEST) {
                             sourcePos = 0.0f;
                         } else if (placement == PortSide.EAST) {
@@ -131,7 +131,7 @@ public class SortingLayerwiseEdgePlacer extends AbstractAlgorithm implements ILa
                 } else if (layer.getHeight() == 1) {
                     PortSide placement = connection.getTargetPort().getData(KShapeLayout.class)
                             .getProperty(LayoutOptions.PORT_SIDE);
-                    if (layoutDirection == LayoutDirection.DOWN) {
+                    if (layoutDirection == Direction.DOWN) {
                         if (placement == PortSide.WEST) {
                             targetPos = 0.0f;
                         } else if (placement == PortSide.EAST) {

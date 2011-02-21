@@ -69,7 +69,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * Initialize default options of the layout provider.
      */
     public LayeredLayoutProvider() {
-        setProperty(LayoutOptions.OBJ_SPACING, Properties.DEF_SPACING);
+        setProperty(LayoutOptions.SPACING, Properties.DEF_SPACING);
         setProperty(LayoutOptions.BORDER_SPACING, Properties.DEF_SPACING);
         setProperty(LayoutOptions.RANDOM_SEED, 1);
     }

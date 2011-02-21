@@ -40,7 +40,7 @@ public class SugiyamaLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         
         // get the minimum spacing and layer distance
-        float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float minSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
@@ -64,6 +64,6 @@ public class SugiyamaLayouter extends OgdfLayouter {
     @Override
     public void initDefaults(final IPropertyHolder defaultsHolder) {
         super.initDefaults(defaultsHolder);
-        defaultsHolder.setProperty(LayoutOptions.OBJ_SPACING, DEF_MIN_SPACING);
+        defaultsHolder.setProperty(LayoutOptions.SPACING, DEF_MIN_SPACING);
     }
 }

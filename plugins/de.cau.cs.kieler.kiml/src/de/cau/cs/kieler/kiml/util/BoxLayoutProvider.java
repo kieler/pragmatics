@@ -34,7 +34,7 @@ import de.cau.cs.kieler.kiml.util.alg.BoxSorter;
 public class BoxLayoutProvider extends AbstractLayoutProvider {
     
     /** the layout provider id. */
-    public static final String ID = "de.cau.cs.kieler.kiml.layouter.boxLayout";
+    public static final String ID = "de.cau.cs.kieler.box";
 
     /** default value for spacing between boxes. */
     private static final float DEFAULT_SPACING = 15.0f;
@@ -48,7 +48,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      * Initialize default options of the layout provider.
      */
     public BoxLayoutProvider() {
-        setProperty(LayoutOptions.OBJ_SPACING, DEFAULT_SPACING);
+        setProperty(LayoutOptions.SPACING, DEFAULT_SPACING);
         setProperty(LayoutOptions.BORDER_SPACING, DEFAULT_SPACING);
         setProperty(LayoutOptions.PRIORITY, 0);
         setProperty(LayoutOptions.EXPAND_NODES, false);
@@ -64,7 +64,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Box layout", 2);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // set option for minimal spacing
-        float objSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float objSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (objSpacing < 0) {
             objSpacing = DEFAULT_SPACING;
         }

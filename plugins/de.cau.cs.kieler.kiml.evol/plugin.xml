@@ -20,7 +20,7 @@
             distribution="GAUSSIAN"
             lowerBound="0.001"
             name="Aspect Ratio"
-            option="de.cau.cs.kieler.layout.options.aspectRatio"
+            option="de.cau.cs.kieler.aspectRatio"
             upperBound="1000.0">
       </data>
       <data
@@ -40,20 +40,14 @@
       <data
             distribution="GAUSSIAN"
             lowerBound="0.0"
-            option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
-            upperBound="1.0e7">
-      </data>
-      <data
-            distribution="GAUSSIAN"
-            lowerBound="0.0"
-            option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
+            option="de.cau.cs.kieler.ogdf.labelDistance"
             upperBound="1.0e7">
       </data>
       <data
             distribution="UNIFORM"
             enum="de.cau.cs.kieler.kiml.layout.options.LayoutDirection"
             name="Layout Direction"
-            option="de.cau.cs.kieler.layout.options.layoutDirection">
+            option="de.cau.cs.kieler.direction">
       </data>
       <data
             distribution="GAUSSIAN"
@@ -98,7 +92,7 @@
             distribution="GAUSSIAN"
             lowerBound="0.0"
             name="Object Spacing"
-            option="de.cau.cs.kieler.layout.options.minSpacing"
+            option="de.cau.cs.kieler.spacing"
             upperBound="1.0e7">
       </data>
       <data
@@ -111,7 +105,7 @@
       <data
             distribution="GAUSSIAN"
             lowerBound="1"
-            option="de.cau.cs.kieler.kiml.ogdf.option.iterations"
+            option="de.cau.cs.kieler.ogdf.iterations"
             upperBound="20000">
       </data>
       <data
@@ -124,7 +118,7 @@
       <data
             distribution="UNIFORM"
             name="Quality vs. Speed"
-            option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed">
+            option="de.cau.cs.kieler.ogdf.fmmm.qualityVsSpeed">
       </data>
       <data
             distribution="GAUSSIAN"
@@ -192,16 +186,16 @@
       <data
             distribution="UNIFORM"
             name="Costs"
-            option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs">
+            option="de.cau.cs.kieler.ogdf.davidsonHarel.costs">
       </data>
       <data
             distribution="UNIFORM"
-            option="de.cau.cs.kieler.layout.options.edgeRouting">
+            option="de.cau.cs.kieler.edgeRouting">
       </data>
       <data
             distribution="UNIFORM"
             name="Expand Nodes"
-            option="de.cau.cs.kieler.layout.options.expandNodes">
+            option="de.cau.cs.kieler.expandNodes">
       </data>
       <data
             distribution="GAUSSIAN"
@@ -219,7 +213,7 @@
       </data>
       <data
             distribution="UNIFORM"
-            option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed">
+            option="de.cau.cs.kieler.ogdf.davidsonHarel.speed">
       </data>
       <data
             distribution="GAUSSIAN"
@@ -238,7 +232,7 @@
             distribution="GAUSSIAN"
             lowerBound="0"
             name="Border Spacing"
-            option="de.cau.cs.kieler.layout.options.borderSpacing">
+            option="de.cau.cs.kieler.borderSpacing">
       </data>
       <data
             distribution="GAUSSIAN"

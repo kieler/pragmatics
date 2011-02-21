@@ -11,23 +11,15 @@
             appliesTo="parents"
             default="15"
             description="Distance of edge labels to the nodes"
-            id="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
+            id="de.cau.cs.kieler.ogdf.labelDistance"
             name="Label Distance"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="15"
-            description="Spacing of labels to the edges"
-            id="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
-            name="Label Spacing"
             type="float">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
             default="400"
             description="The number of iterations performed by the algorithm."
-            id="de.cau.cs.kieler.kiml.ogdf.option.iterations"
+            id="de.cau.cs.kieler.ogdf.iterations"
             name="Iterations"
             type="int">
       </layoutOption>
@@ -35,7 +27,7 @@
             appliesTo="parents"
             default="false"
             description="Sets whether the initial placement of the choosen is different on every algorithm call."
-            id="de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement"
+            id="de.cau.cs.kieler.ogdf.newInitialPlacement"
             name="New Initial Placement"
             type="boolean">
       </layoutOption>
@@ -44,7 +36,7 @@
             class="de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed"
             default="BEAUTIFULANDFAST"
             description="Specifies whether the algorithm prioritizes quality or speed."
-            id="de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed"
+            id="de.cau.cs.kieler.ogdf.fmmm.qualityVsSpeed"
             name="Quality vs Speed"
             type="enum">
       </layoutOption>
@@ -53,7 +45,7 @@
             class="de.cau.cs.kieler.kiml.ogdf.options.Costs"
             default="STANDARD"
             description="Defines the costs used in the algorithm."
-            id="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs"
+            id="de.cau.cs.kieler.ogdf.davidsonHarel.costs"
             name="Costs"
             type="enum">
       </layoutOption>
@@ -62,256 +54,256 @@
             class="de.cau.cs.kieler.kiml.ogdf.options.Speed"
             default="MEDIUM"
             description="Defines the temperature and the number of iterations."
-            id="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed"
+            id="de.cau.cs.kieler.ogdf.davidsonHarel.speed"
             name="Speed"
             type="enum">
       </layoutOption>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            id="de.cau.cs.kieler.kiml.ogdf.sugiyama"
+            id="de.cau.cs.kieler.ogdf.sugiyama"
             name="Sugiyama"
             parameter="SUGIYAMA"
             preview="images/sugiyama.png"
-            type="de.cau.cs.kieler.layout.types.layered">
+            type="de.cau.cs.kieler.type.layered">
          <supportedDiagram
                priority="9"
                type="de.cau.cs.kieler.layout.diagrams.general">
          </supportedDiagram>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+               option="de.cau.cs.kieler.ogdf.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            id="de.cau.cs.kieler.kiml.ogdf.planarizationUML"
+            id="de.cau.cs.kieler.ogdf.planarization"
             name="Planarization"
             parameter="PLANARIZATION"
             preview="images/planarization.png"
-            type="de.cau.cs.kieler.layout.types.orthogonal">
+            type="de.cau.cs.kieler.type.orthogonal">
          <supportedDiagram
                priority="10"
                type="de.cau.cs.kieler.layout.diagrams.classDiagram">
          </supportedDiagram>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.layoutDirection">
+               option="de.cau.cs.kieler.direction">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+               option="de.cau.cs.kieler.ogdf.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.aspectRatio">
+               option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            id="de.cau.cs.kieler.kiml.ogdf.fmmm"
+            id="de.cau.cs.kieler.ogdf.fmmm"
             name="FMMM"
             parameter="FMMM"
             preview="images/fmmm.png"
-            type="de.cau.cs.kieler.layout.types.force">
+            type="de.cau.cs.kieler.type.force">
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.fmmm.qualityVsSpeed">
+               option="de.cau.cs.kieler.ogdf.fmmm.qualityVsSpeed">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement">
+               option="de.cau.cs.kieler.ogdf.newInitialPlacement">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+               option="de.cau.cs.kieler.ogdf.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            id="de.cau.cs.kieler.kiml.ogdf.davidsonHarel"
+            id="de.cau.cs.kieler.ogdf.davidsonHarel"
             name="Davidson-Harel"
             parameter="DAVIDSON_HAREL"
             preview="images/davidson-harel.png"
-            type="de.cau.cs.kieler.layout.types.force">
+            type="de.cau.cs.kieler.type.force">
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.costs">
+               option="de.cau.cs.kieler.ogdf.davidsonHarel.costs">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.davidsonHarel.speed">
+               option="de.cau.cs.kieler.ogdf.davidsonHarel.speed">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+               option="de.cau.cs.kieler.ogdf.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            id="de.cau.cs.kieler.kiml.ogdf.fruchtermanReingold"
+            id="de.cau.cs.kieler.ogdf.fruchtermanReingold"
             name="Fruchterman-Reingold"
             parameter="FRUCHTERMAN_REINGOLD"
             preview="images/fruchterman-reingold.png"
-            type="de.cau.cs.kieler.layout.types.force">
+            type="de.cau.cs.kieler.type.force">
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.iterations">
+               option="de.cau.cs.kieler.ogdf.iterations">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+               option="de.cau.cs.kieler.ogdf.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            id="de.cau.cs.kieler.kiml.ogdf.circular"
+            id="de.cau.cs.kieler.ogdf.circular"
             name="Circular"
             parameter="CIRCULAR"
             preview="images/circular.png"
-            type="de.cau.cs.kieler.layout.types.circle">
+            type="de.cau.cs.kieler.type.circle">
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+               option="de.cau.cs.kieler.ogdf.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            id="de.cau.cs.kieler.kiml.ogdf.tree"
+            id="de.cau.cs.kieler.ogdf.tree"
             name="Tree"
             parameter="TREE"
             preview="images/tree.png"
-            type="de.cau.cs.kieler.layout.types.tree">
+            type="de.cau.cs.kieler.type.tree">
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.layoutDirection">
+               option="de.cau.cs.kieler.direction">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.edgeRouting">
+               option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+               option="de.cau.cs.kieler.ogdf.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            id="de.cau.cs.kieler.kiml.ogdf.radialTree"
+            id="de.cau.cs.kieler.ogdf.radialTree"
             name="Radial Tree"
             parameter="RADIAL_TREE"
             preview="images/radial-tree.png"
-            type="de.cau.cs.kieler.layout.types.tree">
+            type="de.cau.cs.kieler.type.tree">
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+               option="de.cau.cs.kieler.ogdf.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.ogdf"
             class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
-            id="de.cau.cs.kieler.kiml.ogdf.upwardPlanarization"
+            id="de.cau.cs.kieler.kiml.upwardPlanarization"
             name="Upward-Planarization"
             parameter="UPWARD_PLANARIZATION"
             preview="images/upward.png"
-            type="de.cau.cs.kieler.layout.types.layered">
+            type="de.cau.cs.kieler.type.layered">
          <knownOption
-               option="de.cau.cs.kieler.layout.options.minSpacing">
+               option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.borderSpacing">
+               option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+               option="de.cau.cs.kieler.labelSpacing">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+               option="de.cau.cs.kieler.ogdf.labelDistance">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.layout.options.randomSeed">
+               option="de.cau.cs.kieler.randomSeed">
          </knownOption>
       </layoutAlgorithm>
    </extension>

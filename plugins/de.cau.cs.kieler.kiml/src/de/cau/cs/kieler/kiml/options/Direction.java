@@ -19,7 +19,7 @@ package de.cau.cs.kieler.kiml.options;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public enum LayoutDirection {
+public enum Direction {
 
     /** undefined layout direction. */
     UNDEFINED,
@@ -38,7 +38,7 @@ public enum LayoutDirection {
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static LayoutDirection valueOf(final int i) {
+    public static Direction valueOf(final int i) {
         return values()[i];
     }
     

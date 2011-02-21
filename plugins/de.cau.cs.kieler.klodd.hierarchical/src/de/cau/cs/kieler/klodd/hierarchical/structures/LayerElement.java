@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -417,8 +417,8 @@ public class LayerElement {
      * @param minDist minimal distance for routed edges
      */
     public void setCrosswisePos(final float pos, final float minDist) {
-        LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
-        if (layoutDirection == LayoutDirection.DOWN) {
+        Direction layoutDirection = layer.getLayeredGraph().getLayoutDirection();
+        if (layoutDirection == Direction.DOWN) {
             position.setX(pos + westRanks * minDist + preSpacingCross);
         } else {
             position.setY(pos + northRanks * minDist + preSpacingCross);
@@ -433,8 +433,8 @@ public class LayerElement {
      * @param minDist minimal distance for routed edges
      */
     public void setLengthwisePos(final float pos, final float minDist) {
-        LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
-        if (layoutDirection == LayoutDirection.DOWN) {
+        Direction layoutDirection = layer.getLayeredGraph().getLayoutDirection();
+        if (layoutDirection == Direction.DOWN) {
             position.setY(pos + northRanks * minDist + preSpacingLength);
         } else {
             position.setX(pos + westRanks * minDist + preSpacingLength);
@@ -450,8 +450,8 @@ public class LayerElement {
      */
     public float getTotalCrosswiseDim(final float minDist, final boolean preSpacing) {
         if (totalCrosswiseDim < 0.0f) {
-            LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
-            if (layoutDirection == LayoutDirection.DOWN) {
+            Direction layoutDirection = layer.getLayeredGraph().getLayoutDirection();
+            if (layoutDirection == Direction.DOWN) {
                 totalCrosswiseDim = (westRanks + eastRanks) * minDist + realWidth;
                 if (elemObj instanceof KNode) {
                     float minX = 0, maxX = realWidth;
@@ -498,8 +498,8 @@ public class LayerElement {
      */
     public float getTotalLengthwiseDim(final float minDist) {
         if (totalLengthwiseDim < 0.0f) {
-            LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
-            if (layoutDirection == LayoutDirection.DOWN) {
+            Direction layoutDirection = layer.getLayeredGraph().getLayoutDirection();
+            if (layoutDirection == Direction.DOWN) {
                 totalLengthwiseDim = (northRanks + southRanks) * minDist + realHeight;
                 if (elemObj instanceof KNode) {
                     float minY = 0, maxY = realHeight;
@@ -614,8 +614,8 @@ public class LayerElement {
      * @return number of edges in front
      */
     public int getEdgesFront() {
-        LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
-        return layoutDirection == LayoutDirection.DOWN ? northRanks : westRanks;
+        Direction layoutDirection = layer.getLayeredGraph().getLayoutDirection();
+        return layoutDirection == Direction.DOWN ? northRanks : westRanks;
     }
 
     /**
@@ -624,8 +624,8 @@ public class LayerElement {
      * @return number of edges in the back
      */
     public int getEdgesBack() {
-        LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
-        return layoutDirection == LayoutDirection.DOWN ? southRanks : eastRanks;
+        Direction layoutDirection = layer.getLayeredGraph().getLayoutDirection();
+        return layoutDirection == Direction.DOWN ? southRanks : eastRanks;
     }
 
     /**
@@ -654,7 +654,7 @@ public class LayerElement {
      *            else for a backwards layer sweep
      */
     private void calcPortRanks(final boolean forward) {
-        LayoutDirection layoutDirection = layer.getLayeredGraph().getLayoutDirection();
+        Direction layoutDirection = layer.getLayeredGraph().getLayoutDirection();
         portRanks = new HashMap<KPort, Integer>();
 
         if (elemObj instanceof KNode) {
@@ -846,7 +846,7 @@ public class LayerElement {
      *            outgoing connections, else for incoming connections
      */
     public void sortPorts(final Map<KPort, Double> abstractPortRanks, final boolean isoutgoing) {
-        boolean vertical = layer.getLayeredGraph().getLayoutDirection() == LayoutDirection.DOWN;
+        boolean vertical = layer.getLayeredGraph().getLayoutDirection() == Direction.DOWN;
         Arrays.sort(northPorts, new DirectedPortComparator(abstractPortRanks, vertical ? !isoutgoing
                 : isoutgoing, !isoutgoing));
         Arrays.sort(eastPorts, new DirectedPortComparator(abstractPortRanks, vertical ? !isoutgoing
@@ -913,7 +913,7 @@ public class LayerElement {
      */
     public void sortPorts(final Map<KPort, Double> outgoingPortRanks,
             final Map<KPort, Double> incomingPortRanks) {
-        boolean vertical = layer.getLayeredGraph().getLayoutDirection() == LayoutDirection.DOWN;
+        boolean vertical = layer.getLayeredGraph().getLayoutDirection() == Direction.DOWN;
         Arrays.sort(northPorts, new SymmetricPortComparator(outgoingPortRanks, incomingPortRanks, false,
                 vertical));
         Arrays.sort(eastPorts, new SymmetricPortComparator(outgoingPortRanks, incomingPortRanks,

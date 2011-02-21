@@ -169,7 +169,7 @@
       &lt;/diagramType&gt;
       &lt;option
             class=&quot;de.cau.cs.kieler.synccharts.Region&quot;
-            option=&quot;de.cau.cs.kieler.layout.options.diagramType&quot;
+            option=&quot;de.cau.cs.kieler.diagramType&quot;
             value=&quot;de.cau.cs.kieler.layout.info.types.stateMachine&quot;&gt;
       &lt;/option&gt;
    &lt;/extension&gt;

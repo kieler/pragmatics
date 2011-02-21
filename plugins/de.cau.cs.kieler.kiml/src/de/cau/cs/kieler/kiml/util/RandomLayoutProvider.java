@@ -37,7 +37,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 public class RandomLayoutProvider extends AbstractLayoutProvider {
     
     /** the layout provider id. */
-    public static final String ID = "de.cau.cs.kieler.kiml.layouter.random";
+    public static final String ID = "de.cau.cs.kieler.random";
 
     /** default value for aspect ratio. */
     private static final float DEF_ASPECT_RATIO = 1.6f;
@@ -50,7 +50,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
     public RandomLayoutProvider() {
         setProperty(LayoutOptions.RANDOM_SEED, 0);
         setProperty(LayoutOptions.ASPECT_RATIO, DEF_ASPECT_RATIO);
-        setProperty(LayoutOptions.OBJ_SPACING, DEF_SPACING);
+        setProperty(LayoutOptions.SPACING, DEF_SPACING);
         setProperty(LayoutOptions.BORDER_SPACING, DEF_SPACING);
     }
     
@@ -83,7 +83,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         }
         
         // get spacing values
-        float spacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float spacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (spacing <= 0) {
             spacing = DEF_SPACING;
         }

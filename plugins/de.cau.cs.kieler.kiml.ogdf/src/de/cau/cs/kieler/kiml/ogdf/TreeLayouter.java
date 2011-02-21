@@ -18,7 +18,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -42,7 +42,7 @@ public class TreeLayouter extends OgdfLayouter {
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
 
         // get the general minimum distance
-        float minDist = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float minDist = parentLayout.getProperty(LayoutOptions.SPACING);
         if (minDist < 0) {
             minDist = DEF_MIN_DIST;
         }
@@ -50,7 +50,7 @@ public class TreeLayouter extends OgdfLayouter {
         EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         boolean orthogonal = edgeRouting == EdgeRouting.ORTHOGONAL;
         // get orientation
-        LayoutDirection direction = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
+        Direction direction = parentLayout.getProperty(LayoutOptions.DIRECTION);
         int orientation = Ogdf.ORIENTATION_TOP_TO_BOTTOM;
         switch (direction) {
         case LEFT:
@@ -84,9 +84,9 @@ public class TreeLayouter extends OgdfLayouter {
     @Override
     public void initDefaults(final IPropertyHolder defaultsHolder) {
         super.initDefaults(defaultsHolder);
-        defaultsHolder.setProperty(LayoutOptions.OBJ_SPACING, DEF_MIN_DIST);
+        defaultsHolder.setProperty(LayoutOptions.SPACING, DEF_MIN_DIST);
         defaultsHolder.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
-        defaultsHolder.setProperty(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.DOWN);
+        defaultsHolder.setProperty(LayoutOptions.DIRECTION, Direction.DOWN);
     }
 
 }

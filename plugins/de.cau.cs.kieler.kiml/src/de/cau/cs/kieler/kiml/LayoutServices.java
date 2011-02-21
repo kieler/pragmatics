@@ -290,7 +290,7 @@ public class LayoutServices {
         List<LayoutOptionData<?>> optionDataList = new LinkedList<LayoutOptionData<?>>();
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
             if (providerData.knowsOption(optionData.getId())
-                    || LayoutOptions.LAYOUTER_HINT_ID.equals(optionData.getId())) {
+                    || LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
                 if (optionData.hasTarget(targetType)) {
                     optionDataList.add(optionData);
                 }

@@ -50,7 +50,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
 
     /** The layout option ID for the planar testing algorithm option. */
     public static final String PLANAR_TESTING_ALGORITHM_ID =
-        "de.cau.cs.kieler.klay.planar.options.planarTestingAlgorithm";
+        "de.cau.cs.kieler.klay.planar.planarityTest";
     /** property for planar testing algorithm. */
     public static final IProperty<PlanarityTestStrategy> PLANAR_TESTING_ALGORITHM =
         new Property<PlanarityTestStrategy>(

@@ -17,7 +17,7 @@ import net.ogdf.lib.Ogdf;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
@@ -46,12 +46,12 @@ public class PlanarizationLayouter extends OgdfLayouter {
             pageRatio = DEF_PAGE_RATIO;
         }
         // get separation
-        float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float minSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (minSpacing < 0) {
             minSpacing = DEF_MINSPACING;
         }
         // get layout direction
-        LayoutDirection direction = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
+        Direction direction = parentLayout.getProperty(LayoutOptions.DIRECTION);
         int layoutDirection;
         switch (direction) {
         case UP:
@@ -87,8 +87,8 @@ public class PlanarizationLayouter extends OgdfLayouter {
     @Override
     public void initDefaults(final IPropertyHolder defaultsHolder) {
         super.initDefaults(defaultsHolder);
-        defaultsHolder.setProperty(LayoutOptions.LAYOUT_DIRECTION, LayoutDirection.UP);
-        defaultsHolder.setProperty(LayoutOptions.OBJ_SPACING, DEF_MINSPACING);
+        defaultsHolder.setProperty(LayoutOptions.DIRECTION, Direction.UP);
+        defaultsHolder.setProperty(LayoutOptions.SPACING, DEF_MINSPACING);
         defaultsHolder.setProperty(LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
     }
 }

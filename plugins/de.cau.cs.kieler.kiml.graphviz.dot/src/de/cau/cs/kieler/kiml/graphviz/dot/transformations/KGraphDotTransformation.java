@@ -49,7 +49,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
@@ -75,7 +75,7 @@ public class KGraphDotTransformation {
     
     /** layout option identifier for label distance. */
     public static final String LABEL_DISTANCE_ID =
-            "de.cau.cs.kieler.kiml.graphviz.options.labelDistance";
+            "de.cau.cs.kieler.graphviz.labelDistance";
     /** label distance property. */
     public static final IProperty<Float> LABEL_DISTANCE = new Property<Float>(
             LABEL_DISTANCE_ID, 1.0f);
@@ -314,11 +314,11 @@ public class KGraphDotTransformation {
         }
 
         // create edges
-        LayoutDirection layoutDirection =
-                parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
+        Direction layoutDirection =
+                parentLayout.getProperty(LayoutOptions.DIRECTION);
         boolean vertical =
-                layoutDirection == LayoutDirection.DOWN
-                        || layoutDirection == LayoutDirection.UP;
+                layoutDirection == Direction.DOWN
+                        || layoutDirection == Direction.UP;
         for (KNode childNode : parent.getChildren()) {
             for (KEdge outgoingEdge : childNode.getOutgoingEdges()) {
                 // consider only edges on the same hierarchy level
@@ -377,7 +377,7 @@ public class KGraphDotTransformation {
         graphAttrStatement.setType(AttributeType.GRAPH);
         List<Attribute> graphAttrs = graphAttrStatement.getAttributes();
         // set minimal spacing
-        float minSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float minSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
@@ -403,7 +403,7 @@ public class KGraphDotTransformation {
         }
         // set layout direction
         if (command.equals(DOT_COMMAND)) {
-            switch (parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION)) {
+            switch (parentLayout.getProperty(LayoutOptions.DIRECTION)) {
             case DOWN:
                 graphAttrs.add(createAttribute(ATTR_RANKDIR, "TB"));
                 break;

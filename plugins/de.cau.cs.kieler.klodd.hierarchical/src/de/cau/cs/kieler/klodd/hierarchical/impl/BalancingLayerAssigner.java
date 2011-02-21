@@ -18,7 +18,7 @@ import java.util.ListIterator;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klodd.hierarchical.HierarchicalDataflowLayoutProvider;
 import de.cau.cs.kieler.klodd.hierarchical.InteractionLevel;
@@ -63,8 +63,8 @@ public class BalancingLayerAssigner extends AbstractAlgorithm implements ILayerA
                 HierarchicalDataflowLayoutProvider.INTERACTIVE);
         boolean interactive = interactionLevel == InteractionLevel.LAYERS
                 || interactionLevel == InteractionLevel.FULL;
-        LayoutDirection layoutDirection = parentLayout.getProperty(LayoutOptions.LAYOUT_DIRECTION);
-        boolean vertical = layoutDirection == LayoutDirection.DOWN;
+        Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
+        boolean vertical = layoutDirection == Direction.DOWN;
 
         // balance layer assignment of each element in the layering
         if (layeredGraph.getLayers().size() >= 2) {

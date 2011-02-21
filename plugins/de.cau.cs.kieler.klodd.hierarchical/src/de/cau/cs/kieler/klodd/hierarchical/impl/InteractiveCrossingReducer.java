@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.klodd.hierarchical.modules.ICrossingReducer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.LayerElement;
@@ -38,7 +38,7 @@ public class InteractiveCrossingReducer extends AbstractAlgorithm implements ICr
     public void reduceCrossings(final LayeredGraph layeredGraph) {
         getMonitor().begin("Interactive crossing reduction", 1);
 
-        final LayoutDirection layoutDirection = layeredGraph.getLayoutDirection();
+        final Direction layoutDirection = layeredGraph.getLayoutDirection();
         for (Layer layer : layeredGraph.getLayers()) {
             // calculate lengthwise layer position
             float lengthSum = 0.0f;
@@ -46,7 +46,7 @@ public class InteractiveCrossingReducer extends AbstractAlgorithm implements ICr
             for (LayerElement element : layer.getElements()) {
                 if (element.getKNode() != null) {
                     count++;
-                    if (layoutDirection == LayoutDirection.DOWN) {
+                    if (layoutDirection == Direction.DOWN) {
                         lengthSum += element.getKNode().getYpos();
                     } else {
                         lengthSum += element.getKNode().getXpos();
@@ -71,10 +71,10 @@ public class InteractiveCrossingReducer extends AbstractAlgorithm implements ICr
     }
     
     private float getCompareValue(final LayerElement element,
-            final LayoutDirection layoutDirection, final float lengthPos) {
+            final Direction layoutDirection, final float lengthPos) {
         if (element.getKNode() != null) {
             // process a node or external port
-            if (layoutDirection == LayoutDirection.DOWN) {
+            if (layoutDirection == Direction.DOWN) {
                 return element.getKNode().getXpos();
             } else {
                 return element.getKNode().getYpos();
@@ -83,7 +83,7 @@ public class InteractiveCrossingReducer extends AbstractAlgorithm implements ICr
             // process an edge
             KEdge edge = (KEdge) element.getElemObj();
             KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-            if (layoutDirection == LayoutDirection.DOWN) {
+            if (layoutDirection == Direction.DOWN) {
                 float currVal = edgeLayout.getSourcePoint().getX();
                 for (KPoint bendPoint : edgeLayout.getBendPoints()) {
                     if (bendPoint.getY() > lengthPos) {

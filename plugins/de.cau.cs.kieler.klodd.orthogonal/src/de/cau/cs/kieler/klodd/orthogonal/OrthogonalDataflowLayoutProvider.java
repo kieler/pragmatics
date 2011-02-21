@@ -75,7 +75,7 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
         // get the currently configured modules
         updateModules();
         // set option for minimal distance
-        float minDist = layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.OBJ_SPACING);
+        float minDist = layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.SPACING);
         if (minDist < 0) {
             minDist = DEF_MIN_DIST;
         }

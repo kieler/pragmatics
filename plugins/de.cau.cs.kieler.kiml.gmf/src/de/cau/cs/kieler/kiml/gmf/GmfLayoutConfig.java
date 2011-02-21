@@ -201,9 +201,9 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             if (containerEditPart != null) {
                 // look for a layout hint for the container element
                 KOption containerLayoutHintOption = getKOption(containerEditPart,
-                        LayoutOptions.LAYOUTER_HINT_ID);
+                        LayoutOptions.ALGORITHM_ID);
                 if (containerLayoutHintOption == null && diagramEditPart != null) {
-                    KOption koption = getKOption(diagramEditPart, LayoutOptions.LAYOUTER_HINT_ID);
+                    KOption koption = getKOption(diagramEditPart, LayoutOptions.ALGORITHM_ID);
                     if (koption != null && koption.isDefault()) {
                         containerLayoutHintOption = koption;
                     }
@@ -304,7 +304,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         String partLayoutHint = null;
         if (optionStyle != null) {
             for (KOption koption : optionStyle.getOptions()) {
-                if (LayoutOptions.LAYOUTER_HINT_ID.equals(koption.getKey())) {
+                if (LayoutOptions.ALGORITHM_ID.equals(koption.getKey())) {
                     partLayoutHint = koption.getValue();
                 }
                 LayoutOptionData<?> optionData = LayoutServices.getInstance()
@@ -316,7 +316,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         }
         if (partLayoutHint == null && diagramEditPart != null) {
             KOption koption = getKOption(diagramEditPart,
-                    LayoutOptions.LAYOUTER_HINT_ID);
+                    LayoutOptions.ALGORITHM_ID);
             if (koption != null && koption.isDefault()) {
                 partLayoutHint = koption.getValue();
             }

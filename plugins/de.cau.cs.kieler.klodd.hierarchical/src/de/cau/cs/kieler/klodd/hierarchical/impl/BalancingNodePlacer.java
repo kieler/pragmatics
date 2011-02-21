@@ -17,7 +17,7 @@ import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.options.LayoutDirection;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klodd.hierarchical.modules.INodePlacer;
 import de.cau.cs.kieler.klodd.hierarchical.structures.Layer;
@@ -42,7 +42,7 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
     /** maximal crosswise dimension of the layered graph. */
     private float maxWidth;
     /** layout direction for this algorithm instance. */
-    private LayoutDirection layoutDirection;
+    private Direction layoutDirection;
     /** indicates whether node balancing has priority over diagram size. */
     private boolean balanceOverSize;
     /** array of move requests for the linear segments. */
@@ -142,7 +142,7 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
             if (!Float.isNaN(moveDelta)) {
                 for (LayerElement element : linearSegment.getElements()) {
                     KPoint pos = element.getPosition();
-                    if (layoutDirection == LayoutDirection.DOWN) {
+                    if (layoutDirection == Direction.DOWN) {
                         pos.setX(pos.getX() + moveDelta);
                     } else {
                         pos.setY(pos.getY() + moveDelta);
@@ -154,7 +154,7 @@ public class BalancingNodePlacer extends AbstractAlgorithm implements INodePlace
         // update crosswise dimension for the whole graph
         for (Layer layer2 : layeredGraph.getLayers()) {
             LayerElement lastElem = layer2.getElements().get(layer2.getElements().size() - 1);
-            layer2.setCrosswiseDim(layoutDirection == LayoutDirection.DOWN
+            layer2.setCrosswiseDim(layoutDirection == Direction.DOWN
                     ? lastElem.getPosition().getX() : lastElem.getPosition().getY()
                     + lastElem.getTotalCrosswiseDim(objSpacing, false) + borderSpacing);
             layeredGraph.setCrosswiseDim(Math.max(layeredGraph.getCrosswiseDim(),
