@@ -370,14 +370,14 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
         assert theLayeredGraph != null;
         
         getMonitor().begin("Network-Simplex Layering", 1);
+        
+        layeredGraph = theLayeredGraph;
 
         Collection<LNode> theNodes = layeredGraph.getLayerlessNodes();
         if (theNodes.size() < 1) {
             getMonitor().done();
             return;
         }
-        
-        layeredGraph = theLayeredGraph;
         
         // enhance layering, if requested
         LayeringEnhancer enhancer = null;

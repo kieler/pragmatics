@@ -10,6 +10,7 @@ Require-Bundle: de.cau.cs.kieler.core,
  net.sourceforge.lpsolve;bundle-version="5.5.0";resolution:=optional
 Export-Package: de.cau.cs.kieler.klay.layered,
  de.cau.cs.kieler.klay.layered.graph,
+ de.cau.cs.kieler.klay.layered.intermediate,
  de.cau.cs.kieler.klay.layered.p1cycles,
  de.cau.cs.kieler.klay.layered.p2layers,
  de.cau.cs.kieler.klay.layered.p3order,

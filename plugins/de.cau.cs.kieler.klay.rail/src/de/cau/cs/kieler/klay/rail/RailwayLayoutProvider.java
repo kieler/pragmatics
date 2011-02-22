@@ -29,11 +29,13 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
+import de.cau.cs.kieler.klay.layered.IIntermediateLayoutPhase;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.EdgeSplitter;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.rail.impl.RailwayEdgeRouter;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNetworkSimplexLayerer;
@@ -58,6 +60,12 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     private ILayoutPhase nodePlacer = new RailwayNodePlacer();
     /** phase 4: Edge routing module. */
     private ILayoutPhase edgeRouter = new RailwayEdgeRouter();
+    
+    /**
+     * Intermediate phase: proper layering module. This is just temporarily hardcoded
+     * into the workflow. This will be dynamically managed by dependencies later on.
+     */
+    private IIntermediateLayoutPhase edgeSplitter = new EdgeSplitter();
 
     private static final int SWITCH_PORTS = 3;
 
@@ -145,7 +153,9 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         // phase 2: layering
         layerer.reset(monitor.subTask(1));
         layerer.execute(layeredGraph);
-        layeredGraph.splitEdges();
+        // intermediate phase: edge splitting
+        edgeSplitter.reset(monitor.subTask(1));
+        edgeSplitter.execute(layeredGraph);
         // phase 3: node placement
         nodePlacer.reset(monitor.subTask(1));
         nodePlacer.execute(layeredGraph);
