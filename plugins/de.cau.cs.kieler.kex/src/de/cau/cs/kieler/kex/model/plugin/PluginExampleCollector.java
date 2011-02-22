@@ -66,8 +66,8 @@ public class PluginExampleCollector extends ExampleCollector {
             try {
                 String elementName = element.getName();
                 if (PluginConstants.Example.EXAMPLE.equals(elementName)) {
-                    String exampleTitle = element.getAttribute(PluginConstants.Example.TITLE);
-                    if (getExamplePool().containsKey(exampleTitle)) {
+                    String exampleId = element.getAttribute(PluginConstants.Example.ID);
+                    if (getExamplePool().containsKey(exampleId)) {
                         // TODO should normally not happen
                         // throw RUNTIME Exception...
                         // or simple assume that this does not happen.
@@ -80,7 +80,7 @@ public class PluginExampleCollector extends ExampleCollector {
                         // if an example could not load correctly take the next one.
                         continue;
                     }
-                    this.examplePool.put(exampleTitle, example);
+                    this.examplePool.put(exampleId, example);
                 }
             } catch (InvalidRegistryObjectException e) {
                 throw new KielerException("Error while loading example \""
