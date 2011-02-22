@@ -13,15 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.ui.views;
 
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
 
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutServices;
@@ -35,12 +31,7 @@ import de.cau.cs.kieler.kiml.ui.Messages;
  * @kieler.rating 2011-01-24 proposed yellow msp
  * @author msp
  */
-public class LayouterHintCellEditor extends CellEditor {
-
-    /** the label for displaying the current selection. */
-    private Label label;
-    /** the currently set layouter hint identifier. */
-    private String value;
+public class LayouterHintCellEditor extends DialogCellEditor {
     
     /**
      * Creates a layouter hint cell editor.
@@ -55,83 +46,55 @@ public class LayouterHintCellEditor extends CellEditor {
      * {@inheritDoc}
      */
     @Override
-    protected Control createControl(final Composite parent) {
-        label = new Label(parent, SWT.LEFT);
-        label.setFont(parent.getFont());
-        label.setBackground(parent.getBackground());
-        Menu menu = LayoutViewPart.findView().getControl().getMenu();
-        label.setMenu(menu);
+    protected Control createContents(final Composite cell) {
+        Control label = super.createContents(cell);
         label.addMouseListener(new MouseAdapter() {
-            public void mouseUp(final MouseEvent e) {
-                if (e.button == 1) {
-                    showDialog();
+            public void mouseDoubleClick(final MouseEvent e) {
+                Object newValue = openDialogBox(cell);
+                if (newValue != null) {
+                    markDirty();
+                    doSetValue(newValue);
+                    fireApplyEditorValue();
                 }
             }
         });
         return label;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void dispose() {
-        label.setMenu(null);
-        super.dispose();
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void doSetFocus() {
-        label.setFocus();
-        showDialog();
-    }
-    
-    /**
-     * Open a dialog for selection of a layout algorithm and set the new value.
-     */
-    private void showDialog() {
-        LayouterHintDialog dialog = new LayouterHintDialog(Display.getDefault().getActiveShell(),
-                value);
-        if (dialog.open() == LayouterHintDialog.OK) {
-            doSetValue(dialog.getSelectedHint());
-            valueChanged(true, true);
-            fireApplyEditorValue();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Object doGetValue() {
-        return value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void doSetValue(final Object thevalue) {
-        if (thevalue instanceof String) {
-            this.value = (String) thevalue;
+    protected void updateContents(final Object value) {
+        if (value instanceof String) {
             String newText;
             LayoutServices layoutServices = LayoutServices.getInstance();
-            LayoutTypeData layoutType = layoutServices.getTypeData(value);
+            LayoutTypeData layoutType = layoutServices.getTypeData((String) value);
             if (layoutType != null) {
                 newText = layoutType.toString();
             } else {
-                LayoutAlgorithmData layouterData = layoutServices.getAlgorithmData(value);
+                LayoutAlgorithmData layouterData = layoutServices.getAlgorithmData((String) value);
                 if (layouterData != null) {
                     newText = layouterData.toString();
                 } else {
                     newText = Messages.getString("kiml.ui.8");
                 }
             }
-            label.setText(newText);
+            super.updateContents(newText);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Object openDialogBox(final Control cellEditorWindow) {
+        LayouterHintDialog dialog = new LayouterHintDialog(cellEditorWindow.getShell(),
+                (String) getValue());
+        if (dialog.open() == LayouterHintDialog.OK) {
+            return dialog.getSelectedHint();
+        }
+        return null;
     }
 
 }
