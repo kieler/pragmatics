@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import java.util.List;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.KielerException;
@@ -25,7 +24,6 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p1cycles.ICycleBreaker;
@@ -216,14 +214,13 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
         monitor.begin("Layered layout phases", 1 + 1 + 1 + 1 + 1);
         LayeredGraph layeredGraph = importer.getGraph();
-        List<LNode> nodes = importer.getImportedNodes();
 
         // phase 1: cycle breaking
         cycleBreaker.reset(monitor.subTask(1));
-        cycleBreaker.breakCycles(nodes);
+        cycleBreaker.breakCycles(layeredGraph.getLayerlessNodes());
         // phase 2: layering
         layerer.reset(monitor.subTask(1));
-        layerer.layer(nodes, layeredGraph);
+        layerer.layer(layeredGraph.getLayerlessNodes(), layeredGraph);
         layeredGraph.splitEdges();
         // phase 3: crossing minimization
         crossingMinimizer.reset(monitor.subTask(1));

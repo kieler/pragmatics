@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -41,7 +40,7 @@ public class LayeredGraph extends LGraphElement {
     /** the offset to be added to all positions. */
     private KVector offset = new KVector();
     /** nodes that are not currently part of a layer. */
-    private List<LNode> layerlessNodes = new ArrayList<LNode>();
+    private List<LNode> layerlessNodes = new LinkedList<LNode>();
     /** the layers of the layered graph. */
     private List<Layer> layers = new LinkedList<Layer>();
     

@@ -13,9 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import java.util.List;
-
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
@@ -24,13 +21,6 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * @author msp
  */
 public interface IGraphImporter {
-    
-    /**
-     * Returns the list of nodes that were imported from the import source.
-     * 
-     * @return the imported nodes
-     */
-    List<LNode> getImportedNodes();
     
     /**
      * Returns the layered graph that is managed by this graph importer.
