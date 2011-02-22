@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,24 @@ import de.cau.cs.kieler.core.properties.IPropertyHolder;
  * @author msp
  */
 public abstract class SemanticLayoutConfig implements ILayoutConfig {
+    
+    /**
+     * Make a list of layout option descriptors from the given layout option identifiers.
+     * 
+     * @param ids identifiers of layout options
+     * @return a list of corresponding layout option descriptors
+     */
+    protected final List<LayoutOptionData<?>> makeList(final String ... ids) {
+        ArrayList<LayoutOptionData<?>> result = new ArrayList<LayoutOptionData<?>>(ids.length);
+        LayoutServices layoutServices = LayoutServices.getInstance();
+        for (String id : ids) {
+            LayoutOptionData<?> data = layoutServices.getOptionData(id);
+            if (data != null) {
+                result.add(data);
+            }
+        }
+        return result;
+    }
 
     /** the semantic model element in focus. */
     private EObject element;
