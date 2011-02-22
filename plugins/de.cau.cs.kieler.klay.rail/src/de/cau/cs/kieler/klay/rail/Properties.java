@@ -75,6 +75,14 @@ public final class Properties {
     /** angle to use for drawing outgoing edges. */
     public static final Property<Float> BEND_ANGLE = new Property<Float>(BEND_ANGLE_ID,
             DEF_ANGLE);
+    
+    /** option identifier for the bend angle. */
+    public static final String SWITCH_ROTATION_ID = "de.cau.cs.kieler.klay.rail.rotation";
+    /** default value for bend angle. */
+    public static final int DEF_SWITCH_ROTATION = 0;
+    /** angle to use for drawing outgoing edges. */
+    public static final Property<Integer> SWITCH_ROTATION = new Property<Integer>(SWITCH_ROTATION_ID,
+            DEF_SWITCH_ROTATION);
 
     /** option identifier for the node type. */
     public static final String NODE_TYPE_ID = "de.cau.cs.kieler.klay.rail.nodeType";

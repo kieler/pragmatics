@@ -68,7 +68,8 @@ public class KRailGraphImporter implements IGraphImporter {
         layeredGraph.setProperty(Properties.ORIGIN, knode);
         KShapeLayout lay = knode.getData(KShapeLayout.class);
         layeredGraph.setProperty(Properties.BEND_ANGLE, lay.getProperty(Properties.BEND_ANGLE));
-        layeredGraph.setProperty(Properties.LAYER_DISTANCE, lay.getProperty(Properties.LAYER_DISTANCE));
+        layeredGraph.setProperty(Properties.LAYER_DISTANCE,
+                lay.getProperty(Properties.LAYER_DISTANCE));
     }
 
     /**
@@ -108,6 +109,8 @@ public class KRailGraphImporter implements IGraphImporter {
             newNode.setProperty(Properties.NODE_TYPE, nodeLayout.getProperty(Properties.NODE_TYPE));
             newNode.setProperty(Properties.ENTRY_POINT,
                     nodeLayout.getProperty(Properties.ENTRY_POINT));
+            newNode.setProperty(Properties.SWITCH_ROTATION,
+                    nodeLayout.getProperty(Properties.SWITCH_ROTATION));
             layeredNodes.add(newNode);
             elemMap.put(child, newNode);
             KPort[] sortedPorts = KimlUtil.getSortedPorts(child);

@@ -30,6 +30,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.rail.layerDistance">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.rail.rotation">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="nodes"
@@ -72,6 +75,14 @@
             id="de.cau.cs.kieler.klay.rail.layerDistance"
             name="Minimal Layer Distance"
             type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="nodes"
+            default="0"
+            description="The rotation of a switch. Integer value from 0 to 5, representing an angle by multiplying the value with 60 degree."
+            id="de.cau.cs.kieler.klay.rail.rotation"
+            name="Switch Rotation"
+            type="int">
       </layoutOption>
    </extension>
 
