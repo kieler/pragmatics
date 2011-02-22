@@ -80,8 +80,8 @@ import de.cau.cs.kieler.kex.ui.util.ImageConverter;
  */
 public class ImportExamplePage extends WizardPage {
 
-    private static final int IMAGE_PRE_WIDTH = 480;
-    private static final int IMAGE_PRE_HEIGHT = 270;
+    private static final int IMAGE_PRE_WIDTH = 440;
+    private static final int IMAGE_PRE_HEIGHT = 248;
 
     private static final int DESC_HEIGHT_HINT = 200;
     private static final int DESC_MIN_HEIGHT = 160;
@@ -103,6 +103,8 @@ public class ImportExamplePage extends WizardPage {
     private Label previewDesc;
 
     private CheckboxTreeViewer treeViewer;
+
+    private boolean isPreviewAvailable;
 
     /**
      * The constructor will be called with following parameters.
@@ -167,12 +169,14 @@ public class ImportExamplePage extends WizardPage {
                     String desc = pair.getFirst().getDescription();
                     getExampleDescField().setText(desc != null ? desc : "");
                     updateImageLabel(initPreviewImage());
+                    isPreviewAvailable = false;
                 } else if (firstElement instanceof Example) {
                     selectedExample = (Example) firstElement;
                     updateDescriptionLabel((Example) firstElement);
                     Image computeImage = computeImage(selectedExample.getOverviewPic(),
                             selectedExample.getNamespaceId(), IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
-                    updateImageLabel(computeImage != null ? computeImage : noPreviewPic());
+                    isPreviewAvailable = computeImage != null;
+                    updateImageLabel(isPreviewAvailable ? computeImage : noPreviewPic());
 
                 }
             }
@@ -498,7 +502,7 @@ public class ImportExamplePage extends WizardPage {
             @Override
             public void mouseDown(final MouseEvent e) {
                 super.mouseDown(e);
-                if (selectedExample == null) {
+                if (selectedExample == null || !isPreviewAvailable) {
                     return;
                 }
                 Dialog dialog = new Dialog(imageLabel.getShell()) {
@@ -609,7 +613,7 @@ public class ImportExamplePage extends WizardPage {
                 .append(Messages.getString("generatedAt"))
                 .append(generationDate != null ? new SimpleDateFormat(Messages
                         .getString("englishDataFormat")).format(generationDate) : "").append("\n")
-                .append("\n").append(Messages.getString("description"))
+                .append("\n")
                 .append(example.getDescription() != null ? example.getDescription() : "");
         getExampleDescField().setText(sb.toString());
     }
