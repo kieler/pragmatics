@@ -58,7 +58,7 @@ public class ManualFocusCombination extends AbstractCombination {
      * Default Constructor defining some Buttons.
      */
     public ManualFocusCombination() {
-        KiVi.getInstance().setDebug(true);
+        //KiVi.getInstance().setDebug(true);
         
         ImageDescriptor iconFC = KiViExamplesPlugin.imageDescriptorFromPlugin(
                 KiViExamplesPlugin.PLUGIN_ID, "icons/focusContext.png");
