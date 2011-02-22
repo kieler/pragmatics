@@ -724,6 +724,10 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     targetPort.getEdges().add(edge);
                     edge.setTarget(targetPort.getNode());
                 } else {
+                    edge.setSource(null);
+                    if (edge.getSourcePort() != null) {
+                        edge.getSourcePort().getEdges().remove(edge);
+                    }
                     continue;
                 }
 
