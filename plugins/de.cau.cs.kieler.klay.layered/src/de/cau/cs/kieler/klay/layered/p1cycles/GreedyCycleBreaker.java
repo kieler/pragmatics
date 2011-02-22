@@ -18,10 +18,12 @@ import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
 
 /**
@@ -34,7 +36,7 @@ import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
  *
  * @author msp
  */
-public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreaker {
+public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
 
     /** indegree values for the nodes. */
     private int[] indeg;
@@ -56,12 +58,14 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ICycleBreak
         sources.clear();
         sinks.clear();
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public void breakCycles(final Collection<LNode> nodes) {
+    public void execute(final LayeredGraph layeredGraph) {
         getMonitor().begin("Greedy cycle removal", 1);
+        
+        Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
 
         // initialize values for the algorithm
         int unprocessedNodes = nodes.size();

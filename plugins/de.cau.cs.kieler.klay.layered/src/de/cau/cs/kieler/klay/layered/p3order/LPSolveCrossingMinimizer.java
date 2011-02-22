@@ -28,6 +28,7 @@ import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.LPSolveAborter;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -44,7 +45,7 @@ import lpsolve.LpSolve;
  * 
  * @author msp
  */
-public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ICrossingMinimizer {
+public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
 
     /** The timeout in milliseconds after which the LP solver is aborted. */
     private static final long LPSOLVE_TIMEOUT = 5000;
@@ -138,7 +139,7 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ICros
     /**
      * {@inheritDoc}
      */
-    public void minimizeCrossings(final LayeredGraph layeredGraph) {
+    public void execute(final LayeredGraph layeredGraph) {
         assert layeredGraph != null;
         getMonitor().begin("LpSolve Crossing Minimization", 1);
         if (layeredGraph.getLayers().size() <= 1) {

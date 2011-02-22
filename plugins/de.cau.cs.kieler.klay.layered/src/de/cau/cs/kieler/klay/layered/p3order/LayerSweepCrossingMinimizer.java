@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -37,7 +38,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *
  * @author msp
  */
-public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ICrossingMinimizer {
+public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
     
     /** barycenter values for ports. */
     private float[] portBarycenter;
@@ -51,7 +52,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IC
     /**
      * {@inheritDoc}
      */
-    public void minimizeCrossings(final LayeredGraph layeredGraph) {
+    public void execute(final LayeredGraph layeredGraph) {
         getMonitor().begin("Layer sweep crossing minimization", 1);
         int layerCount = layeredGraph.getLayers().size();
         if (layerCount < 2) {

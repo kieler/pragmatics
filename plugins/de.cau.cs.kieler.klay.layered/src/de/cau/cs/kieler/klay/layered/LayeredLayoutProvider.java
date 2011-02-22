@@ -26,20 +26,15 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
-import de.cau.cs.kieler.klay.layered.p1cycles.ICycleBreaker;
-import de.cau.cs.kieler.klay.layered.p2layers.ILayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LPSolveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
-import de.cau.cs.kieler.klay.layered.p3order.ICrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LPSolveCrossingMinimizer;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
-import de.cau.cs.kieler.klay.layered.p4nodes.INodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p5edges.ComplexSplineEdgeRouter;
-import de.cau.cs.kieler.klay.layered.p5edges.IEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRoutingStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.PolylineEdgeRouter;
@@ -53,15 +48,15 @@ import de.cau.cs.kieler.klay.layered.p5edges.SimpleSplineEdgeRouter;
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
     /** phase 1: cycle breaking module. */
-    private ICycleBreaker cycleBreaker = new GreedyCycleBreaker();
+    private ILayoutPhase cycleBreaker = new GreedyCycleBreaker();
     /** phase 2: layering module. */
-    private ILayerer layerer;
+    private ILayoutPhase layerer;
     /** phase 3: crossing minimization module. */
-    private ICrossingMinimizer crossingMinimizer;
+    private ILayoutPhase crossingMinimizer;
     /** phase 4: node placement module. */
-    private INodePlacer nodePlacer = new LinearSegmentsNodePlacer();
+    private ILayoutPhase nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
-    private IEdgeRouter edgeRouter;
+    private ILayoutPhase edgeRouter;
     
     /**
      * Initialize default options of the layout provider.
@@ -217,20 +212,20 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         // phase 1: cycle breaking
         cycleBreaker.reset(monitor.subTask(1));
-        cycleBreaker.breakCycles(layeredGraph.getLayerlessNodes());
+        cycleBreaker.execute(layeredGraph);
         // phase 2: layering
         layerer.reset(monitor.subTask(1));
-        layerer.layer(layeredGraph.getLayerlessNodes(), layeredGraph);
+        layerer.execute(layeredGraph);
         layeredGraph.splitEdges();
         // phase 3: crossing minimization
         crossingMinimizer.reset(monitor.subTask(1));
-        crossingMinimizer.minimizeCrossings(layeredGraph);
+        crossingMinimizer.execute(layeredGraph);
         // phase 4: node placement
         nodePlacer.reset(monitor.subTask(1));
-        nodePlacer.placeNodes(layeredGraph);
+        nodePlacer.execute(layeredGraph);
         // phase 5: edge routing
         edgeRouter.reset(monitor.subTask(1));
-        edgeRouter.routeEdges(layeredGraph);
+        edgeRouter.execute(layeredGraph);
 
         monitor.done();
     }

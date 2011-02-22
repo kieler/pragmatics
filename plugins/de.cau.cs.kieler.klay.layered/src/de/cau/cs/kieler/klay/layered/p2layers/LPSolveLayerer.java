@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.LPSolveAborter;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -41,7 +42,7 @@ import lpsolve.LpSolve;
  * 
  * @author pdo
  */
-public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
+public class LPSolveLayerer extends AbstractAlgorithm implements ILayoutPhase {
 
     // ================================== Attributes ==============================================
 
@@ -172,21 +173,24 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
      * nodes in the graph concerning a minimal edge span using the LP-solver of
      * lpsolve.sourceforge.net.
      * 
-     * @param nodes
-     *            a {@code Collection} of all nodes of the graph to layer
      * @param layeredGraph
-     *            an initially empty layered graph which is filled with layers
+     *            a layered graph which initially only contains layerless nodes and is
+     *            then filled with layers
      * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
-    public void layer(final Collection<LNode> nodes, final LayeredGraph layeredGraph) {
-        assert nodes != null;
+    public void execute(final LayeredGraph layeredGraph) {
         assert layeredGraph != null;
+        
         getMonitor().begin("LpSolve layering", 1);
+        
+        Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
         if (nodes.size() < 1) {
             getMonitor().done();
             return;
         }
+        
         layerGraph = layeredGraph;
+        
         // initialize the LpSolve library, which may cause an UnsatisfiedLinkError
         try {
             LpSolve.initialize();
@@ -244,9 +248,13 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayerer {
             if (lp != null) {
                 lp.deleteLp();
             }
-            getMonitor().done();
+            
+            // empty the list of unlayered nodes
+            nodes.clear();
+            
             // release the created resources
             dispose();
+            getMonitor().done();
         }
     }
 

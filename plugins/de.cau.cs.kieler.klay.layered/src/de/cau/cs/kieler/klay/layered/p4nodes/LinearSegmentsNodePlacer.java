@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -41,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * @author msp
  * @author grh
  */
-public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INodePlacer {
+public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * A linear segment contains a single regular node or all dummy nodes of a long edge.
      */
@@ -139,7 +140,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements INode
     /**
      * {@inheritDoc}
      */
-    public void placeNodes(final LayeredGraph layeredGraph) {
+    public void execute(final LayeredGraph layeredGraph) {
         getMonitor().begin("Linear segments node placement", 1);
 
         // arrange port positions

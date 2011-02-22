@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -41,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.p5edges.ISplineGenerator.curvature;
  * @author car
  * @author uru
  */
-public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
+public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
 
     /** minimal spacing between objects. */
     private float spacing;
@@ -73,7 +74,7 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements IEdgeR
     /**
      * {@inheritDoc}
      */
-    public void routeEdges(final LayeredGraph layeredGraph) {
+    public void execute(final LayeredGraph layeredGraph) {
         getMonitor().begin("Complex spline routing", 1);
         spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
 

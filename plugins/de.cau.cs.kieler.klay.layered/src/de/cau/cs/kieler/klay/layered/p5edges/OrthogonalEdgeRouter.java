@@ -30,6 +30,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -51,7 +52,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *
  * @author msp
  */
-public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
+public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
     
     /** weight penalty for conflicts of horizontal line segments. */
     private static final int CONFLICT_PENALTY = 16;
@@ -197,7 +198,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements IEdgeRout
     /**
      * {@inheritDoc}
      */
-    public void routeEdges(final LayeredGraph layeredGraph) {
+    public void execute(final LayeredGraph layeredGraph) {
         getMonitor().begin("Orthogonal edge routing", 1);
         edgeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         conflictThreshold = CONFL_THRESH_FACTOR * edgeSpacing;

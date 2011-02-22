@@ -23,6 +23,7 @@ import java.util.List;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -41,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * @author pdo
  */
-public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer {
+public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutPhase {
 
     // ================================== Attributes ==============================================
 
@@ -353,21 +354,23 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
      * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories.
      * Note that the execution time of this implemented algorithm has not been proven quadratic yet.
      * 
-     * @param theNodes
-     *            a {@code Collection} of all nodes of the graph to layer
      * @param theLayeredGraph
-     *            an initially empty layered graph which is filled with layers
+     *            a layered graph which initially only contains layerless nodes and is
+     *            then filled with layers
      *            
      * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
-    public void layer(final Collection<LNode> theNodes, final LayeredGraph theLayeredGraph) {
-        assert theNodes != null;
+    public void execute(final LayeredGraph theLayeredGraph) {
         assert theLayeredGraph != null;
+        
         getMonitor().begin("Network-Simplex Layering", 1);
+
+        Collection<LNode> theNodes = layeredGraph.getLayerlessNodes();
         if (theNodes.size() < 1) {
             getMonitor().done();
             return;
         }
+        
         layeredGraph = theLayeredGraph;
         
         // enhance layering, if requested
@@ -416,6 +419,9 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayerer
         if (enhancer != null) {
             enhancer.postProcess();
         }
+        
+        // empty the list of unlayered nodes
+        nodes.clear();
 
         // release the created resources
         dispose();

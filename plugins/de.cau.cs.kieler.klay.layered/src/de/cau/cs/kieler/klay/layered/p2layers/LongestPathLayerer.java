@@ -18,6 +18,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -31,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *
  * @author msp
  */
-public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
+public class LongestPathLayerer extends AbstractAlgorithm implements ILayoutPhase {
 
     /** the layered graph to which layers are added. */
     private LayeredGraph layeredGraph;
@@ -41,9 +42,11 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
     /**
      * {@inheritDoc}
      */
-    public void layer(final Collection<LNode> nodes, final LayeredGraph thelayeredGraph) {
+    public void execute(final LayeredGraph thelayeredGraph) {
         getMonitor().begin("Longest path layering", 1);
+        
         layeredGraph = thelayeredGraph;
+        Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
         
         // enhance layering, if requested
         LayeringEnhancer enhancer = null;
@@ -100,9 +103,13 @@ public class LongestPathLayerer extends AbstractAlgorithm implements ILayerer {
             enhancer.postProcess();
         }
         
+        // empty the list of unlayered nodes
+        nodes.clear();
+        
         // release the created resources
         this.layeredGraph = null;
         this.nodeHeights = null;
+        
         getMonitor().done();
     }
     

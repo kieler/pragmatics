@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -29,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *
  * @author msp
  */
-public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
+public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
     
     /** maximal number of edges for which the default node spacing is taken. */
     private static final int MAX_EDGES = 3;
@@ -37,7 +38,7 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements IEdgeRouter
     /**
      * {@inheritDoc}
      */
-    public void routeEdges(final LayeredGraph layeredGraph) {
+    public void execute(final LayeredGraph layeredGraph) {
         getMonitor().begin("Polyline edge routing", 1);
         float defspacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         
