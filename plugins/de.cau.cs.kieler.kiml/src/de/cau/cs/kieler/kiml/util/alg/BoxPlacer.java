@@ -19,6 +19,7 @@ import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -32,15 +33,11 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class BoxPlacer extends AbstractAlgorithm {
 
-    /** maximal factor by which a row may be broader than the maximal row width. */
+    /** default value for aspect ratio. */
     public static final float DEF_ASPECT_RATIO = 1.3f;
 
-    // width and height of the parent node
-    private float parentWidth, parentHeight;
-
     /**
-     * Place the boxes of the given sorted list according to their order in the
-     * list.
+     * Place the boxes of the given sorted list according to their order in the list.
      * 
      * @param sortedBoxes sorted list of boxes
      * @param parentNode parent node
@@ -50,7 +47,6 @@ public class BoxPlacer extends AbstractAlgorithm {
      */
     public void placeBoxes(final List<KNode> sortedBoxes, final KNode parentNode,
             final float objSpacing, final float borderSpacing, final boolean expandNodes) {
-        getMonitor().begin("Box placement", 1);
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
         float minWidth = Math.max(parentLayout.getProperty(LayoutOptions.MIN_WIDTH)
@@ -63,14 +59,12 @@ public class BoxPlacer extends AbstractAlgorithm {
         }
 
         // do place the boxes
-        placeBoxes(sortedBoxes, objSpacing, borderSpacing, minWidth, minHeight,
+        KVector parentSize = placeBoxes(sortedBoxes, objSpacing, borderSpacing, minWidth, minHeight,
                 expandNodes, aspectRatio);
 
         // adjust parent size
-        parentLayout.setWidth(insets.getLeft() + parentWidth + insets.getRight());
-        parentLayout.setHeight(insets.getTop() + parentHeight + insets.getBottom());
-
-        getMonitor().done();
+        parentLayout.setWidth(insets.getLeft() + (float) parentSize.x + insets.getRight());
+        parentLayout.setHeight(insets.getTop() + (float) parentSize.y + insets.getBottom());
     }
 
     /**
@@ -85,11 +79,10 @@ public class BoxPlacer extends AbstractAlgorithm {
      * @param expandNodes if true, the nodes are expanded to fill their parent
      * @param aspectRatio the desired aspect ratio
      */
-    private void placeBoxes(final List<KNode> sortedBoxes, final float minSpacing,
+    private KVector placeBoxes(final List<KNode> sortedBoxes, final float minSpacing,
             final float borderSpacing, final float minTotalWidth, final float minTotalHeight,
             final boolean expandNodes, final float aspectRatio) {
-        // determine the maximal row width by the maximal box width and the
-        // total area
+        // determine the maximal row width by the maximal box width and the total area
         float maxRowWidth = 0.0f;
         float totalArea = 0.0f;
         for (KNode box : sortedBoxes) {
@@ -167,9 +160,8 @@ public class BoxPlacer extends AbstractAlgorithm {
             }
         }
 
-        // set parent size
-        parentWidth = broadestRow;
-        parentHeight = totalHeight;
+        // return parent size
+        return new KVector(broadestRow, totalHeight);
     }
 
 }

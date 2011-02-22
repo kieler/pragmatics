@@ -75,12 +75,12 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         }
         // set expand nodes option
         boolean expandNodes = parentLayout.getProperty(LayoutOptions.EXPAND_NODES);
+        // set interactive option
+        boolean interactive = parentLayout.getProperty(LayoutOptions.INTERACTIVE);
 
-        // sort boxes according to priority and size
-        boxSorter.reset(progressMonitor.subTask(1));
-        List<KNode> sortedBoxes = boxSorter.sort(layoutNode);
+        // sort boxes according to priority and position or size
+        List<KNode> sortedBoxes = boxSorter.sort(layoutNode, interactive);
         // place boxes on the plane
-        boxPlacer.reset(progressMonitor.subTask(1));
         boxPlacer.placeBoxes(sortedBoxes, layoutNode, objSpacing, borderSpacing, expandNodes);
 
         progressMonitor.done();

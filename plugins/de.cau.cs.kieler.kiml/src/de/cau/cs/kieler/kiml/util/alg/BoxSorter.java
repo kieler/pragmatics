@@ -24,8 +24,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * Algorithm that sorts nodes according to their priority and
- * size.
+ * Algorithm that sorts nodes according to their priority and size or position.
  * 
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
@@ -33,13 +32,14 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 public class BoxSorter extends AbstractAlgorithm {
 
     /**
-     * Sorts nodes according to priority and size. Nodes with
+     * Sorts nodes according to priority and size or position. Nodes with
      * higher priority get a lower rank.
      * 
      * @param parentNode parent node
+     * @param interactive whether position should be considered instead of size
      * @return sorted list of children
      */
-    public List<KNode> sort(final KNode parentNode) {
+    public List<KNode> sort(final KNode parentNode, final boolean interactive) {
         getMonitor().begin("Box sorting", 1);
         List<KNode> sortedBoxes = new LinkedList<KNode>(
                 parentNode.getChildren());
@@ -61,7 +61,17 @@ public class BoxSorter extends AbstractAlgorithm {
                 } else if (prio1 < prio2) {
                     return 1;
                 } else {
-                    // boxes have same priority - compare their size
+                    // boxes have same priority - compare their position or size
+                    if (interactive) {
+                        int c = Float.compare(layout1.getYpos(), layout2.getYpos());
+                        if (c != 0) {
+                            return c;
+                        }
+                        c = Float.compare(layout1.getXpos(), layout2.getXpos());
+                        if (c != 0) {
+                            return c;
+                        }
+                    }
                     float size1 = layout1.getWidth() * layout1.getHeight();
                     float size2 = layout2.getWidth() * layout2.getHeight();
                     return Float.compare(size1, size2); // TODO make this comparison customizable

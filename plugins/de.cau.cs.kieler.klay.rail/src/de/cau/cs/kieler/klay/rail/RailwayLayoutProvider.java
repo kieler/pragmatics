@@ -69,7 +69,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
      */
     public RailwayLayoutProvider() {
         setProperty(LayoutOptions.BORDER_SPACING, Properties.DEF_BORDER);
-        setProperty(LayoutOptions.OBJ_SPACING, Properties.DEF_SPACING);
+        setProperty(LayoutOptions.SPACING, Properties.DEF_SPACING);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     private void setOptions(final LayeredGraph layeredGraph,
             final KNode parent, final KShapeLayout parentLayout) {
         // set object spacing option
-        float objSpacing = parentLayout.getProperty(LayoutOptions.OBJ_SPACING);
+        float objSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (objSpacing >= 0) {
             layeredGraph.setProperty(Properties.OBJ_SPACING, objSpacing);
         }

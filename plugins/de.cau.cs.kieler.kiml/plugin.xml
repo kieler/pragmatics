@@ -60,6 +60,9 @@
          <knownOption
                option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.interactive">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler"
