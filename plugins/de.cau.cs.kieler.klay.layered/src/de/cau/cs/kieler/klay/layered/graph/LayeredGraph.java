@@ -15,11 +15,9 @@ package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.Properties;
 
 /**
@@ -88,48 +86,6 @@ public class LayeredGraph extends LGraphElement {
      */
     public List<Layer> getLayers() {
         return layers;
-    }
-
-    /**
-     * Split the long edges of the layered graph to obtain a proper layering.
-     * For each edge that connects two nodes that are more than one layer apart
-     * from each other, create a dummy node to split the edge. The resulting layering
-     * is <i>proper</i>, i.e. all edges connect only nodes from subsequent layers.
-     * 
-     * TODO create additional dummy nodes for feedback edges (in another module)
-     * TODO move this out into its own module
-     */
-    public void splitEdges() {
-        ListIterator<Layer> layerIter = layers.listIterator();
-        while (layerIter.hasNext()) {
-            Layer layer = layerIter.next();
-            for (LNode node : layer.getNodes()) {
-                for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                    for (LEdge edge : port.getEdges()) {
-                        LPort targetPort = edge.getTarget();
-                        int targetIndex = targetPort.getNode().getLayer().getIndex();
-                        if (targetIndex != layerIter.nextIndex()) {
-                            Layer nextLayer = layerIter.next();
-                            LNode dummyNode = new LNode();
-                            dummyNode.setProperty(Properties.ORIGIN, edge);
-                            dummyNode.setProperty(Properties.NODE_TYPE,
-                                    Properties.NodeType.LONG_EDGE);
-                            dummyNode.setLayer(nextLayer);
-                            LPort dummyInput = new LPort(PortType.INPUT);
-                            dummyInput.setNode(dummyNode);
-                            LPort dummyOutput = new LPort(PortType.OUTPUT);
-                            dummyOutput.setNode(dummyNode);
-                            edge.setTarget(dummyInput);
-                            LEdge dummyEdge = new LEdge();
-                            dummyEdge.copyProperties(edge);
-                            dummyEdge.setSource(dummyOutput);
-                            dummyEdge.setTarget(targetPort);
-                            layerIter.previous();
-                        }
-                    }
-                }
-            }
-        }
     }
     
     /**

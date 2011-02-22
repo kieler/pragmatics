@@ -25,6 +25,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.EdgeSplitter;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.LPSolveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
@@ -57,6 +58,13 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     private ILayoutPhase nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
     private ILayoutPhase edgeRouter;
+    
+    /**
+     * Intermediate phase: proper layering module. This is just temporarily hardcoded
+     * into the workflow. This will be dynamically managed by dependencies later on.
+     */
+    private IIntermediateLayoutPhase edgeSplitter = new EdgeSplitter();
+    
     
     /**
      * Initialize default options of the layout provider.
@@ -207,7 +215,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
         }
-        monitor.begin("Layered layout phases", 1 + 1 + 1 + 1 + 1);
+        monitor.begin("Layered layout phases", 1 + 1 + 1 + 1 + 1 + 1);
         LayeredGraph layeredGraph = importer.getGraph();
 
         // phase 1: cycle breaking
@@ -216,7 +224,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // phase 2: layering
         layerer.reset(monitor.subTask(1));
         layerer.execute(layeredGraph);
-        layeredGraph.splitEdges();
+        // intermediate phase: edge splitting
+        edgeSplitter.reset(monitor.subTask(1));
+        edgeSplitter.execute(layeredGraph);
         // phase 3: crossing minimization
         crossingMinimizer.reset(monitor.subTask(1));
         crossingMinimizer.execute(layeredGraph);
