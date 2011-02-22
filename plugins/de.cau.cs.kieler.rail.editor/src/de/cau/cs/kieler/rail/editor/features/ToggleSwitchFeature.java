@@ -88,8 +88,7 @@ public class ToggleSwitchFeature extends AbstractCustomFeature {
     /**
      * {@inheritDoc}
      */
-    public void execute(final ICustomContext context) {
-
+    public final void execute(final ICustomContext context) {
         PictogramElement[] pes = context.getPictogramElements();
         if (pes != null && pes.length == 1) {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
@@ -106,7 +105,7 @@ public class ToggleSwitchFeature extends AbstractCustomFeature {
                     for (Anchor anchor : cs.getAnchors()) {
                         if (anchor instanceof BoxRelativeAnchor) {
                             Port port =
-                                    (Port) getBusinessObjectForPictogramElement(anchor);
+                            (Port) getBusinessObjectForPictogramElement(anchor);
                             BoxRelativeAnchor box =
                                     (BoxRelativeAnchor) anchor
                                             .getGraphicsAlgorithm()

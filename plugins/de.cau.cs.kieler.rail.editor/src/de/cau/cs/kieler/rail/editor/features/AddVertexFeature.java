@@ -167,7 +167,7 @@ public class AddVertexFeature extends AbstractAddFeature {
         
         Rectangle rect = gaService.createRectangle(containerShape);
         rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-        rect.setForeground(manageColor(255, 255, 255));
+        rect.setForeground(manageColor(255, 255, 255));  //TODO constance White
         
         
         Ellipse ellipse;
@@ -237,7 +237,8 @@ public class AddVertexFeature extends AbstractAddFeature {
             Rectangle rec = gaService.createRectangle(boxAnchor);
             rec.setStyle(styleProvider.getStyle(StyleProvider.PORT_END));
 
-            gaService.setLocationAndSize(rec, -PORT_SIZE/2, -PORT_SIZE/2, PORT_SIZE, PORT_SIZE);
+            gaService.setLocationAndSize(rec, -PORT_SIZE / 2, -PORT_SIZE / 2,
+            PORT_SIZE, PORT_SIZE);
 
             link(boxAnchor, port);
             // PORT
@@ -254,10 +255,9 @@ public class AddVertexFeature extends AbstractAddFeature {
 
         return containerShape;
     }
-
-    /**
+ /**
      * PictogramElement for the deadend vertex
-     * 
+     *
      * @param context
      * @return
      */
@@ -305,7 +305,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 
             // create and set graphics algorithm
             Polyline polyline =
-                    gaService.createPolyline(shape, new int[] { width / 2, 0,
+                    gaService.createPolyline(shape, new int[] {width / 2, 0,
                             width / 2, height });
             polyline.setStyle(styleProvider
                     .getStyle(StyleProvider.DEFAULT_STYLE));
@@ -326,7 +326,7 @@ public class AddVertexFeature extends AbstractAddFeature {
                 // ans = JOptionPane.showInputDialog(null, "Enter Label");
                 deadEndVertex.setName(ans); // TODO ???
             }
-            
+
             Text text =
                     gaService.createDefaultText(shapeLabel,
                             deadEndVertex.getName());
