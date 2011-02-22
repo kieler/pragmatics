@@ -60,8 +60,8 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getEdges()) {
                         if (edge.getSource() == port) {
-                            KVector srcPos = port.getPos().add(node.getPos());
-                            KVector trgPos = edge.getTarget().getPos()
+                            KVector srcPos = new KVector(port.getPos()).add(node.getPos());
+                            KVector trgPos = new KVector(edge.getTarget().getPos())
                                     .add(edge.getTarget().getNode().getPos());
 
                             double slope = Double.POSITIVE_INFINITY;

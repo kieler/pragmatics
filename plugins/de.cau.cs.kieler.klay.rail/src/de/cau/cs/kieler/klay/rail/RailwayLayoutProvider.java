@@ -28,7 +28,6 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -43,6 +42,7 @@ import de.cau.cs.kieler.klay.rail.impl.RailwayEdgeRouter;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNodePlacer;
 import de.cau.cs.kieler.klay.rail.options.NodeType;
+import de.cau.cs.kieler.klay.rail.options.PortType;
 
 /**
  * 
@@ -73,8 +73,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     @Override
-    public void doLayout(final KNode layoutNode,
-            final IKielerProgressMonitor progressMonitor)
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
             throws KielerException {
         progressMonitor.begin("Railway layout", 1);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
@@ -103,8 +102,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
      * @param parentLayout
      *            the layout data for the parent node
      */
-    private void setOptions(final LayeredGraph layeredGraph,
-            final KNode parent, final KShapeLayout parentLayout) {
+    private void setOptions(final LayeredGraph layeredGraph, final KNode parent,
+            final KShapeLayout parentLayout) {
         // set object spacing option
         float objSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (objSpacing >= 0) {
@@ -112,8 +111,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         }
 
         // set border spacing option
-        float borSpacing =
-                parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        float borSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borSpacing >= 0) {
             layeredGraph.setProperty(Properties.BOR_SPACING, borSpacing);
         }
@@ -129,8 +127,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
      * @param themonitor
      *            a progress monitor, or {@code null}
      */
-    public void layout(final IGraphImporter importer,
-            final IKielerProgressMonitor themonitor) {
+    public void layout(final IGraphImporter importer, final IKielerProgressMonitor themonitor) {
         IKielerProgressMonitor monitor = themonitor;
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
@@ -155,6 +152,10 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         // phase 3: node placement
         nodePlacer.reset(monitor.subTask(1));
         nodePlacer.placeNodes(layeredGraph);
+        // subphase: arrange ports
+        // Won't work with GMF editors due to an already reported bug
+        //System.out.println("Arranging ports ...");
+        //arrangePorts(nodes);
         // phase 4: edge routing
         edgeRouter.reset(monitor.subTask(1));
         edgeRouter.routeEdges(layeredGraph);
@@ -164,10 +165,9 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Validates the graph against the requirements of a railway graph. This has
-     * to be executed before any processing or layouting is done. When this was
-     * executed, we may often access the first member of some lists, because we
-     * know then that they contain only one element.
+     * Validates the graph against the requirements of a railway graph. This has to be executed
+     * before any processing or layouting is done. When this was executed, we may often access the
+     * first member of some lists, because we know then that they contain only one element.
      * 
      * @param thenodes
      *            A list of nodes to validate
@@ -178,45 +178,160 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
             if (lNode.getProperty(Properties.ENTRY_POINT).booleanValue()) {
                 foundEntryNodes++;
             }
-            if (lNode.getProperty(Properties.NODE_TYPE).equals(
-                    NodeType.BREACH_OR_CLOSE)) {
+            if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.BREACH_OR_CLOSE)) {
                 if (lNode.getPorts().size() != 1) {
-                    System.out
-                            .println("A breach or close may only have one port.");
-                    throw new IllegalArgumentException(
-                            "A breach or close may only have one port.");
+                    System.out.println("A breach or close may only have one port.");
+                    throw new IllegalArgumentException("A breach or close may only have one port.");
                 }
             }
-            if (lNode.getProperty(Properties.NODE_TYPE).equals(
-                    NodeType.SWITCH_LEFT)
-                    || lNode.getProperty(Properties.NODE_TYPE).equals(
-                            NodeType.SWITCH_RIGHT)) {
+            if (lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)
+                    || lNode.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_RIGHT)) {
                 if (lNode.getPorts().size() != SWITCH_PORTS) {
-                    System.out.println("A switch has to have exactly "
+                    System.out.println("A switch has to have exactly " + SWITCH_PORTS + " ports.");
+                    throw new IllegalArgumentException("A switch has to have exactly "
                             + SWITCH_PORTS + " ports.");
-                    throw new IllegalArgumentException(
-                            "A switch has to have exactly " + SWITCH_PORTS
-                                    + " ports.");
                 }
             }
             for (LPort lPort : lNode.getPorts()) {
                 if (lPort.getEdges().size() != 1) {
                     System.out.println("Each port may only have one edge");
-                    throw new IllegalArgumentException(
-                            "Each port may only have one edge");
+                    throw new IllegalArgumentException("Each port may only have one edge");
                 }
             }
             // TODO: circle detection here or in redirection?
         }
         if (foundEntryNodes != 1) {
-            throw new IllegalArgumentException(
-                    "Currently the graph needs exactly one entry point.");
+            throw new IllegalArgumentException("Currently the graph needs exactly one entry point.");
         }
     }
 
     /**
-     * Method to correct the direction of all edges. Edges have to go out from
-     * the entry point, this method will apply this to given graph.
+     * Method to arrange the ports of all nodes according to their turning angle.
+     * 
+     * @param thenodes A list containing all nodes
+     */
+    @SuppressWarnings("unused")
+    private void arrangePorts(final List<LNode> thenodes) {
+        // CHECKSTYLEOFF MagicNumber
+        // The numbers in the switch cases represent turning angle multipliers, would be annoying to
+        // introduce them as constants
+        for (LNode node : thenodes) {
+            double nodeX = node.getSize().x;
+            double nodeY = node.getSize().y;
+            if (node.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)) {
+                for (LPort port : node.getPorts()) {
+                    switch (node.getProperty(Properties.SWITCH_ROTATION)) {
+                    case 0:
+                        if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
+                            port.getPos().x = nodeX * (3.0 / 4.0);
+                            port.getPos().y = 0;
+                        } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
+                            port.getPos().x = nodeX;
+                            port.getPos().y = nodeY / 2.0;
+                        } else {
+                            port.getPos().x = 0;
+                            port.getPos().y = nodeY / 2.0;
+                        }
+                        break;
+                    case 2:
+                        if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
+                            port.getPos().x = 0;
+                            port.getPos().y = nodeY / 2.0;
+                        } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
+                            port.getPos().x = nodeX * (1.0 / 4.0);
+                            port.getPos().y = 0;
+                        } else {
+                            port.getPos().x = nodeX * (3.0 / 4.0);
+                            port.getPos().y = nodeY;
+                        }
+                        break;
+                    case 3:
+                        if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
+                            port.getPos().x = nodeX * (1.0 / 4.0);
+                            port.getPos().y = nodeY;
+                        } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
+                            port.getPos().x = 0.0;
+                            port.getPos().y = nodeY / 2.0;
+                        } else {
+                            port.getPos().x = nodeX;
+                            port.getPos().y = nodeY / 2.0;
+                        }
+                        break;
+                    case 5:
+                        if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
+                            port.getPos().x = nodeX;
+                            port.getPos().y = nodeY / 2.0;
+                        } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
+                            port.getPos().x = nodeX * (3.0 / 4.0);
+                            port.getPos().y = nodeY;
+                        } else {
+                            port.getPos().x = nodeX * (1.0 / 4.0);
+                            port.getPos().y = 0;
+                        }
+                        break;
+                    }
+                }
+            } else if (node.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_RIGHT)) {
+                for (LPort port : node.getPorts()) {
+                    switch (node.getProperty(Properties.SWITCH_ROTATION)) {
+                    case 0:
+                        if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
+                            port.getPos().x = nodeX * (3.0 / 4.0);
+                            port.getPos().y = nodeY;
+                        } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
+                            port.getPos().x = nodeX;
+                            port.getPos().y = nodeY / 2.0;
+                        } else {
+                            port.getPos().x = 0;
+                            port.getPos().y = nodeY / 2.0;
+                        }
+                        break;
+                    case 1:
+                        if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
+                            port.getPos().x = nodeX;
+                            port.getPos().y = nodeY / 2.0;
+                        } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
+                            port.getPos().x = nodeX * (3.0 / 4.0);
+                            port.getPos().y = 0;
+                        } else {
+                            port.getPos().x = nodeX * (1.0 / 4.0);
+                            port.getPos().y = nodeY;
+                        }
+                        break;
+                    case 3:
+                        if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
+                            port.getPos().x = nodeX * (1.0 / 4.0);
+                            port.getPos().y = 0;
+                        } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
+                            port.getPos().x = 0;
+                            port.getPos().y = nodeY / 2.0;
+                        } else {
+                            port.getPos().x = nodeX;
+                            port.getPos().y = nodeY / 2.0;
+                        }
+                        break;
+                    case 4:
+                        if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
+                            port.getPos().x = 0;
+                            port.getPos().y = nodeY / 2.0;
+                        } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
+                            port.getPos().x = nodeX * (1.0 / 4.0);
+                            port.getPos().y = nodeY;
+                        } else {
+                            port.getPos().x = nodeX * (3.0 / 4.0);
+                            port.getPos().y = 0;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        // CHECKSTYLEON MagicNumber
+    }
+
+    /**
+     * Method to correct the direction of all edges. Edges have to go out from the entry point, this
+     * method will apply this to given graph.
      * 
      * @param thenodes
      *            A list of nodes to process
@@ -231,7 +346,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                 // can do this because validation was executed earlier
                 LNode entryNode = lNode;
                 entryPort = entryNode.getPorts().get(0);
-                if (entryPort.getType().equals(PortType.INPUT)) {
+                if (entryPort.getType().equals(de.cau.cs.kieler.kiml.options.PortType.INPUT)) {
                     // entry port has to be output since all edges
                     // are directed right bound coming from here
                     swapPorts(entryPort.getEdges().get(0));
@@ -252,7 +367,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
             LNode nextNode = currentTarget.getNode();
             for (LPort lPort : nextNode.getPorts()) {
                 if (!visited.get(lPort)) {
-                    if (lPort.getType().equals(PortType.INPUT)) {
+                    if (lPort.getType().equals(de.cau.cs.kieler.kiml.options.PortType.INPUT)) {
                         swapPorts(lPort.getEdges().get(0));
                         // remember that edge was swapped
                         swappedEdges.add(lPort.getEdges().get(0));
@@ -265,18 +380,17 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Swaps the direction of an edges and changes the port types while doing
-     * so.
+     * Swaps the direction of an edges and changes the port types while doing so.
      * 
      * @param theedge
      *            The edge to use.
      */
     private void swapPorts(final LEdge theedge) {
         LPort swap = theedge.getSource();
-        swap.setType(PortType.INPUT);
+        swap.setType(de.cau.cs.kieler.kiml.options.PortType.INPUT);
         theedge.setSource(theedge.getTarget());
         theedge.setTarget(swap);
-        theedge.getSource().setType(PortType.OUTPUT);
+        theedge.getSource().setType(de.cau.cs.kieler.kiml.options.PortType.OUTPUT);
     }
 
     /** Holds all swapped edges for later reversing. */
@@ -295,8 +409,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     /**
-     * Swaps the direction of an edges and changes the port types while doing
-     * so.
+     * Swaps the direction of an edges and changes the port types while doing so.
      * 
      * @param theedge
      *            The edge to use.
