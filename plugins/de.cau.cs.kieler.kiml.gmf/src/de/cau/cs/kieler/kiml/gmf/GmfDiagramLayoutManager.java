@@ -666,43 +666,37 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 edge = KimlUtil.createInitializedEdge();
             }
 
-            KNode sourceNode, targetNode;
-            KPort sourcePort = null, targetPort = null;
-
             // find a proper source node and source port
+            KGraphElement sourceElem;
             EditPart sourceObj = connection.getSource();
-            if (sourceObj instanceof AbstractBorderItemEditPart) {
-                sourcePort = (KPort) graphElem2EditPartMap.inverse().get(sourceObj);
-                if (sourcePort == null) {
-                    continue;
-                }
-                edge.setSourcePort(sourcePort);
-                sourcePort.getEdges().add(edge);
-                sourceNode = sourcePort.getNode();
-            } else if (sourceObj instanceof ConnectionEditPart) {
-                KGraphElement connElem = graphElem2EditPartMap.inverse()
+            if (sourceObj instanceof ConnectionEditPart) {
+                sourceElem = graphElem2EditPartMap.inverse()
                         .get(((ConnectionEditPart) sourceObj).getSource());
-                if (!(connElem instanceof KNode)) {
-                    connElem = graphElem2EditPartMap.inverse()
+                if (sourceElem == null) {
+                    sourceElem = graphElem2EditPartMap.inverse()
                             .get(((ConnectionEditPart) sourceObj).getTarget());
                 }
-                if (!(connElem instanceof KNode)) {
-                    continue;
-                }
-                sourceNode = (KNode) connElem;
             } else {
-                sourceNode = (KNode) graphElem2EditPartMap.inverse().get(sourceObj);
-                if (sourceNode == null) {
-                    continue;
-                }
+                sourceElem = graphElem2EditPartMap.inverse().get(sourceObj);
             }
-
+            if (sourceElem instanceof KNode) {
+                edge.setSource((KNode) sourceElem);
+            } else if (sourceElem instanceof KPort) {
+                KPort sourcePort = (KPort) sourceElem;
+                edge.setSourcePort(sourcePort);
+                sourcePort.getEdges().add(edge);
+                edge.setSource(sourcePort.getNode());
+            } else {
+                continue;
+            }
+            
             // calculate offset for edge and label coordinates
             float offsetx = 0, offsety = 0;
-            IGraphicalEditPart sourceParent = graphElem2EditPartMap.get(sourceNode.getParent());
+            KNode sourceParentNode = edge.getSource().getParent();
+            IGraphicalEditPart sourceParent = graphElem2EditPartMap.get(sourceParentNode);
             if (sourceParent != null) {
                 Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParent.getFigure());
-                KInsets insets = sourceNode.getParent().getData(KShapeLayout.class)
+                KInsets insets = sourceParentNode.getData(KShapeLayout.class)
                     .getProperty(LayoutOptions.INSETS);
                 offsetx = sourceParentBounds.x + insets.getLeft();
                 offsety = sourceParentBounds.y + insets.getTop();
@@ -710,35 +704,29 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
             if (!isOppositeEdge) {
                 // find a proper target node and target port
+                KGraphElement targetElem;
                 EditPart targetObj = connection.getTarget();
-                if (targetObj instanceof AbstractBorderItemEditPart) {
-                    targetPort = (KPort) graphElem2EditPartMap.inverse().get(targetObj);
-                    if (targetPort == null) {
-                        continue;
-                    }
-                    edge.setTargetPort(targetPort);
-                    targetPort.getEdges().add(edge);
-                    targetNode = targetPort.getNode();
-                } else if (targetObj instanceof ConnectionEditPart) {
-                    KGraphElement connElem = graphElem2EditPartMap.inverse()
+                if (targetObj instanceof ConnectionEditPart) {
+                    targetElem = graphElem2EditPartMap.inverse()
                         .get(((ConnectionEditPart) targetObj).getTarget());
-                    if (!(connElem instanceof KNode)) {
-                        connElem = graphElem2EditPartMap.inverse()
+                    if (targetElem == null) {
+                        targetElem = graphElem2EditPartMap.inverse()
                                 .get(((ConnectionEditPart) targetObj).getSource());
                     }
-                    if (!(connElem instanceof KNode)) {
-                        continue;
-                    }
-                    targetNode = (KNode) connElem;
                 } else {
-                    targetNode = (KNode) graphElem2EditPartMap.inverse().get(targetObj);
-                    if (targetNode == null) {
-                        continue;
-                    }
+                    targetElem = graphElem2EditPartMap.inverse().get(targetObj);
+                }
+                if (targetElem instanceof KNode) {
+                    edge.setTarget((KNode) targetElem);
+                } else if (targetElem instanceof KPort) {
+                    KPort targetPort = (KPort) targetElem;
+                    edge.setTargetPort(targetPort);
+                    targetPort.getEdges().add(edge);
+                    edge.setTarget(targetPort.getNode());
+                } else {
+                    continue;
                 }
 
-                edge.setSource(sourceNode);
-                edge.setTarget(targetNode);
                 graphElem2EditPartMap.put(edge, connection);
 
                 // store the current coordinates of the edge
