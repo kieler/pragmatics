@@ -27,6 +27,9 @@
          <knownOption
                option="de.cau.cs.kieler.klay.rail.bendAngle">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.rail.layerDistance">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             appliesTo="nodes"
@@ -60,6 +63,14 @@
             description="The angle which will be used to draw outgoing edges."
             id="de.cau.cs.kieler.klay.rail.bendAngle"
             name="Bend Angle"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="50"
+            description="The minimal distance between two layers"
+            id="de.cau.cs.kieler.klay.rail.layerDistance"
+            name="Minimal Layer Distance"
             type="float">
       </layoutOption>
    </extension>

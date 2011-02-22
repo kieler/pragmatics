@@ -32,16 +32,16 @@ import de.cau.cs.kieler.klay.rail.Properties;
  */
 public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
 
-    private float spacing;
+    private float minLayerDist;
     /** the bounds of a line's slope in which it is not bent. */
-    public static final double SLOPE_TOLERANCE = 1f;
+    public static final double SLOPE_TOLERANCE = 0.7f;
 
     /**
      * {@inheritDoc}
      */
     public void routeEdges(final LayeredGraph layeredGraph) {
-        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         float borspacing = layeredGraph.getProperty(Properties.BOR_SPACING);
+        minLayerDist = layeredGraph.getProperty(Properties.LAYER_DISTANCE);
 
         double xpos = borspacing;
         for (Layer layer : layeredGraph.getLayers()) {
@@ -51,7 +51,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
                 }
             }
             layer.placeNodes(xpos);
-            xpos += layer.getSize().x + spacing;
+            xpos += layer.getSize().x + minLayerDist;
             layeredGraph.getSize().x = xpos;
         }
 
@@ -68,18 +68,19 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
                             if (trgPos.x != srcPos.x) {
                                 slope = (trgPos.y - srcPos.y) / (trgPos.x - srcPos.x);
                             }
-
+                            
                             if (Math.abs(slope) > SLOPE_TOLERANCE) {
                                 double newSlope = Math.tan(Math.toRadians(layeredGraph
                                         .getProperty(Properties.BEND_ANGLE)));
 
                                 KVector bendPoint = new KVector(Math.abs(trgPos.y - srcPos.y)
                                         / newSlope + srcPos.x, trgPos.y);
+                                
 
                                 edge.getBendPoints().add(bendPoint);
                                 if (bendPoint.x > trgPos.x) {
                                     pushBackLayers(layer.getIndex() + 1, bendPoint.x - trgPos.x
-                                            + spacing, layeredGraph);
+                                            + minLayerDist, layeredGraph);
                                 }
                             }
                         }
@@ -110,7 +111,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
             for (LNode node : layer.getNodes()) {
                 node.getPos().x = xpos;
             }
-            xpos += layer.getSize().x + spacing;
+            xpos += layer.getSize().x + minLayerDist;
             layeredGraph.getSize().x = xpos;
         }
     }

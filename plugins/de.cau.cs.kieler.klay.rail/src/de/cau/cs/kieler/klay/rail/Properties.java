@@ -53,6 +53,14 @@ public final class Properties {
     /** minimal spacing between objects. */
     public static final Property<Float> OBJ_SPACING = new Property<Float>(
             LayoutOptions.SPACING, DEF_SPACING);
+    
+    /** option identifier for the minimal layer distance. */
+    public static final String LAYER_DISTANCE_ID = "de.cau.cs.kieler.klay.rail.layerDistance";
+    /** default value for object spacing. */
+    public static final float DEF_LAYER_DISTANCE = 50.0f;
+    /** minimal spacing between objects. */
+    public static final Property<Float> LAYER_DISTANCE = new Property<Float>(
+            LAYER_DISTANCE_ID, DEF_LAYER_DISTANCE);
 
     /** default value for border spacing. */
     public static final float DEF_BORDER = 10.0f;
