@@ -15,12 +15,12 @@ package de.cau.cs.kieler.klay.rail.impl;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.p5edges.IEdgeRouter;
 import de.cau.cs.kieler.klay.rail.Properties;
 
 /**
@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.rail.Properties;
  * @author jjc
  * 
  */
-public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter {
+public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
 
     private float minLayerDist;
     /** the bounds of a line's slope in which it is not bent. */
@@ -39,7 +39,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements IEdgeRouter 
     /**
      * {@inheritDoc}
      */
-    public void routeEdges(final LayeredGraph layeredGraph) {
+    public void execute(final LayeredGraph layeredGraph) {
         float borspacing = layeredGraph.getProperty(Properties.BOR_SPACING);
         minLayerDist = layeredGraph.getProperty(Properties.LAYER_DISTANCE);
 

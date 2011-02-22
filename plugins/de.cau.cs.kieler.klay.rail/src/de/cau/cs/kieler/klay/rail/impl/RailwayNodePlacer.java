@@ -14,11 +14,11 @@
 package de.cau.cs.kieler.klay.rail.impl;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.p4nodes.INodePlacer;
 import de.cau.cs.kieler.klay.rail.IPlacement;
 import de.cau.cs.kieler.klay.rail.Properties;
 import de.cau.cs.kieler.klay.rail.graph.RailLayer;
@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klay.rail.graph.RailRow;
  * 
  * @author jjc
  */
-public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer, IPlacement {
+public class RailwayNodePlacer extends AbstractAlgorithm implements ILayoutPhase, IPlacement {
 
     /**
      * {@inheritDoc}
@@ -42,7 +42,7 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements INodePlacer,
     /**
      * {@inheritDoc}
      */
-    public void placeNodes(final LayeredGraph layeredGraph) {
+    public void execute(final LayeredGraph layeredGraph) {
         NodePlacerHelper helper = new NodePlacerHelper();
         getMonitor().begin("Linear segments node placement", 1);
         int layerCount = layeredGraph.getLayers().size();

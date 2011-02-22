@@ -63,8 +63,8 @@ public class KRailGraphImporter implements IGraphImporter {
      *            the top level node of the KGraph
      */
     public KRailGraphImporter(final KNode knode) {
-        importedNodes = transformGraph(knode);
         layeredGraph = new LayeredGraph();
+        importedNodes = transformGraph(knode);
         layeredGraph.setProperty(Properties.ORIGIN, knode);
         KShapeLayout lay = knode.getData(KShapeLayout.class);
         layeredGraph.setProperty(Properties.BEND_ANGLE, lay.getProperty(Properties.BEND_ANGLE));
@@ -94,7 +94,7 @@ public class KRailGraphImporter implements IGraphImporter {
      * @return a list of nodes for a layered graph
      */
     private List<LNode> transformGraph(final KNode layoutNode) {
-        List<LNode> layeredNodes = new LinkedList<LNode>();
+        List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
 
         // transform nodes and ports
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();

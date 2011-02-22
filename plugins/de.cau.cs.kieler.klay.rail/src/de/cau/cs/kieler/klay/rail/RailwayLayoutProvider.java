@@ -29,15 +29,12 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
+import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
-import de.cau.cs.kieler.klay.layered.p1cycles.ICycleBreaker;
-import de.cau.cs.kieler.klay.layered.p2layers.ILayerer;
-import de.cau.cs.kieler.klay.layered.p4nodes.INodePlacer;
-import de.cau.cs.kieler.klay.layered.p5edges.IEdgeRouter;
 import de.cau.cs.kieler.klay.rail.impl.RailwayEdgeRouter;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNetworkSimplexLayerer;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNodePlacer;
@@ -54,13 +51,13 @@ import de.cau.cs.kieler.klay.rail.options.PortType;
 public class RailwayLayoutProvider extends AbstractLayoutProvider {
 
     /** phase 1: cycle breaking module. */
-    private ICycleBreaker cycleBreaker = new GreedyCycleBreaker();
+    private ILayoutPhase cycleBreaker = new GreedyCycleBreaker();
     /** phase 2: layering module. */
-    private ILayerer layerer = new RailwayNetworkSimplexLayerer();
+    private ILayoutPhase layerer = new RailwayNetworkSimplexLayerer();
     /** phase 3: node placement module. */
-    private INodePlacer nodePlacer = new RailwayNodePlacer();
+    private ILayoutPhase nodePlacer = new RailwayNodePlacer();
     /** phase 4: Edge routing module. */
-    private IEdgeRouter edgeRouter = new RailwayEdgeRouter();
+    private ILayoutPhase edgeRouter = new RailwayEdgeRouter();
 
     private static final int SWITCH_PORTS = 3;
 
@@ -134,7 +131,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         }
         monitor.begin("Layered layout phases", 1 + 1 + 1 + 1);
         LayeredGraph layeredGraph = importer.getGraph();
-        List<LNode> nodes = importer.getImportedNodes();
+        List<LNode> nodes = layeredGraph.getLayerlessNodes();
 
         System.out.println("Validating ...");
         validateRailwayGraph(nodes);
@@ -144,21 +141,21 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
 
         // phase 1: cycle breaking
         cycleBreaker.reset(monitor.subTask(1));
-        cycleBreaker.breakCycles(nodes);
+        cycleBreaker.execute(layeredGraph);
         // phase 2: layering
         layerer.reset(monitor.subTask(1));
-        layerer.layer(nodes, layeredGraph);
+        layerer.execute(layeredGraph);
         layeredGraph.splitEdges();
         // phase 3: node placement
         nodePlacer.reset(monitor.subTask(1));
-        nodePlacer.placeNodes(layeredGraph);
+        nodePlacer.execute(layeredGraph);
         // subphase: arrange ports
         // Won't work with GMF editors due to an already reported bug
         //System.out.println("Arranging ports ...");
         //arrangePorts(nodes);
         // phase 4: edge routing
         edgeRouter.reset(monitor.subTask(1));
-        edgeRouter.routeEdges(layeredGraph);
+        edgeRouter.execute(layeredGraph);
 
         swapBackSwappedEdges();
         monitor.done();
