@@ -49,6 +49,14 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *     Prentice Hall, New Jersey, 1999 (Section 9.4, for cycle breaking in the
  *     hyperedge segment graph)
  * </ul>
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>the graph has a proper layering with
+ *     assigned node and port positions; the size of each layer is
+ *     correctly set</dd>
+ *   <dt>Postcondition:</dt><dd>each node is assigned a horizontal coordinate;
+ *     the bend points of each edge are set; the width of the whole graph is set</dd>
+ * </dl>
  *
  * @author msp
  */

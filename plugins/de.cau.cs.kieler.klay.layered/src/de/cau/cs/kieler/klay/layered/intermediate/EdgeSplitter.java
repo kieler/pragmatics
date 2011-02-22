@@ -30,6 +30,12 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * For each edge that connects two nodes that are more than one layer apart
  * from each other, create a dummy node to split the edge. The resulting layering
  * is <i>proper</i>, i.e. all edges connect only nodes from subsequent layers.
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>a layered graph.</dd>
+ *   <dt>Postcondition:</dt><dd>the graph is properly layered; that is, each edge
+ *              connects nodes in neighbouring layers.</dd>
+ * </dl>
  *
  * @author msp
  */

@@ -29,6 +29,12 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 /**
  * The most basic layering algorithm, which assign layers according to the
  * longest path to a sink.
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>the graph has no cycles</dd>
+ *   <dt>Postcondition:</dt><dd>all nodes have been assigned a layer such that
+ *     edges connect only nodes from layers with increasing indices</dd>
+ * </dl>
  *
  * @author msp
  */

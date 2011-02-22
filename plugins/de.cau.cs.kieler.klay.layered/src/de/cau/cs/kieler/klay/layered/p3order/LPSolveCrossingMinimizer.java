@@ -43,6 +43,14 @@ import lpsolve.LpSolve;
  * an optimal ordering of all nodes in the layered graph using the LP-solver of
  * <a href="http://lpsolve.sourceforge.net/">lpsolve.sourceforge.net</a>.
  * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>the graph has a proper layering, i.e. all
+ *     long edges have been splitted</dd>
+ *   <dt>Postcondition:</dt><dd>the order of nodes in each layer and the order
+ *     of ports in each node are optimized to yield as few edge crossings
+ *     as possible</dd>
+ * </dl>
+ * 
  * @author msp
  */
 public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {

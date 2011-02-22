@@ -38,6 +38,12 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
  * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories}.
  * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>the graph has no cycles</dd>
+ *   <dt>Postcondition:</dt><dd>all nodes have been assigned a layer such that
+ *     edges connect only nodes from layers with increasing indices</dd>
+ * </dl>
+ * 
  * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
  * 
  * @author pdo

@@ -38,6 +38,12 @@ import lpsolve.LpSolve;
  * layering of all nodes in the graph concerning a minimal edge span using the LP-solver of <a
  * href="http://lpsolve.sourceforge.net/">lpsolve.sourceforge.net</a>.
  * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>the graph has no cycles</dd>
+ *   <dt>Postcondition:</dt><dd>all nodes have been assigned a layer such that
+ *     edges connect only nodes from layers with increasing indices</dd>
+ * </dl>
+ * 
  * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
  * 
  * @author pdo

@@ -35,6 +35,14 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 /**
  * Crossing minimization module that performs one or more sweeps over the layers
  * while applying a two-layer crossing minimization heuristic on each pair of layers.
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>the graph has a proper layering, i.e. all
+ *     long edges have been splitted</dd>
+ *   <dt>Postcondition:</dt><dd>the order of nodes in each layer and the order
+ *     of ports in each node are optimized to yield as few edge crossings
+ *     as possible</dd>
+ * </dl>
  *
  * @author msp
  */

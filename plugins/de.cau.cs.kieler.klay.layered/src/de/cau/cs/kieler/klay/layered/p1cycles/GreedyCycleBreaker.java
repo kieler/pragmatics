@@ -32,7 +32,13 @@ import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
  *   <li>Giuseppe di Battista, Peter Eades, Roberto Tamassia, Ioannis G. Tollis,
  *     <i>Graph Drawing: Algorithms for the Visualization of Graphs</i>,
  *     Prentice Hall, New Jersey, 1999
- * </ul> 
+ * </ul>
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>none</dd>
+ *   <dt>Postcondition:</dt><dd>the graph has no cycles, but possibly
+ *     new nodes and edges</dd>
+ * </dl>
  *
  * @author msp
  */

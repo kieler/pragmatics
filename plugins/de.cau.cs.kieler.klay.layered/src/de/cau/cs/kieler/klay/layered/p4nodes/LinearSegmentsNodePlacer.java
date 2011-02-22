@@ -39,6 +39,16 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * Symposium on Graph Drawing (GD '95)</i>, pp. 447-458, Springer, 1996.</li>
  * </ul>
  * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>the graph has a proper layering with
+ *     optimized nodes ordering</dd>
+ *   <dt>Postcondition:</dt><dd>each node is assigned a vertical coordinate
+ *     such that no two nodes overlap; the ports of each node are arranged
+ *     according to their order; the size of each layer is set according to
+ *     the area occupied by contained nodes; the height of the graph is set
+ *     to the maximal layer height</dd>
+ * </dl>
+ * 
  * @author msp
  * @author grh
  */
