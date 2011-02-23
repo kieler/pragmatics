@@ -339,8 +339,11 @@ public final class PtolemyFetcher {
                     }
                 } catch (ClassNotFoundException ce) {
                     // Do nothing. We'll handle that after the try-catch block.
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (NoClassDefFoundError er) {
+                    //er.printStackTrace();
+                    return null;
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
                 
                 try {
