@@ -56,26 +56,31 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
         }
 
         for (Layer layer : layeredGraph.getLayers()) {
+            NodeLoop:
             for (LNode node : layer.getNodes()) {
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getEdges()) {
+                        if (node.getProperty(de.cau.cs.kieler.klay.layered.Properties.NODE_TYPE).equals(
+                                de.cau.cs.kieler.klay.layered.Properties.NodeType.LONG_EDGE)) {
+                            edge.getBendPoints().clear();
+                            continue NodeLoop;
+                        }
                         if (edge.getSource() == port) {
                             KVector srcPos = new KVector(port.getPos()).add(node.getPos());
-                            KVector trgPos = new KVector(edge.getTarget().getPos())
-                                    .add(edge.getTarget().getNode().getPos());
+                            KVector trgPos = new KVector(edge.getTarget().getPos()).add(edge
+                                    .getTarget().getNode().getPos());
 
                             double slope = Double.POSITIVE_INFINITY;
                             if (trgPos.x != srcPos.x) {
                                 slope = (trgPos.y - srcPos.y) / (trgPos.x - srcPos.x);
                             }
-                            
+
                             if (Math.abs(slope) > SLOPE_TOLERANCE) {
                                 double newSlope = Math.tan(Math.toRadians(layeredGraph
                                         .getProperty(Properties.BEND_ANGLE)));
 
                                 KVector bendPoint = new KVector(Math.abs(trgPos.y - srcPos.y)
                                         / newSlope + srcPos.x, trgPos.y);
-                                
 
                                 edge.getBendPoints().add(bendPoint);
                                 if (bendPoint.x > trgPos.x) {
