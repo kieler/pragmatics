@@ -87,16 +87,18 @@ public class FeatureProvider extends DefaultFeatureProvider {
             return new AddVertexFeature(this, this.styleProvider,
                     TypeFeatures.DEADENDVERTEX);
         } else if (context.getNewObject() instanceof Weichenknoten) {
-            EOrientation E =
+            EOrientation orientation =
                     ((Weichenknoten) (context.getNewObject()))
                             .getAbzweigendeLage();
-            switch (E) {
+            switch (orientation) {
             case LINKS:
                 return new AddVertexFeature(this, this.styleProvider,
                         TypeFeatures.SWITCHVERTEX_LEFT);
             case RECHTS:
                 return new AddVertexFeature(this, this.styleProvider,
                         TypeFeatures.SWITCHVERTEX_RIGHT);
+			default:
+				break;
             }
         } else if (context.getNewObject() instanceof Port) {
             return new AddPortFeature(this, styleProvider);
@@ -117,7 +119,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
                 new CreateVertexFeature(this, TypeFeatures.BREANCH),
                 new CreateVertexFeature(this, TypeFeatures.DEADENDVERTEX),
                 new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_LEFT),
-                new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT)};//,
+                new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT)};
                 //new CreatePortFeature(this)};
     }
 
@@ -126,7 +128,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
-        return new ICreateConnectionFeature[] { new CreateEdgeFeature(this) };
+        return new ICreateConnectionFeature[] {new CreateEdgeFeature(this)};
     }
 
     /*

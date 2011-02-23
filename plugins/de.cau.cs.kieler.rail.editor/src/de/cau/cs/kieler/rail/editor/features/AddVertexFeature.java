@@ -38,6 +38,7 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 import de.cau.cs.kieler.rail.editor.Geometry;
+import de.cau.cs.kieler.rail.editor.RotationSwitchHandler;
 import de.cau.cs.kieler.rail.editor.StyleProvider;
 
 /**
@@ -69,6 +70,10 @@ public class AddVertexFeature extends AbstractAddFeature {
 	private static final int HEIGHT_SWITCH = 50;
 
 	private static final int WIDTH_SWITCH = 50;
+
+	private static final double MIDDLE = 0.5;
+
+	public static final String KLAY_NODETYPE_KEY = "layout:de.cau.cs.kieler.klay.rail.nodeType";
 
     private TypeFeatures type;
 
@@ -225,14 +230,14 @@ public class AddVertexFeature extends AbstractAddFeature {
             properPort.setKey("layout:de.cau.cs.kieler.klay.rail.portType");
             properPort.setValue("STUMP");
             containerShape.getProperties().add(properPort);
-
+            
             // PORT
             Port port = einbruchsknoten.getPorts().get(0);
             final BoxRelativeAnchor boxAnchor =
                     peCreateService.createBoxRelativeAnchor(containerShape);
             boxAnchor.setActive(true);
-            boxAnchor.setRelativeHeight(0.5);
-            boxAnchor.setRelativeWidth(0.5);
+            boxAnchor.setRelativeHeight(MIDDLE);
+            boxAnchor.setRelativeWidth(MIDDLE);
             boxAnchor.setReferencedGraphicsAlgorithm(ellipse);
             Rectangle rec = gaService.createRectangle(boxAnchor);
             rec.setStyle(styleProvider.getStyle(StyleProvider.PORT_END));
@@ -407,7 +412,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 
         // for the Layouter
         Property properOrientatin = MmFactory.eINSTANCE.createProperty();
-        properOrientatin.setKey("layout:de.cau.cs.kieler.klay.rail.nodeType");
+        properOrientatin.setKey(KLAY_NODETYPE_KEY);
         switch (orientatin) {
         case LINKS:
             properOrientatin.setValue("SWITCH_LEFT");
@@ -420,10 +425,16 @@ public class AddVertexFeature extends AbstractAddFeature {
 
         IGaService gaService = Graphiti.getGaService();
 
+      //for the angle
+		Property proper = MmFactory.eINSTANCE.createProperty();
+		proper.setKey(RotationSwitchHandler.MULTIPLEANGLE_KEY);
+		proper.setValue("0");
+        containerShape.getProperties().add(proper);
+        
         // virtual Rectangle
         Rectangle rect = gaService.createRectangle(containerShape);
         rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-        rect.setForeground(manageColor(255, 255, 255));
+        rect.setForeground(manageColor(255, 255, 255)); //TODO const
 
         // PORT
         int width= 50;// containerShape.getGraphicsAlgorithm().getWidth();
@@ -438,7 +449,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 
             //for the Layouter
             Property properPort = MmFactory.eINSTANCE.createProperty();
-            properPort.setKey("layout:de.cau.cs.kieler.klay.rail.portType");
+            properPort.setKey(KLAY_NODETYPE_KEY);
 
             boxAnchor.setRelativeHeight(0.4);// (0.5-portWidth);
             

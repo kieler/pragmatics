@@ -26,11 +26,11 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 public class RailEditorActionBarContributor extends EditorActionBarContributor {
 
     @Override
-    public void contributeToToolBar(final IToolBarManager manager) {
+    public final void contributeToToolBar(final IToolBarManager manager) {
         super.contributeToToolBar(manager);
 
         String[] zoomStrings =
-                new String[] { ZoomManager.FIT_ALL, ZoomManager.FIT_HEIGHT,
+                new String[] {ZoomManager.FIT_ALL, ZoomManager.FIT_HEIGHT,
                         ZoomManager.FIT_WIDTH };
         manager.add(new ZoomComboContributionItem(getPage(), zoomStrings));
 

@@ -128,7 +128,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
 
         PictogramElement pictogramElement = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pictogramElement);
-        
+
         int width = pictogramElement.getGraphicsAlgorithm().getWidth();
         int height = pictogramElement.getGraphicsAlgorithm().getHeight();
 
@@ -145,7 +145,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             	trianglePolygon = (Polygon) graphicsAlgorithm;
             }else if (graphicsAlgorithm instanceof Polyline) {
                 polylines.add((Polyline) graphicsAlgorithm);
-            } 
+            }
         }
         // Polylines end
 

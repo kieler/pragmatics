@@ -41,26 +41,24 @@ public class ReInitKrailDiagramCommand extends
         AbstractReInitGraphitiDiagramCommand {
 
     /**
-     * 
      * Creates a new ReInitKrailDiagramCommand.
-     * 
      */
     public ReInitKrailDiagramCommand() {
         super(KrailDiagramEditor.DIAGRAM_TYPE, 0, false);
     }
 
     @Override
-    protected String getEditorId() {
+	protected final String getEditorId() {
         return KrailDiagramEditor.EDITOR_ID;
     }
 
     @Override
-    protected boolean isConnection(final EObject eObj) {
+	protected final boolean isConnection(final EObject eObj) {
         return eObj instanceof Edge;
     }
 
     @Override
-    protected EObject getConnectionSource(final EObject connection) {
+	protected final EObject getConnectionSource(final EObject connection) {
         if (connection instanceof Edge) {
             Edge e = (Edge) connection;
             return e.getBegin();
@@ -69,7 +67,7 @@ public class ReInitKrailDiagramCommand extends
     }
 
     @Override
-    protected EObject getConnectionTarget(final EObject connection) {
+	protected final EObject getConnectionTarget(final EObject connection) {
         if (connection instanceof Edge) {
             Edge e = (Edge) connection;
             return e.getEnd();
@@ -79,8 +77,8 @@ public class ReInitKrailDiagramCommand extends
     }
 
     @SuppressWarnings("restriction")
-    @Override
-    protected void performPostOperationAction(final IFile path,
+	@Override
+	protected final void performPostOperationAction(final IFile path,
             final List<IFile> partners, final IProgressMonitor monitor,
             final IEditorPart newEditor) {
         super.performPostOperationAction(path, partners, monitor, newEditor);
@@ -102,7 +100,7 @@ public class ReInitKrailDiagramCommand extends
                                         @Override
                                         protected void doExecute() {
                                             KrailNewWizard
-                                                    .addLayoutDefaultsToDiagram(diag);
+                                            .addLayoutDefaultsToDiagram(diag);
 
                                             setEntryPoint(diag);
 
@@ -117,7 +115,6 @@ public class ReInitKrailDiagramCommand extends
      * Each Graph needs one Entry point for the layouter to work. Since the
      * entry point is not yet specified in the model file the first
      * 'Einbruchsknoten' will be selected as entry point.
-     * 
      * @param diag
      *            the diagram
      */
@@ -152,7 +149,7 @@ public class ReInitKrailDiagramCommand extends
      * {@inheritDoc}
      */
     @Override
-    protected String getDiagramExtension() {
+	protected final String getDiagramExtension() {
         return KrailDiagramEditor.DIAGRAM_FILE_EXTENSION;
     }
 
@@ -160,12 +157,12 @@ public class ReInitKrailDiagramCommand extends
      * {@inheritDoc}
      */
     @Override
-    protected String getModelExtension() {
+	protected final String getModelExtension() {
         return KrailDiagramEditor.MODEL_FILE_EXTENSION;
     }
 
     @Override
-    protected boolean addChildrenRecursively(final EObject eObj) {
+	protected final boolean addChildrenRecursively(final EObject eObj) {
         return false;
     }
 

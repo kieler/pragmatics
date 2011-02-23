@@ -3,6 +3,11 @@ package de.cau.cs.kieler.rail.editor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+/**
+ * The Krail Graphiti
+ * @author hdw
+ *
+ */
 public class KrailGraphitiPlugin extends AbstractUIPlugin {
 
     /** The plug-in ID. */
@@ -37,7 +42,6 @@ public class KrailGraphitiPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the shared instance.
-     * 
      * @return the shared instance
      */
     public static KrailGraphitiPlugin getDefault() {

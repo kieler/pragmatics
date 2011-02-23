@@ -9,6 +9,11 @@ import de.cau.cs.kieler.core.model.graphiti.ui.GraphitiNewWizard;
 import de.cau.cs.kieler.rail.Topologie.Model;
 import de.cau.cs.kieler.rail.Topologie.TopologieFactory;
 
+/**
+ * 
+ * @author hdw
+ *
+ */
 public class KrailNewWizard extends GraphitiNewWizard {
 
     public KrailNewWizard() {
@@ -45,7 +50,7 @@ public class KrailNewWizard extends GraphitiNewWizard {
      * {@inheritDoc}
      */
     @Override
-    protected EObject createModel(final String name) {
+	protected final EObject createModel(final String name) {
         Model model = TopologieFactory.eINSTANCE.createModel();
         return model;
     }

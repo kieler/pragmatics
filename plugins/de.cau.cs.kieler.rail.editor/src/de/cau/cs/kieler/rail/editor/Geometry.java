@@ -6,19 +6,29 @@ package de.cau.cs.kieler.rail.editor;
  *
  */
 public class Geometry {
+	/**
+	 * Degree to radiant
+	 * @param angle the angle in degree
+	 * @return calculate degree (°) to radiant
+	 */
 	public static double degreeToRad(double angle){
 		return angle * Math.PI / 180;
 	}
-	
+	/**
+	 * A standard constructor
+	 */
+	public Geometry() {
+
+	}
 	/**
 	 * 
 	 * @param relativStartY
 	 * @param angle
 	 * @param relativEndHeight
-	 * @return
+	 * @return get the relative weight
 	 */
-	public static double getRelativWeight(double relativStartY,
-	double angle, double relativEndHeight){
+	public static double getRelativWeight(final double relativStartY,
+	final double angle, final double relativEndHeight){
 		double m = Math.tan(angle);
 		return ((relativEndHeight)/m);  //-relativStartY
 	}
