@@ -13,8 +13,14 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.List;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
@@ -47,8 +53,26 @@ public class StrangePortSideProcessor extends AbstractAlgorithm implements ILayo
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        // TODO Auto-generated method stub
+        List<Layer> layers = layeredGraph.getLayers();
+        int layerCount = layers.size();
         
+        // Iterate through the layers
+        for (int layerIndex = 0; layerIndex < layerCount; layerIndex++) {
+            Layer layer = layers.get(layerIndex);
+            
+            // Iterate through the layer's nodes
+            for (LNode node : layer.getNodes()) {
+                // Look for ports on the right side connected to edges originating from lower layers
+                for (LPort port : node.getPorts(PortSide.EAST)) {
+                    
+                }
+                
+                // Look for ports on the left side connected to edges going to higher layers
+                for (LPort port : node.getPorts(PortSide.WEST)) {
+                    
+                }
+            }
+        }
     }
 
 }
