@@ -255,7 +255,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // create a new request to change the layout
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
         for (Entry<KGraphElement, IGraphicalEditPart> entry : graphElem2EditPartMap.entrySet()) {
-            if (entry.getKey() != layoutGraph) {
+            if (!(entry.getValue() instanceof DiagramEditPart)) {
                 applyLayoutRequest.addElement(entry.getKey(), entry.getValue());
             }
         }
