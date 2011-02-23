@@ -40,7 +40,8 @@ public class LayoutFeature extends AbstractLayoutFeature {
     
     TypeFeatures type;
     
-    public LayoutFeature(IFeatureProvider fp ,TypeFeatures type, int height, int width) {
+    public LayoutFeature(IFeatureProvider fp ,
+    TypeFeatures type, int height, int width) {
         super(fp);
         this.type = type;
         this.height = height;
@@ -49,7 +50,7 @@ public class LayoutFeature extends AbstractLayoutFeature {
     /**
      * {@inheritDoc}
      */
-    public boolean canLayout(ILayoutContext context) {
+    public final boolean canLayout(final ILayoutContext context) {
        // return true, if pictogram element is linked to an EClass
        PictogramElement pe = context.getPictogramElement();
        if (!(pe instanceof ContainerShape))
@@ -65,7 +66,7 @@ public class LayoutFeature extends AbstractLayoutFeature {
     /**
      * {@inheritDoc}
      */
-    public boolean layout(ILayoutContext context) {
+    public boolean layout(final ILayoutContext context) {
         boolean anythingChanged = false;
         ContainerShape containerShape =
             (ContainerShape) context.getPictogramElement();
@@ -114,7 +115,7 @@ public class LayoutFeature extends AbstractLayoutFeature {
      * @param object
      * @return Is an object with 
      */
-	public boolean isInstanceof(Object object){
+	public final boolean isInstanceof(Object object){
 		switch (type){
 		case BREANCH:
 			return object instanceof Einbruchsknoten;
@@ -123,6 +124,8 @@ public class LayoutFeature extends AbstractLayoutFeature {
 		case SWITCHVERTEX_LEFT:
 		case SWITCHVERTEX_RIGHT:
 			return object instanceof Weichenknoten;
+		default:
+			break;
 		}
 		return false;
 	}

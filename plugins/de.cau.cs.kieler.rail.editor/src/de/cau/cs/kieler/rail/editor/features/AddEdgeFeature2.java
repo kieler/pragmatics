@@ -34,7 +34,6 @@ public class AddEdgeFeature2 extends AbstractAddFeature {
 
     /**
      * Constructor
-     * 
      * @param fp
      *            FeatureProvider
      * @param styleProvider

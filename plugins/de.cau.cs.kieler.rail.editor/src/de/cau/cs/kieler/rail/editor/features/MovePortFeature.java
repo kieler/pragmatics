@@ -34,8 +34,10 @@ public class MovePortFeature extends DefaultMoveAnchorFeature {
     * {@inheritDoc}
     */
     @Override
-    public boolean canMoveAnchor(final IMoveAnchorContext context) {
-        return (getBusinessObjectForPictogramElement(context.getTargetContainer()) instanceof Vertex)
+    public final boolean canMoveAnchor(
+    final IMoveAnchorContext context) {
+        return (getBusinessObjectForPictogramElement(
+                context.getTargetContainer()) instanceof Vertex)
                 && !(context.getTargetContainer() instanceof Diagram);
     }
 
@@ -43,7 +45,8 @@ public class MovePortFeature extends DefaultMoveAnchorFeature {
      * {@inheritDoc}
      */
     @Override
-    protected void moveAnchor(final Anchor anchor, final int posX, final int posY) {
+    protected final void moveAnchor(
+    final Anchor anchor, final int posX, final int posY) {
         if (anchor instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor boxAnchor = (BoxRelativeAnchor) anchor;
             GraphicsAlgorithm anchorContainerGa = boxAnchor.getParent().getGraphicsAlgorithm();

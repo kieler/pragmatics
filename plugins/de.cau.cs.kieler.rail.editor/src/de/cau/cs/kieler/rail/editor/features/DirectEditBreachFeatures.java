@@ -11,19 +11,19 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 
 public class DirectEditBreachFeatures extends AbstractDirectEditingFeature {
- 
+
     public DirectEditBreachFeatures(IFeatureProvider fp) {
         super(fp);
     }
- 
+
     public int getEditingType() {
         // there are several possible editor-types supported:
         // text-field, checkbox, color-chooser, combobox, ...
         return TYPE_TEXT;
     }
- 
+
     @Override
-    public boolean canDirectEdit(IDirectEditingContext context) {
+	public final boolean canDirectEdit(final IDirectEditingContext context) {
         PictogramElement pe = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pe);
         GraphicsAlgorithm ga = context.getGraphicsAlgorithm();
@@ -36,7 +36,7 @@ public class DirectEditBreachFeatures extends AbstractDirectEditingFeature {
         return false;
     }
  
-    public String getInitialValue(IDirectEditingContext context) {
+    public String getInitialValue(final IDirectEditingContext context) {
         // return the current name of the EClass
         PictogramElement pe = context.getPictogramElement();
         Einbruchsknoten eClass = (Einbruchsknoten) getBusinessObjectForPictogramElement(pe);
@@ -44,19 +44,18 @@ public class DirectEditBreachFeatures extends AbstractDirectEditingFeature {
     }
  
     @Override
-    public String checkValueValid(String value, IDirectEditingContext context) {
+	public final String checkValueValid(String value, IDirectEditingContext context) {
         if (value.length() < 1)
             return "Please enter any text as class name.";
         if (value.contains(" "))
             return "Spaces are not allowed in class names.";
         if (value.contains("\n"))
             return "Line breakes are not allowed in class names.";
- 
         // null means, that the value is valid
         return null;
     }
- 
-    public void setValue(String value, IDirectEditingContext context) {
+
+    public void setValue(final String value, final IDirectEditingContext context) {
         // set the new name for the MOF class
         PictogramElement pe = context.getPictogramElement();
         Einbruchsknoten einbruchsknoten = (Einbruchsknoten) getBusinessObjectForPictogramElement(pe);

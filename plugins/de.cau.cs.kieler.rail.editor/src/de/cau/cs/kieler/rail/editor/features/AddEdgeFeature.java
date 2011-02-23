@@ -21,9 +21,7 @@ import de.cau.cs.kieler.rail.editor.StyleProvider;
 
 /**
  * AddFeature for the graphical Representation of the edge.
- * 
  * @author hdw
- * 
  */
 public class AddEdgeFeature extends AbstractAddFeature {
 
@@ -34,7 +32,6 @@ public class AddEdgeFeature extends AbstractAddFeature {
 
     /**
      * Constructor
-     * 
      * @param fp
      *            FeatureProvider
      * @param styleProvider
@@ -52,7 +49,7 @@ public class AddEdgeFeature extends AbstractAddFeature {
      *            to.
      * @return The Pictogram Element for the Edge (a line for source to target)
      */
-    public PictogramElement add(final IAddContext context) {
+    public final PictogramElement add(final IAddContext context) {
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
 
         // ONLY NOW
@@ -74,7 +71,7 @@ public class AddEdgeFeature extends AbstractAddFeature {
 
         Polyline polyline = gaService.createPolyline(connection);
         polyline.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-        
+
 
         // create link and write it
         if (((EObject) context.getNewObject()).eResource() == null) {

@@ -25,7 +25,6 @@ import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 
 /**
  * A provider for styles of diagram elements.
- * 
  * @author hdw
  */
 public class StyleProvider implements IStyleProvider {
@@ -35,7 +34,6 @@ public class StyleProvider implements IStyleProvider {
 
     /**
      * Creates a style provider for a given diagram type provider.
-     * 
      * @param provider
      *            the diagram type provider
      */
@@ -45,21 +43,19 @@ public class StyleProvider implements IStyleProvider {
 
     /**
      * Returns the default style.
-     * 
      * @return the default style
      */
-    public Style getStyle() {
+    public final Style getStyle() {
         return getStyle(DEFAULT_STYLE);
     }
 
     /**
      * Fetch the style with given identifier.
-     * 
      * @param id
      *            the style identifier
      * @return a style instance, or {@code null} if the id is unknown
      */
-    public Style getStyle(final String id) {
+    public final Style getStyle(final String id) {
         Diagram diagram = diagramTypeProvider.getDiagram();
         Style style = getStyle(diagram, id);
         if (style == null) {
@@ -70,7 +66,6 @@ public class StyleProvider implements IStyleProvider {
 
     /**
      * Look recursively for an appropriate style.
-     * 
      * @param container
      *            a style container
      * @param id
@@ -96,17 +91,17 @@ public class StyleProvider implements IStyleProvider {
     public static final String DEFAULT_STYLE = "default";
     /** style id for items with solid color fill. */
     public static final String SOLID_STYLE = "solid";
-    // TODO new one.
-    /** style id for Breach (Einbruchsstelle) */
+    /**style id for Breach (Einbruchsstelle) */
     public static final String BREACH = "breach";
-    /** style id for Breach (Einbruchsstelle) */
+    /**style id for Breach (Einbruchsstelle) */
     public static final String PORT = "port";
+    /**name of a style for an port end */
     public static final String PORT_END = "port end";
+    /**name of a style for an polyline */
     public static final String POLYLINE = "polyline";
 
     /**
      * Create the style with given identifier.
-     * 
      * @param diagram
      *            the diagram
      * @param id

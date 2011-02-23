@@ -17,17 +17,21 @@ import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.editor.StyleProvider;
 
+/**
+ * 
+ * @author hdw
+ *
+ */
 public class AddPortFeature extends AbstractAddShapeFeature{
 	/** the default size of ports. */
     public static final int PORT_SIZE = 10;
 
-    
-    /** the style provider. */ 
+
+    /** the style provider. */
     private IStyleProvider styleProvider;
 
     /**
      * The constructor.
-     * 
      * @param fp the feature provider
      * @param sp the style provider
      */

@@ -430,7 +430,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 		proper.setKey(RotationSwitchHandler.MULTIPLEANGLE_KEY);
 		proper.setValue("0");
         containerShape.getProperties().add(proper);
-        
+
         // virtual Rectangle
         Rectangle rect = gaService.createRectangle(containerShape);
         rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
@@ -439,7 +439,7 @@ public class AddVertexFeature extends AbstractAddFeature {
         // PORT
         int width= 50;// containerShape.getGraphicsAlgorithm().getWidth();
         int height= 50;// containerShape.getGraphicsAlgorithm().getHeight();
-        
+
         for (Port port : switchVertex.getPorts()) {
             final BoxRelativeAnchor boxAnchor =
                     peCreateService.createBoxRelativeAnchor(containerShape);
@@ -452,8 +452,7 @@ public class AddVertexFeature extends AbstractAddFeature {
             properPort.setKey(KLAY_NODETYPE_KEY);
 
             boxAnchor.setRelativeHeight(0.4);// (0.5-portWidth);
-            
-            
+
 
             int boxWidth = PORT_SIZE;
             int boxHeight = PORT_SIZE;

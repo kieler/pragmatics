@@ -126,7 +126,7 @@ public class ToggleSwitchFeature extends AbstractCustomFeature {
         		wk.getAbzweigendeLage());
 
         		RotationSwitchHandler.setMultipleAngle(pes[0],
-        		getFeatureProvider(), multipleangle);
+        		getFeatureProvider(), multipleangle,0.1);
 
 	            updatePictogramElement(pes[0]);
 	        }

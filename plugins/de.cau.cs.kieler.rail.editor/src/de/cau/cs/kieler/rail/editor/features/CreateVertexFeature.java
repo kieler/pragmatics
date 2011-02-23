@@ -66,12 +66,12 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
      * @param context
      * @param vertex
      * @param vertexPE
-     * @return the created ports as bisnes 
+     * @return the created ports as bisnes
      */
-    private EList<Port> addGraphicalRepresentationForPorts(Object vertex){
-    	EList<Port> ports=new BasicEList<Port>();
+    private EList<Port> addGraphicalRepresentationForPorts(final Object vertex){
+    	EList<Port> ports = new BasicEList<Port>();
 
-    	switch (type){
+    	switch (type) {
     		case SWITCHVERTEX_LEFT:
     		case SWITCHVERTEX_RIGHT:
     			Port abzweig = BasegraphFactory.eINSTANCE.createPort();
@@ -90,30 +90,34 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     	    	ende.setName(EPort.ENDE);
     	    	ports.add(ende);
     	    	break;
+		default:
+			break;
     	}
     	return ports;
     }
-    
+
     /**
      * Creates the ports and addGraphicalRepresentation for them.
      * @param context
      * @param vertex
-     * @param vertexPE 
+     * @param vertexPE
      * @param vertexPE
      * @return the created ports as bisnes 
      */
-    private EList<Port> addGraphicalRepresentationForPorts(ITargetContext context, Object vertex, PictogramElement vertexPE){
-    	EList<Port> ports=new BasicEList<Port>();
-    	
-    	AddContext addBookContext = new AddContext(new AreaContext(),vertex);
-        
+    private EList<Port> addGraphicalRepresentationForPorts(ITargetContext context, Object vertex, PictogramElement vertexPE) {
+    	EList<Port> ports = new BasicEList<Port>();
+
+    	AddContext addBookContext = new AddContext(new AreaContext(), vertex);
+
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        ContainerShape contShape = peCreateService.createContainerShape(context.getTargetContainer(),false);
-        
+        ContainerShape contShape =
+           peCreateService.createContainerShape(
+           context.getTargetContainer(), false);
+
         contShape.setGraphicsAlgorithm(vertexPE.getGraphicsAlgorithm());
         addBookContext.setTargetContainer(contShape);
 
-    	switch (type){
+    	switch (type) {
     		case SWITCHVERTEX_LEFT:
     		case SWITCHVERTEX_RIGHT:
     			Port abzweig = BasegraphFactory.eINSTANCE.createPort();
@@ -125,13 +129,19 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     			ports.add(abzweig);
     			ports.add(stamm);
     			ports.add(spitze);
-    			
+
     			addGraphicalRepresentation(addBookContext, stamm);
     	    	addGraphicalRepresentation(addBookContext, spitze);
     	    	addGraphicalRepresentation(addBookContext, abzweig);
+		default:
+			break;
     	}
     	return ports;
     }
+    /**
+     *Creates the right vertex from the SpecializedVerticesFactory 
+     *@return a right vertex in dependence form the type   
+     */
     private Vertex getVertex()
     {
     	Vertex vertex;
@@ -152,9 +162,14 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
 		}
     	return null;
     }
-    
+
+    /**
+     * Get the name of the vertex
+     * @param type the type where the name comes from
+     * @return a String witch insert the name of this type of vertex.
+     */
     private static String getName(TypeFeatures type){
-    	switch(type){
+    	switch(type) {
     	case BREANCH:
         	return "Einbruchstelle";
     	case DEADENDVERTEX:
@@ -163,6 +178,8 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     		return "Weiche links";
     	case SWITCHVERTEX_RIGHT:
     		return "Weiche rechts";
+		default:
+			break;
     	}
     	return "";
     }

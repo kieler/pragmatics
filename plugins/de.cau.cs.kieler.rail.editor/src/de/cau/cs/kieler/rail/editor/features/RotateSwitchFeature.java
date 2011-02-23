@@ -29,21 +29,21 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
      * {@inheritDoc}
      */
     @Override
-    public String getName() {
+	public final String getName() {
         return NAME;
     }
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getDescription() {
+	public final String getDescription() {
         return "Ändert den Winkel der Weiche";
     }
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean canExecute(ICustomContext context) {
+	public final boolean canExecute(final ICustomContext context) {
         // allow rename if exactly one pictogram element
         // representing a EClass is selected
         boolean ret = false;
@@ -60,9 +60,9 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
      * {@inheritDoc}
      */
     //RotationSwitchHandler.MULTIPLEANGLE_KEY
-    public void execute(final ICustomContext context) {
-    	Property propertyNodeType=null;
-    	Property propertyAngle=null;
+    public final void execute(final ICustomContext context) {
+    	Property propertyNodeType = null;
+    	Property propertyAngle =  null;
     	PictogramElement[] pes = context.getPictogramElements();
         if (pes != null && pes.length == 1) {
             Object bo = getBusinessObjectForPictogramElement(pes[0]);
@@ -70,14 +70,19 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
                 Weichenknoten wk = (Weichenknoten) bo;
                 //I don't know the right order
                 for (Property property : pes[0].getProperties()) {
-                	if (AddVertexFeature.KLAY_NODETYPE_KEY == property.getKey()) {
+                	if (AddVertexFeature.KLAY_NODETYPE_KEY
+                	== property.getKey()) {
                 		propertyNodeType = property;
-                	} else if (RotationSwitchHandler.MULTIPLEANGLE_KEY == property.getKey()) {
+                	} else if (RotationSwitchHandler.MULTIPLEANGLE_KEY
+                	== property.getKey()) {
                 		propertyAngle = property;
                 	}
                 }
-                int multipleangle = RotationSwitchHandler.getValidMultipleAngle( Integer.parseInt(propertyAngle.getValue())+1,wk.getAbzweigendeLage());
-                RotationSwitchHandler.setMultipleAngle(pes[0], getFeatureProvider(),multipleangle);                		
+                int multipleangle = RotationSwitchHandler.getValidMultipleAngle(
+                Integer.parseInt(propertyAngle.getValue())
+                + 1 , wk.getAbzweigendeLage());
+                RotationSwitchHandler.setMultipleAngle(pes[0]
+                , getFeatureProvider() , multipleangle , 0.1);
 
 	            updatePictogramElement(pes[0]);
 	        }

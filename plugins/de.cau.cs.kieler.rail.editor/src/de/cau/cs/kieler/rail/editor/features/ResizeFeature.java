@@ -20,14 +20,18 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
  *
  */
 public class ResizeFeature extends DefaultResizeShapeFeature {
-   
+
+	/**
+	 * The type of this vertex.
+	 * @see TypeFeatures
+	 */
     private TypeFeatures type;
 	/**
 	 * 
 	 * @param fp
 	 * @param type
 	 */
-	public ResizeFeature(IFeatureProvider fp, TypeFeatures type) {
+	public ResizeFeature(final IFeatureProvider fp, TypeFeatures type) {
         super(fp);
         this.type = type;
     }
@@ -35,7 +39,7 @@ public class ResizeFeature extends DefaultResizeShapeFeature {
      * {@inheritDoc}
      */
     @Override
-    public boolean canResizeShape(IResizeShapeContext context) {
+	public final boolean canResizeShape(final IResizeShapeContext context) {
         boolean canResize = super.canResizeShape(context);
  
         // perform further check only if move allowed by default feature
@@ -56,8 +60,8 @@ public class ResizeFeature extends DefaultResizeShapeFeature {
     /**
      * {@inheritDoc}
      */
-	public boolean isInstanceof(Object object){
-		switch (type){
+	public boolean isInstanceof(final Object object){
+		switch (type) {
 		case BREANCH:
 			return object instanceof Einbruchsknoten;
 		case DEADENDVERTEX:
@@ -75,7 +79,7 @@ public class ResizeFeature extends DefaultResizeShapeFeature {
     private Vertex getVertex()
     {
     	Vertex vertex;
-		switch(type){
+		switch(type) {
     	case BREANCH:
         	return SpecializedVerticesFactory.eINSTANCE.createEinbruchsknoten();
     	case DEADENDVERTEX:
