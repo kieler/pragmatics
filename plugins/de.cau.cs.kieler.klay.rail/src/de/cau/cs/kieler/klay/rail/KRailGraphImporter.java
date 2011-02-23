@@ -230,15 +230,15 @@ public class KRailGraphImporter implements IGraphImporter {
                 }
 
                 //yields problems in GMF diagrams
-//                for (LPort port : lnode.getPorts()) {
-//                    Object original = port.getProperty(Properties.ORIGIN);
-//                    if (original instanceof KPort) {
-//                        KPort kport = (KPort) original;
-//                        KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-//                        portLayout.setXpos((float) (lnode.getPos().x + port.getPos().x + offset.x));
-//                        portLayout.setYpos((float) (lnode.getPos().y + port.getPos().y + offset.y));
-//                    }
-//                }
+                for (LPort port : lnode.getPorts()) {
+                    Object original = port.getProperty(Properties.ORIGIN);
+                    if (original instanceof KPort) {
+                        KPort kport = (KPort) original;
+                        KShapeLayout portLayout = kport.getData(KShapeLayout.class);
+                        portLayout.setXpos((float) (port.getPos().x));
+                        portLayout.setYpos((float) (port.getPos().y));
+                    }
+                }
 
             }
         }

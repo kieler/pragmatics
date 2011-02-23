@@ -34,7 +34,7 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
 
     private float minLayerDist;
     /** the bounds of a line's slope in which it is not bent. */
-    public static final double SLOPE_TOLERANCE = 0.7f;
+    public static final double SLOPE_TOLERANCE = 0.2f;
 
     /**
      * {@inheritDoc}

@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -60,10 +61,10 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     private ILayoutPhase nodePlacer = new RailwayNodePlacer();
     /** phase 4: Edge routing module. */
     private ILayoutPhase edgeRouter = new RailwayEdgeRouter();
-    
+
     /**
-     * Intermediate phase: proper layering module. This is just temporarily hardcoded
-     * into the workflow. This will be dynamically managed by dependencies later on.
+     * Intermediate phase: proper layering module. This is just temporarily hardcoded into the
+     * workflow. This will be dynamically managed by dependencies later on.
      */
     private IIntermediateLayoutPhase edgeSplitter = new EdgeSplitter();
 
@@ -160,9 +161,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         nodePlacer.reset(monitor.subTask(1));
         nodePlacer.execute(layeredGraph);
         // subphase: arrange ports
-        // Won't work with GMF editors due to an already reported bug
-        //System.out.println("Arranging ports ...");
-        //arrangePorts(nodes);
+        System.out.println("Arranging ports ...");
+        arrangePorts(nodes);
         // phase 4: edge routing
         edgeRouter.reset(monitor.subTask(1));
         edgeRouter.execute(layeredGraph);
@@ -215,9 +215,9 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     /**
      * Method to arrange the ports of all nodes according to their turning angle.
      * 
-     * @param thenodes A list containing all nodes
+     * @param thenodes
+     *            A list containing all nodes
      */
-    @SuppressWarnings("unused")
     private void arrangePorts(final List<LNode> thenodes) {
         // CHECKSTYLEOFF MagicNumber
         // The numbers in the switch cases represent turning angle multipliers, would be annoying to
@@ -225,19 +225,23 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         for (LNode node : thenodes) {
             double nodeX = node.getSize().x;
             double nodeY = node.getSize().y;
+            KPort kPort = (KPort) node.getPorts().get(0).getProperty(Properties.ORIGIN);
+            KShapeLayout portLayout = kPort.getData(KShapeLayout.class);
+            double portWidth = portLayout.getWidth();
+            double portHeight = portLayout.getHeight();
             if (node.getProperty(Properties.NODE_TYPE).equals(NodeType.SWITCH_LEFT)) {
                 for (LPort port : node.getPorts()) {
                     switch (node.getProperty(Properties.SWITCH_ROTATION)) {
                     case 0:
                         if (port.getProperty(Properties.PORT_TYPE).equals(PortType.BRANCH)) {
-                            port.getPos().x = nodeX * (3.0 / 4.0);
-                            port.getPos().y = 0;
+                            port.getPos().x = nodeX * (3.0 / 4.0) - (portWidth / 2);
+                            port.getPos().y = 0 - portHeight;
                         } else if (port.getProperty(Properties.PORT_TYPE).equals(PortType.STRAIGHT)) {
                             port.getPos().x = nodeX;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPos().y = nodeY / 2.0 - (portWidth / 2);
                         } else {
-                            port.getPos().x = 0;
-                            port.getPos().y = nodeY / 2.0;
+                            port.getPos().x = 0 - portWidth;
+                            port.getPos().y = nodeY / 2.0 - (portHeight / 2);
                         }
                         break;
                     case 2:
@@ -331,6 +335,8 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
                         break;
                     }
                 }
+            } else {
+                node.getPorts().get(0).getPos().y = nodeY / 2 - (portHeight / 2);
             }
         }
         // CHECKSTYLEON MagicNumber
