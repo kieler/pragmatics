@@ -28,6 +28,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
@@ -152,6 +154,7 @@ public class LayouterHintDialog extends Dialog {
             imageLabel.getImage().dispose();
         }
         imageLabel.setImage(newImage);
+        imageLabel.getParent().layout();
     }
     
     /**
@@ -211,6 +214,7 @@ public class LayouterHintDialog extends Dialog {
         
         // set up a filter on the tree viewer using the filter text
         final Maybe<Boolean> filterChanged = new Maybe<Boolean>(Boolean.FALSE);
+        final Maybe<Boolean> filterLeft = new Maybe<Boolean>(Boolean.FALSE);
         filterText.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
                 if (!filterChanged.get()) {
@@ -227,6 +231,18 @@ public class LayouterHintDialog extends Dialog {
                 }
             }
         });
+        filterText.addFocusListener(new FocusListener() {
+            public void focusGained(final FocusEvent e) {
+                if (filterLeft.get() && !filterChanged.get()) {
+                    filterChanged.set(Boolean.TRUE);
+                    filterText.setForeground(null);
+                    filterText.setText("");
+                }
+            }
+            public void focusLost(final FocusEvent e) {
+                filterLeft.set(Boolean.TRUE);
+            }
+        });
         treeViewer.addFilter(new ViewerFilter() {
             public boolean select(final Viewer viewer, final Object parentElement,
                     final Object element) {
@@ -241,10 +257,8 @@ public class LayouterHintDialog extends Dialog {
     
     /** width of the description area. */
     private static final int DESCRIPTION_WIDTH = 300;
-    /** height of the image label. */
-    private static final int IMAGE_HEIGHT = 200;
     /** vertical spacing in the description area. */
-    private static final int DESCR_SPACING = 10;
+    private static final int DESCR_SPACING = 12;
     
     /**
      * Create the dialog area that displays the description of a layout algorithm.
@@ -271,7 +285,6 @@ public class LayouterHintDialog extends Dialog {
         // create label for the preview image
         imageLabel = new Label(composite, SWT.NONE);
         GridData imageLayoutData = new GridData(SWT.FILL, SWT.BOTTOM, true, false);
-        imageLayoutData.heightHint = IMAGE_HEIGHT;
         imageLabel.setLayoutData(imageLayoutData);
         
         GridLayout compositeLayout = new GridLayout();

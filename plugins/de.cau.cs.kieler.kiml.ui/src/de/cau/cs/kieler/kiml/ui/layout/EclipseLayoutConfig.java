@@ -161,6 +161,9 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     public final void initialize(final LayoutOptionData.Target targetType,
             final EditPart editPart, final String theLayoutHint) {
         String diagramType = (String) getOption(editPart, LayoutOptions.DIAGRAM_TYPE);
+        if (diagramType == null) {
+            diagramType = LayoutServices.DIAGRAM_TYPE_GENERAL;
+        }
         if (targetType == LayoutOptionData.Target.PARENTS) {
             contentDiagramType = diagramType;
         } else {
