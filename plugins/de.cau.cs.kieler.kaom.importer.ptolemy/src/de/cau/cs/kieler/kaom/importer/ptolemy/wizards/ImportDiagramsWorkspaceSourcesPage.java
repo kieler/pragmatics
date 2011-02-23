@@ -94,9 +94,11 @@ public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
                 if (resource instanceof IContainer) {
                     getTargetGroupCombo().setText(
                             resource.getFullPath().makeRelative().toString());
+                    validate();
                 } else if (resource.getParent() != null) {
                     getTargetGroupCombo().setText(
                             resource.getParent().getFullPath().makeRelative().toString());
+                    validate();
                 }
             }
         }
