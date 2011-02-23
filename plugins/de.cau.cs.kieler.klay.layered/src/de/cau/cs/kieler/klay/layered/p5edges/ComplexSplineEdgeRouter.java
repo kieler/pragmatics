@@ -27,6 +27,7 @@ import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.math.BezierSpline.BezierCurve;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -78,11 +79,18 @@ public class ComplexSplineEdgeRouter extends AbstractAlgorithm implements ILayou
 
     /** @TODO correspond with box generation */
     private static final int FITTING_TOLERANCE = 3;
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return null;
+    }
 
     /**
      * {@inheritDoc}
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Complex spline routing", 1);
         spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
 

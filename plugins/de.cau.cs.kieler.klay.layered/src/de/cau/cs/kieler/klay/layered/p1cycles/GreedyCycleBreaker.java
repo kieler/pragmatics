@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -54,6 +55,13 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
     private final LinkedList<LNode> sources = new LinkedList<LNode>();
     /** list of sink nodes. */
     private final LinkedList<LNode> sinks = new LinkedList<LNode>();
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return null;
+    }
 
     /**
      * {@inheritDoc}
@@ -68,7 +76,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Greedy cycle removal", 1);
         
         Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
@@ -213,5 +221,5 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
             }
         }
     }
-
+    
 }

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.p3order;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -29,12 +30,14 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.LPSolveAborter;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import lpsolve.LpSolveException;
 import lpsolve.LpSolve;
 
@@ -54,6 +57,22 @@ import lpsolve.LpSolve;
  * @author msp
  */
 public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
+    
+    /** intermediate processing strategy. */
+    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                // Before Phase 2
+                null,
+                // Before Phase 3
+                EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER),
+                // Before Phase 4
+                null,
+                // Before Phase 5
+                null,
+                // After Phase 5
+                null);
 
     /** The timeout in milliseconds after which the LP solver is aborted. */
     private static final long LPSOLVE_TIMEOUT = 5000;
@@ -68,6 +87,13 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ILayo
     private Map<Integer, Integer> crossingVariables = new HashMap<Integer, Integer>();
 
     // =============================== Initialization Methods =====================================
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return INTERMEDIATE_PROCESSING_STRATEGY;
+    }
 
     /**
      * {@inheritDoc}
@@ -147,7 +173,7 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ILayo
     /**
      * {@inheritDoc}
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public void process(final LayeredGraph layeredGraph) {
         assert layeredGraph != null;
         getMonitor().begin("LpSolve Crossing Minimization", 1);
         if (layeredGraph.getLayers().size() <= 1) {

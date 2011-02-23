@@ -14,14 +14,16 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 /**
- * Definition of available intermediate phases for the layered layouter.
+ * Definition of available intermediate layout processors for the layered layouter.
  * 
  * @author cds
  */
-public enum IntermediatePhases {
+public enum IntermediateLayoutProcessor {
     
     /** Takes a layered graph and turns it into a properly layered graph. */
-    EDGE_SPLITTER;
+    EDGE_SPLITTER,
+    /** Takes a layered graph and inserts dummy nodes for edges connected to ports on strange sides. */
+    STRANGE_PORT_SIDE_PROCESSOR;
     
     
     /**
@@ -30,7 +32,7 @@ public enum IntermediatePhases {
      * @param i ordinal value
      * @return the related enumeration value
      */
-    public static IntermediatePhases valueOf(final int i) {
+    public static IntermediateLayoutProcessor valueOf(final int i) {
         return values()[i];
     }
 

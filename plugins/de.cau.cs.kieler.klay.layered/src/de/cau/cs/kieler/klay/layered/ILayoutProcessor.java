@@ -16,23 +16,21 @@ package de.cau.cs.kieler.klay.layered;
 import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
-//CHECKSTYLEOFF JavadocStyle
-
 /**
- * Interface for intermediate layout phases. Layout phases can specify dependencies on
- * intermediate layout phases. Intermediate layout phases factor out some pre- or
- * post processing that is not exactly part of a phase, and might not be required by
- * all layout phase implementations.
+ * Interface for layout processors. A layout processor processes a
+ * {@links de.cau.cs.kieler.klay.layered.graph.LayeredGraph}, performing layout
+ * related tasks on it.
  *
+ * @see LayeredLayoutProvider
  * @author cds
  */
-public interface IIntermediateLayoutPhase extends IAlgorithm {
+public interface ILayoutProcessor extends IAlgorithm {
     
     /**
      * Performs the phase's work on the given graph.
      * 
      * @param layeredGraph a layered graph
      */
-    void execute(LayeredGraph layeredGraph);
+    void process(LayeredGraph layeredGraph);
     
 }

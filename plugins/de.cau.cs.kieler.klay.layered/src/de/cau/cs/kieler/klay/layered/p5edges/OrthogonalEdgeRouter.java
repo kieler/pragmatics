@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -31,12 +32,14 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 
 /**
  * Edge routing implementation that creates orthogonal bend points. Inspired by
@@ -53,7 +56,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * <dl>
  *   <dt>Precondition:</dt><dd>the graph has a proper layering with
  *     assigned node and port positions; the size of each layer is
- *     correctly set</dd>
+ *     correctly set; edges connected to ports on strange sides were
+ *     processed</dd>
  *   <dt>Postcondition:</dt><dd>each node is assigned a horizontal coordinate;
  *     the bend points of each edge are set; the width of the whole graph is set</dd>
  * </dl>
@@ -61,6 +65,22 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * @author msp
  */
 public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
+    
+    /** intermediate processing strategy. */
+    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                // Before Phase 2
+                null,
+                // Before Phase 3
+                EnumSet.of(IntermediateLayoutProcessor.STRANGE_PORT_SIDE_PROCESSOR),
+                // Before Phase 4
+                null,
+                // Before Phase 5
+                null,
+                // After Phase 5
+                null);
     
     /** weight penalty for conflicts of horizontal line segments. */
     private static final int CONFLICT_PENALTY = 16;
@@ -206,7 +226,14 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     /**
      * {@inheritDoc}
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return INTERMEDIATE_PROCESSING_STRATEGY;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Orthogonal edge routing", 1);
         edgeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         conflictThreshold = CONFL_THRESH_FACTOR * edgeSpacing;

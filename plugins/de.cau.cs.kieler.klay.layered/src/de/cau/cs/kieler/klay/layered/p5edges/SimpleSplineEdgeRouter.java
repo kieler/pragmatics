@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.math.BezierSpline;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -69,11 +70,18 @@ public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements ILayout
 
     /** at least this many points are needed to handle the spline. */
     private static final int MINIMAL_POINTS_HANDLES = 4;
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return null;
+    }
 
     /**
      * {@inheritDoc}
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Simple spline routing", 1);
         spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         

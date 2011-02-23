@@ -13,23 +13,23 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
-import de.cau.cs.kieler.core.alg.IAlgorithm;
-import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-
-//CHECKSTYLEOFF JavadocStyle
 
 /**
- * Interface for layout phases. Layout phases are the backbone of Klay Layered.
+ * Interface for layout phases. A layout phase is a special kind of layout
+ * processor that encapsulates an implementation of one of the algorithm's
+ * five main phases. A layout phase also specifies a strategy for the
+ * intermediate layout processors that get executed in between layout phases.
  *
+ * @see LayeredLayoutProvider
  * @author cds
  */
-public interface ILayoutPhase extends IAlgorithm {
+public interface ILayoutPhase extends ILayoutProcessor {
     
     /**
-     * Performs the phase's work on the given graph.
+     * Returns the intermediate layout processors this phase depends on.
      * 
-     * @param layeredGraph a layered graph
+     * @return intermediate processing strategy. May be {@code null}.
      */
-    void execute(LayeredGraph layeredGraph);
+    IntermediateProcessingStrategy getIntermediateProcessingStrategy();
     
 }

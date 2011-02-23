@@ -17,6 +17,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -46,7 +47,14 @@ public class PolylineEdgeRouter extends AbstractAlgorithm implements ILayoutPhas
     /**
      * {@inheritDoc}
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Polyline edge routing", 1);
         float defspacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         

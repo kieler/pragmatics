@@ -17,7 +17,7 @@ import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortType;
-import de.cau.cs.kieler.klay.layered.IIntermediateLayoutPhase;
+import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -34,17 +34,17 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
  *   <dt>Postcondition:</dt><dd>the graph is properly layered; that is, each edge
- *              connects nodes in neighbouring layers.</dd>
+ *     connects nodes in neighbouring layers.</dd>
  * </dl>
  *
  * @author msp
  */
-public class EdgeSplitter extends AbstractAlgorithm implements IIntermediateLayoutPhase {
+public class EdgeSplitter extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public void process(final LayeredGraph layeredGraph) {
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();

@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
@@ -25,12 +26,14 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 
 /**
  * Crossing minimization module that performs one or more sweeps over the layers
@@ -48,6 +51,22 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  */
 public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
     
+    /** intermediate processing strategy. */
+    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+        new IntermediateProcessingStrategy(
+                // Before Phase 1
+                null,
+                // Before Phase 2
+                null,
+                // Before Phase 3
+                EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER),
+                // Before Phase 4
+                null,
+                // Before Phase 5
+                null,
+                // After Phase 5
+                null);
+    
     /** barycenter values for ports. */
     private float[] portBarycenter;
     /** port position array. */
@@ -60,7 +79,14 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     /**
      * {@inheritDoc}
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return INTERMEDIATE_PROCESSING_STRATEGY;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Layer sweep crossing minimization", 1);
         int layerCount = layeredGraph.getLayers().size();
         if (layerCount < 2) {

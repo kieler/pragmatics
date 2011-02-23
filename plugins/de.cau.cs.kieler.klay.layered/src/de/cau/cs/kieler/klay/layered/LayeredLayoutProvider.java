@@ -13,7 +13,12 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.KielerRuntimeException;
@@ -26,6 +31,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.EdgeSplitter;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.StrangePortSideProcessor;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.LPSolveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
@@ -44,7 +51,32 @@ import de.cau.cs.kieler.klay.layered.p5edges.SimpleSplineEdgeRouter;
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
  * 
+ * <p>
+ * The layered layouter works with five main phases: cycle breaking, layering, crossing
+ * minimization, node placement and edge routing. Before these phases and after the last
+ * phase, so called intermediate layout processors can be inserted that do some kind of
+ * pre or post processing. Implementations of the different main phases specify the
+ * intermediate layout processors they require, which are automatically collected and
+ * inserted between the main phases.
+ * 
+ * <pre>
+ *           Intermediate Layout Processors
+ * ---------------------------------------------------
+ * |         |         |         |         |         |
+ * |   ---   |   ---   |   ---   |   ---   |   ---   |
+ * |   | |   |   | |   |   | |   |   | |   |   | |   |
+ * |   | |   |   | |   |   | |   |   | |   |   | |   |
+ *     | |       | |       | |       | |       | |
+ *     | |       | |       | |       | |       | |
+ *     ---       ---       ---       ---       ---
+ *   Phase 1   Phase 2   Phase 3   Phase 4   Phase 5
+ * </pre>
+ * 
+ * @see ILayoutPhase
+ * @see ILayoutProcessor
+ * 
  * @author msp
+ * @author cds
  */
 public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
@@ -58,12 +90,14 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     private ILayoutPhase nodePlacer = new LinearSegmentsNodePlacer();
     /** phase 5: Edge routing module. */
     private ILayoutPhase edgeRouter;
-    
-    /**
-     * Intermediate phase: proper layering module. This is just temporarily hardcoded
-     * into the workflow. This will be dynamically managed by dependencies later on.
-     */
-    private IIntermediateLayoutPhase edgeSplitter = new EdgeSplitter();
+    /** intermediate layout processor strategy. */
+    private IntermediateProcessingStrategy intermediateProcessingStrategy =
+        new IntermediateProcessingStrategy();
+    /** collection of instantiated intermediate modules. */
+    private Map<IntermediateLayoutProcessor, ILayoutProcessor> intermediateLayoutProcessorCache =
+        new HashMap<IntermediateLayoutProcessor, ILayoutProcessor>();
+    /** list of layout processors that compose the current algorithm. */
+    private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
     
     
     /**
@@ -169,6 +203,68 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 edgeRouter = new PolylineEdgeRouter();
             }
         }
+        
+        // update intermediate processor strategy
+        intermediateProcessingStrategy.clear();
+        intermediateProcessingStrategy.addAll(cycleBreaker.getIntermediateProcessingStrategy())
+            .addAll(layerer.getIntermediateProcessingStrategy())
+            .addAll(crossingMinimizer.getIntermediateProcessingStrategy())
+            .addAll(nodePlacer.getIntermediateProcessingStrategy())
+            .addAll(edgeRouter.getIntermediateProcessingStrategy());
+        
+        // construct the list of processors that make up the algorithm
+        algorithm.clear();
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_1));
+        algorithm.add(cycleBreaker);
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_2));
+        algorithm.add(layerer);
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
+        algorithm.add(crossingMinimizer);
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
+        algorithm.add(nodePlacer);
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_5));
+        algorithm.add(edgeRouter);
+        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_5));
+    }
+    
+    /**
+     * Returns a list of layout processor instances for the given intermediate layout
+     * processing slot.
+     * 
+     * @param slotIndex the slot index. One of the constants defined in
+     *                  {@link IntermediateProcessingStrategy}.
+     * @return list of layout processors.
+     */
+    private List<ILayoutProcessor> getIntermediateProcessorList(final int slotIndex) {
+        // fetch the set of layout processors configured for the given slot
+        List<ILayoutProcessor> result = new LinkedList<ILayoutProcessor>();
+        Set<IntermediateLayoutProcessor> processors =
+            intermediateProcessingStrategy.getProcessors(slotIndex);
+        
+        // iterate through the layout processors and add them to the result list
+        for (IntermediateLayoutProcessor processor : processors) {
+            // check if an instance of the given layout processor is already in the cache
+            ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);
+            
+            if (processorImpl == null) {
+                // instantiate the layout processor and add it to the cache
+                switch (processor) {
+                case EDGE_SPLITTER:
+                    processorImpl = new EdgeSplitter();
+                    break;
+                
+                case STRANGE_PORT_SIDE_PROCESSOR:
+                    processorImpl = new StrangePortSideProcessor();
+                    break;
+                }
+                
+                intermediateLayoutProcessorCache.put(processor, processorImpl);
+            }
+            
+            result.add(processorImpl);
+        }
+        
+        return result;
     }
     
     /**
@@ -215,27 +311,21 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
         }
-        monitor.begin("Layered layout phases", 1 + 1 + 1 + 1 + 1 + 1);
+        monitor.begin("Layered layout phases", algorithm.size());
         LayeredGraph layeredGraph = importer.getGraph();
+        
+        // TODO BEGIN DEBUG CODE
+        System.out.println("LAYOUT ALGORITHM:");
+        for (Object o : algorithm) {
+            System.out.println(o.getClass().getName());
+        }
+        // END DEBUG CODE
 
-        // phase 1: cycle breaking
-        cycleBreaker.reset(monitor.subTask(1));
-        cycleBreaker.execute(layeredGraph);
-        // phase 2: layering
-        layerer.reset(monitor.subTask(1));
-        layerer.execute(layeredGraph);
-        // intermediate phase: edge splitting
-        edgeSplitter.reset(monitor.subTask(1));
-        edgeSplitter.execute(layeredGraph);
-        // phase 3: crossing minimization
-        crossingMinimizer.reset(monitor.subTask(1));
-        crossingMinimizer.execute(layeredGraph);
-        // phase 4: node placement
-        nodePlacer.reset(monitor.subTask(1));
-        nodePlacer.execute(layeredGraph);
-        // phase 5: edge routing
-        edgeRouter.reset(monitor.subTask(1));
-        edgeRouter.execute(layeredGraph);
+        // invoke each layout processor
+        for (ILayoutProcessor processor : algorithm) {
+            processor.reset(monitor.subTask(1));
+            processor.process(layeredGraph);
+        }
 
         monitor.done();
     }

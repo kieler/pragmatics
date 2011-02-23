@@ -23,6 +23,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.LPSolveAborter;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -90,6 +91,13 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayoutPhase {
     private int longestPath;
 
     // =============================== Initialization Methods =====================================
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return null;
+    }
 
     /**
      * Instantiates all necessary attributes for the execution of the LpSolve-layerer and
@@ -184,7 +192,7 @@ public class LPSolveLayerer extends AbstractAlgorithm implements ILayoutPhase {
      *            then filled with layers
      * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public void process(final LayeredGraph layeredGraph) {
         assert layeredGraph != null;
         
         getMonitor().begin("LpSolve layering", 1);

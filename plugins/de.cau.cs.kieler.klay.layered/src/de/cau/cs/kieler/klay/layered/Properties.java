@@ -38,7 +38,9 @@ public final class Properties {
         /** a normal node is created from a node of the original graph. */
         NORMAL,
         /** a dummy node created to split a long edge. */
-        LONG_EDGE;
+        LONG_EDGE,
+        /** a dummy node created to cope with ports at "wrong" sides. */
+        STRANGE_PORT_SIDE;
     }
 
     /** the original object from which a graph element was created. */
