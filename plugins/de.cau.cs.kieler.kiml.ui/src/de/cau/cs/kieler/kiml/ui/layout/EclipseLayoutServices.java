@@ -476,7 +476,7 @@ public class EclipseLayoutServices extends LayoutServices {
      *            entry
      */
     private static void reportError(final String extensionPoint,
-            final IConfigurationElement element, final String attribute, final Exception exception) {
+            final IConfigurationElement element, final String attribute, final Throwable exception) {
         String message = "Extension point " + extensionPoint + ": Invalid entry in attribute '"
                 + attribute + "' of element " + element.getName() + ", contributed by "
                 + element.getContributor().getName();
@@ -568,6 +568,8 @@ public class EclipseLayoutServices extends LayoutServices {
                     }
                 } catch (CoreException exception) {
                     StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
+                } catch (Throwable throwable) {
+                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, throwable);
                 }
             } else if (ELEMENT_LAYOUT_TYPE.equals(element.getName())) {
                 // register a layout type from the extension
