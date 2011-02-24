@@ -329,7 +329,10 @@ public class KaomPortProvider implements IRenderingProvider {
         } catch (ClassNotFoundException e) {
             // Not a class actor, continue below
         }
-
+     catch (NoClassDefFoundError er) {
+        //er.printStackTrace();
+        return null;
+     }
         // Use Ptolemy to load the actor
         PtolemyHelper ptolemyHelper = new PtolemyHelper();
         NamedObj nObj = ptolemyHelper.instantiatePtolemyEntity(className);

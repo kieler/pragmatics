@@ -84,8 +84,8 @@ public class FigureProvider {
      * 
      * @param _lightweightGraphics if true simple rectangles are drawn instead of svg
      */
-    public FigureProvider(final boolean _lightweightGraphics) {
-        lightweightGraphics = _lightweightGraphics;
+    public FigureProvider(final boolean lightweightGraphics) {
+        this.lightweightGraphics = lightweightGraphics;
     }
     
     /**
@@ -112,9 +112,14 @@ public class FigureProvider {
         org.eclipse.swt.graphics.Image image = new org.eclipse.swt.graphics.Image(Display.getCurrent(),
                 CoreUiUtil.convertAWTImageToSWT(resizedImage));
         ImageFigureEx fig = new ImageFigureEx(image);
+        Dimension size = new Dimension(img.getWidth(null),img.getHeight(null));
+        fig.setMinimumSize(size.getCopy());
+        fig.setPreferredSize(size.getCopy());
+        fig.getBounds().setSize(size.getCopy());
+        fig.setSize(size.getCopy());
         //ScalableImageFigure fig = new ScalableImageFigure(image);
          if (lightweightGraphics) {
-             Dimension size = new Dimension(img.getWidth(null),img.getHeight(null));
+             //Dimension size = new Dimension(img.getWidth(null),img.getHeight(null));
              IFigure lightweight = getDefaultFigure();
              //lightweight.setBounds(original.getBounds());
              lightweight.setMinimumSize(size.getCopy());
