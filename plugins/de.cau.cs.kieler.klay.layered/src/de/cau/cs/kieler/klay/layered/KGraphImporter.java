@@ -83,19 +83,28 @@ public class KGraphImporter implements IGraphImporter {
                 LayoutOptions.BORDER_SPACING);
         List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
 
-        // transform nodes and ports
+        // keep a map between KGraph nodes / ports and LGraph nodes / ports
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
+        
+        // transform nodes and ports
         for (KNode child : layoutNode.getChildren()) {
+            // add a new node to the layered graph, copying its size
             KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
+            
             LNode newNode = new LNode(child.getLabel().getText());
             newNode.setProperty(Properties.ORIGIN, child);
             newNode.getSize().x = nodeLayout.getWidth();
             newNode.getSize().y = nodeLayout.getHeight();
             layeredNodes.add(newNode);
+            
             elemMap.put(child, newNode);
+            
+            // add the node's ports
             KPort[] sortedPorts = KimlUtil.getSortedPorts(child);
             for (KPort kport : sortedPorts) {
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
+                
+                // determine the port type
                 PortType type = PortType.UNDEFINED;
                 int outBalance = 0;
                 for (KEdge edge : kport.getEdges()) {
@@ -106,17 +115,23 @@ public class KGraphImporter implements IGraphImporter {
                         outBalance--;
                     }
                 }
+                
                 if (outBalance > 0) {
                     type = PortType.OUTPUT;
                 } else if (outBalance < 0) {
                     type = PortType.INPUT;
                 }
+                
+                // create layered port, copying its position
                 LPort newPort = new LPort(type, kport.getLabel().getText());
                 newPort.setProperty(Properties.ORIGIN, kport);
                 newPort.getPos().x = portLayout.getXpos();
                 newPort.getPos().y = portLayout.getYpos();
                 newPort.setNode(newNode);
+                
                 elemMap.put(kport, newPort);
+                
+                // calculate port side
                 PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
                 if (portConstraints != PortConstraints.UNDEFINED) {
                     newPort.setSide(KimlUtil.calcPortSide(kport));
@@ -129,14 +144,21 @@ public class KGraphImporter implements IGraphImporter {
         for (KNode child : layoutNode.getChildren()) {
             for (KEdge kedge : child.getOutgoingEdges()) {
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+                
                 // exclude edges that pass hierarchy bounds and self-loops
+                // TODO self loops shouldn't be excluded once the edge router can handle them
                 if (kedge.getTarget().getParent() == child.getParent()
                         && kedge.getSource() != kedge.getTarget()) {
+                    
                     // TODO handle fixed port constraints for edges without ports
+                    
+                    // retrieve source and target
                     LNode sourceNode = (LNode) elemMap.get(child);
                     LPort sourcePort = (LPort) elemMap.get(kedge.getSourcePort());
                     LNode targetNode = (LNode) elemMap.get(kedge.getTarget());
                     LPort targetPort = (LPort) elemMap.get(kedge.getTargetPort());
+                    
+                    // source port
                     if (sourcePort == null) {
                         sourcePort = new LPort(PortType.OUTPUT);
                         sourcePort.setNode(sourceNode);
@@ -145,6 +167,8 @@ public class KGraphImporter implements IGraphImporter {
                         edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                         continue;
                     }
+                    
+                    // target port
                     if (targetPort == null) {
                         targetPort = new LPort(PortType.INPUT);
                         targetPort.setNode(targetNode);
@@ -153,22 +177,29 @@ public class KGraphImporter implements IGraphImporter {
                         edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                         continue;
                     }
+                    
+                    // create a layered edge
                     LEdge newEdge = new LEdge();
                     newEdge.setProperty(Properties.ORIGIN, kedge);
                     newEdge.setSource(sourcePort);
                     newEdge.setTarget(targetPort);
+                    
+                    // transform the edge's labels
                     for (KLabel klabel : kedge.getLabels()) {
                         KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+                        
                         LLabel newLabel = new LLabel(klabel.getText());
                         newLabel.getSize().x = labelLayout.getWidth();
                         newLabel.getSize().y = labelLayout.getHeight();
                         newLabel.setProperty(Properties.ORIGIN, klabel);
                         newEdge.getLabels().add(newLabel);
                     }
+                    
                     // set properties of the new edge
                     newEdge.setProperty(Properties.PRIORITY,
                             edgeLayout.getProperty(LayoutOptions.PRIORITY));
                 } else {
+                    // 
                     edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
                 }
             }
@@ -297,6 +328,8 @@ public class KGraphImporter implements IGraphImporter {
      *            point where coordinates are written
      * @param lpoint
      *            point from which coordinates are read
+     * @param offset
+     *            offset to apply to the {@code lpoint} coordinates
      */
     private void applyLayout(final KPoint kpoint, final KVector lpoint, final KVector offset) {
         kpoint.setX((float) (lpoint.x + offset.x));

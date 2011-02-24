@@ -129,6 +129,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         // perform the actual layout
         layout(graphImporter, progressMonitor.subTask(1));
+        
         // apply the layout results to the original graph
         graphImporter.applyLayout();
 

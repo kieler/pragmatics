@@ -15,10 +15,10 @@ package de.cau.cs.kieler.klay.layered;
 
 
 /**
- * Interface for layout phases. A layout phase is a special kind of layout
- * processor that encapsulates an implementation of one of the algorithm's
- * five main phases. A layout phase also specifies a strategy for the
- * intermediate layout processors that get executed in between layout phases.
+ * A layout phase is a special kind of layout processor that encapsulates an
+ * implementation of one of the algorithm's five main phases. A layout phase
+ * also specifies a strategy for the intermediate layout processors that it
+ * wants to have executed in between layout phases. (think dependencies)
  *
  * @see LayeredLayoutProvider
  * @author cds

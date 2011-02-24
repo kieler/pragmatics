@@ -17,9 +17,8 @@ import de.cau.cs.kieler.core.alg.IAlgorithm;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * Interface for layout processors. A layout processor processes a
- * {@links de.cau.cs.kieler.klay.layered.graph.LayeredGraph}, performing layout
- * related tasks on it.
+ * A layout processor processes a {@link de.cau.cs.kieler.klay.layered.graph.LayeredGraph},
+ * performing layout related tasks on it.
  *
  * @see LayeredLayoutProvider
  * @author cds
