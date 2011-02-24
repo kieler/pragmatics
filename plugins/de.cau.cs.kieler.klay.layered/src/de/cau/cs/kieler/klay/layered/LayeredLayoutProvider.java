@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 import de.cau.cs.kieler.klay.layered.intermediate.EdgeSplitter;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
-import de.cau.cs.kieler.klay.layered.intermediate.StrangePortSideProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.OddPortSideProcessor;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.LPSolveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
@@ -141,18 +141,25 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param parentLayout the parent layout data
      */
     private void updateModules(final KShapeLayout parentLayout) {
+        // we'll keep track of whether at least one of the phases has changed; this
+        // would mean that we'd have to recalculate the intermediate processing
+        // strategy as well, which we would like to avoid
+        boolean phasesChanged = false;
+        
         // check which layering strategy to use
         LayeringStrategy placing = parentLayout.getProperty(Properties.NODE_LAYERING);
         switch (placing) {
         case LONGEST_PATH:
             if (!(layerer instanceof LongestPathLayerer)) {
                 layerer = new LongestPathLayerer();
+                phasesChanged = true;
             }
             break;
         case LP_SOLVER:
             if (!(layerer instanceof LPSolveLayerer)) {
                 try {
                     layerer = new LPSolveLayerer();
+                    phasesChanged = true;
                 } catch (Throwable throwable) {
                     // this will only occur if the required LpSolve classes can't be loaded
                     throw new KielerRuntimeException("The LpSolve plug-in is not installed."
@@ -163,6 +170,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         default:
             if (!(layerer instanceof NetworkSimplexLayerer)) {
                 layerer = new NetworkSimplexLayerer();
+                phasesChanged = true;
             }
         }
         
@@ -172,11 +180,13 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         case LP_SOLVER:
             if (!(crossingMinimizer instanceof LPSolveCrossingMinimizer)) {
                 crossingMinimizer = new LPSolveCrossingMinimizer();
+                phasesChanged = true;
             }
             break;
         default:
             if (!(crossingMinimizer instanceof LayerSweepCrossingMinimizer)) {
                 crossingMinimizer = new LayerSweepCrossingMinimizer();
+                phasesChanged = true;
             }
         }
 
@@ -186,45 +196,57 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         case ORTHOGONAL:
             if (!(edgeRouter instanceof OrthogonalEdgeRouter)) {
                 edgeRouter = new OrthogonalEdgeRouter();
+                phasesChanged = true;
             }
             break;
         case SIMPLE_SPLINES:
             if (!(edgeRouter instanceof SimpleSplineEdgeRouter)) {
                 edgeRouter = new SimpleSplineEdgeRouter();
+                phasesChanged = true;
             }
             break;
         case COMPLEX_SPLINES:
             if (!(edgeRouter instanceof ComplexSplineEdgeRouter)) {
                 edgeRouter = new ComplexSplineEdgeRouter();
+                phasesChanged = true;
             }
             break;
         default:
             if (!(edgeRouter instanceof PolylineEdgeRouter)) {
                 edgeRouter = new PolylineEdgeRouter();
+                phasesChanged = true;
             }
         }
         
-        // update intermediate processor strategy
-        intermediateProcessingStrategy.clear();
-        intermediateProcessingStrategy.addAll(cycleBreaker.getIntermediateProcessingStrategy())
-            .addAll(layerer.getIntermediateProcessingStrategy())
-            .addAll(crossingMinimizer.getIntermediateProcessingStrategy())
-            .addAll(nodePlacer.getIntermediateProcessingStrategy())
-            .addAll(edgeRouter.getIntermediateProcessingStrategy());
-        
-        // construct the list of processors that make up the algorithm
-        algorithm.clear();
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_1));
-        algorithm.add(cycleBreaker);
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_2));
-        algorithm.add(layerer);
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
-        algorithm.add(crossingMinimizer);
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
-        algorithm.add(nodePlacer);
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_5));
-        algorithm.add(edgeRouter);
-        algorithm.addAll(getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_5));
+        if (phasesChanged) {
+            // update intermediate processor strategy
+            intermediateProcessingStrategy.clear();
+            intermediateProcessingStrategy.addAll(cycleBreaker.getIntermediateProcessingStrategy())
+                .addAll(layerer.getIntermediateProcessingStrategy())
+                .addAll(crossingMinimizer.getIntermediateProcessingStrategy())
+                .addAll(nodePlacer.getIntermediateProcessingStrategy())
+                .addAll(edgeRouter.getIntermediateProcessingStrategy());
+            
+            // construct the list of processors that make up the algorithm
+            algorithm.clear();
+            algorithm.addAll(
+                    getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_1));
+            algorithm.add(cycleBreaker);
+            algorithm.addAll(
+                    getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_2));
+            algorithm.add(layerer);
+            algorithm.addAll(
+                    getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_3));
+            algorithm.add(crossingMinimizer);
+            algorithm.addAll(
+                    getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_4));
+            algorithm.add(nodePlacer);
+            algorithm.addAll(
+                    getIntermediateProcessorList(IntermediateProcessingStrategy.BEFORE_PHASE_5));
+            algorithm.add(edgeRouter);
+            algorithm.addAll(
+                    getIntermediateProcessorList(IntermediateProcessingStrategy.AFTER_PHASE_5));
+        }
     }
     
     /**
@@ -253,8 +275,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                     processorImpl = new EdgeSplitter();
                     break;
                 
-                case STRANGE_PORT_SIDE_PROCESSOR:
-                    processorImpl = new StrangePortSideProcessor();
+                case ODD_PORT_SIDE_PROCESSOR:
+                    processorImpl = new OddPortSideProcessor();
                     break;
                 }
                 
@@ -313,13 +335,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
         monitor.begin("Layered layout phases", algorithm.size());
         LayeredGraph layeredGraph = importer.getGraph();
-        
-        // TODO BEGIN DEBUG CODE
-        System.out.println("LAYOUT ALGORITHM:");
-        for (Object o : algorithm) {
-            System.out.println(o.getClass().getName());
-        }
-        // END DEBUG CODE
 
         // invoke each layout processor
         for (ILayoutProcessor processor : algorithm) {

@@ -30,6 +30,35 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  * which intermediate layout processors must be inserted into the layout algorithm
  * workflow.
  * 
+ * <p>
+ * To construct a processing strategy that just depends on processors in a single
+ * processing slot, use code like the following:
+ * <pre>
+ * new IntermediateProcessingStrategy(
+ *         IntermediateProcessingStrategy.BEFORE_PHASE_3,
+ *         EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER));
+ * </pre>
+ * 
+ * <p>
+ * To construct a processing strategy with processors in more than one slot, you
+ * can use code like the following:
+ * <pre>
+ * new IntermediateProcessingStrategy(
+ *         // Before Phase 1
+ *         null,
+ *         // Before Phase 2
+ *         null,
+ *         // Before Phase 3
+ *         EnumSet.of(IntermediateLayoutProcessor.STRANGE_PORT_SIDE_PROCESSOR),
+ *         // Before Phase 4
+ *         null,
+ *         // Before Phase 5
+ *         null,
+ *         // After Phase 5
+ *         EnumSet.of(IntermediateLayoutProcessor.SOME_OTHER_PROCESSOR,
+ *                    IntermediateLayoutProcessor.YET_ANOTHER_PROCESSOR);
+ * </pre>
+ * 
  * @author cds
  */
 public class IntermediateProcessingStrategy {
@@ -72,6 +101,22 @@ public class IntermediateProcessingStrategy {
         for (int i = 0; i < INTERMEDIATE_PHASE_SLOTS; i++) {
             strategy.add(EnumSet.copyOf(init.strategy.get(i)));
         }
+    }
+    
+    /**
+     * Constructs a new strategy that has the given processors in the given slot, but
+     * is otherwise empty.
+     * 
+     * @param slotIndex the slot index. Must be {@code >= 0} and
+     *                  {@code < INTERMEDIATE_PHASE_SLOTS}.
+     * @param processors the layout processors to add. May be {@code null}.
+     */
+    public IntermediateProcessingStrategy(final int slotIndex,
+            final Collection<IntermediateLayoutProcessor> processors) {
+        
+        this();
+        
+        addAll(slotIndex, processors);
     }
     
     /**

@@ -45,6 +45,8 @@ public class EdgeSplitter extends AbstractAlgorithm implements ILayoutProcessor 
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
+        getMonitor().begin("Edge splitting", 1);
+        
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
@@ -75,6 +77,8 @@ public class EdgeSplitter extends AbstractAlgorithm implements ILayoutProcessor 
                 }
             }
         }
+        
+        getMonitor().done();
     }
 
 }

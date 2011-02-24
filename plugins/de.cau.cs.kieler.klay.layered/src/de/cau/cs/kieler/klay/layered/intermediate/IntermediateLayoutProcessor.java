@@ -22,8 +22,8 @@ public enum IntermediateLayoutProcessor {
     
     /** Takes a layered graph and turns it into a properly layered graph. */
     EDGE_SPLITTER,
-    /** Takes a layered graph and inserts dummy nodes for edges connected to ports on strange sides. */
-    STRANGE_PORT_SIDE_PROCESSOR;
+    /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
+    ODD_PORT_SIDE_PROCESSOR;
     
     
     /**

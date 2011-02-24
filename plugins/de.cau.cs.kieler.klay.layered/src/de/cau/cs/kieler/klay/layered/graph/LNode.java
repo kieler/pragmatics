@@ -13,13 +13,16 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.util.CompoundCondition;
 import de.cau.cs.kieler.core.util.FilteredIterator;
+import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 
@@ -153,6 +156,21 @@ public class LNode extends LGraphElement {
     public Iterable<LPort> getPorts(final PortSide side) {
         return new FilteredIterator.Iterable<LPort>(ports,
                 new LPort.SideCondition(side));
+    }
+    
+    /**
+     * Returns an iterable for all ports of a given type and side.
+     * 
+     * @param portType a port type.
+     * @param side a port side.
+     * @return an iterable for the ports of the given type and side.
+     */
+    public Iterable<LPort> getPorts(final PortType portType, final PortSide side) {
+        List<ICondition<LPort>> conditions = new ArrayList<ICondition<LPort>>();
+        conditions.add(new LPort.TypeCondition(portType));
+        conditions.add(new LPort.SideCondition(side));
+        
+        return new FilteredIterator.Iterable<LPort>(ports, new CompoundCondition<LPort>(conditions));
     }
     
     /**
