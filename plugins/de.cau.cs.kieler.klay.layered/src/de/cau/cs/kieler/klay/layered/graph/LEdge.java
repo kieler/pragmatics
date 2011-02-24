@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.layered.graph;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 
 /**
  * An edge in a layered graph. Edges may only be connected to ports of a node, which represent the
@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.math.KVector;
 public class LEdge extends LGraphElement {
 
     /** the bend points. */
-    private List<KVector> bendPoints = new LinkedList<KVector>();
+    private KVectorChain bendPoints = new KVectorChain();
     /** the source and target ports. */
     private LPort source, target;
     /** labels assigned to this edge. */
@@ -101,7 +101,7 @@ public class LEdge extends LGraphElement {
      * 
      * @return the bend points
      */
-    public List<KVector> getBendPoints() {
+    public KVectorChain getBendPoints() {
         return bendPoints;
     }
 

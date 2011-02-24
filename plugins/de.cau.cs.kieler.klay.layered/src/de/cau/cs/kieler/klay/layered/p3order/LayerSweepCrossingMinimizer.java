@@ -54,8 +54,18 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     /** intermediate processing strategy. */
     private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
         new IntermediateProcessingStrategy(
-                IntermediateProcessingStrategy.BEFORE_PHASE_3,
-                EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER));
+                // Before Phase 1
+                null,
+                // Before Phase 2
+                null,
+                // Before Phase 3
+                EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER),
+                // Before Phase 4
+                null,
+                // Before Phase 5
+                null,
+                // After Phase 5
+                EnumSet.of(IntermediateLayoutProcessor.EDGE_JOINER));
     
     /** barycenter values for ports. */
     private float[] portBarycenter;

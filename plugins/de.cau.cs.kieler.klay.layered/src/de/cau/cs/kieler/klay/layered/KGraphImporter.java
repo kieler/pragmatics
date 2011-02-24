@@ -24,10 +24,9 @@ import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -53,6 +52,7 @@ public class KGraphImporter implements IGraphImporter {
     /** the created layered graph. */
     private LayeredGraph layeredGraph;
     
+    
     /**
      * Imports a KGraph to a layered graph.
      * 
@@ -63,6 +63,7 @@ public class KGraphImporter implements IGraphImporter {
         layeredGraph.setProperty(Properties.ORIGIN, knode);
         transformGraph(knode);
     }
+    
 
     /**
      * {@inheritDoc}
@@ -206,106 +207,81 @@ public class KGraphImporter implements IGraphImporter {
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
     public void applyLayout() {
+        // determine the border spacing, which influences the offset
         KNode parentNode = (KNode) layeredGraph.getProperty(Properties.ORIGIN);
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = Properties.DEF_SPACING;
         }
-        KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x, borderSpacing
-                + layeredGraph.getOffset().y);
+        
+        // calculate the offset
+        KVector offset = new KVector(borderSpacing + layeredGraph.getOffset().x,
+                borderSpacing + layeredGraph.getOffset().y);
+        
+        // along the way, we collect the list of edges to be processed later
+        List<LEdge> edgeList = new LinkedList<LEdge>();
 
         // process the nodes
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode lnode : layer.getNodes()) {
                 Object origin = lnode.getProperty(Properties.ORIGIN);
+                
                 if (origin instanceof KNode) {
+                    // set the node position
                     KNode knode = (KNode) origin;
                     KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+                    
                     nodeLayout.setXpos((float) (lnode.getPos().x + offset.x));
                     nodeLayout.setYpos((float) (lnode.getPos().y + offset.y));
                 }
+                
+                // collect edges
                 for (LPort port : lnode.getPorts(PortType.OUTPUT)) {
-                    for (LEdge edge : port.getEdges()) {
-                        edge.id = -1;
-                    }
-                }
-            }
-        }
-
-        // collect all parts of each long edge
-        Map<KEdge, List<LEdge>> edgeMap = new HashMap<KEdge, List<LEdge>>();
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode lnode : layer.getNodes()) {
-                for (LPort port : lnode.getPorts(PortType.OUTPUT)) {
-                    for (LEdge ledge : port.getEdges()) {
-                        Object origin = ledge.getProperty(Properties.ORIGIN);
-                        if (ledge.id < 0 && origin instanceof KEdge) {
-                            KEdge kedge = (KEdge) origin;
-                            List<LEdge> edgeList = edgeMap.get(kedge);
-                            if (edgeList == null) {
-                                edgeList = new LinkedList<LEdge>();
-                                edgeMap.put(kedge, edgeList);
-                            }
-                            edgeList.add(ledge);
-                            // apply layout to labels
-                            for (LLabel label : ledge.getLabels()) {
-                                KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
-                                KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-                                KVector labelPos = new KVector(ledge.getSource().getPos().x, ledge
-                                        .getSource().getPos().y);
-                                labelPos.add(ledge.getSource().getNode().getPos());
-                                labelPos.add(label.getPos());
-                                klabelLayout.setXpos((float) (labelPos.x + offset.x));
-                                klabelLayout.setYpos((float) (labelPos.y + offset.y));
-                            }
-                        }
-                    }
+                    edgeList.addAll(port.getEdges());
                 }
             }
         }
         
-        // process the edges
+        // check if the edge routing uses splines
         EdgeRoutingStrategy routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
         boolean splinesActive = routing == EdgeRoutingStrategy.SIMPLE_SPLINES
                 || routing == EdgeRoutingStrategy.COMPLEX_SPLINES;
-        for (Map.Entry<KEdge, List<LEdge>> edgeEntry : edgeMap.entrySet()) {
-            KEdge kedge = edgeEntry.getKey();
+        
+        // iterate through all edges
+        for (LEdge ledge : edgeList) {
+            KEdge kedge = (KEdge) ledge.getProperty(Properties.ORIGIN);
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            List<LEdge> edgeList = edgeEntry.getValue();
-            // set source and target points, considering direction of the edge
-            LEdge firstEdge = edgeList.get(0);
-            LPort sourcePort = firstEdge.getSource();
-            sourcePort.getPos().add(sourcePort.getNode().getPos());
-            LEdge lastEdge = edgeList.get(edgeList.size() - 1);
-            LPort targetPort = lastEdge.getTarget();
-            targetPort.getPos().add(targetPort.getNode().getPos());
-            if (firstEdge.getProperty(Properties.REVERSED)) {
-                applyLayout(edgeLayout.getSourcePoint(), targetPort.getPos(), offset);
-                applyLayout(edgeLayout.getTargetPoint(), sourcePort.getPos(), offset);
-            } else {
-                applyLayout(edgeLayout.getSourcePoint(), sourcePort.getPos(), offset);
-                applyLayout(edgeLayout.getTargetPoint(), targetPort.getPos(), offset);
+            KVectorChain bendPoints = ledge.getBendPoints();
+            
+            // add the source port and target port positions to the vector chain
+            KVector sourcePortPos = ledge.getSource().getPos();
+            bendPoints.addFirst(sourcePortPos);
+            
+            KVector targetPortPos = ledge.getTarget().getPos();
+            bendPoints.add(targetPortPos);
+            
+            // offset the bend points by the offset and apply the bend points
+            bendPoints.offset(offset);
+            KimlUtil.applyVectorChain(edgeLayout, bendPoints);
+            
+            // apply layout to labels
+            for (LLabel label : ledge.getLabels()) {
+                KLabel klabel = (KLabel) label.getProperty(Properties.ORIGIN);
+                KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                
+                KVector labelPos = new KVector(ledge.getSource().getPos().x, ledge
+                        .getSource().getPos().y);
+                labelPos.add(ledge.getSource().getNode().getPos());
+                labelPos.add(label.getPos());
+                klabelLayout.setXpos((float) (labelPos.x + offset.x));
+                klabelLayout.setYpos((float) (labelPos.y + offset.y));
             }
-            // set bend points, considering direction of the edge
-            List<KPoint> bendPoints = edgeLayout.getBendPoints();
-            bendPoints.clear();
-            for (LEdge ledge : edgeList) {
-                for (KVector lpoint : ledge.getBendPoints()) {
-                    KPoint newPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    applyLayout(newPoint, lpoint, offset);
-                    if (ledge.getProperty(Properties.REVERSED)) {
-                        bendPoints.add(0, newPoint);
-                    } else {
-                        bendPoints.add(newPoint);
-                    }
-                }
-            }
+            
             // set spline option
             if (splinesActive) {
                 edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
@@ -319,21 +295,6 @@ public class KGraphImporter implements IGraphImporter {
         parentLayout.setHeight((float) layeredGraph.getSize().y + 2 * borderSpacing
                 + insets.getTop() + insets.getBottom());
         parentLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
-    }
-
-    /**
-     * Apply the given point coordinates to the {@code KPoint}.
-     * 
-     * @param kpoint
-     *            point where coordinates are written
-     * @param lpoint
-     *            point from which coordinates are read
-     * @param offset
-     *            offset to apply to the {@code lpoint} coordinates
-     */
-    private void applyLayout(final KPoint kpoint, final KVector lpoint, final KVector offset) {
-        kpoint.setX((float) (lpoint.x + offset.x));
-        kpoint.setY((float) (lpoint.y + offset.y));
     }
     
 }

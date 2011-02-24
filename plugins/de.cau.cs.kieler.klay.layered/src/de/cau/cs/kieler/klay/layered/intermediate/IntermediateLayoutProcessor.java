@@ -20,10 +20,14 @@ package de.cau.cs.kieler.klay.layered.intermediate;
  */
 public enum IntermediateLayoutProcessor {
     
+    /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
+    EDGE_JOINER,
     /** Takes a layered graph and turns it into a properly layered graph. */
     EDGE_SPLITTER,
     /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
-    ODD_PORT_SIDE_PROCESSOR;
+    ODD_PORT_SIDE_PROCESSOR,
+    /** Takes the reversed edges of a graph and restores their original direction. */
+    REVERSED_EDGE_RESTORER;
     
     
     /**

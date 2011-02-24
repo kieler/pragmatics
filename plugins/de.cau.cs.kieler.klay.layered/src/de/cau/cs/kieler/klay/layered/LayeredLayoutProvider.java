@@ -30,9 +30,11 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.EdgeJoiner;
 import de.cau.cs.kieler.klay.layered.intermediate.EdgeSplitter;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.intermediate.OddPortSideProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.LPSolveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
@@ -129,6 +131,11 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         // perform the actual layout
         layout(graphImporter, progressMonitor.subTask(1));
+        
+        // if debug mode is enabled, print out the layed-out graph
+        if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
+            System.out.println(layeredGraph);
+        }
         
         // apply the layout results to the original graph
         graphImporter.applyLayout();
@@ -272,12 +279,20 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             if (processorImpl == null) {
                 // instantiate the layout processor and add it to the cache
                 switch (processor) {
+                case EDGE_JOINER:
+                    processorImpl = new EdgeJoiner();
+                    break;
+                    
                 case EDGE_SPLITTER:
                     processorImpl = new EdgeSplitter();
                     break;
                 
                 case ODD_PORT_SIDE_PROCESSOR:
                     processorImpl = new OddPortSideProcessor();
+                    break;
+                
+                case REVERSED_EDGE_RESTORER:
+                    processorImpl = new ReversedEdgeRestorer();
                     break;
                 }
                 
@@ -336,6 +351,14 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         }
         monitor.begin("Layered layout phases", algorithm.size());
         LayeredGraph layeredGraph = importer.getGraph();
+        
+        // if debug mode is active, print the list of processors used
+        if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
+            System.out.println("Klay Layered uses the following configuration:");
+            for (Object o : algorithm) {
+                System.out.println("   " + o.getClass().getName());
+            }
+        }
 
         // invoke each layout processor
         for (ILayoutProcessor processor : algorithm) {

@@ -61,9 +61,19 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ILayo
     /** intermediate processing strategy. */
     private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
         new IntermediateProcessingStrategy(
-                IntermediateProcessingStrategy.BEFORE_PHASE_3,
-                EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER));
-
+                // Before Phase 1
+                null,
+                // Before Phase 2
+                null,
+                // Before Phase 3
+                EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER),
+                // Before Phase 4
+                null,
+                // Before Phase 5
+                null,
+                // After Phase 5
+                EnumSet.of(IntermediateLayoutProcessor.EDGE_JOINER));
+    
     /** The timeout in milliseconds after which the LP solver is aborted. */
     private static final long LPSOLVE_TIMEOUT = 5000;
     

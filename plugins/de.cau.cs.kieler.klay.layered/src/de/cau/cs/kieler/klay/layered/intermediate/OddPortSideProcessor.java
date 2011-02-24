@@ -13,7 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -60,31 +64,39 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         
         // Retrieve the layers in the graph
         List<Layer> layers = layeredGraph.getLayers();
-        int layerCount = layers.size();
         
         // We may need a new first and last layer
         Layer prefixLayer = new Layer(layeredGraph);
         Layer postfixLayer = new Layer(layeredGraph);
         
-        // Iterate through the layers
-        for (int layerIndex = 0; layerIndex < layerCount; layerIndex++) {
+        // Iterate through the layers and for each layer create a list of dummy nodes
+        // that were created, but not yet assigned to the layer (to avoid concurrent
+        // modification exceptions)
+        ListIterator<Layer> layerIterator = layers.listIterator();
+        Layer currentLayer = prefixLayer;
+        Map<Layer, List<LNode>> unassignedNodes = new HashMap<Layer, List<LNode>>();
+        
+        while (layerIterator.hasNext()) {
             // Find the current, previous and next layer. If this layer is the first or last one,
             // use the prefix or postfix layer as the previous and next layer, respectively.
-            Layer layer = layers.get(layerIndex);
-            Layer previousLayer = (layerIndex > 0)
-                ? layers.get(layerIndex - 1)
-                : prefixLayer;
-            Layer nextLayer = (layerIndex < layerCount - 1)
-                ? layers.get(layerIndex + 1)
-                : postfixLayer;
+            Layer previousLayer = currentLayer;
+            currentLayer = layerIterator.next();
+            Layer nextLayer = null;
+            if (layerIterator.hasNext()) {
+                nextLayer = layerIterator.next();
+                layerIterator.previous();
+            } else {
+                nextLayer = postfixLayer;
+            }
+            
+            // Create an empty list of unassigned nodes
+            List<LNode> currentLayerUnassignedNodes = new LinkedList<LNode>();
+            unassignedNodes.put(currentLayer, currentLayerUnassignedNodes);
             
             // Iterate through the layer's nodes (we cannot optimize the nodes.size() call
             // away since the list of nodes is modified whenever dummy nodes are inserted
             // anywhere)
-            List<LNode> nodes = layer.getNodes();
-            for (int nodeIndex = 0; nodeIndex < nodes.size(); nodeIndex++) {
-                LNode node = nodes.get(nodeIndex);
-                
+            for (LNode node : currentLayer.getNodes()) {
                 // Look for ports on the right side connected to edges originating from lower layers
                 for (LPort port : node.getPorts(PortType.INPUT, PortSide.EAST)) {
                     // For every edge connected to this port, insert dummy nodes (do this using
@@ -94,7 +106,8 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
                     LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
                     
                     for (LEdge edge : edgeArray) {
-                        createEastPortSideDummies(port, edge, layer, nextLayer);
+                        createEastPortSideDummies(port, edge, currentLayerUnassignedNodes,
+                                nextLayer);
                     }
                 }
                 
@@ -107,19 +120,23 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
                     LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
                     
                     for (LEdge edge : edgeArray) {
-                        createWestPortSideDummies(port, edge, layer, previousLayer);
+                        createWestPortSideDummies(port, edge, currentLayerUnassignedNodes,
+                                previousLayer);
                     }
                 }
             }
         }
         
+        // Assign the unasssigned nodes
+        assignUnassignedNodes(unassignedNodes);
+        
         // Add the prefix and postfix layers to the graph, if necessary
         if (!prefixLayer.getNodes().isEmpty()) {
-            layeredGraph.getLayers().add(0, prefixLayer);
+            layers.add(0, prefixLayer);
         }
         
         if (!postfixLayer.getNodes().isEmpty()) {
-            layeredGraph.getLayers().add(postfixLayer);
+            layers.add(postfixLayer);
         }
         
         
@@ -131,18 +148,20 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
      * 
      * @param eastwardPort the offending port.
      * @param edge the edge connected to the port.
-     * @param layer the layer of the node the port belongs to.
+     * @param layerNodeList list of unassigned nodes belonging to the layer of the node the
+     *                      port belongs to. The new dummy node is added to this list and
+     *                      must be assigned to the layer later.
      * @param nextLayer the next layer.
      */
     private void createEastPortSideDummies(final LPort eastwardPort, final LEdge edge,
-            final Layer layer, final Layer nextLayer) {
+            final List<LNode> layerNodeList, final Layer nextLayer) {
         
         // Dummy node in the same layer
         LNode sameLayerDummy = new LNode();
         sameLayerDummy.setProperty(Properties.ORIGIN, edge);
         sameLayerDummy.setProperty(Properties.NODE_TYPE,
                 Properties.NodeType.ODD_PORT_SIDE);
-        sameLayerDummy.setLayer(layer);
+        layerNodeList.add(sameLayerDummy);
         
         LPort sameLayerDummyInput = new LPort(PortType.INPUT);
         sameLayerDummyInput.setNode(sameLayerDummy);
@@ -180,18 +199,20 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
      * 
      * @param westwardPort the offending port.
      * @param edge the edge connected to the port.
-     * @param layer the layer of the node the port belongs to.
+     * @param layerNodeList list of unassigned nodes belonging to the layer of the node the
+     *                      port belongs to. The new dummy node is added to this list and
+     *                      must be assigned to the layer later.
      * @param previousLayer the previous layer.
      */
     private void createWestPortSideDummies(final LPort westwardPort, final LEdge edge,
-            final Layer layer, final Layer previousLayer) {
+            final List<LNode> layerNodeList, final Layer previousLayer) {
         
         // Dummy node in the same layer
         LNode sameLayerDummy = new LNode();
         sameLayerDummy.setProperty(Properties.ORIGIN, edge);
         sameLayerDummy.setProperty(Properties.NODE_TYPE,
                 Properties.NodeType.ODD_PORT_SIDE);
-        sameLayerDummy.setLayer(layer);
+        layerNodeList.add(sameLayerDummy);
         
         LPort sameLayerDummyInput = new LPort(PortType.INPUT);
         sameLayerDummyInput.setNode(sameLayerDummy);
@@ -222,6 +243,20 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         dummyEdge.copyProperties(edge);
         dummyEdge.setSource(previousLayerDummyOutput);
         dummyEdge.setTarget(sameLayerDummyInput);
+    }
+    
+    /**
+     * Goes through the map of layer and assigns any unassigned nodes.
+     * 
+     * @param unassignedNodes the map mapping layers to unassigned nodes.
+     */
+    private void assignUnassignedNodes(final Map<Layer, List<LNode>> unassignedNodes) {
+        for (Map.Entry<Layer, List<LNode>> entry : unassignedNodes.entrySet()) {
+            Layer layer = entry.getKey();
+            for (LNode node : entry.getValue()) {
+                node.setLayer(layer);
+            }
+        }
     }
 
 }

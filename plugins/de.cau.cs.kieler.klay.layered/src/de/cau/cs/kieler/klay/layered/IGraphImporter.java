@@ -31,6 +31,13 @@ public interface IGraphImporter {
     
     /**
      * Apply the computed layout of a layered graph to the original graph.
+     * 
+     * <dl>
+     *   <dt>Precondition:</dt><dd>the graph has all its dummy nodes and edges removed;
+     *     edges that were reversed during layout have been restored to their original
+     *     orientation</dd>
+     *   <dt>Postcondition:</dt><dd>none</dd>
+     * </dl>
      */
     void applyLayout();
 

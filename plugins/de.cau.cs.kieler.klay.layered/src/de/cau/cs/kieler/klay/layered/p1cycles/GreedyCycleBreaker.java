@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.p1cycles;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.LinkedList;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -25,6 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
 
 /**
@@ -44,6 +46,12 @@ import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
  * @author msp
  */
 public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhase {
+    
+    /** intermediate processing strategy. */
+    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+        new IntermediateProcessingStrategy(
+                IntermediateProcessingStrategy.AFTER_PHASE_5,
+                EnumSet.of(IntermediateLayoutProcessor.REVERSED_EDGE_RESTORER));
 
     /** indegree values for the nodes. */
     private int[] indeg;
@@ -60,7 +68,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
-        return null;
+        return INTERMEDIATE_PROCESSING_STRATEGY;
     }
 
     /**
