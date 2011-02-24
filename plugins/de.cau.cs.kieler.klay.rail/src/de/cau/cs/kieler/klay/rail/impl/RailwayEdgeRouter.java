@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.rail.impl;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -36,10 +37,18 @@ public class RailwayEdgeRouter extends AbstractAlgorithm implements ILayoutPhase
     /** the bounds of a line's slope in which it is not bent. */
     public static final double SLOPE_TOLERANCE = 0.2f;
 
+    
     /**
      * {@inheritDoc}
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final LayeredGraph layeredGraph) {
         float borspacing = layeredGraph.getProperty(Properties.BOR_SPACING);
         minLayerDist = layeredGraph.getProperty(Properties.LAYER_DISTANCE);
 

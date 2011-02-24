@@ -30,8 +30,8 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.IGraphImporter;
-import de.cau.cs.kieler.klay.layered.IIntermediateLayoutPhase;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -63,10 +63,10 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     private ILayoutPhase edgeRouter = new RailwayEdgeRouter();
 
     /**
-     * Intermediate phase: proper layering module. This is just temporarily hardcoded into the
-     * workflow. This will be dynamically managed by dependencies later on.
+     * Proper layering module. Since the phases used in this algorithm do not have any
+     * dependencies, this is hardcoded into the layout provider.
      */
-    private IIntermediateLayoutPhase edgeSplitter = new EdgeSplitter();
+    private ILayoutProcessor edgeSplitter = new EdgeSplitter();
 
     private static final int SWITCH_PORTS = 3;
 
@@ -138,7 +138,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
         }
-        monitor.begin("Layered layout phases", 1 + 1 + 1 + 1);
+        monitor.begin("Layered layout phases", 1 + 1 + 1 + 1 + 1);
         LayeredGraph layeredGraph = importer.getGraph();
         List<LNode> nodes = layeredGraph.getLayerlessNodes();
 
@@ -150,22 +150,22 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
 
         // phase 1: cycle breaking
         cycleBreaker.reset(monitor.subTask(1));
-        cycleBreaker.execute(layeredGraph);
+        cycleBreaker.process(layeredGraph);
         // phase 2: layering
         layerer.reset(monitor.subTask(1));
-        layerer.execute(layeredGraph);
+        layerer.process(layeredGraph);
         // intermediate phase: edge splitting
         edgeSplitter.reset(monitor.subTask(1));
-        edgeSplitter.execute(layeredGraph);
+        edgeSplitter.process(layeredGraph);
         // phase 3: node placement
         nodePlacer.reset(monitor.subTask(1));
-        nodePlacer.execute(layeredGraph);
+        nodePlacer.process(layeredGraph);
         // subphase: arrange ports
         System.out.println("Arranging ports ...");
         arrangePorts(nodes);
         // phase 4: edge routing
         edgeRouter.reset(monitor.subTask(1));
-        edgeRouter.execute(layeredGraph);
+        edgeRouter.process(layeredGraph);
 
         swapBackSwappedEdges();
         monitor.done();

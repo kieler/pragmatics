@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.rail.impl;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
@@ -42,7 +43,14 @@ public class RailwayNodePlacer extends AbstractAlgorithm implements ILayoutPhase
     /**
      * {@inheritDoc}
      */
-    public void execute(final LayeredGraph layeredGraph) {
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final LayeredGraph layeredGraph) {
         NodePlacerHelper helper = new NodePlacerHelper();
         getMonitor().begin("Linear segments node placement", 1);
         int layerCount = layeredGraph.getLayers().size();

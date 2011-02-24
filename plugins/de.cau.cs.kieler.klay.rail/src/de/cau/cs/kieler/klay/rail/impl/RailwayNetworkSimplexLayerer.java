@@ -24,6 +24,7 @@ import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
+import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -180,6 +181,13 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
     }
 
     // =============================== Initialization Methods =====================================
+
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
+        return null;
+    }
 
     /**
      * Helper method for the network simplex layerer. It determines all connected components of the
@@ -366,7 +374,7 @@ public class RailwayNetworkSimplexLayerer extends AbstractAlgorithm implements I
      *            
      * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
-    public void execute(final LayeredGraph theLayeredGraph) {
+    public void process(final LayeredGraph theLayeredGraph) {
         assert theLayeredGraph != null;
         
         getMonitor().begin("Network-Simplex Layering", 1);
