@@ -21,6 +21,7 @@ import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.ImageFigureEx;
 import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.swt.graphics.Color;
@@ -98,17 +99,17 @@ public class SwitchableFigure extends Shape {
         
 
         if (this.getParent() instanceof DefaultSizeNodeFigure
-                && figure instanceof ScalableImageFigure) {
+                && figure instanceof ImageFigureEx) {
             DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
-            Image image = ((ScalableImageFigure) figure).getImage();
+            Image image = ((ImageFigureEx) figure).getImage();
             if (image != null ) {
                     defaultSizeNodeFigure.setDefaultSize(image.getBounds().width + 2, image.getBounds().height + 2);
             }
         } else if (this.getParent() instanceof DefaultSizeNodeFigure) {
             DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
-            if (currentFigure.getPreferredSize().height != 0 && currentFigure.getPreferredSize().width != 0) {
-                defaultSizeNodeFigure.setDefaultSize(currentFigure.getPreferredSize().width + 2, currentFigure.getPreferredSize().height + 2);
-        }
+       //     if (currentFigure.getPreferredSize().height != 0 && currentFigure.getPreferredSize().width != 0) {
+                defaultSizeNodeFigure.setDefaultSize(currentFigure.getBounds().width + 2, currentFigure.getBounds().height + 2);
+        //}
         }
         // this.repaint();
         
