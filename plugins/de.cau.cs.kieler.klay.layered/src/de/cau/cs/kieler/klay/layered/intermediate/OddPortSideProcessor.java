@@ -48,7 +48,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
- *   <dt>Postcondition:</dt><dd>dummy nodes have been insertes for edges connected to
+ *   <dt>Postcondition:</dt><dd>dummy nodes have been inserted for edges connected to
  *     ports on odd sides.</dd>
  * </dl>
  * 

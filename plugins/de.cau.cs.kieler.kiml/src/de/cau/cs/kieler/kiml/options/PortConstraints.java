@@ -27,9 +27,7 @@ public enum PortConstraints {
     FREE,
     /** the side is fixed for each port. */
     FIXED_SIDE,
-    /** the side is fixed for each port, and the order of ports
-     * is fixed for each side.
-     */
+    /** the side is fixed for each port, and the order of ports is fixed for each side. */
     FIXED_ORDER,
     /** the exact position is fixed for each port. */
     FIXED_POS;
@@ -42,6 +40,34 @@ public enum PortConstraints {
      */
     public static PortConstraints valueOf(final int i) {
         return values()[i];
+    }
+    
+    /**
+     * Returns whether the position of the ports is fixed.
+     * 
+     * @return true if the position is fixed
+     */
+    public boolean isPosFixed() {
+        return this == FIXED_POS;
+    }
+    
+    /**
+     * Returns whether the order of ports is fixed.
+     * 
+     * @return true if the order of ports is fixed
+     */
+    public boolean isOrderFixed() {
+        return this == FIXED_ORDER || this == FIXED_POS;
+    }
+    
+    /**
+     * Returns whether the sides of ports are fixed.
+     * 
+     * @see PortSide
+     * @return true if the port sides are fixed
+     */
+    public boolean isSideFixed() {
+        return this != FREE && this != UNDEFINED;
     }
     
 }

@@ -181,81 +181,33 @@ public final class KimlUtil {
      * @return port placement
      */
     public static PortSide calcPortSide(final KPort port) {
-        KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
         PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
         if (portSide != PortSide.UNDEFINED) {
             return portSide;
         }
+        
         // determine port placement from port position
-        float nodeWidth = nodeLayout.getWidth();
-        float nodeHeight = nodeLayout.getHeight();
-        if (nodeWidth > 0) {
-            float relx = (portLayout.getXpos() + portLayout.getWidth() / 2) - (nodeWidth / 2);
-            float rely = (portLayout.getYpos() + portLayout.getHeight() / 2) - (nodeHeight / 2);
-    
-            if (relx != 0) {
-                float nodeRatio = Math.abs(nodeHeight / nodeWidth);
-                float portRatio = Math.abs(rely / relx);
-                if (portRatio < nodeRatio) {
-                    if (relx > 0) {
-                        return PortSide.EAST;
-                    } else if (relx < 0) {
-                        return PortSide.WEST;
-                    }
-                } else if (portRatio > nodeRatio) {
-                    if (rely > 0) {
-                        return PortSide.SOUTH;
-                    } else if (rely < 0) {
-                        return PortSide.NORTH;
-                    }
-                }
-            } else if (rely > 0) {
-                return PortSide.SOUTH;
-            } else if (rely < 0) {
-                return PortSide.NORTH;
-            }
+        KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
+        float widthPercent = (portLayout.getXpos() + portLayout.getWidth() / 2)
+                / nodeLayout.getWidth();
+        float heightPercent = (portLayout.getYpos() + portLayout.getHeight() / 2)
+                / nodeLayout.getHeight();
+        if (widthPercent + heightPercent <= 1
+                && widthPercent - heightPercent <= 0) {
+            // port is on the left
+            return PortSide.WEST;
+        } else if (widthPercent + heightPercent >= 1
+                && widthPercent - heightPercent >= 0) {
+            // port is on the right
+            return PortSide.EAST;
+        } else if (heightPercent < 1.0f / 2) {
+            // port is on the top
+            return PortSide.NORTH;
+        } else {
+            // port is on the bottom
+            return PortSide.SOUTH;
         }
-
-        // determine port placement from the incident edges
-        Direction layoutDirection = port.getNode().getParent().getData(KShapeLayout.class)
-                .getProperty(LayoutOptions.DIRECTION);
-        int flow = calcFlow(port);
-        switch (layoutDirection) {
-        case DOWN:
-            if (flow > 0) {
-                return PortSide.SOUTH;
-            }
-            if (flow < 0) {
-                return PortSide.NORTH;
-            }
-            break;
-        case UP:
-            if (flow > 0) {
-                return PortSide.NORTH;
-            }
-            if (flow < 0) {
-                return PortSide.SOUTH;
-            }
-            break;            
-        case LEFT:
-            if (flow > 0) {
-                return PortSide.WEST;
-            }
-            if (flow < 0) {
-                return PortSide.EAST;
-            }
-            break;
-        case RIGHT:
-            if (flow > 0) {
-                return PortSide.EAST;
-            }
-            if (flow < 0) {
-                return PortSide.WEST;
-            }
-            break;
-        }
-        return PortSide.UNDEFINED;
     }
     
     /**

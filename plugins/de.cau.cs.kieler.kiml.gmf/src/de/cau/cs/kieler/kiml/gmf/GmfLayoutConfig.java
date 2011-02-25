@@ -32,6 +32,7 @@ import org.eclipse.gmf.runtime.notation.View;
 
 import de.cau.cs.kieler.core.model.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
@@ -187,7 +188,8 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
         // determine the target type and container / containment edit parts
         Pair<IGraphicalEditPart, IGraphicalEditPart> targetEditParts
                 = new Pair<IGraphicalEditPart, IGraphicalEditPart>();
-        LayoutOptionData.Target partTarget = findTarget(focusEditPart, targetEditParts);
+        Maybe<Boolean> hasPorts = new Maybe<Boolean>(Boolean.FALSE);
+        LayoutOptionData.Target partTarget = findTarget(focusEditPart, targetEditParts, hasPorts);
         IGraphicalEditPart containmentEditPart = targetEditParts.getFirst();
         IGraphicalEditPart containerEditPart = targetEditParts.getSecond();
 
@@ -215,7 +217,10 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             
             if (containmentEditPart != null) {
                 initialize(LayoutOptionData.Target.PARENTS, containmentEditPart, contentLayoutHint);
+                setChildren(true);
             }
+            
+            setPorts(hasPorts.get());
         }
     }
     
@@ -223,10 +228,13 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * Determines the type of edit part target for the layout options.
      * 
      * @param editPart an edit part
+     * @param hasPorts if contained ports are found, this reference parameter is
+     *          set to {@code true}
      * @return the edit part target
      */
     private LayoutOptionData.Target findTarget(final IGraphicalEditPart editPart,
-            final Pair<IGraphicalEditPart, IGraphicalEditPart> targetEditParts) {
+            final Pair<IGraphicalEditPart, IGraphicalEditPart> targetEditParts,
+            final Maybe<Boolean> hasPorts) {
         IGraphicalEditPart containerEditPart = null, containmentEditPart = null;
         LayoutOptionData.Target partTarget = null;
         if (editPart instanceof AbstractBorderItemEditPart) {
@@ -236,7 +244,7 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             // check whether the node is a parent
             partTarget = LayoutOptionData.Target.NODES;
             containerEditPart = (IGraphicalEditPart) editPart.getParent();
-            if (findContainingEditPart(editPart) != null) {
+            if (findContainingEditPart(editPart, hasPorts) != null) {
                 containmentEditPart = editPart;
             }
         } else if (editPart instanceof ConnectionEditPart) {
@@ -272,11 +280,15 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
      * edit part is either the parent edit part itself or one of its compartments. 
      * 
      * @param editPart a node edit part
+     * @param hasPorts if ports are found, this reference parameter is set to {@code true}
      * @return the edit part that contains other node edit parts, or {@code null} if there is none
      */
-    private IGraphicalEditPart findContainingEditPart(final IGraphicalEditPart editPart) {
+    private IGraphicalEditPart findContainingEditPart(final IGraphicalEditPart editPart,
+            final Maybe<Boolean> hasPorts) {
         for (Object child : editPart.getChildren()) {
-            if (child instanceof ShapeNodeEditPart
+            if (child instanceof AbstractBorderItemEditPart && !isNoLayout((EditPart) child)) {
+                hasPorts.set(Boolean.TRUE);
+            } else if (child instanceof ShapeNodeEditPart
                     && !(child instanceof AbstractBorderItemEditPart)
                     && !isNoLayout((EditPart) child)) {
                 return editPart;

@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -47,9 +46,7 @@ public class PortArranger extends AbstractAlgorithm implements ILayoutProcessor 
         // Iterate through all nodes
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                PortConstraints constraints = node.getProperty(Properties.PORT_CONS);
-                
-                if (constraints != PortConstraints.FIXED_POS) {
+                if (!node.getProperty(Properties.PORT_CONS).isPosFixed()) {
                     // The ports are not fixed to their positions, so arrange them
                     
                     // Count the ports on different sides

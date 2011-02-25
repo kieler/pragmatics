@@ -59,6 +59,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.model.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
@@ -67,9 +68,10 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutConfig;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
 import de.cau.cs.kieler.kiml.ui.util.KimlUiUtil;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -388,12 +390,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * @param parentLayoutNode the corresponding KNode
      * @param currentEditPart the currently analyzed edit part
      * @param layoutConfig layout configuration handler
+     * @return whether the element has any children (first component), and whether the
+     *         element has any ports (second component)
      */
-    private void buildLayoutGraphRecursively(final IGraphicalEditPart parentEditPart,
+    private Pair<Boolean, Boolean> buildLayoutGraphRecursively(final IGraphicalEditPart parentEditPart,
             final KNode parentLayoutNode, final IGraphicalEditPart currentEditPart,
-            final ILayoutConfig layoutConfig) {
-        boolean hasChildNodes = false, hasChildCompartments = false,
-                hasPorts = false, isCollapsed = false;
+            final EclipseLayoutConfig layoutConfig) {
+        boolean hasChildNodes = false, hasPorts = false;
         KInsets kinsets = null;
         IFigure parentFigure = parentEditPart.getFigure();
 
@@ -441,16 +444,20 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                         && widthPercent - heightPercent <= 0) {
                     // port is on the left
                     offset = -(xpos + portBounds.width);
+                    portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
                 } else if (widthPercent + heightPercent >= 1
                         && widthPercent - heightPercent >= 0) {
                     // port is on the right
                     offset = xpos - nodeLayout.getWidth();
+                    portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
                 } else if (heightPercent < 1.0f / 2) {
                     // port is on the top
                     offset = -(ypos + portBounds.height);
+                    portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.NORTH);
                 } else {
                     // port is on the bottom
                     offset = ypos - nodeLayout.getHeight();
+                    portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
                 }
                 if (offset != 0) {
                     portLayout.setProperty(LayoutOptions.OFFSET, offset);
@@ -503,14 +510,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                                 = (ResizableCompartmentFigure) compartmentFigure;
                         // check whether the compartment is collapsed
                         if (!resizCompFigure.isExpanded()) {
-                            isCollapsed = true;
                             continue;
                         }
                     }
 
-                    hasChildCompartments = true;
-                    buildLayoutGraphRecursively(parentEditPart, parentLayoutNode,
-                            compartment, layoutConfig);
+                    Pair<Boolean, Boolean> result = buildLayoutGraphRecursively(parentEditPart,
+                            parentLayoutNode, compartment, layoutConfig);
+                    hasChildNodes |= result.getFirst();
                 }
 
                 // process nodes, which may be parents of compartments
@@ -555,11 +561,13 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     graphElem2EditPartMap.put(childLayoutNode, childNodeEditPart);
                     hasChildNodes = true;
                     // process the child as new current edit part
-                    buildLayoutGraphRecursively(childNodeEditPart, childLayoutNode,
-                            childNodeEditPart, layoutConfig);
+                    Pair<Boolean, Boolean> result = buildLayoutGraphRecursively(childNodeEditPart,
+                            childLayoutNode, childNodeEditPart, layoutConfig);
 
                     // set user defined layout options for the node
                     layoutConfig.setFocus(childNodeEditPart);
+                    layoutConfig.setChildren(result.getFirst());
+                    layoutConfig.setPorts(result.getSecond());
                     nodeLayout.copyProperties(layoutConfig);
                 }
 
@@ -606,19 +614,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
         }
 
-        // FIXME extract this to layout configurations
-        KShapeLayout nodeLayout = parentLayoutNode.getData(KShapeLayout.class);
-        // set default fixed size option
-        nodeLayout.setProperty(LayoutOptions.FIXED_SIZE, !hasChildNodes && !hasChildCompartments
-            && !isCollapsed);
-        // set default port constraints option
-        if (hasPorts) {
-            if (hasChildNodes || hasChildCompartments || isCollapsed) {
-                nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
-            } else {
-                nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            }
-        }
+        return new Pair<Boolean, Boolean>(hasChildNodes, hasPorts);
     }
 
     /**

@@ -110,7 +110,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 LNode node = nodeIter.next();
                 curRun[i][nodeIter.previousIndex()] = node;
                 node.id = nodeCount++;
-                boolean freePorts = node.getProperty(Properties.PORT_CONS) == PortConstraints.FREE;
+                boolean freePorts = !node.getProperty(Properties.PORT_CONS).isSideFixed();
                 for (LPort port : node.getPorts()) {
                     port.id = portCount++;
                     if (freePorts) {
@@ -124,6 +124,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                             break;
                         }
                     }
+                }
+                if (freePorts) {
+                    node.setProperty(Properties.PORT_CONS, PortConstraints.FIXED_SIDE);
                 }
             }
         }
@@ -287,8 +290,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         int targetCount = 0;
         Map<LPort, Integer> targetMap = new HashMap<LPort, Integer>();
         for (LNode node : rightLayer) {
-            PortConstraints cons = node.getProperty(Properties.PORT_CONS);
-            if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
+            if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
                 ListIterator<LPort> portIter = node.getPorts().listIterator(node.getPorts().size());
                 while (portIter.hasPrevious()) {
                     LPort port = portIter.previous();
@@ -308,8 +310,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         int[] southSequence = new int[edgeCount];
         int i = 0;
         for (LNode node : leftLayer) {
-            PortConstraints cons = node.getProperty(Properties.PORT_CONS);
-            if (cons == PortConstraints.FIXED_ORDER || cons == PortConstraints.FIXED_POS) {
+            if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
                     int start = i;
                     for (LEdge edge : port.getEdges()) {
@@ -445,21 +446,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
      */
     private void assignPortPos(final LNode node, final int nodeIx,
             final PortType type, final int count) {
-        float pos = nodeIx;
-        PortConstraints cons = node.getProperty(Properties.PORT_CONS);
-        switch (cons) {
-        case FREE:
-            pos += 1.0f / 2;
-            for (LPort port : node.getPorts(type)) {
-                portPos[port.id] = pos;
-            }
-            break;
-        case FIXED_SIDE:
-            for (LPort port : node.getPorts(type)) {
-                portPos[port.id] = getPortIncr(type, port.getSide());
-            }
-            break;
-        default:
+        if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+            float pos = nodeIx;
             float incr = 1.0f / count;
             if (type == PortType.INPUT) {
                 incr = -incr;
@@ -469,12 +457,17 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 portPos[port.id] = pos;
                 pos += incr;
             }
+        } else {
+            for (LPort port : node.getPorts(type)) {
+                portPos[port.id] = getPortIncr(type, port.getSide());
+            }
         }
     }
     
-    private static final float INCR_ONE = 0.25f;
+    private static final float INCR_ONE = 0.3f;
     private static final float INCR_TWO = 0.5f;
-    private static final float INCR_THREE = 0.75f;
+    private static final float INCR_THREE = 0.7f;
+    private static final float INCR_FOUR = 0.9f;
     
     /**
      * Return an increment value for the position of a port with given type and side.
@@ -487,22 +480,26 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         switch (type) {
         case INPUT:
             switch (side) {
-            case WEST:
+            case NORTH:
                 return INCR_ONE;
-            case SOUTH:
+            case WEST:
                 return INCR_TWO;
-            case EAST:
+            case SOUTH:
                 return INCR_THREE;
+            case EAST:
+                return INCR_FOUR;
             }
             break;
         case OUTPUT:
             switch (side) {
-            case EAST:
+            case NORTH:
                 return INCR_ONE;
-            case SOUTH:
+            case EAST:
                 return INCR_TWO;
-            case WEST:
+            case SOUTH:
                 return INCR_THREE;
+            case WEST:
+                return INCR_FOUR;
             }
             break;
         }
@@ -572,8 +569,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             LNode[] layer = layeredGraph[l];
             for (int i = 0; i < layer.length; i++) {
                 LNode node = layer[i];
-                PortConstraints cons = node.getProperty(Properties.PORT_CONS);
-                if (cons == PortConstraints.FREE || cons == PortConstraints.FIXED_SIDE) {
+                if (!node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
+                    // the order of ports on each side is variable, so distribute the ports
                     distributePorts(node);
                     node.setProperty(Properties.PORT_CONS, PortConstraints.FIXED_ORDER);
                     int portCount = 0;

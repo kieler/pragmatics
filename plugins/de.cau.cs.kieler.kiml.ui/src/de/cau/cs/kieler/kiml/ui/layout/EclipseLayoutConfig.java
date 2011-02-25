@@ -110,6 +110,10 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     private String containerDiagramType;
     /** external layout configuration embedded in this one. */
     private ILayoutConfig externalConfig;
+    /** indicates whether the selected node contains any children. */
+    private boolean hasChildren;
+    /** indicates whether thw selected node contains any ports. */
+    private boolean hasPorts;
     
     /**
      * Create a stand-alone Eclipse layout configuration.
@@ -120,10 +124,10 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     /**
      * Create an Eclipse layout configuration embedding an external configuration.
      * 
-     * @param theexternalConfig an external layout configuration
+     * @param externalConfig an external layout configuration
      */
-    public EclipseLayoutConfig(final ILayoutConfig theexternalConfig) {
-        this.externalConfig = theexternalConfig;
+    public EclipseLayoutConfig(final ILayoutConfig externalConfig) {
+        this.externalConfig = externalConfig;
     }
     
     /**
@@ -139,6 +143,8 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         if (element == null) {
             this.focusEditPart = null;
             this.modelElement = null;
+            this.hasChildren = false;
+            this.hasPorts = false;
         } else if (element instanceof EditPart) {
             this.focusEditPart = (EditPart) element;
         } else if (element instanceof EObject) {
@@ -151,8 +157,27 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     }
     
     /**
+     * Set whether the node in focus has any children.
+     * 
+     * @param hasChildren whether the selected node has children
+     */
+    public void setChildren(final boolean hasChildren) {
+        this.hasChildren = hasChildren;
+    }
+    
+    /**
+     * Set whether the node in focus has any ports.
+     * 
+     * @param hasPorts whether the selected node has ports
+     */
+    public void setPorts(final boolean hasPorts) {
+        this.hasPorts = hasPorts;
+    }
+    
+    /**
      * Initialize the configuration with a layout hint and an edit part for the
-     * content or the container of the selected element.
+     * content (if target type is {@link LayoutOptionData.Target#PARENTS}) or
+     * the container of the selected element.
      * 
      * @param targetType type of the selected element (parent, node, edge, port, etc.)
      * @param editPart the edit part
@@ -255,12 +280,12 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      */
     private Object getDynamicValue(final LayoutOptionData<?> optionData) {
         if (LayoutOptions.FIXED_SIZE_ID.equals(optionData.getId())) {
-            return Boolean.valueOf(contentDiagramType == null);
+            return Boolean.valueOf(!hasChildren);
         } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
-            if (contentDiagramType != null) {
-                return PortConstraints.FREE.ordinal();
+            if (!hasChildren && hasPorts) {
+                return PortConstraints.FIXED_POS;
             } else {
-                return PortConstraints.FIXED_POS.ordinal();
+                return PortConstraints.FREE;
             }
         }
         return null;
