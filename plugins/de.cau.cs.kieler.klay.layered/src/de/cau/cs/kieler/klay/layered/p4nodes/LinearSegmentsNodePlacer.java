@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 
 /**
  * Node placement implementation that aligns long edges using linear segments. Inspired by Section 4
@@ -42,11 +44,10 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>the graph has a proper layering with
- *     optimized nodes ordering</dd>
+ *     optimized nodes ordering; ports are properly arranged</dd>
  *   <dt>Postcondition:</dt><dd>each node is assigned a vertical coordinate
- *     such that no two nodes overlap; the ports of each node are arranged
- *     according to their order; the size of each layer is set according to
- *     the area occupied by contained nodes; the height of the graph is set
+ *     such that no two nodes overlap; the size of each layer is set according
+ *     to the area occupied by contained nodes; the height of the graph is set
  *     to the maximal layer height</dd>
  * </dl>
  * 
@@ -133,6 +134,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             }
         }
     }
+    
+    /** intermediate processing strategy. */
+    private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
+        new IntermediateProcessingStrategy(
+                IntermediateProcessingStrategy.BEFORE_PHASE_4,
+                EnumSet.of(IntermediateLayoutProcessor.PORT_ARRANGER));
 
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
@@ -143,7 +150,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * {@inheritDoc}
      */
     public IntermediateProcessingStrategy getIntermediateProcessingStrategy() {
-        return null;
+        return INTERMEDIATE_PROCESSING_STRATEGY;
     }
     
     /**
@@ -161,8 +168,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Linear segments node placement", 1);
 
-        // arrange port positions
-        layeredGraph.arrangePorts();
         // sort the linear segments of the layered graph
         sortLinearSegments(layeredGraph);
         // create an unbalanced placement from the sorted segments

@@ -17,8 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.klay.layered.Properties;
 
 /**
  * A layered graph has a set of layers that contain the nodes, as well as a
@@ -86,69 +84,6 @@ public class LayeredGraph extends LGraphElement {
      */
     public List<Layer> getLayers() {
         return layers;
-    }
-    
-    /**
-     * Arrange the ports of all nodes in the layered graph.
-     * 
-     * TODO move this out into its own module?
-     */
-    public void arrangePorts() {
-        for (Layer layer : layers) {
-            for (LNode node : layer.getNodes()) {
-                PortConstraints constraints = node.getProperty(Properties.PORT_CONS);
-                if (constraints != PortConstraints.FIXED_POS) {
-                    int northCount = 1, eastCount = 1, southCount = 1, westCount = 1;
-                    for (LPort port : node.getPorts()) {
-                        switch (port.getSide()) {
-                        case NORTH:
-                            northCount++;
-                            break;
-                        case EAST:
-                            eastCount++;
-                            break;
-                        case SOUTH:
-                            southCount++;
-                            break;
-                        default:
-                            westCount++;
-                        }
-                    }
-                    KVector nodeSize = node.getSize();
-                    double northDelta = nodeSize.x / northCount;
-                    double northX = northDelta;
-                    double eastDelta = nodeSize.y / eastCount;
-                    double eastY = eastDelta;
-                    double southDelta = nodeSize.x / southCount;
-                    double southX = nodeSize.x - southDelta;
-                    double westDelta = nodeSize.y / westCount;
-                    double westY = nodeSize.y - westDelta;
-                    for (LPort port : node.getPorts()) {
-                        switch (port.getSide()) {
-                        case NORTH:
-                            port.getPos().x = northX;
-                            port.getPos().y = 0;
-                            northX += northDelta;
-                            break;
-                        case EAST:
-                            port.getPos().x = nodeSize.x;
-                            port.getPos().y = eastY;
-                            eastY += eastDelta;
-                            break;
-                        case SOUTH:
-                            port.getPos().x = southX;
-                            port.getPos().y = nodeSize.y;
-                            southX -= southDelta;
-                            break;
-                        default:
-                            port.getPos().x = 0;
-                            port.getPos().y = westY;
-                            westY -= westDelta;
-                        }
-                    }
-                }
-            }
-        }
     }
     
 }

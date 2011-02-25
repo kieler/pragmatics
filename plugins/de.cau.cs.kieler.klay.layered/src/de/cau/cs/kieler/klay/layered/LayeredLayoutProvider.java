@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.EdgeJoiner;
 import de.cau.cs.kieler.klay.layered.intermediate.EdgeSplitter;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 import de.cau.cs.kieler.klay.layered.intermediate.OddPortSideProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.PortArranger;
 import de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.LPSolveLayerer;
@@ -289,6 +290,10 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                 
                 case ODD_PORT_SIDE_PROCESSOR:
                     processorImpl = new OddPortSideProcessor();
+                    break;
+                
+                case PORT_ARRANGER:
+                    processorImpl = new PortArranger();
                     break;
                 
                 case REVERSED_EDGE_RESTORER:

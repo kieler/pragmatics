@@ -26,6 +26,8 @@ public enum IntermediateLayoutProcessor {
     EDGE_SPLITTER,
     /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
     ODD_PORT_SIDE_PROCESSOR,
+    /** Sets the positions of ports. */
+    PORT_ARRANGER,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER;
     
