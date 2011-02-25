@@ -157,6 +157,29 @@ public class KVectorChain extends LinkedList<KVector> implements IDataObject {
     }
     
     /**
+     * Iterates through all vectors and adds the offset to them.
+     * 
+     * @param offset the offset to add to the vectors.
+     */
+    public void translate(final KVector offset) {
+        for (KVector vector : this) {
+            vector.add(offset);
+        }
+    }
+    
+    /**
+     * Iterates through all vectors and adds the offset to them.
+     * 
+     * @param dx x value to add.
+     * @param dy y value to add.
+     */
+    public void translate(final double dx, final double dy) {
+        for (KVector vector : this) {
+            vector.translate(dx, dy);
+        }
+    }
+    
+    /**
      * Calculate the total length of this vector chain.
      * 
      * @return the total length

@@ -768,7 +768,10 @@ public final class KimlUtil {
     }
     
     /**
-     * Apply the points of a vector chain to the given edge layout.
+     * Apply the points of a vector chain to the given edge layout. The vector chain
+     * is expected to not only contain bend points of an edge, but also the coordinates
+     * where it joins its source and target port. An exception is thrown if that's not
+     * the case.
      * 
      * @param edgeLayout an edge layout
      * @param vectorChain a vector chain with source point, bend points, and target point
