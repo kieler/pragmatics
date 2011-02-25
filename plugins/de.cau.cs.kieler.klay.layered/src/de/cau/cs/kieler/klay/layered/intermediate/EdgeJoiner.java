@@ -78,7 +78,8 @@ public class EdgeJoiner extends AbstractAlgorithm implements ILayoutProcessor {
                     
                     // Do some edgy stuff
                     survivingEdge.setTarget(droppedEdge.getTarget());
-                    droppedEdge.getTarget().getEdges().remove(droppedEdge);
+                    droppedEdge.setSource(null);
+                    droppedEdge.setTarget(null);
                     
                     // Remove the node
                     layerIterator.remove();

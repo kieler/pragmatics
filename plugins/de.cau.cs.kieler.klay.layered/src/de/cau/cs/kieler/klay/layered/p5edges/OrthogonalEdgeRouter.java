@@ -618,7 +618,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     private static Writer createWriter(final Layer layer, final String label) throws IOException {
         String path = System.getProperty("user.home");
         if (path.endsWith(File.separator)) {
-            path += "tmp" + File.separator + "graphviz";
+            path += "tmp" + File.separator + "klay";
         } else {
             path += File.separator + "tmp" + File.separator + "klay";
         }

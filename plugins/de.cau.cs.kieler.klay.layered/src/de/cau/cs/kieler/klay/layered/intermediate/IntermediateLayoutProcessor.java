@@ -13,8 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+
 /**
  * Definition of available intermediate layout processors for the layered layouter.
+ * This enumeration also serves as a factory for intermediate layout processors.
  * 
  * @author cds
  */
@@ -41,5 +44,32 @@ public enum IntermediateLayoutProcessor {
     public static IntermediateLayoutProcessor valueOf(final int i) {
         return values()[i];
     }
-
+    
+    
+    /**
+     * Creates an instance of the layout processor described by this instance.
+     * 
+     * @return the layout processor.
+     */
+    public ILayoutProcessor create() {
+        switch (this) {
+        case EDGE_JOINER:
+            return new EdgeJoiner();
+            
+        case EDGE_SPLITTER:
+            return new EdgeSplitter();
+        
+        case ODD_PORT_SIDE_PROCESSOR:
+            return new OddPortSideProcessor();
+        
+        case PORT_ARRANGER:
+            return new PortArranger();
+        
+        case REVERSED_EDGE_RESTORER:
+            return new ReversedEdgeRestorer();
+        
+        default:
+            return null;
+        }
+    }
 }

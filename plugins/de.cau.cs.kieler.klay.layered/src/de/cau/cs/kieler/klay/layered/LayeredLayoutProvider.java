@@ -13,6 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,12 +34,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.EdgeJoiner;
-import de.cau.cs.kieler.klay.layered.intermediate.EdgeSplitter;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
-import de.cau.cs.kieler.klay.layered.intermediate.OddPortSideProcessor;
-import de.cau.cs.kieler.klay.layered.intermediate.PortArranger;
-import de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.layered.p2layers.LPSolveLayerer;
 import de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer;
@@ -278,32 +277,12 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             ILayoutProcessor processorImpl = intermediateLayoutProcessorCache.get(processor);
             
             if (processorImpl == null) {
-                // instantiate the layout processor and add it to the cache
-                switch (processor) {
-                case EDGE_JOINER:
-                    processorImpl = new EdgeJoiner();
-                    break;
-                    
-                case EDGE_SPLITTER:
-                    processorImpl = new EdgeSplitter();
-                    break;
-                
-                case ODD_PORT_SIDE_PROCESSOR:
-                    processorImpl = new OddPortSideProcessor();
-                    break;
-                
-                case PORT_ARRANGER:
-                    processorImpl = new PortArranger();
-                    break;
-                
-                case REVERSED_EDGE_RESTORER:
-                    processorImpl = new ReversedEdgeRestorer();
-                    break;
-                }
-                
+                // It's not in the cache, so create it and put it in the cache
+                processorImpl = processor.create();
                 intermediateLayoutProcessorCache.put(processor, processorImpl);
             }
             
+            // add the layout processor to the list of processors for this slot
             result.add(processorImpl);
         }
         
@@ -357,21 +336,69 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         monitor.begin("Layered layout phases", algorithm.size());
         LayeredGraph layeredGraph = importer.getGraph();
         
-        // if debug mode is active, print the list of processors used
         if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
+            // Debug Mode!
+            // Prints the algorithm configuration and outputs the whole graph to a file
+            // before each slot execution
+            
             System.out.println("Klay Layered uses the following configuration:");
             for (Object o : algorithm) {
                 System.out.println("   " + o.getClass().getName());
             }
-        }
 
-        // invoke each layout processor
-        for (ILayoutProcessor processor : algorithm) {
-            processor.reset(monitor.subTask(1));
-            processor.process(layeredGraph);
+            // invoke each layout processor
+            int slotIndex = 0;
+            for (ILayoutProcessor processor : algorithm) {
+                // Graph debug output
+                try {
+                    layeredGraph.writeDotGraph(createWriter(layeredGraph, slotIndex++));
+                } catch (IOException e) {
+                    // Do nothing.
+                }
+                
+                processor.reset(monitor.subTask(1));
+                processor.process(layeredGraph);
+            }
+
+            // Graph debug output
+            try {
+                layeredGraph.writeDotGraph(createWriter(layeredGraph, slotIndex++));
+            } catch (IOException e) {
+                // Do nothing.
+            }
+        } else {
+            // invoke each layout processor
+            for (ILayoutProcessor processor : algorithm) {
+                processor.reset(monitor.subTask(1));
+                processor.process(layeredGraph);
+            }
         }
 
         monitor.done();
+    }
+    
+    /**
+     * Creates a writer for the given graph. The file name to be written to is assembled
+     * from the graph's hash code and the slot index.
+     * 
+     * @param graph the graph to be written.
+     * @param slotIndex the slot before whose execution the graph is written.
+     * @return file writer.
+     * @throws IOException if anything goes wrong.
+     */
+    private Writer createWriter(final LayeredGraph graph, final int slotIndex) throws IOException {
+        String path = System.getProperty("user.home");
+        
+        if (path.endsWith(File.separator)) {
+            path += "tmp" + File.separator + "klay";
+        } else {
+            path += File.separator + "tmp" + File.separator + "klay";
+        }
+        new File(path).mkdirs();
+        
+        String debugFileName = Integer.toString(graph.hashCode()
+                & ((1 << (Integer.SIZE / 2)) - 1)) + "-fulldebug-slot" + slotIndex;
+        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
 }

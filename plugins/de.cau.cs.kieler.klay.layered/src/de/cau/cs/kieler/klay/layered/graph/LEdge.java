@@ -59,15 +59,19 @@ public class LEdge extends LGraphElement {
      * careful not to use this method while iterating through the edges list of the old port nor of
      * the new port, since that could lead to {@link java.util.ConcurrentModificationException}s.
      * 
-     * @param thesource
+     * @param source
      *            the source port to set
      */
-    public void setSource(final LPort thesource) {
+    public void setSource(final LPort source) {
         if (source != null) {
             source.getEdges().remove(this);
         }
-        this.source = thesource;
-        source.getEdges().add(this);
+        
+        this.source = source;
+        
+        if (source != null) {
+            source.getEdges().add(this);
+        }
     }
 
     /**
@@ -85,15 +89,19 @@ public class LEdge extends LGraphElement {
      * careful not to use this method while iterating through the edges list of the old port nor of
      * the new port, since that could lead to {@link java.util.ConcurrentModificationException}s.
      * 
-     * @param thetarget
+     * @param target
      *            the target port to set
      */
-    public void setTarget(final LPort thetarget) {
+    public void setTarget(final LPort target) {
         if (target != null) {
             target.getEdges().remove(this);
         }
-        this.target = thetarget;
-        target.getEdges().add(this);
+        
+        this.target = target;
+        
+        if (target != null) {
+            target.getEdges().add(this);
+        }
     }
 
     /**

@@ -13,10 +13,14 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.klay.layered.Properties;
+import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 
 /**
  * A layered graph has a set of layers that contain the nodes, as well as a
@@ -45,7 +49,7 @@ public class LayeredGraph extends LGraphElement {
      */
     @Override
     public String toString() {
-        return "G" + layers.toString();
+        return "G[" + layerlessNodes.toString() + ", " + layers.toString() + "]";
     }
 
     /**
@@ -86,4 +90,139 @@ public class LayeredGraph extends LGraphElement {
         return layers;
     }
     
+    /**
+     * Outputs a representation of this graph in dot format to the given writer. The
+     * following conventions are used:
+     * <ul>
+     *   <li>Standard nodes are drawn as rectangles.</li>
+     *   <li>Dummy nodes are drawn as ellipses.</li>
+     *   <li>Nodes have a color that depends on their node type.
+     *     (yellow for {@code LONG_EDGE}, turquoise for {@code ODD_PORT_SIDE},
+     *     dark blue for {@code NORTH_SOUTH_PORT})</li>
+     * </ul>
+     * 
+     * @param writer the writer to output the graph to. An attempt is made to close the
+     *               writer when finished.
+     * @throws IOException if anything goes wrong with the writer.
+     */
+    public void writeDotGraph(final Writer writer) throws IOException {
+        // Begin the digraph
+        writer.write("digraph {\n");
+        
+        // Digraph options
+        writer.write("    rankdir=LR;\n");
+        
+        // Write layerless nodes and edges
+        writeLayer(writer, -1, layerlessNodes);
+        
+        // Go through the layers
+        int layerNumber = -1;
+        for (Layer layer : layers) {
+            layerNumber++;
+            
+            // Write the nodes and edges
+            writeLayer(writer, layerNumber, layer.getNodes());
+        }
+        
+        // Close the digraph. And the writer.
+        writer.write("}\n");
+        writer.close();
+    }
+    
+    /**
+     * Writes the given list of nodes and their edges.
+     * 
+     * @param writer writer to write to.
+     * @param layerNumber the layer number. {@code -1} for layerless nodes.
+     * @param nodes the nodes in the layer.
+     * @throws IOException if anything goes wrong with the writer.
+     */
+    private void writeLayer(final Writer writer, final int layerNumber, final List<LNode> nodes)
+            throws IOException {
+        
+        if (nodes.isEmpty()) {
+            return;
+        }
+        
+        // Start a subgraph for the layer
+        writer.write("    {\n");
+        
+        if (layerNumber != -1) {
+            writer.write("        rank=same;\n");
+        }
+        
+        // Go through the layer's nodes
+        int nodeNumber = -1;
+        for (LNode node : nodes) {
+            nodeNumber++;
+            
+            // Output the node name
+            writer.write("        " + node.hashCode());
+            
+            // Options time!
+            StringBuffer options = new StringBuffer();
+            
+            // Label
+            options.append("label=\"");
+            if (node.getName() != null) {
+                options.append(node.getName().replace("\"", "\\\"") + " ");
+            }
+            options.append("(" + layerNumber + "," + nodeNumber + ")\",");
+            
+            // Node type
+            if (node.getProperty(Properties.NODE_TYPE).equals(NodeType.NORMAL)) {
+                options.append("shape=box,");
+            } else {
+                options.append("shape=circle,style=filled,");
+                
+                // Add colouring
+                switch (node.getProperty(Properties.NODE_TYPE)) {
+                case LONG_EDGE:
+                    options.append("color=\"#eaed00\",");
+                    break;
+                    
+                case ODD_PORT_SIDE:
+                    options.append("color=\"#00cbbf\",");
+                    break;
+                
+                case NORTH_SOUTH_PORT:
+                    options.append("color=\"#0034de\",");
+                    break;
+                }
+            }
+            
+            // Print options, if any
+            options.deleteCharAt(options.length() - 1);
+            if (options.length() > 0) {
+                writer.write("[" + options + "]");
+            }
+            
+            // End the node line
+            writer.write(";\n");
+        }
+        
+        if (layerNumber != -1) {
+            // End the layer's subgraph
+            writer.write("    }\n");
+        }
+        
+        // Write the edges
+        for (LNode node : nodes) {
+            // Go through all ports and edges and output those that have this
+            // node as their source
+            for (LPort port : node.getPorts()) {
+                for (LEdge edge : port.getEdges()) {
+                    if (edge.getSource() == port) {
+                        writer.write("    " + node.hashCode() + " -> "
+                                + edge.getTarget().getNode().hashCode() + ";\n");
+                    }
+                }
+            }
+        }
+        
+        if (layerNumber == -1) {
+            // End the layer's subgraph
+            writer.write("    }\n");
+        }
+    }
 }

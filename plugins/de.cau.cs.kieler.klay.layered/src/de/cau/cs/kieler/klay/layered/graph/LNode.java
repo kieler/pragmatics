@@ -102,8 +102,12 @@ public class LNode extends LGraphElement {
         if (owner != null) {
             owner.getNodes().remove(this);
         }
+        
         this.owner = layer;
-        owner.getNodes().add(this);
+        
+        if (owner != null) {
+            owner.getNodes().add(this);
+        }
     }
 
     /**

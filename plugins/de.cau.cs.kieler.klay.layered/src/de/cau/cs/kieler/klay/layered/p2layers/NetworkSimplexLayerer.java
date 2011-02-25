@@ -435,7 +435,7 @@ public class NetworkSimplexLayerer extends AbstractAlgorithm implements ILayoutP
         }
         
         // empty the list of unlayered nodes
-        nodes.clear();
+        theNodes.clear();
 
         // release the created resources
         dispose();

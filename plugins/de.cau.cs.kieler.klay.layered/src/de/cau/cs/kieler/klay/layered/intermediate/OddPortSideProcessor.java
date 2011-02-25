@@ -13,17 +13,18 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
+import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -74,30 +75,33 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         // modification exceptions)
         ListIterator<Layer> layerIterator = layers.listIterator();
         Layer currentLayer = prefixLayer;
-        Map<Layer, List<LNode>> unassignedNodes = new HashMap<Layer, List<LNode>>();
+        List<LNode> previousLayerUnassignedNodes = new LinkedList<LNode>();
         
         while (layerIterator.hasNext()) {
-            // Find the current, previous and next layer. If this layer is the first or last one,
-            // use the prefix or postfix layer as the previous and next layer, respectively.
+            // Find the current, previous and next layer. If this layer is the last one,
+            // use the postfix layer as the next layer
             Layer previousLayer = currentLayer;
             currentLayer = layerIterator.next();
-            Layer nextLayer = null;
+            Layer nextLayer = postfixLayer;
             if (layerIterator.hasNext()) {
                 nextLayer = layerIterator.next();
                 layerIterator.previous();
-            } else {
-                nextLayer = postfixLayer;
             }
             
-            // Create an empty list of unassigned nodes
-            List<LNode> currentLayerUnassignedNodes = new LinkedList<LNode>();
-            unassignedNodes.put(currentLayer, currentLayerUnassignedNodes);
+            // If the last layer had unassigned nodes, assign them now and clear the list
+            for (LNode node : previousLayerUnassignedNodes) {
+                node.setLayer(previousLayer);
+            }
+            previousLayerUnassignedNodes.clear();
             
-            // Iterate through the layer's nodes (we cannot optimize the nodes.size() call
-            // away since the list of nodes is modified whenever dummy nodes are inserted
-            // anywhere)
+            // Iterate through the layer's nodes
             for (LNode node : currentLayer.getNodes()) {
-                // Look for ports on the right side connected to edges originating from lower layers
+                // Skip dummy nodes
+                if (!node.getProperty(Properties.NODE_TYPE).equals(NodeType.NORMAL)) {
+                    continue;
+                }
+                
+                // Look for input ports on the right side
                 for (LPort port : node.getPorts(PortType.INPUT, PortSide.EAST)) {
                     // For every edge connected to this port, insert dummy nodes (do this using
                     // a copy of the current list of edges, since the edges are modified when
@@ -106,7 +110,7 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
                     LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
                     
                     for (LEdge edge : edgeArray) {
-                        createEastPortSideDummies(port, edge, currentLayerUnassignedNodes,
+                        createEastPortSideDummies(port, edge, previousLayerUnassignedNodes,
                                 nextLayer);
                     }
                 }
@@ -120,15 +124,12 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
                     LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
                     
                     for (LEdge edge : edgeArray) {
-                        createWestPortSideDummies(port, edge, currentLayerUnassignedNodes,
+                        createWestPortSideDummies(port, edge, previousLayerUnassignedNodes,
                                 previousLayer);
                     }
                 }
             }
         }
-        
-        // Assign the unasssigned nodes
-        assignUnassignedNodes(unassignedNodes);
         
         // Add the prefix and postfix layers to the graph, if necessary
         if (!prefixLayer.getNodes().isEmpty()) {
@@ -161,23 +162,28 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         sameLayerDummy.setProperty(Properties.ORIGIN, edge);
         sameLayerDummy.setProperty(Properties.NODE_TYPE,
                 Properties.NodeType.ODD_PORT_SIDE);
+        sameLayerDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(sameLayerDummy);
         
         LPort sameLayerDummyInput = new LPort(PortType.INPUT);
         sameLayerDummyInput.setNode(sameLayerDummy);
+        sameLayerDummyInput.setSide(PortSide.WEST);
         
         LPort sameLayerDummyOutput = new LPort(PortType.OUTPUT);
         sameLayerDummyOutput.setNode(sameLayerDummy);
+        sameLayerDummyOutput.setSide(PortSide.EAST);
         
         // Dummy node in the next layer
         LNode nextLayerDummy = new LNode();
         nextLayerDummy.setProperty(Properties.ORIGIN, edge);
         nextLayerDummy.setProperty(Properties.NODE_TYPE,
                 Properties.NodeType.ODD_PORT_SIDE);
+        sameLayerDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         nextLayerDummy.setLayer(nextLayer);
         
         LPort nextLayerDummyInput = new LPort(PortType.INPUT);
         nextLayerDummyInput.setNode(nextLayerDummy);
+        nextLayerDummyInput.setSide(PortSide.WEST);
         
         // Reroute the original edge
         edge.setTarget(sameLayerDummyInput);
@@ -192,6 +198,10 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         dummyEdge.copyProperties(edge);
         dummyEdge.setSource(eastwardPort);
         dummyEdge.setTarget(nextLayerDummyInput);
+        
+        // Reconfigure the port
+        eastwardPort.setType(PortType.OUTPUT);
+        eastwardPort.setProperty(Properties.REVERSED, true);
     }
 
     /**
@@ -212,23 +222,28 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         sameLayerDummy.setProperty(Properties.ORIGIN, edge);
         sameLayerDummy.setProperty(Properties.NODE_TYPE,
                 Properties.NodeType.ODD_PORT_SIDE);
+        sameLayerDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(sameLayerDummy);
         
         LPort sameLayerDummyInput = new LPort(PortType.INPUT);
         sameLayerDummyInput.setNode(sameLayerDummy);
+        sameLayerDummyInput.setSide(PortSide.WEST);
         
         LPort sameLayerDummyOutput = new LPort(PortType.OUTPUT);
         sameLayerDummyOutput.setNode(sameLayerDummy);
+        sameLayerDummyInput.setSide(PortSide.EAST);
         
         // Dummy node in the previous layer
         LNode previousLayerDummy = new LNode();
         previousLayerDummy.setProperty(Properties.ORIGIN, edge);
         previousLayerDummy.setProperty(Properties.NODE_TYPE,
                 Properties.NodeType.ODD_PORT_SIDE);
+        sameLayerDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         previousLayerDummy.setLayer(previousLayer);
         
         LPort previousLayerDummyOutput = new LPort(PortType.OUTPUT);
         previousLayerDummyOutput.setNode(previousLayerDummy);
+        previousLayerDummyOutput.setSide(PortSide.EAST);
         
         // Reroute the original edge
         edge.setSource(sameLayerDummyOutput);
@@ -243,20 +258,10 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         dummyEdge.copyProperties(edge);
         dummyEdge.setSource(previousLayerDummyOutput);
         dummyEdge.setTarget(sameLayerDummyInput);
-    }
-    
-    /**
-     * Goes through the map of layer and assigns any unassigned nodes.
-     * 
-     * @param unassignedNodes the map mapping layers to unassigned nodes.
-     */
-    private void assignUnassignedNodes(final Map<Layer, List<LNode>> unassignedNodes) {
-        for (Map.Entry<Layer, List<LNode>> entry : unassignedNodes.entrySet()) {
-            Layer layer = entry.getKey();
-            for (LNode node : entry.getValue()) {
-                node.setLayer(layer);
-            }
-        }
+        
+        // Reconfigure the port
+        westwardPort.setType(PortType.INPUT);
+        westwardPort.setProperty(Properties.REVERSED, true);
     }
 
 }
