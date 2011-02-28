@@ -42,5 +42,14 @@
        </Priority>
     </editpolicyProvider>
  </extension>
+  <extension
+        point="de.cau.cs.kieler.core.kivi.combinations">
+     <combination
+            active="true"
+            class="de.cau.cs.kieler.kiml.gmf.combinations.LayoutAfterCollapseExpandCombination"
+            description="Call automatic layout after the collapsed state of a compartment has been changed."
+            name="Layout after Collapse/Expand">
+      </combination>
+  </extension>
 
 </plugin>

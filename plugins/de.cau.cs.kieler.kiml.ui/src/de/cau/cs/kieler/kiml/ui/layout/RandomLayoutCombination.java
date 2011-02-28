@@ -11,25 +11,23 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.kivi.examples.combinations;
+package de.cau.cs.kieler.kiml.ui.layout;
 
 import java.util.ArrayList;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.kivi.examples.KiViExamplesPlugin;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.model.trigger.DiagramTrigger.DiagramState;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.layout.LayoutEffect;
+import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.util.RandomLayoutProvider;
 
 /**
@@ -40,26 +38,40 @@ import de.cau.cs.kieler.kiml.util.RandomLayoutProvider;
  */
 public class RandomLayoutCombination extends AbstractCombination {
 
-    private final String RANDOM_BUTTON = "de.cau.cs.kieler.core.kivi.randomLayout";
+    private static final String RANDOM_BUTTON = "de.cau.cs.kieler.core.kivi.randomLayout";
 
-    private static final ArrayList<String> editorIDs = Lists.newArrayList("de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID",
-    "de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID");
-    
+    private static final ArrayList<String> EDITOR_IDS = Lists.newArrayList(
+            "de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID",
+            "de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID");
+
+    /**
+     * Setup Buttons in the Constructor.
+     */
     public RandomLayoutCombination() {
-        ImageDescriptor iconRandom = KiViExamplesPlugin.imageDescriptorFromPlugin(
-                KiViExamplesPlugin.PLUGIN_ID, "icons/random-arrange.gif");
+        ImageDescriptor iconRandom = KimlUiPlugin.imageDescriptorFromPlugin(KimlUiPlugin.PLUGIN_ID,
+                "icons/menu16/random-arrange.gif");
 
-        KiviMenuContributionService.INSTANCE.addToolbarButton(this, RANDOM_BUTTON,
-                "RandomLayout", "Do a random layout on the current diagram. Invalidates all positions but keeps the original layout options.", iconRandom,
-                SWT.PUSH, null, editorIDs.toArray(new String[2]));
+        KiviMenuContributionService.INSTANCE.addToolbarButton(this, RANDOM_BUTTON, "RandomLayout",
+                "Do a random layout on the current diagram. "
+                        + "Invalidates all positions but keeps the original layout options.",
+                iconRandom, SWT.PUSH, null, EDITOR_IDS.toArray(new String[2]));
     }
 
-    public void execute(ButtonState button, DiagramState diagram) {
+    /**
+     * Execute this Combination and react on the input triggers.
+     * 
+     * @param button
+     *            react on the random layout button
+     * @param diagram
+     *            react on the current diagram
+     */
+    public void execute(final ButtonState button, final DiagramState diagram) {
         dontUndo();
         if (this.getTriggerState() instanceof ButtonState
                 && button.getButtonId().equals(RANDOM_BUTTON)) {
-            LayoutEffect layout = new LayoutEffect(diagram.getDiagramPart(), null, true, false);
-            TreeIterator iterator = diagram.getSemanticModel().eAllContents();
+            LayoutEffect layout = new LayoutEffect(diagram.getDiagramPart(), null, false, true,
+                    true, true);
+            TreeIterator<?> iterator = diagram.getSemanticModel().eAllContents();
             while (iterator.hasNext()) {
                 Object object = iterator.next();
                 if (object instanceof EObject) {
@@ -68,7 +80,7 @@ public class RandomLayoutCombination extends AbstractCombination {
                 }
             }
             this.schedule(layout);
-        }else{
+        } else {
             doNothing();
         }
     }

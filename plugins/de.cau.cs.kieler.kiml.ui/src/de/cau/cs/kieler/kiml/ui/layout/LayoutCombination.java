@@ -78,33 +78,32 @@ public class LayoutCombination extends AbstractCombination {
     /**
      * Listen to view management buttons and the current selection.
      * 
-     * @param button the trigger state for view management buttons
-     * @param selection the trigger state for the current selection
+     * @param button
+     *            the trigger state for view management buttons
+     * @param selection
+     *            the trigger state for the current selection
      */
     public void execute(final ButtonState button, final SelectionState selection) {
         dontUndo();
-        if (button.getSequenceNumber() < selection.getSequenceNumber()) {
-            return; // the selection has changed, only layout when the button was pushed
-        }
-        if (!COMMAND_ID.equals(button.getButtonId())) {
-            return; // sort out other buttons
-        }
-
-        IPreferenceStore preferenceStore = getPreferenceStore();
-        boolean animate = preferenceStore.getBoolean(ANIMATE);
-        boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);
-        boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
-        // check parameter for layout scope, default is diagram scope
-        Object layoutScope = button.getParameters().get(PARAM_LAYOUT_SCOPE);
-        if (layoutScope instanceof String && layoutScope.equals(VAL_SELECTION)) {
-            for (EObject selected : selection.getSelectedEObjects()) {
-                // merging of multiple selected objects is done by the layout effect
-                schedule(new LayoutEffect(button.getEditor(), selected, zoom, progressBar,
-                        false, animate)); 
+        if (this.getTriggerState() instanceof ButtonState
+                && COMMAND_ID.equals(button.getButtonId())) {
+            IPreferenceStore preferenceStore = getPreferenceStore();
+            boolean animate = preferenceStore.getBoolean(ANIMATE);
+            boolean zoom = preferenceStore.getBoolean(ZOOM_TO_FIT);
+            boolean progressBar = preferenceStore.getBoolean(PROGRESS_BAR);
+            // check parameter for layout scope, default is diagram scope
+            Object layoutScope = button.getParameters().get(PARAM_LAYOUT_SCOPE);
+            if (layoutScope instanceof String && layoutScope.equals(VAL_SELECTION)) {
+                for (EObject selected : selection.getSelectedEObjects()) {
+                    // merging of multiple selected objects is done by the layout effect
+                    schedule(new LayoutEffect(button.getEditor(), selected, zoom, progressBar,
+                            false, animate));
+                }
+            } else {
+                schedule(new LayoutEffect(button.getEditor(), null, zoom, progressBar, false,
+                        animate));
             }
-        } else {
-            schedule(new LayoutEffect(button.getEditor(), null, zoom, progressBar, false, animate));
         }
     }
-    
+
 }

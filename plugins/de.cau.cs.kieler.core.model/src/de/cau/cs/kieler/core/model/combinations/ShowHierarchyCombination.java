@@ -11,20 +11,21 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.kivi.examples.combinations;
+package de.cau.cs.kieler.core.model.combinations;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-import de.cau.cs.kieler.core.kivi.examples.KiViExamplesPlugin;
-import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
+import de.cau.cs.kieler.core.kivi.menu.KiviMenuContributionService;
+import de.cau.cs.kieler.core.model.CoreModelPlugin;
 import de.cau.cs.kieler.core.model.effects.HighlightEffect;
+import de.cau.cs.kieler.core.model.trigger.DiagramTrigger.DiagramState;
 
 /**
  * Color the levels of hierarchy.
@@ -35,22 +36,20 @@ public class ShowHierarchyCombination extends AbstractCombination {
 
     private static final String ID = "de.cau.cs.kieler.core.model.showhierarchy";
 
-    private final static String[] editorIDs = { 
+    private final static String[] EDITOR_IDS = { 
         "de.cau.cs.kieler.synccharts.diagram.part.SyncchartsDiagramEditorID",
         "de.cau.cs.kieler.kaom.diagram.part.KaomDiagramEditorID"};
     
-    private DiagramEditor editor;
-
     /**
      * Default Constructor defining the button. 
      */
     public ShowHierarchyCombination() {
-        ImageDescriptor icon = KiViExamplesPlugin.imageDescriptorFromPlugin(
-                KiViExamplesPlugin.PLUGIN_ID, "icons/rainbow.png");
+        ImageDescriptor icon = CoreModelPlugin.imageDescriptorFromPlugin(
+                CoreModelPlugin.PLUGIN_ID, "icons/rainbow.gif");
 
         KiviMenuContributionService.INSTANCE.addToolbarButton(this, ID,
                 "Show Hierarchy", "Colorize hierarchical objects to make the hierarchy structure clearer.", icon,
-                SWT.CHECK, null, editorIDs);
+                SWT.CHECK, null, EDITOR_IDS);
     }
     
     /**
@@ -59,16 +58,15 @@ public class ShowHierarchyCombination extends AbstractCombination {
      * @param button
      *            kivi button trigger
      */
-    public void execute(final ButtonState button/*
+    public void execute(final ButtonState button, final DiagramState diagram/*
                                                  * , final SelectionState selection
                                                  * enables editing in color, causes some overhead
                                                  */) {
-        if (ID.equals(button.getButtonId()) && button.getEditor() instanceof DiagramEditor) {
+        if (this.getTriggerState() instanceof ButtonState && ID.equals(button.getButtonId())) {
             if (button.isPushedIn()) {
-                editor = (DiagramEditor) button.getEditor();
-                EObject root = editor.getDiagram().getElement();
+                EObject root = diagram.getSemanticModel();
                 int maxLevel = getDepth(root, 0);
-                paintRecursively(root, 0, maxLevel);
+                paintRecursively(diagram.getDiagramPart(), root, 0, maxLevel);
             }
         } else {
             doNothing();
@@ -86,9 +84,9 @@ public class ShowHierarchyCombination extends AbstractCombination {
         return level + 1;
     }
 
-    private void paintRecursively(final EObject element, final int level, final int maxLevel) {
+    private void paintRecursively(IWorkbenchPart editor, final EObject element, final int level, final int maxLevel) {
         for (EObject child : element.eContents()) {
-            paintRecursively(child, level + 1, maxLevel);
+            paintRecursively(editor, child, level + 1, maxLevel);
         }
         if (level > 0) {
             HighlightEffect effect = new HighlightEffect(element, editor, new Color(null, new RGB(

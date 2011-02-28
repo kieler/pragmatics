@@ -12,4 +12,5 @@ Require-Bundle: de.cau.cs.kieler.kiml.ui,
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.core.model,
- com.google.guava;bundle-version="8.0.0"
+ com.google.guava;bundle-version="8.0.0",
+ de.cau.cs.kieler.core.kivi;bundle-version="0.1.0"
