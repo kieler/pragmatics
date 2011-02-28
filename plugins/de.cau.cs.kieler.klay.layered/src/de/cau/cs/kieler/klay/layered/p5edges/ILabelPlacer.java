@@ -18,8 +18,6 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
-//CHECKSTYLEOFF JavadocStyle
-
 /**
  * Interface for label placement modules.
  * <dl>

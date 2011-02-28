@@ -109,6 +109,35 @@ public class LNode extends LGraphElement {
             owner.getNodes().add(this);
         }
     }
+    
+    /**
+     * Sets the owning layer and adds itself to the layer's list of nodes at the
+     * specified position. If the node was previously in another layer, it is
+     * removed from that layer's list of nodes. Be careful not to use this method
+     * while iterating through the nodes list of the old layer nor of the new layer,
+     * since that could lead to {@link java.util.ConcurrentModificationException}s.
+     * 
+     * @param index where the node should be inserted in the layer.
+     * @param layer the owner to set.
+     * @throws IllegalArgumentException if {@code pos < 0} or {@pos > layer.getNodes().size()}.
+     *                                  In this case, no modifications to the node's owning
+     *                                  layer is made.
+     */
+    public void setLayer(final int index, final Layer layer) {
+        if (layer != null && (index < 0 || index > layer.getNodes().size())) {
+            throw new IllegalArgumentException("index must be >= 0 and <= layer node count");
+        }
+        
+        if (owner != null) {
+            owner.getNodes().remove(this);
+        }
+        
+        this.owner = layer;
+        
+        if (owner != null) {
+            owner.getNodes().add(index, this);
+        }
+    }
 
     /**
      * Returns the current position of the node.

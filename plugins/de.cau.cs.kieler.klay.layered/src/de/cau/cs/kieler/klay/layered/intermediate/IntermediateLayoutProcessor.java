@@ -27,6 +27,10 @@ public enum IntermediateLayoutProcessor {
     EDGE_JOINER,
     /** Takes a layered graph and turns it into a properly layered graph. */
     EDGE_SPLITTER,
+    /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
+    NORTH_SOUTH_SIDE_POSTPROCESSOR,
+    /** Inserts dummy nodes to take care of northern and southern ports. */
+    NORTH_SOUTH_SIDE_PREPROCESSOR,
     /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
     ODD_PORT_SIDE_PROCESSOR,
     /** Sets the positions of ports. */
@@ -58,6 +62,12 @@ public enum IntermediateLayoutProcessor {
             
         case EDGE_SPLITTER:
             return new EdgeSplitter();
+        
+        case NORTH_SOUTH_SIDE_POSTPROCESSOR:
+            return new NorthSouthPortPostprocessor();
+        
+        case NORTH_SOUTH_SIDE_PREPROCESSOR:
+            return new NorthSouthPortPreprocessor();
         
         case ODD_PORT_SIDE_PROCESSOR:
             return new OddPortSideProcessor();

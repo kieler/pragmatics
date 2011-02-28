@@ -69,8 +69,18 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     /** intermediate processing strategy. */
     private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
         new IntermediateProcessingStrategy(
-                IntermediateProcessingStrategy.BEFORE_PHASE_3,
-                EnumSet.of(IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR));
+                // Before Phase 1
+                null,
+                // Before Phase 2
+                null,
+                // Before Phase 3
+                EnumSet.of(IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR),
+                // Before Phase 4
+                EnumSet.of(IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_PREPROCESSOR),
+                // Before Phase 5
+                null,
+                // After Phase 5
+                EnumSet.of(IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_POSTPROCESSOR));
     
     /** weight penalty for conflicts of horizontal line segments. */
     private static final int CONFLICT_PENALTY = 16;
