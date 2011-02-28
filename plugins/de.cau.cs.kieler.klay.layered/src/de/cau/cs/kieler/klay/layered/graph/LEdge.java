@@ -43,6 +43,19 @@ public class LEdge extends LGraphElement {
             return "e_" + hashCode();
         }
     }
+    
+    /**
+     * Reverses the edge. This does not change any properties on the connected ports.
+     */
+    public void reverse() {
+        LPort oldSource = getSource();
+        LPort oldTarget = getTarget();
+        
+        setSource(null);
+        setTarget(null);
+        setSource(oldTarget);
+        setTarget(oldSource);
+    }
 
     /**
      * Returns the source port.
@@ -63,14 +76,14 @@ public class LEdge extends LGraphElement {
      *            the source port to set
      */
     public void setSource(final LPort source) {
-        if (source != null) {
-            source.getEdges().remove(this);
+        if (this.source != null) {
+            this.source.getEdges().remove(this);
         }
         
         this.source = source;
         
-        if (source != null) {
-            source.getEdges().add(this);
+        if (this.source != null) {
+            this.source.getEdges().add(this);
         }
     }
 
@@ -93,14 +106,14 @@ public class LEdge extends LGraphElement {
      *            the target port to set
      */
     public void setTarget(final LPort target) {
-        if (target != null) {
-            target.getEdges().remove(this);
+        if (this.target != null) {
+            this.target.getEdges().remove(this);
         }
         
         this.target = target;
         
-        if (target != null) {
-            target.getEdges().add(this);
+        if (this.target != null) {
+            this.target.getEdges().add(this);
         }
     }
 

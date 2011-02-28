@@ -131,6 +131,11 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
             }
         }
         
+        // There may be unassigned nodes left
+        for (LNode node : previousLayerUnassignedNodes) {
+            node.setLayer(currentLayer);
+        }
+        
         // Add the prefix and postfix layers to the graph, if necessary
         if (!prefixLayer.getNodes().isEmpty()) {
             layers.add(0, prefixLayer);

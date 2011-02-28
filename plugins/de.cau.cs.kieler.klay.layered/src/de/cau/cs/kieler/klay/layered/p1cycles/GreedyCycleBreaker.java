@@ -170,10 +170,7 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                     int targetIx = edge.getTarget().getNode().id;
                     if (mark[index] > mark[targetIx]) {
                         // TODO extend this to support port constraints
-                        LPort source = edge.getSource();
-                        LPort target = edge.getTarget();
-                        edge.setSource(target);
-                        edge.setTarget(source);
+                        edge.reverse();
                         edge.getSource().setType(PortType.OUTPUT);
                         edge.getTarget().setType(PortType.INPUT);
                         edge.setProperty(Properties.REVERSED, true);
