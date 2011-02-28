@@ -60,10 +60,10 @@ public class EdgeJoiner extends AbstractAlgorithm implements ILayoutProcessor {
         for (Layer layer : layeredGraph.getLayers()) {
             // Get a list iterator for the layer's nodes (since we might be
             // removing dummy nodes from it)
-            ListIterator<LNode> layerIterator = layer.getNodes().listIterator();
+            ListIterator<LNode> nodeIterator = layer.getNodes().listIterator();
             
-            while (layerIterator.hasNext()) {
-                LNode node = layerIterator.next();
+            while (nodeIterator.hasNext()) {
+                LNode node = nodeIterator.next();
                 
                 // Check if it's a dummy edge we're looking for
                 if (node.getProperty(Properties.NODE_TYPE).equals(Properties.NodeType.LONG_EDGE)) {
@@ -81,8 +81,15 @@ public class EdgeJoiner extends AbstractAlgorithm implements ILayoutProcessor {
                     droppedEdge.setSource(null);
                     droppedEdge.setTarget(null);
                     
+                    // Join their bend points
+                    if (survivingEdge.getProperty(Properties.REVERSED)) {
+                        survivingEdge.getBendPoints().addAll(0, droppedEdge.getBendPoints());
+                    } else {
+                        survivingEdge.getBendPoints().addAll(droppedEdge.getBendPoints());
+                    }
+                    
                     // Remove the node
-                    layerIterator.remove();
+                    nodeIterator.remove();
                 }
             }
         }

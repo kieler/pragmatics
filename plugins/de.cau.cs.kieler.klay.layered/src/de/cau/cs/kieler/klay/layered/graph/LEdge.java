@@ -46,9 +46,9 @@ public class LEdge extends LGraphElement {
     }
     
     /**
-     * Reverses the edge and properly negates the {@code REVERSED} property. (an edge that was
-     * marked as being reversed is then unmarked, and the other way around) This does not change
-     * any properties on the connected ports.
+     * Reverses the edge, its bendpoints and properly negates the {@code REVERSED} property. (an
+     * edge that was marked as being reversed is then unmarked, and the other way around) This
+     * does not change any properties on the connected ports.
      */
     public void reverse() {
         LPort oldSource = getSource();
@@ -61,6 +61,8 @@ public class LEdge extends LGraphElement {
         
         boolean reversed = getProperty(Properties.REVERSED);
         setProperty(Properties.REVERSED, !reversed);
+        
+        bendPoints = KVectorChain.reverse(bendPoints);
     }
 
     /**

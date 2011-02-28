@@ -261,5 +261,23 @@ public class KVectorChain extends LinkedList<KVector> implements IDataObject {
             throw new IllegalStateException("Cannot determine a point on an empty vector chain.");
         }
     }
+    
+    /**
+     * Returns a new vector chain that is the reverse of the given vector chain. The returned
+     * vector chain is a deep copy in the sense that a change to a {@link KVector} instance in
+     * the old chain doesn't affect any vectors in the new chain.
+     * 
+     * @param chain the chain to be reversed.
+     * @return a new vector chain that is the reverse of the old one.
+     */
+    public static KVectorChain reverse(final KVectorChain chain) {
+        KVectorChain result = new KVectorChain();
+        
+        for (KVector vector : chain) {
+            result.add(0, new KVector(vector));
+        }
+        
+        return result;
+    }
 
 }

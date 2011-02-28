@@ -132,11 +132,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         // perform the actual layout
         layout(graphImporter, progressMonitor.subTask(1));
         
-        // if debug mode is enabled, print out the layed-out graph
-        if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
-            System.out.println(layeredGraph);
-        }
-        
         // apply the layout results to the original graph
         graphImporter.applyLayout();
 

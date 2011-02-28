@@ -44,8 +44,12 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * <p>
  * The dummy nodes are decorated with a {@link de.cau.cs.kieler.klay.layered.Properties#NODE_TYPE}
- * property, its value being set to
- * {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#ODD_PORT_SIDE}.
+ * property. For nodes in the same layer, it is set to
+ * {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE}, since these
+ * can simply be treated just like any other node that splits long edges. Nodes that
+ * get placed in a previous or next layer have their node type property set to
+ * {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#ODD_PORT_SIDE}, since
+ * these require special treatment because of their ports.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
@@ -166,7 +170,7 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         LNode sameLayerDummy = new LNode();
         sameLayerDummy.setProperty(Properties.ORIGIN, edge);
         sameLayerDummy.setProperty(Properties.NODE_TYPE,
-                Properties.NodeType.ODD_PORT_SIDE);
+                Properties.NodeType.LONG_EDGE);
         sameLayerDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(sameLayerDummy);
         
@@ -226,7 +230,7 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         LNode sameLayerDummy = new LNode();
         sameLayerDummy.setProperty(Properties.ORIGIN, edge);
         sameLayerDummy.setProperty(Properties.NODE_TYPE,
-                Properties.NodeType.ODD_PORT_SIDE);
+                Properties.NodeType.LONG_EDGE);
         sameLayerDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(sameLayerDummy);
         
