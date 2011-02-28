@@ -11,22 +11,8 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.keg.custom;
-
-import de.cau.cs.kieler.karma.ICustomCondition;
-import de.cau.cs.kieler.keg.Node;
 
 /**
- * The condition for a node with ports.
- * 
- * @author mri
+ * Custom code for KEG.
  */
-public class PortsCondition extends ICustomCondition<Node> {
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean evaluate(final Node node) {
-        return node.getPorts().size() > 0;
-    }
-}
+package de.cau.cs.kieler.keg.custom;

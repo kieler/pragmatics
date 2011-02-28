@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2010 by
+ * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -22,11 +22,19 @@ import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 
 /**
- * A basic layout for compound nodes.
+ * A layout for KEG nodes.
  * 
- * @author msp
+ * @author mri 
  */
 public class NodeLayout extends AbstractHintLayout {
+
+    /** the default node width. */
+    private static final int DEFAULT_NODE_WIDTH = 40;
+    /** the default node height. */
+    private static final int DEFAULT_NODE_HEIGHT = 40;
+
+    /** the label height cashed from of the last layout. */
+    private int lastLabelHeight = 0;
 
     /**
      * {@inheritDoc}
@@ -45,19 +53,23 @@ public class NodeLayout extends AbstractHintLayout {
         Dimension labelSize;
         if (label != null) {
             labelSize = label.getPreferredSize();
+            // this prevents the input text for the label to assume a label height of 0
+            int labelHeight = labelSize.height == 0 ? lastLabelHeight : labelSize.height;
+            lastLabelHeight = labelSize.height;
             int xpos = (area.width - labelSize.width) / 2;
-            label.setBounds(new Rectangle(area.x + xpos, area.y, labelSize.width, labelSize.height));
+            int ypos = (Math.min(area.height, DEFAULT_NODE_HEIGHT) - labelHeight) / 2;
+            label.setBounds(new Rectangle(area.x + xpos, area.y + ypos, labelSize.width,
+                    labelHeight));
         } else {
             labelSize = new Dimension();
         }
         if (compartment != null) {
-            compartment.setBounds(new Rectangle(area.x + 1, area.y + labelSize.height + 1,
-                    area.width - 2, area.height - labelSize.height - 2));
+            compartment.setBounds(new Rectangle(area.x + DEFAULT_NODE_WIDTH / 2, area.y
+                    + DEFAULT_NODE_HEIGHT / 2 + labelSize.height / 2 + 1, area.width
+                    - DEFAULT_NODE_WIDTH, Math.max(0, area.height - DEFAULT_NODE_HEIGHT
+                    - labelSize.height / 2)));
         }
     }
-
-    private static final int MIN_WIDTH = 20;
-    private static final int MIN_HEIGHT = 20;
 
     /**
      * {@inheritDoc}
@@ -77,7 +89,7 @@ public class NodeLayout extends AbstractHintLayout {
                 compartment = (ResizableCompartmentFigure) child;
             }
         }
-        Dimension size = new Dimension(MIN_WIDTH, MIN_HEIGHT);
+        Dimension size = new Dimension(DEFAULT_NODE_WIDTH, DEFAULT_NODE_HEIGHT);
         Dimension labelSize;
         if (label != null) {
             labelSize = label.getPreferredSize();

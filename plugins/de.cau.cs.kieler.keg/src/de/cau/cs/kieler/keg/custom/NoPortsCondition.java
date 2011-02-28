@@ -26,8 +26,7 @@ public class NoPortsCondition extends ICustomCondition<Node> {
     /**
      * {@inheritDoc}
      */
-    public boolean evaluate(Node node) {
+    public boolean evaluate(final Node node) {
         return node.getPorts().size() == 0;
     }
-
 }

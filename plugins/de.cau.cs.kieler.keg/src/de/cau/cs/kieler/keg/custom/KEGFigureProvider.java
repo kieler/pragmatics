@@ -37,8 +37,6 @@ public class KEGFigureProvider implements IRenderingProvider {
     private static final int ROUNDED_RECTANGLE_CORNER_HEIGHT = 40;
     
     private static final Color BG_COLOR = new Color(null, 80, 230, 154);
-    
-    //private static final 
 
     /**
      * {@inheritDoc}
