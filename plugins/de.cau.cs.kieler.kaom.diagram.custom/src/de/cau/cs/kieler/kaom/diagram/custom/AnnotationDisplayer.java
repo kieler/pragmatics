@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -86,7 +87,8 @@ public final class AnnotationDisplayer {
             if (rootElement instanceof Entity) {
                 Entity rootEntity = (Entity) rootElement;
                 // do it for all fitting annotations
-                for (Pair<Annotation, EObject> ann : getAllTextAnnotations(rootEntity)) {
+                List<Pair<Annotation, EObject>> allTextAnnotations = getAllTextAnnotations(rootEntity);
+                for (Pair<Annotation, EObject> ann : allTextAnnotations) {
 
                     final StringAnnotation textAnnotation = (StringAnnotation) ann.getFirst()
                             .getAnnotation("text");
@@ -121,27 +123,29 @@ public final class AnnotationDisplayer {
                             Shape shape = (Shape) adaptable;
                             EditPartViewer viewer = dde.getDiagramGraphicalViewer();
                             Map epRegistry = viewer.getEditPartRegistry();
-                            ReferenceAnnotation targetAnnotation = (ReferenceAnnotation) ann.getFirst().getAnnotation("attachedTo");
+                            ReferenceAnnotation targetAnnotation = (ReferenceAnnotation) ann
+                                    .getFirst().getAnnotation("attachedTo");
                             EditPart target = null;
                             if (targetAnnotation != null) {
                                 EObject targetObject = targetAnnotation.getObject();
                                 if (targetObject != null) {
                                     target = dde.getDiagramEditPart().findEditPart(
                                             dde.getDiagramEditPart(), targetObject);
-                                //target = (EditPart) epRegistry.get(targetObject);
+                                    // target = (EditPart) epRegistry.get(targetObject);
                                 }
                             }
-                            IGraphicalEditPart source = (IGraphicalEditPart) epRegistry
-                                    .get(shape);             
-                            if ((target != null) && (source != null)){
-                            ConnectionViewDescriptor connectionViewDescriptor = new ConnectionViewDescriptor(
-                                    null, DiagramNotationType.NOTE_ATTACHMENT.getSemanticHint(),
-                                    dde.getDiagramEditPart().getDiagramPreferencesHint());
-                            CreateConnectionViewRequest createRequest = new CreateConnectionViewRequest(
-                                    connectionViewDescriptor);
-                            Command attachCmd = CreateConnectionViewRequest.getCreateCommand(
-                                    createRequest, source, target);
-                            dde.getDiagramEditDomain().getDiagramCommandStack().execute(attachCmd);
+                            IGraphicalEditPart source = (IGraphicalEditPart) epRegistry.get(shape);
+                            if ((target != null) && (source != null)) {
+                                ConnectionViewDescriptor connectionViewDescriptor = new ConnectionViewDescriptor(
+                                        null,
+                                        DiagramNotationType.NOTE_ATTACHMENT.getSemanticHint(), dde
+                                                .getDiagramEditPart().getDiagramPreferencesHint());
+                                CreateConnectionViewRequest createRequest = new CreateConnectionViewRequest(
+                                        connectionViewDescriptor);
+                                Command attachCmd = CreateConnectionViewRequest.getCreateCommand(
+                                        createRequest, source, target);
+                                dde.getDiagramEditDomain().getDiagramCommandStack()
+                                        .execute(attachCmd);
                             }
                         }
 
@@ -170,8 +174,8 @@ public final class AnnotationDisplayer {
 
                         // execute the operation
                         try {
-                            OperationHistoryFactory.getOperationHistory()
-                                    .execute(emfOp, null, null);
+                            IOperationHistory oh = OperationHistoryFactory.getOperationHistory();
+                            oh.execute(emfOp, null, null);
                         } catch (ExecutionException e) { //
                             e.printStackTrace();
                         }
