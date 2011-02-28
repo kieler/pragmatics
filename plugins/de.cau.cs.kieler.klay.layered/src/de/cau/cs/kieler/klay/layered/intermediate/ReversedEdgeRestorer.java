@@ -55,10 +55,16 @@ public class ReversedEdgeRestorer extends AbstractAlgorithm implements ILayoutPr
                 // type is reversed as well, the other ports becoming output ports too
                 // and possibly being iterated over again)
                 for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                    // Iterate through the edges
-                    for (LEdge edge : port.getEdges()) {
+                    // Iterate over a copy of the edges to avoid concurrent modification
+                    // exceptions
+                    LEdge[] edgeArray = port.getEdges().toArray(new LEdge[0]);
+                    
+                    for (LEdge edge : edgeArray) {
                         if (edge.getProperty(Properties.REVERSED)) {
-                            reverseEdge(edge);
+                            edge.reverse();
+
+                            edge.getTarget().setType(PortType.INPUT);
+                            edge.getSource().setType(PortType.OUTPUT);
                         }
                     }
                 }
@@ -66,27 +72,6 @@ public class ReversedEdgeRestorer extends AbstractAlgorithm implements ILayoutPr
         }
         
         getMonitor().done();
-    }
-    
-    /**
-     * Reverses the given edge. Sets its former source port's type to {@code INPUT},
-     * sets its former target port's type to {@code OUTPUT} and sets the edge's
-     * {@code REVERSED} property to {@code false}.
-     * 
-     * @param edge the edge to reverse.
-     */
-    private void reverseEdge(final LEdge edge) {
-        LPort formerSourcePort = edge.getSource();
-        LPort formerTargetPort = edge.getTarget();
-        
-        // Reverse edge and remove REVERSED property
-        edge.setSource(formerTargetPort);
-        edge.setTarget(formerSourcePort);
-        edge.setProperty(Properties.REVERSED, false);
-        
-        // Set port types
-        formerSourcePort.setType(PortType.INPUT);
-        formerTargetPort.setType(PortType.OUTPUT);
     }
 
 }

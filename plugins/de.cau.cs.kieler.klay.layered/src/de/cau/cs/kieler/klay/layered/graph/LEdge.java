@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.klay.layered.Properties;
 
 /**
  * An edge in a layered graph. Edges may only be connected to ports of a node, which represent the
@@ -45,7 +46,9 @@ public class LEdge extends LGraphElement {
     }
     
     /**
-     * Reverses the edge. This does not change any properties on the connected ports.
+     * Reverses the edge and properly negates the {@code REVERSED} property. (an edge that was
+     * marked as being reversed is then unmarked, and the other way around) This does not change
+     * any properties on the connected ports.
      */
     public void reverse() {
         LPort oldSource = getSource();
@@ -55,6 +58,9 @@ public class LEdge extends LGraphElement {
         setTarget(null);
         setSource(oldTarget);
         setTarget(oldSource);
+        
+        boolean reversed = getProperty(Properties.REVERSED);
+        setProperty(Properties.REVERSED, !reversed);
     }
 
     /**

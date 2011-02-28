@@ -173,7 +173,6 @@ public class GreedyCycleBreaker extends AbstractAlgorithm implements ILayoutPhas
                         edge.reverse();
                         edge.getSource().setType(PortType.OUTPUT);
                         edge.getTarget().setType(PortType.INPUT);
-                        edge.setProperty(Properties.REVERSED, true);
                     }
                 }                
             }
