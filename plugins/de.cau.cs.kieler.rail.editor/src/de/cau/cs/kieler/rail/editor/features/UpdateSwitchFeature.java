@@ -149,7 +149,6 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             }
         }
         // Polylines end
-
         if (pictogramElement instanceof ContainerShape) {
             ContainerShape cs = (ContainerShape) pictogramElement;
 
@@ -172,7 +171,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                                       + boxHeight / 2);
 
                         System.out.println("SPITZE");
-                        
+
                         System.out.println("relativ width: "
                                 + box.getRelativeWidth());
                         System.out.println("relativ height: "
@@ -187,7 +186,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                                 + boxHeight / 2);
 
                         System.out.println("STAMM");
-                        
+
                         System.out.println("relativ width: "
                                 + box.getRelativeWidth());
                         System.out.println("relativ height: "
@@ -228,7 +227,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                     getYFromArray(mitteAbzweigXY,
                             MITTE_ABZWEIG_DEFAULT[MITTE_X]);
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 2; i++) {//set the new position for the Polylines
                 for (int j = 0; j < 2; j++) {
                     System.out.println("PolyLine x: "
                             + (i == 0 ? spitzeStammXY[0 + j * 2]
@@ -248,32 +247,31 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                             .get(j)
                             .setY(i == 0 ? spitzeStammXY[1 + j * 2]
                                     : mitteAbzweigXY[1 + j * 2]);
-                    // if (j == 1) {
-                    // polylines.get(i).getPoints().get(j).setY(0);
-                    // polylines.get(i).getPoints().get(j).setX(0);
-                    // }
                 }
             }
-            
+
             //triangle refresh
             if (trianglePolygon != null) {
-	            int[] polyXY = new int[] {mitteAbzweigXY[0], 
-	        			mitteAbzweigXY[1], 0, 0, 0, 0};
-	            
-	            if (((Weichenknoten)bo).getAbzweigendeLage() == EOrientation.LINKS) {
-	            	polyXY[2] = 32;
-	            }
-	            else {
+            	int dx, dy;
+            	dx = mitteAbzweigXY[ABZWEIG_X] - mitteAbzweigXY[MITTE_X];
+            	dy = mitteAbzweigXY[ABZWEIG_Y] - mitteAbzweigXY[MITTE_Y];
+                int[] polyXY = new int[] {mitteAbzweigXY[0],
+                mitteAbzweigXY[1], mitteAbzweigXY[MITTE_X] + dx / 3, 0, 0, 0};
+                /*
+                if (((Weichenknoten) bo).getAbzweigendeLage()
+                == EOrientation.LINKS) {
+                	polyXY[2] = 32;
+	            } else {
 	            	polyXY[2] = 50-32;
-	            }
+	            }*/
 	            polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
 	        	polyXY[4] = polyXY[2];
-	            polyXY[5] = 25;
-	            setPolygonPoints(trianglePolygon,polyXY);
+	            polyXY[5] = getYFromArray(spitzeStammXY, polyXY[2]);;
+	            setPolygonPoints(trianglePolygon, polyXY);
 	            System.out.println("polyline: " + arrayToString(polyXY));
             }
-            //triangle refresh
-            
+            //triangle was refreshed
+
             getDiagramEditor().refresh();
         }
 
@@ -296,7 +294,8 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
      * @param polygon The polygon witch the pos are set for.
      * @param polyXY The points in an array
      */
-	private void setPolygonPoints(Polygon polygon, final int[] polyXY) {
+	private void setPolygonPoints(final Polygon polygon,
+			final int[] polyXY) {
     	for (int i = 0; i < polygon.getPoints().size(); i++) {
     		polygon.getPoints().get(i).setX(polyXY[i * 2]);
     		polygon.getPoints().get(i).setY(polyXY[i * 2 + 1]);
@@ -307,9 +306,8 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
     /**
      * Calculate the Y pos for the straight line (port Stamm to port Ende) for a
      * x pos.
-     * 
      * @param mitteAbzweigXY
-     *            the position array
+     *            the position array witch the line descrips (X1, Y1, X2, Y2)
      * @param x
      *            the x position
      * @return the y position

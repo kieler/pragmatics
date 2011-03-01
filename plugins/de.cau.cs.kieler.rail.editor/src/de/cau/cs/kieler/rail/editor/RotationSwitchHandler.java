@@ -246,17 +246,17 @@ public class RotationSwitchHandler {
 			EOrientation abzweigendeLage) {
 		if (abzweigendeLage == EOrientation.LINKS) {
 			//0 2  3  5
-			if(value == 1 ){
+			if (value == 1) {
 				return 2;
 			} else if (value == 4) {
 				return 5;
 			}
 		} else {
 			//0 1 3 4
-			if(value == 2 ) {
-				return 1;
+			if (value == 2) {
+				return 3;
 			} else if (value == 5) {
-				return 4;
+				return 0;
 			}
 		}
 		return (value % MAX_MULTIOLEANGLE);
