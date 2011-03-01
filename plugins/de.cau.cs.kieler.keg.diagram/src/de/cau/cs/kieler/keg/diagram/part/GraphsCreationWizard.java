@@ -129,6 +129,14 @@ public class GraphsCreationWizard extends Wizard implements INewWizard {
      * @generated
      */
     public boolean performFinish() {
+
+        if (domainModelFilePage.getFileName().matches("default\\d*.\\w*")) {
+            String name = diagramModelFilePage.getFileName();
+            String domainFileName = name.replace(".kegdi", "");
+            domainFileName += ".keg";
+            domainModelFilePage.setFileName(domainFileName);
+        }
+        
         IRunnableWithProgress op = new WorkspaceModifyOperation(null) {
 
             protected void execute(IProgressMonitor monitor) throws CoreException,
