@@ -73,6 +73,7 @@
       </page>
       -->
       </extension>
+  <!--    
   <extension
         point="de.cau.cs.kieler.core.kivi.combinations">
      <combination
@@ -82,6 +83,7 @@
            active="true">
      </combination>
   </extension>
+  -->
       <!--
   <extension
         point="org.eclipse.ui.menus">

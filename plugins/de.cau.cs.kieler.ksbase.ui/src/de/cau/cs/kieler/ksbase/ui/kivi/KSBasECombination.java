@@ -24,6 +24,8 @@ import de.cau.cs.kieler.ksbase.ui.kivi.KSBasETrigger.KSBasEState;
 /**
  * A Combination handling KSBasE-related effects after transformations.
  * 
+ * @deprecated (haf) not used anymore. Currently the LayoutAfterModelChangeCombination
+ *             also handles all KSBASE editing.
  * @author mmu
  * 
  */
