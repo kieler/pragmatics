@@ -52,12 +52,6 @@ public class AddEdgeFeature extends AbstractAddFeature {
     public final PictogramElement add(final IAddContext context) {
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
 
-        // ONLY NOW
-
-        // ONLY NOW
-
-        System.out.println("add Edge X: " + context.getX() + " Y: "
-                + context.getY());
 
         IAddConnectionContext addConContext = (IAddConnectionContext) context;
 

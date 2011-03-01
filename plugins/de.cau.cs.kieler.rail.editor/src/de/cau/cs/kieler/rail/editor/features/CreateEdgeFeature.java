@@ -41,10 +41,8 @@ public class CreateEdgeFeature extends
     public boolean canCreate(ICreateConnectionContext context) {
         // return true if both anchors belong to an EClass
         // and those EClasses are not identical
-    	
-        
-    	System.out.println("canCreate");
-    	
+
+
     	Object source = null;//getEClass(context.getSourceAnchor());
         Object target = null;//getEClass(context.getTargetAnchor());
         Anchor sourceAnchor = context.getSourceAnchor();
@@ -65,17 +63,12 @@ public class CreateEdgeFeature extends
     }
  
     public boolean canStartConnection(ICreateConnectionContext context) {
-    	System.out.println("#canStartConnection#");
-    	System.out.println(context.getSourceAnchor());
-    	System.out.println(getBusinessObjectForPictogramElement(
-                context.getSourceAnchor().getParent()));
     	return (context.getSourceAnchor() != null
                 && getBusinessObjectForPictogramElement(
                 context.getSourceAnchor().getParent()) != null);
     }
  
     public Connection create(ICreateConnectionContext context) {
-    	System.out.println("create");
     	Anchor sourceAnchor = context.getSourceAnchor();
  
         // get Vertex which should be connected

@@ -43,9 +43,10 @@ import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
  */
 public class UpdateSwitchFeature extends AbstractUpdateFeature {
 
-    private static final int[] SPITZE_STAMM_DEFAULT = { 0, 0, 0, 0 };
-
-    private static final int[] MITTE_ABZWEIG_DEFAULT = { 25, 25, 0, 0 };
+/**The default values SPITZE STAMM */
+    private static final int[] SPITZE_STAMM_DEFAULT = {0, 0, 0, 0 };
+/**The default values MITTE ABZWEIG */
+    private static final int[] MITTE_ABZWEIG_DEFAULT = {25, 25, 0, 0 };
 
     private static final int SPITZE_X = 0;
     private static final int SPITZE_Y = 1;
@@ -142,8 +143,8 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             GraphicsAlgorithm graphicsAlgorithm = shape.getGraphicsAlgorithm();
             System.out.println(graphicsAlgorithm);
             if (graphicsAlgorithm instanceof Polygon) {
-            	trianglePolygon = (Polygon) graphicsAlgorithm;
-            }else if (graphicsAlgorithm instanceof Polyline) {
+                trianglePolygon = (Polygon) graphicsAlgorithm;
+            } else if (graphicsAlgorithm instanceof Polyline) {
                 polylines.add((Polyline) graphicsAlgorithm);
             }
         }
@@ -164,32 +165,46 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                     switch (port.getName()) {
                     case SPITZE:
                         spitzeStammXY[SPITZE_X] =
-                                (int) (width * (box.getRelativeWidth()) 
-                                		- boxWidth / 2);
+                                (int) (width * (box.getRelativeWidth())
+                                         + boxWidth / 2);
                         spitzeStammXY[SPITZE_Y] =
-                                (int) (height * (box.getRelativeHeight()) 
-                                		+ boxHeight / 2);
+                                (int) (height * (box.getRelativeHeight())
+                                      + boxHeight / 2);
+
+                        System.out.println("SPITZE");
+                        
+                        System.out.println("relativ width: "
+                                + box.getRelativeWidth());
+                        System.out.println("relativ height: "
+                                + box.getRelativeHeight());
                         break;
                     case STAMM:
                         spitzeStammXY[STAMM_X] =
-                                (int) (width * (box.getRelativeWidth()) 
-                                		+ boxWidth / 2);
+                                (int) (width * (box.getRelativeWidth())
+                                       + boxWidth / 2);
                         spitzeStammXY[STAMM_Y] =
-                                (int) (height * (box.getRelativeHeight()) 
-                                		+ boxHeight / 2);
+                                (int) (height * (box.getRelativeHeight())
+                                + boxHeight / 2);
+
+                        System.out.println("STAMM");
+                        
+                        System.out.println("relativ width: "
+                                + box.getRelativeWidth());
+                        System.out.println("relativ height: "
+                                + box.getRelativeHeight());
                         break;
                     case ABZWEIG:
                         System.out.println("Abzweig");
                         mitteAbzweigXY[ABZWEIG_X] =
-                                (int) (width * (box.getRelativeWidth()) 
-                                		+ boxWidth / 2);
+                                (int) (width * (box.getRelativeWidth())
+                                + boxWidth / 2);
                         System.out.println("relativ width: "
                                 + box.getRelativeWidth());
-                        mitteAbzweigXY[ABZWEIG_Y] =
-                                (int) (height * (box.getRelativeHeight()) 
-                                		+ boxHeight / 2);
                         System.out.println("relativ height: "
                                 + box.getRelativeHeight());
+                        mitteAbzweigXY[ABZWEIG_Y] =
+                                (int) (height * (box.getRelativeHeight())
+                                + boxHeight / 2);
                         break;
                     case ENDE:
                     default:

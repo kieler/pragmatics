@@ -157,9 +157,6 @@ public class RotationSwitchHandler {
 					+ portTypeToInt(portBO.getName())
 					* 2 + 1];
 				}
-				//TODO DEBUG
-				System.out.println(fp.getBusinessObjectForPictogramElement(port));
-				System.out.println("x: " + x + " y: " + y);
 				port.setRelativeWidth(validValue(x,offset));
 				port.setRelativeHeight(validValue(y,offset));
 			}

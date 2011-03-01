@@ -38,10 +38,18 @@ public class LayoutFeature extends AbstractLayoutFeature {
     private int height = 50;
     private int width = 50;
     
+    
     TypeFeatures type;
     
+    /**
+     * 
+     * @param fp
+     * @param type
+     * @param height
+     * @param width
+     */
     public LayoutFeature(IFeatureProvider fp ,
-    TypeFeatures type, int height, int width) {
+    final TypeFeatures type, int height, int width) {
         super(fp);
         this.type = type;
         this.height = height;
