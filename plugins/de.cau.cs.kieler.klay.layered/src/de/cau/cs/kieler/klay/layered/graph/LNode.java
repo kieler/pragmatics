@@ -117,11 +117,9 @@ public class LNode extends LGraphElement {
      * while iterating through the nodes list of the old layer nor of the new layer,
      * since that could lead to {@link java.util.ConcurrentModificationException}s.
      * 
-     * @param index where the node should be inserted in the layer.
+     * @param index where the node should be inserted in the layer. Must be {@code >= 0}
+     *              and {@code <= layer.getNodes().size()}.
      * @param layer the owner to set.
-     * @throws IllegalArgumentException if {@code pos < 0} or {@pos > layer.getNodes().size()}.
-     *                                  In this case, no modifications to the node's owning
-     *                                  layer is made.
      */
     public void setLayer(final int index, final Layer layer) {
         if (layer != null && (index < 0 || index > layer.getNodes().size())) {

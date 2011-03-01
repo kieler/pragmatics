@@ -69,9 +69,11 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 }
                 
                 // Iterate over the northern ports
+                int northPointer = pointer;
                 for (LPort northPort : node.getPorts(PortSide.NORTH)) {
                     LNode dummy = createDummyNode(northPort);
-                    dummy.setLayer(pointer++, layer);
+                    dummy.setLayer(northPointer, layer);
+                    pointer++;
                 }
                 
                 // Iterate over the southern ports
