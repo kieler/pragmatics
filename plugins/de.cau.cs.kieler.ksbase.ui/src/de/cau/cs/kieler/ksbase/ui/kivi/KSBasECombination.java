@@ -13,12 +13,7 @@
  */
 package de.cau.cs.kieler.ksbase.ui.kivi;
 
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.gmf.runtime.diagram.ui.requests.CreateViewRequest;
-
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
-//import de.cau.cs.kieler.core.model.trigger.ModelChangeTrigger.ModelChangeState;
 import de.cau.cs.kieler.ksbase.ui.kivi.KSBasETrigger.KSBasEState;
 
 /**
