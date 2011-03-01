@@ -55,44 +55,36 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /** the background color. */
     private static final Color BACKGROUND_COLOR = new Color(Display.getDefault(), 254, 254, 254);
     /** color used for node borders and labels. */
-    private static final Color[] NODE_BORDER_COLOR = {
-            new Color(Display.getDefault(), 9, 22, 80),
+    private static final Color[] NODE_BORDER_COLOR = { new Color(Display.getDefault(), 9, 22, 80),
             new Color(Display.getDefault(), 22, 80, 9), new Color(Display.getDefault(), 80, 22, 9),
-            new Color(Display.getDefault(), 254, 0, 0),
-        };
+            new Color(Display.getDefault(), 254, 0, 0), };
     /** color used for node fills. */
     private static final Color[] NODE_FILL_COLOR = {
             new Color(Display.getDefault(), 208, 214, 244),
             new Color(Display.getDefault(), 214, 244, 208),
             new Color(Display.getDefault(), 214, 208, 244),
-            new Color(Display.getDefault(), 255, 255, 255)
-        };
+            new Color(Display.getDefault(), 255, 255, 255) };
     /** alpha value for nodes. */
-    private static final int[] NODE_ALPHA = {120, 80, 80, 220};
+    private static final int[] NODE_ALPHA = { 120, 80, 80, 220 };
     /** font size for nodes. */
     private static final int NODE_FONT_SIZE = 10;
     /** color used for port borders and labels. */
-    private static final Color[] PORT_BORDER_COLOR = {
-            new Color(Display.getDefault(), 14, 54, 24),
-            new Color(Display.getDefault(), 54, 14, 24), new Color(Display.getDefault(), 24, 14, 54),
-            new Color(Display.getDefault(), 254, 0, 0)
-        };
+    private static final Color[] PORT_BORDER_COLOR = { new Color(Display.getDefault(), 14, 54, 24),
+            new Color(Display.getDefault(), 54, 14, 24),
+            new Color(Display.getDefault(), 24, 14, 54), new Color(Display.getDefault(), 254, 0, 0) };
     /** color used for port fills. */
-    private static final Color[] PORT_FILL_COLOR = {
-            new Color(Display.getDefault(), 81, 136, 95),
-            new Color(Display.getDefault(), 136, 81, 95), new Color(Display.getDefault(), 95, 81, 136),
-            new Color(Display.getDefault(), 255, 255, 255)
-        };
+    private static final Color[] PORT_FILL_COLOR = { new Color(Display.getDefault(), 81, 136, 95),
+            new Color(Display.getDefault(), 136, 81, 95),
+            new Color(Display.getDefault(), 95, 81, 136),
+            new Color(Display.getDefault(), 255, 255, 255) };
     /** alpha value for ports. */
     private static final int PORT_ALPHA = 240;
     /** font size for ports. */
     private static final int PORT_FONT_SIZE = 6;
     /** color used for edges and edge labels. */
-    private static final Color[] EDGE_COLOR = {
-            new Color(Display.getDefault(), 39, 9, 16),
+    private static final Color[] EDGE_COLOR = { new Color(Display.getDefault(), 39, 9, 16),
             new Color(Display.getDefault(), 16, 39, 9), new Color(Display.getDefault(), 9, 16, 39),
-            new Color(Display.getDefault(), 254, 0, 0)
-        };
+            new Color(Display.getDefault(), 254, 0, 0) };
 
     /** alpha value for edges. */
     private static final int EDGE_ALPHA = 220;
@@ -114,11 +106,16 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         /**
          * Creates a paint rectangle from the four defining values.
          * 
-         * @param thex x coordinate value of the upper left corner
-         * @param they y coordinate value of the upper left corner
-         * @param thewidth width of the rectangle
-         * @param theheight height of the rectangle
-         * @param offset offset to be added to coordinate values
+         * @param thex
+         *            x coordinate value of the upper left corner
+         * @param they
+         *            y coordinate value of the upper left corner
+         * @param thewidth
+         *            width of the rectangle
+         * @param theheight
+         *            height of the rectangle
+         * @param offset
+         *            offset to be added to coordinate values
          */
         PaintRectangle(final float thex, final float they, final float thewidth,
                 final float theheight, final KPoint offset) {
@@ -131,8 +128,10 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         /**
          * Creates a paint rectangle from a shape layout object.
          * 
-         * @param shapeLayout shape layout from which values shall be taken
-         * @param offset offset to be added to coordinate values
+         * @param shapeLayout
+         *            shape layout from which values shall be taken
+         * @param offset
+         *            offset to be added to coordinate values
          */
         PaintRectangle(final KShapeLayout shapeLayout, final KPoint offset) {
             this.x = Math.round(shapeLayout.getXpos() + offset.getX());
@@ -144,12 +143,14 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         /**
          * Creates a paint rectangle from an edge layout object.
          * 
-         * @param edgeLayout edge layout from which the values shall be
-         *            determined
-         * @param offset offset to be added to coordinate values
+         * @param edgeLayout
+         *            edge layout from which the values shall be determined
+         * @param offset
+         *            offset to be added to coordinate values
          */
         PaintRectangle(final KEdgeLayout edgeLayout, final KPoint offset) {
-            float minX = edgeLayout.getSourcePoint().getX(), minY = edgeLayout.getSourcePoint().getY();
+            float minX = edgeLayout.getSourcePoint().getX(), minY = edgeLayout.getSourcePoint()
+                    .getY();
             float maxX = minX, maxY = minY;
             for (KPoint point : edgeLayout.getBendPoints()) {
                 minX = Math.min(minX, point.getX());
@@ -170,7 +171,8 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         /**
          * Determines whether the given rectangle intersects with the receiver.
          * 
-         * @param other the rectangle to check for intersection
+         * @param other
+         *            the rectangle to check for intersection
          * @return true if the other rectangle intersects with this one
          */
         public boolean intersects(final PaintRectangle other) {
@@ -191,10 +193,11 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         /**
          * Creates a bends iterator from an edge layout.
          * 
-         * @param edgeLayout edge layout with bend points information
-         * @param forward if true, bend points are iterated with the
-         *            <code>next()</code> method, else <code>previous()</code>
-         *            is used
+         * @param edgeLayout
+         *            edge layout with bend points information
+         * @param forward
+         *            if true, bend points are iterated with the <code>next()</code> method, else
+         *            <code>previous()</code> is used
          */
         BendsIterator(final KEdgeLayout edgeLayout, final boolean forward) {
             this.bendPoints = edgeLayout.getBendPoints();
@@ -247,11 +250,11 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         }
 
         /**
-         * Determines whether this bends iterator is compatible with the given
-         * one. If they are not compatible, no junctures need to be painted for
-         * the two corresponding edges.
+         * Determines whether this bends iterator is compatible with the given one. If they are not
+         * compatible, no junctures need to be painted for the two corresponding edges.
          * 
-         * @param other the other bends iterator
+         * @param other
+         *            the other bends iterator
          * @return true if both bends iterators are compatible
          */
         public boolean isCompatible(final BendsIterator other) {
@@ -278,7 +281,8 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /**
      * Creates a layout graph canvas.
      * 
-     * @param parent the parent widget
+     * @param parent
+     *            the parent widget
      */
     public LayoutGraphCanvas(final Composite parent) {
         super(parent, SWT.NONE);
@@ -302,11 +306,11 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     }
 
     /**
-     * Sets the given layout graph as the painted graph. Assumes that there is
-     * only one layout graph to be painted and not multiple ones overlaid over
-     * each other.
+     * Sets the given layout graph as the painted graph. Assumes that there is only one layout graph
+     * to be painted and not multiple ones overlaid over each other.
      * 
-     * @param thelayoutGraph layout graph to be painted
+     * @param thelayoutGraph
+     *            layout graph to be painted
      */
     public void setLayoutGraph(final KNode thelayoutGraph) {
         if (this.layoutGraph != null) {
@@ -329,10 +333,11 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     }
 
     /**
-     * Adds a layout graph to be painted. Multiple graphs may be overlaid to get
-     * a direct comparison.
+     * Adds a layout graph to be painted. Multiple graphs may be overlaid to get a direct
+     * comparison.
      * 
-     * @param thelayoutGraph layout graph
+     * @param thelayoutGraph
+     *            layout graph
      */
     public void addLayoutGraph(final KNode thelayoutGraph) {
         // set new size values for the canvas
@@ -353,7 +358,8 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /**
      * This method is called when the canvas is requested to paint.
      * 
-     * @param event paint event
+     * @param event
+     *            paint event
      */
     public void paintControl(final PaintEvent event) {
         paintControl(event, 0);
@@ -362,8 +368,10 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /**
      * This method is called when the canvas is requested to paint.
      * 
-     * @param event paint event
-     * @param thecolor color index
+     * @param event
+     *            paint event
+     * @param thecolor
+     *            color index
      */
     public void paintControl(final PaintEvent event, final int thecolor) {
         int color = thecolor;
@@ -390,8 +398,10 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /**
      * Paints the contained layout graph onto the given graphics object.
      * 
-     * @param graphics the graphics context used to paint
-     * @param size of the paintable area
+     * @param graphics
+     *            the graphics context used to paint
+     * @param size
+     *            of the paintable area
      */
     public void paintLayoutGraph(final GC graphics, final Point size) {
         paintLayoutGraph(graphics, size, 0);
@@ -400,9 +410,12 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /**
      * Paints the contained layout graph onto the given graphics object.
      * 
-     * @param graphics the graphics context used to paint
-     * @param size of the paintable area
-     * @param thecolor color index
+     * @param graphics
+     *            the graphics context used to paint
+     * @param size
+     *            of the paintable area
+     * @param thecolor
+     *            color index
      */
     public void paintLayoutGraph(final GC graphics, final Point size, final int thecolor) {
         int color = thecolor;
@@ -427,10 +440,14 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /**
      * Paints a layout node for the given dirty area.
      * 
-     * @param layoutNode layout node to paint
-     * @param graphics the graphics context used to paint
-     * @param area dirty area that needs painting
-     * @param offset offset to be added to relative coordinates
+     * @param layoutNode
+     *            layout node to paint
+     * @param graphics
+     *            the graphics context used to paint
+     * @param area
+     *            dirty area that needs painting
+     * @param offset
+     *            offset to be added to relative coordinates
      */
     private void paintLayoutNode(final KNode layoutNode, final GC graphics,
             final PaintRectangle area, final KPoint offset, final int color) {
@@ -468,11 +485,15 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         }
 
         // add insets to offset value
-        KInsets insets = layoutNode.getData(KShapeLayout.class)
-                .getProperty(LayoutOptions.INSETS);
+        KInsets insets = layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.INSETS);
         KPoint subOffset = KLayoutDataFactory.eINSTANCE.createKPoint();
-        subOffset.setX(offset.getX() + insets.getLeft());
-        subOffset.setY(offset.getY() + insets.getTop());
+        if (insets == null) {
+            subOffset.setX(offset.getX());
+            subOffset.setY(offset.getY());
+        } else {
+            subOffset.setX(offset.getX() + insets.getLeft());
+            subOffset.setY(offset.getY() + insets.getTop());
+        }
 
         // paint sub layout nodes
         for (KNode child : layoutNode.getChildren()) {
@@ -533,10 +554,14 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /**
      * Paints an edge for the given dirty area.
      * 
-     * @param edge edge to paint
-     * @param graphics the graphics context used to paint
-     * @param area dirty area that needs painting
-     * @param offset offset to be added to relative coordinates
+     * @param edge
+     *            edge to paint
+     * @param graphics
+     *            the graphics context used to paint
+     * @param area
+     *            dirty area that needs painting
+     * @param offset
+     *            offset to be added to relative coordinates
      */
     private void paintEdge(final KEdge edge, final GC graphics, final PaintRectangle area,
             final KPoint offset) {
@@ -547,10 +572,10 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         if (hasPorts) {
             sourceIter = new BendsIterator(edgeLayout, true);
             targetIter = new BendsIterator(edgeLayout, false);
-            sourceBends = edge.getSourcePort() == null ? bendsMap.get(edge.getSource())
-                    : bendsMap.get(edge.getSourcePort());
-            targetBends = edge.getTargetPort() == null ? bendsMap.get(edge.getTarget())
-                    : bendsMap.get(edge.getTargetPort());
+            sourceBends = edge.getSourcePort() == null ? bendsMap.get(edge.getSource()) : bendsMap
+                    .get(edge.getSourcePort());
+            targetBends = edge.getTargetPort() == null ? bendsMap.get(edge.getTarget()) : bendsMap
+                    .get(edge.getTargetPort());
         }
         PaintRectangle rect = boundsMap.get(edge);
         if (rect == null) {
@@ -583,16 +608,16 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
             List<KPoint> bendPoints = edgeLayout.getBendPoints();
             KPoint lastPoint = sourcePoint;
             for (KPoint point : bendPoints) {
-                graphics.drawLine(Math.round(lastPoint.getX() + offset.getX()), Math.round(lastPoint
-                        .getY()
-                        + offset.getY()), Math.round(point.getX() + offset.getX()), Math.round(point
-                        .getY()
-                        + offset.getY()));
+                graphics.drawLine(Math.round(lastPoint.getX() + offset.getX()),
+                        Math.round(lastPoint.getY() + offset.getY()),
+                        Math.round(point.getX() + offset.getX()),
+                        Math.round(point.getY() + offset.getY()));
                 lastPoint = point;
             }
-            graphics.drawLine(Math.round(lastPoint.getX() + offset.getX()), Math.round(lastPoint.getY()
-                    + offset.getY()), Math.round(targetPoint.getX() + offset.getX()), Math
-                    .round(targetPoint.getY() + offset.getY()));
+            graphics.drawLine(Math.round(lastPoint.getX() + offset.getX()),
+                    Math.round(lastPoint.getY() + offset.getY()),
+                    Math.round(targetPoint.getX() + offset.getX()),
+                    Math.round(targetPoint.getY() + offset.getY()));
             // draw an arrow at the last segment of the connection
             int[] arrowPoly = makeArrow(lastPoint, targetPoint, offset);
             if (arrowPoly != null) {
@@ -623,11 +648,14 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /**
      * Constructs a polygon that forms an arrow.
      * 
-     * @param point1 source point
-     * @param point2 target point
-     * @param offset offset value to be added to coordinates
-     * @return array of coordinates for the arrow polygon, or null if the given
-     *         source and target points are equal
+     * @param point1
+     *            source point
+     * @param point2
+     *            target point
+     * @param offset
+     *            offset value to be added to coordinates
+     * @return array of coordinates for the arrow polygon, or null if the given source and target
+     *         points are equal
      */
     private int[] makeArrow(final KPoint point1, final KPoint point2, final KPoint offset) {
         if (!(point1.getX() == point2.getX() && point1.getY() == point2.getY())) {
@@ -658,10 +686,14 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /**
      * Paints the junctures for a given iterator of bend points of an edge.
      * 
-     * @param bends bend points of other edges with the same incidence
-     * @param origIter iterator for bend points of the original edge
-     * @param graphics the graphics context used to paint
-     * @param offset offset to be added to relative coordinates
+     * @param bends
+     *            bend points of other edges with the same incidence
+     * @param origIter
+     *            iterator for bend points of the original edge
+     * @param graphics
+     *            the graphics context used to paint
+     * @param offset
+     *            offset to be added to relative coordinates
      */
     private void paintJunctures(final List<BendsIterator> bends, final BendsIterator origIter,
             final GC graphics, final KPoint offset) {
@@ -671,12 +703,12 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
                 compIter.init();
                 if (origIter.hasNext() && !compIter.hasNext()) {
                     KPoint junctPoint = origIter.next();
-                    graphics.drawRectangle(Math.round(junctPoint.getX() + offset.getX()) - 1, Math
-                            .round(junctPoint.getY() + offset.getY()) - 1, 2, 2);
+                    graphics.drawRectangle(Math.round(junctPoint.getX() + offset.getX()) - 1,
+                            Math.round(junctPoint.getY() + offset.getY()) - 1, 2, 2);
                 } else if (compIter.hasNext() && !origIter.hasNext()) {
                     KPoint junctPoint = compIter.next();
-                    graphics.drawRectangle(Math.round(junctPoint.getX() + offset.getX()) - 1, Math
-                            .round(junctPoint.getY() + offset.getY()) - 1, 2, 2);
+                    graphics.drawRectangle(Math.round(junctPoint.getX() + offset.getX()) - 1,
+                            Math.round(junctPoint.getY() + offset.getY()) - 1, 2, 2);
                 } else {
                     KPoint lastPoint = origIter.getStartPoint();
                     while (origIter.hasNext() && compIter.hasNext()) {
@@ -685,7 +717,8 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
                         if (origPoint.getX() != compPoint.getX()
                                 || origPoint.getY() != compPoint.getY()) {
                             KPoint junctPoint = findMedian(lastPoint, origPoint, compPoint);
-                            graphics.drawRectangle(Math.round(junctPoint.getX() + offset.getX()) - 1,
+                            graphics.drawRectangle(
+                                    Math.round(junctPoint.getX() + offset.getX()) - 1,
                                     Math.round(junctPoint.getY() + offset.getY()) - 1, 2, 2);
                             break;
                         }
@@ -699,24 +732,24 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
     /**
      * Finds one point out of three points that lies between the other ones.
      * 
-     * @param point1 first point
-     * @param point2 second point
-     * @param point3 third point
-     * @return the median point, or <code>point1</code> if the median is
-     *         ambiguous
+     * @param point1
+     *            first point
+     * @param point2
+     *            second point
+     * @param point3
+     *            third point
+     * @return the median point, or <code>point1</code> if the median is ambiguous
      */
     private static KPoint findMedian(final KPoint point1, final KPoint point2, final KPoint point3) {
-        if ((point2.getX() >= point1.getX() && point2.getX() <= point3.getX()
-                || point2.getX() >= point3.getX() && point2.getX() <= point1.getX())
-                && (point2.getY() >= point1.getY() && point2.getY() <= point3.getY()
-                        || point2.getY() >= point3.getY()
-                        && point2.getY() <= point1.getY())) {
+        if ((point2.getX() >= point1.getX() && point2.getX() <= point3.getX() || point2.getX() >= point3
+                .getX() && point2.getX() <= point1.getX())
+                && (point2.getY() >= point1.getY() && point2.getY() <= point3.getY() || point2
+                        .getY() >= point3.getY() && point2.getY() <= point1.getY())) {
             return point2;
-        } else if ((point3.getX() >= point1.getX() && point3.getX() <= point2.getX()
-                || point3.getX() >= point2.getX() && point3.getX() <= point1.getX())
-                && (point3.getY() >= point1.getY() && point3.getY() <= point2.getY()
-                        || point3.getY() >= point2.getY()
-                        && point3.getY() <= point1.getY())) {
+        } else if ((point3.getX() >= point1.getX() && point3.getX() <= point2.getX() || point3
+                .getX() >= point2.getX() && point3.getX() <= point1.getX())
+                && (point3.getY() >= point1.getY() && point3.getY() <= point2.getY() || point3
+                        .getY() >= point2.getY() && point3.getY() <= point1.getY())) {
             return point3;
         } else {
             return point1;
