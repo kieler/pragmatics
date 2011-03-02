@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
@@ -34,13 +35,19 @@ import org.eclipse.gmf.runtime.diagram.core.services.ViewService;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 
 import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
+import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.diagram.edit.parts.NodeEditPart;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
@@ -112,24 +119,20 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             boolean isWorkspacePath = importPage.isImportWorkspacePath();
             MapPropertyHolder options = importPage.getOptions();
             // open the import file
-            InputStream stream =
-                    ImportUtil.createInputStream(filePath, isWorkspacePath);
+            InputStream stream = ImportUtil.createInputStream(filePath, isWorkspacePath);
             // perform the import
-            IKielerProgressMonitor monitor =
-                    new KielerProgressMonitor(new NullProgressMonitor());
+            IKielerProgressMonitor monitor = new KielerProgressMonitor(new NullProgressMonitor());
             Node graph = importer.doImport(stream, options, monitor);
             stream.close();
             // serialize KEG graph
             serializeKEGGraph(graph);
             // post process the model file
-            importer.doModelPostProcess(newFilePage.createNewFile()
-                    .getFullPath(), options);
+            importer.doModelPostProcess(newFilePage.createNewFile().getFullPath(), options);
             // create diagram file
             IPath diagramFile =
-                    newFilePage.createNewFile().getFullPath()
-                            .removeFileExtension().addFileExtension("kegdi");
-            createKEGDiagram(newFilePage.createNewFile().getFullPath(),
-                    diagramFile);
+                    newFilePage.createNewFile().getFullPath().removeFileExtension()
+                            .addFileExtension("kegdi");
+            createKEGDiagram(newFilePage.createNewFile().getFullPath(), diagramFile);
             // post process the diagram file
             options.setProperty(ImportManager.OPTION_OPEN_DIAGRAM, true);
             importer.doDiagramPostProcess(diagramFile, options);
@@ -144,14 +147,11 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
 
     private void serializeKEGGraph(final Node graph) throws IOException {
         IFile file = newFilePage.createNewFile();
-        URI fileURI =
-                URI.createPlatformResourceURI(file.getFullPath().toOSString(),
-                        true);
+        URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toOSString(), true);
         URIConverter uriConverter = new ExtensibleURIConverterImpl();
         OutputStream outputStream = uriConverter.createOutputStream(fileURI);
         ResourceSet resourceSet = new ResourceSetImpl();
-        Resource resource =
-                resourceSet.createResource(URI.createURI("http:///My.keg"));
+        Resource resource = resourceSet.createResource(URI.createURI("http:///My.keg"));
         resource.getContents().add(graph);
         Map<String, Object> resourceOptions = new HashMap<String, Object>();
         resourceOptions.put(XMLResource.OPTION_ENCODING, "UTF-8");
@@ -163,18 +163,15 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
 
     private void createKEGDiagram(final IPath modelFile, final IPath diagramFile)
             throws IOException {
+        closeDiagramEditor(diagramFile);
         // load the model
         ResourceSet modelResourceSet = new ResourceSetImpl();
-        URI modelFileURI =
-                URI.createPlatformResourceURI(modelFile.toOSString(), true);
-        Resource modelResource =
-                modelResourceSet.getResource(modelFileURI, true);
+        URI modelFileURI = URI.createPlatformResourceURI(modelFile.toOSString(), true);
+        Resource modelResource = modelResourceSet.getResource(modelFileURI, true);
         // create the diagram resource
         ResourceSet diagramResourceSet = new ResourceSetImpl();
-        URI diagramFileURI =
-                URI.createPlatformResourceURI(diagramFile.toOSString(), true);
-        Resource diagramResource =
-                diagramResourceSet.createResource(diagramFileURI);
+        URI diagramFileURI = URI.createPlatformResourceURI(diagramFile.toOSString(), true);
+        Resource diagramResource = diagramResourceSet.createResource(diagramFileURI);
         // create the diagram model and serialize it to the resource
         EObject model = (EObject) modelResource.getContents().get(0);
         Diagram diagram =
@@ -184,11 +181,28 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
         diagramResource.save(GraphsDiagramEditorUtil.getSaveOptions());
     }
 
+    private void closeDiagramEditor(final IPath diagramPath) {
+        final IFile diagramFile = ResourcesPlugin.getWorkspace().getRoot().getFile(diagramPath);
+        if (diagramFile.exists()) {
+            // close all editors which have the diagram file opened
+            MonitoredOperation.runInUI(new Runnable() {
+                public void run() {
+                    IWorkbenchPage page =
+                            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    IEditorInput input = new FileEditorInput(diagramFile);
+                    IEditorPart editorPart;
+                    while ((editorPart = page.findEditor(input)) != null) {
+                        page.closeEditor(editorPart, false);
+                    }
+                }
+            }, true);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
-    public void init(final IWorkbench workbench,
-            final IStructuredSelection theselection) {
+    public void init(final IWorkbench workbench, final IStructuredSelection theselection) {
         selection = theselection;
     }
 }
