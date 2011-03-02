@@ -142,8 +142,8 @@ public final class PtolemyFetcher {
                     String[] splittedPoints = points.split(" +");
                     String firstPoint = splittedPoints[0];
                     String[] firstPointCoords = firstPoint.split(",");
-                    xoffset = Math.abs(Integer.parseInt(firstPointCoords[0]));
-                    yoffset = Math.abs(Integer.parseInt(firstPointCoords[1]));
+                    //xoffset = Math.abs(Integer.parseInt(firstPointCoords[0]));
+                    //yoffset = Math.abs(Integer.parseInt(firstPointCoords[1]));
                     List<Integer> pointsX = new LinkedList<Integer>();
                     List<Integer> pointsY = new LinkedList<Integer>();
                     for (String singlePoint : splittedPoints) {
@@ -151,6 +151,10 @@ public final class PtolemyFetcher {
                         pointsX.add(Integer.parseInt(pointCoord[0]));
                         pointsY.add(Integer.parseInt(pointCoord[1]));
                     }
+                    int minX = Collections.min(pointsX);
+                    int minY = Collections.min(pointsY);
+                    xoffset = Math.abs(minX);
+                    yoffset = Math.abs(minY);
                     int maxX = Collections.max(pointsX);
                     int maxY = Collections.max(pointsY);
                     svgElement.setAttribute("height", String.valueOf(maxX + xoffset + 1));

@@ -17,10 +17,12 @@ package de.cau.cs.kieler.karma.ptolemy.figurecreation;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.gmf.runtime.draw2d.ui.figures.FigureUtilities;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
@@ -30,6 +32,7 @@ import org.eclipse.draw2d.PolylineShape;
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.Shape;
+import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
@@ -38,16 +41,21 @@ import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.ImageFigureEx;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.internal.figures.CircleFigure;
 import org.eclipse.gmf.runtime.gef.ui.internal.figures.OvalFigure;
+import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import de.cau.cs.kieler.kaom.custom.Activator;
+import de.cau.cs.kieler.kaom.custom.EntityLayout;
 
 /**
  * Class for creating a draw2d figure out of an svg document.
@@ -78,6 +86,7 @@ public final class FigureParser {
                 new Dimension(Integer.parseInt(svgElement.getAttribute("width")), 
                         Integer.parseInt(svgElement.getAttribute("height"))));
         rootFigure = buildFigure(svgElement, rootFigure);
+        //rootFigure.getBounds().setSize(FigureParser.calculateMinimumSize(rootFigure));
         return rootFigure;
     }
 
@@ -183,8 +192,8 @@ public final class FigureParser {
                     text = text.trim();
                     Label figure = new Label();
                     figure.setText(text);
-                    applyStyle(figure, style);
-                    figure.getBounds().setLocation(x.intValue(), x.intValue());
+                    applyTextStyle(figure, style);
+                    figure.getBounds().setLocation(x.intValue(), y.intValue() - (figure.getTextBounds().getSize().height - 2));
                     figure.getBounds().setSize(figure.getTextBounds().getSize());
                     figure.setLayoutManager(new BorderLayout());
                     //figure.setLabelAlignment(PositionConstants.LEFT);
@@ -260,14 +269,38 @@ public final class FigureParser {
                     } else if (figure instanceof NodeFigure) {
                         ((NodeFigure) figure).setLineWidth(width.intValue());
                     }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Applys the style attribute of the svg element to the figure.
+     * 
+     * @param figure
+     *            the figure whoose style to set
+     * @param style
+     *            the style as a string
+     */
+    private static void applyTextStyle(final IFigure figure, final String style) {
+        if (style != null) {
+            StringTokenizer t = new StringTokenizer(style, ";");
 
+            while (t.hasMoreTokens()) {
+                String string = t.nextToken().trim();
+                int index = string.indexOf(":");
+                String name = string.substring(0, index);
+                String value = string.substring(index + 1);
+
+                if (name.equals("fill")) {
+                    figure.setForegroundColor(lookupColor(value));
                 } else if (name.equals("font-size")) {
                     int size = Integer.parseInt(value);
                     if (figure instanceof Label) {
-                        FontData fd = new FontData();
-                        fd.setStyle(SWT.NORMAL);
-                        fd.setHeight(size - 6);
-                        Font font = new Font(Workbench.getInstance().getDisplay(), fd);
+                        FontData[] fonts = PlatformUI.getWorkbench().getDisplay().getFontList("arial", true);
+                        FontData fd = fonts[0];
+                        fd.setHeight(size - 2);
+                        Font font = new Font(PlatformUI.getWorkbench().getDisplay(), fd);
                         ((Label) figure).setFont(font);
                     }
                 }
@@ -313,4 +346,23 @@ public final class FigureParser {
         }
     }
 
+    private static Dimension calculateMinimumSize(IFigure figure) {
+        Dimension minSize = new Dimension(0,0);
+        for (Object child: figure.getChildren()) {
+            if (child instanceof IFigure) {
+                IFigure childFigure = (IFigure) child;
+                int childWidth = childFigure.getBounds().x + childFigure.getBounds().width;
+                int childHeight = childFigure.getBounds().y + childFigure.getBounds().height;
+                if (childHeight > minSize.height) {
+                    minSize.height = childHeight;
+                }
+                if (childWidth > minSize.width) {
+                    minSize.width = childWidth;
+                }
+            }
+        }
+        return minSize;
+        
+    }
+    
 }
