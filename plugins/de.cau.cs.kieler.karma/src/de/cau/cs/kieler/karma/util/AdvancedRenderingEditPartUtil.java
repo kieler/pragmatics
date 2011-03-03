@@ -39,7 +39,9 @@ import org.eclipse.gmf.runtime.notation.Bounds;
 import org.eclipse.gmf.runtime.notation.DrawerStyle;
 import org.eclipse.gmf.runtime.notation.IdentityAnchor;
 import org.eclipse.gmf.runtime.notation.RelativeBendpoints;
+import org.eclipse.ui.IEditorPart;
 
+import de.cau.cs.kieler.core.ui.util.EditorUtils;
 import de.cau.cs.kieler.core.util.ICondition;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.karma.AdvancedRenderingLabelEditPart;
@@ -61,13 +63,13 @@ public class AdvancedRenderingEditPartUtil {
      */
     private ICondition<EObject> lastCondition = null;
 
-    boolean isCollapsed = false;
-
     /**
      * The list of conditions and the corresponding string for generating the figure.
      */
     private List<HashMap<String, Object>> conditions;
 
+    private boolean isCollapsed = false;
+    
     /**
      * 
      * @param theConditions
@@ -91,27 +93,22 @@ public class AdvancedRenderingEditPartUtil {
     public void handleNotificationEvent(final Notification notification,
             final IFigure primaryShape, final EObject modelElement,
             final AbstractGraphicalEditPart editPart) {
-        Object notifier = notification.getNotifier();
-        boolean coll = AdvancedRenderingEditPartUtil.checkCollapsed(editPart);
+        Object notifier = notification.getNotifier();      
+        boolean coll = this.checkCollapsed(editPart);
         if ((!(notification.isTouch()) && !(notifier instanceof Bounds) 
                 && !(notifier instanceof RelativeBendpoints)
-                && !(notifier instanceof IdentityAnchor)) || (coll != this.isCollapsed) ) {
+                && !(notifier instanceof IdentityAnchor)) || (coll != this.isCollapsed)) {
+            this.isCollapsed = coll;
             IFigure figure = primaryShape;
             if (figure != null) {
                 boolean changed = false;
-                if (coll != this.isCollapsed) {
-                    changed = this.updateFigure(figure, modelElement, editPart, true);
-                    this.isCollapsed = coll;
-                } else {
-                    changed = this.updateFigure(figure, modelElement, editPart, false);
-                }
+                changed = this.updateFigure(figure, modelElement, editPart, false);
                 if (changed) {
                     LayoutManager layoutManager = figure.getLayoutManager();
                     if (layoutManager != null) {
                         layoutManager.layout(figure);
                     }
                 }
-                int g = 7;
             }
         }
     }
@@ -320,7 +317,7 @@ public class AdvancedRenderingEditPartUtil {
      * @param part the editPart whose compartments to check
      * @return true if all compartments are collapsed else false
      */
-    public static boolean checkCollapsed(final EditPart part) {
+    private boolean checkCollapsed(final EditPart part) {
         if (part instanceof TopGraphicEditPart) {
             TopGraphicEditPart ep = (TopGraphicEditPart) part;
             List<EditPart> resizeableCompartments = ep.getResizableCompartments();
@@ -332,13 +329,13 @@ public class AdvancedRenderingEditPartUtil {
                         boolean expanded = f.isExpanded();
                         if (expanded) {
                             return false;
-                     }
-                     }
+                        }
+                    }
                 }
             }
             return true;
         }
         return false;
     }
-
+    
 }

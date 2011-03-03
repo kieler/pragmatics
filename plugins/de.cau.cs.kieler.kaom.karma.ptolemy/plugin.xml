@@ -16,6 +16,27 @@
                   value="ptolemy.actor.lib.MonitorValue">
             </customCondition>
             <compoundCondition
+                  figureParam="compoundCollapsed"
+                  layoutParam="compoundCollapsed">
+               <listSizeCondition
+                     feature="childEntities"
+                     figureParam="compound"
+                     layoutParam="compound"
+                     size="&lt;0"
+                     type="Entity">
+               </listSizeCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.kaom.karma.ptolemy.conditions.IsCollapsedCondition"
+                     key="null"
+                     value="null">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
                   figureParam="compound"
                   layoutParam="compound">
                <listSizeCondition
@@ -25,6 +46,18 @@
                      size="&lt;0"
                      type="Entity">
                </listSizeCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
+                  figureParam="compound"
+                  layoutParam="compound">
+               <customCondition
+                     condition="de.cau.cs.kieler.kaom.karma.ptolemy.conditions.HasCommentsCondition">
+               </customCondition>
                <customCondition
                      condition="de.cau.cs.kieler.karma.AnnotationCondition"
                      key="language"

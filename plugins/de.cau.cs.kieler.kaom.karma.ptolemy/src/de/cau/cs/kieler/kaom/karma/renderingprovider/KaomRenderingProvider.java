@@ -14,6 +14,7 @@
 
 package de.cau.cs.kieler.kaom.karma.renderingprovider;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
@@ -47,10 +48,12 @@ import org.w3c.dom.Document;
 import ptolemy.kernel.util.NamedObj;
 import ptolemy.vergil.icon.EditorIcon;
 import de.cau.cs.kieler.core.annotations.Annotatable;
+import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
 import de.cau.cs.kieler.core.annotations.StringAnnotation;
 import de.cau.cs.kieler.core.ui.figures.SplineConnection;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.custom.EntityLayout;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.Entity3EditPart;
 import de.cau.cs.kieler.kaom.diagram.edit.parts.EntityEntityCompartment2EditPart;
@@ -97,14 +100,10 @@ public class KaomRenderingProvider implements IRenderingProvider {
         } else if (input.equals("MonitorValue")) {
             return figureProvider.createMonitorValue(object);
         } else if (input.equals("compound")) {
-            boolean collapsed = AdvancedRenderingEditPartUtil.checkCollapsed(part);
-            if (collapsed) {
-                IFigure figure = createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
-                return figure;
-            } else {
-                return figureProvider.getDefaultFigure();
-            }
-
+            return figureProvider.getDefaultFigure();
+        } else if (input.equals("compoundCollapsed")) {
+            IFigure figure = createPtolemyFigure(PtolemyFetcher.getPtolemyInstance(object));
+            return figure;
         } else if (input.startsWith("valueDisplay")) {
             String[] parts = input.split("//");
             return figureProvider.createValueFigure(object, parts[1], part);
@@ -182,6 +181,12 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 el.setFixedMinSize(63, 43);
             }
             return oldLayoutManager;
+        } else if (input.equals("compoundCollapsed")) {
+            if (oldLayoutManager instanceof EntityLayout) {
+                EntityLayout el = (EntityLayout) oldLayoutManager;
+                el.setFixedMinSize(63, 43);
+            }
+            return oldLayoutManager;
         }
         return null;
     }
@@ -249,5 +254,6 @@ public class KaomRenderingProvider implements IRenderingProvider {
         }
 
     }
+
 
 }
