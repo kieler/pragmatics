@@ -111,9 +111,9 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     /** external layout configuration embedded in this one. */
     private ILayoutConfig externalConfig;
     /** indicates whether the selected node contains any children. */
-    private boolean hasChildren;
-    /** indicates whether thw selected node contains any ports. */
-    private boolean hasPorts;
+    private Boolean hasChildren;
+    /** indicates whether the selected node contains any ports. */
+    private Boolean hasPorts;
     
     /**
      * Create a stand-alone Eclipse layout configuration.
@@ -134,7 +134,8 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      * Set the edit part or domain model element as focus for this layout configuration.
      * This can be done without initializing the layout configuration in order to use
      * {@link #getAllProperties()} efficiently, since the same configuration instance can
-     * be reused multiple times. Passing {@code null} clears the current focus.
+     * be reused multiple times. Passing {@code null} clears the current focus and resets
+     * information about children and ports.
      * 
      * @param element an {@link EditPart} or {@link EObject}
      */
@@ -143,8 +144,8 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
         if (element == null) {
             this.focusEditPart = null;
             this.modelElement = null;
-            this.hasChildren = false;
-            this.hasPorts = false;
+            this.hasChildren = null;
+            this.hasPorts = null;
         } else if (element instanceof EditPart) {
             this.focusEditPart = (EditPart) element;
         } else if (element instanceof EObject) {
@@ -280,8 +281,33 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      */
     private Object getDynamicValue(final LayoutOptionData<?> optionData) {
         if (LayoutOptions.FIXED_SIZE_ID.equals(optionData.getId())) {
-            return Boolean.valueOf(!hasChildren);
+            return getFixedSizeValue();
         } else if (LayoutOptions.PORT_CONSTRAINTS_ID.equals(optionData.getId())) {
+            return getPortConstraintsValue();
+        }
+        return null;
+    }
+    
+    /**
+     * Return the dynamic value for the fixed size option.
+     * 
+     * @return {@code true} if the selected node has no children, and {@code false} otherwise
+     */
+    private Boolean getFixedSizeValue() {
+        if (hasChildren != null) {
+            return Boolean.valueOf(!hasChildren);
+        }
+        return null;
+    }
+    
+    /**
+     * Return the dynamic value for the port constraints option.
+     * 
+     * @return {@code FIXED_POS} if the selected node has ports and no children,
+     *          and {@code FREE} otherwise
+     */
+    private PortConstraints getPortConstraintsValue() {
+        if (hasChildren != null && hasPorts != null) {
             if (!hasChildren && hasPorts) {
                 return PortConstraints.FIXED_POS;
             } else {
@@ -313,6 +339,17 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
      */
     protected void addProperties(final Map<IProperty<?>, Object> options) {
         LayoutServices layoutServices = LayoutServices.getInstance();
+        Object value;
+        
+        // get dynamic values for specific options
+        value = getFixedSizeValue();
+        if (value != null) {
+            options.put(LayoutOptions.FIXED_SIZE, value);
+        }
+        value = getPortConstraintsValue();
+        if (value != null) {
+            options.put(LayoutOptions.PORT_CONSTRAINTS, value);
+        }
 
         // get default layout options for the diagram type
         String diagramType = (String) getOption(focusEditPart, modelElement,
@@ -332,7 +369,7 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
                     modelElement.eClass())) {
                 config.setFocus(modelElement);
                 for (LayoutOptionData<?> optionData : config.getOptionData()) {
-                    Object value = config.getProperty(optionData);
+                    value = config.getProperty(optionData);
                     if (value != null) {
                         options.put(optionData, value);
                     }

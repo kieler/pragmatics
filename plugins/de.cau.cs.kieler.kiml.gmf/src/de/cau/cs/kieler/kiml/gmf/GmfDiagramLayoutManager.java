@@ -59,6 +59,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.model.GmfFrameworkBridge;
 import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -373,7 +374,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         }
         
         // traverse the children of the layout root part
-        buildLayoutGraphRecursively(rootPart, topNode, rootPart, layoutConfig);
+        buildLayoutGraphRecursively(rootPart, topNode, rootPart, layoutConfig, false);
         // set user defined layout options for the diagram
         layoutConfig.setFocus(rootPart);
         shapeLayout.copyProperties(layoutConfig);
@@ -395,10 +396,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      */
     private Pair<Boolean, Boolean> buildLayoutGraphRecursively(final IGraphicalEditPart parentEditPart,
             final KNode parentLayoutNode, final IGraphicalEditPart currentEditPart,
-            final EclipseLayoutConfig layoutConfig) {
+            final EclipseLayoutConfig layoutConfig, final boolean isCollapsed) {
         boolean hasChildNodes = false, hasPorts = false;
-        KInsets kinsets = null;
-        IFigure parentFigure = parentEditPart.getFigure();
+        Maybe<KInsets> kinsets = new Maybe<KInsets>();
 
         // set the target of layout ancestry if it was found
         if (ancestryTargetNode == null && ancestryTargetPart == currentEditPart) {
@@ -416,205 +416,247 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                 }
             }
 
-            // process ports (border items)
+            // process a port (border item)
             if (obj instanceof AbstractBorderItemEditPart) {
-                AbstractBorderItemEditPart borderItem = (AbstractBorderItemEditPart) obj;
-                KPort port = KimlUtil.createInitializedPort();
-                graphElem2EditPartMap.put(port, borderItem);
-                port.setNode(parentLayoutNode);
-
-                // set the port's layout, relative to the node position
-                KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(borderItem.getFigure());
-                Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(currentEditPart.getFigure());
-                float xpos = portBounds.x - nodeBounds.x;
-                portLayout.setXpos(xpos);
-                float ypos = portBounds.y - nodeBounds.y;
-                portLayout.setYpos(ypos);
-                portLayout.setWidth(portBounds.width);
-                portLayout.setHeight(portBounds.height);
+                if (!isCollapsed) {
+                    createPort((AbstractBorderItemEditPart) obj, parentEditPart, parentLayoutNode,
+                            layoutConfig);
+                }
                 hasPorts = true;
-                
-                // calculate port offset from the node border
-                float offset = 0;
-                KShapeLayout nodeLayout = parentLayoutNode.getData(KShapeLayout.class);
-                float widthPercent = (xpos + portBounds.width / 2) / nodeLayout.getWidth();
-                float heightPercent = (ypos + portBounds.height / 2) / nodeLayout.getHeight();
-                if (widthPercent + heightPercent <= 1
-                        && widthPercent - heightPercent <= 0) {
-                    // port is on the left
-                    offset = -(xpos + portBounds.width);
-                    portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
-                } else if (widthPercent + heightPercent >= 1
-                        && widthPercent - heightPercent >= 0) {
-                    // port is on the right
-                    offset = xpos - nodeLayout.getWidth();
-                    portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
-                } else if (heightPercent < 1.0f / 2) {
-                    // port is on the top
-                    offset = -(ypos + portBounds.height);
-                    portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.NORTH);
-                } else {
-                    // port is on the bottom
-                    offset = ypos - nodeLayout.getHeight();
-                    portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
-                }
-                if (offset != 0) {
-                    portLayout.setProperty(LayoutOptions.OFFSET, offset);
-                }
-                
-                // set user defined layout options for the port
-                layoutConfig.setFocus(borderItem);
-                portLayout.copyProperties(layoutConfig);
 
-                // store all the connections to process them later
-                addConnections(borderItem);
-
-                // set the port label
-                for (Object portChildObj : borderItem.getChildren()) {
-                    if (portChildObj instanceof IGraphicalEditPart) {
-                        IFigure labelFigure = ((IGraphicalEditPart) portChildObj).getFigure();
-                        String text = null;
-                        if (labelFigure instanceof WrappingLabel) {
-                            text = ((WrappingLabel) labelFigure).getText();
-                        } else if (labelFigure instanceof Label) {
-                            text = ((Label) labelFigure).getText();
-                        }
-                        if (text != null) {
-                            KLabel portLabel = port.getLabel();
-                            portLabel.setText(text);
-                            // set the port label's layout
-                            KShapeLayout labelLayout = portLabel.getData(KShapeLayout.class);
-                            Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
-                            labelLayout.setXpos(labelBounds.x - portBounds.x);
-                            labelLayout.setYpos(labelBounds.y - portBounds.y);
-                            try {
-                                Dimension size = labelFigure.getPreferredSize();
-                                labelLayout.setWidth(size.width);
-                                labelLayout.setHeight(size.height);
-                            } catch (SWTException exception) {
-                                // ignore exception and leave the label size to (0, 0)
-                            }
-                        }
-                    }
-                }
-
-                // process compartments, which may contain other elements
+            // process a compartment, which may contain other elements
             } else if (obj instanceof ShapeCompartmentEditPart
                 && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
                 if (!GmfLayoutConfig.isNoLayout(compartment)) {
                     IFigure compartmentFigure = compartment.getFigure();
+                    boolean compColl = isCollapsed;
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
                         ResizableCompartmentFigure resizCompFigure
                                 = (ResizableCompartmentFigure) compartmentFigure;
                         // check whether the compartment is collapsed
                         if (!resizCompFigure.isExpanded()) {
-                            continue;
+                            compColl = true;
                         }
                     }
 
                     Pair<Boolean, Boolean> result = buildLayoutGraphRecursively(parentEditPart,
-                            parentLayoutNode, compartment, layoutConfig);
+                            parentLayoutNode, compartment, layoutConfig, compColl);
                     hasChildNodes |= result.getFirst();
                 }
 
-                // process nodes, which may be parents of compartments
+            // process a node, which may be a parent of ports, compartments, or other nodes
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
                 if (!GmfLayoutConfig.isNoLayout(childNodeEditPart)) {
-                    IFigure nodeFigure = childNodeEditPart.getFigure();
-                    KNode childLayoutNode = KimlUtil.createInitializedNode();
-
-                    // store all the connections to process them later
-                    addConnections(childNodeEditPart);
-
-                    // set location and size
-                    Rectangle childBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure);
-                    Rectangle containerBounds = KimlUiUtil
-                        .getAbsoluteBounds(nodeFigure.getParent());
-                    KShapeLayout nodeLayout = childLayoutNode.getData(KShapeLayout.class);
-                    nodeLayout.setXpos(childBounds.x - containerBounds.x);
-                    nodeLayout.setYpos(childBounds.y - containerBounds.y);
-                    nodeLayout.setHeight(childBounds.height);
-                    nodeLayout.setWidth(childBounds.width);
-                    try {
-                        Dimension minSize = nodeFigure.getMinimumSize();
-                        nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
-                        nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
-                    } catch (SWTException exception) {
-                        // ignore exception and leave the default minimal size
+                    if (!isCollapsed) {
+                        createNode(childNodeEditPart, parentEditPart, parentLayoutNode, layoutConfig,
+                                kinsets);
                     }
-
-                    // set insets if not yet defined
-                    if (kinsets == null) {
-                        kinsets = parentLayoutNode.getData(KShapeLayout.class).getProperty(
-                            LayoutOptions.INSETS);
-                        Insets insets = KimlUiUtil.calcInsets(parentFigure, nodeFigure);
-                        kinsets.setLeft(insets.left);
-                        kinsets.setTop(insets.top);
-                        kinsets.setRight(insets.right);
-                        kinsets.setBottom(insets.bottom);
-                    }
-
-                    parentLayoutNode.getChildren().add(childLayoutNode);
-                    graphElem2EditPartMap.put(childLayoutNode, childNodeEditPart);
                     hasChildNodes = true;
-                    // process the child as new current edit part
-                    Pair<Boolean, Boolean> result = buildLayoutGraphRecursively(childNodeEditPart,
-                            childLayoutNode, childNodeEditPart, layoutConfig);
-
-                    // set user defined layout options for the node
-                    layoutConfig.setFocus(childNodeEditPart);
-                    layoutConfig.setChildren(result.getFirst());
-                    layoutConfig.setPorts(result.getSecond());
-                    nodeLayout.copyProperties(layoutConfig);
                 }
 
-                // process labels of nodes
+            // process a label of the current node
             } else if (obj instanceof IGraphicalEditPart) {
-
-                IGraphicalEditPart graphicalEditPart = (IGraphicalEditPart) obj;
-                IFigure labelFigure = graphicalEditPart.getFigure();
-                String text = null;
-                Font font = null;
-                if (labelFigure instanceof WrappingLabel) {
-                    WrappingLabel wrappingLabel = (WrappingLabel) labelFigure;
-                    text = wrappingLabel.getText();
-                    font = wrappingLabel.getFont();
-                } else if (labelFigure instanceof Label) {
-                    Label label = (Label) labelFigure;
-                    text = label.getText();
-                    font = label.getFont();
-                }
-                if (text != null) {
-                    KNode parent = (KNode) graphElem2EditPartMap.inverse()
-                            .get(graphicalEditPart.getParent());
-                    KLabel label = parent.getLabel();
-                    if (label.getText() == null || label.getText().length() == 0) {
-                        label.setText(text);
-                        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                        Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
-                        Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(parentFigure);
-                        labelLayout.setXpos(labelBounds.x - nodeBounds.x);
-                        labelLayout.setYpos(labelBounds.y - nodeBounds.y);
-                        try {
-                            Dimension size = labelFigure.getPreferredSize();
-                            labelLayout.setWidth(size.width);
-                            labelLayout.setHeight(size.height);
-                        } catch (SWTException exception) {
-                            // ignore exception and leave the label size to (0, 0)
-                        }
-                        labelLayout.setProperty(LayoutOptions.FONT_NAME,
-                            font.getFontData()[0].getName());
-                        labelLayout.setProperty(LayoutOptions.FONT_SIZE,
-                            font.getFontData()[0].getHeight());
-                    }
-                }
+                createNodeLabel((IGraphicalEditPart) obj, parentEditPart, parentLayoutNode);
             }
         }
 
         return new Pair<Boolean, Boolean>(hasChildNodes, hasPorts);
+    }
+    
+    /**
+     * Create a node while building the layout graph.
+     * 
+     * @param nodeEditPart the node edit part
+     * @param parentEditPart the parent node edit part that contains the current node
+     * @param parentKNode the corresponding parent layout node
+     * @param layoutConfig a layout configuration
+     * @param kinsets reference parameter for insets; the insets are calculated if this has
+     *     not been done before
+     */
+    private void createNode(final ShapeNodeEditPart nodeEditPart,
+            final IGraphicalEditPart parentEditPart, final KNode parentKNode,
+            final EclipseLayoutConfig layoutConfig, final Maybe<KInsets> kinsets) {
+        IFigure nodeFigure = nodeEditPart.getFigure();
+        KNode childLayoutNode = KimlUtil.createInitializedNode();
+
+        // set location and size
+        Rectangle childBounds = KimlUiUtil.getAbsoluteBounds(nodeFigure);
+        Rectangle containerBounds = KimlUiUtil
+            .getAbsoluteBounds(nodeFigure.getParent());
+        KShapeLayout nodeLayout = childLayoutNode.getData(KShapeLayout.class);
+        nodeLayout.setXpos(childBounds.x - containerBounds.x);
+        nodeLayout.setYpos(childBounds.y - containerBounds.y);
+        nodeLayout.setHeight(childBounds.height);
+        nodeLayout.setWidth(childBounds.width);
+        try {
+            Dimension minSize = nodeFigure.getMinimumSize();
+            nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
+            nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
+        } catch (SWTException exception) {
+            // ignore exception and leave the default minimal size
+        }
+
+        // set insets if not yet defined
+        if (kinsets.get() == null) {
+            KInsets ki = parentKNode.getData(KShapeLayout.class).getProperty(LayoutOptions.INSETS);
+            Insets insets = KimlUiUtil.calcInsets(parentEditPart.getFigure(), nodeFigure);
+            ki.setLeft(insets.left);
+            ki.setTop(insets.top);
+            ki.setRight(insets.right);
+            ki.setBottom(insets.bottom);
+            kinsets.set(ki);
+        }
+
+        parentKNode.getChildren().add(childLayoutNode);
+        graphElem2EditPartMap.put(childLayoutNode, nodeEditPart);
+        // process the child as new current edit part
+        Pair<Boolean, Boolean> result = buildLayoutGraphRecursively(nodeEditPart,
+                childLayoutNode, nodeEditPart, layoutConfig, false);
+
+        // set user defined layout options for the node
+        layoutConfig.setFocus(nodeEditPart);
+        layoutConfig.setChildren(result.getFirst());
+        layoutConfig.setPorts(result.getSecond());
+        nodeLayout.copyProperties(layoutConfig);
+
+        // store all the connections to process them later
+        addConnections(nodeEditPart);
+    }
+    
+    /**
+     * Create a port while building the layout graph.
+     * 
+     * @param portEditPart the port edit part
+     * @param nodeEditPart the parent node edit part
+     * @param knode the corresponding layout node
+     * @param layoutConfig a layout configuration
+     */
+    private void createPort(final AbstractBorderItemEditPart portEditPart,
+            final IGraphicalEditPart nodeEditPart, final KNode knode,
+            final EclipseLayoutConfig layoutConfig) {
+        KPort port = KimlUtil.createInitializedPort();
+        graphElem2EditPartMap.put(port, portEditPart);
+        port.setNode(knode);
+
+        // set the port's layout, relative to the node position
+        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+        Rectangle portBounds = KimlUiUtil.getAbsoluteBounds(portEditPart.getFigure());
+        Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(nodeEditPart.getFigure());
+        float xpos = portBounds.x - nodeBounds.x;
+        portLayout.setXpos(xpos);
+        float ypos = portBounds.y - nodeBounds.y;
+        portLayout.setYpos(ypos);
+        portLayout.setWidth(portBounds.width);
+        portLayout.setHeight(portBounds.height);
+        
+        // calculate port offset from the node border
+        float offset = 0;
+        KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+        float widthPercent = (xpos + portBounds.width / 2) / nodeLayout.getWidth();
+        float heightPercent = (ypos + portBounds.height / 2) / nodeLayout.getHeight();
+        if (widthPercent + heightPercent <= 1
+                && widthPercent - heightPercent <= 0) {
+            // port is on the left
+            offset = -(xpos + portBounds.width);
+            portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
+        } else if (widthPercent + heightPercent >= 1
+                && widthPercent - heightPercent >= 0) {
+            // port is on the right
+            offset = xpos - nodeLayout.getWidth();
+            portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
+        } else if (heightPercent < 1.0f / 2) {
+            // port is on the top
+            offset = -(ypos + portBounds.height);
+            portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.NORTH);
+        } else {
+            // port is on the bottom
+            offset = ypos - nodeLayout.getHeight();
+            portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.SOUTH);
+        }
+        if (offset != 0) {
+            portLayout.setProperty(LayoutOptions.OFFSET, offset);
+        }
+        
+        // set user defined layout options for the port
+        layoutConfig.setFocus(portEditPart);
+        portLayout.copyProperties(layoutConfig);
+
+        // store all the connections to process them later
+        addConnections(portEditPart);
+
+        // set the port label
+        for (Object portChildObj : portEditPart.getChildren()) {
+            if (portChildObj instanceof IGraphicalEditPart) {
+                IFigure labelFigure = ((IGraphicalEditPart) portChildObj).getFigure();
+                String text = null;
+                if (labelFigure instanceof WrappingLabel) {
+                    text = ((WrappingLabel) labelFigure).getText();
+                } else if (labelFigure instanceof Label) {
+                    text = ((Label) labelFigure).getText();
+                }
+                if (text != null) {
+                    KLabel portLabel = port.getLabel();
+                    portLabel.setText(text);
+                    // set the port label's layout
+                    KShapeLayout labelLayout = portLabel.getData(KShapeLayout.class);
+                    Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
+                    labelLayout.setXpos(labelBounds.x - portBounds.x);
+                    labelLayout.setYpos(labelBounds.y - portBounds.y);
+                    try {
+                        Dimension size = labelFigure.getPreferredSize();
+                        labelLayout.setWidth(size.width);
+                        labelLayout.setHeight(size.height);
+                    } catch (SWTException exception) {
+                        // ignore exception and leave the label size to (0, 0)
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Create a node label while building the layout graph.
+     * 
+     * @param labelEditPart the label edit part
+     * @param nodeEditPart the parent node edit part
+     * @param knode the layout node for which the label is set
+     */
+    private void createNodeLabel(final IGraphicalEditPart labelEditPart,
+            final IGraphicalEditPart nodeEditPart, final KNode knode) {
+        IFigure labelFigure = labelEditPart.getFigure();
+        String text = null;
+        Font font = null;
+        if (labelFigure instanceof WrappingLabel) {
+            WrappingLabel wrappingLabel = (WrappingLabel) labelFigure;
+            text = wrappingLabel.getText();
+            font = wrappingLabel.getFont();
+        } else if (labelFigure instanceof Label) {
+            Label label = (Label) labelFigure;
+            text = label.getText();
+            font = label.getFont();
+        }
+        KLabel label = knode.getLabel();
+        if (text != null && (label.getText() == null || label.getText().length() == 0)) {
+            label.setText(text);
+            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+            Rectangle labelBounds = KimlUiUtil.getAbsoluteBounds(labelFigure);
+            Rectangle nodeBounds = KimlUiUtil.getAbsoluteBounds(nodeEditPart.getFigure());
+            labelLayout.setXpos(labelBounds.x - nodeBounds.x);
+            labelLayout.setYpos(labelBounds.y - nodeBounds.y);
+            try {
+                Dimension size = labelFigure.getPreferredSize();
+                labelLayout.setWidth(size.width);
+                labelLayout.setHeight(size.height);
+                labelLayout.setProperty(LayoutOptions.FONT_NAME,
+                        font.getFontData()[0].getName());
+                labelLayout.setProperty(LayoutOptions.FONT_SIZE,
+                    font.getFontData()[0].getHeight());
+            } catch (SWTException exception) {
+                // ignore exception and leave the label size to (0, 0)
+            }
+        }
     }
 
     /**
@@ -739,7 +781,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             }
 
             // process edge labels
-            processLabels(connection, edge, edgeLabelPlacement, offsetx, offsety);
+            processEdgeLabels(connection, edge, edgeLabelPlacement, offsetx, offsety);
         }
     }
 
@@ -782,7 +824,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * @param offsetx the offset for horizontal coordinates
      * @param offsety the offset for vertical coordinates
      */
-    protected void processLabels(final ConnectionEditPart connection, final KEdge edge,
+    protected void processEdgeLabels(final ConnectionEditPart connection, final KEdge edge,
         final EdgeLabelPlacement placement, final float offsetx, final float offsety) {
         /*
          * ars: source and target is exchanged when defining it in the gmfgen file. So if Emma sets

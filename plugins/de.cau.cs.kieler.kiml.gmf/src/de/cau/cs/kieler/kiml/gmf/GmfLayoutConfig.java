@@ -218,6 +218,8 @@ public class GmfLayoutConfig extends EclipseLayoutConfig {
             if (containmentEditPart != null) {
                 initialize(LayoutOptionData.Target.PARENTS, containmentEditPart, contentLayoutHint);
                 setChildren(true);
+            } else {
+                setChildren(false);
             }
             
             setPorts(hasPorts.get());

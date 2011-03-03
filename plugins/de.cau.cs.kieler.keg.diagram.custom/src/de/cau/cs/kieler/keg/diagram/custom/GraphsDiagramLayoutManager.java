@@ -305,7 +305,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                     setEdgeLayout(edgeLayout, connection, offsetx, offsety);
                     
                     // set edge labels
-                    processLabels(connection, layoutEdge, EdgeLabelPlacement.UNDEFINED,
+                    processEdgeLabels(connection, layoutEdge, EdgeLabelPlacement.UNDEFINED,
                             offsetx, offsety);
         
                     // set user defined layout options for the edge
