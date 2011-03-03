@@ -44,6 +44,7 @@ import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.Port;
 import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyHelper;
 import de.cau.cs.kieler.kaom.karma.ptolemy.PtolemyPortBorderItemLocator;
+import de.cau.cs.kieler.kaom.karma.ptolemy.conditions.HasCommentsCondition;
 import de.cau.cs.kieler.karma.IAdvancedRenderingEditPart;
 import de.cau.cs.kieler.karma.IRenderingProvider;
 
@@ -247,7 +248,8 @@ public class KaomPortProvider implements IRenderingProvider {
         if (container instanceof Entity) {
             Entity parent = (Entity) container;
             EList<Entity> childEntitys = parent.getChildEntities();
-            if (childEntitys.isEmpty()) {
+            HasCommentsCondition commentsCondition = new HasCommentsCondition();
+            if (childEntitys.isEmpty() && !commentsCondition.evaluate(parent)) {
                 EList<Port> ports = parent.getChildPorts();
                 if (input.equals("NORTH")) {
                     List<Port> portsOfSide = new LinkedList<Port>();
