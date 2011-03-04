@@ -392,7 +392,8 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
         new File(path).mkdirs();
         
         String debugFileName = Integer.toString(graph.hashCode()
-                & ((1 << (Integer.SIZE / 2)) - 1)) + "-fulldebug-slot" + slotIndex;
+                & ((1 << (Integer.SIZE / 2)) - 1)) + "-fulldebug-slot"
+                + String.format("%1$02d", slotIndex);
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
