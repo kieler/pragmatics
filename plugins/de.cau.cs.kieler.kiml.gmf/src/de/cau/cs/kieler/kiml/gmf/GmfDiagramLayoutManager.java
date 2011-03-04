@@ -69,6 +69,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.ui.layout.ApplyLayoutRequest;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
@@ -310,7 +311,11 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      */
     @Override
     public KNode getLayoutGraph() {
-        return layoutGraph;
+        if (ancestryTargetNode != null) {
+            return ancestryTargetNode;
+        } else {
+            return layoutGraph;
+        }
     }
 
     /**
@@ -381,7 +386,9 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
         // transform all connections in the selected area
         processConnections(layoutConfig);
 
-        return cleanupAncestryPath(topNode);
+        // TODO instead of cleaning up the path afterwards, build only the right elements in the first place
+        cleanupAncestryPath(topNode);
+        return topNode;
     }
 
     /**
@@ -908,9 +915,8 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
      * paths.
      * 
      * @param topNode the top level node
-     * @return the top level node or the ancestry target node
      */
-    protected KNode cleanupAncestryPath(final KNode topNode) {
+    protected void cleanupAncestryPath(final KNode topNode) {
         if (ancestryTargetNode != null) {
             KNode previousNode = ancestryTargetNode;
             KNode parent = ancestryTargetNode.getParent();
@@ -919,15 +925,14 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
                     if (child != previousNode) {
                         KShapeLayout childLayout = child.getData(KShapeLayout.class);
                         childLayout.setProperty(LayoutOptions.FIXED_SIZE, true);
+                        childLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS,
+                                PortConstraints.FIXED_POS);
                         removeFromLayout(child);
                     }
                 }
                 previousNode = parent;
                 parent = parent.getParent();
             }
-            return ancestryTargetNode;
-        } else {
-            return topNode;
         }
     }
 

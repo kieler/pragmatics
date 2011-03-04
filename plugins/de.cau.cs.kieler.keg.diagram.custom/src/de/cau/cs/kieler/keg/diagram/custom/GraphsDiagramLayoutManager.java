@@ -128,7 +128,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
             // transform all connections in the selected area
             processConnections(rootPart, layoutConfig);
     
-            topNode = cleanupAncestryPath(topNode);
+            cleanupAncestryPath(topNode);
             hyperedgeMap = HypernodesEditPolicy.createHyperedgeMap(topNode);
             return topNode;
         } else {
