@@ -35,6 +35,8 @@ public enum IntermediateLayoutProcessor {
     ODD_PORT_SIDE_PROCESSOR,
     /** Sets the positions of ports. */
     PORT_ARRANGER,
+    /** Sets port sides and orders the ports, if necessary. */
+    PORT_SIDE_AND_ORDER_PROCESSOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER;
     
@@ -74,6 +76,9 @@ public enum IntermediateLayoutProcessor {
         
         case PORT_ARRANGER:
             return new PortArranger();
+        
+        case PORT_SIDE_AND_ORDER_PROCESSOR:
+            return new PortSideAndOrderProcessor();
         
         case REVERSED_EDGE_RESTORER:
             return new ReversedEdgeRestorer();

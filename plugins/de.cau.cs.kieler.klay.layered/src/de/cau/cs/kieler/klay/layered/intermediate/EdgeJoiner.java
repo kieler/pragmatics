@@ -82,11 +82,7 @@ public class EdgeJoiner extends AbstractAlgorithm implements ILayoutProcessor {
                     droppedEdge.setTarget(null);
                     
                     // Join their bend points
-                    if (survivingEdge.getProperty(Properties.REVERSED)) {
-                        survivingEdge.getBendPoints().addAll(0, droppedEdge.getBendPoints());
-                    } else {
-                        survivingEdge.getBendPoints().addAll(droppedEdge.getBendPoints());
-                    }
+                    survivingEdge.getBendPoints().addAll(droppedEdge.getBendPoints());
                     
                     // Remove the node
                     nodeIterator.remove();

@@ -71,7 +71,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph, with an established node order in each
- *     layer.</dd>
+ *     layer; port orders are fixed.</dd>
  *   <dt>Postcondition:</dt><dd>dummy nodes have been inserted for edges connected to
  *     ports on north and south sides.</dd>
  * </dl>

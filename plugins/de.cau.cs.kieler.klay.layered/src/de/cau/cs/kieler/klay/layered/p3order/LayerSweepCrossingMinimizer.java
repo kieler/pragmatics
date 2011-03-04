@@ -41,7 +41,8 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>the graph has a proper layering, i.e. all
- *     long edges have been splitted</dd>
+ *     long edges have been splitted; all nodes have at least fixed port
+ *     sides.</dd>
  *   <dt>Postcondition:</dt><dd>the order of nodes in each layer and the order
  *     of ports in each node are optimized to yield as few edge crossings
  *     as possible</dd>
@@ -59,7 +60,9 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 // Before Phase 2
                 null,
                 // Before Phase 3
-                EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER),
+                EnumSet.of(
+                        IntermediateLayoutProcessor.EDGE_SPLITTER,
+                        IntermediateLayoutProcessor.PORT_SIDE_AND_ORDER_PROCESSOR),
                 // Before Phase 4
                 null,
                 // Before Phase 5
@@ -110,23 +113,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
                 LNode node = nodeIter.next();
                 curRun[i][nodeIter.previousIndex()] = node;
                 node.id = nodeCount++;
-                boolean freePorts = !node.getProperty(Properties.PORT_CONS).isSideFixed();
                 for (LPort port : node.getPorts()) {
                     port.id = portCount++;
-                    if (freePorts) {
-                        // set input ports left, output ports right
-                        switch (port.getType()) {
-                        case INPUT:
-                            port.setSide(PortSide.WEST);
-                            break;
-                        case OUTPUT:
-                            port.setSide(PortSide.EAST);
-                            break;
-                        }
-                    }
-                }
-                if (freePorts) {
-                    node.setProperty(Properties.PORT_CONS, PortConstraints.FIXED_SIDE);
                 }
             }
         }
@@ -459,7 +447,7 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             }
         } else {
             for (LPort port : node.getPorts(type)) {
-                portPos[port.id] = getPortIncr(type, port.getSide());
+                portPos[port.id] = nodeIx + getPortIncr(type, port.getSide());
             }
         }
     }
