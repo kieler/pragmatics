@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OGDF-Server Binaries
+Bundle-SymbolicName: net.ogdf.bin;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
+ org.eclipse.core.runtime;bundle-version="3.6.0",
+ de.cau.cs.kieler.core;bundle-version="0.5.0"
+Bundle-Activator: net.ogdf.bin.OgdfPlugin
+Export-Package: net.ogdf.bin
+Bundle-ActivationPolicy: lazy

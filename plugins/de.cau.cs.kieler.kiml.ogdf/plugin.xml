@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.layoutProviders">
+      <category
+            id="de.cau.cs.kieler.kiml.categories.ogdf"
+            name="OGDF">
+      </category>
+      <layoutOption
+            appliesTo="parents"
+            default="15"
+            description="Distance of edge labels to the nodes"
+            id="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance"
+            name="Label Distance"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="15"
+            description="Spacing of labels to the edges"
+            id="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance"
+            name="Label Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="400"
+            description="The number of iterations performed by the algorithm."
+            id="de.cau.cs.kieler.kiml.ogdf.option.iterations"
+            name="Iterations"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            description="Sets whether the initial placement of the choosen is different on every algorithm call."
+            id="de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement"
+            name="New Initial Placement"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed"
+            default="BEAUTIFULANDFAST"
+            description="Specifies whether the algorithm prioritizes quality or speed."
+            id="de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed"
+            name="Quality vs Speed"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.Costs"
+            default="STANDARD"
+            description="Defines the costs used in the algorithm."
+            id="de.cau.cs.kieler.kiml.ogdf.option.costs"
+            name="Costs"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.Speed"
+            default="MEDIUM"
+            description="Defines the temperature and the number of iterations."
+            id="de.cau.cs.kieler.kiml.ogdf.option.speed"
+            name="Speed"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="4"
+            description="The number of times that the number of crossings may not decrease after a complete top-down bottom-up traversal, before a run is terminated."
+            id="de.cau.cs.kieler.kiml.ogdf.option.fails"
+            name="Fails"
+            type="int">
+      </layoutOption>
+            <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="15"
+            description="Determines, how many times the crossing minimization is repeated. Each repetition (except for the first) starts with randomly permuted nodes on each layer. Deterministic behaviour can be achieved by setting runs to 1."
+            id="de.cau.cs.kieler.kiml.ogdf.option.runs"
+            name="Runs"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="true"
+            description="Determines whether the transpose step is performed after each 2-layer crossing minimization; this step tries to reduce the number of crossings by switching neighbored nodes on a layer."
+            id="de.cau.cs.kieler.kiml.ogdf.option.transpose"
+            name="Transpose"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="true"
+            description="If set to true connected components are laid out separately and the resulting layouts are arranged afterwards using the packer module."
+            id="de.cau.cs.kieler.kiml.ogdf.option.arrangeCCs"
+            name="Arrange Connected Components"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="20.0"
+            description="The spacing between connected components."
+            id="de.cau.cs.kieler.kiml.ogdf.option.minDistCC"
+            name="Minimum Connected Component Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="16.0"
+            description="The minimal vertical distance between two nodes on neighbored layers."
+            id="de.cau.cs.kieler.kiml.ogdf.option.layerDistance"
+            name="Layer Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques will be laid out in a special form (straight-line, not orthogonal). The preprocessing may reduce running time and improve layout quality if the input graphs contains dense subgraphs."
+            id="de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques"
+            name="Preprocess Cliques"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="10"
+            description="If preprocessing of cliques is enabled, this option determines the minimal size of cliques to search for."
+            id="de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize"
+            name="Minimum Clique Size"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="1"
+            description="Defines the costs for an association edge."
+            id="de.cau.cs.kieler.kiml.ogdf.option.costAssoc"
+            name="Cost for Association Edges"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="4"
+            description="Defines the costs for generalization edges."
+            id="de.cau.cs.kieler.kiml.ogdf.option.costGen"
+            name="Cost for Generalization Edges"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.51"
+            description="The fineness option used in the algorithm."
+            id="de.cau.cs.kieler.kiml.ogdf.option.fineness"
+            name="Fineness"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="20000"
+            description="The maximal number of rounds per node."
+            id="de.cau.cs.kieler.kiml.ogdf.option.numberOfRounds"
+            name="Number Of Rounds"
+            type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.005"
+            description="The minimal temperature."
+            id="de.cau.cs.kieler.kiml.ogdf.option.minimalTemperature"
+            name="Minimal Temperature"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="10.0"
+            description="The initial temperature."
+            id="de.cau.cs.kieler.kiml.ogdf.option.initialTemperature"
+            name="Initial Temperature"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.0625"
+            description="The gravitational constant."
+            id="de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant"
+            name="Gravitational Constant"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.0"
+            description="The maximal disturbance."
+            id="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance."
+            name="Maximal Disturbance"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.33"
+            description="The opening angle for rotations (in PI)."
+            id="de.cau.cs.kieler.kiml.ogdf.option.rotationAngle"
+            name="Rotation Angle"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.5"
+            description="The opening angle for oscillations (in PI)."
+            id="de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle"
+            name="Oscillation Angle"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.01"
+            description="The rotation sensitivity."
+            id="de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity"
+            name="Rotation Sensitivity"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.3"
+            description="The oscillation sensitivity."
+            id="de.cau.cs.kieler.kiml.ogdf.option.oscillationSensitivity"
+            name="Oscillation Sensitivity"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            class="de.cau.cs.kieler.kiml.ogdf.options.AttractionFormula"
+            default="FRUCHTERMAN_REINGOLD"
+            description="The used formula for attraction."
+            id="de.cau.cs.kieler.kiml.ogdf.option.attractionFormula"
+            name="Attraction Formula"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="20.0"
+            description="The minimal distance between father and child circle."
+            id="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel"
+            name="Minimum Level Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="10.0"
+            description="The minimal distance between circles on same level."
+            id="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling"
+            name="Minimum Sibling Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="20.0"
+            description="The minimal distance between nodes on a circle."
+            id="de.cau.cs.kieler.kiml.ogdf.option.minDistCircle"
+            name="Minimum Circle Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="20.0"
+            description="The horizontal spacing between adjacent subtrees."
+            id="de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance"
+            name="Subtree Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="50.0"
+            description="The vertical spacing between adjacent levels."
+            id="de.cau.cs.kieler.kiml.ogdf.option.levelDistance"
+            name="Level Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="50.0"
+            description="The horizontal spacing between adjacent trees in a forest."
+            id="de.cau.cs.kieler.kiml.ogdf.option.treeDistance"
+            name="Tree Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="20.0"
+            description="The horizontal spacing between adjacent sibling nodes."
+            id="de.cau.cs.kieler.kiml.ogdf.option.siblingDistance"
+            name="Sibling Spacing"
+            type="float">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="50.0"
+            description="The minimal horizontal distance required between trees in the forest."
+            id="de.cau.cs.kieler.kiml.ogdf.option.ccDistance"
+            name="Connected Component Spacing"
+            type="float">
+      </layoutOption>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.sugiyama"
+            name="Sugiyama"
+            parameter="SUGIYAMA"
+            preview="images/sugiyama.png"
+            type="de.cau.cs.kieler.type.layered">
+         <supportedDiagram
+               priority="9"
+               type="de.cau.cs.kieler.layout.diagrams.general">
+         </supportedDiagram>
+         <knownOption
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.fails">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.runs">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.transpose">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.arrangeCCs">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.layerDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.aspectRatio">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.planarizationUML"
+            name="Planarization"
+            parameter="PLANARIZATION"
+            preview="images/planarization.png"
+            type="de.cau.cs.kieler.type.orthogonal">
+         <supportedDiagram
+               priority="10"
+               type="de.cau.cs.kieler.layout.diagrams.classDiagram">
+         </supportedDiagram>
+         <knownOption
+               option="de.cau.cs.kieler.direction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.aspectRatio">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.preprocessCliques">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.minCliqueSize">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.costAssoc">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.costGen">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.fmmm"
+            name="FMMM"
+            parameter="FMMM"
+            preview="images/fmmm.png"
+            type="de.cau.cs.kieler.type.force">
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.qualityVsSpeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.minSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.newInitialPlacement">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.davidsonHarel"
+            name="Davidson-Harel"
+            parameter="DAVIDSON_HAREL"
+            preview="images/davidson-harel.png"
+            type="de.cau.cs.kieler.type.force">
+         <knownOption
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.costs">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.speed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.fruchtermanReingold"
+            name="Fruchterman-Reingold"
+            parameter="FRUCHTERMAN_REINGOLD"
+            preview="images/fruchterman-reingold.png"
+            type="de.cau.cs.kieler.type.force">
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.iterations">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.fineness">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.noise">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.aspectRatio">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.gem"
+            name="GEM"
+            parameter="GEM"
+            preview="images/fmmm.png"
+            type="de.cau.cs.kieler.type.force">
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.aspectRatio">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.numberOfRounds">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.minimalTemperature">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.initialTemperature">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance.">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.rotationAngle">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.oscillationSensitivity">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.attractionFormula">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.circular"
+            name="Circular"
+            parameter="CIRCULAR"
+            preview="images/circular.png"
+            type="de.cau.cs.kieler.type.circle">
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.minDistCircle">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.minDistSibling">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.minDistLevel">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.minDistCC">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.aspectRatio">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.tree"
+            name="Tree"
+            parameter="TREE"
+            preview="images/tree.png"
+            type="de.cau.cs.kieler.type.tree">
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.direction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.edgeRouting">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.siblingDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.levelDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.treeDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.radialTree"
+            name="Radial Tree"
+            parameter="RADIAL_TREE"
+            preview="images/radial-tree.png"
+            type="de.cau.cs.kieler.type.tree">
+         <knownOption
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.levelDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.ccDistance">
+         </knownOption>
+      </layoutAlgorithm>
+      <layoutAlgorithm
+            category="de.cau.cs.kieler.kiml.categories.ogdf"
+            class="de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider"
+            id="de.cau.cs.kieler.kiml.ogdf.upwardPlanarization"
+            name="Upward-Planarization"
+            parameter="UPWARD_PLANARIZATION"
+            preview="images/upward.png"
+            type="de.cau.cs.kieler.type.layered">
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.borderSpacing">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.layout.options.randomSeed">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.kiml.ogdf.option.layerDistance">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.spacing">
+         </knownOption>
+      </layoutAlgorithm>
+   </extension>
+
+
+</plugin>
