@@ -121,10 +121,12 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     pointer++;
                 }
                 
-                // Do the same for ports on the southern side
+                // Do the same for ports on the southern side; the list of ports must
+                // be built in reversed order, since ports on the southern side are
+                // listed from right to left
                 portList.clear();
                 for (LPort port : node.getPorts(PortSide.SOUTH)) {
-                    portList.add(port);
+                    portList.add(0, port);
                 }
                 
                 dummyNodes = createDummyNodes(portList);
