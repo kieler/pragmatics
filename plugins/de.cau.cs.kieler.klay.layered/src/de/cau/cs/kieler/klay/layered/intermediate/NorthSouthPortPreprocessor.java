@@ -34,7 +34,39 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * Inserts dummy nodes to cope with north and south ports.
  * 
  * <p>
- * TODO Add a proper description here of what's going on.
+ * For each node with northern or southern ports, dummy nodes get inserted in the node's
+ * layer above or below the node. (for northern and southern ports, respectively) Assume
+ * that a node has several northern ports. First, the ports are assembled in left-to-right
+ * order according to their position. Then, the ports are partitioned into ports with
+ * only incoming edges (in ports), ports with only outgoing edges (out ports) and ports
+ * with both, incoming and outgoing edges (in/out ports). Note that this does not rely on
+ * port type information.
+ * 
+ * <p>
+ * In and out ports are now matched up left to right and right to left, respectively, as
+ * long as the out port is right of the in port. In the example below, ports P1 and P6
+ * will be matched, as will be ports P2 and P5. Ports P3 and P4 will not be matched since
+ * P3 is an out port and not right of P4.
+ * 
+ * <p>
+ * For each pair of matched ports, a dummy node is then inserted that is shared by both
+ * ports. This leads to edges of both ports sharing the same y coordinate, which is fine
+ * as long as the out port is right of the in port. When this is no longer the case,
+ * ports cannot share a dummy node anymore. Thus, P4 and P3 each get their own dummy node.
+ * 
+ * <p>
+ * Once in and out ports are processed, in/out ports are given their own dummy node.
+ * <pre>
+ *                      ------------------------------
+ *                      |
+ * ---------------------+----
+ *                      |   |
+ * ------------------   |   |   ----------------------
+ *                  |   |   |   |
+ * --------------   |   |   |   |   ------------------
+ *              |   |   |   |   |   |
+ *              P1  P2  P3  P4  P5  P6
+ * </pre>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph, with an established node order in each
@@ -139,7 +171,7 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 inOutPorts.add(port);
             } else if (in) {
                 inPorts.add(port);
-            } else {
+            } else if (out) {
                 outPorts.add(port);
             }
         }

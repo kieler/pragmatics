@@ -28,9 +28,6 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * Removes dummy nodes created by {@link NorthSouthPortPreprocessor} and routes the
  * edges properly.
  * 
- * <p>
- * TODO Add a proper description here of what's going on.
- * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph, with finished node placements, port
  *     placements and edge routing.</dd>
