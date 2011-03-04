@@ -13,6 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -68,17 +72,31 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                     continue;
                 }
                 
-                // Iterate over the northern ports
-                int northPointer = pointer;
-                for (LPort northPort : node.getPorts(PortSide.NORTH)) {
-                    LNode dummy = createDummyNode(northPort);
-                    dummy.setLayer(northPointer, layer);
+                // Prepare a list of ports on the northern side, sorted from left
+                // to right (when viewed in the diagram); create the appropriate
+                // dummy nodes and assign them to the layer
+                List<LPort> portList = new LinkedList<LPort>();
+                for (LPort port : node.getPorts(PortSide.NORTH)) {
+                    portList.add(port);
+                }
+                
+                List<LNode> dummyNodes = createDummyNodes(portList);
+                
+                int insertPoint = pointer;
+                for (LNode dummy : dummyNodes) {
+                    dummy.setLayer(insertPoint, layer);
                     pointer++;
                 }
                 
-                // Iterate over the southern ports
-                for (LPort southPort : node.getPorts(PortSide.SOUTH)) {
-                    LNode dummy = createDummyNode(southPort);
+                // Do the same for ports on the southern side
+                portList.clear();
+                for (LPort port : node.getPorts(PortSide.SOUTH)) {
+                    portList.add(port);
+                }
+                
+                dummyNodes = createDummyNodes(portList);
+                
+                for (LNode dummy : dummyNodes) {
                     dummy.setLayer(++pointer, layer);
                 }
             }
@@ -86,38 +104,136 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
     }
     
     /**
-     * Creates a dummy node for the given port. All the edges incident with the given port
-     * are rerouted to the new dummy node, leaving the port edgeless for the moment. This
-     * method takes into account that a port may have both incoming and outgoing edges,
-     * distributing them to an input and an output port of the new dummy node.
+     * Returns a list of dummy nodes for the given ports. The list of ports must be
+     * sorted by position from left to right.
      * 
-     * @param port the port.
-     * @return dummy node for the port.
+     * @param ports the list of ports to create dummy nodes for.
+     * @return a list of dummy nodes.
      */
-    private LNode createDummyNode(final LPort port) {
+    private List<LNode> createDummyNodes(final List<LPort> ports) {
+        // We'll create at most as many dummy nodes as there are ports
+        List<LNode> dummyNodes = new ArrayList<LNode>(ports.size());
+        
+        // We'll assemble lists of ports with only incoming, ports with only outgoing
+        // and ports with both, incoming and outgoing edges
+        List<LPort> inPorts = new ArrayList<LPort>(ports.size());
+        List<LPort> outPorts = new ArrayList<LPort>(ports.size());
+        List<LPort> inOutPorts = new ArrayList<LPort>(ports.size());
+        
+        for (LPort port : ports) {
+            boolean in = false;
+            boolean out = false;
+            
+            // This is completely independent of ports being marked as INPUT or OUTPUT
+            // ports to stay clear of problems related to cycle breaking. (INPUT ports
+            // may have outgoing edges, OUTPUT ports may have incoming edges)
+            for (LEdge edge : port.getEdges()) {
+                if (edge.getSource() == port) {
+                    out = true;
+                } else {
+                    in = true;
+                }
+            }
+            
+            if (in && out) {
+                inOutPorts.add(port);
+            } else if (in) {
+                inPorts.add(port);
+            } else {
+                outPorts.add(port);
+            }
+        }
+        
+        // Iterate through the lists of input and output ports while both lists still
+        // have elements and while output ports are still located right of input ports.
+        // While this is true, input and output ports may share the same dummy node
+        int inPortsIndex = 0;
+        int outPortsIndex = outPorts.size() - 1;
+        
+        while (inPortsIndex < inPorts.size() && outPortsIndex >= 0) {
+            LPort inPort = inPorts.get(inPortsIndex);
+            LPort outPort = outPorts.get(outPortsIndex);
+            
+            // If the out port is not right of the in port, they cannot share the same
+            // dummy node anymore
+            if (ports.indexOf(outPort) < ports.indexOf(inPort)) {
+                break;
+            }
+            
+            // Otherwise, create a dummy node for them
+            dummyNodes.add(createDummyNode(inPort, outPort));
+            
+            inPortsIndex++;
+            outPortsIndex--;
+        }
+        
+        // Give the rest of input and output ports their dummy nodes
+        while (inPortsIndex < inPorts.size()) {
+            dummyNodes.add(createDummyNode(inPorts.get(inPortsIndex), null));
+            inPortsIndex++;
+        }
+        
+        while (outPortsIndex >= 0) {
+            dummyNodes.add(createDummyNode(null, outPorts.get(outPortsIndex)));
+            outPortsIndex--;
+        }
+        
+        // in / out ports get their own dummy nodes
+        for (LPort inOutPort : inOutPorts) {
+            dummyNodes.add(createDummyNode(inOutPort, inOutPort));
+        }
+        
+        return dummyNodes;
+    }
+    
+    /**
+     * Creates a dummy node for the given ports. Edges going into {@code inPort} are
+     * rerouted to the dummy node's input port. Edges leaving the {@code outPort} are
+     * rerouted to the dummy node's output port. Both arguments may refer to the same
+     * port. The dummy's port have their {@code ORIGIN} property set to the port whose
+     * edges have been rerouted to them.
+     * 
+     * @param inPort the input port whose edges to reroute. May be {@code null}.
+     * @param outPort the output port whose edges to reroute. May be {@code null}.
+     * @return a dummy node.
+     */
+    private LNode createDummyNode(final LPort inPort, final LPort outPort) {
         LNode dummy = new LNode();
-        dummy.setProperty(Properties.ORIGIN, port);
         dummy.setProperty(Properties.NODE_TYPE,
                 Properties.NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
-        LPort dummyInputPort = new LPort();
-        dummyInputPort.setType(PortType.INPUT);
-        dummyInputPort.setSide(PortSide.WEST);
-        dummyInputPort.setNode(dummy);
+        // Input port
+        if (inPort != null) {
+            LPort dummyInputPort = new LPort();
+            dummyInputPort.setProperty(Properties.ORIGIN, inPort);
+            dummyInputPort.setType(PortType.INPUT);
+            dummyInputPort.setSide(PortSide.WEST);
+            dummyInputPort.setNode(dummy);
+            
+            // Reroute edges
+            LEdge[] edgeArray = inPort.getEdges().toArray(new LEdge[0]);
+            for (LEdge edge : edgeArray) {
+                if (edge.getTarget() == inPort) {
+                    edge.setTarget(dummyInputPort);
+                }
+            }
+        }
         
-        LPort dummyOutputPort = new LPort();
-        dummyOutputPort.setType(PortType.OUTPUT);
-        dummyOutputPort.setSide(PortSide.EAST);
-        dummyOutputPort.setNode(dummy);
-        
-        // Reroute the edges
-        LEdge[] edgeArray = port.getEdges().toArray(new LEdge[0]);
-        for (LEdge edge : edgeArray) {
-            if (edge.getSource() == port) {
-                edge.setSource(dummyOutputPort);
-            } else {
-                edge.setTarget(dummyInputPort);
+        // Output port
+        if (outPort != null) {
+            LPort dummyOutputPort = new LPort();
+            dummyOutputPort.setProperty(Properties.ORIGIN, outPort);
+            dummyOutputPort.setType(PortType.OUTPUT);
+            dummyOutputPort.setSide(PortSide.EAST);
+            dummyOutputPort.setNode(dummy);
+            
+            // Reroute edges
+            LEdge[] edgeArray = outPort.getEdges().toArray(new LEdge[0]);
+            for (LEdge edge : edgeArray) {
+                if (edge.getSource() == outPort) {
+                    edge.setSource(dummyOutputPort);
+                }
             }
         }
         

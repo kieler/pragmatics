@@ -60,33 +60,64 @@ public class NorthSouthPortPostprocessor extends AbstractAlgorithm implements IL
                     continue;
                 }
                 
-                // The node has exactly one input and one output port
-                LPort dummyInputPort = node.getPorts(PortType.INPUT).iterator().next();
-                LPort dummyOutputPort = node.getPorts(PortType.OUTPUT).iterator().next();
-                
-                // Retrieve the port the dummy node was created from
-                LPort originPort = (LPort) node.getProperty(Properties.ORIGIN);
-                
-                // Calculate the bend point
-                KVector bendPoint = node.getPos();
-                bendPoint.x = originPort.getNode().getPos().x + originPort.getPos().x;
-                
-                // Reroute the edges, inserting a new bend point at the position of
-                // the dummy node
-                LEdge[] edgeArray = dummyInputPort.getEdges().toArray(new LEdge[0]);
-                for (LEdge inEdge : edgeArray) {
-                    inEdge.setTarget(originPort);
-                    inEdge.getBendPoints().add(bendPoint.x, bendPoint.y);
-                }
-
-                edgeArray = dummyOutputPort.getEdges().toArray(new LEdge[0]);
-                for (LEdge outEdge : edgeArray) {
-                    outEdge.setSource(originPort);
-                    outEdge.getBendPoints().addFirst(bendPoint.x, bendPoint.y);
+                // Iterate through the ports
+                for (LPort port : node.getPorts()) {
+                    if (port.getType() == PortType.INPUT) {
+                        processInputPort(port);
+                    } else if (port.getType() == PortType.OUTPUT) {
+                        processOutputPort(port);
+                    }
                 }
                 
+                // Remove the node
                 node.setLayer(null);
             }
+        }
+    }
+    
+    /**
+     * Reroutes the edges connected to the given input port back to the port it was
+     * created for.
+     * 
+     * @param inputPort the input port whose edges to restore.
+     */
+    private void processInputPort(final LPort inputPort) {
+        // Retrieve the port the dummy node was created from
+        LPort originPort = (LPort) inputPort.getProperty(Properties.ORIGIN);
+        
+        // Calculate the bend point
+        KVector bendPoint = inputPort.getNode().getPos();
+        bendPoint.x = originPort.getNode().getPos().x + originPort.getPos().x;
+        
+        // Reroute the edges, inserting a new bend point at the position of
+        // the dummy node
+        LEdge[] edgeArray = inputPort.getEdges().toArray(new LEdge[0]);
+        for (LEdge inEdge : edgeArray) {
+            inEdge.setTarget(originPort);
+            inEdge.getBendPoints().add(bendPoint.x, bendPoint.y);
+        }
+    }
+    
+    /**
+     * Reroutes the edges connected to the given output port back to the port it was
+     * created for.
+     * 
+     * @param outputPort the output port whose edges to restore.
+     */
+    private void processOutputPort(final LPort outputPort) {
+        // Retrieve the port the dummy node was created from
+        LPort originPort = (LPort) outputPort.getProperty(Properties.ORIGIN);
+        
+        // Calculate the bend point
+        KVector bendPoint = outputPort.getNode().getPos();
+        bendPoint.x = originPort.getNode().getPos().x + originPort.getPos().x;
+        
+        // Reroute the edges, inserting a new bend point at the position of
+        // the dummy node
+        LEdge[] edgeArray = outputPort.getEdges().toArray(new LEdge[0]);
+        for (LEdge outEdge : edgeArray) {
+            outEdge.setSource(originPort);
+            outEdge.getBendPoints().addFirst(bendPoint.x, bendPoint.y);
         }
     }
 }
