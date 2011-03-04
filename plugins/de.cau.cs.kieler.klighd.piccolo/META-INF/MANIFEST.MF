@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER Scalable Diagrams
-Bundle-SymbolicName: de.cau.cs.kieler.skad;singleton:=true
+Bundle-Name: KIELER Light-Weight Piccolo Diagrams
+Bundle-SymbolicName: de.cau.cs.kieler.klighd.piccolo;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

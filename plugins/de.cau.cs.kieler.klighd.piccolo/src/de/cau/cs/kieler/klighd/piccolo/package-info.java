@@ -13,6 +13,6 @@
  */
 
 /**
- * Classes providing a view part for displaying scalable diagrams. 
+ * Base package of the SKaD project.
  */
-package de.cau.cs.kieler.skad.views;
+package de.cau.cs.kieler.klighd.piccolo;

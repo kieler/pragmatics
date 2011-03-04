@@ -6,8 +6,8 @@
       <view
             allowMultiple="true"
             category="de.cau.cs.kieler"
-            class="de.cau.cs.kieler.skad.views.SkadViewPart"
-            icon="icons/skad.gif"
+            class="de.cau.cs.kieler.klighd.piccolo.views.PiccoloViewPart"
+            icon="icons/klighd.gif"
             id="de.cau.cs.kieler.skad.skadView"
             name="Diagram"
             restorable="true">

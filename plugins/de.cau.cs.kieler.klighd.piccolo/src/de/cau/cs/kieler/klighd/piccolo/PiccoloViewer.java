@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.skad;
+package de.cau.cs.kieler.klighd.piccolo;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -23,11 +23,12 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolox.swt.PSWTCanvas;
 
 /**
- * A viewer for scalable diagrams.
+ * A viewer for light-weight piccolo diagrams.
  *
  * @author msp
  */
-public class SkadViewer extends Viewer {
+public class PiccoloViewer extends Viewer {
+    
     /** the canvas used for drawing. */
     private PSWTCanvas canvas;
     
@@ -36,7 +37,7 @@ public class SkadViewer extends Viewer {
      * 
      * @param parent the parent composite
      */
-    public SkadViewer(final Composite parent) {
+    public PiccoloViewer(final Composite parent) {
         this(parent, SWT.NONE);
     }
     
@@ -46,7 +47,7 @@ public class SkadViewer extends Viewer {
      * @param parent the parent composite
      * @param style the style attributes
      */
-    public SkadViewer(final Composite parent, final int style) {
+    public PiccoloViewer(final Composite parent, final int style) {
         canvas = new PSWTCanvas(parent, style);
         canvas.setDoubleBuffered(false);
     }

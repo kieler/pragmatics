@@ -11,30 +11,30 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.skad.views;
+package de.cau.cs.kieler.klighd.piccolo.views;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import de.cau.cs.kieler.skad.SkadViewer;
+import de.cau.cs.kieler.klighd.piccolo.PiccoloViewer;
 import edu.umd.cs.piccolo.PNode;
 
 /**
- * A view part for scalable diagrams.
+ * A view part for light-weight piccolo diagrams.
  *
  * @author msp
  */
-public class SkadViewPart extends ViewPart {
+public class PiccoloViewPart extends ViewPart {
 
     /** the viewer that is shown in this view part. */
-    private SkadViewer viewer;
+    private PiccoloViewer viewer;
     
     /**
      * {@inheritDoc}
      */
     @Override
     public void createPartControl(final Composite parent) {
-        viewer = new SkadViewer(parent);
+        viewer = new PiccoloViewer(parent);
         
         ShowDiagramAction showDiagramAction = new ShowDiagramAction(this, getSite().getPage());
         getViewSite().getActionBars().getToolBarManager().add(showDiagramAction);

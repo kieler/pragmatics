@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.skad.views;
+package de.cau.cs.kieler.klighd.piccolo.views;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditPart;
@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchPage;
 
 import de.cau.cs.kieler.core.ui.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
-import de.cau.cs.kieler.skad.Draw2DNode;
+import de.cau.cs.kieler.klighd.piccolo.Draw2DNode;
 
 /**
  * An action that copies the content of the currently open diagram.
@@ -32,7 +32,7 @@ import de.cau.cs.kieler.skad.Draw2DNode;
 public class ShowDiagramAction extends Action {
     
     /** the view part that created this action. */
-    private SkadViewPart viewPart;
+    private PiccoloViewPart viewPart;
     /** the current workbench page. */
     private IWorkbenchPage workbenchPage;
     
@@ -42,7 +42,7 @@ public class ShowDiagramAction extends Action {
      * @param viewPart the view part for displaying diagrams
      * @param page the current workbench page
      */
-    public ShowDiagramAction(final SkadViewPart viewPart, final IWorkbenchPage page) {
+    public ShowDiagramAction(final PiccoloViewPart viewPart, final IWorkbenchPage page) {
         super("Test");
         this.workbenchPage = page;
         this.viewPart = viewPart;
