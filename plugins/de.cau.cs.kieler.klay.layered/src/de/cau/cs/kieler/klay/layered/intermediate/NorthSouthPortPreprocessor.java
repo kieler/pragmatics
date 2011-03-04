@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * Inserts dummy nodes to cope with north and south ports.
  * 
  * <p>
- * For each node with northern or southern ports, dummy nodes get inserted in the node's
+ * For each node with northern or southern ports, dummy nodes are inserted in the node's
  * layer above or below the node. (for northern and southern ports, respectively) Assume
  * that a node has several northern ports. First, the ports are assembled in left-to-right
  * order according to their position. Then, the ports are partitioned into ports with
@@ -52,7 +52,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * For each pair of matched ports, a dummy node is then inserted that is shared by both
  * ports. This leads to edges of both ports sharing the same y coordinate, which is fine
  * as long as the out port is right of the in port. When this is no longer the case,
- * ports cannot share a dummy node anymore. Thus, P4 and P3 each get their own dummy node.
+ * ports cannot share a dummy node anymore. (the horizontal edge segments would overlap
+ * and thus introduce ambiguity) Thus, P4 and P3 each get their own dummy node.
  * 
  * <p>
  * Once in and out ports are processed, in/out ports are given their own dummy node.
