@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
@@ -435,15 +437,42 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
     private void assignPortPos(final LNode node, final int nodeIx,
             final PortType type, final int count) {
         if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
-            float pos = nodeIx;
             float incr = 1.0f / count;
+            
             if (type == PortType.INPUT) {
-                incr = -incr;
-                pos = pos + 1 + incr;
-            }
-            for (LPort port : node.getPorts(type)) {
-                portPos[port.id] = pos;
-                pos += incr;
+                // Start at the top right port, going counter-clockwise. Since that's
+                // not the order the ports appear in the list of ports, we'll have to
+                // do some preprocessing
+                List<LPort> northPorts = new LinkedList<LPort>();
+                List<LPort> portList = new LinkedList<LPort>();
+                
+                for (LPort port : node.getPorts(type)) {
+                    if (port.getSide() == PortSide.NORTH) {
+                        northPorts.add(port);
+                    } else {
+                        portList.add(port);
+                    }
+                }
+                
+                // Append the list of northern ports to the other ports
+                portList.addAll(northPorts);
+                
+                // Now, on to the real processing
+                float pos = nodeIx + 1 - incr;
+                
+                for (LPort port : portList) {
+                    portPos[port.id] = pos;
+                    pos -= incr;
+                }
+                
+            } else {
+                // Start at the top left port, going clockwise
+                float pos = nodeIx;
+                
+                for (LPort port : node.getPorts(type)) {
+                    portPos[port.id] = pos;
+                    pos += incr;
+                }
             }
         } else {
             for (LPort port : node.getPorts(type)) {
