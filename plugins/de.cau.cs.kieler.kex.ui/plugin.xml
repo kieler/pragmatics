@@ -26,7 +26,7 @@
         <wizard    id="de.cau.cs.kieler.kex.ui.newWizard"
             name="KIELER Examples"
             class="de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard"
-            category="org.eclipse.ui.Examples/de.cau.cs.kieler"
+            category="de.cau.cs.kieler"
             icon="icons/keksIcon.gif"
             project="true">
             <description>Add KIELER examples to your workspace.</description>
