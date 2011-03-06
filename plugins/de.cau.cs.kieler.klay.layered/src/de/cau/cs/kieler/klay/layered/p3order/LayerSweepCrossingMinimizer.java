@@ -281,12 +281,10 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         Map<LPort, Integer> targetMap = new HashMap<LPort, Integer>();
         for (LNode node : rightLayer) {
             if (node.getProperty(Properties.PORT_CONS).isOrderFixed()) {
-                ListIterator<LPort> portIter = node.getPorts().listIterator(node.getPorts().size());
+                List<LPort> inputPorts = getSortedInputPorts(node);
+                ListIterator<LPort> portIter = inputPorts.listIterator(inputPorts.size());
                 while (portIter.hasPrevious()) {
-                    LPort port = portIter.previous();
-                    if (port.getType() == PortType.INPUT) {
-                        targetMap.put(port, targetCount++);
-                    }
+                    targetMap.put(portIter.previous(), targetCount++);
                 }
             } else {
                 for (LPort port : node.getPorts(PortType.INPUT)) {
@@ -440,24 +438,8 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
             float incr = 1.0f / count;
             
             if (type == PortType.INPUT) {
-                // Start at the top right port, going counter-clockwise. Since that's
-                // not the order the ports appear in the list of ports, we'll have to
-                // do some preprocessing
-                List<LPort> northPorts = new LinkedList<LPort>();
-                List<LPort> portList = new LinkedList<LPort>();
-                
-                for (LPort port : node.getPorts(type)) {
-                    if (port.getSide() == PortSide.NORTH) {
-                        northPorts.add(port);
-                    } else {
-                        portList.add(port);
-                    }
-                }
-                
-                // Append the list of northern ports to the other ports
-                portList.addAll(northPorts);
-                
-                // Now, on to the real processing
+                // Start at the top right port, going counter-clockwise
+                List<LPort> portList = getSortedInputPorts(node);
                 float pos = nodeIx + 1 - incr;
                 
                 for (LPort port : portList) {
@@ -625,6 +607,30 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         }
         // sort the ports by considering the side, type, and barycenter values
         node.sortPorts(portBarycenter);
+    }
+
+    /**
+     * Returns a list of input ports, beginning at the top right port of the eastern
+     * side, going clockwise.
+     * 
+     * @param node the node whose input ports to return.
+     * @return list of input ports.
+     */
+    private List<LPort> getSortedInputPorts(final LNode node) {
+        List<LPort> northPorts = new LinkedList<LPort>();
+        List<LPort> portList = new LinkedList<LPort>();
+        
+        for (LPort port : node.getPorts(PortType.INPUT)) {
+            if (port.getSide() == PortSide.NORTH) {
+                northPorts.add(port);
+            } else {
+                portList.add(port);
+            }
+        }
+        
+        // Append the list of northern ports to the other ports
+        portList.addAll(northPorts);
+        return portList;
     }
 
 }
