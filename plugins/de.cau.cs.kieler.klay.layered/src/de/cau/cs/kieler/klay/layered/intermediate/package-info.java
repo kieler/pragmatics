@@ -13,6 +13,6 @@
  */
 
 /**
- * Intermediate layout phases.
+ * Intermediate layout processors.
  */
 package de.cau.cs.kieler.klay.layered.intermediate;

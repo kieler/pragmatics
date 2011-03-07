@@ -170,8 +170,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
 
         // sort the linear segments of the layered graph
         sortLinearSegments(layeredGraph);
+        
         // create an unbalanced placement from the sorted segments
         createUnbalancedPlacement(layeredGraph);
+        
         // balance the placement
         IKielerProgressMonitor monitor = getMonitor().subTask(1);
         monitor.begin("Balance Placement", 1);
@@ -327,6 +329,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
 
     /**
      * Creates an unbalanced placement for the sorted linear segments.
+     * 
+     * @param layeredGraph TODO Document.
      */
     private void createUnbalancedPlacement(final LayeredGraph layeredGraph) {
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
@@ -338,6 +342,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             double maxSize = 0.0f;
             for (LNode node : segment.getNodes()) {
                 float offset = (float) node.getProperty(Properties.LINSEG_OFFSET);
+                System.out.println(offset);
                 if (offset < minOffset) {
                     minOffset = offset;
                 }
@@ -363,10 +368,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             for (LNode node : segment.getNodes()) {
                 double offset = 0.0f;
                 if (straightEdges) {
-                  // add node offset - minimal offset
-                  offset = node.getProperty(Properties.LINSEG_OFFSET) - minOffset;
+                    // add node offset - minimal offset
+                    offset = node.getProperty(Properties.LINSEG_OFFSET) - minOffset;
                 } else {
-                  offset = maxSize / 2 - node.getSize().y / 2;
+                    offset = maxSize / 2 - node.getSize().y / 2;
                 }
                 Layer layer = node.getLayer();
                 node.getPos().y = newPos + offset;
@@ -432,6 +437,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     }
 
     /**
+     * TODO: Document.
+     * 
      * @param region the region whose force to be calculated
      */
     private void calculateForce(final Region region) {
@@ -471,6 +478,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     }
 
     /**
+     * TODO: Document.
      * 
      * @param region the region to be checked
      * @param spacing the object spacing
@@ -514,6 +522,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     }
 
     /**
+     * TODO: Document.
      * 
      * @param layeredGraph the layered graph
      * @return ready is set to false if there are regions newly touching

@@ -14,5 +14,11 @@
 
 /**
  * Base package of the layered layouter.
+ * 
+ * <p>
+ * Klay Layered is split into five main phases, each having their own package containing
+ * the available implementations. Additionally, there are intermediate processors that
+ * do some pre and post processing. Those also have their own package. Finally, Klay Layered
+ * operates on its own graph structure, the Layered Graph. That, too, has its own package.
  */
 package de.cau.cs.kieler.klay.layered;
