@@ -184,30 +184,43 @@ public class ImportExamplePage extends WizardPage {
         treeViewer.addCheckStateListener(new ICheckStateListener() {
             public void checkStateChanged(final CheckStateChangedEvent event) {
                 // TODO test if under subcategory funzt
-                treeViewer.setSubtreeChecked(event.getElement(), event.getChecked());
-                // TODO category uncheck if no childs selected and category check one child is
-                // selected.
-                // isCategoryElementChecked(event.getElement(), false);
+                boolean checked = event.getChecked();
+                treeViewer.setSubtreeChecked(event.getElement(), checked);
+                updateChecks(event);
             }
 
-            private boolean isCategoryElementChecked(final Object element, final boolean isChecked) {
-                boolean result = false;
-                if (element instanceof Pair) {
-                    @SuppressWarnings("unchecked")
-                    Pair<Category, ArrayList<Object>> pair = (Pair<Category, ArrayList<Object>>) element;
-                    for (Object categoryElement : pair.getSecond()) {
-                        if (treeViewer.getChecked(categoryElement)) {
-                            result = true;
-                        }
-                        if (categoryElement instanceof Pair) {
-                            boolean categoryElementChecked = isCategoryElementChecked(
-                                    categoryElement, false);
-                            treeViewer.setChecked(categoryElement, categoryElementChecked);
-                            result |= categoryElementChecked;
+            private void updateChecks(CheckStateChangedEvent event) {
+                Object element = event.getElement();
+                ArrayList<Pair<Category, ArrayList<Object>>> input = (ArrayList<Pair<Category, ArrayList<Object>>>) treeViewer
+                        .getInput();
+                // TODO add functionality for subcategories.
+                Pair<Category, ArrayList<Object>> parentCat = null;
+                for (Pair<Category, ArrayList<Object>> cat : input) {
+                    if (cat.equals(element)) {
+                        return;
+                    }
+                    for (Object child : cat.getSecond()) {
+                        if (child.equals(element)) {
+                            parentCat = cat;
+                            break;
                         }
                     }
+                    if (parentCat != null) {
+                        break;
+                    }
                 }
-                return result;
+                if (!event.getChecked()) {
+                    for (Object child : parentCat.getSecond()) {
+                        if (!child.equals(element) && treeViewer.getChecked(child)) {
+                            return;
+                        }
+                    }
+                    treeViewer.setChecked(parentCat, false);
+                } else {
+                    if (!treeViewer.getChecked(parentCat)) {
+                        treeViewer.setChecked(parentCat, true);
+                    }
+                }
             }
         });
         treeViewer.expandAll();
@@ -617,10 +630,6 @@ public class ImportExamplePage extends WizardPage {
                 .append(example.getDescription() != null ? example.getDescription() : "");
         getExampleDescField().setText(sb.toString());
     }
-
-    // TODO falls ein image nicht richtig geladen wird wegen format fehler oder
-    // so muss auf jeden fall eine (dezente) meldung kommen... am besten schon beim export
-    // darauf reagieren.
 
     /**
      * loads "no preview" picture.
