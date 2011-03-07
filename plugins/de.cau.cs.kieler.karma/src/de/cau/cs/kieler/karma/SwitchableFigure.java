@@ -22,7 +22,6 @@ import org.eclipse.draw2d.Shape;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.ImageFigureEx;
-import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
 import org.eclipse.gmf.runtime.gef.ui.figures.DefaultSizeNodeFigure;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -55,6 +54,10 @@ public class SwitchableFigure extends Shape {
         currentFigure = defaultFigure();
     }
 
+    /**
+     * A fallback default figure. Should only be displayed if things go wrong.
+     * @return the default figure.
+     */
     private IFigure defaultFigure() {
         RectangleFigure rectangle = new RectangleFigure();
         rectangle.setLineWidth(1);
@@ -66,6 +69,7 @@ public class SwitchableFigure extends Shape {
     @Override
     public void paint(final Graphics graphics) {    
         if (currentFigure != null) {
+            //some border stuff for better displaying the inner figure
             Rectangle newBounds = new Rectangle();
             newBounds.x = this.getBounds().x + 1;
             newBounds.y = this.getBounds().y + 1;
@@ -95,9 +99,8 @@ public class SwitchableFigure extends Shape {
     public void setCurrentFigure(final IFigure figure) {
         currentFigure = figure;
         currentFigure.setParent(this.getParent());
-        //currentFigure.setBounds(super.getBounds());
         
-
+        //adding some border for some types of figures otherwise they might get cut off.
         if (this.getParent() instanceof DefaultSizeNodeFigure
                 && figure instanceof ImageFigureEx) {
             DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
@@ -107,11 +110,8 @@ public class SwitchableFigure extends Shape {
             }
         } else if (this.getParent() instanceof DefaultSizeNodeFigure) {
             DefaultSizeNodeFigure defaultSizeNodeFigure = (DefaultSizeNodeFigure) this.getParent();
-       //     if (currentFigure.getPreferredSize().height != 0 && currentFigure.getPreferredSize().width != 0) {
                 defaultSizeNodeFigure.setDefaultSize(currentFigure.getBounds().width + 2, currentFigure.getBounds().height + 2);
-        //}
         }
-        // this.repaint();
         
     }
 

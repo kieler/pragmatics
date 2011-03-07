@@ -68,6 +68,9 @@ public class AdvancedRenderingEditPartUtil {
      */
     private List<HashMap<String, Object>> conditions;
 
+    /**
+     * Variable to detect if the collapsed state has changed.
+     */
     private boolean isCollapsed = false;
     
     /**
@@ -95,6 +98,7 @@ public class AdvancedRenderingEditPartUtil {
             final AbstractGraphicalEditPart editPart) {
         Object notifier = notification.getNotifier();      
         boolean coll = this.checkCollapsed(editPart);
+        //eliminate some notifications we are not interested in 
         if ((!(notification.isTouch()) && !(notifier instanceof Bounds) 
                 && !(notifier instanceof RelativeBendpoints)
                 && !(notifier instanceof IdentityAnchor)) || (coll != this.isCollapsed)) {
@@ -103,6 +107,7 @@ public class AdvancedRenderingEditPartUtil {
             if (figure != null) {
                 boolean changed = false;
                 changed = this.updateFigure(figure, modelElement, editPart, false);
+                //do some layout if the figure actually was changed
                 if (changed) {
                     LayoutManager layoutManager = figure.getLayoutManager();
                     if (layoutManager != null) {
@@ -138,15 +143,20 @@ public class AdvancedRenderingEditPartUtil {
             } else {
                 oldFigure = figure;
             }
+            //check the conditions
             for (HashMap<String, Object> conditionElement : conditions) {
                 @SuppressWarnings("unchecked")
                 ICondition<EObject> condition = (ICondition<EObject>) conditionElement
                         .get("condition");
                 if (condition.evaluate(modelElement)) {
+                    //if its the same condition as the last time we can stop here. 
+                    //forceUpdate variable bypasses this check.
                     if (lastCondition == condition && !forceUpdate) {
                         return false;
                     } else {
                         lastCondition = condition;
+                        //get our figure description strings. 
+                        //No type check for better performance. The Types are hardcoded in the conditionprovider anyway.
                         @SuppressWarnings("unchecked")
                         Pair<Integer, Integer> figureSize = (Pair<Integer, Integer>) conditionElement
                                 .get("figureSize");
@@ -156,7 +166,7 @@ public class AdvancedRenderingEditPartUtil {
 
                         IRenderingProvider renderingProvider = (IRenderingProvider) conditionElement
                                 .get("renderingProvider");
-
+                        //use those descriptions to set the figure and stuff
                         this.setFigure(renderingProvider, figureParam, oldFigure, modelElement,
                                 switchableFigure, editPart);
                         figure.getBounds().setSize(60,40);
@@ -248,12 +258,13 @@ public class AdvancedRenderingEditPartUtil {
     private void setBorderItemLocator(final AbstractGraphicalEditPart editPart,
             final IRenderingProvider renderingProvider, final String borderItemParam,
             final EObject modelElement, final IFigure figure) {
-        // sets the new BoderItemLocator
+        // sets the new BoderItemLocator. unfortunately pretty hacked to get the right elements und special cases
         if (editPart instanceof IBorderItemEditPart) {
             if (editPart.getParent() instanceof AbstractBorderedShapeEditPart) {
                 AbstractBorderedShapeEditPart parent = ((AbstractBorderedShapeEditPart) editPart
                         .getParent());
                 IFigure mainFigure = parent.getMainFigure();
+                //special case for labels since hierarchie is different
                 if (editPart instanceof AdvancedRenderingLabelEditPart) {
                     IFigure contentPane = editPart.getContentPane();
                     if (contentPane != null) {
@@ -267,6 +278,7 @@ public class AdvancedRenderingEditPartUtil {
                         lastCondition = null;
                     }
                 } else {
+                    //this is the code for ports etc.
                     IFigure parentsParent = figure.getParent().getParent();
                     if (parentsParent instanceof BorderedNodeFigure) {
                         BorderedNodeFigure borderedNodeFigure = (BorderedNodeFigure) parentsParent;

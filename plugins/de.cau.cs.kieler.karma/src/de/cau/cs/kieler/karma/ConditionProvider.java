@@ -100,6 +100,7 @@ public final class ConditionProvider {
      */
     public List<HashMap<String, Object>> getPairs(final String callingEditPart) {
         if (hashTableConditions.containsKey(callingEditPart)) {
+            //if its cached we are done already
             return hashTableConditions.get(callingEditPart);
         }
         List<HashMap<String, Object>> conditionsList = new LinkedList<HashMap<String, Object>>();
@@ -111,6 +112,7 @@ public final class ConditionProvider {
                 continue;
             }
             IConfigurationElement[] parts = settings.getChildren("editPart");
+            //we need to be an editpart thats supposed to be a target of karma.(registered in the extensionpoint)
             if (checkCompatibleEditParts(parts, callingEditPart)) {
                 int prio = 1;
                 String prioString = settings.getAttribute("Priority");
@@ -121,11 +123,15 @@ public final class ConditionProvider {
                 IConfigurationElement[] conditionsContainer = settings.getChildren("conditions");
                 for (IConfigurationElement conditionContainer : conditionsContainer) {
                     IConfigurationElement[] conditions = conditionContainer.getChildren();
+                    //read and build all those conditions
                     for (IConfigurationElement condition : conditions) {
+                        //our condition element is a hashmap to be flexible in how many and what informations to provide.
                         HashMap<String, Object> conditionElement = new HashMap<String, Object>();
 
+                        //set the priority
                         conditionElement.put("prio", prio);
 
+                        //Make an instance of the rendering provider read from the extension and set it.
                         IRenderingProvider renderingProvider = null;
                         try {
                             renderingProvider = (IRenderingProvider) settings
@@ -135,6 +141,7 @@ public final class ConditionProvider {
                         }
                         conditionElement.put("renderingProvider", renderingProvider);
 
+                        //Read the figure, borderitem, layout and figuresize strings and set them.
                         String figureParam = condition.getAttribute("figureParam");
                         if (figureParam == null) {
                             figureParam = "";
@@ -145,8 +152,8 @@ public final class ConditionProvider {
                         if (borderItemParam == null) {
                             borderItemParam = "";
                         }
+                        
                         conditionElement.put("borderItemParam", borderItemParam);
-
                         String layoutParam = condition.getAttribute("layoutParam");
                         if (layoutParam == null) {
                             layoutParam = "";
@@ -156,7 +163,8 @@ public final class ConditionProvider {
                         String figureSizeString = condition.getAttribute("figureSize");
                         Pair<Integer, Integer> figureSize = this.parseFigureSize(figureSizeString);
                         conditionElement.put("figureSize", figureSize);
-
+                        
+                        //Read and build the actual condition
                         ICondition<EObject> cond = getCondition(condition, packages);
                         if ((cond != null)) {
                             conditionElement.put("condition", cond);
@@ -188,6 +196,8 @@ public final class ConditionProvider {
      */
     private ICondition<EObject> getCondition(final IConfigurationElement condition,
             final IConfigurationElement[] packages) {
+        //if its a FeatureValueCondition we try to get the EStructuralFeature from the packages
+        //and try to get the desired value by guessing its type. (atm only supports enum and boolean)
         if (condition.getName().equals("featureValueCondition")) {
             String featureString = condition.getAttribute("feature");
             String typeString = condition.getAttribute("type");
@@ -206,6 +216,8 @@ public final class ConditionProvider {
             } else {
                 throw new RuntimeException("Could not find specified feature.");
             }
+            //If its a ListSizeCondition try to get the EStructuredFeature from registered packages.
+            //Also try to parse the desired size as an int and an operator (i.e. =< from the input string) 
         } else if (condition.getName().equals("listSizeCondition")) {
             String featureString = condition.getAttribute("feature");
             String typeString = condition.getAttribute("type");
@@ -222,6 +234,7 @@ public final class ConditionProvider {
             } else {
                 throw new RuntimeException("Could not find specified feature.");
             }
+            // If its a CompoundCondition do some recursion to get the inner ones.
         } else if (condition.getName().equals("compoundCondition")) {
             IConfigurationElement[] compounds = condition.getChildren();
             LinkedList<ICondition<EObject>> compoundList = new LinkedList<ICondition<EObject>>();
@@ -235,7 +248,7 @@ public final class ConditionProvider {
             }
             CompoundCondition<EObject> cond = new CompoundCondition<EObject>(compoundList);
             return cond;
-
+            //If its a custom condition try to instanciate and initialize it.
         } else if (condition.getName().equals("customCondition")) {
             try {
                 Object customConditionObject = condition.createExecutableExtension("condition");
@@ -362,6 +375,11 @@ public final class ConditionProvider {
         return result;
     }
 
+    /**
+     * Method to parse the height and width out of the string read from the extension.
+     * @param input the size string read from the extension.
+     * @return a width/height pair of int
+     */
     private Pair<Integer, Integer> parseFigureSize(final String input) {
         if ((input != null) && !(input.equals(""))) {
             String[] xandy = input.split(",");
