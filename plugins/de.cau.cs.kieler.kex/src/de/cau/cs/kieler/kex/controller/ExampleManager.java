@@ -196,19 +196,6 @@ public final class ExampleManager {
     }
 
     /**
-     * Loads the preview picture.
-     * 
-     * @param example
-     *            , {@link Example}
-     * @return {@link InputStream}
-     * @throws KielerException
-     *             , if ExampleImport.loadOverviewPic(...) throws it.
-     */
-    public InputStream loadOverviewPic(final Example example) throws KielerException {
-        return ExampleImport.loadOverviewPic(example);
-    }
-
-    /**
      * Loads a default picture.
      * 
      * @return {@link InputStream}

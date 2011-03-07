@@ -167,25 +167,6 @@ public final class ExampleImport {
     }
 
     /**
-     * Loads the preview pic of an example.
-     * 
-     * @param example
-     *            , {@link Example}
-     * @return {@link InputStream}
-     * @throws KielerException
-     *             , if anything goes wrong.
-     */
-    public static InputStream loadOverviewPic(final Example example) throws KielerException {
-        Bundle bundle = Platform.getBundle(example.getNamespaceId());
-        URL entry = bundle.getEntry(example.getOverviewPic());
-        try {
-            return entry.openStream();
-        } catch (IOException e) {
-            throw new KielerException(ErrorMessage.PREVIEW_LOAD_ERROR + example.getTitle());
-        }
-    }
-
-    /**
      * Loads the empty picture, often called when no example image exists.
      * 
      * @return {@link InputStream}
