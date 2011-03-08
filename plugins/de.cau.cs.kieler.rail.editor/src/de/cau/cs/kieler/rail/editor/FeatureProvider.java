@@ -33,6 +33,7 @@ import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.core.model.graphiti.features.DefaultKielerDeleteFeature;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
+import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
@@ -170,7 +171,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
             final IDirectEditingContext context) {
         PictogramElement pe = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pe);
-        if (bo instanceof Einbruchsknoten) {
+        if (bo instanceof Vertex) {
             return new DirectEditBreachFeatures(this);
         }
         return super.getDirectEditingFeature(context);

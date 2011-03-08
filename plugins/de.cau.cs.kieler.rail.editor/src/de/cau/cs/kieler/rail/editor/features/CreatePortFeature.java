@@ -31,7 +31,7 @@ public class CreatePortFeature extends AbstractCreateFeature {
         return (getBusinessObjectForPictogramElement(context.getTargetContainer()) instanceof Vertex)
                 && !(context.getTargetContainer() instanceof Diagram);
     }
-    
+
     /**
      * {@inheritDoc}
      */

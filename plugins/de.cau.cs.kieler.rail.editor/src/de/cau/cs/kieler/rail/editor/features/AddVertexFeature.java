@@ -4,6 +4,7 @@
 package de.cau.cs.kieler.rail.editor.features;
 
 import org.eclipse.graphiti.examples.common.ExampleUtil;
+import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddFeature;
@@ -119,7 +120,8 @@ public class AddVertexFeature extends AbstractAddFeature {
         case SWITCHVERTEX_RIGHT:
             pe = addSwitchVertex(context, EOrientation.RECHTS);
             break;
-        }
+        }        
+        
         //peCreateService.createChopboxAnchor((Shape) pe);
         layoutPictogramElement(pe);
         return pe;
@@ -172,9 +174,7 @@ public class AddVertexFeature extends AbstractAddFeature {
         
         Rectangle rect = gaService.createRectangle(containerShape);
         rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-        rect.setForeground(manageColor(255, 255, 255));  //TODO constance White
-        
-        
+        rect.setForeground(manageColor(ColorConstant.WHITE));
         Ellipse ellipse;
         {
             // Create Ellipse
@@ -240,7 +240,7 @@ public class AddVertexFeature extends AbstractAddFeature {
             boxAnchor.setRelativeWidth(MIDDLE);
             boxAnchor.setReferencedGraphicsAlgorithm(ellipse);
             Rectangle rec = gaService.createRectangle(boxAnchor);
-            rec.setStyle(styleProvider.getStyle(StyleProvider.PORT_END));
+            rec.setStyle(styleProvider.getStyle(StyleProvider.BREACH_PORT));
 
             gaService.setLocationAndSize(rec, -PORT_SIZE / 2, -PORT_SIZE / 2,
             PORT_SIZE, PORT_SIZE);
@@ -559,9 +559,23 @@ public class AddVertexFeature extends AbstractAddFeature {
         
         gaService.setLocationAndSize(containerShape.getGraphicsAlgorithm(),
                 context.getX(), context.getY(), HEIGHT_SWITCH, WIDTH_SWITCH);
-        link(containerShape, switchVertex);
+        
+        link(shape, switchVertex);
 
-        //updatePictogramElement(containerShape);
+        // provide information to support direct-editing directly
+        // after object creation (must be activated additionally)
+        IDirectEditingInfo directEditingInfo =
+            getFeatureProvider().getDirectEditingInfo();
+        // set container shape for direct editing after object creation
+        directEditingInfo.setMainPictogramElement(containerShape);
+        // set shape and graphics algorithm where the editor for
+        // direct editing shall be opened after object creation
+        directEditingInfo.setPictogramElement(shape);
+        directEditingInfo.setGraphicsAlgorithm(text);
+        
+        link(containerShape, switchVertex); // containerShape
+        
+        updatePictogramElement(containerShape);
 
         return containerShape;
     }

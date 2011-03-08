@@ -93,12 +93,15 @@ public class StyleProvider implements IStyleProvider {
     public static final String SOLID_STYLE = "solid";
     /**style id for Breach (Einbruchsstelle) */
     public static final String BREACH = "breach";
-    /**style id for Breach (Einbruchsstelle) */
+    /**style id for breach (Port) */
     public static final String PORT = "port";
     /**name of a style for an port end */
     public static final String PORT_END = "port end";
-    /**name of a style for an polyline */
+    /**name of a style for an polyline*/
     public static final String POLYLINE = "polyline";
+    /**name of a style for an port for  a breach*/
+    public static final String BREACH_PORT = "polyline";
+	private static final Integer LINE_WIDTH = 5;
 
     /**
      * Create the style with given identifier.
@@ -127,7 +130,7 @@ public class StyleProvider implements IStyleProvider {
             style.setForeground(gaService.manageColor(diagram,
                     ColorConstant.BLACK));
             style.setBackground(gaService.manageColor(diagram,
-                    ColorConstant.GRAY));
+                    ColorConstant.LIGHT_GRAY));
             style.setFilled(true);
             return style;
         } else if (PORT.equals(id)) {
@@ -146,13 +149,22 @@ public class StyleProvider implements IStyleProvider {
             style.setBackground(gaService.manageColor(diagram,
                     ColorConstant.WHITE));
             style.setFilled(false);
-            style.setTransparency(1.0);
+            style.setTransparency(1.0);           
+            return style;
+        } else if (BREACH_PORT.equals(id)) {
+        	Style style = gaService.createStyle(diagram, id);
+            style.setForeground(gaService.manageColor(diagram,
+                    ColorConstant.LIGHT_GRAY));
+            style.setBackground(gaService.manageColor(diagram,
+                    ColorConstant.LIGHT_GRAY));
+            style.setFilled(false);
+            style.setTransparency(1.0);           
             return style;
         } else if (POLYLINE.equals(id)) {
             Style style = gaService.createStyle(diagram, id);
             style.setForeground(gaService.manageColor(diagram,
                     ColorConstant.BLACK));
-            style.setLineWidth(2);
+            style.setLineWidth(LINE_WIDTH);
             return style;
         }
         return null;

@@ -33,6 +33,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
+import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 
@@ -83,7 +84,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
      * {@inheritDoc}
      */
     public IReason updateNeeded(final IUpdateContext context) {
-        // retrieve name from pictogram model
+    	// retrieve name from pictogram model
 
         String pictogramName = null;
         PictogramElement pictogramElement = context.getPictogramElement();
@@ -122,13 +123,14 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
      * {@inheritDoc}
      */
     public boolean update(final IUpdateContext context) {
-        int[] spitzeStammXY = SPITZE_STAMM_DEFAULT.clone();
+    	int[] spitzeStammXY = SPITZE_STAMM_DEFAULT.clone();
         int[] mitteAbzweigXY = MITTE_ABZWEIG_DEFAULT.clone();
         List<Polyline> polylines = new LinkedList<Polyline>();
-        Polygon trianglePolygon=null;
+        Polygon trianglePolygon = null;
 
         PictogramElement pictogramElement = context.getPictogramElement();
-        Object bo = getBusinessObjectForPictogramElement(pictogramElement);
+        Vertex bo = (Vertex)
+        	getBusinessObjectForPictogramElement(pictogramElement);
 
         int width = pictogramElement.getGraphicsAlgorithm().getWidth();
         int height = pictogramElement.getGraphicsAlgorithm().getHeight();
@@ -146,12 +148,22 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                 trianglePolygon = (Polygon) graphicsAlgorithm;
             } else if (graphicsAlgorithm instanceof Polyline) {
                 polylines.add((Polyline) graphicsAlgorithm);
+            }  else if (graphicsAlgorithm instanceof Text) {
+            	((Text) graphicsAlgorithm).setValue(bo.getName());
             }
         }
         // Polylines end
+        
+        
         if (pictogramElement instanceof ContainerShape) {
-            ContainerShape cs = (ContainerShape) pictogramElement;
-
+        	
+        	ContainerShape cs = (ContainerShape) pictogramElement;
+            int[][] SpitzeStammMitteAbzweigXY = getSpitzeStammMitteAbzweigXY(cs.getAnchors(),height,width);
+            spitzeStammXY = SpitzeStammMitteAbzweigXY[0];
+            mitteAbzweigXY = SpitzeStammMitteAbzweigXY[1];
+        	
+            /*
+			//ContainerShape cs = (ContainerShape) pictogramElement;
             for (Anchor anchor : cs.getAnchors()) {
                 if (anchor instanceof BoxRelativeAnchor) {
                     Port port =
@@ -210,7 +222,8 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                         break;
                     }
                 }
-            }
+            }*/
+            
             System.out.println("width: " + width);
             System.out.println("height: " + height);
             System.out.println("spitzeStammXY");
@@ -226,7 +239,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             mitteAbzweigXY[MITTE_Y] =
                     getYFromArray(mitteAbzweigXY,
                             MITTE_ABZWEIG_DEFAULT[MITTE_X]);
-
+            
             for (int i = 0; i < 2; i++) {//set the new position for the Polylines
                 for (int j = 0; j < 2; j++) {
                     System.out.println("PolyLine x: "
@@ -253,29 +266,98 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             //triangle refresh
             if (trianglePolygon != null) {
             	int dx, dy;
-            	dx = mitteAbzweigXY[ABZWEIG_X] - mitteAbzweigXY[MITTE_X];
-            	dy = mitteAbzweigXY[ABZWEIG_Y] - mitteAbzweigXY[MITTE_Y];
-                int[] polyXY = new int[] {mitteAbzweigXY[0],
-                mitteAbzweigXY[1], mitteAbzweigXY[MITTE_X] + dx / 3, 0, 0, 0};
-                /*
-                if (((Weichenknoten) bo).getAbzweigendeLage()
-                == EOrientation.LINKS) {
-                	polyXY[2] = 32;
-	            } else {
-	            	polyXY[2] = 50-32;
-	            }*/
+            	dx = mitteAbzweigXY[MITTE_X] - mitteAbzweigXY[ABZWEIG_X];
+            	dy = spitzeStammXY[STAMM_Y] - mitteAbzweigXY[ABZWEIG_Y];
+
+            	double angle = dy/dx;//Math.atan2(dy, dx);
+            	System.out.println("dx: " + dx);
+            	System.out.println("dy: " + dy);
+            	System.out.println("angle " + angle);
+            	int[] polyXY = new int[] {mitteAbzweigXY[0],
+                mitteAbzweigXY[1], (int) (mitteAbzweigXY[MITTE_X] + dx * angle * 0.25), 0, 0, 0};
+            	
 	            polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
 	        	polyXY[4] = polyXY[2];
 	            polyXY[5] = getYFromArray(spitzeStammXY, polyXY[2]);;
 	            setPolygonPoints(trianglePolygon, polyXY);
-	            System.out.println("polyline: " + arrayToString(polyXY));
+	            System.out.println("polygon: " + arrayToString(polyXY));
             }
             //triangle was refreshed
 
             getDiagramEditor().refresh();
         }
-
         return false;
+    }
+    /**
+     * 
+     * @param anchors
+     * @param height
+     * @param width
+     * @return spitzeStammXY, mitteAbzweigXY
+     */
+    private int[][] getSpitzeStammMitteAbzweigXY(List<Anchor> anchors, double height, double width) {
+    	int[] spitzeStammXY = {0, 0, 0, 0};
+    	int[] mitteAbzweigXY = MITTE_ABZWEIG_DEFAULT.clone();
+    	for (Anchor anchor : anchors) {
+            if (anchor instanceof BoxRelativeAnchor) {
+                Port port =
+                        (Port) getBusinessObjectForPictogramElement(anchor);
+                BoxRelativeAnchor box =
+                        (BoxRelativeAnchor) anchor.getGraphicsAlgorithm()
+                                .getPictogramElement();
+                int boxWidth = anchor.getGraphicsAlgorithm().getWidth();
+                int boxHeight = anchor.getGraphicsAlgorithm().getWidth();
+                switch (port.getName()) {
+                case SPITZE:
+                    spitzeStammXY[SPITZE_X] =
+                            (int) (width * (box.getRelativeWidth())
+                                     + boxWidth / 2);
+                    spitzeStammXY[SPITZE_Y] =
+                            (int) (height * (box.getRelativeHeight())
+                                  + boxHeight / 2);
+
+                    System.out.println("SPITZE");
+
+                    System.out.println("relativ width: "
+                            + box.getRelativeWidth());
+                    System.out.println("relativ height: "
+                            + box.getRelativeHeight());
+                    break;
+                case STAMM:
+                    spitzeStammXY[STAMM_X] =
+                            (int) (width * (box.getRelativeWidth())
+                                   + boxWidth / 2);
+                    spitzeStammXY[STAMM_Y] =
+                            (int) (height * (box.getRelativeHeight())
+                            + boxHeight / 2);
+
+                    System.out.println("STAMM");
+
+                    System.out.println("relativ width: "
+                            + box.getRelativeWidth());
+                    System.out.println("relativ height: "
+                            + box.getRelativeHeight());
+                    break;
+                case ABZWEIG:
+                    System.out.println("Abzweig");
+                    mitteAbzweigXY[ABZWEIG_X] =
+                            (int) (width * (box.getRelativeWidth())
+                            + boxWidth / 2);
+                    System.out.println("relativ width: "
+                            + box.getRelativeWidth());
+                    System.out.println("relativ height: "
+                            + box.getRelativeHeight());
+                    mitteAbzweigXY[ABZWEIG_Y] =
+                            (int) (height * (box.getRelativeHeight())
+                            + boxHeight / 2);
+                    break;
+                case ENDE:
+                default:
+                    break;
+                }
+            }
+    	}
+    	return new int[][] {spitzeStammXY , mitteAbzweigXY};
     }
     /**
      *makes a string out of an array

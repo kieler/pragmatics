@@ -117,11 +117,11 @@ public class RotationSwitchHandler {
 	 * @param fp FeatureProvider
 	 *        (to get the getBusinessObjectForPictogramElement)
 	 * @param multipleAngle int 0-5
-	 * 
+	 * @param offset
 	 */
 	public static void setMultipleAngle(
 	final PictogramElement pictogramElement,
-	final IFeatureProvider fp, final int multipleAngle, 
+	final IFeatureProvider fp, final int multipleAngle,
 	final double offset) {
 		List<BoxRelativeAnchor> ports =
 		getPortsFromPE(pictogramElement, fp);

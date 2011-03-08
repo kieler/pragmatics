@@ -57,6 +57,9 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
         vertex.getPorts().addAll(addGraphicalRepresentationForPorts(vertex));
         PictogramElement vertexPE = addGraphicalRepresentation(context, vertex);
 
+        // activate direct editing after object creation
+        getFeatureProvider().getDirectEditingInfo().setActive(true);
+        
         // return newly created business object(s)
         return new Object[] {vertex};
     }
