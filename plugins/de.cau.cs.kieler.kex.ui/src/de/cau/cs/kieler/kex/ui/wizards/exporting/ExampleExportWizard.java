@@ -61,7 +61,7 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
 
         examplePage = new ExampleAttributesPage("Example Export", selection);
         resourcePage = new ExampleResourcesPage("Example Resources", selection);
-        exportPage = new ExampleExportPage(this, "Destination Choice", selection);
+        exportPage = new ExampleExportPage("Destination Choice", selection);
     }
 
     @Override

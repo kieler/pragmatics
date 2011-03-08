@@ -50,6 +50,8 @@ import de.cau.cs.kieler.kex.model.Example;
  */
 public class ExampleImportWizard extends Wizard implements IImportWizard {
 
+    private static final int WARNING_BORDER = 5;
+
     private static final String ERROR_TITLE = "Could not complete Import";
 
     private ImportExamplePage mainPage;
@@ -103,15 +105,14 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                 throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
             }
 
-            // warning if more examples selected than 5.
-            if (checkedExamples.size() > 5
+            // warning if more examples selected than warning_border.
+            if (checkedExamples.size() > WARNING_BORDER
                     && !MessageDialog.openQuestion(this.getShell(),
                             "More than 5 examples selected",
                             "Importing may take a while. Do you really want to continue?")) {
                 return false;
             }
 
-            // TODO check if projectPath is empty when deletes the import location in destPage.
             IPath destinationLocation = destinationPage.getResourcePath();
             if (destinationLocation == null || destinationLocation.isEmpty()) {
                 throw new KielerException("No import location has been set.");

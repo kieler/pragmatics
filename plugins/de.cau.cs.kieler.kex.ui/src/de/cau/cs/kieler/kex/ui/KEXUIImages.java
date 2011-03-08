@@ -9,7 +9,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * @author pkl
  */
-public class KEXUIImages {
+public final class KEXUIImages {
 
     private static final URL baseURL = Platform.getBundle(KEXUIPlugin.PLUGIN_ID)
             .getEntry("/icons/"); //$NON-NLS-1$
@@ -31,5 +31,9 @@ public class KEXUIImages {
         } catch (MalformedURLException e) {
             return ImageDescriptor.getMissingImageDescriptor();
         }
+    }
+
+    private KEXUIImages() {
+        // should not be called.
     }
 }

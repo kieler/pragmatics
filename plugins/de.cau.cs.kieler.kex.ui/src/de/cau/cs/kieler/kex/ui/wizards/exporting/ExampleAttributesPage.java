@@ -29,6 +29,12 @@ import org.eclipse.swt.widgets.Text;
  */
 public class ExampleAttributesPage extends WizardPage {
 
+    private static final int EX_DESC_HEIGHT = 100;
+    private static final int EX_DESC_MINHEIGHT = 80;
+
+    private static final int MIN_WIDTH = 540;
+    private static final int MIN_HEIGHT = 600;
+
     private Text exampleTitle;
 
     private Text author;
@@ -36,10 +42,6 @@ public class ExampleAttributesPage extends WizardPage {
     private Text contact;
 
     private Text exampleDescription;
-
-    private static final int EX_DESC_HEIGHT = 100;
-
-    private static final int EX_DESC_MINHEIGHT = 80;
 
     /**
      * Constructor for {@link ExampleAttributesPage}.
@@ -66,7 +68,7 @@ public class ExampleAttributesPage extends WizardPage {
         composite.setLayout(new GridLayout());
         setControl(composite);
         addAttributeFields(composite);
-        getShell().setMinimumSize(540, 600);
+        getShell().setMinimumSize(MIN_WIDTH, MIN_HEIGHT);
     }
 
     /**

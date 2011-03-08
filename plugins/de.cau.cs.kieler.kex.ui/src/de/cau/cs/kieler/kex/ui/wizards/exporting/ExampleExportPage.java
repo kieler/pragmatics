@@ -21,7 +21,6 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -69,8 +68,6 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
     private Button revertTree;
 
-    private final IWizard parentWizard;
-
     /**
      * contstructor for {@link ExampleExportPage}.
      * 
@@ -79,13 +76,11 @@ public class ExampleExportPage extends WizardResourceImportPage {
      * @param selection
      *            , String
      */
-    protected ExampleExportPage(IWizard wizard, final String name,
-            final IStructuredSelection selection) {
+    protected ExampleExportPage(final String name, final IStructuredSelection selection) {
         super(name, selection);
         setTitle(name);
         setDescription("Set destination and preview picture "
                 + "for exported example and determine example categories.");
-        this.parentWizard = wizard;
         checkedCategories = new ArrayList<String>();
         creatableCategories = new ArrayList<String>();
     }

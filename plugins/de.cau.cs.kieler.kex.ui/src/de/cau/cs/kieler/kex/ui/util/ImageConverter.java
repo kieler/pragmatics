@@ -11,9 +11,19 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 
-public class ImageConverter {
+/**
+ * Utility class for converting an image to AWT or to SWT with different sizes.
+ * 
+ * @author pkl
+ * 
+ */
+public final class ImageConverter {
 
-    static BufferedImage convertToAWT(ImageData data) {
+    private ImageConverter() {
+        // should not be called.
+    }
+
+    static BufferedImage convertToAWT(final ImageData data) {
         ColorModel colorModel = null;
         PaletteData palette = data.palette;
         if (palette.isDirect) {
@@ -66,7 +76,7 @@ public class ImageConverter {
         }
     }
 
-    static ImageData convertToSWT(BufferedImage bufferedImage) {
+    static ImageData convertToSWT(final BufferedImage bufferedImage) {
         if (bufferedImage.getColorModel() instanceof DirectColorModel) {
             DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
             PaletteData palette = new PaletteData(colorModel.getRedMask(),
@@ -115,7 +125,8 @@ public class ImageConverter {
         return null;
     }
 
-    public static ImageData scaleSWTImage(ImageData imgData, int width, int height, int hint) {
+    public static ImageData scaleSWTImage(final ImageData imgData, final int width,
+            final int height, final int hint) {
         BufferedImage bufImg = convertToAWT(imgData);
         Image image = bufImg.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
         BufferedImage bImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);

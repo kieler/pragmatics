@@ -51,6 +51,9 @@ import de.cau.cs.kieler.kex.controller.ExportResource;
  */
 public class ExampleResourcesPage extends WizardPage {
 
+    private static final int MIN_WIDTH = 540;
+    private static final int MIN_HEIGHT = 600;
+
     private Tree directOpenTree;
 
     @SuppressWarnings("restriction")
@@ -93,7 +96,7 @@ public class ExampleResourcesPage extends WizardPage {
         createResourcesGroup(composite);
         createDirectOpenComposite(composite);
         setControl(composite);
-        getShell().setMinimumSize(540, 600);
+        getShell().setMinimumSize(MIN_WIDTH, MIN_HEIGHT);
     }
 
     private void createDirectOpenComposite(final Composite composite) {
