@@ -337,8 +337,9 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
             // before each slot execution
             
             System.out.println("Klay Layered uses the following configuration:");
-            for (Object o : algorithm) {
-                System.out.println("   " + o.getClass().getName());
+            for (int i = 0; i < algorithm.size(); i++) {
+                System.out.println("   Slot " + String.format("%1$02d", i) + ": "
+                        + algorithm.get(i).getClass().getName());
             }
 
             // invoke each layout processor

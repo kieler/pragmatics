@@ -74,7 +74,7 @@
       <layoutOption
             appliesTo="parents"
             default="false"
-            description="If enabled, edges with priority &gt; 0 are drawn straight instead of keeping the connected nodes in line.ne."
+            description="If enabled, edges with priority &gt; 0 are drawn straight instead of keeping the connected nodes in line."
             id="de.cau.cs.kieler.klay.layered.straightEdges"
             name="Straight Edges"
             type="boolean">
