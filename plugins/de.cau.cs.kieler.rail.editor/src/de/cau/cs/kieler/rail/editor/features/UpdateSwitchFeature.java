@@ -161,69 +161,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             int[][] SpitzeStammMitteAbzweigXY = getSpitzeStammMitteAbzweigXY(cs.getAnchors(),height,width);
             spitzeStammXY = SpitzeStammMitteAbzweigXY[0];
             mitteAbzweigXY = SpitzeStammMitteAbzweigXY[1];
-        	
-            /*
-			//ContainerShape cs = (ContainerShape) pictogramElement;
-            for (Anchor anchor : cs.getAnchors()) {
-                if (anchor instanceof BoxRelativeAnchor) {
-                    Port port =
-                            (Port) getBusinessObjectForPictogramElement(anchor);
-                    BoxRelativeAnchor box =
-                            (BoxRelativeAnchor) anchor.getGraphicsAlgorithm()
-                                    .getPictogramElement();
-                    int boxWidth = anchor.getGraphicsAlgorithm().getWidth();
-                    int boxHeight = anchor.getGraphicsAlgorithm().getWidth();
-                    switch (port.getName()) {
-                    case SPITZE:
-                        spitzeStammXY[SPITZE_X] =
-                                (int) (width * (box.getRelativeWidth())
-                                         + boxWidth / 2);
-                        spitzeStammXY[SPITZE_Y] =
-                                (int) (height * (box.getRelativeHeight())
-                                      + boxHeight / 2);
 
-                        System.out.println("SPITZE");
-
-                        System.out.println("relativ width: "
-                                + box.getRelativeWidth());
-                        System.out.println("relativ height: "
-                                + box.getRelativeHeight());
-                        break;
-                    case STAMM:
-                        spitzeStammXY[STAMM_X] =
-                                (int) (width * (box.getRelativeWidth())
-                                       + boxWidth / 2);
-                        spitzeStammXY[STAMM_Y] =
-                                (int) (height * (box.getRelativeHeight())
-                                + boxHeight / 2);
-
-                        System.out.println("STAMM");
-
-                        System.out.println("relativ width: "
-                                + box.getRelativeWidth());
-                        System.out.println("relativ height: "
-                                + box.getRelativeHeight());
-                        break;
-                    case ABZWEIG:
-                        System.out.println("Abzweig");
-                        mitteAbzweigXY[ABZWEIG_X] =
-                                (int) (width * (box.getRelativeWidth())
-                                + boxWidth / 2);
-                        System.out.println("relativ width: "
-                                + box.getRelativeWidth());
-                        System.out.println("relativ height: "
-                                + box.getRelativeHeight());
-                        mitteAbzweigXY[ABZWEIG_Y] =
-                                (int) (height * (box.getRelativeHeight())
-                                + boxHeight / 2);
-                        break;
-                    case ENDE:
-                    default:
-                        break;
-                    }
-                }
-            }*/
-            
             System.out.println("width: " + width);
             System.out.println("height: " + height);
             System.out.println("spitzeStammXY");
@@ -278,7 +216,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             	
 	            polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
 	        	polyXY[4] = polyXY[2];
-	            polyXY[5] = getYFromArray(spitzeStammXY, polyXY[2]);;
+	            polyXY[5] = getYFromArray(spitzeStammXY, polyXY[2]);
 	            setPolygonPoints(trianglePolygon, polyXY);
 	            System.out.println("polygon: " + arrayToString(polyXY));
             }
@@ -288,6 +226,29 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
         }
         return false;
     }
+    
+    private int[] getPolygonXY() {
+    	int[] polyXY = new int[] {mitteAbzweigXY[0],
+                mitteAbzweigXY[1], (int) (mitteAbzweigXY[MITTE_X] +
+                		dx * angle * 0.25), 0, 0, 0};
+    	int dx, dy;
+    	dx = mitteAbzweigXY[MITTE_X] - mitteAbzweigXY[ABZWEIG_X];
+    	dy = spitzeStammXY[STAMM_Y] - mitteAbzweigXY[ABZWEIG_Y];
+
+    	System.out.println("dx: " + dx);
+    	System.out.println("dy: " + dy);
+    	System.out.println("angle " + angle);
+    	int[] polyXY = new int[] {mitteAbzweigXY[0],
+        mitteAbzweigXY[1], (int) (mitteAbzweigXY[MITTE_X] + dx * 
+        		angle * 0.25), 0, 0, 0};
+    	
+        polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
+    	polyXY[4] = polyXY[2];
+        polyXY[5] = getYFromArray(spitzeStammXY, polyXY[2]);
+    	
+    	return polyXY;
+    }
+    
     /**
      * 
      * @param anchors
