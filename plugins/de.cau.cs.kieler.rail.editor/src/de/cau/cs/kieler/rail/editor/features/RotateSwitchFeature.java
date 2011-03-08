@@ -79,8 +79,8 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
                 	}
                 }
                 int multipleangle = RotationSwitchHandler.getValidMultipleAngle(
-                Integer.parseInt(propertyAngle.getValue())
-                + 1 , wk.getAbzweigendeLage());
+                		Integer.parseInt(propertyAngle.getValue())
+                		+ 1 , wk.getAbzweigendeLage());
                 RotationSwitchHandler.setMultipleAngle(pes[0]
                 , getFeatureProvider() , multipleangle , 0.1);
 
@@ -88,53 +88,4 @@ public class RotateSwitchFeature extends AbstractCustomFeature {
 	        }
         }
     }
-    /*
-    public void execute(final ICustomContext context) {
-
-        PictogramElement[] pes = context.getPictogramElements();
-        if (pes != null && pes.length == 1) {
-            Object bo = getBusinessObjectForPictogramElement(pes[0]);
-            if (bo instanceof Weichenknoten) {
-                Weichenknoten weichenknoten = (Weichenknoten) bo;
-                String currentName = weichenknoten.getName();
-
-                PictogramElement pictogramElement =
-                        context.getInnerPictogramElement();
-
-                // rotate
-                if (pictogramElement instanceof ContainerShape) {
-                    ContainerShape cs = (ContainerShape) pictogramElement;
-                    
-                    for (Anchor anchor : cs.getAnchors()) {
-                        if (anchor instanceof BoxRelativeAnchor) {
-                            Port port =
-                                    (Port) getBusinessObjectForPictogramElement(anchor);
-                            BoxRelativeAnchor box =
-                                    (BoxRelativeAnchor) anchor
-                                            .getGraphicsAlgorithm()
-                                            .getPictogramElement();
-                            int boxWidth =
-                                    anchor.getGraphicsAlgorithm().getWidth();
-                            int boxHeight =
-                                    anchor.getGraphicsAlgorithm().getWidth();
-                            if (port.getName() == EPort.ABZWEIG) {
-                                box.setRelativeHeight(Math.abs(1 - box
-                                        .getRelativeHeight()));
-                            }
-                        }
-                    }
-                    
-                    for(Shape shape : cs.getChildren()){
-                    	GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
-                    	if(ga instanceof Text){
-                    		((Text) ga).setY(Math.abs(30
-                    		- ((Text) ga).getY()));     //TODO add const
-                    	}
-                    }
-                   
-                    updatePictogramElement(pictogramElement);
-                }
-            }
-        }
-    }*/
 }

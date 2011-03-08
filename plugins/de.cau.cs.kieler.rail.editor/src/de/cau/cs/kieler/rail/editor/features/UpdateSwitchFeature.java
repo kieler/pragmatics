@@ -36,6 +36,7 @@ import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
 import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
+import de.cau.cs.kieler.rail.editor.Geometry;
 
 /**
  * Update feature for the switch It updates the lines for the ports.
@@ -158,7 +159,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
         if (pictogramElement instanceof ContainerShape) {
         	
         	ContainerShape cs = (ContainerShape) pictogramElement;
-            int[][] SpitzeStammMitteAbzweigXY = getSpitzeStammMitteAbzweigXY(cs.getAnchors(),height,width);
+            int[][] SpitzeStammMitteAbzweigXY = getSpitzeStammMitteAbzweigXY(cs.getAnchors(),height,width, getFeatureProvider());
             spitzeStammXY = SpitzeStammMitteAbzweigXY[0];
             mitteAbzweigXY = SpitzeStammMitteAbzweigXY[1];
 
@@ -175,7 +176,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             System.out.println();
 
             mitteAbzweigXY[MITTE_Y] =
-                    getYFromArray(mitteAbzweigXY,
+                    Geometry.getYFromArray(mitteAbzweigXY,
                             MITTE_ABZWEIG_DEFAULT[MITTE_X]);
             
             for (int i = 0; i < 2; i++) {//set the new position for the Polylines
@@ -200,37 +201,18 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
                                     : mitteAbzweigXY[1 + j * 2]);
                 }
             }
-
             //triangle refresh
             if (trianglePolygon != null) {
-            	setPolygonPoints(trianglePolygon, getPolygonXY(spitzeStammXY,mitteAbzweigXY));
-            	
-            	/*
-            	int dx, dy;
-            	dx = mitteAbzweigXY[MITTE_X] - mitteAbzweigXY[ABZWEIG_X];
-            	dy = spitzeStammXY[STAMM_Y] - mitteAbzweigXY[ABZWEIG_Y];
-
-            	double angle = dy/dx;//Math.atan2(dy, dx);
-            	System.out.println("dx: " + dx);
-            	System.out.println("dy: " + dy);
-            	System.out.println("angle " + angle);
-            	int[] polyXY = new int[] {mitteAbzweigXY[0],
-                mitteAbzweigXY[1], (int) (mitteAbzweigXY[MITTE_X] + dx * angle * 0.25), 0, 0, 0};
-            	
-	            polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
-	        	polyXY[4] = polyXY[2];
-	            polyXY[5] = getYFromArray(spitzeStammXY, polyXY[2]);
-	            setPolygonPoints(trianglePolygon, polyXY);
-	            System.out.println("polygon: " + arrayToString(polyXY));*/
-            }
+            	setPolygonPoints(trianglePolygon, getPolygonXY(spitzeStammXY,mitteAbzweigXY,((Weichenknoten) bo).getAbzweigendeLage()));  //not nice
             //triangle was refreshed
 
             getDiagramEditor().refresh();
         }
-        return false;
     }
+    return false;
+}
     
-    private int[] getPolygonXY(int[] spitzeStammXY, int[] mitteAbzweigXY) {
+    public static int[] getPolygonXY(int[] spitzeStammXY, int[] mitteAbzweigXY, EOrientation orientation ) {
     	int dx, dy;
     	
     	dx = mitteAbzweigXY[MITTE_X] - mitteAbzweigXY[ABZWEIG_X];
@@ -238,16 +220,21 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
     	
     	double angle = dy/dx;//Math.atan2(dy, dx);
     	
+    	if (orientation == EOrientation.RECHTS) {
+    		angle = - angle;
+    	}
+    	
     	int[] polyXY = new int[] {mitteAbzweigXY[0],
-                mitteAbzweigXY[1], (int) (mitteAbzweigXY[MITTE_X] + dx * angle * 0.25), 0, 0, 0};
+                mitteAbzweigXY[1], (int) (mitteAbzweigXY[MITTE_X]
+                + dx * angle * 0.25), 0, 0, 0};
 
     	System.out.println("dx: " + dx);
     	System.out.println("dy: " + dy);
     	System.out.println("angle " + angle);
 
-        polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
+        polyXY[3] = Geometry.getYFromArray(mitteAbzweigXY, polyXY[2]);
     	polyXY[4] = polyXY[2];
-        polyXY[5] = getYFromArray(spitzeStammXY, polyXY[2]);
+        polyXY[5] = Geometry.getYFromArray(spitzeStammXY, polyXY[2]);
 
     	return polyXY;
     }
@@ -259,13 +246,14 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
      * @param width
      * @return spitzeStammXY, mitteAbzweigXY
      */
-    private int[][] getSpitzeStammMitteAbzweigXY(List<Anchor> anchors, double height, double width) {
+    public static int[][] getSpitzeStammMitteAbzweigXY(List<Anchor> anchors, double height, double width, IFeatureProvider fp) {
     	int[] spitzeStammXY = {0, 0, 0, 0};
     	int[] mitteAbzweigXY = MITTE_ABZWEIG_DEFAULT.clone();
     	for (Anchor anchor : anchors) {
             if (anchor instanceof BoxRelativeAnchor) {
-                Port port =
-                        (Port) getBusinessObjectForPictogramElement(anchor);
+                
+            	Port port =
+                        (Port) fp.getBusinessObjectForPictogramElement(anchor);
                 BoxRelativeAnchor box =
                         (BoxRelativeAnchor) anchor.getGraphicsAlgorithm()
                                 .getPictogramElement();
@@ -348,21 +336,5 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
     	}
 	}
 
-	// TODO better comment
-    /**
-     * Calculate the Y pos for the straight line (port Stamm to port Ende) for a
-     * x pos.
-     * @param mitteAbzweigXY
-     *            the position array witch the line descrips (X1, Y1, X2, Y2)
-     * @param x
-     *            the x position
-     * @return the y position
-     */
-    private int getYFromArray(final int[] mitteAbzweigXY, final int x) {
-        double m =
-                (mitteAbzweigXY[ABZWEIG_Y] - mitteAbzweigXY[MITTE_Y])
-                        / (mitteAbzweigXY[ABZWEIG_X] - mitteAbzweigXY[MITTE_X]);
-        double b = mitteAbzweigXY[MITTE_Y] - m * mitteAbzweigXY[MITTE_X];
-        return (int) (m * x + b);
-    }
+
 }

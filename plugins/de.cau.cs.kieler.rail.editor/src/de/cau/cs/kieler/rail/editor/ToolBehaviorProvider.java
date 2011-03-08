@@ -156,7 +156,7 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
                 ContextButtonEntry toogleButton =
                         new ContextButtonEntry(cf[i], ccContextButon);
 
-                	toogleButton.setText("Weiche um 180° drehen");
+                	toogleButton.setText("Rotiert die Weiche um 60°");
 	                toogleButton.setIconId(ImageProvider.IMG_ROTATE);
 	
 	                data.getGenericContextButtons().add(toogleButton);
