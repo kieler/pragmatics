@@ -203,6 +203,9 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
 
             //triangle refresh
             if (trianglePolygon != null) {
+            	setPolygonPoints(trianglePolygon, getPolygonXY(spitzeStammXY,mitteAbzweigXY));
+            	
+            	/*
             	int dx, dy;
             	dx = mitteAbzweigXY[MITTE_X] - mitteAbzweigXY[ABZWEIG_X];
             	dy = spitzeStammXY[STAMM_Y] - mitteAbzweigXY[ABZWEIG_Y];
@@ -218,7 +221,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
 	        	polyXY[4] = polyXY[2];
 	            polyXY[5] = getYFromArray(spitzeStammXY, polyXY[2]);
 	            setPolygonPoints(trianglePolygon, polyXY);
-	            System.out.println("polygon: " + arrayToString(polyXY));
+	            System.out.println("polygon: " + arrayToString(polyXY));*/
             }
             //triangle was refreshed
 
@@ -227,28 +230,28 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
         return false;
     }
     
-    private int[] getPolygonXY() {
-    	int[] polyXY = new int[] {mitteAbzweigXY[0],
-                mitteAbzweigXY[1], (int) (mitteAbzweigXY[MITTE_X] +
-                		dx * angle * 0.25), 0, 0, 0};
+    private int[] getPolygonXY(int[] spitzeStammXY, int[] mitteAbzweigXY) {
     	int dx, dy;
+    	
     	dx = mitteAbzweigXY[MITTE_X] - mitteAbzweigXY[ABZWEIG_X];
     	dy = spitzeStammXY[STAMM_Y] - mitteAbzweigXY[ABZWEIG_Y];
+    	
+    	double angle = dy/dx;//Math.atan2(dy, dx);
+    	
+    	int[] polyXY = new int[] {mitteAbzweigXY[0],
+                mitteAbzweigXY[1], (int) (mitteAbzweigXY[MITTE_X] + dx * angle * 0.25), 0, 0, 0};
 
     	System.out.println("dx: " + dx);
     	System.out.println("dy: " + dy);
     	System.out.println("angle " + angle);
-    	int[] polyXY = new int[] {mitteAbzweigXY[0],
-        mitteAbzweigXY[1], (int) (mitteAbzweigXY[MITTE_X] + dx * 
-        		angle * 0.25), 0, 0, 0};
-    	
+
         polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
     	polyXY[4] = polyXY[2];
         polyXY[5] = getYFromArray(spitzeStammXY, polyXY[2]);
-    	
+
     	return polyXY;
     }
-    
+
     /**
      * 
      * @param anchors
