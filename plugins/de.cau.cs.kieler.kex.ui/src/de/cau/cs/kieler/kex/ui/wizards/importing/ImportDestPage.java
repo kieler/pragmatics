@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,6 +31,13 @@ import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
+/**
+ * This class is one of the to {@link WizardPage}s of the kex import wizard. Users of the wizardpage
+ * set the destination location of the imported example and have some options to change.
+ * 
+ * @author pkl
+ * 
+ */
 @SuppressWarnings("restriction")
 public class ImportDestPage extends WizardResourceImportPage {
 
@@ -37,7 +45,15 @@ public class ImportDestPage extends WizardResourceImportPage {
 
     private Button openImports;
 
-    protected ImportDestPage(String name, IStructuredSelection selection) {
+    /**
+     * Creates a new {@link ImportDestPage}, which extends the {@link WizardResourceImportPage}.
+     * 
+     * @param name
+     *            , String
+     * @param selection
+     *            , {@link IStructuredSelection}
+     */
+    protected ImportDestPage(final String name, final IStructuredSelection selection) {
         super(name, selection);
         super.setDescription("Set destination location for imported examples.");
     }
@@ -58,12 +74,12 @@ public class ImportDestPage extends WizardResourceImportPage {
     }
 
     @Override
-    protected void createSourceGroup(Composite parent) {
+    protected void createSourceGroup(final Composite parent) {
         // no sources
     }
 
     @Override
-    protected void createOptionsGroupButtons(Group optionsGroup) {
+    protected void createOptionsGroupButtons(final Group optionsGroup) {
         openImports = new Button(optionsGroup, SWT.CHECK);
         openImports.setText("Open examples after import");
         openImports.setSelection(true);
@@ -76,7 +92,7 @@ public class ImportDestPage extends WizardResourceImportPage {
      *            , {@link Composite}
      */
     @Override
-    public void createControl(Composite parent) {
+    public void createControl(final Composite parent) {
         Group topGroup = new Group(parent, SWT.NONE);
         topGroup.setLayout(new GridLayout());
         topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -111,7 +127,7 @@ public class ImportDestPage extends WizardResourceImportPage {
 
     private boolean myValidateDestinationGroup() {
         IPath containerPath = getContainerFullPath();
-        if (containerPath == null) {
+        if (containerPath == null || containerPath.toPortableString().trim().isEmpty()) {
             setMessage(IDEWorkbenchMessages.WizardImportPage_specifyFolder);
             return false;
         }
@@ -162,6 +178,11 @@ public class ImportDestPage extends WizardResourceImportPage {
 
     }
 
+    /**
+     * Checks if the openImports button is selected.
+     * 
+     * @return boolean
+     */
     public boolean openImports() {
         return openImports.getSelection();
     }
