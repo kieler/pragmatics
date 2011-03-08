@@ -497,20 +497,29 @@ public class AddVertexFeature extends AbstractAddFeature {
 
             link(boxAnchor, port);
         }
-        // PORT
 
+        // PORT
+        
+        //LINES
+        
+        int[][] spitzeStammMitteAbzweigXY = UpdateSwitchFeature.getSpitzeStammMitteAbzweigXY(containerShape.getAnchors(), height, width, getFeatureProvider());
+        
         // Line (straight line)
         Shape shapep = peCreateService.createShape(containerShape, false);
+        //Polyline polyline =
+                //gaService.createPolyline(shapep, spitzeStammXY); //{ 0, 25, 25, 25 });
         Polyline polyline =
-                gaService.createPolyline(shapep, spitzeStammXY); //{ 0, 25, 25, 25 });
+            gaService.createPolyline(shapep, spitzeStammMitteAbzweigXY[0]); //{ 0, 25, 25, 25 });
         polyline.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
 
         // Line (30°)
         mitteAbzweigXY[1] = getYFromArray(mitteAbzweigXY, 25);
         Shape shapep30 = peCreateService.createShape(containerShape, false);
         //mitteAbzweigXY
+        //Polyline polyline30 =
+                //gaService.createPolyline(shapep30,mitteAbzweigXY);//new int[] { 20, 25, 0,
         Polyline polyline30 =
-                gaService.createPolyline(shapep30,mitteAbzweigXY);//new int[] { 20, 25, 0,
+            gaService.createPolyline(shapep30,spitzeStammMitteAbzweigXY[1]);//new int[] { 20, 25, 0,
         polyline30.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
                         //(int) (25 * 0.577350269) });
         //polyline30.getPoints().get(0).setX(mitteAbzweigXY[0]);
@@ -574,6 +583,9 @@ public class AddVertexFeature extends AbstractAddFeature {
         directEditingInfo.setGraphicsAlgorithm(text);
         
         link(containerShape, switchVertex); // containerShape
+        
+        RotationSwitchHandler.setMultipleAngle(containerShape,
+        		getFeatureProvider() , 0, 0.1);
         
         updatePictogramElement(containerShape);
 
