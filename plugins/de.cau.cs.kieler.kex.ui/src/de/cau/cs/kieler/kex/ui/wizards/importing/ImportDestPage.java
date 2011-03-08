@@ -100,17 +100,13 @@ public class ImportDestPage extends WizardResourceImportPage {
     }
 
     @Override
+    protected void updateWidgetEnablements() {
+        setPageComplete(determinePageCompletion());
+    }
+
+    @Override
     protected boolean determinePageCompletion() {
-        boolean complete = validateSourceGroup() && myValidateDestinationGroup()
-                && validateOptionsGroup();
-
-        // Avoid draw flicker by not clearing the error
-        // message unless all is valid.
-        if (complete) {
-            setErrorMessage(null);
-        }
-
-        return complete;
+        return validateSourceGroup() && myValidateDestinationGroup() && validateOptionsGroup();
     }
 
     private boolean myValidateDestinationGroup() {
@@ -131,15 +127,12 @@ public class ImportDestPage extends WizardResourceImportPage {
             // if it is does not exist be sure the project does
             IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
             IPath projectPath = containerPath.removeLastSegments(containerPath.segmentCount() - 1);
-            // FIXME: Bug when changing destiniation to unknown project.
-            // -> you can´t finish the wizard.
-            // but there is no problem, because kex supports to create new projects.
             if (workspace.getRoot().exists(projectPath)) {
                 return true;
             }
             setMessage(IDEWorkbenchMessages.WizardImportPage_projectNotExist,
                     IMessageProvider.WARNING);
-            return false;
+            return true;
         }
         if (!container.isAccessible()) {
             setMessage(IDEWorkbenchMessages.WizardImportPage_folderMustExist,
