@@ -342,7 +342,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             double maxSize = 0.0f;
             for (LNode node : segment.getNodes()) {
                 float offset = (float) node.getProperty(Properties.LINSEG_OFFSET);
-                System.out.println(offset);
                 if (offset < minOffset) {
                     minOffset = offset;
                 }
