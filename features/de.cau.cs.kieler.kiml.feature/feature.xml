@@ -109,7 +109,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <requires>
       <import feature="de.cau.cs.kieler.core" version="0.4.0" match="greaterOrEqual"/>
-      <import feature="net.ogdf.lib" version="2.1.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.emf.common" version="2.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.4.0" match="greaterOrEqual"/>
@@ -119,6 +118,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <import feature="org.eclipse.gmf" version="1.3.0" match="greaterOrEqual"/>
       <import feature="de.cau.cs.kieler.core.model" version="0.2.0" match="greaterOrEqual"/>
       <import feature="net.sourceforge.lpsolve" version="5.5.0" match="greaterOrEqual"/>
+      <import feature="net.ogdf.bin" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

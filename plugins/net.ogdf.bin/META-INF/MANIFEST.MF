@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OGDF-Server Binaries
+Bundle-Name: OGDF Server Binaries
 Bundle-SymbolicName: net.ogdf.bin;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -10,3 +10,4 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.1",
 Bundle-Activator: net.ogdf.bin.OgdfPlugin
 Export-Package: net.ogdf.bin
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel

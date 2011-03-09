@@ -221,10 +221,8 @@ litigation.
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui.ide" version="3.5.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.ui.navigator"/>
       <import plugin="org.eclipse.ui.navigator.resources"/>
       <import feature="de.cau.cs.kieler.core" version="0.2.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.draw2d" version="3.5.0" match="greaterOrEqual"/>
@@ -236,6 +234,15 @@ litigation.
       <import feature="org.eclipse.gmf" version="1.3.0"/>
       <import feature="org.eclipse.ocl" version="1.3.0" match="greaterOrEqual"/>
       <import feature="de.cau.cs.kieler.core.model" version="0.1.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.kiml" version="0.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.navigator" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui"/>
+      <import feature="de.cau.cs.kieler.kiml.graphviz" version="0.4.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.ksbase" version="0.4.0" match="greaterOrEqual"/>
+      <import feature="net.ogdf.bin" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import feature="org.eclipse.xtend" version="1.0.1" match="greaterOrEqual"/>
+      <import feature="org.eclipse.xtext.runtime" version="1.0.1" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -282,6 +289,20 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.keg.diagram.custom"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.keg.importer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kiml.export"
          download-size="0"
          install-size="0"
          version="0.0.0"
