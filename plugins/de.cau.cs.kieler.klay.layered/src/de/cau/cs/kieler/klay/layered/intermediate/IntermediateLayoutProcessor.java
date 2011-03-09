@@ -31,8 +31,10 @@ public enum IntermediateLayoutProcessor {
     NORTH_SOUTH_SIDE_POSTPROCESSOR,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_SIDE_PREPROCESSOR,
+    /** Removes odd port side dummies. */
+    ODD_PORT_SIDE_POSTPROCESSOR,
     /** Takes a layered graph and inserts dummy nodes for edges connected to ports on odd sides. */
-    ODD_PORT_SIDE_PROCESSOR,
+    ODD_PORT_SIDE_PREPROCESSOR,
     /** Sets the positions of ports. */
     PORT_ARRANGER,
     /** Sets port sides and orders the ports, if necessary. */
@@ -71,8 +73,11 @@ public enum IntermediateLayoutProcessor {
         case NORTH_SOUTH_SIDE_PREPROCESSOR:
             return new NorthSouthPortPreprocessor();
         
-        case ODD_PORT_SIDE_PROCESSOR:
-            return new OddPortSideProcessor();
+        case ODD_PORT_SIDE_POSTPROCESSOR:
+            return new OddPortSidePostprocessor();
+        
+        case ODD_PORT_SIDE_PREPROCESSOR:
+            return new OddPortSidePreprocessor();
         
         case PORT_ARRANGER:
             return new PortArranger();

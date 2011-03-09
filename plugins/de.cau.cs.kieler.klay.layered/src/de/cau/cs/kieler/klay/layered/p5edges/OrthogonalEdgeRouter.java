@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
@@ -74,11 +75,11 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 // Before Phase 2
                 null,
                 // Before Phase 3
-                EnumSet.of(IntermediateLayoutProcessor.ODD_PORT_SIDE_PROCESSOR),
+                EnumSet.of(IntermediateLayoutProcessor.ODD_PORT_SIDE_PREPROCESSOR),
                 // Before Phase 4
                 EnumSet.of(IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_PREPROCESSOR),
                 // Before Phase 5
-                null,
+                EnumSet.of(IntermediateLayoutProcessor.ODD_PORT_SIDE_POSTPROCESSOR),
                 // After Phase 5
                 EnumSet.of(IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_POSTPROCESSOR));
     
@@ -275,7 +276,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         Map<LPort, HyperNode> portToHyperNodeMap = new HashMap<LPort, HyperNode>();
         List<HyperNode> hyperNodes = new LinkedList<HyperNode>();
         for (LNode node : layer.getNodes()) {
-            for (LPort port : node.getPorts(PortType.OUTPUT)) {
+            for (LPort port : node.getPorts(PortType.OUTPUT, PortSide.EAST)) {
                 HyperNode hyperNode = portToHyperNodeMap.get(port);
                 if (hyperNode == null) {
                     hyperNode = new HyperNode();

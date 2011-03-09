@@ -57,15 +57,16 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *     ports on odd sides.</dd>
  * </dl>
  * 
+ * @see OddPortSidePostprocessor
  * @author cds
  */
-public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutProcessor {
+public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
      */
     public void process(final LayeredGraph layeredGraph) {
-        getMonitor().begin("Odd port side processing", 1);
+        getMonitor().begin("Odd port side preprocessing", 1);
         
         // Retrieve the layers in the graph
         List<Layer> layers = layeredGraph.getLayers();
@@ -148,7 +149,6 @@ public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutPr
         if (!postfixLayer.getNodes().isEmpty()) {
             layers.add(postfixLayer);
         }
-        
         
         getMonitor().done();
     }
