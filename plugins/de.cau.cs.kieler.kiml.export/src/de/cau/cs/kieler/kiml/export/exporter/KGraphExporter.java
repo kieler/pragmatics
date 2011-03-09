@@ -69,7 +69,6 @@ public class KGraphExporter extends AbstractExporter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void doExport(final KNode graph, final OutputStream stream,
             final MapPropertyHolder options,
             final IKielerProgressMonitor monitor) throws KielerException {
