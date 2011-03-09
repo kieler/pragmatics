@@ -138,7 +138,6 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
 
             // catch the right feature
             for (int i = 0; i < cf.length; i++) {
-
                 if (cf[i].getName() == ToggleSwitchFeature.NAME) {
                     ContextButtonEntry toogleButton =
                             new ContextButtonEntry(cf[i], ccContextButon);

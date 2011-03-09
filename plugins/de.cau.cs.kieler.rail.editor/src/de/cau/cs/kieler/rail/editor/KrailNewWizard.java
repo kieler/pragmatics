@@ -18,7 +18,7 @@ public class KrailNewWizard extends GraphitiNewWizard {
 
     public KrailNewWizard() {
         super("Rail", "krail", "topologie", "Rail",
-                DiagramEditor.DIAGRAM_EDITOR_ID);
+                KrailDiagramEditor.DIAGRAM_EDITOR_ID);
     }
 
     /**
