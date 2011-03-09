@@ -169,7 +169,6 @@ public class AdvancedRenderingEditPartUtil {
                         //use those descriptions to set the figure and stuff
                         this.setFigure(renderingProvider, figureParam, oldFigure, modelElement,
                                 switchableFigure, editPart);
-                        figure.getBounds().setSize(60,40);
                         this.setLayoutManager(figure, renderingProvider, layoutParam, modelElement);
                         this.setBorderItemLocator(editPart, renderingProvider, borderItemParam,
                                 modelElement, figure);
