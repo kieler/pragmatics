@@ -30,9 +30,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderItemLocator;
-import org.eclipse.gmf.runtime.draw2d.ui.render.RenderedImage;
-import org.eclipse.gmf.runtime.draw2d.ui.render.factory.RenderedImageFactory;
-import org.eclipse.gmf.runtime.draw2d.ui.render.figures.ScalableImageFigure;
 import org.eclipse.swt.graphics.Color;
 
 import ptolemy.kernel.CompositeEntity;
@@ -60,7 +57,8 @@ public class KaomPortProvider implements IRenderingProvider {
             final EObject object, final EditPart part) {
         EditPart parentPart = part.getParent();
 
-        // /// make port name invisible. not working yet.
+        // ///TODO make port name invisible. not working yet. (hitting layout makes it visible
+        // again)
         /*
          * Object partChild = part.getChildren().get(0); if (partChild instanceof PortNameEditPart)
          * { PortNameEditPart portNameEditPart = (PortNameEditPart) partChild; if
@@ -72,6 +70,7 @@ public class KaomPortProvider implements IRenderingProvider {
          */
         // ///
         if (parentPart instanceof IAdvancedRenderingEditPart) {
+            // we want to know the ptolemy class of the object that owns this port
             EObject parentObject = ((IAdvancedRenderingEditPart) parentPart).getModelElement();
             if (parentObject instanceof Annotatable) {
                 Annotatable myAnnotatable = (Annotatable) parentObject;
@@ -82,9 +81,12 @@ public class KaomPortProvider implements IRenderingProvider {
                         ptolemy.kernel.Entity entity = getPtolemyEntity(ptolemyClassString);
 
                         if (object instanceof Port) {
+                            // we fetch a ptolemy instance of this port by its name to get some
+                            // informations of its former nature.
                             Port port = (Port) object;
                             String name = port.getName();
                             ptolemy.kernel.Port ptolemyPort = entity.getPort(name);
+                            // parameterports are gray
                             if (ptolemyPort instanceof ptolemy.actor.parameters.ParameterPort) {
                                 if (input.equals("UP")) {
                                     return getUpwardsPortSvgString(ColorConstants.gray);
@@ -94,6 +96,7 @@ public class KaomPortProvider implements IRenderingProvider {
                                     return getPortSvgString(ColorConstants.gray);
                                 }
                             } else if (ptolemyPort instanceof ptolemy.actor.IOPort) {
+                                // io multiports are white
                                 if (((ptolemy.actor.IOPort) (ptolemyPort)).isMultiport()) {
                                     if (input.equals("UP")) {
                                         return getUpwardsPortSvgString(ColorConstants.white);
@@ -103,6 +106,7 @@ public class KaomPortProvider implements IRenderingProvider {
                                         return getPortSvgString(ColorConstants.white);
                                     }
                                 } else {
+                                    // other io ports are black
                                     if (input.equals("UP")) {
                                         return getUpwardsPortSvgString(ColorConstants.black);
                                     } else if (input.equals("DOWN")) {
@@ -112,6 +116,7 @@ public class KaomPortProvider implements IRenderingProvider {
                                     }
                                 }
                             } else {
+                                // all other ports are painted black
                                 if (input.equals("UP")) {
                                     return getUpwardsPortSvgString(ColorConstants.black);
                                 } else if (input.equals("DOWN")) {
@@ -152,16 +157,16 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     private IFigure getPortSvgString(final Color color) {
         PointList pointList = new PointList();
-        pointList.addPoint(0,7);
-        pointList.addPoint(0,0);
+        pointList.addPoint(0, 7);
+        pointList.addPoint(0, 0);
         pointList.addPoint(new Point(7, 3.5));
-        pointList.addPoint(0,7);
+        pointList.addPoint(0, 7);
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
         figure.setBackgroundColor(color);
         figure.setForegroundColor(ColorConstants.black);
         figure.setLineWidth(1);
-        figure.getBounds().setSize(8,8);
+        figure.getBounds().setSize(8, 8);
         return figure;
     }
 
@@ -170,20 +175,20 @@ public class KaomPortProvider implements IRenderingProvider {
      * 
      * @param color
      *            an swt compatible color name
-     * @return the port figure 
+     * @return the port figure
      */
     private IFigure getDownwardsPortSvgString(final Color color) {
         PointList pointList = new PointList();
-        pointList.addPoint(0,0);
-        pointList.addPoint(7,0);
+        pointList.addPoint(0, 0);
+        pointList.addPoint(7, 0);
         pointList.addPoint(new Point(3.5, 7));
-        pointList.addPoint(0,0);
+        pointList.addPoint(0, 0);
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
         figure.setBackgroundColor(color);
         figure.setForegroundColor(ColorConstants.black);
         figure.setLineWidth(1);
-        figure.getBounds().setSize(8,8);
+        figure.getBounds().setSize(8, 8);
         return figure;
     }
 
@@ -196,30 +201,17 @@ public class KaomPortProvider implements IRenderingProvider {
      */
     private IFigure getUpwardsPortSvgString(final Color color) {
         PointList pointList = new PointList();
-        pointList.addPoint(0,7);
-        pointList.addPoint(7,7);
+        pointList.addPoint(0, 7);
+        pointList.addPoint(7, 7);
         pointList.addPoint(new Point(3.5, 0));
-        pointList.addPoint(0,7);
+        pointList.addPoint(0, 7);
         PolygonShape figure = new PolygonShape();
         figure.setPoints(pointList);
         figure.setBackgroundColor(color);
         figure.setForegroundColor(ColorConstants.black);
         figure.setLineWidth(1);
-        figure.getBounds().setSize(8,8);
+        figure.getBounds().setSize(8, 8);
         return figure;
-    }
-
-    /**
-     * method for generating a scalable image figure from a file.
-     * 
-     * @param svgString
-     *            the string representing the svg image
-     * @return a scalable image figure
-     */
-    private IFigure createSvg(final String svgString) {
-        RenderedImage img = RenderedImageFactory.getInstance(svgString.getBytes());
-        ScalableImageFigure fig = new ScalableImageFigure(img, false, true, true);
-        return fig;
     }
 
     /**
@@ -246,11 +238,13 @@ public class KaomPortProvider implements IRenderingProvider {
             final IFigure parentFigure, final Object locator, final EObject object) {
         EObject container = object.eContainer();
         if (container instanceof Entity) {
+            //Get the parent to check if its a compositeactor. If it is ports are done by the layout.
             Entity parent = (Entity) container;
             EList<Entity> childEntitys = parent.getChildEntities();
             HasCommentsCondition commentsCondition = new HasCommentsCondition();
             if (childEntitys.isEmpty() && !commentsCondition.evaluate(parent)) {
                 EList<Port> ports = parent.getChildPorts();
+                //The locator needs all the ports of one side to distribute them evenly.
                 if (input.equals("NORTH")) {
                     List<Port> portsOfSide = new LinkedList<Port>();
                     for (Port port : ports) {
@@ -330,11 +324,10 @@ public class KaomPortProvider implements IRenderingProvider {
             return entity;
         } catch (ClassNotFoundException e) {
             // Not a class actor, continue below
+        } catch (NoClassDefFoundError er) {
+            // er.printStackTrace();
+            return null;
         }
-     catch (NoClassDefFoundError er) {
-        //er.printStackTrace();
-        return null;
-     }
         // Use Ptolemy to load the actor
         PtolemyHelper ptolemyHelper = new PtolemyHelper();
         NamedObj nObj = ptolemyHelper.instantiatePtolemyEntity(className);

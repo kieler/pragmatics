@@ -1,3 +1,17 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ *
+ * Copyright 2009 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ *
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+
 package de.cau.cs.kieler.kaom.karma.ptolemy.conditions;
 
 import java.util.List;
@@ -13,8 +27,14 @@ import org.eclipse.ui.IEditorPart;
 import de.cau.cs.kieler.core.ui.util.EditorUtils;
 import de.cau.cs.kieler.karma.ICustomCondition;
 
+/**
+ * Condition for evaluating whether a modelelement is in a collapsed state in the opened diagram. 
+ * 
+ * @author ckru
+ *
+ */
 public class IsCollapsedCondition extends ICustomCondition<EObject> {
-
+    
     public boolean evaluate(EObject object) {
         IEditorPart editorPart = EditorUtils.getLastActiveEditor();
         if ((editorPart != null) && (editorPart instanceof DiagramDocumentEditor)) {

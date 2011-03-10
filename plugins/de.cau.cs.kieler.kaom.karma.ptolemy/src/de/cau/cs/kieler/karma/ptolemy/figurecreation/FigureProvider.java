@@ -22,16 +22,6 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.StringWriter;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.ColorConstants;
@@ -49,7 +39,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Document;
 
 import ptolemy.vergil.icon.EditorIcon;
@@ -76,20 +66,7 @@ import diva.canvas.toolbox.ImageFigure;
 public class FigureProvider {
     
     /**
-     * Debug variable. figures are plain rectangles instead of complex svg figures.
-     */
-    private boolean lightweightGraphics;
-    
-    /**
-     * 
-     * @param _lightweightGraphics if true simple rectangles are drawn instead of svg
-     */
-    public FigureProvider(final boolean lightweightGraphics) {
-        this.lightweightGraphics = lightweightGraphics;
-    }
-    
-    /**
-     * creates a draw2d ImageFigure out of an ptolemy EditorIcon
+     * Creates a draw2d ImageFigure out of an ptolemy EditorIcon.
      * @param icon the EditorIcon to display in draw2d
      * @return draw2d Figure representing the EditorIcon
      */
@@ -117,61 +94,17 @@ public class FigureProvider {
         fig.setPreferredSize(size.getCopy());
         fig.getBounds().setSize(size.getCopy());
         fig.setSize(size.getCopy());
-        //ScalableImageFigure fig = new ScalableImageFigure(image);
-         if (lightweightGraphics) {
-             //Dimension size = new Dimension(img.getWidth(null),img.getHeight(null));
-             IFigure lightweight = getDefaultFigure();
-             //lightweight.setBounds(original.getBounds());
-             lightweight.setMinimumSize(size.getCopy());
-             lightweight.setPreferredSize(size.getCopy());
-             lightweight.getBounds().setSize(size.getCopy());
-             lightweight.setSize(size.getCopy());
-             return lightweight;
-         }
         return fig;
     }
     
     /**
-     * Create a draw2d ScalableImageFigure out of an svg Document.
+     * Create a draw2d figure out of an svg Document.
+     * FigureParser.createFigure does the actual work.
      * @param doc the Document holding the svg description
-     * @param lightweightSize container for the size of the new object 
-     *        used by the lightweight graphics mechanism
      * @return the figure representing the svg
      */
-    public IFigure createFigureFromSvg(final Document doc, final Dimension lightweightSize) {
-        String svg = "";
-        Source source = new DOMSource(doc);
-        StringWriter stringWriter = new StringWriter();
-        Result result = new StreamResult(stringWriter);
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer;
-        try {
-            transformer = factory.newTransformer();
-            transformer.transform(source, result);
-        } catch (TransformerConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();                    
-        } catch (TransformerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        svg = stringWriter.getBuffer().toString();
-        
-        if (svg == null) {
-            return getDefaultFigure();
-        } else {
-            if (lightweightGraphics) {
-                IFigure lightweight = getDefaultFigure();
-                //lightweight.setBounds(original.getBounds());
-                lightweight.setMinimumSize(lightweightSize.getCopy());
-                lightweight.setPreferredSize(lightweightSize.getCopy());
-                lightweight.getBounds().setSize(lightweightSize.getCopy());
-                lightweight.setSize(lightweightSize.getCopy());
-                return lightweight;
-            } else {
-                return createSvg(svg);
-            }
-        }
+    public IFigure createFigureFromSvg(final Document doc) {
+        return FigureParser.createFigure(doc);
     }
     
 
@@ -200,12 +133,14 @@ public class FigureProvider {
         return fig;
     }
     
+    
     /**
      * Gets an awt image out of a diva figure.
      * @param figure diva figure holding an image 
      * @return the awt image of the diva figure
      */
     private Image getImageFromFigure(final Figure figure) {
+        //if its an ImageFigure use that image.
         if (figure instanceof ImageFigure) {
             ImageFigure imageFigure = (ImageFigure) figure;
             Image image = imageFigure.getImage();
@@ -216,6 +151,7 @@ public class FigureProvider {
             } else {
                 throw new NullPointerException("Failed to get an image from " + imageFigure);
             }
+        // if its something else try to get some swt graphics stuff and make an image out of that.
         } else {
             Rectangle2D bounds = figure.getBounds();
             Rectangle2D size = new Rectangle2D.Double(0, 0, figure.getBounds().getWidth(), figure
@@ -229,6 +165,7 @@ public class FigureProvider {
 
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
+            //white background since draw2 can't handle transparency
             graphics.setBackground(new Color(255, 255, 255, 255));
             graphics.clearRect(0, 0, (int) figure.getBounds().getWidth(), (int) figure.getBounds()
                     .getHeight());
@@ -262,9 +199,6 @@ public class FigureProvider {
                 + "-8.789062,10.335937 14.554687,0 0,3.041016 -18.246093,0 "
                 + "0,-3.550781 8.419921,-9.826172 -8.419921,-8.9648439 0,-3.4277344 z\" />"
                 + "</svg>";
-        if (lightweightGraphics) {
-            return getDefaultFigure();
-        }
         return createSvg(accsvg);
     }
     
@@ -298,8 +232,8 @@ public class FigureProvider {
         private static final int LABELSIZE_WIDTH = 140;
         private static final int LABELSIZE_HEIGHT = 10;
         private static final int LABELLOCATION_X = 70;
-        private static final int LABELLOCATION_Y = 10;
-
+        private static final int LABELLOCATION_Y = 10;     
+        
         /**
          * constructs this figure and adds a label that displays the current value.
          * 
@@ -344,10 +278,7 @@ public class FigureProvider {
 
     }
 
-    private static final int DEFAULT_WIDTH = 90;
-    private static final int DEFAULT_HEIGHT = 30;
-    private static final int LABELSIZE_HEIGHT = 12;
-    private static final int LABELSIZE_WIDTH = 80;
+    //Position of the label inside the outer rectangle to make it centered somehow.
     private static final int LABELLOCATION_X = 5;
     private static final int LABELLOCATION_Y = 8;
 
@@ -362,39 +293,26 @@ public class FigureProvider {
             final EditPart part) {
         RectangleFigure constFigure = (RectangleFigure) getDefaultFigure();
         if (object instanceof Annotatable) {
-            Annotation iconAnn = ((Annotatable) object).getAnnotation("_icon");
-            int width;
-            if (iconAnn != null) {
-                StringAnnotation sizeAnn = (StringAnnotation) iconAnn.getAnnotation("displayWidth");
-
-                if (sizeAnn != null) {
-                    width = Integer.parseInt(sizeAnn.getValue());
-                } else {
-                    width = DEFAULT_WIDTH;
-                }
-            } else {
-                width = DEFAULT_WIDTH;
-            }
-
             Label valueLabel = new Label();
             if (!valueAttribute.equals("null")) {
                 Annotation valueAnn = ((Annotatable) object).getAnnotation(valueAttribute);
                 String value = ((StringAnnotation) valueAnn).getValue();
                 valueLabel.setText(value);
+                //Make a font. Whithout giving the label a font we can't calculate it size. 
                 FontData fd = new FontData();
                 fd.setStyle(SWT.NORMAL);
                 fd.setHeight(10);
-                Font font = new Font(Workbench.getInstance().getDisplay(), fd); // "Courier New", 12, SWT.NORMAL);
-                //fd.setHeight(12);
+                Font font = new Font(PlatformUI.getWorkbench().getDisplay(), fd);
                 valueLabel.setFont(font);
+                //calculate and set the size the figure must have to display the text value.
                 valueLabel.getBounds().setLocation(LABELLOCATION_X, LABELLOCATION_Y);
                 valueLabel.getBounds().setSize(valueLabel.getTextBounds().getSize());
                 valueLabel.setLayoutManager(new BorderLayout());
-                /* width -5 *///LABELSIZE_WIDTH, LABELSIZE_HEIGHT));
                 constFigure.setLayoutManager(new BorderLayout());
                 constFigure.add(valueLabel);
             }
-            Dimension dim = valueLabel.getBounds().getSize().expand(10, 10); //new Dimension(width, DEFAULT_HEIGHT);
+            //make the size of the outer rectangle a bit bigger than the label to have a nice border
+            Dimension dim = valueLabel.getBounds().getSize().expand(10, 10);
             constFigure.getBounds().setSize(dim.getCopy());
             constFigure.setMaximumSize(dim.getCopy());
             constFigure.setMinimumSize(dim.getCopy());

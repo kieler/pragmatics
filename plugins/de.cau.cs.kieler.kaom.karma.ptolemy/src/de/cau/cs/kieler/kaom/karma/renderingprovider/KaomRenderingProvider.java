@@ -83,12 +83,11 @@ public class KaomRenderingProvider implements IRenderingProvider {
      */
     private static final int ROUNDED_BENDPOINTS_RADIUS = 0;
 
+    
     /**
-     * debug variable. If true svg graphics will be discarded. Simple rectangles are drawn instead.
+     * a class that holds logic to build the actual figures. Main purpose is to keep this class smaller.
      */
-    private static boolean lightweightGraphics = false;
-
-    private FigureProvider figureProvider = new FigureProvider(lightweightGraphics);
+    private FigureProvider figureProvider = new FigureProvider();
 
     /**
      * {@inheritDoc}
@@ -113,6 +112,9 @@ public class KaomRenderingProvider implements IRenderingProvider {
             return figureProvider.createAccumulator();
         } else if (input.equals("connection")) {
             if (oldFigure instanceof SplineConnection) {
+                //This is a connection between common actors. Switch the Splinedrawing off.
+                //TODO The emfOp is for Switching on the gmf inherent rounded bendpoint method.
+                // currently the radius is 0 and thus  rounded bendpoints are deactivated due to gmf being bugged.
                 SplineConnection connection = ((SplineConnection) oldFigure);
                 connection.setTargetDecoration(null);
                 connection.setLineWidthFloat(LINE_WIDTH);
@@ -142,6 +144,7 @@ public class KaomRenderingProvider implements IRenderingProvider {
                 return null;
             }
         } else if (input.equals("stateConnection")) {
+            //This is a connection between states so turn spline drawing on.
             if (oldFigure instanceof SplineConnection) {
                 SplineConnection connection = ((SplineConnection) oldFigure);
                 connection.setTargetDecoration(createArrowDecoration());
@@ -194,13 +197,6 @@ public class KaomRenderingProvider implements IRenderingProvider {
     /**
      * {@inheritDoc}
      */
-    public LayoutManager getDefaultLayoutManager() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public BorderItemLocator getBorderItemLocatorByString(final String input, final IFigure parent,
             final Object locator, final EObject object) {
         return null;
@@ -240,10 +236,8 @@ public class KaomRenderingProvider implements IRenderingProvider {
         } else {
             List<EditorIcon> icons = PtolemyFetcher.fetchIcons(nObj);
             if (icons.isEmpty()) {
-                Dimension lightweightSize = new Dimension();
-                Document doc = PtolemyFetcher.fetchSvgDoc(nObj, lightweightSize);
-                IFigure figure = FigureParser.createFigure(doc);
-                // IFigure figure = figureProvider.createFigureFromSvg(doc, lightweightSize);
+                Document doc = PtolemyFetcher.fetchSvgDoc(nObj);
+                IFigure figure = figureProvider.createFigureFromSvg(doc);
                 return figure;
             } else {
                 EditorIcon icon = icons.get(0);

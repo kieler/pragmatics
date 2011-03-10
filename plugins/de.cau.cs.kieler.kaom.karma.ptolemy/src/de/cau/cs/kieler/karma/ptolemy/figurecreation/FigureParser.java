@@ -17,22 +17,17 @@ package de.cau.cs.kieler.karma.ptolemy.figurecreation;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.draw2d.BorderLayout;
 import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.gmf.runtime.draw2d.ui.figures.FigureUtilities;
-import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.Panel;
 import org.eclipse.draw2d.PolygonShape;
 import org.eclipse.draw2d.PolylineShape;
-import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.Shape;
-import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
@@ -41,21 +36,15 @@ import org.eclipse.gmf.runtime.draw2d.ui.internal.figures.ImageFigureEx;
 import org.eclipse.gmf.runtime.gef.ui.figures.NodeFigure;
 import org.eclipse.gmf.runtime.gef.ui.internal.figures.CircleFigure;
 import org.eclipse.gmf.runtime.gef.ui.internal.figures.OvalFigure;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.Workbench;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import de.cau.cs.kieler.kaom.custom.Activator;
-import de.cau.cs.kieler.kaom.custom.EntityLayout;
 
 /**
  * Class for creating a draw2d figure out of an svg document.
@@ -81,12 +70,12 @@ public final class FigureParser {
      */
     public static IFigure createFigure(final Document doc) {
         Element svgElement = (Element) doc.getElementsByTagName("svg").item(0);
+        //Make an invisible container to hold the visible figures because we don't know the structure of the svg.
         IFigure rootFigure = new Panel();
         rootFigure.getBounds().setSize(
                 new Dimension(Integer.parseInt(svgElement.getAttribute("width")), 
                         Integer.parseInt(svgElement.getAttribute("height"))));
         rootFigure = buildFigure(svgElement, rootFigure);
-        //rootFigure.getBounds().setSize(FigureParser.calculateMinimumSize(rootFigure));
         return rootFigure;
     }
 
@@ -99,7 +88,6 @@ public final class FigureParser {
      *            an invisible figure as container for the actual figures
      * @return a hirachical figure representing the svg
      */
-    @SuppressWarnings("restriction")
     private static IFigure buildFigure(final Element root, final IFigure parentFigure) {
         NodeList childList = root.getChildNodes();
         for (int i = 0; i < childList.getLength(); i++) {
@@ -107,6 +95,7 @@ public final class FigureParser {
             if (child instanceof Element) {
                 Element childElement = (Element) child;
                 String tag = childElement.getTagName();
+                //make a RectangleFigure from a rectangle element
                 if (tag.equals("rect")) {
                     RectangleFigure figure = new RectangleFigure();
                     Float x = Float.parseFloat(childElement.getAttribute("x"));
@@ -117,6 +106,8 @@ public final class FigureParser {
                     figure.setBounds(new Rectangle(x.intValue(), y.intValue(), width, height));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
+                //make a CircleFigure from a circle element.
+                //structure is different between draw2d and svg so positions are a bit hacked
                 } else if (tag.equals("circle")) {
                     Float x = Float.parseFloat(childElement.getAttribute("cx"));
                     Float y = Float.parseFloat(childElement.getAttribute("cy"));
@@ -128,6 +119,8 @@ public final class FigureParser {
                     figure.getBounds().setSize((r.intValue() * 2), (r.intValue() * 2));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
+                //make a CircleFigure from a ellipse element.
+                //structure is different between draw2d and svg so positions are a bit hacked
                 } else if (tag.equals("ellipse")) {
                     OvalFigure figure = new OvalFigure();
                     Float x = Float.parseFloat(childElement.getAttribute("cx"));
@@ -135,10 +128,11 @@ public final class FigureParser {
                     Float rx = Float.parseFloat(childElement.getAttribute("rx"));
                     Float ry = Float.parseFloat(childElement.getAttribute("ry"));
                     String style = (String) childElement.getAttribute("style");
-                    figure.setBounds(new Rectangle(x.intValue(), y.intValue(), rx.intValue(), ry
+                    figure.setBounds(new Rectangle(x.intValue() + 1 - rx.intValue(), y.intValue() + 1 - ry.intValue(), rx.intValue(), ry
                             .intValue()));
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
+                //make a PolyLineShape from a line element
                 } else if (tag.equals("line")) {
                     float x1 = Float.parseFloat(childElement.getAttribute("x1"));
                     float y1 = Float.parseFloat(childElement.getAttribute("y1"));
@@ -151,6 +145,7 @@ public final class FigureParser {
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     figure.getBounds().setSize(figure.getParent().getBounds().getSize().getCopy());
+                //make a PolylineShape from a polyline element.
                 } else if (tag.equals("polyline")) {
                     String allpoints = childElement.getAttribute("points");
                     String style = (String) childElement.getAttribute("style");
@@ -167,6 +162,7 @@ public final class FigureParser {
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     figure.getBounds().setSize(figure.getParent().getBounds().getSize().getCopy());
+                //make a PolygonShape from a polygon element
                 } else if (tag.equals("polygon")) {
                     String allpoints = childElement.getAttribute("points");
                     String style = (String) childElement.getAttribute("style");
@@ -183,6 +179,8 @@ public final class FigureParser {
                     applyStyle(figure, style);
                     parentFigure.add(buildFigure(childElement, figure));
                     figure.getBounds().setSize(figure.getParent().getBounds().getSize().getCopy());
+                //make a Label from a text element
+                //TODO weird behavior of y value
                 } else if (tag.equals("text")) {
                     Float x = Float.parseFloat(childElement.getAttribute("x"));
                     Float y = Float.parseFloat(childElement.getAttribute("y"));
@@ -196,13 +194,8 @@ public final class FigureParser {
                     figure.getBounds().setLocation(x.intValue(), y.intValue() - (figure.getTextBounds().getSize().height - 2));
                     figure.getBounds().setSize(figure.getTextBounds().getSize());
                     figure.setLayoutManager(new BorderLayout());
-                    //figure.setLabelAlignment(PositionConstants.LEFT);
-                    // figure.setTextPlacement(Label.WEST);
                     parentFigure.add(buildFigure(childElement, figure));
-                    //figure.getBounds().setLocation(x.intValue(), y.intValue());
-                    //figure.getBounds().setSize(figure.getParent().getBounds().width, 8);
-                    // figure.setTextPlacement(PositionConstants.EAST);
-                    // figure.setTextAlignment(PositionConstants.TOP);
+                //make an ImageFigureEx out of an image element
                 } else if (tag.equals("image")) {
                     Float x = Float.parseFloat(childElement.getAttribute("x"));
                     Float y = Float.parseFloat(childElement.getAttribute("y"));
@@ -257,7 +250,7 @@ public final class FigureParser {
                 int index = string.indexOf(":");
                 String name = string.substring(0, index);
                 String value = string.substring(index + 1);
-
+                //fill might be background, stroke foreground. Works fine so far.
                 if (name.equals("fill")) {
                     figure.setBackgroundColor(lookupColor(value));
                 } else if (name.equals("stroke")) {
@@ -291,9 +284,10 @@ public final class FigureParser {
                 int index = string.indexOf(":");
                 String name = string.substring(0, index);
                 String value = string.substring(index + 1);
-
+                //foreground color determines the text color
                 if (name.equals("fill")) {
                     figure.setForegroundColor(lookupColor(value));
+                //some hacked size stuff without having a fitting font.
                 } else if (name.equals("font-size")) {
                     int size = Integer.parseInt(value);
                     if (figure instanceof Label) {
@@ -304,6 +298,8 @@ public final class FigureParser {
                         ((Label) figure).setFont(font);
                     }
                 }
+                //TODO set a font.Problem: Svg has an attribute that loosely describes the font family. 
+                //This has to be mapped to existing fonts on a specific system.
             }
         }
     }
@@ -345,24 +341,4 @@ public final class FigureParser {
             return c;
         }
     }
-
-    private static Dimension calculateMinimumSize(IFigure figure) {
-        Dimension minSize = new Dimension(0,0);
-        for (Object child: figure.getChildren()) {
-            if (child instanceof IFigure) {
-                IFigure childFigure = (IFigure) child;
-                int childWidth = childFigure.getBounds().x + childFigure.getBounds().width;
-                int childHeight = childFigure.getBounds().y + childFigure.getBounds().height;
-                if (childHeight > minSize.height) {
-                    minSize.height = childHeight;
-                }
-                if (childWidth > minSize.width) {
-                    minSize.width = childWidth;
-                }
-            }
-        }
-        return minSize;
-        
-    }
-    
 }

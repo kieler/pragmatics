@@ -83,19 +83,21 @@ public final class PtolemyFetcher {
      *            container used by lightweightgraphics mechanism.
      * @return an svg Document representing the NamedObj
      */
-    public static Document fetchSvgDoc(final NamedObj nObj, final Dimension size) {
+    public static Document fetchSvgDoc(final NamedObj nObj) {
         ConfigurableAttribute ca = (ConfigurableAttribute) nObj.getAttribute("_iconDescription");
         String svg = ca.getConfigureText();
         try {
             XMLParser xmlpars = new XMLParser();
             Document doc;
+            //Try to parse the xml. If it fails there are probably some blanks missing. (Typos in ptolemy)
+            // Repair that and try again. If it still fails thats bad.
             try {
                 doc = xmlpars.parser(svg);
             } catch (Exception e) {
                 svg = repairString(svg);
                 doc = xmlpars.parser(svg);
             }
-            doc = repairSvg(doc, size);
+            doc = repairSvg(doc);
             return doc;
         } catch (Exception e) {
 
@@ -112,23 +114,26 @@ public final class PtolemyFetcher {
      *            the string describing an svg in xml
      * @return an svg description compatible with the svg standard
      */
-    private static Document repairSvg(final Document doc, final Dimension size) {
+    private static Document repairSvg(final Document doc) {
         try {
             Element svgElement = (Element) doc.getElementsByTagName("svg").item(0);
             NodeList nodeList = doc.getElementsByTagName("rect");
             int xoffset = 0;
             int yoffset = 0;
+            // We have to set the size of the whole thing to the <svg> tag (thats missing in ptolemy)
+            // Thats easy if the top element is a rectangle.
+            // Also we have to calculate an offset by which to shift each element
+            // (in ptolemy 0,0 is in the middle in gmf its topleft).
             if (nodeList.getLength() != 0) {
                 Element rectElement = (Element) doc.getElementsByTagName("rect").item(0);
-
                 svgElement.setAttribute("height",
                         String.valueOf(Integer.parseInt(rectElement.getAttribute("height")) + 1));
                 svgElement.setAttribute("width",
                         String.valueOf(Integer.parseInt(rectElement.getAttribute("width")) + 1));
-                size.height = Integer.parseInt(rectElement.getAttribute("height")) + 1;
-                size.width = Integer.parseInt(rectElement.getAttribute("width")) + 1;
                 xoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("x")));
                 yoffset = Math.abs(Integer.parseInt(rectElement.getAttribute("y")));
+            // The topmost element is not a rectangle. Try to find the topmost svg element. 
+            // If it has points (its a polygon or something) use those to calculate the needed size and offset.   
             } else {
                 // TODO hacked else case, think of something better
                 int childPointer = 0;
@@ -142,8 +147,6 @@ public final class PtolemyFetcher {
                     String[] splittedPoints = points.split(" +");
                     String firstPoint = splittedPoints[0];
                     String[] firstPointCoords = firstPoint.split(",");
-                    //xoffset = Math.abs(Integer.parseInt(firstPointCoords[0]));
-                    //yoffset = Math.abs(Integer.parseInt(firstPointCoords[1]));
                     List<Integer> pointsX = new LinkedList<Integer>();
                     List<Integer> pointsY = new LinkedList<Integer>();
                     for (String singlePoint : splittedPoints) {
@@ -159,11 +162,10 @@ public final class PtolemyFetcher {
                     int maxY = Collections.max(pointsY);
                     svgElement.setAttribute("height", String.valueOf(maxX + xoffset + 1));
                     svgElement.setAttribute("width", String.valueOf(maxY + yoffset + 1));
-                    size.height = maxX + xoffset + 1;
-                    size.width = maxY + yoffset + 1;
                 }
 
             }
+            //shift all rectangles by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("rect").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("rect").item(i);
                 if (e.hasAttribute("x") && e.hasAttribute("y") && e.hasAttribute("style")) {
@@ -177,7 +179,7 @@ public final class PtolemyFetcher {
                             e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
                 }
             }
-
+          //shift all circles by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("circle").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("circle").item(i);
                 if (e.hasAttribute("cx") && e.hasAttribute("cy")) {
@@ -191,7 +193,7 @@ public final class PtolemyFetcher {
                 e.setAttribute("style",
                         e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
             }
-
+          //shift all polygons by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("polygon").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("polygon").item(i);
                 if (e.hasAttribute("points")) {
@@ -212,7 +214,7 @@ public final class PtolemyFetcher {
                             e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
                 }
             }
-
+            //shift all polylines by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("polyline").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("polyline").item(i);
                 if (e.hasAttribute("points")) {
@@ -231,7 +233,7 @@ public final class PtolemyFetcher {
                     e.setAttribute("points", newpoints);
                 }
             }
-
+            //shift all lines by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("line").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("line").item(i);
                 if (e.hasAttribute("x1") && e.hasAttribute("y1") && e.hasAttribute("x2")
@@ -252,7 +254,7 @@ public final class PtolemyFetcher {
                 e.setAttribute("style",
                         e.getAttribute("style").concat(";stroke:black;stroke-width:1"));
             }
-
+            //shift all images by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("image").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("image").item(i);
                 if (e.hasAttribute("x") && e.hasAttribute("y")) {
@@ -264,7 +266,7 @@ public final class PtolemyFetcher {
                     e.setAttribute("y", String.valueOf(y));
                 }
             }
-
+            //shift all ellipses by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("ellipse").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("ellipse").item(i);
                 if (e.hasAttribute("cx") && e.hasAttribute("cy")) {
@@ -276,7 +278,7 @@ public final class PtolemyFetcher {
                     e.setAttribute("cy", String.valueOf(y));
                 }
             }
-
+            //shift all text elements by the offset calculated beforehand
             for (int i = 0; i < doc.getElementsByTagName("text").getLength(); i++) {
                 Element e = (Element) doc.getElementsByTagName("text").item(i);
                 if (e.hasAttribute("x") && e.hasAttribute("y")) {
