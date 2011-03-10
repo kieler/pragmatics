@@ -165,7 +165,7 @@ public class FigureProvider {
 
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-            //white background since draw2 can't handle transparency
+            //White background since draw2 can't handle transparency well
             graphics.setBackground(new Color(255, 255, 255, 255));
             graphics.clearRect(0, 0, (int) figure.getBounds().getWidth(), (int) figure.getBounds()
                     .getHeight());
@@ -181,6 +181,7 @@ public class FigureProvider {
      */
     public IFigure createDirector() {
         RectangleFigure director = new RectangleFigure();
+        //Directors just are that big. Wouldn't gain anything by hiding the magic numbers in constants. 
         director.getBounds().setSize(100, 30);
         director.setBackgroundColor(ColorConstants.green);
         director.setForegroundColor(ColorConstants.black);
