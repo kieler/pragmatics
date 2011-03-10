@@ -276,7 +276,9 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             sourceRel.x /= sourceLayout.getWidth();
             sourceRel.y /= sourceLayout.getHeight();
         }
-        return sourceRel;
+        
+        // check the bound of the relative position
+        return sourceRel.applyBounds(0, 0, 1, 1);
     }
     
     /**
@@ -338,7 +340,9 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             targetRel.x /= targetLayout.getWidth();
             targetRel.y /= targetLayout.getHeight();
         }
-        return targetRel;
+        
+        // check the bound of the relative position
+        return targetRel.applyBounds(0, 0, 1, 1);
     }
 
     /** see LabelViewConstants.TARGET_LOCATION. */

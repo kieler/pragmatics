@@ -80,8 +80,9 @@ public class KVector implements IDataObject {
                     "Value for angle has to be within [0, 360)! Given Value: " + alpha);
         }
 
-        this.x = Math.sin(Math.toRadians(alpha));
-        this.y = Math.cos(Math.toRadians(alpha));
+        double rad = Math.toRadians(alpha);
+        this.x = Math.sin(rad);
+        this.y = Math.cos(rad);
     }
 
     /**
@@ -97,6 +98,7 @@ public class KVector implements IDataObject {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "(" + x + "," + y + ")";
     }
@@ -104,6 +106,7 @@ public class KVector implements IDataObject {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(final Object obj) {
         if (obj instanceof KVector) {
             KVector other = (KVector) obj;
@@ -116,19 +119,9 @@ public class KVector implements IDataObject {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
-        return Double.valueOf(x).hashCode() + Double.valueOf(y).hashCode();
-    }
-
-    /**
-     * Compute euclidean norm (a.k.a length). FIXME why define two names for the same function?
-     * (msp)
-     * 
-     * @deprecated use getLength()
-     * @return length of this vector
-     */
-    public final double getNorm() {
-        return getLength();
+        return Double.valueOf(x).hashCode() + Integer.reverse(Double.valueOf(y).hashCode());
     }
 
     /**
@@ -410,6 +403,30 @@ public class KVector implements IDataObject {
      */
     public static double productDot(final KVector v1, final KVector v2) {
         return ((v1.x * v2.x) + (v1.y * v2.y));
+    }
+    
+    /**
+     * Apply the given bounds to this vector.
+     * 
+     * @param lowx the lower bound for x coordinate
+     * @param lowy the lower bound for y coordinate
+     * @param highx the upper bound for x coordinate
+     * @param highy the upper bound for y coordinate
+     * @return {@code this}
+     */
+    public KVector applyBounds(final double lowx, final double lowy, final double highx,
+            final double highy) {
+        if (x < lowx) {
+            x = lowx;
+        } else if (x > highx) {
+            x = highx;
+        }
+        if (y < lowy) {
+            y = lowy;
+        } else if (y > highy) {
+            y = highy;
+        }
+        return this;
     }
 
     /**
