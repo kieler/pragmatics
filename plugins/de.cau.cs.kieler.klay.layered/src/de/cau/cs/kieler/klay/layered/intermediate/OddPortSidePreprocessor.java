@@ -240,7 +240,7 @@ public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayou
         
         LPort sameLayerDummyOutput = new LPort(PortType.OUTPUT);
         sameLayerDummyOutput.setNode(sameLayerDummy);
-        sameLayerDummyInput.setSide(PortSide.EAST);
+        sameLayerDummyOutput.setSide(PortSide.EAST);
         
         // Dummy node in the previous layer
         LNode previousLayerDummy = new LNode();

@@ -120,7 +120,7 @@ public class RandomGraphGenerator {
                 nodesLeft--;
             }
             totalCount++;
-            node.setNodeLabel("n" + nodeIndex++);
+            node.setNodeLabel("N" + nodeIndex++);
             graph.getChildren().add(node);
         } while (nodesLeft > 0);
 

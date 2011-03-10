@@ -118,11 +118,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
          * 
          * @param port a port
          * @param hyperNodeMap map of ports to existing hypernodes
-         * @param isTargetLayer TODO Document.
          */
-        void addPortPosis(final LPort port, final Map<LPort, HyperNode> hyperNodeMap,
-                final boolean isTargetLayer) {
-            
+        void addPortPosis(final LPort port, final Map<LPort, HyperNode> hyperNodeMap) {
             hyperNodeMap.put(port, this);
             ports.add(port);
             double pos = port.getNode().getPos().y + port.getPos().y;
@@ -142,7 +139,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             }
             
             // add the new port position to the respective list
-            if (isTargetLayer) {
+            if (port.getSide() == PortSide.WEST) {
                 insertSorted(targetPosis, pos);
             } else {
                 insertSorted(sourcePosis, pos);
@@ -151,7 +148,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             // add connected ports
             for (LPort otherPort : port.getConnectedPorts()) {
                 if (!hyperNodeMap.containsKey(otherPort)) {
-                    addPortPosis(otherPort, hyperNodeMap, !isTargetLayer);
+                    addPortPosis(otherPort, hyperNodeMap);
                 }
             }
         }
@@ -249,10 +246,19 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         Iterator<Layer> layerIter = layeredGraph.getLayers().iterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
+            int slotsCount;
+            
+            // Route edges of western output ports
+            slotsCount = routeEdges(layer, PortSide.WEST, xpos);
+            xpos += slotsCount * edgeSpacing;
+            
+            // Place the nodes
             layer.placeNodes(xpos);
             xpos += layer.getSize().x + edgeSpacing;
+            
+            // Route edges of eastern output ports
             if (layerIter.hasNext()) {
-                int slotsCount = routeEdges(layer, xpos);
+                slotsCount = routeEdges(layer, PortSide.EAST, xpos);
                 xpos += slotsCount * edgeSpacing;
             }
         }
@@ -265,23 +271,27 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     private static final int STRAIGHT_TOLERANCE = 256;
     
     /**
-     * Route the edges from one layer to the next one.
+     * Route edges originating at the given layer. The edges may go to the next layer
+     * (in case of the output ports being on the eastern side), or may stay at the same
+     * layer (in case of the output ports being on the western side).
      * 
      * @param layer the source layer
+     * @param portSide side of the output ports whose edges to route. Either {@code EAST}
+     *                 or {@code WEST}.
      * @param xpos horizontal position of the first routing slot
      * @return the number of routing slots for this layer
      */
-    private int routeEdges(final Layer layer, final double xpos) {
+    private int routeEdges(final Layer layer, final PortSide portSide, final double xpos) {
         // create hypernodes for the ports of the source layer and the target layer
         Map<LPort, HyperNode> portToHyperNodeMap = new HashMap<LPort, HyperNode>();
         List<HyperNode> hyperNodes = new LinkedList<HyperNode>();
         for (LNode node : layer.getNodes()) {
-            for (LPort port : node.getPorts(PortType.OUTPUT, PortSide.EAST)) {
+            for (LPort port : node.getPorts(PortType.OUTPUT, portSide)) {
                 HyperNode hyperNode = portToHyperNodeMap.get(port);
                 if (hyperNode == null) {
                     hyperNode = new HyperNode();
                     hyperNodes.add(hyperNode);
-                    hyperNode.addPortPosis(port, portToHyperNodeMap, false);
+                    hyperNode.addPortPosis(port, portToHyperNodeMap);
                 }
             }
         }
@@ -299,7 +309,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         
         // write the full dependency graph to an output file
         if (layer.getGraph().getProperty(LayoutOptions.DEBUG_MODE)) {
-            writeDebugGraph(layer, hyperNodes, "full");
+            writeDebugGraph(layer, hyperNodes, portSide, "full");
         }
         
         // break cycles
@@ -307,7 +317,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
 
         // write the acyclic dependency graph to an output file
         if (layer.getGraph().getProperty(LayoutOptions.DEBUG_MODE)) {
-            writeDebugGraph(layer, hyperNodes, "acyc");
+            writeDebugGraph(layer, hyperNodes, portSide, "acyc");
         }
         
         // assign ranks to the hypernodes
@@ -619,12 +629,14 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      * 
      * @param layer the currently processed layer
      * @param hypernodes a list of hypernodes
+     * @param portSide the side of output ports currently processed
      * @param label a label to append to the output files
      */
-    private static void writeDebugGraph(final Layer layer,
-            final List<HyperNode> hypernodes, final String label) {
+    private static void writeDebugGraph(final Layer layer, final List<HyperNode> hypernodes,
+            final PortSide portSide, final String label) {
+        
         try {
-            Writer writer = createWriter(layer, label);
+            Writer writer = createWriter(layer, portSide, label);
             writer.write("digraph {\n");
             // write hypernode information
             for (HyperNode hypernode : hypernodes) {
@@ -649,11 +661,14 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      * Create a writer for debug output.
      * 
      * @param layer the currently processed layer
+     * @param portSide the side of output ports currently processed
      * @param label a label to append to the output files
      * @return a file writer for debug output
      * @throws IOException if creating the output file fails
      */
-    private static Writer createWriter(final Layer layer, final String label) throws IOException {
+    private static Writer createWriter(final Layer layer, final PortSide portSide,
+            final String label) throws IOException {
+        
         String path = System.getProperty("user.home");
         if (path.endsWith(File.separator)) {
             path += "tmp" + File.separator + "klay";
@@ -662,7 +677,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         }
         new File(path).mkdirs();
         String debugFileName = Integer.toString(layer.getGraph().hashCode()
-                & ((1 << (Integer.SIZE / 2)) - 1)) + "-l" + layer.getIndex() + "-" + label;
+                & ((1 << (Integer.SIZE / 2)) - 1)) + "-l" + layer.getIndex()
+                + (portSide == PortSide.EAST ? "e" : "w") + "-" + label;
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
