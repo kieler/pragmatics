@@ -37,6 +37,23 @@
                </customCondition>
             </compoundCondition>
             <compoundCondition
+                  figureParam="compoundCollapsed"
+                  layoutParam="compoundCollapsed">
+               <customCondition
+                     condition="de.cau.cs.kieler.kaom.karma.ptolemy.conditions.HasCommentsCondition">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.karma.AnnotationCondition"
+                     key="language"
+                     value="ptolemy">
+               </customCondition>
+               <customCondition
+                     condition="de.cau.cs.kieler.kaom.karma.ptolemy.conditions.IsCollapsedCondition"
+                     key="null"
+                     value="null">
+               </customCondition>
+            </compoundCondition>
+            <compoundCondition
                   figureParam="compound"
                   layoutParam="compound">
                <listSizeCondition
