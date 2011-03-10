@@ -733,7 +733,7 @@ final class GenomeFactory {
      * @param configs
      *            list of layout configurations
      * @param layoutHintIds
-     *            set of layout hint IDs; must not be {@code null}
+     *            set of layout hint IDs
      * @return a genome, or {@code null}.
      */
     public Genome createGenome(final List<ILayoutConfig> configs, final Set<Object> layoutHintIds) {
@@ -743,7 +743,7 @@ final class GenomeFactory {
         }
 
         /*
-         * TODO: Discuss: If more than one ILayoutInspector is contained in the given list,
+         * TODO: Discuss: If more than one ILayoutConfig is contained in the given list,
          * they may stem from different editors set to different layout algorithms.
          * Should the genes from different layout algorithms
          *   - be pooled without hierarchy?
@@ -820,7 +820,7 @@ final class GenomeFactory {
             return null;
         }
 
-        // Get the type of the provider.
+        // Get the type of the layout algorithm.
         String typeId = algorithmData.getType();
 
         // Get the IDs of all suitable algorithms for this type.
@@ -851,10 +851,10 @@ final class GenomeFactory {
 
         return result;
     }
-
+    
     /**
      * Creates a genome of extra genes (for known options that are not present).
-     *
+     * 
      * @param knownOptionIds
      *            set of identifiers of the known options; must not be
      *            {@code null}
@@ -864,6 +864,7 @@ final class GenomeFactory {
      *            mutation probability
      * @param theGeneFactory
      *            an {@link IGeneFactory}; may be {@code null}
+     * @return the created genome
      */
     private Genome createGenes(
             final Set<String> knownOptionIds, final List<String> presentIds, final double prob,
@@ -882,11 +883,12 @@ final class GenomeFactory {
             geneFactory = theGeneFactory;
         }
 
+        LayoutServices layoutServices = LayoutServices.getInstance();
+
         for (final String optionId : knownOptionIds) {
             if (!presentIds.contains(optionId)) {
                 EvolPlugin.logStatus("Creating extra gene for " + optionId);
-                LayoutOptionData<?> optionData =
-                        LayoutServices.getInstance().getOptionData(optionId);
+                LayoutOptionData<?> optionData = layoutServices.getOptionData(optionId);
 
                 if (optionData == null) {
                     throw new IllegalStateException("Could not get layout option data: " + optionId);
@@ -916,9 +918,11 @@ final class GenomeFactory {
             throw new IllegalArgumentException();
         }
 
+        LayoutServices layoutServices = LayoutServices.getInstance();
+
         Set<String> knownOptionIds = new HashSet<String>();
         for (final String id : algorithmIds) {
-            LayoutAlgorithmData algorithm = LayoutServices.getInstance().getAlgorithmData(id);
+            LayoutAlgorithmData algorithm = layoutServices.getAlgorithmData(id);
             for (final String optionId : this.learnableOptions) {
                 if (algorithm.knowsOption(optionId)) {
                     knownOptionIds.add(optionId);
