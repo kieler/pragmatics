@@ -305,21 +305,30 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 }
             }
         }
+        
         // At least one of the outgoing edges has priority > 0
+        NodeType nodeType = node.getProperty(Properties.NODE_TYPE);
         if (highestPrioEdge != null) {
             LNode nextNode = highestPrioEdge.getTarget().getNode();
+            
             // calculate/set offset
             int offset = (int) Math.round(highestPrioEdge.getSource().getPos().y
                     - (highestPrioEdge.getTarget().getPos().y)
                     + node.getProperty(Properties.LINSEG_OFFSET));
             nextNode.setProperty(Properties.LINSEG_OFFSET, offset);
+            
             // Fill segment
             fillSegment(nextNode, segment);
-        } else if (node.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+        } else if (nodeType == NodeType.LONG_EDGE || nodeType == NodeType.NORTH_SOUTH_PORT) {
+            // Long Edge and North South Port dummies can be part of a linear segment
             for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
                 for (LPort targetPort : sourcePort.getConnectedPorts()) {
                     LNode targetNode = targetPort.getNode();
-                    if (targetNode.getProperty(Properties.NODE_TYPE) == NodeType.LONG_EDGE) {
+                    NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
+                    
+                    if (targetNodeType == NodeType.LONG_EDGE
+                            || targetNodeType == NodeType.NORTH_SOUTH_PORT) {
+                        
                         fillSegment(targetNode, segment);
                     }
                 }
@@ -330,7 +339,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     /**
      * Creates an unbalanced placement for the sorted linear segments.
      * 
-     * @param layeredGraph TODO Document.
+     * @param layeredGraph the layered graph to create an unbalanced placement for.
      */
     private void createUnbalancedPlacement(final LayeredGraph layeredGraph) {
         float spacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
@@ -436,7 +445,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     }
 
     /**
-     * TODO: Document.
+     * Calculates the force acting on the given region.
      * 
      * @param region the region whose force to be calculated
      */
@@ -521,10 +530,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     }
 
     /**
-     * TODO: Document.
+     * Checks if any regions are now touching each other that weren't touching each other
+     * during the last call.
      * 
      * @param layeredGraph the layered graph
-     * @return ready is set to false if there are regions newly touching
+     * @return {@code false} if regions are newly touching
      */
     private boolean noNewTouchingRegions(final LayeredGraph layeredGraph) {
         boolean ready = true;

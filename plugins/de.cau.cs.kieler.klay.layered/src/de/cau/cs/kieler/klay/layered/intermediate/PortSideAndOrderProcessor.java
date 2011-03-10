@@ -27,7 +27,9 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
- * TODO Write description.
+ * Makes sure ports have at least a fixed side. If they don't, input ports are assigned
+ * to the left and output ports to the right side. If the port order is fixed, the node's
+ * list of ports is sorted, beginning at the leftmost northern port, going clockwise.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
