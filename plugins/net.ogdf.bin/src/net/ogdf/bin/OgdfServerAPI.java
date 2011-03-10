@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 
 /**
@@ -286,11 +285,8 @@ public final class OgdfServerAPI {
      * @param inputFormat
      *            the graph input format for the ogdf server
      * @return an instance of the ogdf server process
-     * @throws KielerException
-     *             if creating the process fails
      */
-    public static synchronized Process startProcess(final String inputFormat)
-            throws KielerException {
+    public static synchronized Process startProcess(final String inputFormat) {
         if (process == null) {
             try {
                 if (executable == null) {
@@ -298,7 +294,7 @@ public final class OgdfServerAPI {
                 }
                 process = Runtime.getRuntime().exec(new String[] { executable, inputFormat });
             } catch (IOException exception) {
-                throw new KielerException("Failed to start ogdf server process.", exception);
+                throw new RuntimeException("Failed to start ogdf server process.", exception);
             }
         }
         return process;
@@ -331,7 +327,7 @@ public final class OgdfServerAPI {
      *             if the timeout is exceeded while waiting
      */
     public static boolean waitForInput(final InputStream inputStream,
-            final IKielerProgressMonitor monitor) throws KielerException {
+            final IKielerProgressMonitor monitor) {
         monitor.begin("Wait for the ogdf server", 1);
         // TODO read from somewhere else
         int timeout = -1;
@@ -362,7 +358,7 @@ public final class OgdfServerAPI {
             return true;
         } catch (IOException exception) {
             endProcess();
-            throw new KielerException("Unable to read ogdf server output.", exception);
+            throw new RuntimeException("Unable to read ogdf server output.", exception);
         } finally {
             monitor.done();
         }

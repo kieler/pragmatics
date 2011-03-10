@@ -22,7 +22,6 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -37,8 +36,7 @@ public class RemoteLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         HttpClient client = new HttpClient();
         HostConfiguration config = new HostConfiguration();
         config.setHost("effert.local", 80);

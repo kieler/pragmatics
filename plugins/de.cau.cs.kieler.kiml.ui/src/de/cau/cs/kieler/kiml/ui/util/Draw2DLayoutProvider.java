@@ -27,7 +27,6 @@ import org.eclipse.draw2d.graph.DirectedGraphLayout;
 import org.eclipse.draw2d.graph.Edge;
 import org.eclipse.draw2d.graph.Node;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
@@ -83,8 +82,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Draw2D Directed Graph layout", 1);
         
         DirectedGraph graph = buildDraw2dGraph(layoutNode);

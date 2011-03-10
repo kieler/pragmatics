@@ -31,8 +31,8 @@ import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
 import de.cau.cs.kieler.ksbase.ui.KSBasEUIPlugin;
 
 /**
@@ -87,7 +87,7 @@ public class TransformationCommand extends AbstractTransactionalCommand {
         if (transformationFramework != null) {
             try {
                 transformationFramework.executeTransformation();
-            } catch (TransformationException e0) {
+            } catch (TransformException e0) {
                 return CommandResult.newErrorCommandResult(e0);
             }
 

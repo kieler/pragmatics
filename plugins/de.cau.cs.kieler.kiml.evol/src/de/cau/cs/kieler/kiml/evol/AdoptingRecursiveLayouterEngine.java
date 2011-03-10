@@ -15,10 +15,12 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
+import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -110,9 +112,9 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         try {
             layout(adopted, monitor, false /* layoutAncestors */);
 
-        } catch (final KielerException exception) {
+        } catch (final Throwable exception) {
             // layout failed
-            exception.printStackTrace();
+            EvolPlugin.showError("Layout algorithm failed", exception);
             return null;
         }
         return adopted;

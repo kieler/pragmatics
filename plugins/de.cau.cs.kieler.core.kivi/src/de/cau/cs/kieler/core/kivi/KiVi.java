@@ -32,11 +32,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
-import de.cau.cs.kieler.core.KielerNotSupportedException;
 import de.cau.cs.kieler.core.kivi.internal.CombinationsWorker;
 import de.cau.cs.kieler.core.kivi.internal.EffectsWorker;
 import de.cau.cs.kieler.core.kivi.internal.IEffectsListener;
 import de.cau.cs.kieler.core.kivi.triggers.EffectTrigger.EffectTriggerState;
+import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 
 /**
  * Core controller for the view management.
@@ -339,7 +339,7 @@ public class KiVi {
                 for (IEffect effect : effects) {
                     executeEffect(effect);
                 }
-            } catch (KielerNotSupportedException e) {
+            } catch (UnsupportedPartException e) {
                 error(combo, triggerState, e);
             }
 
@@ -359,12 +359,7 @@ public class KiVi {
         for (IConfigurationElement element : elements) {
             try {
                 // instanciate new combination
-                Object o = element.createExecutableExtension("class");
-                if (!(o instanceof ICombination)) {
-                    throw new KielerNotSupportedException("Load View Management Combination",
-                            "The class is no ICombination.", element.getAttribute("class"));
-                }
-                ICombination combination = (ICombination) o;
+                ICombination combination = (ICombination) element.createExecutableExtension("class");
                 combinations.add(combination);
                 // create descriptor for a combination
                 CombinationDescriptor descriptor = new CombinationDescriptor(
@@ -392,7 +387,7 @@ public class KiVi {
                 error(e);
             } catch (CoreException e) {
                 error(e);
-            } catch (KielerNotSupportedException e) {
+            } catch (ClassCastException e) {
                 error(e);
             }
         }

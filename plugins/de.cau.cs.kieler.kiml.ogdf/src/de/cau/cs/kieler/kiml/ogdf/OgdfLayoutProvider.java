@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -37,15 +36,11 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
      * @throws KielerException
      */
     @Override
-    public void initialize(final String parameter) throws KielerException {
+    public void initialize(final String parameter) {
         if (parameter == null) {
-            throw new KielerException("Could not initialize OGDF layouter.");
+            throw new IllegalArgumentException("Could not initialize OGDF layouter.");
         }
-        try {
-            initialize(LayoutAlgorithm.valueOf(parameter));
-        } catch (IllegalArgumentException exception) {
-            throw new KielerException("Could not initialize OGDF layouter.", exception);
-        }
+        initialize(LayoutAlgorithm.valueOf(parameter));
     }
 
     /**
@@ -100,9 +95,9 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public synchronized void doLayout(final KNode layoutNode,
-            final IKielerProgressMonitor progressMonitor) throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         if (layoutAlgorithm == null) {
-            throw new KielerException("The OGDF layout algorithm is not configured correctly."
+            throw new IllegalStateException("The OGDF layout algorithm is not configured correctly."
                     + " Please check the parameter in the extension point");
         }
         // layout the graph with the selected algorithm

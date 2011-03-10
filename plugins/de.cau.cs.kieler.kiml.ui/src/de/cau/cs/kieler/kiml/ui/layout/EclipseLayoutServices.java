@@ -35,7 +35,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -561,7 +560,7 @@ public class EclipseLayoutServices extends LayoutServices {
                         try {
                             layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
                             registry().addLayoutProvider(providerData);
-                        } catch (KielerException exception) {
+                        } catch (Throwable exception) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, element,
                                     ATTRIBUTE_PARAMETER, exception);
                         }

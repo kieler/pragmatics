@@ -20,10 +20,9 @@ import java.util.List;
 
 import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
+import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.export.ExportUtil;
@@ -86,7 +85,7 @@ public class OGMLExporter extends AbstractExporter {
      */
     public void doExport(final KNode graph, final OutputStream stream,
             final MapPropertyHolder options,
-            final IKielerProgressMonitor monitor) throws KielerException {
+            final IKielerProgressMonitor monitor) {
         monitor.begin("Exporting KGraph to OGML", 1);
 
         try {
@@ -106,9 +105,9 @@ public class OGMLExporter extends AbstractExporter {
                     "de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage");
 
         } catch (IOException e) {
-            throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
-        } catch (TransformationException e) {
-            throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
+            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
+        } catch (TransformException e) {
+            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
         } finally {
             monitor.done();
         }

@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -60,7 +59,7 @@ public class EdgeDirectionAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor) throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         
         progressMonitor.begin("Edge Direction Analysis", 1);
         

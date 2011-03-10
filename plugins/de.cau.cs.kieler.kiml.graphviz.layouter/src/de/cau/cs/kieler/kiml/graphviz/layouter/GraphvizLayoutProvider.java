@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.layouter;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -61,13 +60,13 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void initialize(final String parameter) throws KielerException {
+    public void initialize(final String parameter) {
         if (!KGraphDotTransformation.DOT_COMMAND.equals(parameter)
                 && !KGraphDotTransformation.NEATO_COMMAND.equals(parameter)
                 && !KGraphDotTransformation.TWOPI_COMMAND.equals(parameter)
                 && !KGraphDotTransformation.FDP_COMMAND.equals(parameter)
                 && !KGraphDotTransformation.CIRCO_COMMAND.equals(parameter)) {
-            throw new KielerException(
+            throw new IllegalArgumentException(
                     "Invalid Graphviz command set for this layout provider.");
         }
         this.command = parameter;
@@ -78,8 +77,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void doLayout(final KNode layoutNode,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         graphvizLayouter.layout(layoutNode, progressMonitor, command);
     }
 

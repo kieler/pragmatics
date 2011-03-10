@@ -17,7 +17,6 @@ import java.io.InputStream;
 
 import org.eclipse.core.runtime.IPath;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.keg.Node;
@@ -40,11 +39,9 @@ public interface IImporter {
      * @param monitor
      *            the progress monitor
      * @return the KEG graph
-     * @throws KielerException
-     *             thrown when import failed
      */
     Node doImport(final InputStream stream, final MapPropertyHolder options,
-            final IKielerProgressMonitor monitor) throws KielerException;
+            final IKielerProgressMonitor monitor);
 
     /**
      * Performs a post processing on the created KEG model instance file using

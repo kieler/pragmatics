@@ -15,7 +15,6 @@ package de.cau.cs.kieler.core.math;
 
 import java.util.StringTokenizer;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.util.IDataObject;
 
 /**
@@ -416,7 +415,7 @@ public class KVector implements IDataObject {
     /**
      * {@inheritDoc}
      */
-    public void parse(final String string) throws KielerException {
+    public void parse(final String string) {
         StringTokenizer tokenizer = new StringTokenizer(string, ",;()[]{} \t\n");
         x = 0;
         y = 0;
@@ -428,7 +427,7 @@ public class KVector implements IDataObject {
                 y = Double.parseDouble(tokenizer.nextToken());
             }
         } catch (NumberFormatException exception) {
-            throw new KielerException(
+            throw new IllegalArgumentException(
                     "The given string does not match the expected format for vectors." + exception);
         }
     }

@@ -20,7 +20,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -94,7 +93,7 @@ public class MultiEdgeCountAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor) throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         
         progressMonitor.begin("Multi Edge Count Analysis", 1);
         int multiEdgeCount = countMultiEdges(parentNode);

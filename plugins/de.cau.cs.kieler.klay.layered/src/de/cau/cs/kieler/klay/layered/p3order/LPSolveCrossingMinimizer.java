@@ -25,7 +25,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -184,7 +183,7 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ILayo
         try {
             LpSolve.initialize();
         } catch (UnsatisfiedLinkError error) {
-            throw new KielerRuntimeException("LpSolve is not available for your platform."
+            throw new UnsupportedOperationException("LpSolve is not available for your platform."
                     + " Please choose another crossing minimization method.", error);
         }
         
@@ -206,10 +205,10 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ILayo
                 if (solution == LpSolve.USERABORT && abortListener.isTimeoutOccurred()) {
                     solution = LpSolve.TIMEOUT;
                 }
-                throw new KielerRuntimeException(LPSolveAborter.getErrorMessage(solution));
+                throw new RuntimeException(LPSolveAborter.getErrorMessage(solution));
             }
         } catch (LpSolveException exception) {
-            throw new KielerRuntimeException("LpSolve crossing minimization failed.", exception);
+            throw new RuntimeException("LpSolve crossing minimization failed.", exception);
         } finally {
             if (lp != null) {
                 lp.deleteLp();

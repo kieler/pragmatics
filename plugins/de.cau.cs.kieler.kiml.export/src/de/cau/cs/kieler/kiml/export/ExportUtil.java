@@ -38,9 +38,9 @@ import org.osgi.framework.Bundle;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.model.m2m.ITransformationContext;
+import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.model.m2m.TransformationDescriptor;
 import de.cau.cs.kieler.core.model.xtend.m2m.XtendTransformationContext;
-import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
 
 /**
  * A utility class for graph export.
@@ -129,7 +129,7 @@ public final class ExportUtil {
             final Resource.Factory resourceFactory,
             final IKielerProgressMonitor monitor,
             final String... involvedMetamodels) throws IOException,
-            TransformationException {
+            TransformException {
         monitor.begin("KGraph Model2Model transformation",
                 MONITOR_TRANSFORMATION_WORK);
 

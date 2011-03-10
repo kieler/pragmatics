@@ -28,7 +28,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
@@ -46,9 +45,6 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
     /** the message for an unsupported diagram editor. */
     private static final String MESSAGE_NO_MANAGER =
             "The editor for the diagram file is not supported by KIML.";
-    /** the message for a failed diagram layout. */
-    private static final String MESSAGE_LAYOUT_FAILED =
-            "The layout of the diagram failed.";
     /** the message for a missing eclipse editor. */
     private static final String MESSAGE_NO_EDITOR =
             "The diagram file could not be opened in an eclipse editor.";
@@ -56,7 +52,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
     /** the 'layout before analysis' option. */
     private boolean layoutBeforeAnalysis;
     /** the last exception thrown inside the UI thread. */
-    private Exception lastException;
+    private Throwable lastException;
     /** the last created kgraph instance. */
     private KNode graph;
 
@@ -64,7 +60,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
      * {@inheritDoc}
      */
     public KNode getKGraph(final IPath parameter,
-            final IKielerProgressMonitor monitor) throws Exception {
+            final IKielerProgressMonitor monitor) {
         monitor.begin("Retrieving KGraph from " + parameter.toString(), 1);
         // get the diagram file
         final IFile diagramFile =
@@ -120,9 +116,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
                         if (!initialEditors.contains(editorPart)) {
                             page.closeEditor(editorPart, false);
                         }
-                        lastException =
-                                new KielerException(MESSAGE_LAYOUT_FAILED,
-                                        status.getException());
+                        lastException = status.getException();
                         return;
                     }
                 }
@@ -134,7 +128,7 @@ public class DiagramKGraphProvider implements IKGraphProvider<IPath> {
         monitor.done();
         // throw any exceptions that occurred inside the UI thread
         if (lastException != null) {
-            throw lastException;
+            throw new RuntimeException(lastException);
         }
         return graph;
     }

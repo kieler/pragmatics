@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.util;
 
 import java.util.List;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -59,8 +58,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Box layout", 2);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // set option for minimal spacing

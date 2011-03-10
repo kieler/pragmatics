@@ -15,8 +15,6 @@ package de.cau.cs.kieler.kiml;
 
 import java.util.StringTokenizer;
 
-import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.IDataObject;
@@ -166,10 +164,10 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
         try {
             return (IDataObject) clazz.newInstance();
         } catch (InstantiationException exception) {
-            throw new KielerRuntimeException("The data object for layout option " + id
+            throw new IllegalStateException("The data object for layout option " + id
                     + " cannot be instantiated.", exception);
         } catch (IllegalAccessException exception) {
-            throw new KielerRuntimeException("The data object for layout option " + id
+            throw new IllegalStateException("The data object for layout option " + id
                     + " cannot be accessed.", exception);
         }
     }
@@ -286,7 +284,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
                 IDataObject value = createDataInstance();
                 value.parse(valueString);
                 return (T) value;
-            } catch (KielerException exception) {
+            } catch (IllegalArgumentException exception) {
                 return null;
             }
         default:

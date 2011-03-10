@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.util;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
@@ -53,8 +52,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Null Layout", 1);
         float maxx = 0, maxy = 0;
         

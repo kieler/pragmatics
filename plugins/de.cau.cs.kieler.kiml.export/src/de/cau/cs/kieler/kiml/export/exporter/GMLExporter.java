@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -90,7 +89,7 @@ public class GMLExporter extends AbstractExporter {
      */
     public void doExport(final KNode graph, final OutputStream stream,
             final MapPropertyHolder options,
-            final IKielerProgressMonitor monitor) throws KielerException {
+            final IKielerProgressMonitor monitor) {
         monitor.begin("Exporting KGraph to GML", 1);
 
         try {
@@ -99,7 +98,7 @@ public class GMLExporter extends AbstractExporter {
                     monitor.subTask(1));
 
         } catch (IOException e) {
-            throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
+            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
         }
 
         monitor.done();

@@ -24,7 +24,6 @@ import org.eclipse.zest.layouts.LayoutEntity;
 import org.eclipse.zest.layouts.LayoutRelationship;
 import org.eclipse.zest.layouts.constraints.BasicEntityConstraint;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -79,10 +78,8 @@ public class ZestAlgorithmWrapper {
      * 
      * @param layoutNode layout node to be layouted
      * @param progressMonitor monitor used to keep track of progress
-     * @throws KielerException if the layout algorithm fails
      */
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Zest layout", SMALL_TASK + LARGE_TASK + SMALL_TASK);
         // build layout entities and relationships
         LayoutEntity[] entities = buildEntities(layoutNode);
@@ -100,7 +97,7 @@ public class ZestAlgorithmWrapper {
             layoutAlgorithm.applyLayout(entities, relationships, SIZE_ADDITION, SIZE_ADDITION, width,
                     height, false, false);
         } catch (InvalidLayoutConfiguration exception) {
-            throw new KielerException(exception.getMessage());
+            throw new RuntimeException(exception.getMessage());
         }
         progressMonitor.worked(LARGE_TASK);
 

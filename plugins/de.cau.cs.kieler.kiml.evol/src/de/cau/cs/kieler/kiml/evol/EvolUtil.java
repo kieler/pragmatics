@@ -777,11 +777,8 @@ public final class EvolUtil {
      *            DiagramEditors.
      * @return a new {@link Population} of default size, or an empty
      *         {@link Population} in case of an error
-     * @throws KielerException
-     *             when the population cannot be created.
      */
-    public static Population createPopulation(final Set<IEditorPart> editors)
-            throws KielerException {
+    public static Population createPopulation(final Set<IEditorPart> editors) {
         if ((editors == null) || editors.isEmpty()) {
             return new Population();
         }
@@ -988,13 +985,9 @@ public final class EvolUtil {
      * @param configs
      *            list of layout configurations
      * @return the new population
-     * @throws KielerException
-     *             in case of an error
      */
-    private static Population createPopulation(final List<ILayoutConfig> configs)
-            throws KielerException {
-        int size =
-                EvolPlugin.getDefault().getPreferenceStore()
+    private static Population createPopulation(final List<ILayoutConfig> configs) {
+        int size = EvolPlugin.getDefault().getPreferenceStore()
                         .getInt(EvolPlugin.PREF_POPULATION_SIZE);
 
         return createPopulation(configs, size);
@@ -1009,11 +1002,8 @@ public final class EvolUtil {
      * @param size
      *            desired population size
      * @return the new population
-     * @throws KielerException
-     *             in case of an error
      */
-    private static Population createPopulation(final List<ILayoutConfig> configs, final int size)
-            throws KielerException {
+    private static Population createPopulation(final List<ILayoutConfig> configs, final int size) {
         if ((configs == null) || (size < 0)) {
             throw new IllegalArgumentException();
         }

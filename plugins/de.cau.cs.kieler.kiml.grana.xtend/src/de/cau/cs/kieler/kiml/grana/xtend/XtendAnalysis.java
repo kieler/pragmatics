@@ -22,11 +22,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
 import de.cau.cs.kieler.kiml.grana.AbstractSimpleInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 
@@ -186,8 +185,7 @@ public class XtendAnalysis extends AbstractSimpleInfoAnalysis {
      */
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Xtend analysis: " + name, 1);
         // build the parameters
         Object[] parameters = new Object[dependencies.size() + 1];
@@ -220,7 +218,7 @@ public class XtendAnalysis extends AbstractSimpleInfoAnalysis {
                 progressMonitor.done();
                 return new AnalysisFailed(AnalysisFailed.Type.Failed);
             }
-        } catch (TransformationException e) {
+        } catch (TransformException e) {
             framework.reset();
             progressMonitor.done();
             return new AnalysisFailed(AnalysisFailed.Type.Failed);

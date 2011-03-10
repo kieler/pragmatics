@@ -16,7 +16,7 @@ package de.cau.cs.kieler.core;
 /**
  * Exception for error handling in KIELER projects.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @deprecated use a more specific exception instead
  * @author msp
  */
 public class KielerException extends Exception {

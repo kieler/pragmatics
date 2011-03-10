@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
@@ -42,9 +41,8 @@ public abstract class AbstractLayoutProvider extends MapPropertyHolder {
      * Initialize the layout provider with the given parameter.
      * 
      * @param parameter a string used to parameterize the layout provider instance
-     * @throws KielerException if the provider has received a wrong parameter
      */
-    public void initialize(final String parameter) throws KielerException {
+    public void initialize(final String parameter) {
     }
 
     /**
@@ -53,10 +51,10 @@ public abstract class AbstractLayoutProvider extends MapPropertyHolder {
      * 
      * @param parentNode the parent node which should be laid out
      * @param progressMonitor progress monitor used to keep track of progress
-     * @throws KielerException if the method fails to perform layout
+     * @throws UnsupportedGraphException if the given KGraph is not supported by
+     *     this algorithm
      */
-    public abstract void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor)
-            throws KielerException;
+    public abstract void doLayout(KNode parentNode, IKielerProgressMonitor progressMonitor);
     
     /**
      * Determines whether this layout provider would handle the complete hierarchy of the

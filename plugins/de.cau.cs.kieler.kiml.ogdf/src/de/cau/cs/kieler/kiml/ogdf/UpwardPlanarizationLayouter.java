@@ -20,12 +20,12 @@ import java.util.Set;
 
 import net.ogdf.bin.OgdfServerAPI;
 
-import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.UnsupportedGraphException;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -104,7 +104,7 @@ public class UpwardPlanarizationLayouter extends OgdfLayouter {
     protected void prepareLayouter(final KNode layoutNode) {
         // the layouter crashes on not connected graphs
         if (!isConnected(layoutNode)) {
-            throw new KielerRuntimeException("Layouter does not support not-connected graphs.");
+            throw new UnsupportedGraphException("Layouter does not support not-connected graphs.");
         }
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // minSpacing

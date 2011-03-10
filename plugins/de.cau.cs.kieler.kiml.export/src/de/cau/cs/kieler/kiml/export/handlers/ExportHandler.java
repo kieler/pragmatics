@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
@@ -73,9 +72,6 @@ public class ExportHandler extends AbstractHandler {
                         new KielerProgressMonitor(new NullProgressMonitor());
                 exporter.doExport(graph, stream, options, monitor);
                 stream.close();
-            } catch (KielerException e) {
-                // TODO handle this properly
-                e.printStackTrace();
             } catch (IOException e) {
                 // TODO handle this properly
                 e.printStackTrace();

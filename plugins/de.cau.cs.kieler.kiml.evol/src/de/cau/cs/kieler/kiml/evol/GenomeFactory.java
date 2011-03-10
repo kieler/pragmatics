@@ -29,7 +29,6 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kiml.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
@@ -736,11 +735,8 @@ final class GenomeFactory {
      * @param layoutHintIds
      *            set of layout hint IDs; must not be {@code null}
      * @return a genome, or {@code null}.
-     * @throws KielerException
-     *             in case of an error
      */
-    public Genome createGenome(final List<ILayoutConfig> configs, final Set<Object> layoutHintIds)
-            throws KielerException {
+    public Genome createGenome(final List<ILayoutConfig> configs, final Set<Object> layoutHintIds) {
         // TODO: split this method
         if ((configs == null) || (layoutHintIds == null) || layoutHintIds.isEmpty()) {
             return null;
@@ -790,17 +786,13 @@ final class GenomeFactory {
             // learnable option?
             if (this.learnableOptions.contains(id)) {
                 IGene<?> gene = null;
-                try {
-                    assert value != null : "Value is null: " + id;
-                    // XXX convert value to string for legacy reasons
-                    gene =
-                            this.layoutOptionGeneFactory.newGene(id, value.toString(),
-                                    uniformProb);
-                    assert gene != null : "Failed to create gene for " + id;
-                    result.add(gene);
-                } catch (final IllegalArgumentException exception) {
-                    throw new KielerException("Failed to create gene for " + id, exception);
-                }
+                assert value != null : "Value is null: " + id;
+                // XXX convert value to string for legacy reasons
+                gene =
+                        this.layoutOptionGeneFactory.newGene(id, value.toString(),
+                                uniformProb);
+                assert gene != null : "Failed to create gene for " + id;
+                result.add(gene);
 
             } else {
                 EvolPlugin.logStatus("Option not registered as evolutionData: " + id);
@@ -852,7 +844,7 @@ final class GenomeFactory {
             Genome extraGenes = createGenes(knownOptionIds, presentIds, uniformProb, null);
             result.addAll(extraGenes);
         } catch (final Exception exception) {
-            throw new KielerException("Genome could not be created.", exception);
+            throw new RuntimeException("Genome could not be created.", exception);
         }
 
         EvolPlugin.logStatus("Created genome: " + result.size() + " genes.");
@@ -872,13 +864,10 @@ final class GenomeFactory {
      *            mutation probability
      * @param theGeneFactory
      *            an {@link IGeneFactory}; may be {@code null}
-     * @return the created genome
-     * @throws KielerException
-     *             in case of an error
      */
     private Genome createGenes(
             final Set<String> knownOptionIds, final List<String> presentIds, final double prob,
-            final IGeneFactory theGeneFactory) throws KielerException {
+            final IGeneFactory theGeneFactory) {
 
         if ((knownOptionIds == null) || (presentIds == null)) {
             throw new IllegalArgumentException();
@@ -900,7 +889,7 @@ final class GenomeFactory {
                         LayoutServices.getInstance().getOptionData(optionId);
 
                 if (optionData == null) {
-                    throw new KielerException("Could not get layout option data: " + optionId);
+                    throw new IllegalStateException("Could not get layout option data: " + optionId);
                 }
 
                 Object value = optionData.getDefault();

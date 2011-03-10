@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.evol.metrics;
 
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
@@ -41,7 +40,7 @@ public class EdgeUniformityMetric implements IAnalysis {
      */
     public Object doAnalysis(
             final KNode parentNode, final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor) throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Edge length uniformity analysis", 1);
 
@@ -51,7 +50,7 @@ public class EdgeUniformityMetric implements IAnalysis {
             Object edgeLengthResult = results.get(GRANA_EDGE_LENGTH);
 
             if (!(edgeLengthResult instanceof Object[])) {
-                throw new KielerException("Edge length uniformity analysis failed.");
+                throw new RuntimeException("Edge length uniformity analysis failed.");
             }
 
             Object[] mmr = (Object[]) edgeLengthResult;

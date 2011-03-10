@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.evol.metrics;
 import java.util.Map;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.evol.EvolutionServices;
@@ -35,8 +34,7 @@ public class WeightedAggregation implements IAnalysis {
      */
     public Object doAnalysis(
             final KNode parentNode, final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Weighted aggregation", 1);
 

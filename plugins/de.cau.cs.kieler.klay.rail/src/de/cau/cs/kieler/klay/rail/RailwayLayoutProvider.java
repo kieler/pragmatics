@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -79,8 +78,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     }
 
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Railway layout", 1);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
 

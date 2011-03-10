@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
@@ -84,8 +83,7 @@ public class LayersAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Layers Analysis", 1);
 
         int[] count = countLayers(parentNode);

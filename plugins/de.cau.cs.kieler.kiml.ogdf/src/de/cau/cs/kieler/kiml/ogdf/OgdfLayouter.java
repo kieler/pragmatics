@@ -53,7 +53,6 @@ import net.ogdf.ogml.StylesType;
 import net.ogdf.ogml.impl.OgmlFactoryImpl;
 import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
@@ -176,11 +175,8 @@ public abstract class OgdfLayouter {
      *            the node representing the graph
      * @param progressMonitor
      *            the progress monitor
-     * @throws KielerException
-     *             if the layout failed
      */
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("OGDF Layout", LAYOUT_WORK);
         // if the graph is empty there is no need to layout
         if (layoutNode.getChildren().isEmpty()) {
@@ -219,7 +215,7 @@ public abstract class OgdfLayouter {
             // wait for the process to finish the layout and send the layout information
             if (!OgdfServerAPI.waitForInput(process.getInputStream(),
                     progressMonitor.subTask(PROCESS_WORK))) {
-                throw new KielerException("The layout process timed out.");
+                throw new RuntimeException("The layout process timed out.");
             }
             // read the layout information
             Map<String, KVectorChain> layoutInformation =
@@ -230,7 +226,7 @@ public abstract class OgdfLayouter {
             // perform post-processing
             postProcess(layoutNode);
         } catch (IOException e) {
-            throw new KielerException("Could not flush stdout.", e);
+            throw new RuntimeException("Could not flush stdout.", e);
         } finally {
             progressMonitor.done();
         }
@@ -526,16 +522,14 @@ public abstract class OgdfLayouter {
      *            the parent node of the layout graph
      * @param layoutInformation
      *            the layout information
-     * @throws KielerException
-     *             when the layout could no be applied
      */
     protected void applyLayout(final KNode parentNode,
-            final Map<String, KVectorChain> layoutInformation) throws KielerException {
+            final Map<String, KVectorChain> layoutInformation) {
         // get the parent node layout
         KShapeLayout parentNodeLayout = parentNode.getData(KShapeLayout.class);
         KVectorChain boundingBox = layoutInformation.get("graph");
         if (boundingBox == null || boundingBox.size() != 2) {
-            throw new KielerException("Malformed layout data received from ogdf server.");
+            throw new RuntimeException("Malformed layout data received from ogdf server.");
         }
         KVector bbLocation = boundingBox.getFirst();
         KVector bbShape = boundingBox.getLast();
@@ -643,7 +637,7 @@ public abstract class OgdfLayouter {
      *            the progress monitor
      */
     private void writeOgmlGraph(final DocumentRoot root, final OutputStream outputStream,
-            final IKielerProgressMonitor progressMonitor) throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Serialize OGML graph", 1);
         try {
             Resource resource = resourceSet.createResource(URI.createURI("http:///My.ogml"));
@@ -653,7 +647,7 @@ public abstract class OgdfLayouter {
             outputStream.flush();
         } catch (IOException exception) {
             OgdfServerAPI.endProcess();
-            throw new KielerException("Failed to serialize the OGML graph.", exception);
+            throw new RuntimeException("Failed to serialize the OGML graph.", exception);
         }
         progressMonitor.done();
     }
@@ -699,11 +693,9 @@ public abstract class OgdfLayouter {
      *            the input stream
      * @param progressMonitor
      *            the progress monitor
-     * @throws KielerException
-     *             thrown when the read failed
      */
     private Map<String, KVectorChain> readLayoutInformation(final InputStream inputStream,
-            final IKielerProgressMonitor progressMonitor) throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Read layout information", 1);
         Map<String, KVectorChain> layoutInformation = new HashMap<String, KVectorChain>();
         String error = "";
@@ -717,7 +709,7 @@ public abstract class OgdfLayouter {
                 String line = reader.readLine();
                 if (line == null) {
                     OgdfServerAPI.endProcess();
-                    throw new KielerException("Failed to read answer from ogdf server process.");
+                    throw new RuntimeException("Failed to read answer from ogdf server process.");
                 }
                 switch (state) {
                 case TYPE:
@@ -739,14 +731,14 @@ public abstract class OgdfLayouter {
                                 pointList.parse(tokens[1]);
                                 layoutInformation.put(tokens[0], pointList);
                             }
-                        } catch (KielerException e) {
+                        } catch (IllegalArgumentException e) {
                             // do nothing
                         }
                     }
                     break;
                 case ERROR:
                     if (line.equals("DONE")) {
-                        throw new KielerException(error);
+                        throw new RuntimeException(error);
                     } else {
                         if (error.length() > 0) {
                             error += "\n";
@@ -756,9 +748,10 @@ public abstract class OgdfLayouter {
                     break;
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException exception) {
             OgdfServerAPI.endProcess();
-            throw new KielerException("Failed to read layout information from ogdf server process.");
+            throw new RuntimeException("Failed to read layout information from ogdf server process.",
+                    exception);
         } finally {
             progressMonitor.done();
         }

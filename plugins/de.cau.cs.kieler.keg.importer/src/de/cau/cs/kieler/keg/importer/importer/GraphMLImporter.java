@@ -18,9 +18,8 @@ import java.io.InputStream;
 
 import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
+import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.importer.AbstractImporter;
@@ -70,7 +69,7 @@ public class GraphMLImporter extends AbstractImporter {
      */
     public Node doImport(final InputStream stream,
             final MapPropertyHolder options,
-            final IKielerProgressMonitor monitor) throws KielerException {
+            final IKielerProgressMonitor monitor) {
         Node node = null;
         try {
             node =
@@ -79,9 +78,9 @@ public class GraphMLImporter extends AbstractImporter {
                             null, stream, new GraphMLResourceFactoryImpl(),
                             monitor, "org.graphdrawing.graphml.GraphMLPackage");
         } catch (IOException e) {
-            throw new KielerException(ERROR_MESSAGE_IMPORT_FAILED, e);
-        } catch (TransformationException e) {
-            throw new KielerException(ERROR_MESSAGE_IMPORT_FAILED, e);
+            throw new RuntimeException(ERROR_MESSAGE_IMPORT_FAILED, e);
+        } catch (TransformException e) {
+            throw new RuntimeException(ERROR_MESSAGE_IMPORT_FAILED, e);
         }
         return node;
     }

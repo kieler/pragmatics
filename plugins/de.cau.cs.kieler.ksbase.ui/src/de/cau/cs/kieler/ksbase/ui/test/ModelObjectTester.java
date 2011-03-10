@@ -20,10 +20,10 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.PlatformUI;
 
+import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.model.util.ModelingUtil;
 import de.cau.cs.kieler.core.model.xtend.transformation.AbstractTransformation;
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
 import de.cau.cs.kieler.ksbase.core.KSBasETransformation;
 import de.cau.cs.kieler.ksbase.core.TransformationManager;
@@ -168,7 +168,7 @@ public class ModelObjectTester extends PropertyTester {
             Object res = null;
             try {
                 res = framework.executeTransformation();
-            } catch (TransformationException e0) {
+            } catch (TransformException e0) {
                 res = false;
             }
             if (res instanceof Boolean) {

@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.evol.metrics;
 
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
@@ -42,8 +41,7 @@ public class FlatnessMetric implements IAnalysis {
     @SuppressWarnings("unchecked")
     public Object doAnalysis(
             final KNode parentNode, final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Flatness metric analysis", 1);
 
@@ -53,7 +51,7 @@ public class FlatnessMetric implements IAnalysis {
 
             if (!(dimsResult instanceof Pair<?, ?>)) {
                 // This should happen only when the dims analysis failed.
-                throw new KielerException("Flatness metric analysis failed.");
+                throw new RuntimeException("Flatness metric analysis failed.");
             }
 
             Pair<Float, Float> dims = (Pair<Float, Float>) dimsResult;
@@ -64,7 +62,7 @@ public class FlatnessMetric implements IAnalysis {
             boolean isYdimZero = ydim == 0.0f;
 
             if (isXdimZero && isYdimZero) {
-                throw new KielerException("Flatness metric analysis failed.");
+                throw new RuntimeException("Flatness metric analysis failed.");
             }
 
             float heightToWidthRatio = isXdimZero ? Float.POSITIVE_INFINITY : ydim / xdim;

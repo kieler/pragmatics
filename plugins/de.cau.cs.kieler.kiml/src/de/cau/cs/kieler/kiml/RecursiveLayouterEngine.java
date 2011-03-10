@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -54,11 +53,9 @@ public class RecursiveLayouterEngine {
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
      * @param layoutAncestors if true, layout is not only performed for the selected
      *         node, but also for its ancestors
-     * @throws KielerException if a layout algorithm fails
      */
     public void layout(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor,
-            final boolean layoutAncestors)
-            throws KielerException {
+            final boolean layoutAncestors) {
         lastLayoutProvider = null;
         int nodeCount = countNodes(layoutGraph);
         String label = "Recursive graph layout";
@@ -93,11 +90,9 @@ public class RecursiveLayouterEngine {
      * 
      * @param layoutNode the node with children to be laid out
      * @param progressMonitor monitor used to keep track of progress
-     * @throws KielerException if one of the layout providers fails
      */
     private void layoutRecursively(final KNode layoutNode,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         if (!layoutNode.getChildren().isEmpty()) {
             AbstractLayoutProvider layoutProvider = getLayoutProvider(layoutNode);
             // if the layout provider supports hierarchy, it is expected to layout the children
@@ -127,10 +122,8 @@ public class RecursiveLayouterEngine {
      * 
      * @param layoutNode node for which a layout provider is requested
      * @return a layout provider instance that fits the layout hints for the given node
-     * @throws KielerException if there is no registered layout provider
      */
-    private AbstractLayoutProvider getLayoutProvider(final KNode layoutNode)
-            throws KielerException {
+    private AbstractLayoutProvider getLayoutProvider(final KNode layoutNode) {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
         String layoutHint = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
         String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
@@ -138,7 +131,7 @@ public class RecursiveLayouterEngine {
         if (algorithmData != null) {
             return algorithmData.getProvider();
         } else {
-            throw new KielerException("No registered layout algorithm is available.");
+            throw new IllegalStateException("No registered layout algorithm is available.");
         }
     }
     

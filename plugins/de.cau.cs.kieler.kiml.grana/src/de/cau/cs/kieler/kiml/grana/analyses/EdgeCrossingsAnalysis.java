@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -122,8 +121,7 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+            final IKielerProgressMonitor progressMonitor){
         
         progressMonitor.begin("Edge Crossings analysis", 1);
         

@@ -22,7 +22,9 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -42,8 +44,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
@@ -55,6 +57,7 @@ import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorUtil;
 import de.cau.cs.kieler.keg.importer.AbstractImporter;
 import de.cau.cs.kieler.keg.importer.ImportManager;
 import de.cau.cs.kieler.keg.importer.ImportUtil;
+import de.cau.cs.kieler.keg.importer.KEGImporterPlugin;
 
 /**
  * A wizard for importing graphs from various file formats into the KEG format.
@@ -136,10 +139,10 @@ public class ImportGraphWizard extends Wizard implements IImportWizard {
             // post process the diagram file
             options.setProperty(ImportManager.OPTION_OPEN_DIAGRAM, true);
             importer.doDiagramPostProcess(diagramFile, options);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (KielerException e) {
-            e.printStackTrace();
+        } catch (Throwable throwable) {
+            IStatus status = new Status(IStatus.ERROR, KEGImporterPlugin.PLUGIN_ID,
+                    "Failed importing model file", throwable);
+            StatusManager.getManager().handle(status, StatusManager.SHOW);
         }
 
         return true;

@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.util;
 
 import java.util.Random;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
@@ -58,8 +57,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Random Layout", 1);
         if (parentNode.getChildren().size() == 0) {
             progressMonitor.done();

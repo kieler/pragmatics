@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
 
@@ -82,11 +81,8 @@ public final class GraphvizAPI {
      * @param command
      *            the graphviz command to use
      * @return an instance of the graphviz process
-     * @throws KielerException
-     *             if creating the process fails
      */
-    public static synchronized Process startProcess(final String command)
-            throws KielerException {
+    public static synchronized Process startProcess(final String command) {
         Process graphvizProcess = processMap.get(command);
         if (graphvizProcess == null) {
             IPreferenceStore preferenceStore =
@@ -119,7 +115,7 @@ public final class GraphvizAPI {
                                         ARG_COMMAND + command });
                 processMap.put(command, graphvizProcess);
             } catch (IOException exception) {
-                throw new KielerException("Failed to start Graphviz process."
+                throw new RuntimeException("Failed to start Graphviz process."
                         + " Please check your Graphviz installation.",
                         exception);
             }
@@ -175,13 +171,10 @@ public final class GraphvizAPI {
      *            monitor to which progress is reported
      * @param debugMode
      *            whether debug mode is active
-     * @throws KielerException
-     *             if the timeout is exceeded while waiting
      */
     public static void waitForInput(final InputStream inputStream,
             final InputStream errorStream,
-            final IKielerProgressMonitor monitor, final boolean debugMode)
-            throws KielerException {
+            final IKielerProgressMonitor monitor, final boolean debugMode) {
         monitor.begin("Wait for Graphviz", 1);
         IPreferenceStore preferenceStore =
                 GraphvizLayouterPlugin.getDefault().getPreferenceStore();
@@ -216,10 +209,9 @@ public final class GraphvizAPI {
                 }
                 endProcess();
                 if (error.length() > 0) {
-                    throw new KielerException("Graphviz error: "
-                            + error.toString());
+                    throw new RuntimeException("Graphviz error: " + error.toString());
                 } else {
-                    throw new KielerException(
+                    throw new RuntimeException(
                             "Timeout exceeded while waiting for Graphviz output. "
                                     + "Try increasing the timeout value in the preferences.");
                 }
@@ -236,8 +228,7 @@ public final class GraphvizAPI {
             }
         } catch (IOException exception) {
             endProcess();
-            throw new KielerException("Unable to read Graphviz output.",
-                    exception);
+            throw new RuntimeException("Unable to read Graphviz output.", exception);
         } finally {
             monitor.done();
         }

@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.grana;
 
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 
@@ -38,11 +37,9 @@ public interface IAnalysis {
      *            should include the results of all dependency analyses)
      * @param progressMonitor
      *            progress monitor used to keep track of progress
-     * @throws KielerException
-     *             if the method fails to perform the analysis
      * @return the analysis results
      */
     Object doAnalysis(KNode parentNode, Map<String, Object> results,
-            IKielerProgressMonitor progressMonitor) throws KielerException;
+            IKielerProgressMonitor progressMonitor);
 
 }

@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.planar;
 
 import java.util.List;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
@@ -49,12 +48,10 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
     // ======================== Layout Options =====================================================
 
     /** The layout option ID for the planar testing algorithm option. */
-    public static final String PLANAR_TESTING_ALGORITHM_ID =
-        "de.cau.cs.kieler.klay.planar.planarityTest";
+    public static final String PLANAR_TESTING_ALGORITHM_ID = "de.cau.cs.kieler.klay.planar.planarityTest";
     /** property for planar testing algorithm. */
-    public static final IProperty<PlanarityTestStrategy> PLANAR_TESTING_ALGORITHM =
-        new Property<PlanarityTestStrategy>(
-                PLANAR_TESTING_ALGORITHM_ID, PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM);
+    public static final IProperty<PlanarityTestStrategy> PLANAR_TESTING_ALGORITHM = new Property<PlanarityTestStrategy>(
+            PLANAR_TESTING_ALGORITHM_ID, PlanarityTestStrategy.BOYER_MYRVOLD_ALGORITHM);
 
     // ======================== Attributes =========================================================
 
@@ -76,8 +73,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
     // ======================== Layout Provider ====================================================
 
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor monitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor monitor) {
         monitor.begin("Orthogonal Layout", 1);
 
         // Get layout options

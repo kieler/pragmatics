@@ -13,7 +13,6 @@ package de.cau.cs.kieler.kiml.evol.metrics;
 
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
@@ -39,8 +38,7 @@ public class AreaMetric implements IAnalysis {
     @SuppressWarnings("unchecked")
     public Object doAnalysis(
             final KNode parentNode, final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Area metric analysis", 1);
         Float result;
 
@@ -49,7 +47,7 @@ public class AreaMetric implements IAnalysis {
 
             if (!(dimsResult instanceof Pair<?, ?>)) {
                 // This should only happen when the dimensions analysis fails.
-                throw new KielerException("Area metric analysis failed.");
+                throw new RuntimeException("Area metric analysis failed.");
             }
 
             Pair<Float, Float> dims = (Pair<Float, Float>) dimsResult;

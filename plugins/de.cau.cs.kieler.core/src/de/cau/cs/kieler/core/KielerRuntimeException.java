@@ -19,6 +19,7 @@ package de.cau.cs.kieler.core;
  * of (overloaded) methods that are not allowed to throw exceptions.
  * 
  * @author chsch
+ * @deprecated use a more specific exception instead
  */
 public class KielerRuntimeException extends RuntimeException {
 

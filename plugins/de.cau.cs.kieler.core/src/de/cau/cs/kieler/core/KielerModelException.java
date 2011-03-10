@@ -15,15 +15,13 @@
 package de.cau.cs.kieler.core;
 
 /**
- * An Exception that indicates problems with certain model elements. Main
- * difference to the normal KielerException is that it carries a reference
- * to an arbitrary object that is supposed to be the causing model
- * part.
+ * An Exception that indicates problems with certain model elements. It carries
+ * a reference to an arbitrary object that is supposed to be the causing model part.
+ * 
  * @author haf
- *
  * @kieler.rating 2010-01-19 proposed yellow proposed by haf
  */
-public class KielerModelException extends KielerException {
+public class KielerModelException extends Exception {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 6763552087561256313L;

@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.core.KielerRuntimeException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -115,8 +113,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Layered layout", 1);
 
         // update the modules depending on user options
@@ -165,7 +162,7 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
                     phasesChanged = true;
                 } catch (Throwable throwable) {
                     // this will only occur if the required LpSolve classes can't be loaded
-                    throw new KielerRuntimeException("The LpSolve plug-in is not installed."
+                    throw new UnsupportedOperationException("The LpSolve plug-in is not installed."
                             + " Please choose another layering method.", throwable); 
                 }
             }

@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.KielerProgressMonitor;
 import de.cau.cs.kieler.core.ui.util.MonitoredOperation;
@@ -366,7 +365,7 @@ public final class EvolModel {
             Population sourcePopulation = null;
             try {
                 sourcePopulation = EvolUtil.createPopulation(editors);
-            } catch (final KielerException exception) {
+            } catch (final Exception exception) {
                 exception.printStackTrace();
                 EvolPlugin.showError("A new population could not be created.", exception);
             }

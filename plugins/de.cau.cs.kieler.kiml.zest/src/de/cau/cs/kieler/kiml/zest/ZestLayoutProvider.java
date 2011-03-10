@@ -18,7 +18,6 @@ import org.eclipse.zest.layouts.algorithms.GridLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.RadialLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -60,8 +59,7 @@ public class ZestLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         AbstractLayoutAlgorithm zestLayoutAlgo;
         if (GRID_LAYOUT.equals(algoParam)) {
             zestLayoutAlgo = new GridLayoutAlgorithm();

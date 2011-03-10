@@ -34,7 +34,6 @@ import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.ForkedOutputStream;
@@ -77,11 +76,9 @@ public class GraphvizLayouter {
      *            a monitor to which progress is reported
      * @param command
      *            Graphviz command to use, determines the layout algorithm
-     * @throws KielerException
-     *             if Graphviz layout fails
      */
     public void layout(final KNode parentNode, final IKielerProgressMonitor progressMonitor,
-            final String command) throws KielerException {
+            final String command) {
         progressMonitor.begin("Graphviz layout (" + command + ")", SMALL_TASK + LARGE_TASK + LARGE_TASK
                 + LARGE_TASK + SMALL_TASK);
         boolean debugMode = parentNode.getData(KShapeLayout.class).getProperty(LayoutOptions.DEBUG_MODE);
@@ -137,11 +134,9 @@ public class GraphvizLayouter {
      *            a monitor to which progress is reported
      * @param debugMode
      *            whether debug mode is active
-     * @throws KielerException
-     *             if writing to the output stream fails
      */
     private void writeDotGraph(final GraphvizModel graphvizModel, final OutputStream processStream,
-            final IKielerProgressMonitor monitor, final boolean debugMode) throws KielerException {
+            final IKielerProgressMonitor monitor, final boolean debugMode) {
         monitor.begin("Serialize model", 1);
         OutputStream outputStream = processStream;
         // enable debug output if needed
@@ -173,7 +168,7 @@ public class GraphvizLayouter {
             outputStream.flush();
         } catch (IOException exception) {
             GraphvizAPI.endProcess();
-            throw new KielerException("Failed to serialize the Dot graph.", exception);
+            throw new RuntimeException("Failed to serialize the Dot graph.", exception);
         } finally {
             if (debugStream != null) {
                 try {
@@ -196,11 +191,9 @@ public class GraphvizLayouter {
      * @param debugMode
      *            whether debug mode is active
      * @return an instance of the parsed graphviz model
-     * @throws KielerException
-     *             if reading from the input stream fails, or the parser fails to parse the model
      */
     private GraphvizModel readDotGraph(final InputStream processStream,
-            final IKielerProgressMonitor monitor, final boolean debugMode) throws KielerException {
+            final IKielerProgressMonitor monitor, final boolean debugMode) {
         monitor.begin("Parse output", 1);
         InputStream inputStream = new NonBlockingInputStream(processStream);
         // enable debug output if needed
@@ -231,7 +224,7 @@ public class GraphvizLayouter {
             EcoreUtil.resolveAll(resource);
         } catch (IOException exception) {
             GraphvizAPI.endProcess();
-            throw new KielerException("Failed to read Graphviz output.", exception);
+            throw new RuntimeException("Failed to read Graphviz output.", exception);
         } finally {
             if (debugStream != null) {
                 try {
@@ -249,12 +242,12 @@ public class GraphvizLayouter {
                 errorString.append("\n" + diagnostic.getLine() + ": " + diagnostic.getMessage());
             }
             GraphvizAPI.endProcess();
-            throw new KielerException(errorString.toString());
+            throw new RuntimeException(errorString.toString());
         }
         GraphvizModel graphvizModel = (GraphvizModel) resource.getParseResult().getRootASTElement();
         if (graphvizModel.getGraphs().isEmpty()) {
             GraphvizAPI.endProcess();
-            throw new KielerException("No output from the Graphviz process.");
+            throw new RuntimeException("No output from the Graphviz process.");
         }
 
         monitor.done();

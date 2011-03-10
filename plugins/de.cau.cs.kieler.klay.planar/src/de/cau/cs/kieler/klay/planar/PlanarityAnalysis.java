@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klay.planar;
 import java.util.List;
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
@@ -48,7 +47,7 @@ public class PlanarityAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor) throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Planarity testing", 1);
 
         // KGraph -> PGraph conversion

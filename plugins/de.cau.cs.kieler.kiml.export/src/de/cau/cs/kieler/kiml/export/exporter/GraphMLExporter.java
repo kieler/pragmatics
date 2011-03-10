@@ -18,10 +18,9 @@ import java.io.OutputStream;
 
 import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
+import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.export.AbstractExporter;
 import de.cau.cs.kieler.kiml.export.ExportUtil;
@@ -77,7 +76,7 @@ public class GraphMLExporter extends AbstractExporter {
      */
     public void doExport(final KNode graph, final OutputStream stream,
             final MapPropertyHolder options,
-            final IKielerProgressMonitor monitor) throws KielerException {
+            final IKielerProgressMonitor monitor) {
         monitor.begin("Exporting KGraph to GraphML", 1);
 
         try {
@@ -92,9 +91,9 @@ public class GraphMLExporter extends AbstractExporter {
                     monitor.subTask(1),
                     "org.graphdrawing.graphml.GraphMLPackage");
         } catch (IOException e) {
-            throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
-        } catch (TransformationException e) {
-            throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
+            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
+        } catch (TransformException e) {
+            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
         } finally {
             monitor.done();
         }

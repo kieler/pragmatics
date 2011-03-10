@@ -21,13 +21,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IWorkbenchPart;
 
-import de.cau.cs.kieler.core.KielerNotSupportedException;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.ui.GraphicalFrameworkService;
 import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
+import de.cau.cs.kieler.core.ui.UnsupportedPartException;
 import de.cau.cs.kieler.kiml.VolatileLayoutConfig;
 
 /**
@@ -67,10 +67,9 @@ public class LayoutEffect extends AbstractEffect {
      *            the workbench part containing the diagram to layout
      * @param object
      *            the top-level domain model object to layout, or {@code null}
-     * @throws KielerNotSupportedException if layout is not supported for the given workbench part
+     * @throws UnsupportedPartException if layout is not supported for the given workbench part
      */
-    public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object)
-            throws KielerNotSupportedException {
+    public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object) {
         this.diagramEditor = workbenchPart;
         this.bridge = GraphicalFrameworkService.getInstance().getBridge(workbenchPart);
         this.editPart = bridge.getEditPart(object);
@@ -86,10 +85,10 @@ public class LayoutEffect extends AbstractEffect {
      *            the top-level domain model object to layout, or {@code null}
      * @param zoomToFit
      *            whether zoom to fit shall be performed
-     * @throws KielerNotSupportedException if layout is not supported for the given workbench part
+     * @throws UnsupportedPartException if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
-            final boolean zoomToFit) throws KielerNotSupportedException {
+            final boolean zoomToFit) {
         this(workbenchPart, object);
         this.doZoom = zoomToFit;
     }
@@ -106,10 +105,10 @@ public class LayoutEffect extends AbstractEffect {
      *            whether zoom to fit shall be performed
      * @param progressBar
      *            whether a progress bar shall be displayed
-     * @throws KielerNotSupportedException if layout is not supported for the given workbench part
+     * @throws UnsupportedPartException if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
-            final boolean zoomToFit, final boolean progressBar) throws KielerNotSupportedException {
+            final boolean zoomToFit, final boolean progressBar) {
         this(workbenchPart, object);
         this.doZoom = zoomToFit;
         this.useProgMonitor = progressBar;
@@ -129,11 +128,11 @@ public class LayoutEffect extends AbstractEffect {
      *            whether a progress bar shall be displayed
      * @param ancestors
      *            whether to include the ancestors in the layout process
-     * @throws KielerNotSupportedException if layout is not supported for the given workbench part
+     * @throws UnsupportedPartException if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar,
-            final boolean ancestors) throws KielerNotSupportedException {
+            final boolean ancestors) {
         this(workbenchPart, object);
         this.doZoom = zoomToFit;
         this.useProgMonitor = progressBar;
@@ -156,11 +155,11 @@ public class LayoutEffect extends AbstractEffect {
      *            whether to include the ancestors in the layout process
      * @param animation
      *            whether the layout shall be animated
-     * @throws KielerNotSupportedException if layout is not supported for the given workbench part
+     * @throws UnsupportedPartException if layout is not supported for the given workbench part
      */
     public LayoutEffect(final IWorkbenchPart workbenchPart, final EObject object,
             final boolean zoomToFit, final boolean progressBar, final boolean ancestors,
-            final boolean animation) throws KielerNotSupportedException {
+            final boolean animation) {
         this(workbenchPart, object);
         this.doZoom = zoomToFit;
         this.useProgMonitor = progressBar;

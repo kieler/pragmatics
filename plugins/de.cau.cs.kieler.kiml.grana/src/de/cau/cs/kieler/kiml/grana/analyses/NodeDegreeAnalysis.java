@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -36,8 +35,7 @@ public class NodeDegreeAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode,
             final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Number of Edges analysis", 1);
         int numberOfNodes = 0;
         int overallNodeDegree = 0;

@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
@@ -46,7 +45,7 @@ public class CoverageAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final Map<String, Object> results,
-            final IKielerProgressMonitor progressMonitor) throws KielerException {
+            final IKielerProgressMonitor progressMonitor) {
         
         progressMonitor.begin("Node Coverage Analysis", 1);
 

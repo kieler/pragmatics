@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
@@ -71,7 +70,7 @@ public class KGraphExporter extends AbstractExporter {
      */
     public void doExport(final KNode graph, final OutputStream stream,
             final MapPropertyHolder options,
-            final IKielerProgressMonitor monitor) throws KielerException {
+            final IKielerProgressMonitor monitor) {
         monitor.begin("Exporting KGraph", 1);
         try {
             ResourceSet resourceSet = new ResourceSetImpl();
@@ -85,7 +84,7 @@ public class KGraphExporter extends AbstractExporter {
             // write to the stream
             resource.save(stream, resourceOptions);
         } catch (IOException e) {
-            throw new KielerException(ERROR_MESSAGE_EXPORT_FAILED, e);
+            throw new RuntimeException(ERROR_MESSAGE_EXPORT_FAILED, e);
         } finally {
             monitor.done();
         }

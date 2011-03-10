@@ -11,17 +11,18 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core;
+package de.cau.cs.kieler.core.ui;
 
 /**
- * Exception to express that some operation is not supported. The most specific constructor takes a
- * String as an explanation for the operation that is not supported, a reason why it is not
- * supported and an Object, that is not supported in the context of the operation. The message will
- * be built from these elements, which may be null.
+ * Thrown when a diagram object such as an editor part or edit part is not supported.
+ * The most specific constructor takes a String as an explanation for the operation that
+ * is not supported, a reason why it is not supported and an Object, that is not supported
+ * in the context of the operation. The message will be built from these elements, which
+ * may be null.
  * 
  * @author haf
  */
-public class KielerNotSupportedException extends KielerRuntimeException {
+public class UnsupportedPartException extends RuntimeException {
 
     /** the serial version UID. */
     private static final long serialVersionUID = -3050609849973311868L;
@@ -52,7 +53,7 @@ public class KielerNotSupportedException extends KielerRuntimeException {
      * @param message
      *            readable exception message
      */
-    public KielerNotSupportedException(final String message) {
+    public UnsupportedPartException(final String message) {
         super(message);
     }
 
@@ -66,7 +67,7 @@ public class KielerNotSupportedException extends KielerRuntimeException {
      * @param notSupportedObject
      *            an object for which the operation is not supported, e.g. a wrong parameter
      */
-    public KielerNotSupportedException(final String operation, final String reason,
+    public UnsupportedPartException(final String operation, final String reason,
             final Object notSupportedObject) {
         super(transformMessage("", operation, reason, notSupportedObject, false));
         this.myReason = reason;
@@ -88,7 +89,7 @@ public class KielerNotSupportedException extends KielerRuntimeException {
      *            location of that error is of great importance and should be indicated in the
      *            message
      */
-    public KielerNotSupportedException(final String operation, final String reason,
+    public UnsupportedPartException(final String operation, final String reason,
             final Object notSupportedObject, final boolean nullConsideredEvil) {
         super(transformMessage("", operation, reason, notSupportedObject, nullConsideredEvil));
         this.myReason = reason;
@@ -104,7 +105,7 @@ public class KielerNotSupportedException extends KielerRuntimeException {
      * @param cause
      *            exception that caused this exception
      */
-    public KielerNotSupportedException(final String message, final Throwable cause) {
+    public UnsupportedPartException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

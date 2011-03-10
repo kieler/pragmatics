@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.cau.cs.kieler.core.IKielerPreferenceStore;
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -148,8 +147,7 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Hierarchical layout",
                 SMALL_TASK + SMALL_TASK + SMALL_TASK + LARGE_TASK + LARGE_TASK
                 + LARGE_TASK + LARGE_TASK);

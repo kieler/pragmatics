@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.StringTokenizer;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.util.IDataObject;
 
 /**
@@ -79,7 +78,7 @@ public class KVectorChain extends LinkedList<KVector> implements IDataObject {
     /**
      * {@inheritDoc}
      */
-    public void parse(final String string) throws KielerException {
+    public void parse(final String string) {
         StringTokenizer tokenizer = new StringTokenizer(string, ",;()[]{} \t\n");
         clear();
         try {
@@ -89,7 +88,7 @@ public class KVectorChain extends LinkedList<KVector> implements IDataObject {
                 add(new KVector(x, y));
             }
         } catch (NumberFormatException exception) {
-            throw new KielerException(
+            throw new IllegalArgumentException(
                     "The given string does not match the expected format for vectors." + exception);
         }
     }

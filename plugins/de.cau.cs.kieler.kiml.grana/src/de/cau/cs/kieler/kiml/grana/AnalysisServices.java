@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Dependency;
@@ -585,8 +584,7 @@ public final class AnalysisServices implements IBundleChangedListener {
          */
         public Object doAnalysis(final KNode parentNode,
                 final Map<String, Object> results,
-                final IKielerProgressMonitor progressMonitor)
-                throws KielerException {
+                final IKielerProgressMonitor progressMonitor) {
             if (wrappedAnalysis != null) {
                 return wrappedAnalysis.doAnalysis(parentNode, results,
                         progressMonitor);

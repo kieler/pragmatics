@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.core.util;
 
-import de.cau.cs.kieler.core.KielerException;
-
 /**
  * An interface for data types, which should be serializable using {@link #toString()} and
  * parsable using {@link #parse(String)}. The default constructor must always be
@@ -30,8 +28,8 @@ public interface IDataObject {
      * Parse the given string and set the content of this data object.
      * 
      * @param string a string
-     * @throws KielerException if the string does not have the expected format
+     * @throws IllegalArgumentException if the string does not have the expected format
      */
-    void parse(String string) throws KielerException;
+    void parse(String string);
 
 }

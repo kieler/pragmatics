@@ -16,7 +16,6 @@ package de.cau.cs.kieler.klodd.orthogonal;
 import java.util.List;
 
 import de.cau.cs.kieler.core.IKielerPreferenceStore;
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
@@ -70,8 +69,7 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor)
-            throws KielerException {
+    public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {
         // get the currently configured modules
         updateModules();
         // set option for minimal distance

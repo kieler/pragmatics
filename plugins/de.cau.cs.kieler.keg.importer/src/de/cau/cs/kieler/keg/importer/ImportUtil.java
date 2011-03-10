@@ -33,8 +33,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.model.m2m.TransformException;
 import de.cau.cs.kieler.core.model.xtend.transformation.ITransformationFramework;
-import de.cau.cs.kieler.core.model.xtend.transformation.TransformationException;
 import de.cau.cs.kieler.core.model.xtend.transformation.xtend.XtendTransformationFramework;
 import de.cau.cs.kieler.keg.Node;
 
@@ -114,7 +114,7 @@ public final class ImportUtil {
      * @return the parent node of the KEG graph
      * @throws IOException
      *             thrown when the the xtend file could not be found or opened
-     * @throws TransformationException
+     * @throws TransformException
      *             thrown when the execution of the xtend transformation failed
      */
     public static Node transformModel2KEGGraph(final String xtendFile,
@@ -123,7 +123,7 @@ public final class ImportUtil {
             final Resource.Factory resourceFactory,
             final IKielerProgressMonitor monitor,
             final String... involvedMetamodels) throws IOException,
-            TransformationException {
+            TransformException {
         monitor.begin("KEG Model2Model transformation",
                 MONITOR_TRANSFORMATION_WORK);
 
