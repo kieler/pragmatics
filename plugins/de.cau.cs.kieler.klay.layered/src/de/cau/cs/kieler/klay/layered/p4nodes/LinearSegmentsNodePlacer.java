@@ -21,6 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
+
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -258,11 +261,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             }
         }
 
-        // create linear segments for the layered graph
+        // create linear segments for the layered graph, ignoring odd port side dummies
         int nextLinearSegmentID = 0;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                if (node.id < 0) {
+                if (node.id < 0
+                        && node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.ODD_PORT_SIDE) {
+                    
                     LinearSegment segment = new LinearSegment();
                     segment.id = nextLinearSegmentID++;
                     fillSegment(node, segment);
@@ -346,7 +351,13 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         int nextLinearSegmentID = segmentList.size();
         int layerIndex = 0;
         for (Layer layer : layeredGraph.getLayers()) {
-            Iterator<LNode> nodeIter = layer.getNodes().iterator();
+            List<LNode> nodes = layer.getNodes();
+            if (nodes.isEmpty()) {
+                // Ignore empty layers
+                continue;
+            }
+            
+            Iterator<LNode> nodeIter = nodes.iterator();
             int indexInLayer = 0;
             
             // We carry the next-to-last node with us
@@ -358,6 +369,11 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             
             while (nodeIter.hasNext()) {
                 // Get the current node's segment
+                if (node1.id == -1) {
+                    // Can happen for odd port side dummies
+                    node1 = nodeIter.next();
+                    continue;
+                }
                 segment1 = segmentList.get(node1.id);
                 
                 // Check if we can have a cycle. That's the case if we find a node after the
@@ -368,14 +384,16 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 
                 while (cycleNodesIter.hasNext()) {
                     LNode cycleNode = cycleNodesIter.next();
-                    cycleSegment = segmentList.get(cycleNode.id);
-                    
-                    if (cycleSegment.lastLayer == segment1.lastLayer
-                            && cycleSegment.indexInLastLayer < segment1.indexInLastLayer) {
+                    if (cycleNode.id != -1) {
+                        cycleSegment = segmentList.get(cycleNode.id);
                         
-                        break;
-                    } else {
-                        cycleSegment = null;
+                        if (cycleSegment.lastLayer == segment1.lastLayer
+                                && cycleSegment.indexInLastLayer < segment1.indexInLastLayer) {
+                            
+                            break;
+                        } else {
+                            cycleSegment = null;
+                        }
                     }
                 }
                 
@@ -400,12 +418,21 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     }
                 }
                 
-                // Now add a dependency to the next node
-                LNode node2 = nodeIter.next();
-                LinearSegment segment2 = segmentList.get(node2.id);
-                
-                outgoingList.get(node1.id).add(segment2);
-                incomingCountList.set(node2.id, incomingCountList.get(node2.id) + 1);
+                // Now add a dependency to the next node we find with id != -1
+                LNode node2 = null;
+                while (nodeIter.hasNext()) {
+                    node2 = nodeIter.next();
+                    if (node2.id == -1) {
+                        node2 = null;
+                    } else {
+                        LinearSegment segment2 = segmentList.get(node2.id);
+                        
+                        outgoingList.get(node1.id).add(segment2);
+                        incomingCountList.set(node2.id, incomingCountList.get(node2.id) + 1);
+                        
+                        break;
+                    }
+                }
                 
                 // Update segment's layer information
                 segment1.lastLayer = layerIndex;
@@ -692,36 +719,50 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         for (Layer layer : layeredGraph.getLayers()) {
             List<LNode> nodes = layer.getNodes();
             
-            for (LNode node : nodes) {
-                if (node.getIndex() < nodes.size() - 1) {
-                    // Test if nodes have different regions
-                    LNode neighbor = nodes.get(node.getIndex() + 1);
-                    if (node.getProperty(Properties.REGION)
-                            != neighbor.getProperty(Properties.REGION)) {
+            // Iterator that iterates over nodes belonging to regions
+            Iterator<LNode> nodeIter = Iterators.filter(nodes.iterator(), new Predicate<LNode>() {
+                public boolean apply(final LNode node) {
+                    return node.getProperty(Properties.REGION) != null;
+                }
+            });
+            
+            if (!nodeIter.hasNext()) {
+                // Ignore "empty" layers
+                continue;
+            }
+            
+            // Get the first node
+            LNode node1 = nodeIter.next();
+            
+            // While there are still nodes following the current node
+            while (nodeIter.hasNext()) {
+                // Test if nodes have different regions
+                LNode node2 = nodeIter.next();
+                
+                if (node1.getProperty(Properties.REGION)
+                        != node2.getProperty(Properties.REGION)) {
+                    
+                    // Test if the nodes are touching
+                    if (node1.getPos().y + node1.getSize().y + spacing > node2.getPos().y - 1.0f) {
+                        double overlay = node1.getPos().y + node1.getSize().y
+                            + spacing - node2.getPos().y;
                         
-                        // Test if the nodes are touching
-                        if (node.getPos().y + node.getSize().y + spacing
-                                > neighbor.getPos().y - 1.0f) {
-                            
-                            double overlay = node.getPos().y + node.getSize().y
-                                + spacing - neighbor.getPos().y;
-                            
-                            // Adjust position for every member of the neighbors region
-                            for (LNode toAdjust : neighbor.getProperty(
-                                    Properties.REGION).getNodes()) {
-                                
-                                toAdjust.getPos().y = toAdjust.getPos().y + overlay;
-                            }
-                            
-                            // Union the regions of the neighbors
-                            node.getProperty(Properties.REGION).union(
-                                    neighbor.getProperty(Properties.REGION));
-                            ready = false;
+                        // Adjust position for every member of the neighbors region
+                        for (LNode toAdjust : node2.getProperty(Properties.REGION).getNodes()) {
+                            toAdjust.getPos().y = toAdjust.getPos().y + overlay;
                         }
+                        
+                        // Union the regions of the neighbors
+                        node1.getProperty(Properties.REGION).union(
+                                node2.getProperty(Properties.REGION));
+                        ready = false;
                     }
                 }
+                
+                node1 = node2;
             }
         }
+        
         return ready;
     }
 
