@@ -302,7 +302,8 @@ public abstract class DiagramLayoutManager {
         float y2 = Float.NEGATIVE_INFINITY;
 
         for (EditPart editPart : elements) {
-            // System.out.println("Figure Bounds: "+((GraphicalEditPart)editPart).getFigure().getBounds());
+//            System.out.println("Figure Bounds: "
+//                    + ((GraphicalEditPart) editPart).getFigure().getBounds());
             KNode node = getLayoutNode(editPart);
             KShapeLayout layout = node.getData(KShapeLayout.class);
             // calculate absolute coordinates
@@ -350,15 +351,19 @@ public abstract class DiagramLayoutManager {
         System.out.println("Bounding box: " + x1 + " " + y1 + " " + x2 + " "
                 + y2 + " New Scale: " + scale + " availaible: " + available);
         Point newLocation = new Point(x1, y1);
-        // newLocation.scale(1 / scale);
-        // RectangleFigure rect = new RectangleFigure();
-        // rect.setBounds(new
-        // Rectangle((int)newLocation.x,(int)newLocation.y,(int)(desiredWidth*scale),(int)(desiredHeight*scale)));
-        // //rect.setBounds(new Rectangle(39,248,100,100));
-        // rect.setLineWidth(5);
-        // rect.setForegroundColor(ColorConstants.red);
-        // rect.setFill(false);
-        // rect.setVisible(true);
+//        newLocation.scale(1 / scale);
+//        RectangleFigure rect = new RectangleFigure();
+//        rect.setBounds(new
+//        Rectangle(
+//                (int)newLocation.x,
+//                (int)newLocation.y,
+//                (int)(desiredWidth*scale),
+//                (int)(desiredHeight*scale)));
+//        //rect.setBounds(new Rectangle(39,248,100,100));
+//        rect.setLineWidth(5);
+//        rect.setForegroundColor(ColorConstants.red);
+//        rect.setFill(false);
+//        rect.setVisible(true);
 
         Viewport vp = zoomManager.getViewport();
         // find the top-level Viewport

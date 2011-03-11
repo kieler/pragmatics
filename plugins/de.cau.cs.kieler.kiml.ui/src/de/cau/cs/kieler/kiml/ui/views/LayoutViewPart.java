@@ -31,6 +31,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -47,8 +48,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -82,6 +83,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     public static final String PREF_CATEGORIES = "view.categories";
     /** preference identifier for enabling advanced options. */
     public static final String PREF_ADVANCED = "view.advanced";
+    /** preference identifier for the title font. */
+    private static final String TITLE_FONT = "de.cau.cs.kieler.kiml.ui.views.LayoutViewPart.TITLE_FONT";
     
     /** default layout algorithm array, which is empty. */
     private static final LayoutAlgorithmData[] DEFAULT_LAYOUTER_DATA = new LayoutAlgorithmData[0];
@@ -89,7 +92,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     /** the form toolkit used to create the form container. */
     private FormToolkit toolkit;
     /** the form container for the property sheet page. */
-    private ScrolledForm form;
+    private Form form;
     /** the page that is displayed in this view part. */
     private PropertySheetPage page;
     /** the currently tracked diagram editor. */
@@ -188,16 +191,29 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         // CHECKSTYLEOFF MagicNumber
         
         toolkit = new FormToolkit(parent.getDisplay());
-        form = toolkit.createScrolledForm(parent);
-        toolkit.decorateFormHeading(form.getForm());
-        form.setFont(JFaceResources.getBannerFont());
-        form.pack();
+        form = toolkit.createForm(parent);
+        
+        // Set the form's heading
+        // (see org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle)
+        toolkit.decorateFormHeading(form);
         form.setText("");
+
+        if (!JFaceResources.getFontRegistry().hasValueFor(TITLE_FONT)) {
+            FontData[] fontData = JFaceResources.getFontRegistry().getBold(
+                    JFaceResources.DEFAULT_FONT).getFontData();
+            /* title font is 2pt larger than that used in the tabs. */  
+            fontData[0].setHeight(fontData[0].getHeight() + 2);
+            JFaceResources.getFontRegistry().put(TITLE_FONT, fontData);
+        }
+        form.setFont(JFaceResources.getFont(TITLE_FONT));
+        
+        // Content
         Composite content = form.getBody();
         FormLayout contentLayout = new FormLayout();
         contentLayout.marginWidth = MARGIN_WIDTH;
         content.setLayout(contentLayout);
         
+        // Property Sheet Page
         page = new PropertySheetPage();
         page.setRootEntry(new PropertySheetEntry());
         page.createControl(content);
@@ -218,6 +234,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         menuManager.add(new RemoveOptionsAction(this, Messages.getString("kiml.ui.30")));
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
         toolBarManager.add(new SelectionInfoAction(this, Messages.getString("kiml.ui.37")));
+        
         // set the stored value of the categories button
         ActionContributionItem categoriesItem = (ActionContributionItem) actionBars
                 .getToolBarManager().find("categories");
@@ -225,6 +242,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
             categoriesItem.getAction().setChecked(preferenceStore.getBoolean(PREF_CATEGORIES));
             categoriesItem.getAction().run();
         }
+        
         // set the stored value of the advanced button
         ActionContributionItem advancedItem = (ActionContributionItem) actionBars
                 .getToolBarManager().find("filter");

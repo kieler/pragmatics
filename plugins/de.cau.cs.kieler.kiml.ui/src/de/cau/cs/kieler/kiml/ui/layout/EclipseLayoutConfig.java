@@ -160,19 +160,19 @@ public class EclipseLayoutConfig extends DefaultLayoutConfig {
     /**
      * Set whether the node in focus has any children.
      * 
-     * @param hasChildren whether the selected node has children
+     * @param children whether the selected node has children
      */
-    public void setChildren(final boolean hasChildren) {
-        this.hasChildren = hasChildren;
+    public void setChildren(final boolean children) {
+        this.hasChildren = children;
     }
     
     /**
      * Set whether the node in focus has any ports.
      * 
-     * @param hasPorts whether the selected node has ports
+     * @param ports whether the selected node has ports
      */
-    public void setPorts(final boolean hasPorts) {
-        this.hasPorts = hasPorts;
+    public void setPorts(final boolean ports) {
+        this.hasPorts = ports;
     }
     
     /**
