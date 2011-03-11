@@ -8,12 +8,8 @@ import org.eclipse.graphiti.features.context.IResizeShapeContext;
 import org.eclipse.graphiti.features.impl.DefaultResizeShapeFeature;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.SpecializedVerticesFactory;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
+import de.menges.topologie.Topologie.Basegraph.Vertex;
+import de.menges.topologie.Topologie.SpecializedVertices.*;
 
 /**
  * @author hdw

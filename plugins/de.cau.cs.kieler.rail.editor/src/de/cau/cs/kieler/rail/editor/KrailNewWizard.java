@@ -6,8 +6,8 @@ import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 import de.cau.cs.kieler.core.model.graphiti.ui.GraphitiNewWizard;
-import de.cau.cs.kieler.rail.Topologie.Model;
-import de.cau.cs.kieler.rail.Topologie.TopologieFactory;
+import de.menges.topologie.Topologie.Model;
+import de.menges.topologie.Topologie.TopologieFactory;
 
 /**
  * 

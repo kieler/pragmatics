@@ -11,7 +11,8 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
+import de.menges.topologie.Topologie.Basegraph.Vertex;
+import de.menges.topologie.Topologie.SpecializedVertices.*;
 
 /**
  * {@inheritDoc}

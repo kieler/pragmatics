@@ -16,8 +16,8 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
 import de.cau.cs.kieler.rail.editor.StyleProvider;
+import de.menges.topologie.Topologie.Basegraph.Edge;
 
 /**
  * AddFeature for the graphical Representation of the edge.

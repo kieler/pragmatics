@@ -14,8 +14,8 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.services.IPeCreateService;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
 import de.cau.cs.kieler.rail.editor.StyleProvider;
+import de.menges.topologie.Topologie.Basegraph.Port;
 
 /**
  * 

@@ -30,8 +30,8 @@ import org.eclipse.graphiti.ui.internal.parts.DiagramEditPart;
 import org.eclipse.ui.IEditorPart;
 
 import de.cau.cs.kieler.core.model.graphiti.ui.AbstractReInitGraphitiDiagramCommand;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
+import de.menges.topologie.Topologie.Basegraph.Edge;
+import de.menges.topologie.Topologie.SpecializedVertices.Einbruchsknoten;
 
 /**
  * 
@@ -61,7 +61,7 @@ public class ReInitKrailDiagramCommand extends
 	protected final EObject getConnectionSource(final EObject connection) {
         if (connection instanceof Edge) {
             Edge e = (Edge) connection;
-            return e.getBegin();
+            return e.getFrom();
         }
         return null;
     }
@@ -70,7 +70,7 @@ public class ReInitKrailDiagramCommand extends
 	protected final EObject getConnectionTarget(final EObject connection) {
         if (connection instanceof Edge) {
             Edge e = (Edge) connection;
-            return e.getEnd();
+            return e.getDestination();
         }
 
         return null;

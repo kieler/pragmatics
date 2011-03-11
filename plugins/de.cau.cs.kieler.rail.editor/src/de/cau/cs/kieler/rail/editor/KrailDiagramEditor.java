@@ -12,7 +12,7 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.util.ColorConstant;
 
-import de.cau.cs.kieler.rail.Topologie.Model;
+import de.menges.topologie.Topologie.Model;
 
 /**
  * Special DiagramEditor

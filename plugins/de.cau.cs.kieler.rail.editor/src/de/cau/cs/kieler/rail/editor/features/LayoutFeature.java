@@ -20,9 +20,7 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
+import de.menges.topologie.Topologie.SpecializedVertices.*;
 
 /**
  * @author hdw

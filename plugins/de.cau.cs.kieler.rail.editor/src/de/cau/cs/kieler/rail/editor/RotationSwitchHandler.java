@@ -14,10 +14,10 @@ import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-import de.cau.cs.kieler.rail.Topologie.Basegraph.EPort;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
+import de.menges.topologie.Topologie.Basegraph.EPort;
+import de.menges.topologie.Topologie.Basegraph.Port;
+import de.menges.topologie.Topologie.SpecializedVertices.EOrientation;
+import de.menges.topologie.Topologie.SpecializedVertices.Weichenknoten;
 
 /**
  * 

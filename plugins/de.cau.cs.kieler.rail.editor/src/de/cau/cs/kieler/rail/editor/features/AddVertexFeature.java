@@ -32,15 +32,12 @@ import org.eclipse.graphiti.util.ColorConstant;
 import org.eclipse.graphiti.util.IColorConstant;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.EPort;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 import de.cau.cs.kieler.rail.editor.Geometry;
 import de.cau.cs.kieler.rail.editor.RotationSwitchHandler;
 import de.cau.cs.kieler.rail.editor.StyleProvider;
+import de.menges.topologie.Topologie.Basegraph.EPort;
+import de.menges.topologie.Topologie.Basegraph.Port;
+import de.menges.topologie.Topologie.SpecializedVertices.*;
 
 /**
  * @author hdw
@@ -120,7 +117,9 @@ public class AddVertexFeature extends AbstractAddFeature {
         case SWITCHVERTEX_RIGHT:
             pe = addSwitchVertex(context, EOrientation.RECHTS);
             break;
-        }        
+		default:
+			break;
+        }  
         
         //peCreateService.createChopboxAnchor((Shape) pe);
         layoutPictogramElement(pe);
@@ -440,62 +439,69 @@ public class AddVertexFeature extends AbstractAddFeature {
         int width= 50;// containerShape.getGraphicsAlgorithm().getWidth();
         int height= 50;// containerShape.getGraphicsAlgorithm().getHeight();
 
+        
+        if (switchVertex.eResource() == null) {
+            getDiagram().eResource().getContents().add(switchVertex);
+        }
+        
         for (Port port : switchVertex.getPorts()) {
-            final BoxRelativeAnchor boxAnchor =
-                    peCreateService.createBoxRelativeAnchor(containerShape);
-            boxAnchor.setActive(true);
-
-            double portWidth = PORT_SIZE / 50;
-
-            //for the Layouter
-            Property properPort = MmFactory.eINSTANCE.createProperty();
-            properPort.setKey(KLAY_NODETYPE_KEY);
-
-            boxAnchor.setRelativeHeight(0.4);// (0.5-portWidth);
-
-
-            int boxWidth = PORT_SIZE;
-            int boxHeight = PORT_SIZE;
-            
-            switch (port.getName()) {
-            case SPITZE:
-                boxAnchor.setRelativeWidth(0.0);
-                properPort.setValue("STUMP");
-                spitzeStammXY[0] =
-                    (int) (width * (boxAnchor.getRelativeWidth()) - boxWidth / 2);
-                spitzeStammXY[1] =
-                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
-                break;
-            case STAMM:
-                boxAnchor.setRelativeWidth(0.85);
-                properPort.setValue("STRAIGHT");
-                spitzeStammXY[2] =
-                    (int) (width * (boxAnchor.getRelativeWidth()) + boxWidth / 2);
-                spitzeStammXY[3] =
-                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
-                break;
-            case ABZWEIG:
-                properPort.setValue("BRANCH");
-                if (orientatin == EOrientation.LINKS) {
-                    //boxAnchor.setRelativeWidth(0.8);
-                    boxAnchor.setRelativeWidth(Geometry.getRelativWeight(0.5, Geometry.degreeToRad(30), 1.0));
-                } else {
-                    //boxAnchor.setRelativeWidth(0.2);
-                    boxAnchor.setRelativeWidth(Geometry.getRelativWeight(0.5, Geometry.degreeToRad(90+30), 1.0));
-                }
-                boxAnchor.setRelativeHeight(0.0);
-                mitteAbzweigXY[2] =
-                    (int) (width * (boxAnchor.getRelativeWidth()) + boxWidth / 2);
-                mitteAbzweigXY[3] =
-                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
-            }
-            boxAnchor.getProperties().add(properPort);
-
-            boxAnchor.setReferencedGraphicsAlgorithm(rect);
-
-            createGraphicalPort(boxAnchor, port.getName());
-
-            link(boxAnchor, port);
+        	if (port != null) {
+	            final BoxRelativeAnchor boxAnchor =
+	                    peCreateService.createBoxRelativeAnchor(containerShape);
+	            boxAnchor.setActive(true);
+	
+	            double portWidth = PORT_SIZE / 50;
+	
+	            //for the Layouter
+	            Property properPort = MmFactory.eINSTANCE.createProperty();
+	            properPort.setKey(KLAY_NODETYPE_KEY);
+	
+	            boxAnchor.setRelativeHeight(0.4);// (0.5-portWidth);
+	
+	
+	            int boxWidth = PORT_SIZE;
+	            int boxHeight = PORT_SIZE;
+	            
+	            switch (port.getName()) {
+	            case SPITZE:
+	                boxAnchor.setRelativeWidth(0.0);
+	                properPort.setValue("STUMP");
+	                spitzeStammXY[0] =
+	                    (int) (width * (boxAnchor.getRelativeWidth()) - boxWidth / 2);
+	                spitzeStammXY[1] =
+	                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
+	                break;
+	            case STAMM:
+	                boxAnchor.setRelativeWidth(0.85);
+	                properPort.setValue("STRAIGHT");
+	                spitzeStammXY[2] =
+	                    (int) (width * (boxAnchor.getRelativeWidth()) + boxWidth / 2);
+	                spitzeStammXY[3] =
+	                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
+	                break;
+	            case ABZWEIG:
+	                properPort.setValue("BRANCH");
+	                if (orientatin == EOrientation.LINKS) {
+	                    //boxAnchor.setRelativeWidth(0.8);
+	                    boxAnchor.setRelativeWidth(Geometry.getRelativWeight(0.5, Geometry.degreeToRad(30), 1.0));
+	                } else {
+	                    //boxAnchor.setRelativeWidth(0.2);
+	                    boxAnchor.setRelativeWidth(Geometry.getRelativWeight(0.5, Geometry.degreeToRad(90+30), 1.0));
+	                }
+	                boxAnchor.setRelativeHeight(0.0);
+	                mitteAbzweigXY[2] =
+	                    (int) (width * (boxAnchor.getRelativeWidth()) + boxWidth / 2);
+	                mitteAbzweigXY[3] =
+	                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
+	            }
+	            boxAnchor.getProperties().add(properPort);
+	
+	            boxAnchor.setReferencedGraphicsAlgorithm(rect);
+	
+	            createGraphicalPort(boxAnchor, port.getName());
+	
+	            link(boxAnchor, port);
+        	}
         }
 
         // PORT
@@ -583,6 +589,9 @@ public class AddVertexFeature extends AbstractAddFeature {
         directEditingInfo.setGraphicsAlgorithm(text);
         
         link(containerShape, switchVertex); // containerShape
+        if (switchVertex.eResource() == null) {
+            getDiagram().eResource().getContents().add(switchVertex);
+        }
         
         RotationSwitchHandler.setMultipleAngle(containerShape,
         		getFeatureProvider() , 0, 0.1);

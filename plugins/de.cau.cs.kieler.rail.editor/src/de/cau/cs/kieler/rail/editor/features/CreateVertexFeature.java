@@ -14,15 +14,13 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IPeCreateService;
 
-import de.cau.cs.kieler.rail.Topologie.Model;
+import de.menges.topologie.Topologie.Model;
+import de.menges.topologie.Topologie.Basegraph.BasegraphFactory;
+import de.menges.topologie.Topologie.Basegraph.EPort;
+import de.menges.topologie.Topologie.Basegraph.Port;
+import de.menges.topologie.Topologie.Basegraph.Vertex;
+import de.menges.topologie.Topologie.SpecializedVertices.*;
 
-import de.cau.cs.kieler.rail.Topologie.Basegraph.BasegraphFactory;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.EPort;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.SpecializedVerticesFactory;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
 
 
@@ -55,6 +53,7 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
 
         // do the add
         vertex.getPorts().addAll(addGraphicalRepresentationForPorts(vertex));
+        
         PictogramElement vertexPE = addGraphicalRepresentation(context, vertex);
 
         // activate direct editing after object creation

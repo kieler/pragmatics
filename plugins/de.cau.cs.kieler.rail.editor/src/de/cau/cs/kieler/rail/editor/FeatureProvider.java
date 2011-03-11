@@ -31,19 +31,10 @@ import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.core.model.graphiti.features.DefaultKielerDeleteFeature;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.EOrientation;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Einbruchsknoten;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Stumpfgleisknoten;
-import de.cau.cs.kieler.rail.Topologie.SpecializedVertices.Weichenknoten;
 import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.AddPortFeature;
 import de.cau.cs.kieler.rail.editor.features.AddVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
-import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature2;
-import de.cau.cs.kieler.rail.editor.features.CreatePortFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.DirectEditBreachFeatures;
 import de.cau.cs.kieler.rail.editor.features.LayoutFeature;
@@ -54,6 +45,11 @@ import de.cau.cs.kieler.rail.editor.features.ToggleSwitchFeature;
 import de.cau.cs.kieler.rail.editor.features.TypeFeatures;
 import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
 import de.cau.cs.kieler.rail.editor.features.UpdateSwitchFeature;
+import de.menges.topologie.Topologie.Basegraph.Edge;
+import de.menges.topologie.Topologie.Basegraph.Port;
+import de.menges.topologie.Topologie.Basegraph.Vertex;
+import de.menges.topologie.Topologie.SpecializedVertices.*;
+import de.menges.topologie.topoDSL.ELage;
 
 /**
  * @author hdw
@@ -89,8 +85,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
                     TypeFeatures.DEADENDVERTEX);
         } else if (context.getNewObject() instanceof Weichenknoten) {
             EOrientation orientation =
-                    ((Weichenknoten) (context.getNewObject()))
-                            .getAbzweigendeLage();
+                    ((Weichenknoten) (context.getNewObject())).getAbzweigendeLage();
             switch (orientation) {
             case LINKS:
                 return new AddVertexFeature(this, this.styleProvider,

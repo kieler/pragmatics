@@ -13,11 +13,12 @@ import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 
-import de.cau.cs.kieler.rail.Topologie.Model;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.BasegraphFactory;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Edge;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Port;
-import de.cau.cs.kieler.rail.Topologie.Basegraph.Vertex;
+import de.menges.topologie.Topologie.Model;
+import de.menges.topologie.Topologie.Basegraph.BasegraphFactory;
+import de.menges.topologie.Topologie.Basegraph.Edge;
+import de.menges.topologie.Topologie.Basegraph.Port;
+import de.menges.topologie.Topologie.Basegraph.Vertex;
+import de.menges.topologie.Topologie.SpecializedVertices.*;
 import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
 
 
@@ -94,13 +95,14 @@ public class CreateEdgeFeature extends
         
         if (source instanceof Port && target instanceof Port) {
         	Edge link = BasegraphFactory.eINSTANCE.createEdge();
-        	link.setBegin((Port) source);
-        	link.setEnd((Port) target);
+        	link.setFrom((Port) source);
+        	link.setDestination((Port) target);
             
             Model topModel = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(getDiagram());
             
-            //TODO Make the link
-            topModel.getEdges().add(link);
+            //TODO Make the link I thing it is not necessary
+            //topModel.getEdges().add(link);
+            
             
             getFeatureProvider().getDirectEditingInfo().setActive(true);
             AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(),
