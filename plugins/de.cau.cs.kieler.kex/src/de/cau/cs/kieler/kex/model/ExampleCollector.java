@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
-
 /**
  * Main class for an example collector.
  * 
@@ -30,10 +28,10 @@ public abstract class ExampleCollector {
     /**
      * Loads the examples.
      * 
-     * @throws KielerException
+     * @throws RuntimeException
      *             , should help to avoid problems.
      */
-    public abstract void load() throws KielerException;
+    public abstract void load() throws RuntimeException;
 
     /**
      * Returns the loaded examplePool.

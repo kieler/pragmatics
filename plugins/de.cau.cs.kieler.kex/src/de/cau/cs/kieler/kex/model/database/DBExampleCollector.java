@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleCollector;
@@ -62,10 +61,10 @@ public class DBExampleCollector extends ExampleCollector {
      * @param exampleTitle
      *            , String
      * @return {@link Example}
-     * @throws KielerException
+     * @throws RuntimeException
      *             , if an error occurs.
      */
-    public static Example getExample(final String exampleTitle) throws KielerException {
+    public static Example getExample(final String exampleTitle) throws RuntimeException {
         // to implement
         return null;
     }

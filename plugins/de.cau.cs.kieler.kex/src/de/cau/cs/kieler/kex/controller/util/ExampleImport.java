@@ -32,8 +32,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
-import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleResource;
@@ -63,13 +61,11 @@ public final class ExampleImport {
      * @param selectedExamples
      *            , {@link List} of {@link Example}s.
      * @param, checkDuplicate , flag for checking example duplication in project.
-     * @throws KielerException
-     *             , will throw if any error occurs.
      * @return directopens, {@link List} of {@link String}.
      */
     public static List<String> importExamples(final IPath selectedResource,
             final List<Example> selectedExamples, final boolean checkDuplicate)
-            throws KielerException {
+            throws RuntimeException {
 
         List<String> directOpens = new ArrayList<String>();
         List<String> finishedResources = new ArrayList<String>();
@@ -93,7 +89,7 @@ public final class ExampleImport {
                         example.getNamespaceId(), exampleBeginIndex, checkDuplicate,
                         finishedResources);
             }
-        } catch (KielerException e) {
+        } catch (RuntimeException e) {
             deleteResources(finishedResources);
             throw e;
         }
@@ -109,7 +105,7 @@ public final class ExampleImport {
     private static void handleResources(final List<String> directOpens,
             final List<ExampleResource> resources, String destFolder, final String nameSpaceId,
             final int exampleBeginIndex, final boolean checkDuplicate,
-            final List<String> finishedResources) throws KielerException {
+            final List<String> finishedResources) throws RuntimeException {
         Bundle bundle = Platform.getBundle(nameSpaceId);
 
         for (ExampleResource resource : resources) {
@@ -132,8 +128,7 @@ public final class ExampleImport {
                     File destFile = new File(destFolder + "/" + destPath);
                     finishedResources.add(destFile.getPath());
                     if (checkDuplicate && destFile.exists()) {
-                        throw new KielerModelException(ErrorMessage.DUPLICATE_EXAMPLE,
-                                destFile.getName());
+                        throw new RuntimeException(destFile.getName());
                     }
                     IOHandler.createFolder(destFolder + "/" + destPath);
                     break;
@@ -147,22 +142,21 @@ public final class ExampleImport {
                         directOpens.add(dest);
                     }
                     break;
-
                 }
             } catch (FileNotFoundException e) {
-                throw new KielerException(ErrorMessage.NO_Import, e);
+                throw new RuntimeException(ErrorMessage.NO_Import, e);
             } catch (IOException e1) {
-                throw new KielerException(ErrorMessage.NO_Import, e1);
+                throw new RuntimeException(ErrorMessage.NO_Import, e1);
             } catch (CoreException e2) {
-                throw new KielerException(ErrorMessage.NO_Import + e2.getMessage());
+                throw new RuntimeException(ErrorMessage.NO_Import + e2.getMessage());
             }
         }
     }
 
-    private static void checkDuplicate(final String destPath) throws KielerException {
+    private static void checkDuplicate(final String destPath) throws RuntimeException {
         IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(destPath);
         if (project != null && project.exists()) {
-            throw new KielerException("Duplicate Project, you maybe inserted it before.");
+            throw new RuntimeException("Duplicate Project, you maybe inserted it before.");
         }
     }
 
@@ -192,13 +186,11 @@ public final class ExampleImport {
      *            , {@link List} of {@link Example}
      * @param checkDuplicate
      *            , boolean
-     * @throws KielerException
-     *             , if any error occurs.
      */
     public static void validate(final IPath selectedResource, final List<Example> selectedExamples,
-            final boolean checkDuplicate) throws KielerException {
+            final boolean checkDuplicate) throws RuntimeException {
         if (selectedExamples == null || selectedExamples.size() == 0) {
-            throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
+            throw new RuntimeException(ErrorMessage.NO_EXAMPLE_SELECTED);
         }
         // could happen that user wants to import a project and a example in a
         // other project
@@ -218,7 +210,7 @@ public final class ExampleImport {
         // projects do not need a destinatin resource
         if (!allProjects) {
             if (selectedResource == null || selectedResource.segmentCount() == 0) {
-                throw new KielerException(ErrorMessage.NO_DEST_SET);
+                throw new RuntimeException(ErrorMessage.NO_DEST_SET);
             }
         }
     }

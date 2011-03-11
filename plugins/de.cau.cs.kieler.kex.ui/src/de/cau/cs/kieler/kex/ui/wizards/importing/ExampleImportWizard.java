@@ -37,7 +37,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
@@ -80,7 +79,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         this.checkDuplicate = false;
         try {
             ExampleManager.get().load(true);
-        } catch (KielerException e) {
+        } catch (RuntimeException e) {
             MessageDialog.openError(this.getShell(), "Can't initialize existing example pool.",
                     e.getLocalizedMessage());
         }
@@ -102,7 +101,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
             List<Example> checkedExamples = mainPage.getCheckedExamples();
 
             if (checkedExamples.isEmpty()) {
-                throw new KielerException(ErrorMessage.NO_EXAMPLE_SELECTED);
+                throw new RuntimeException(ErrorMessage.NO_EXAMPLE_SELECTED);
             }
 
             // warning if more examples selected than warning_border.
@@ -115,12 +114,12 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 
             IPath destinationLocation = destinationPage.getResourcePath();
             if (destinationLocation == null || destinationLocation.isEmpty()) {
-                throw new KielerException("No import location has been set.");
+                throw new RuntimeException("No import location has been set.");
             }
             ExampleManager.get().generateProject(destinationLocation);
             directOpens = ExampleManager.get().importExamples(destinationLocation, checkedExamples,
                     checkDuplicate);
-        } catch (KielerException e) {
+        } catch (RuntimeException e) {
             if (e.getLocalizedMessage().equals(ErrorMessage.DUPLICATE_EXAMPLE)) {
                 checkDuplicate = !MessageDialog.openQuestion(getShell(), ERROR_TITLE,
                         e.getLocalizedMessage() + " Do you want to override it?");

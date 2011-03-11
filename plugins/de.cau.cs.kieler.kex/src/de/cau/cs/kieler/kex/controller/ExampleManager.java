@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.util.ExampleExport;
 import de.cau.cs.kieler.kex.controller.util.ExampleImport;
 import de.cau.cs.kieler.kex.model.Category;
@@ -46,6 +45,8 @@ import de.cau.cs.kieler.kex.model.plugin.PluginExampleCreator;
  * 
  */
 public final class ExampleManager {
+
+    // TODO exception handling in a correct way, see trac and use statushandler...
 
     private static ExampleManager instance = new ExampleManager();
 
@@ -79,10 +80,10 @@ public final class ExampleManager {
      * 
      * @param forceLoad
      *            , set this parameter to force loading of examples
-     * @throws KielerException
+     * @throws RuntimeException
      *             , can be thrown by <code> load() </code>.
      */
-    public void load(final boolean forceLoad) throws KielerException {
+    public void load(final boolean forceLoad) throws RuntimeException {
         if (!this.isLoaded || forceLoad) {
             load();
             // after completely loaded
@@ -98,11 +99,12 @@ public final class ExampleManager {
      * @param exampleTitle
      *            , {@link String}
      * @return {@link Example}
-     * @throws KielerException
+     * @throws RuntimeException
      *             , can be thrown by <code> {@link PluginExampleCollector}.getExample(...) </code>
      *             and if the example found example is null.
      */
-    public Example getExample(final SourceType type, final String exampleId) throws KielerException {
+    public Example getExample(final SourceType type, final String exampleId)
+            throws RuntimeException {
         if (type == SourceType.KIELER) {
             if (isLoaded) {
                 Map<String, Example> examplePool = extensionCollector.getExamplePool();
@@ -110,7 +112,7 @@ public final class ExampleManager {
                 if (example != null) {
                     return example;
                 } else {
-                    throw new KielerException(ErrorMessage.NO_EXAMPLE_FOUND + exampleId);
+                    throw new RuntimeException(ErrorMessage.NO_EXAMPLE_FOUND + exampleId);
                 }
             } else {
                 return PluginExampleCollector.getExample(exampleId);
@@ -123,7 +125,7 @@ public final class ExampleManager {
         return null;
     }
 
-    private void load() throws KielerException {
+    private void load() throws RuntimeException {
         this.extensionCollector.load();
         // TODO test impl of an online interface.
         this.databaseCollector.load();
@@ -162,12 +164,12 @@ public final class ExampleManager {
      * @param checkDuplicate
      *            , boolean
      * @return {@link List} of {@link String}
-     * @throws KielerException
+     * @throws RuntimeException
      *             , if ExampleImport.validate(...) or ExampleImport.importExamples(...) throws it.
      */
     public List<String> importExamples(final IPath selectedResource,
             final List<Example> selectedExamples, final boolean checkDuplicate)
-            throws KielerException {
+            throws RuntimeException {
         ExampleImport.validate(selectedResource, selectedExamples, checkDuplicate);
         return ExampleImport.importExamples(selectedResource, selectedExamples, checkDuplicate);
     }
@@ -177,10 +179,10 @@ public final class ExampleManager {
      * 
      * @param properties
      *            , {@link Map} with {@link ExampleElement} as key and {@link Object} as value.
-     * @throws KielerException
+     * @throws RuntimeException
      *             , can be thrown at several places.
      */
-    public void export(final Map<ExampleElement, Object> properties) throws KielerException {
+    public void export(final Map<ExampleElement, Object> properties) throws RuntimeException {
 
         ExampleExport.validate(properties, this.extensionCollector, this.databaseCollector);
 
@@ -191,7 +193,7 @@ public final class ExampleManager {
             // {
             // // TODO build online interface
         } else {
-            throw new KielerException(ErrorMessage.NO_SOURCETYPE);
+            throw new RuntimeException(ErrorMessage.NO_SOURCETYPE);
         }
     }
 
@@ -210,10 +212,10 @@ public final class ExampleManager {
      * @param quickStarter
      *            , {@link Example}
      * @return files which can be open directly, List<String>
-     * @throws KielerException
+     * @throws RuntimeException
      *             , if anything goes wrong at ExampleImport.importExamples(...).
      */
-    public List<String> quickStartImport(final Example quickStarter) throws KielerException {
+    public List<String> quickStartImport(final Example quickStarter) throws RuntimeException {
         List<Example> quickStarts = new ArrayList<Example>();
         quickStarts.add(quickStarter);
         return ExampleImport.importExamples(null, quickStarts, false);

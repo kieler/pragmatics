@@ -38,7 +38,6 @@ import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IIntroAction;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.SourceType;
@@ -89,7 +88,7 @@ public class QuickStartAction implements IIntroAction {
         Example quickStarter = null;
         try {
             quickStarter = ExampleManager.get().getExample(sourcetype, exampleId);
-        } catch (KielerException e) {
+        } catch (RuntimeException e) {
             showError("Example loading error", e.getMessage());
             return;
         }
@@ -107,7 +106,7 @@ public class QuickStartAction implements IIntroAction {
             List<String> directOpens = ExampleManager.get().importExamples(projectPath, examples,
                     false);
             postfix(directOpens);
-        } catch (KielerException e) {
+        } catch (RuntimeException e) {
             showError("Could not import example", e.getMessage());
             return;
         }

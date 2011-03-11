@@ -503,7 +503,7 @@ public class ImportExamplePage extends WizardPage {
         previewDesc.setText(Messages.getString("previewLabel"));
         GridData previewDescData = new GridData(GridData.FILL_HORIZONTAL);
         previewDesc.setLayoutData(previewDescData);
-        imageLabel = new Label(composite, SWT.BORDER);
+        imageLabel = new Label(composite, SWT.BORDER | SWT.CENTER);
         imageLabel.setImage(initPreviewImage());
         GridData imgLabelData = new GridData(GridData.FILL_HORIZONTAL, GridData.FILL_VERTICAL,
                 true, true);

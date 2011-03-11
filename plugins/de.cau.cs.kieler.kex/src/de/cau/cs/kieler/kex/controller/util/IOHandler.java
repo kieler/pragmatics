@@ -25,8 +25,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.KielerException;
-import de.cau.cs.kieler.core.KielerModelException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 
 /**
@@ -124,22 +122,20 @@ public final class IOHandler {
      * @param location
      *            , folder in an plugin project.
      * @return plugin.xml if found otherwise parent java project directory
-     * @throws KielerException
-     *             , throws when null checks fail.
      */
-    public static File filterPluginXML(final File location) throws KielerException {
+    public static File filterPluginXML(final File location) throws RuntimeException {
 
         // TODO hier ansetzen project rausholen lokale rootresource filtern und
         // bei example einsetzen sowie beim plugin schreiben ber�cksichtigen,
         // bei resources und bei example attribute rootresource
         File childDir = searchUP(location, IOHandler.PROJECT_FILE);
         if (childDir == null) {
-            throw new KielerException("Could not find any java project.");
+            throw new RuntimeException("Could not find any java project.");
         }
 
         File project = childDir.getParentFile();
         if (project == null) {
-            throw new KielerException("Could not find any java project.");
+            throw new RuntimeException("Could not find any java project.");
         }
         if (getFile(project, IOHandler.MANIFEST_MF) != null) {
             File result = getFile(project, IOHandler.PLUGIN_XML);
@@ -149,7 +145,7 @@ public final class IOHandler {
                 return project;
             }
         } else {
-            throw new KielerException("The choosen destination contains no manifest.mf.");
+            throw new RuntimeException("The choosen destination contains no manifest.mf.");
         }
     }
 
@@ -159,9 +155,9 @@ public final class IOHandler {
      * @param sourceDir
      * @param fileName
      * @return true, if exactly one file is found, otherwise false
-     * @throws KielerException
      */
-    private static File getFile(final File sourceDir, final String fileName) throws KielerException {
+    private static File getFile(final File sourceDir, final String fileName)
+            throws RuntimeException {
         List<File> resultList = new ArrayList<File>();
         collectFiles(sourceDir, fileName, resultList);
         return filterFoundFile(resultList, fileName, sourceDir);
@@ -174,10 +170,9 @@ public final class IOHandler {
      * @param sourceDir
      * @param fileName
      * @param resultList
-     * @throws KielerException
      */
     private static void collectFiles(final File sourceDir, final String fileName,
-            final List<File> resultList) throws KielerException {
+            final List<File> resultList) throws RuntimeException {
         for (File file : sourceDir.listFiles()) {
             if (fileName.equals(file.getName())) {
                 resultList.add(file);
@@ -195,10 +190,9 @@ public final class IOHandler {
      * @param fileName
      *            , String
      * @return File, if exactly one file is found otherwise null;
-     * @throws KielerException
-     *             , when <code> filterFoundFile(...) </code> throws it.
      */
-    public static File searchUP(final File sourceDir, final String fileName) throws KielerException {
+    public static File searchUP(final File sourceDir, final String fileName)
+            throws RuntimeException {
         File parent = sourceDir;
         File[] foundFiles = null;
         while (parent != null && parent.exists() && parent.isDirectory()) {
@@ -218,13 +212,13 @@ public final class IOHandler {
     }
 
     private static File filterFoundFile(final List<File> foundFiles, final String searchName,
-            final File source) throws KielerException {
+            final File source) throws RuntimeException {
         int fileCount = foundFiles.size();
         if (fileCount == 0) {
             return null;
         }
         if (fileCount > 1) {
-            throw new KielerException(new StringBuffer()
+            throw new RuntimeException(new StringBuffer()
                     .append("There are more than one file with name \"" + searchName + "\" in")
                     .append(source.getPath()).toString());
         }
@@ -232,13 +226,13 @@ public final class IOHandler {
     }
 
     private static File filterFoundFile(final File[] foundFiles, final String searchName,
-            final File source) throws KielerException {
+            final File source) throws RuntimeException {
         int fileCount = foundFiles.length;
         if (fileCount == 0) {
             return null;
         }
         if (fileCount > 1) {
-            throw new KielerException(new StringBuffer()
+            throw new RuntimeException(new StringBuffer()
                     .append("There are more than one file with name \"" + source + "\" in")
                     .append(source.getPath()).toString());
         }
@@ -254,17 +248,14 @@ public final class IOHandler {
      *            , destination path as String
      * @param checkDuplicate
      *            , boolean
-     * @throws KielerException
      * @throws IOException
      *             , can occur while io writing.
-     * @throws KielerModelException
-     *             , if target exists already.
      */
     public static void writeFile(final URL sourceUrl, final String destPath,
-            final boolean checkDuplicate) throws IOException, KielerModelException {
+            final boolean checkDuplicate) throws IOException, RuntimeException {
         File target = new File(destPath);
         if (checkDuplicate && target.exists()) {
-            throw new KielerModelException(ErrorMessage.DUPLICATE_EXAMPLE, target.getName());
+            throw new RuntimeException(target.getName());
         }
         InputStream is = sourceUrl.openStream();
         OutputStream os = new FileOutputStream(target, false);

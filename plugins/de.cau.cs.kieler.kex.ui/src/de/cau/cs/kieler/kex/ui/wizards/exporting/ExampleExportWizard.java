@@ -23,7 +23,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 
@@ -93,7 +92,7 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
             resourcePage.buildResourceStructure();
             result.put(ExampleElement.RESOURCES, resourcePage.getExportedResources());
             ExampleManager.get().export(result);
-        } catch (KielerException e) {
+        } catch (RuntimeException e) {
             MessageDialog.open(MessageDialog.ERROR, getShell(), "Error while exporting example.",
                     e.getMessage(), SWT.NONE);
             return false;

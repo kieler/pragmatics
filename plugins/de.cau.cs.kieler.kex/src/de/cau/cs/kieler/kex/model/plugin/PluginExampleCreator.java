@@ -42,7 +42,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExportResource;
 import de.cau.cs.kieler.kex.controller.util.IOHandler;
@@ -96,12 +95,12 @@ public class PluginExampleCreator {
      *            , {@link List} of {@link String}s
      * @param absOverviewPic
      *            , {@link String}
-     * @throws KielerException
+     * @throws RuntimeException
      *             , if duplicatechecks fails or can be thrown by getPluginNode(...).
      */
     public void addExtension(final File location, final Example parseElement,
             final List<Category> creatableCategories, final String absOverviewPic)
-            throws KielerException {
+            throws RuntimeException {
 
         Node pluginNode = getPluginNode(location);
         Node extensionKEX = filterExtensionKEX(pluginNode);
@@ -118,7 +117,7 @@ public class PluginExampleCreator {
 
     // TODO testen...
     private void checkDuplicate(final Node extensionKEX, final String exampleId,
-            final List<Category> creatableCategories) throws KielerException {
+            final List<Category> creatableCategories) throws RuntimeException {
         NodeList childNodes = extensionKEX.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
@@ -128,7 +127,7 @@ public class PluginExampleCreator {
                 if (namedItem != null) {
                     for (Category creatableCategory : creatableCategories) {
                         if (creatableCategory.getId().equals(namedItem.getNodeValue())) {
-                            throw new KielerException(ErrorMessage.DUPLICATE_ELEMENT
+                            throw new RuntimeException(ErrorMessage.DUPLICATE_ELEMENT
                                     + "The category \"" + creatableCategory.getId()
                                     + "\" exists already in choosen plugin project.");
                         }
@@ -137,7 +136,7 @@ public class PluginExampleCreator {
             } else if (PluginConstants.Example.EXAMPLE.equals(nodeName)) {
                 Node namedItem = item.getAttributes().getNamedItem(PluginConstants.Example.ID);
                 if (namedItem != null && exampleId.equals(namedItem.getNodeValue())) {
-                    throw new KielerException(ErrorMessage.DUPLICATE_ELEMENT + "The example \""
+                    throw new RuntimeException(ErrorMessage.DUPLICATE_ELEMENT + "The example \""
                             + exampleId + "\" exists already in choosen plugin project.");
                 }
             }
@@ -150,14 +149,14 @@ public class PluginExampleCreator {
         return new Path(absOverviewPic.substring(projectPath.length())).toPortableString();
     }
 
-    private void makeRootSource(final File location, final Example example) throws KielerException {
+    private void makeRootSource(final File location, final Example example) throws RuntimeException {
         File project = IOHandler.searchUP(location, IOHandler.PROJECT_FILE).getParentFile();
         String relativeLocation = location.getPath().substring(project.getPath().length());
         example.setRootDir((relativeLocation.length() > 0) ? relativeLocation.substring(1)
                 : relativeLocation);
     }
 
-    private Node getPluginNode(final File locationFile) throws KielerException {
+    private Node getPluginNode(final File locationFile) throws RuntimeException {
 
         try {
             this.pluginXML = IOHandler.filterPluginXML(locationFile);
@@ -171,20 +170,20 @@ public class PluginExampleCreator {
             }
         } catch (ParserConfigurationException e) {
             String msg = ErrorMessage.NOT_PARSE_PLUGIN + "\n" + e.getLocalizedMessage();
-            throw new KielerException(msg, e);
+            throw new RuntimeException(msg, e);
         } catch (SAXException e) {
             String msg = ErrorMessage.NOT_PARSE_PLUGIN + "\n" + e.getLocalizedMessage();
-            throw new KielerException(msg, e);
+            throw new RuntimeException(msg, e);
         } catch (IOException e) {
             String msg = ErrorMessage.NOT_PARSE_PLUGIN + "\n" + e.getLocalizedMessage();
-            throw new KielerException(msg, e);
+            throw new RuntimeException(msg, e);
         }
 
         NodeList plugins = this.parsedXML.getElementsByTagName(PluginConstants.PLUGIN);
         if (plugins.getLength() == 1) {
             return plugins.item(0);
         }
-        throw new KielerException("Could not filter plugin node. " + locationFile.getPath());
+        throw new RuntimeException("Could not filter plugin node. " + locationFile.getPath());
     }
 
     private Node filterExtensionKEX(final Node pluginNode) {
@@ -214,7 +213,7 @@ public class PluginExampleCreator {
         return extensionKEX;
     }
 
-    private Document createPluginDocument() throws KielerException {
+    private Document createPluginDocument() throws RuntimeException {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(true);
@@ -223,7 +222,7 @@ public class PluginExampleCreator {
         try {
             docBuilder = factory.newDocumentBuilder();
         } catch (ParserConfigurationException p) {
-            throw new KielerException(ErrorMessage.DOC_BUILDER_NEW_ERROR + ", "
+            throw new RuntimeException(ErrorMessage.DOC_BUILDER_NEW_ERROR + ", "
                     + p.getLocalizedMessage());
         }
 
@@ -249,18 +248,18 @@ public class PluginExampleCreator {
      * 
      * @param destFile
      *            , {@link File}
-     * @throws KielerException
+     * @throws RuntimeException
      *             , if copyResource(...) throws it.
      */
     public void copyResources(final File destFile, final List<ExportResource> resources,
-            final List<IPath> finishedResources) throws KielerException {
+            final List<IPath> finishedResources) throws RuntimeException {
         for (ExportResource resource : resources) {
             copyResource(resource, destFile.getPath(), finishedResources);
         }
     }
 
     private void copyResource(final ExportResource resource, final String destPath,
-            final List<IPath> finishedResources) throws KielerException {
+            final List<IPath> finishedResources) throws RuntimeException {
         StringBuilder destLocation = new StringBuilder();
         try {
 
@@ -274,7 +273,7 @@ public class PluginExampleCreator {
 
             IOHandler.writeResource(new File(sourcePath), destination.toFile());
         } catch (IOException e) {
-            throw new KielerException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -305,7 +304,7 @@ public class PluginExampleCreator {
         return true;
     }
 
-    private void writePluginXML(final String pluginPath) throws KielerException {
+    private void writePluginXML(final String pluginPath) throws RuntimeException {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             DOMSource source = new DOMSource(parsedXML);
@@ -329,8 +328,8 @@ public class PluginExampleCreator {
 
     }
 
-    private void throwWritePluginError(final Throwable e) throws KielerException {
-        throw new KielerException(new StringBuffer().append(ErrorMessage.NOT_WRITE_PLUGIN)
+    private void throwWritePluginError(final Throwable e) throws RuntimeException {
+        throw new RuntimeException(new StringBuffer().append(ErrorMessage.NOT_WRITE_PLUGIN)
                 .append(e.getLocalizedMessage()).toString());
     }
 
@@ -345,7 +344,7 @@ public class PluginExampleCreator {
         return createdElement;
     }
 
-    private Node toNode(final Example example, final File location) throws KielerException {
+    private Node toNode(final Example example, final File location) throws RuntimeException {
         Element createdExample = parsedXML.createElement(PluginConstants.Example.EXAMPLE);
         createdExample.setAttribute(PluginConstants.Example.ID, example.getId());
         createdExample.setAttribute(PluginConstants.Example.TITLE, example.getTitle());
@@ -404,11 +403,11 @@ public class PluginExampleCreator {
      * @param finishedResources
      *            , {@link List} of {@link IPath}
      * @return {@link String}
-     * @throws KielerException
+     * @throws RuntimeException
      *             , if an IOHandler.writeResource throws an exception.
      */
     public String copyOverviewPic(final String destPath, final String sourcePath,
-            final List<IPath> finishedResources) throws KielerException {
+            final List<IPath> finishedResources) throws RuntimeException {
         File file = new File(sourcePath);
         String destLocation = destPath + File.separatorChar + file.getName();
         IPath destination = Path.fromPortableString(destLocation.toString());
@@ -419,7 +418,7 @@ public class PluginExampleCreator {
             StringBuilder errorMessage = new StringBuilder();
             errorMessage.append(ErrorMessage.PLUGIN_WRITE_ERROR).append("\ndestination: ")
                     .append(destPath).append(", image: ").append(sourcePath);
-            throw new KielerException(errorMessage.toString());
+            throw new RuntimeException(errorMessage.toString());
         }
         return destLocation;
 

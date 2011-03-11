@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.model.Category;
 import de.cau.cs.kieler.kex.model.Example;
@@ -53,11 +52,11 @@ public class PluginExampleCollector extends ExampleCollector {
     /**
      * Loads examples of extenders.
      * 
-     * @throws KielerException
+     * @throws RuntimeException
      *             , if toExample(...) throws it.
      */
     @Override
-    public void load() throws KielerException {
+    public void load() throws RuntimeException {
         getCategories();
         // TODO rebuild,that first loadcategories and then loadexamples
         IConfigurationElement[] configElements = Platform.getExtensionRegistry()
@@ -83,11 +82,11 @@ public class PluginExampleCollector extends ExampleCollector {
                     this.examplePool.put(exampleId, example);
                 }
             } catch (InvalidRegistryObjectException e) {
-                throw new KielerException("Error while loading example \""
+                throw new RuntimeException("Error while loading example \""
                         + element.getAttribute(PluginConstants.Example.ID) + "\". "
                         + e.getLocalizedMessage());
             } catch (IllegalArgumentException e1) {
-                throw new KielerException("Error while loading example \""
+                throw new RuntimeException("Error while loading example \""
                         + element.getAttribute(PluginConstants.Example.ID) + "\". "
                         + e1.getLocalizedMessage());
             }
@@ -201,11 +200,11 @@ public class PluginExampleCollector extends ExampleCollector {
      * @param exampleId
      *            , {@link String}
      * @return {@link Example}
-     * @throws KielerException
+     * @throws RuntimeException
      *             , if a {@link InvalidRegistryObjectException} or a
      *             {@link IllegalArgumentException} has been thrown.
      */
-    public static Example getExample(final String exampleId) throws KielerException {
+    public static Example getExample(final String exampleId) throws RuntimeException {
         IConfigurationElement[] configElements = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(PluginConstants.KEX_EXT_POINT);
         for (IConfigurationElement element : configElements) {
@@ -215,11 +214,11 @@ public class PluginExampleCollector extends ExampleCollector {
                     try {
                         return toExample(element);
                     } catch (InvalidRegistryObjectException e) {
-                        throw new KielerException(ErrorMessage.LOAD_ERROR
+                        throw new RuntimeException(ErrorMessage.LOAD_ERROR
                                 + element.getAttribute(PluginConstants.Example.ID) + "\". "
                                 + e.getLocalizedMessage());
                     } catch (IllegalArgumentException e1) {
-                        throw new KielerException(ErrorMessage.LOAD_ERROR
+                        throw new RuntimeException(ErrorMessage.LOAD_ERROR
                                 + element.getAttribute(PluginConstants.Example.ID) + "\". "
                                 + e1.getLocalizedMessage());
                     }

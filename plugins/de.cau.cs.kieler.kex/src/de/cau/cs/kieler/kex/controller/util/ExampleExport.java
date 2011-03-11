@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExportResource;
@@ -60,17 +59,17 @@ public final class ExampleExport {
      *            , Map of {@link ExampleElement} and an arbitrary {@link Object}.
      * @param collectors
      *            , {@link ExampleCollector}s
-     * @throws KielerException
-     *             , if any check fail a {@link KielerException} will throw.
+     * @throws RuntimeException
+     *             , if any check fail a {@link RuntimeException} will throw.
      */
     @SuppressWarnings("unchecked")
     public static void validate(final Map<ExampleElement, Object> map,
-            final ExampleCollector... collectors) throws KielerException {
+            final ExampleCollector... collectors) throws RuntimeException {
         checkAttributes(map);
 
         Object sourceType = map.get(ExampleElement.SOURCETYPE);
         if (!(sourceType instanceof SourceType)) {
-            throw new KielerException("No source type has been defined.");
+            throw new RuntimeException("No source type has been defined.");
         }
 
         String destLocation = (String) map.get(ExampleElement.DEST_LOCATION);
@@ -90,7 +89,7 @@ public final class ExampleExport {
     }
 
     private static void checkAttributes(final Map<ExampleElement, Object> map)
-            throws KielerException {
+            throws RuntimeException {
         String exampleTitle = (String) map.get(ExampleElement.TITLE);
         validateField(exampleTitle, EXAMPLE_TITLE_MIN, "Example Title");
 
@@ -107,46 +106,46 @@ public final class ExampleExport {
     }
 
     private static void validateElement(final List<?> list, final int minLength,
-            final String listName) throws KielerException {
+            final String listName) throws RuntimeException {
         if (list == null || list.size() < minLength) {
             StringBuilder errorMsg = new StringBuilder();
             errorMsg.append("No ").append(listName).append(" has been selected.\n")
                     .append("Please choose at least ").append(String.valueOf(minLength));
-            throw new KielerException(errorMsg.toString());
+            throw new RuntimeException(errorMsg.toString());
         }
     }
 
     private static void validateField(final String checkable, final int minLength,
-            final String checkableName) throws KielerException {
+            final String checkableName) throws RuntimeException {
         if (checkable == null || checkable.length() < minLength) {
             StringBuilder errorMsg = new StringBuilder();
             errorMsg.append("The field ").append(checkableName)
                     .append(" has to be set with at least ").append(String.valueOf(minLength))
                     .append(" characters.");
-            throw new KielerException(errorMsg.toString());
+            throw new RuntimeException(errorMsg.toString());
         }
     }
 
     /**
-     * checks the collectors for given exampleTitle. If exists, a {@link KielerException} will
+     * checks the collectors for given exampleTitle. If exists, a {@link RuntimeException} will
      * thrown.
      * 
      * @param exampleTitle
      *            , String
      * @param collectors
      *            , {@link ExampleCollector}...
-     * @throws KielerException
+     * @throws RuntimeException
      *             , throws if duplicate found.
      * 
      */
     public static void checkDuplicate(final String exampleTitle,
-            final ExampleCollector... collectors) throws KielerException {
+            final ExampleCollector... collectors) throws RuntimeException {
         if (exampleTitle == null) {
-            throw new KielerException("Title of an example could not be null.");
+            throw new RuntimeException("Title of an example could not be null.");
         }
         for (ExampleCollector collector : collectors) {
             if (collector.getExamplePool().containsKey(exampleTitle)) {
-                throw new KielerException("Duplicate example title. Please choose an other one!");
+                throw new RuntimeException("Duplicate example title. Please choose an other one!");
             }
         }
     }
@@ -158,19 +157,19 @@ public final class ExampleExport {
      *            , {@link Map} with {@link ExampleElement} as key and an {@link Object} as value.
      * @param extensionCreator
      *            , {@link PluginExampleCreator}
-     * @throws KielerException
+     * @throws RuntimeException
      *             , will be caused if some errors occurs.
      */
     @SuppressWarnings("unchecked")
     public static void exportInPlugin(final Map<ExampleElement, Object> properties,
-            final PluginExampleCreator extensionCreator) throws KielerException {
+            final PluginExampleCreator extensionCreator) throws RuntimeException {
 
         Example mappedExample = ExampleExport.mapToExample(properties);
 
         // TODO hier the example image in images ordner einbauen!
         File destFile = new File(mappedExample.getRootDir());
         if (!destFile.exists()) {
-            throw new KielerException(ErrorMessage.DESTFILE_NOT_EXIST + mappedExample.getRootDir());
+            throw new RuntimeException(ErrorMessage.DESTFILE_NOT_EXIST + mappedExample.getRootDir());
         }
 
         List<ExportResource> exportResources = (List<ExportResource>) properties
@@ -189,7 +188,7 @@ public final class ExampleExport {
             extensionCreator.addExtension(destFile, mappedExample,
                     (List<Category>) properties.get(ExampleElement.CREATE_CATEGORIES),
                     absOverviewPic);
-        } catch (KielerException e) {
+        } catch (RuntimeException e) {
             extensionCreator.deleteExampleResources(finishedResources);
             throw e;
         }
@@ -197,7 +196,7 @@ public final class ExampleExport {
 
     private static String copyOverviewPic(final String overviewPic,
             final PluginExampleCreator extensionCreator, final File destFile,
-            final List<IPath> finishedResources) throws KielerException {
+            final List<IPath> finishedResources) throws RuntimeException {
         if (overviewPic != null && overviewPic.length() > 1) {
             String absolutePath = extensionCreator.copyOverviewPic(destFile.getPath(), overviewPic,
                     finishedResources);
