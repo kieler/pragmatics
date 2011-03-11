@@ -13,11 +13,13 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -71,10 +73,51 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         }
 
         // CHECKSTYLEOFF VisibilityModifier
-        /** Identifier value, may be arbitrarily used by algorithms. */
+        /**
+         * Identifier value, may be arbitrarily used by algorithms.
+         */
         public int id;
-
+        
+        /**
+         * Index in the previous layer. Used for cycle avoidance.
+         */
+        public int indexInLastLayer = -1;
+        
+        /**
+         * The last layer where a node belonging to this segment was discovered. Used for
+         * cycle avoidance.
+         */
+        public int lastLayer = -1;
         // CHECKSTYLEON VisibilityModifier
+        
+        /**
+         * Splits this linear segment before the given node. The returned segment contains
+         * all nodes from the given node onward, with their ID set to the new segment's ID.
+         * Those nodes are removed from this segment.
+         * 
+         * @param node the node to split the segment at.
+         * @param newId the new segment's id.
+         * @return new linear segment with ID {@code -1} and all nodes from {@code node}
+         *         onward.
+         */
+        public LinearSegment split(final LNode node, final int newId) {
+            int nodeIndex = nodes.indexOf(node);
+            
+            // Prepare the new segment
+            LinearSegment newSegment = new LinearSegment();
+            newSegment.id = newId;
+            
+            // Move nodes to the new segment
+            ListIterator<LNode> iterator = nodes.listIterator(nodeIndex);
+            while (iterator.hasNext()) {
+                LNode movedNode = iterator.next();
+                movedNode.id = newId;
+                newSegment.nodes.add(movedNode);
+                iterator.remove();
+            }
+            
+            return newSegment;
+        }
 
         /**
          * {@inheritDoc}
@@ -207,45 +250,47 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      * @return a sorted array of linear segments
      */
     private LinearSegment[] sortLinearSegments(final LayeredGraph layeredGraph) {
-        // create linear segments for the layered graph
+        // reset all node IDs
         List<LinearSegment> segmentList = new LinkedList<LinearSegment>();
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 node.id = -1;
             }
         }
-        int index = 0;
+
+        // create linear segments for the layered graph
+        int nextLinearSegmentID = 0;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 if (node.id < 0) {
                     LinearSegment segment = new LinearSegment();
-                    segment.id = index++;
+                    segment.id = nextLinearSegmentID++;
                     fillSegment(node, segment);
                     segmentList.add(segment);
                 }
             }
         }
-        LinearSegment[] segments = segmentList.toArray(new LinearSegment[segmentList.size()]);
 
         // create and initialize segment ordering graph
-        @SuppressWarnings("unchecked")
-        List<LinearSegment>[] outgoing = new List[segments.length];
-        int[] incomingCount = new int[segments.length];
-        for (int i = 0; i < segments.length; i++) {
-            outgoing[i] = new LinkedList<LinearSegment>();
+        List<List<LinearSegment>> outgoingList = new ArrayList<List<LinearSegment>>(segmentList.size());
+        List<Integer> incomingCountList = new ArrayList<Integer>(segmentList.size());
+        for (int i = 0; i < segmentList.size(); i++) {
+            outgoingList.add(new LinkedList<LinearSegment>());
+            incomingCountList.add(0);
         }
-
-        // create edges in the segment ordering graph
-        for (Layer layer : layeredGraph.getLayers()) {
-            Iterator<LNode> nodeIter = layer.getNodes().iterator();
-            LNode node1 = nodeIter.next();
-            while (nodeIter.hasNext()) {
-                LNode node2 = nodeIter.next();
-                LinearSegment segment2 = segments[node2.id];
-                outgoing[node1.id].add(segment2);
-                incomingCount[node2.id]++;
-                node1 = node2;
-            }
+        
+        createDependencyGraphEdges(layeredGraph, segmentList, outgoingList, incomingCountList);
+        
+        // Turn lists into arrays
+        LinearSegment[] segments = segmentList.toArray(new LinearSegment[segmentList.size()]);
+        
+        @SuppressWarnings("unchecked")
+        List<LinearSegment>[] outgoing =
+            outgoingList.toArray(new List[outgoingList.size()]);
+        
+        int[] incomingCount = new int[incomingCountList.size()];
+        for (int i = 0; i < incomingCount.length; i++) {
+            incomingCount[i] = incomingCountList.get(i);
         }
 
         // find a topological ordering of the segment ordering graph
@@ -256,13 +301,16 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 noIncoming.add(segments[i]);
             }
         }
+        
         int[] newRanks = new int[segments.length];
         while (!noIncoming.isEmpty()) {
             LinearSegment segment = noIncoming.remove(0);
             newRanks[segment.id] = nextRank++;
+            
             while (!outgoing[segment.id].isEmpty()) {
                 LinearSegment target = outgoing[segment.id].remove(0);
                 incomingCount[target.id]--;
+                
                 if (incomingCount[target.id] == 0) {
                     noIncoming.add(target);
                 }
@@ -275,7 +323,107 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             assert outgoing[i].isEmpty();
             linearSegments[newRanks[i]] = segments[i];
         }
+        
         return linearSegments;
+    }
+
+    /**
+     * Fills the dependency graph with dependencies. If a dependency would introduce a cycle,
+     * the offending linear segment is split into two linear segments.
+     * 
+     * @param layeredGraph the layered graph.
+     * @param segmentList the list of segments. Updated to include the newly created linear
+     *                    segments.
+     * @param outgoingList the lists of outgoing dependencies for each segment. This
+     *                     essentially encodes the edges of the dependency graph.
+     * @param incomingCountList the number of incoming dependencies for each segment.
+     */
+    private void createDependencyGraphEdges(final LayeredGraph layeredGraph,
+            final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList,
+            final List<Integer> incomingCountList) {
+        
+        // create edges in the segment ordering graph
+        int nextLinearSegmentID = segmentList.size();
+        int layerIndex = 0;
+        for (Layer layer : layeredGraph.getLayers()) {
+            Iterator<LNode> nodeIter = layer.getNodes().iterator();
+            int indexInLayer = 0;
+            
+            // We carry the next-to-last node with us
+            LNode node0 = null;
+            
+            // Get the layer's first node
+            LNode node1 = nodeIter.next();
+            LinearSegment segment1 = null;
+            
+            while (nodeIter.hasNext()) {
+                // Get the current node's segment
+                segment1 = segmentList.get(node1.id);
+                
+                // Check if we can have a cycle. That's the case if we find a node after the
+                // current node whose segment appeared in the last layer as well, and whose
+                // index than came before node1's segment
+                Iterator<LNode> cycleNodesIter = layer.getNodes().listIterator(indexInLayer + 1);
+                LinearSegment cycleSegment = null;
+                
+                while (cycleNodesIter.hasNext()) {
+                    LNode cycleNode = cycleNodesIter.next();
+                    cycleSegment = segmentList.get(cycleNode.id);
+                    
+                    if (cycleSegment.lastLayer == segment1.lastLayer
+                            && cycleSegment.indexInLastLayer < segment1.indexInLastLayer) {
+                        
+                        break;
+                    } else {
+                        cycleSegment = null;
+                    }
+                }
+                
+                // If we have found a cycle segment, we need to split the current linear
+                // segment
+                if (cycleSegment != null) {
+                    // Update the current segment before it's split
+                    if (node0 != null) {
+                        incomingCountList.set(node1.id, incomingCountList.get(node1.id) - 1);
+                        outgoingList.get(node0.id).remove(segment1);
+                    }
+                    
+                    segment1 = segment1.split(node1, nextLinearSegmentID++);
+                    segmentList.add(segment1);
+                    outgoingList.add(new LinkedList<LinearSegment>());
+                    
+                    if (node0 != null) {
+                        outgoingList.get(node0.id).add(segment1);
+                        incomingCountList.add(1);
+                    } else {
+                        incomingCountList.add(0);
+                    }
+                }
+                
+                // Now add a dependency to the next node
+                LNode node2 = nodeIter.next();
+                LinearSegment segment2 = segmentList.get(node2.id);
+                
+                outgoingList.get(node1.id).add(segment2);
+                incomingCountList.set(node2.id, incomingCountList.get(node2.id) + 1);
+                
+                // Update segment's layer information
+                segment1.lastLayer = layerIndex;
+                segment1.indexInLastLayer = indexInLayer++;
+                
+                // Cycle nodes
+                node0 = node1;
+                node1 = node2;
+            }
+            
+            // Assign indices to the layer's last node's segment, if any
+            if (segment1 != null) {
+                segment1.lastLayer = layerIndex;
+                segment1.indexInLastLayer = indexInLayer;
+            }
+            
+            layerIndex++;
+        }
     }
 
     /**
@@ -502,6 +650,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                             != neighbor.getProperty(Properties.REGION)
                             && neighbor.getPos().y + neighbor.getSize().y + spacing 
                             > node.getPos().y + region.force) {
+                        
                         // Set force on region to the max possible force
                         region.force = node.getPos().y
                                 - (neighbor.getPos().y + neighbor.getSize().y + spacing);
@@ -513,14 +662,14 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                         region.force = -node.getPos().y;
                     }
                 }
-            } else if (region.force > 0.0f
-                    && node.getIndex() < node.getLayer().getNodes().size() - 1) {
+            } else if (region.force > 0.0f && node.getIndex() < node.getLayer().getNodes().size() - 1) {
                 // Force is directed downward and the node is not lowermost
                 LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
                 if (node.getProperty(Properties.REGION) 
                         != neighbor.getProperty(Properties.REGION)
-                        && node.getPos().y + node.getSize().y + spacing + region.force 
-                        > neighbor.getPos().y) {
+                        && node.getPos().y + node.getSize().y + spacing + region.force
+                            > neighbor.getPos().y) {
+                    
                     // Set force on region to the max possible force
                     region.force = neighbor.getPos().y
                             - (node.getPos().y + node.getSize().y + spacing);
