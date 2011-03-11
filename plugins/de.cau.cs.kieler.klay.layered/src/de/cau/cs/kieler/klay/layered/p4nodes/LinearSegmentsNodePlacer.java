@@ -347,7 +347,22 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList,
             final List<Integer> incomingCountList) {
         
-        // create edges in the segment ordering graph
+        /* There's some <scaryVoice> faaaancy </scaryVoice> stuff going on here. Basically,
+         * we go through all the layers, from left to right. In each layer, we go through
+         * all the nodes. For each node, we retrieve the linear segment it's part of and
+         * add a dependency to the next node's linear segment. So far so good.
+         * 
+         * This works perfectly fine as long as we assume that the relative order of linear
+         * segments doesn't change from one layer to the next. However, since the introduction
+         * of north / south port dummies, it can. We now have to avoid creating cycles in the
+         * dependency graph. This is done by remembering the indices of each linear segment in
+         * the previous layer. When we encounter a segment x, we check if there is a segment y
+         * that came before x in the previous layer. (that would introduce a cycle) If that's
+         * the case, we split x at the current layer, resulting two segments, x1 and x2, x2
+         * starting at the current layer. Now, we proceed as usual, adding a dependency from x2
+         * to y. But we have avoided a cycle because y does not depend on x2, but on x1.
+         */
+        
         int nextLinearSegmentID = segmentList.size();
         int layerIndex = 0;
         for (Layer layer : layeredGraph.getLayers()) {
@@ -360,21 +375,21 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             Iterator<LNode> nodeIter = nodes.iterator();
             int indexInLayer = 0;
             
-            // We carry the next-to-last node with us
-            LNode node0 = null;
+            // We carry the previous node with us for dependency management
+            LNode previousNode = null;
             
             // Get the layer's first node
-            LNode node1 = nodeIter.next();
-            LinearSegment segment1 = null;
+            LNode currentNode = nodeIter.next();
+            LinearSegment currentSegment = null;
             
             while (nodeIter.hasNext()) {
                 // Get the current node's segment
-                if (node1.id == -1) {
+                if (currentNode.id == -1) {
                     // Can happen for odd port side dummies
-                    node1 = nodeIter.next();
+                    currentNode = nodeIter.next();
                     continue;
                 }
-                segment1 = segmentList.get(node1.id);
+                currentSegment = segmentList.get(currentNode.id);
                 
                 // Check if we can have a cycle. That's the case if we find a node after the
                 // current node whose segment appeared in the last layer as well, and whose
@@ -387,8 +402,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     if (cycleNode.id != -1) {
                         cycleSegment = segmentList.get(cycleNode.id);
                         
-                        if (cycleSegment.lastLayer == segment1.lastLayer
-                                && cycleSegment.indexInLastLayer < segment1.indexInLastLayer) {
+                        if (cycleSegment.lastLayer == currentSegment.lastLayer
+                                && cycleSegment.indexInLastLayer < currentSegment.indexInLastLayer) {
                             
                             break;
                         } else {
@@ -401,17 +416,17 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 // segment
                 if (cycleSegment != null) {
                     // Update the current segment before it's split
-                    if (node0 != null) {
-                        incomingCountList.set(node1.id, incomingCountList.get(node1.id) - 1);
-                        outgoingList.get(node0.id).remove(segment1);
+                    if (previousNode != null) {
+                        incomingCountList.set(currentNode.id, incomingCountList.get(currentNode.id) - 1);
+                        outgoingList.get(previousNode.id).remove(currentSegment);
                     }
                     
-                    segment1 = segment1.split(node1, nextLinearSegmentID++);
-                    segmentList.add(segment1);
+                    currentSegment = currentSegment.split(currentNode, nextLinearSegmentID++);
+                    segmentList.add(currentSegment);
                     outgoingList.add(new LinkedList<LinearSegment>());
                     
-                    if (node0 != null) {
-                        outgoingList.get(node0.id).add(segment1);
+                    if (previousNode != null) {
+                        outgoingList.get(previousNode.id).add(currentSegment);
                         incomingCountList.add(1);
                     } else {
                         incomingCountList.add(0);
@@ -419,34 +434,34 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 }
                 
                 // Now add a dependency to the next node we find with id != -1
-                LNode node2 = null;
+                LNode nextNode = null;
                 while (nodeIter.hasNext()) {
-                    node2 = nodeIter.next();
-                    if (node2.id == -1) {
-                        node2 = null;
+                    nextNode = nodeIter.next();
+                    if (nextNode.id == -1) {
+                        nextNode = null;
                     } else {
-                        LinearSegment segment2 = segmentList.get(node2.id);
+                        LinearSegment nextSegment = segmentList.get(nextNode.id);
                         
-                        outgoingList.get(node1.id).add(segment2);
-                        incomingCountList.set(node2.id, incomingCountList.get(node2.id) + 1);
+                        outgoingList.get(currentNode.id).add(nextSegment);
+                        incomingCountList.set(nextNode.id, incomingCountList.get(nextNode.id) + 1);
                         
                         break;
                     }
                 }
                 
                 // Update segment's layer information
-                segment1.lastLayer = layerIndex;
-                segment1.indexInLastLayer = indexInLayer++;
+                currentSegment.lastLayer = layerIndex;
+                currentSegment.indexInLastLayer = indexInLayer++;
                 
                 // Cycle nodes
-                node0 = node1;
-                node1 = node2;
+                previousNode = currentNode;
+                currentNode = nextNode;
             }
             
             // Assign indices to the layer's last node's segment, if any
-            if (segment1 != null) {
-                segment1.lastLayer = layerIndex;
-                segment1.indexInLastLayer = indexInLayer;
+            if (currentSegment != null) {
+                currentSegment.lastLayer = layerIndex;
+                currentSegment.indexInLastLayer = indexInLayer;
             }
             
             layerIndex++;
@@ -486,7 +501,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         if (highestPrioEdge != null) {
             LNode nextNode = highestPrioEdge.getTarget().getNode();
             
-            // calculate/set offset
+            // Calculate and set offset
             int offset = (int) Math.round(highestPrioEdge.getSource().getPos().y
                     - (highestPrioEdge.getTarget().getPos().y)
                     + node.getProperty(Properties.LINSEG_OFFSET));
