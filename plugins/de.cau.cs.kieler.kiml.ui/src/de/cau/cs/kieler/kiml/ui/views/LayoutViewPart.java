@@ -27,6 +27,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
@@ -85,6 +86,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     /** default layout algorithm array, which is empty. */
     private static final LayoutAlgorithmData[] DEFAULT_LAYOUTER_DATA = new LayoutAlgorithmData[0];
     
+    /** the form toolkit used to create the form container. */
+    private FormToolkit toolkit;
     /** the form container for the property sheet page. */
     private ScrolledForm form;
     /** the page that is displayed in this view part. */
@@ -181,8 +184,14 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
      */
     @Override
     public void createPartControl(final Composite parent) {
-        FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+        // GUI code needs magic numbers
+        // CHECKSTYLEOFF MagicNumber
+        
+        toolkit = new FormToolkit(parent.getDisplay());
         form = toolkit.createScrolledForm(parent);
+        toolkit.decorateFormHeading(form.getForm());
+        form.setFont(JFaceResources.getBannerFont());
+        form.pack();
         form.setText("");
         Composite content = form.getBody();
         FormLayout contentLayout = new FormLayout();
@@ -195,7 +204,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         FormData formData = new FormData();
         formData.left = new FormAttachment(FORM_LEFT, 0);
         formData.right = new FormAttachment(FORM_RIGHT, 0);
-        formData.top = new FormAttachment(FORM_TOP, 0);
+        formData.top = new FormAttachment(FORM_TOP, 5);
         formData.bottom = new FormAttachment(FORM_BOTTOM, 0);
         page.getControl().setLayoutData(formData);
         page.setPropertySourceProvider(new PropertySourceProvider());
@@ -239,7 +248,8 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
             }
         }
         workbenchWindow.getSelectionService().addSelectionListener(this);
-        toolkit.dispose();
+
+        // CHECKSTYLEON MagicNumber
     }
 
     /**
@@ -283,6 +293,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         currentManager = null;
         currentWorkbenchPart = null;
         currentEditPart = null;
+        toolkit.dispose();
         super.dispose();
     }
     
