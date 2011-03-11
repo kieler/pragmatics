@@ -73,6 +73,10 @@ public class KGraphImporter implements IGraphImporter {
     public LayeredGraph getGraph() {
         return layeredGraph;
     }
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Transformation KGraph -> LGraph
     
     /**
      * Transform the given KGraph to a layered graph.
@@ -84,12 +88,29 @@ public class KGraphImporter implements IGraphImporter {
         layeredGraph.copyProperties(layoutNode.getData(KShapeLayout.class));
         layeredGraph.checkProperties(Properties.OBJ_SPACING, Properties.THOROUGHNESS,
                 LayoutOptions.BORDER_SPACING);
-        List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
 
-        // keep a map between KGraph nodes / ports and LGraph nodes / ports
+        // keep a list of created nodes in the layered graph, as well as a map between KGraph
+        // nodes / ports and LGraph nodes / ports
+        List<LNode> layeredNodes = layeredGraph.getLayerlessNodes();
         Map<KGraphElement, LGraphElement> elemMap = new HashMap<KGraphElement, LGraphElement>();
         
-        // transform nodes and ports
+        // transform everything
+        transformNodesAndPorts(layoutNode, layeredNodes, elemMap);
+        transformEdges(layoutNode, elemMap);
+    }
+
+
+    /**
+     * Transforms the nodes and ports defined by the given layout node.
+     * 
+     * @param layoutNode the layout node whose edges to transform.
+     * @param layeredNodes list of nodes created.
+     * @param elemMap the element map that maps the original {@code KGraph} elements to the
+     *                transformed {@code LGraph} elements.
+     */
+    private void transformNodesAndPorts(final KNode layoutNode, final List<LNode> layeredNodes,
+            final Map<KGraphElement, LGraphElement> elemMap) {
+        
         for (KNode child : layoutNode.getChildren()) {
             // add a new node to the layered graph, copying its size
             KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
@@ -146,9 +167,31 @@ public class KGraphImporter implements IGraphImporter {
             
             // set properties of the new node
             newNode.copyProperties(nodeLayout);
+            
+            // if we have a hypernode without ports, create a default input and output port
+            if (newNode.getProperty(LayoutOptions.HYPERNODE) && newNode.getPorts().isEmpty()) {
+                LPort inputPort = new LPort(PortType.INPUT);
+                inputPort.setSide(PortSide.WEST);
+                inputPort.setNode(newNode);
+                
+                LPort outputPort = new LPort(PortType.OUTPUT);
+                outputPort.setSide(PortSide.EAST);
+                outputPort.setNode(newNode);
+            }
         }
+    }
 
-        // transform edges
+
+    /**
+     * Transforms the edges defined by the given layout node.
+     * 
+     * @param layoutNode the layout node whose edges to transform.
+     * @param elemMap the element map that maps the original {@code KGraph} elements to the
+     *                transformed {@code LGraph} elements.
+     */
+    private void transformEdges(final KNode layoutNode,
+            final Map<KGraphElement, LGraphElement> elemMap) {
+        
         for (KNode child : layoutNode.getChildren()) {
             for (KEdge kedge : child.getOutgoingEdges()) {
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
@@ -166,22 +209,32 @@ public class KGraphImporter implements IGraphImporter {
                     
                     // create source port
                     if (sourcePort == null) {
-                        sourcePort = new LPort(PortType.OUTPUT);
-                        sourcePort.setNode(sourceNode);
-                        KPoint sourcePoint = edgeLayout.getSourcePoint();
-                        sourcePort.getPos().x = sourcePoint.getX() - sourceNode.getPos().x;
-                        sourcePort.getPos().y = sourcePoint.getY() - sourceNode.getPos().y;
-                        sourcePort.setSide(calcPortSide(sourceNode, sourcePort));
+                        if (sourceNode.getProperty(LayoutOptions.HYPERNODE)) {
+                            // Hypernodes have an input port
+                            sourcePort = sourceNode.getPorts(PortType.OUTPUT).iterator().next();
+                        } else {
+                            sourcePort = new LPort(PortType.OUTPUT);
+                            sourcePort.setNode(sourceNode);
+                            KPoint sourcePoint = edgeLayout.getSourcePoint();
+                            sourcePort.getPos().x = sourcePoint.getX() - sourceNode.getPos().x;
+                            sourcePort.getPos().y = sourcePoint.getY() - sourceNode.getPos().y;
+                            sourcePort.setSide(calcPortSide(sourceNode, sourcePort));
+                        }
                     }
                     
                     // create target port
                     if (targetPort == null) {
-                        targetPort = new LPort(PortType.INPUT);
-                        targetPort.setNode(targetNode);
-                        KPoint targetPoint = edgeLayout.getTargetPoint();
-                        targetPort.getPos().x = targetPoint.getX() - targetNode.getPos().x;
-                        targetPort.getPos().y = targetPoint.getY() - targetNode.getPos().y;
-                        targetPort.setSide(calcPortSide(targetNode, targetPort));
+                        if (targetNode.getProperty(LayoutOptions.HYPERNODE)) {
+                            // Hypernodes have an input port
+                            targetPort = targetNode.getPorts(PortType.INPUT).iterator().next();
+                        } else {
+                            targetPort = new LPort(PortType.INPUT);
+                            targetPort.setNode(targetNode);
+                            KPoint targetPoint = edgeLayout.getTargetPoint();
+                            targetPort.getPos().x = targetPoint.getX() - targetNode.getPos().x;
+                            targetPort.getPos().y = targetPoint.getY() - targetNode.getPos().y;
+                            targetPort.setSide(calcPortSide(targetNode, targetPort));
+                        }
                     }
                     
                     // create a layered edge
@@ -238,6 +291,10 @@ public class KGraphImporter implements IGraphImporter {
             return PortSide.SOUTH;
         }
     }
+
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // Apply Layout Results
 
     /**
      * {@inheritDoc}
