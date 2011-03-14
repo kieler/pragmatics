@@ -23,8 +23,7 @@ import de.menges.topologie.Topologie.SpecializedVertices.*;
 public class MovePortFeature extends DefaultMoveAnchorFeature {
     
     /**
-     * The constructor.
-     * 
+     * The constructor .
      * @param fp the feature provider
      */
     public MovePortFeature(final IFeatureProvider fp) {
@@ -50,17 +49,21 @@ public class MovePortFeature extends DefaultMoveAnchorFeature {
     final Anchor anchor, final int posX, final int posY) {
         if (anchor instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor boxAnchor = (BoxRelativeAnchor) anchor;
-            GraphicsAlgorithm anchorContainerGa = boxAnchor.getParent().getGraphicsAlgorithm();
-            IDimension nodeSize = Graphiti.getGaService().calculateSize(anchorContainerGa, false);
+            GraphicsAlgorithm anchorContainerGa =
+            	boxAnchor.getParent().getGraphicsAlgorithm();
+            IDimension nodeSize = Graphiti.getGaService().
+            	calculateSize(anchorContainerGa, false);
             int nodeWidth = nodeSize.getWidth();
             int nodeHeight = nodeSize.getHeight();
 
             float widthPercent = (float) posX / nodeWidth;
             float heightPercent = (float) posY / nodeHeight;
-            if (widthPercent + heightPercent <= 1 && widthPercent - heightPercent <= 0) {
+            if (widthPercent + heightPercent <= 1
+            		&& widthPercent - heightPercent <= 0) {
                 // port is put to the left
                 widthPercent = 0.2f;
-            } else if (widthPercent + heightPercent >= 1 && widthPercent - heightPercent >= 0) {
+            } else if (widthPercent + heightPercent >= 1
+            		&& widthPercent - heightPercent >= 0) {
                 // port is put to the right
                 widthPercent = 1;
             } else if (heightPercent < 1.0f / 2) {

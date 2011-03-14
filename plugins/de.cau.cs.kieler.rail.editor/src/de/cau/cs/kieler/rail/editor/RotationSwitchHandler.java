@@ -118,6 +118,7 @@ public class RotationSwitchHandler {
 	 *        (to get the getBusinessObjectForPictogramElement)
 	 * @param multipleAngle int 0-5
 	 * @param offset
+	 * @param offset
 	 */
 	public static void setMultipleAngle(
 	final PictogramElement pictogramElement,
@@ -157,8 +158,8 @@ public class RotationSwitchHandler {
 					+ portTypeToInt(portBO.getName())
 					* 2 + 1];
 				}
-				port.setRelativeWidth(validValue(x,offset));
-				port.setRelativeHeight(validValue(y,offset));
+				port.setRelativeWidth(validValue(x, offset));
+				port.setRelativeHeight(validValue(y, offset));
 			}
 			boolean changed = false;
 			for (Property property
@@ -171,13 +172,13 @@ public class RotationSwitchHandler {
 			}
 		}
 	}
-	/**
-	 * 
+	/**  TODO Comment
+	 *  Checks the value to not be greater then MAX_RELATIV_SIZE
 	 * @param value
 	 * @param offset
 	 * @return
 	 */
-	private static double validValue(double value, double offset) {
+	private static double validValue(final double value, final double offset) {
 		if (value >= MAX_RELATIV_SIZE) {
 			return value - offset * (value / MAX_RELATIV_SIZE);
 		} else {
@@ -242,7 +243,7 @@ public class RotationSwitchHandler {
 	 * @param abzweigendeLage
 	 * @return valid and between 0-5
 	 */
-	public static int getValidMultipleAngle(int value,
+	public static int getValidMultipleAngle(final int value,
 			EOrientation abzweigendeLage) {
 		if (abzweigendeLage == EOrientation.LINKS) {
 			//0 2  3  5

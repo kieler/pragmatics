@@ -41,7 +41,7 @@ public class KrailDiagramEditor extends DiagramEditor {
      * @param containerShape a container shape
      * @return the domain model entity of the container
      */
-    public Model fetchModel(final ContainerShape containerShape) {
+    public final Model fetchModel(final ContainerShape containerShape) {
         Object obj = getDiagramTypeProvider().getFeatureProvider()
                 .getBusinessObjectForPictogramElement(containerShape);
         if (obj instanceof Model) {
@@ -49,7 +49,8 @@ public class KrailDiagramEditor extends DiagramEditor {
         } else if (containerShape instanceof Diagram) {
             return linkModel((Diagram) containerShape);
         }
-        throw new IllegalStateException("The given container is not linked to an entity.");
+        throw new IllegalStateException(
+             "The given container is not linked to an entity.");
     }
 
     /**
@@ -100,7 +101,6 @@ public class KrailDiagramEditor extends DiagramEditor {
 
     /**
      * Create the style with given identifier.
-     * 
      * @param diagram the diagram where the style shall be created
      * @param id the style identifier
      * @return a new style instance, or {@code null} if the id is unknown
@@ -109,8 +109,10 @@ public class KrailDiagramEditor extends DiagramEditor {
         if (DEFAULT_STYLE.equals(id)) {
             IGaService gaService = Graphiti.getGaService();
             Style style = gaService.createStyle(diagram, id);
-            style.setForeground(gaService.manageColor(diagram, ColorConstant.BLACK));
-            style.setBackground(gaService.manageColor(diagram, ColorConstant.WHITE));
+            style.setForeground(gaService.manageColor(diagram,
+            		ColorConstant.BLACK));
+            style.setBackground(gaService.manageColor(diagram,
+            		ColorConstant.WHITE));
             return style;
         }
         return null;

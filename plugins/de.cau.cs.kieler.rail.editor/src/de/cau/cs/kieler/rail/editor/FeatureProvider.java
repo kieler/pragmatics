@@ -32,7 +32,6 @@ import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 import de.cau.cs.kieler.core.model.graphiti.IStyleProvider;
 import de.cau.cs.kieler.core.model.graphiti.features.DefaultKielerDeleteFeature;
 import de.cau.cs.kieler.rail.editor.features.AddEdgeFeature;
-import de.cau.cs.kieler.rail.editor.features.AddPortFeature;
 import de.cau.cs.kieler.rail.editor.features.AddVertexFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateEdgeFeature;
 import de.cau.cs.kieler.rail.editor.features.CreateVertexFeature;
@@ -56,16 +55,24 @@ import de.menges.topologie.topoDSL.ELage;
  * 
  */
 public class FeatureProvider extends DefaultFeatureProvider {
-    private static final int BREANCH_HEIGHT = 50;
+    /**Height for the Breach*/
+	private static final int BREANCH_HEIGHT = 50;
+	/**Width for the breach*/
     private static final int BREANCH_WIDTH = 50;
+    /**Height for the switch*/
 	private static final int SWITCH_HEIGHT = 50;
+	/**Width for the switch*/
 	private static final int SWITCH_WIDTH = 50;
+	/**Width for the deadend vertex*/
+	private static final int DEADENDVERTEX_HEIGHT = 50;
+	/**Height for the deadend vertex*/
+	private static final int DEADENDVERTEX_WIDTH = 50;
     /** the style provider that is used by the features. */
     private IStyleProvider styleProvider;
 
     /**
-     * 
-     * @param dtp
+     * Standard constructor.
+     * @param dtp The Diagram Type Provider
      */
     public FeatureProvider(final IDiagramTypeProvider dtp) {
         super(dtp);
@@ -76,7 +83,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public IAddFeature getAddFeature(final IAddContext context) {
+	public final IAddFeature getAddFeature(final IAddContext context) {
         if (context.getNewObject() instanceof Einbruchsknoten) {
             return new AddVertexFeature(this, this.styleProvider,
                     TypeFeatures.BREANCH);
@@ -85,7 +92,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
                     TypeFeatures.DEADENDVERTEX);
         } else if (context.getNewObject() instanceof Weichenknoten) {
             EOrientation orientation =
-                    ((Weichenknoten) (context.getNewObject())).getAbzweigendeLage();
+                 ((Weichenknoten) (context.getNewObject()))
+                 .getAbzweigendeLage();
             switch (orientation) {
             case LINKS:
                 return new AddVertexFeature(this, this.styleProvider,
@@ -96,8 +104,6 @@ public class FeatureProvider extends DefaultFeatureProvider {
 			default:
 				break;
             }
-        } else if (context.getNewObject() instanceof Port) {
-            return new AddPortFeature(this, styleProvider);
         } else if (context.getNewObject() instanceof Edge) {
             return new AddEdgeFeature(this, styleProvider);
         }
@@ -108,7 +114,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public ICreateFeature[] getCreateFeatures() {
+	public final ICreateFeature[] getCreateFeatures() {
         // , new CreateDeadEndVertexFeature(this)
 
         return new ICreateFeature[] {
@@ -123,29 +129,16 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public ICreateConnectionFeature[] getCreateConnectionFeatures() {
+	public final ICreateConnectionFeature[] getCreateConnectionFeatures() {
         return new ICreateConnectionFeature[] {new CreateEdgeFeature(this)};
     }
-
-    /*
-     *     @Override
-    public IUpdateFeature getUpdateFeature(IUpdateContext context) {
-        PictogramElement pictogramElement = context.getPictogramElement();
-        if (pictogramElement instanceof ContainerShape) {
-            Object bo = getBusinessObjectForPictogramElement(pictogramElement);
-            if (bo instanceof EClass) {
-                return new TutorialUpdateEClassFeature(this);
-            }
-        }
-        return super.getUpdateFeature(context);
-    }
-     */
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IUpdateFeature getUpdateFeature(final IUpdateContext context) {
+	public final IUpdateFeature getUpdateFeature(
+			final IUpdateContext context) {
         PictogramElement pictogramElement = context.getPictogramElement();
         if (pictogramElement instanceof ContainerShape) {
             Object bo = getBusinessObjectForPictogramElement(pictogramElement);
@@ -162,7 +155,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public IDirectEditingFeature getDirectEditingFeature(
+	public final IDirectEditingFeature getDirectEditingFeature(
             final IDirectEditingContext context) {
         PictogramElement pe = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pe);
@@ -176,7 +169,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public IResizeShapeFeature getResizeShapeFeature(
+	public final IResizeShapeFeature getResizeShapeFeature(
             final IResizeShapeContext context) {
         Shape shape = context.getShape();
         Object bo = getBusinessObjectForPictogramElement(shape);
@@ -185,8 +178,9 @@ public class FeatureProvider extends DefaultFeatureProvider {
         } else if (bo instanceof Stumpfgleisknoten) {
             return new ResizeFeature(this, TypeFeatures.DEADENDVERTEX);
         } else if (bo instanceof Weichenknoten) {
-            EOrientation E = ((Weichenknoten) (bo)).getAbzweigendeLage();
-            switch (E) {
+            EOrientation orientation = ((Weichenknoten)
+            		(bo)).getAbzweigendeLage();
+            switch (orientation) {
             case LINKS:
                 return new ResizeFeature(this, TypeFeatures.SWITCHVERTEX_LEFT);
             case RECHTS:
@@ -202,23 +196,28 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public ILayoutFeature getLayoutFeature(final ILayoutContext context) {
+	public final ILayoutFeature getLayoutFeature(
+			final ILayoutContext context) {
         PictogramElement pictogramElement = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pictogramElement);
         if (bo instanceof Einbruchsknoten) {
             return new LayoutFeature(this, TypeFeatures.BREANCH,
                     BREANCH_HEIGHT, BREANCH_WIDTH);
         } else if (bo instanceof Stumpfgleisknoten) {
-            return new LayoutFeature(this, TypeFeatures.DEADENDVERTEX, 50, 50);
+            return new LayoutFeature(this, TypeFeatures.DEADENDVERTEX,
+            		DEADENDVERTEX_HEIGHT, DEADENDVERTEX_WIDTH);
         } else if (bo instanceof Weichenknoten) {
-            EOrientation E = ((Weichenknoten) (bo)).getAbzweigendeLage();
-            switch (E) {
+            EOrientation orientation =
+            	((Weichenknoten) (bo)).getAbzweigendeLage();
+            switch (orientation) {
             case LINKS:
                 return new LayoutFeature(this, TypeFeatures.SWITCHVERTEX_LEFT,
                         SWITCH_HEIGHT, SWITCH_WIDTH);
             case RECHTS:
                 return new LayoutFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT,
                 		SWITCH_HEIGHT, SWITCH_WIDTH);
+			default:
+				break;
             }
         }
         return super.getLayoutFeature(context);
@@ -228,7 +227,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public IMoveAnchorFeature getMoveAnchorFeature(
+	public final IMoveAnchorFeature getMoveAnchorFeature(
             final IMoveAnchorContext context) {
         System.out.println(getBusinessObjectForPictogramElement(context
                 .getAnchor()));
@@ -240,14 +239,14 @@ public class FeatureProvider extends DefaultFeatureProvider {
     }
 
     @Override
-    public IFeature[] getDragAndDropFeatures(
+	public final IFeature[] getDragAndDropFeatures(
             final IPictogramElementContext context) {
         // simply return all create connection features
         return getCreateConnectionFeatures();
     }
 
     @Override
-    public ICustomFeature[] getCustomFeatures(final ICustomContext context) {
+	public final ICustomFeature[] getCustomFeatures(final ICustomContext context) {
         return new ICustomFeature[] {new RotateSwitchFeature(this),
                 new ToggleSwitchFeature(this) };
     }
@@ -256,7 +255,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      * {@inheritDoc}
      */
     @Override
-    public IDeleteFeature getDeleteFeature(final IDeleteContext context) {
+	public final IDeleteFeature getDeleteFeature(final IDeleteContext context) {
         return new DefaultKielerDeleteFeature(this);
     }
 

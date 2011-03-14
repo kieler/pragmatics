@@ -6,7 +6,6 @@ package de.cau.cs.kieler.rail.editor;
  *
  */
 public class Geometry {
-	
     private static final int X1 = 0;
     private static final int Y1 = 1;
     private static final int X2 = 2;
@@ -17,7 +16,7 @@ public class Geometry {
 	 * @param angle the angle in degree
 	 * @return calculate degree (°) to radiant
 	 */
-	public static double degreeToRad(double angle){
+	public static double degreeToRad(final double angle){
 		return angle * Math.PI / 180;
 	}
 	/**
@@ -36,7 +35,7 @@ public class Geometry {
 	public static double getRelativWeight(final double relativStartY,
 	final double angle, final double relativEndHeight){
 		double m = Math.tan(angle);
-		return ((relativEndHeight)/m);  //-relativStartY
+		return ((relativEndHeight) / m);  //-relativStartY
 	}
 	
 	// TODO better comment

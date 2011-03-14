@@ -1,25 +1,29 @@
 package de.cau.cs.kieler.rail.editor.features;
 
-import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.Property;
-import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
-import org.eclipse.graphiti.mm.algorithms.Text;
-import org.eclipse.graphiti.mm.pictograms.Anchor;
-import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
-import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
-import org.eclipse.graphiti.mm.pictograms.Shape;
-
 import de.menges.topologie.Topologie.SpecializedVertices.*;
 import de.cau.cs.kieler.rail.editor.RotationSwitchHandler;
 
+/**
+ * Implement the custom feature, witch rotates a switch to the next possible.
+ * @author hdw
+ *
+ */
 public class RotateSwitchFeature extends AbstractCustomFeature {
- 
+
+/**
+* Name of this custom features
+*/
     public static final String NAME = "Rotate Switch";
-	public RotateSwitchFeature(IFeatureProvider fp) {
+    /**
+     * The standard constructor.
+     * @param fp
+     */
+    public RotateSwitchFeature(IFeatureProvider fp) {
         super(fp);
     }
     /**

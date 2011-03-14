@@ -61,7 +61,6 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
 
     /**
      * Updater for the switch.
-     * 
      * @param fp
      *            the feature provider
      */
@@ -72,7 +71,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
     /**
      * {@inheritDoc}
      */
-    public boolean canUpdate(final IUpdateContext context) {
+    public final boolean canUpdate(final IUpdateContext context) {
         // return true, if linked business object is a EClass
         Object bo =
                 getBusinessObjectForPictogramElement(context
@@ -83,8 +82,8 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
     /**
      * {@inheritDoc}
      */
-    public IReason updateNeeded(final IUpdateContext context) {
-    	// retrieve name from pictogram model
+    public final IReason updateNeeded(final IUpdateContext context) {
+    // retrieve name from pictogram model
 
         String pictogramName = null;
         PictogramElement pictogramElement = context.getPictogramElement();
@@ -122,7 +121,7 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
     /**
      * {@inheritDoc}
      */
-    public boolean update(final IUpdateContext context) {
+    public final boolean update(final IUpdateContext context) {
     	int[] spitzeStammXY = SPITZE_STAMM_DEFAULT.clone();
         int[] mitteAbzweigXY = MITTE_ABZWEIG_DEFAULT.clone();
         List<Polyline> polylines = new LinkedList<Polyline>();
@@ -153,14 +152,16 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             }
         }
         // Polylines end
-        
-        
+
+
         if (pictogramElement instanceof ContainerShape) {
-        	
+
         	ContainerShape cs = (ContainerShape) pictogramElement;
-            int[][] SpitzeStammMitteAbzweigXY = getSpitzeStammMitteAbzweigXY(cs.getAnchors(),height,width, getFeatureProvider());
-            spitzeStammXY = SpitzeStammMitteAbzweigXY[0];
-            mitteAbzweigXY = SpitzeStammMitteAbzweigXY[1];
+            int[][] spitzeStammMitteAbzweigXY =
+            	getSpitzeStammMitteAbzweigXY(cs.getAnchors(),
+            			height, width, getFeatureProvider());
+            spitzeStammXY = spitzeStammMitteAbzweigXY[0];
+            mitteAbzweigXY = spitzeStammMitteAbzweigXY[1];
 
             System.out.println("width: " + width);
             System.out.println("height: " + height);
@@ -177,8 +178,8 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             mitteAbzweigXY[MITTE_Y] =
                     Geometry.getYFromArray(mitteAbzweigXY,
                             MITTE_ABZWEIG_DEFAULT[MITTE_X]);
-            
-            for (int i = 0; i < 2; i++) {//set the new position for the Polylines
+          //set the new position for the Polylines
+            for (int i = 0; i < 2; i++) {
                 for (int j = 0; j < 2; j++) {
                     System.out.println("PolyLine x: "
                             + (i == 0 ? spitzeStammXY[0 + j * 2]
@@ -202,7 +203,9 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
             }
             //triangle refresh
             if (trianglePolygon != null) {
-            	setPolygonPoints(trianglePolygon, getPolygonXY(spitzeStammXY,mitteAbzweigXY,((Weichenknoten) bo).getAbzweigendeLage()));  //not nice
+            	setPolygonPoints(trianglePolygon,  //not nice
+            			getPolygonXY(spitzeStammXY, mitteAbzweigXY,
+            			((Weichenknoten) bo).getAbzweigendeLage()));
             //triangle was refreshed
 
             getDiagramEditor().refresh();
@@ -210,19 +213,27 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
     }
     return false;
 }
-    
-    public static int[] getPolygonXY(int[] spitzeStammXY, int[] mitteAbzweigXY, EOrientation orientation ) {
+
+    /**
+     * Get the x and y Position for the Polygon.
+     * @param spitzeStammXY x and y position for the spitze stamm line.
+     * @param mitteAbzweigXY x and y position for the mitte abzweig line.
+     * @param orientation The orientation witch the switch has got.
+     * @return x and y Position for the Polygon.
+     */
+    public static int[] getPolygonXY(final int[] spitzeStammXY,
+    		final int[] mitteAbzweigXY, final EOrientation orientation) {
     	int dx, dy;
-    	
+
     	dx = mitteAbzweigXY[MITTE_X] - mitteAbzweigXY[ABZWEIG_X];
     	dy = spitzeStammXY[STAMM_Y] - mitteAbzweigXY[ABZWEIG_Y];
-    	
+
     	double angle = dy/dx;//Math.atan2(dy, dx);
-    	
+
     	if (orientation == EOrientation.RECHTS) {
-    		angle = - angle;
+    		angle = -angle;
     	}
-    	
+
     	int[] polyXY = new int[] {mitteAbzweigXY[0],
                 mitteAbzweigXY[1], (int) (mitteAbzweigXY[MITTE_X]
                 + dx * angle * 0.25), 0, 0, 0};
@@ -239,18 +250,22 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
     }
 
     /**
-     * 
-     * @param anchors
-     * @param height
-     * @param width
+     * Get the x and y positions form Spitze to Stamm and From Mitte to Abzweig.
+     * @param anchors The anchors from witch is drawn
+     * @param height Height of the Vertex.
+     * @param width Width of the Vertex.
+     * @param fp The Feature Provider is needed to get the Business Objects
+     * from the anchors.
      * @return spitzeStammXY, mitteAbzweigXY
      */
-    public static int[][] getSpitzeStammMitteAbzweigXY(List<Anchor> anchors, double height, double width, IFeatureProvider fp) {
+    public static int[][] getSpitzeStammMitteAbzweigXY(
+    		final List<Anchor> anchors, final double height,
+    		final double width, final IFeatureProvider fp) {
     	int[] spitzeStammXY = {0, 0, 0, 0};
     	int[] mitteAbzweigXY = MITTE_ABZWEIG_DEFAULT.clone();
     	for (Anchor anchor : anchors) {
             if (anchor instanceof BoxRelativeAnchor) {
-                
+
             	Port port =
                         (Port) fp.getBusinessObjectForPictogramElement(anchor);
                 BoxRelativeAnchor box =

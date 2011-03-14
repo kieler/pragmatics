@@ -48,17 +48,17 @@ public class ReInitKrailDiagramCommand extends
     }
 
     @Override
-	protected final String getEditorId() {
+    protected final String getEditorId() {
         return KrailDiagramEditor.EDITOR_ID;
     }
 
     @Override
-	protected final boolean isConnection(final EObject eObj) {
+    protected final boolean isConnection(final EObject eObj) {
         return eObj instanceof Edge;
     }
 
     @Override
-	protected final EObject getConnectionSource(final EObject connection) {
+    protected final EObject getConnectionSource(final EObject connection) {
         if (connection instanceof Edge) {
             Edge e = (Edge) connection;
             return e.getFrom();
@@ -67,7 +67,7 @@ public class ReInitKrailDiagramCommand extends
     }
 
     @Override
-	protected final EObject getConnectionTarget(final EObject connection) {
+    protected final EObject getConnectionTarget(final EObject connection) {
         if (connection instanceof Edge) {
             Edge e = (Edge) connection;
             return e.getDestination();
@@ -77,8 +77,8 @@ public class ReInitKrailDiagramCommand extends
     }
 
     @SuppressWarnings("restriction")
-	@Override
-	protected final void performPostOperationAction(final IFile path,
+    @Override
+    protected final void performPostOperationAction(final IFile path,
             final List<IFile> partners, final IProgressMonitor monitor,
             final IEditorPart newEditor) {
         super.performPostOperationAction(path, partners, monitor, newEditor);
@@ -149,7 +149,7 @@ public class ReInitKrailDiagramCommand extends
      * {@inheritDoc}
      */
     @Override
-	protected final String getDiagramExtension() {
+    protected final String getDiagramExtension() {
         return KrailDiagramEditor.DIAGRAM_FILE_EXTENSION;
     }
 
@@ -157,12 +157,12 @@ public class ReInitKrailDiagramCommand extends
      * {@inheritDoc}
      */
     @Override
-	protected final String getModelExtension() {
+    protected final String getModelExtension() {
         return KrailDiagramEditor.MODEL_FILE_EXTENSION;
     }
 
     @Override
-	protected final boolean addChildrenRecursively(final EObject eObj) {
+    protected final boolean addChildrenRecursively(final EObject eObj) {
         return false;
     }
 

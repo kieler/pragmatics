@@ -149,7 +149,7 @@ public class StyleProvider implements IStyleProvider {
             style.setBackground(gaService.manageColor(diagram,
                     ColorConstant.WHITE));
             style.setFilled(false);
-            style.setTransparency(1.0);           
+            style.setTransparency(1.0);
             return style;
         } else if (BREACH_PORT.equals(id)) {
         	Style style = gaService.createStyle(diagram, id);
@@ -158,7 +158,7 @@ public class StyleProvider implements IStyleProvider {
             style.setBackground(gaService.manageColor(diagram,
                     ColorConstant.LIGHT_GRAY));
             style.setFilled(false);
-            style.setTransparency(1.0);           
+            style.setTransparency(1.0);
             return style;
         } else if (POLYLINE.equals(id)) {
             Style style = gaService.createStyle(diagram, id);

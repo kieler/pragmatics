@@ -16,6 +16,9 @@ import de.menges.topologie.Topologie.TopologieFactory;
  */
 public class KrailNewWizard extends GraphitiNewWizard {
 
+	/**
+	 * Makes a new Wizard for the raileditor
+	 */
     public KrailNewWizard() {
         super("Rail", "krail", "topologie", "Rail",
                 KrailDiagramEditor.DIAGRAM_EDITOR_ID);
@@ -25,13 +28,12 @@ public class KrailNewWizard extends GraphitiNewWizard {
      * {@inheritDoc}
      */
     @Override
-    protected void configureDiagram(final Diagram diagram) {
+	protected final void configureDiagram(final Diagram diagram) {
         addLayoutDefaultsToDiagram(diagram);
     }
 
     /**
      * Set the right layouter and proper minimal object spacing.
-     * 
      * @param diagram
      *            the diagram
      */

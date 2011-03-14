@@ -20,7 +20,6 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 
 /**
  * Contribute zoom actions to the action bar.
- * 
  * @author soh
  */
 public class RailEditorActionBarContributor extends EditorActionBarContributor {

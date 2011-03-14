@@ -73,6 +73,10 @@ public class AddVertexFeature extends AbstractAddFeature {
 
 	public static final String KLAY_NODETYPE_KEY = "layout:de.cau.cs.kieler.klay.rail.nodeType";
 
+	private static final int BREACH_WIDTH = 40;
+
+	private static final int BREACH_HEIGHT = 40;
+
     private TypeFeatures type;
 
     public AddVertexFeature(final IFeatureProvider fp,
@@ -123,6 +127,7 @@ public class AddVertexFeature extends AbstractAddFeature {
         
         //peCreateService.createChopboxAnchor((Shape) pe);
         layoutPictogramElement(pe);
+        pe.setActive(true);
         return pe;
     }
 
@@ -179,8 +184,9 @@ public class AddVertexFeature extends AbstractAddFeature {
             // Create Ellipse
         	
             ellipse = gaService.createEllipse(containerShape);
-            ellipse.setWidth(40);
-            ellipse.setHeight(40);
+            
+            ellipse.setWidth(BREACH_WIDTH);
+            ellipse.setHeight(BREACH_HEIGHT);
             ellipse.setX(5);
             ellipse.setY(10);
             
@@ -204,7 +210,7 @@ public class AddVertexFeature extends AbstractAddFeature {
         // SHAPE WITH TEXT
         {
             // create shape for text
-            Shape shape = peCreateService.createShape(containerShape, false);
+            Shape textShape = peCreateService.createShape(containerShape, false);
 
             // create and set text graphics algorithm
             // Compromise only
@@ -216,7 +222,7 @@ public class AddVertexFeature extends AbstractAddFeature {
                 einbruchsknoten.setName(ans); // TODO ???
             }
             Text text =
-                    gaService.createDefaultText(shape,
+                    gaService.createDefaultText(textShape,
                             einbruchsknoten.getName()); // addedClass.getName()
             text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
@@ -224,6 +230,19 @@ public class AddVertexFeature extends AbstractAddFeature {
             text.getFont().setBold(true);
             gaService.setLocationAndSize(text, 0, 0, width, 20);
 
+            
+            //direct editable
+            // set container shape for direct editing after object creation
+            IDirectEditingInfo directEditingInfo = getFeatureProvider()
+                    .getDirectEditingInfo();
+            directEditingInfo.setMainPictogramElement(containerShape);
+            // set shape and graphics algorithm where the editor for
+            // direct editing shall be opened after object creation
+            directEditingInfo.setPictogramElement(textShape);
+            directEditingInfo.setGraphicsAlgorithm(text);
+            //direct editable
+            
+            
             // for the Layouter
             Property properPort = MmFactory.eINSTANCE.createProperty();
             properPort.setKey("layout:de.cau.cs.kieler.klay.rail.portType");
@@ -248,7 +267,7 @@ public class AddVertexFeature extends AbstractAddFeature {
             // PORT
 
             // create link and wire it
-            link(shape, einbruchsknoten);
+            link(textShape, einbruchsknoten);
         }
 
         // add a chopbox anchor to the shape

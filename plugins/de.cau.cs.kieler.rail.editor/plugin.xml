@@ -31,6 +31,7 @@
      <wizard
            category="de.cau.cs.kieler"
            class="de.cau.cs.kieler.rail.editor.KrailNewWizard"
+           icon="icons/menges-logo.gif"
            id="de.cau.cs.kieler.rail.editor.WizardPage"
            name="Rail Editor">
      </wizard>
@@ -42,6 +43,7 @@
            contributorClass="de.cau.cs.kieler.rail.editor.RailEditorActionBarContributor"
            default="true"
            extensions="krail"
+           icon="icons/menges-logo.gif"
            id="de.cau.cs.kieler.rail.editor"
            name="Rail Editor">
      </editor>

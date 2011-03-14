@@ -13,7 +13,6 @@ import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.impl.AbstractLayoutFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
-import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
@@ -28,6 +27,7 @@ import de.menges.topologie.Topologie.SpecializedVertices.*;
  */
 public class LayoutFeature extends AbstractLayoutFeature {
  
+	
     private static final int MIN_HEIGHT = 50;
  
     private static final int MIN_WIDTH = 50;
@@ -62,17 +62,14 @@ public class LayoutFeature extends AbstractLayoutFeature {
        if (!(pe instanceof ContainerShape))
            return false;
        EList<EObject> businessObjects = pe.getLink().getBusinessObjects();
-       
-       //((ContainerShape)pe).getGraphicsAlgorithm().setHeight(50);
-       //((ContainerShape)pe).getGraphicsAlgorithm().setWidth(50);
-       
+
        return businessObjects.size() == 1
               && isInstanceof(businessObjects.get(0));
     }
     /**
      * {@inheritDoc}
      */
-    public boolean layout(final ILayoutContext context) {
+    public final boolean layout(final ILayoutContext context) {
         boolean anythingChanged = false;
         ContainerShape containerShape =
             (ContainerShape) context.getPictogramElement();
@@ -118,10 +115,10 @@ public class LayoutFeature extends AbstractLayoutFeature {
     
     /**
      * 
-     * @param object
+     * @param object Witch object has to check.
      * @return Is an object with 
      */
-	public final boolean isInstanceof(Object object){
+	public final boolean isInstanceof(final Object object){
 		switch (type){
 		case BREANCH:
 			return object instanceof Einbruchsknoten;

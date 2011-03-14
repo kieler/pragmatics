@@ -20,10 +20,9 @@ import de.menges.topologie.Topologie.SpecializedVertices.*;
  *
  */
 public class UpdateBreachFeature extends AbstractUpdateFeature {
-	/**
-	 * 
-	 * @param fp The FeatureProvider
-	 */
+/**
+* @param fp The FeatureProvider
+*/
     public UpdateBreachFeature(final IFeatureProvider fp){
         super(fp);
     }
@@ -52,7 +51,7 @@ public class UpdateBreachFeature extends AbstractUpdateFeature {
                 }
             }
         }
- 
+
         // retrieve name from business model
         String businessName = null;
         Object bo = getBusinessObjectForPictogramElement(pictogramElement);
@@ -60,11 +59,12 @@ public class UpdateBreachFeature extends AbstractUpdateFeature {
         	Einbruchsknoten eClass = (Einbruchsknoten) bo;
             businessName = eClass.getName();
         }
- 
+
         // update needed, if names are different
         boolean updateNameNeeded =
-            ((pictogramName == null && businessName != null) ||
-                (pictogramName != null && !pictogramName.equals(businessName)));
+            ((pictogramName == null && businessName != null)
+                || (pictogramName != null
+                && !pictogramName.equals(businessName)));
         if (updateNameNeeded) {
             return Reason.createTrueReason("Name is out of date");
         } else {
@@ -83,7 +83,7 @@ public class UpdateBreachFeature extends AbstractUpdateFeature {
         	Einbruchsknoten eClass = (Einbruchsknoten) bo;
             businessName = eClass.getName();
         }
- 
+
         // Set name in pictogram model
         if (pictogramElement instanceof ContainerShape) {
             ContainerShape cs = (ContainerShape) pictogramElement;
@@ -95,7 +95,7 @@ public class UpdateBreachFeature extends AbstractUpdateFeature {
                 }
             }
         }
- 
+
         return false;
     }
 }

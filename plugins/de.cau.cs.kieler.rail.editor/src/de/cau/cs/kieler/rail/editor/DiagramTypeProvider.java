@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.cau.cs.kieler.rail.editor;
 
@@ -7,13 +7,14 @@ import org.eclipse.graphiti.dt.AbstractDiagramTypeProvider;
 import org.eclipse.graphiti.tb.IToolBehaviorProvider;
 
 /**
+ * The Diagram type provider used to initialize the diagram editor.
  * @author Hauke
  *
  */
 public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
 
 	/**
-	 * the tool Behavior Providers
+	 * The tool Behavior Providers
 	 */
 	private IToolBehaviorProvider[] toolBehaviorProviders;
 
@@ -28,7 +29,7 @@ public class DiagramTypeProvider extends AbstractDiagramTypeProvider {
      * {@inheritDoc}
      */
     @Override
-    public IToolBehaviorProvider[] getAvailableToolBehaviorProviders() {
+	public final IToolBehaviorProvider[] getAvailableToolBehaviorProviders() {
         if (toolBehaviorProviders == null) {
             toolBehaviorProviders =
             new IToolBehaviorProvider[] {new ToolBehaviorProvider(this)};

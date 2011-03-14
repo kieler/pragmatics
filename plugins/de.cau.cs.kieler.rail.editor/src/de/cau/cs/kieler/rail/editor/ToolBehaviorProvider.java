@@ -55,7 +55,7 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
      * {@inheritDoc}
      */
     @Override
-    public IPaletteCompartmentEntry[] getPalette() {
+	public final IPaletteCompartmentEntry[] getPalette() {
         List<IPaletteCompartmentEntry> ret =
                 new ArrayList<IPaletteCompartmentEntry>();
 
@@ -64,16 +64,6 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
         for (int i = 0; i < superCompartments.length; i++) {
             ret.add(superCompartments[i]);
         }
-
-        // add new compartment at the end of the existing compartments
-        /* don't need
-        PaletteCompartmentEntry compartmentEntry =
-                new PaletteCompartmentEntry("Stacked", null);
-        ret.add(compartmentEntry);
-
-        // add new stack entry to new compartment
-        StackEntry stackEntry = new StackEntry("EObject", "EObject", null);
-        compartmentEntry.addToolEntry(stackEntry);*/
 
         // add all create-features to the new stack-entry
         IFeatureProvider featureProvider = getFeatureProvider();
@@ -104,7 +94,7 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
      * {@inheritDoc}
      */
     @Override
-    public GraphicsAlgorithm[] getClickArea(final PictogramElement pe) {
+	public final GraphicsAlgorithm[] getClickArea(final PictogramElement pe) {
         // maybe later I will use it.
         // System.out.println(pe);
         return super.getClickArea(pe);
@@ -115,7 +105,7 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
      * {@inheritDoc}
      */
     @Override
-    public IContextButtonPadData getContextButtonPad(
+	public final IContextButtonPadData getContextButtonPad(
             final IPictogramElementContext context) {
         IContextButtonPadData data = super.getContextButtonPad(context);
 
@@ -151,13 +141,13 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
                     toogleButton.setIconId(ImageProvider.IMG_TOGGLE);
 
                     data.getGenericContextButtons().add(toogleButton);
-                }else if (cf[i].getName() == RotateSwitchFeature.NAME) {
+                } else if (cf[i].getName() == RotateSwitchFeature.NAME) {
                 ContextButtonEntry toogleButton =
                         new ContextButtonEntry(cf[i], ccContextButon);
 
                 	toogleButton.setText("Rotiert die Weiche um 60°");
 	                toogleButton.setIconId(ImageProvider.IMG_ROTATE);
-	
+
 	                data.getGenericContextButtons().add(toogleButton);
                 }
             }
@@ -166,10 +156,9 @@ public class ToolBehaviorProvider extends DefaultToolBehaviorProvider {
         return data;
     }
     /**
-     * don't draw it roundet
+     * {@inheritDoc}
      */
-    public boolean isDefaultBendPointRenderingActive(){
+    public final boolean isDefaultBendPointRenderingActive(){
     	return false;
     }
-    
 }

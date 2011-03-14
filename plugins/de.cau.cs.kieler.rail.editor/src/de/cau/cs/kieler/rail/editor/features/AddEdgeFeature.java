@@ -93,15 +93,13 @@ public class AddEdgeFeature extends AbstractAddFeature {
         directEditingInfo.setPictogramElement(textDecorator);
         directEditingInfo.setGraphicsAlgorithm(text);
 
-        // NEW
-
         return connection;
     }
 
     /**
-     * 
+     * {@inheritDoc}
      */
-    public boolean canAdd(final IAddContext context) {
+    public final boolean canAdd(final IAddContext context) {
         // return true if given business object is an EReference
         // note, that the context must be an instance of IAddConnectionContext
         if (context instanceof IAddConnectionContext
