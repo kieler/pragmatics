@@ -45,23 +45,23 @@ import de.menges.topologie.Topologie.SpecializedVertices.*;
  */
 public class AddVertexFeature extends AbstractAddFeature {
 
-    /** the style provider. */
-    protected IStyleProvider styleProvider;
+	/** the style provider. */
+	protected IStyleProvider styleProvider;
 
-    protected static final IColorConstant CLASS_TEXT_FOREGROUND =
-            new ColorConstant(51, 51, 153);
+	protected static final IColorConstant CLASS_TEXT_FOREGROUND = new ColorConstant(
+			51, 51, 153);
 
-    protected static final IColorConstant CLASS_FOREGROUND = new ColorConstant(
-            255, 102, 0);
+	protected static final IColorConstant CLASS_FOREGROUND = new ColorConstant(
+			255, 102, 0);
 
-    protected static final IColorConstant CLASS_BACKGROUND = new ColorConstant(
-            255, 204, 153);
+	protected static final IColorConstant CLASS_BACKGROUND = new ColorConstant(
+			255, 204, 153);
 
-    private static final int PORT_SIZE = 10;
+	private static final int PORT_SIZE = 10;
 
 	private static final int WIDTH_BREACH = 50;
 	private static final int HEIGHT_BREACH = 50;
-	
+
 	private static final int WIDTH_DEADEND = 50;
 	private static final int HEIGHT_DEADEND = 50;
 
@@ -77,593 +77,606 @@ public class AddVertexFeature extends AbstractAddFeature {
 
 	private static final int BREACH_HEIGHT = 40;
 
-    private TypeFeatures type;
+	private TypeFeatures type;
 
-    public AddVertexFeature(final IFeatureProvider fp,
-            final IStyleProvider thestyleProvider, final TypeFeatures type) {
-        super(fp);
-        this.styleProvider = thestyleProvider;
-        this.type = type;
-    }
+	public AddVertexFeature(final IFeatureProvider fp,
+			final IStyleProvider thestyleProvider, final TypeFeatures type) {
+		super(fp);
+		this.styleProvider = thestyleProvider;
+		this.type = type;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.graphiti.func.IAdd#canAdd(org.eclipse.graphiti.features.context.IAddContext)
-     */
-    public boolean canAdd(final IAddContext context) {
-        // check if user wants to add a the right vertex
-        if (isInstanceof(context.getNewObject())) {
-            // check if user wants to add to a diagram
-            if (context.getTargetContainer() instanceof Diagram) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.graphiti.func.IAdd#canAdd(org.eclipse.graphiti.features.context
+	 * .IAddContext)
+	 */
+	public boolean canAdd(final IAddContext context) {
+		// check if user wants to add a the right vertex
+		if (isInstanceof(context.getNewObject())) {
+			// check if user wants to add to a diagram
+			if (context.getTargetContainer() instanceof Diagram) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    /**
-     * Add the right vertex
-     * 
-     * @see org.eclipse.graphiti.func.IAdd#add(org.eclipse.graphiti.features.context.IAddContext)
-     */
-    public PictogramElement add(final IAddContext context) {
-        PictogramElement pe = null;
-        IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        switch (type) {
-        case BREANCH:
-            pe = addBreach(context);
-            break;
-        case DEADENDVERTEX:
-            pe = addDeadEndVertex(context);
-            break;
-        case SWITCHVERTEX_LEFT:
-            pe = addSwitchVertex(context, EOrientation.LINKS);
-            break;
-        case SWITCHVERTEX_RIGHT:
-            pe = addSwitchVertex(context, EOrientation.RECHTS);
-            break;
+	/**
+	 * Add the right vertex
+	 * 
+	 * @see org.eclipse.graphiti.func.IAdd#add(org.eclipse.graphiti.features.context.IAddContext)
+	 */
+	public PictogramElement add(final IAddContext context) {
+		PictogramElement pe = null;
+		IPeCreateService peCreateService = Graphiti.getPeCreateService();
+		switch (type) {
+		case BREANCH:
+			pe = addBreach(context);
+			break;
+		case DEADENDVERTEX:
+			pe = addDeadEndVertex(context);
+			break;
+		case SWITCHVERTEX_LEFT:
+			pe = addSwitchVertex(context, EOrientation.LINKS);
+			break;
+		case SWITCHVERTEX_RIGHT:
+			pe = addSwitchVertex(context, EOrientation.RECHTS);
+			break;
 		default:
 			break;
-        }  
-        
-        //peCreateService.createChopboxAnchor((Shape) pe);
-        layoutPictogramElement(pe);
-        pe.setActive(true);
-        return pe;
-    }
+		}
 
-    /**
-     * Checks if object is a instance of the right vertex with the information
-     * in the type variable
-     * 
-     * @param object
-     * @return
-     */
-    public boolean isInstanceof(final Object object) {
-        switch (type) {
-        case BREANCH:
-            return object instanceof Einbruchsknoten;
-        case DEADENDVERTEX:
-            return object instanceof Stumpfgleisknoten;
-        case SWITCHVERTEX_LEFT:
-        case SWITCHVERTEX_RIGHT:
-            return object instanceof Weichenknoten;
-        }
-        return false;
-    }
+		// peCreateService.createChopboxAnchor((Shape) pe);
+		layoutPictogramElement(pe);
+		pe.setActive(true);
+		return pe;
+	}
 
-    /**
-     * PictogramElement for the breach vertex
-     * 
-     * @param context
-     * @return
-     */
-    private PictogramElement addBreach(final IAddContext context) {
-        Einbruchsknoten einbruchsknoten =
-                (Einbruchsknoten) context.getNewObject();
-        Diagram targetDiagram = (Diagram) context.getTargetContainer();
+	/**
+	 * Checks if object is a instance of the right vertex with the information
+	 * in the type variable
+	 * 
+	 * @param object
+	 * @return
+	 */
+	public boolean isInstanceof(final Object object) {
+		switch (type) {
+		case BREANCH:
+			return object instanceof Einbruchsknoten;
+		case DEADENDVERTEX:
+			return object instanceof Stumpfgleisknoten;
+		case SWITCHVERTEX_LEFT:
+		case SWITCHVERTEX_RIGHT:
+			return object instanceof Weichenknoten;
+		}
+		return false;
+	}
 
-        // CONTAINER SHAPE WITH CIRCLE
-        IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        ContainerShape containerShape =
-                peCreateService.createContainerShape(targetDiagram, true);
+	/**
+	 * PictogramElement for the breach vertex
+	 * 
+	 * @param context
+	 * @return
+	 */
+	private PictogramElement addBreach(final IAddContext context) {
+		Einbruchsknoten einbruchsknoten = (Einbruchsknoten) context
+				.getNewObject();
+		Diagram targetDiagram = (Diagram) context.getTargetContainer();
 
-        // define a default size for the shape
-        int width = WIDTH_BREACH;
-        int height = HEIGHT_BREACH;
-        IGaService gaService = Graphiti.getGaService();
+		// CONTAINER SHAPE WITH CIRCLE
+		IPeCreateService peCreateService = Graphiti.getPeCreateService();
+		ContainerShape containerShape = peCreateService.createContainerShape(
+				targetDiagram, true);
 
-        System.out.println(context.getHeight());
-        System.out.println(context.getWidth());
+		// define a default size for the shape
+		int width = WIDTH_BREACH;
+		int height = HEIGHT_BREACH;
+		IGaService gaService = Graphiti.getGaService();
 
-        
-        Rectangle rect = gaService.createRectangle(containerShape);
-        rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-        rect.setForeground(manageColor(ColorConstant.WHITE));
-        Ellipse ellipse;
-        {
-            // Create Ellipse
-        	
-            ellipse = gaService.createEllipse(containerShape);
-            
-            ellipse.setWidth(BREACH_WIDTH);
-            ellipse.setHeight(BREACH_HEIGHT);
-            ellipse.setX(5);
-            ellipse.setY(10);
-            
-            ellipse.setLineWidth(3);
-            ellipse.setFilled(true);
-            ellipse.setStyle(styleProvider.getStyle(StyleProvider.BREACH));
+		System.out.println(context.getHeight());
+		System.out.println(context.getWidth());
 
-            gaService.setLocationAndSize(ellipse, context.getX(),
-                    context.getY() + 10, width, height - 10);
+		Rectangle rect = gaService.createRectangle(containerShape);
+		rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+		rect.setForeground(manageColor(ColorConstant.WHITE));
+		Ellipse ellipse;
+		{
+			// Create Ellipse
 
-            // if added Class has no resource we add it to the resource
-            // of the diagram
-            // in a real scenario the business model would have its own resource
-            if (einbruchsknoten.eResource() == null) {
-                getDiagram().eResource().getContents().add(einbruchsknoten);
-            }
-            // create link and wire it
-            link(containerShape, einbruchsknoten);
-        }
+			ellipse = gaService.createEllipse(containerShape);
 
-        // SHAPE WITH TEXT
-        {
-            // create shape for text
-            Shape textShape = peCreateService.createShape(containerShape, false);
+			ellipse.setWidth(BREACH_WIDTH);
+			ellipse.setHeight(BREACH_HEIGHT);
+			ellipse.setX(5);
+			ellipse.setY(10);
 
-            // create and set text graphics algorithm
-            // Compromise only
-            String ans = einbruchsknoten.getName();
-            // only ask for name if none is set already
-            if (ans == null) {
-                ans = ExampleUtil.askString("", "Enter Label", "");
-                // ans = JOptionPane.showInputDialog(null, "Enter Label");
-                einbruchsknoten.setName(ans); // TODO ???
-            }
-            Text text =
-                    gaService.createDefaultText(textShape,
-                            einbruchsknoten.getName()); // addedClass.getName()
-            text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
-            text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.getFont().setBold(true);
-            gaService.setLocationAndSize(text, 0, 0, width, 20);
+			ellipse.setLineWidth(3);
+			ellipse.setFilled(true);
+			ellipse.setStyle(styleProvider.getStyle(StyleProvider.BREACH));
 
-            
-            //direct editable
-            // set container shape for direct editing after object creation
-            IDirectEditingInfo directEditingInfo = getFeatureProvider()
-                    .getDirectEditingInfo();
-            directEditingInfo.setMainPictogramElement(containerShape);
-            // set shape and graphics algorithm where the editor for
-            // direct editing shall be opened after object creation
-            directEditingInfo.setPictogramElement(textShape);
-            directEditingInfo.setGraphicsAlgorithm(text);
-            //direct editable
-            
-            
-            // for the Layouter
-            Property properPort = MmFactory.eINSTANCE.createProperty();
-            properPort.setKey("layout:de.cau.cs.kieler.klay.rail.portType");
-            properPort.setValue("STUMP");
-            containerShape.getProperties().add(properPort);
-            
-            // PORT
-            Port port = einbruchsknoten.getPorts().get(0);
-            final BoxRelativeAnchor boxAnchor =
-                    peCreateService.createBoxRelativeAnchor(containerShape);
-            boxAnchor.setActive(true);
-            boxAnchor.setRelativeHeight(MIDDLE);
-            boxAnchor.setRelativeWidth(MIDDLE);
-            boxAnchor.setReferencedGraphicsAlgorithm(ellipse);
-            Rectangle rec = gaService.createRectangle(boxAnchor);
-            rec.setStyle(styleProvider.getStyle(StyleProvider.BREACH_PORT));
+			gaService.setLocationAndSize(ellipse, context.getX(),
+					context.getY() + 10, width, height - 10);
 
-            gaService.setLocationAndSize(rec, -PORT_SIZE / 2, -PORT_SIZE / 2,
-            PORT_SIZE, PORT_SIZE);
+			// if added Class has no resource we add it to the resource
+			// of the diagram
+			// in a real scenario the business model would have its own resource
+			if (einbruchsknoten.eResource() == null) {
+				getDiagram().eResource().getContents().add(einbruchsknoten);
+			}
+			// create link and wire it
+			link(containerShape, einbruchsknoten);
+		}
 
-            link(boxAnchor, port);
-            // PORT
+		// SHAPE WITH TEXT
+		{
+			// create shape for text
+			Shape textShape = peCreateService
+					.createShape(containerShape, false);
 
-            // create link and wire it
-            link(textShape, einbruchsknoten);
-        }
+			// create and set text graphics algorithm
+			// Compromise only
+			String ans = einbruchsknoten.getName();
+			// only ask for name if none is set already
+			if (ans == null) {
+				ans = ExampleUtil.askString("", "Enter Label", "");
+				// ans = JOptionPane.showInputDialog(null, "Enter Label");
+				einbruchsknoten.setName(ans); // TODO ???
+			}
+			Text text = gaService.createDefaultText(textShape,
+					einbruchsknoten.getName()); // addedClass.getName()
+			text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
+			text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
+			text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
+			text.getFont().setBold(true);
+			gaService.setLocationAndSize(text, 0, 0, width, 20);
 
-        // add a chopbox anchor to the shape
-        //peCreateService.createChopboxAnchor(containerShape);
+			// direct editable
+			// set container shape for direct editing after object creation
+			IDirectEditingInfo directEditingInfo = getFeatureProvider()
+					.getDirectEditingInfo();
+			directEditingInfo.setMainPictogramElement(containerShape);
+			// set shape and graphics algorithm where the editor for
+			// direct editing shall be opened after object creation
+			directEditingInfo.setPictogramElement(textShape);
+			directEditingInfo.setGraphicsAlgorithm(text);
+			// direct editable
 
-        // call the layout feature
-        //layoutPictogramElement(containerShape);
+			// for the Layouter
+			Property properPort = MmFactory.eINSTANCE.createProperty();
+			properPort.setKey("layout:de.cau.cs.kieler.klay.rail.portType");
+			properPort.setValue("STUMP");
+			containerShape.getProperties().add(properPort);
 
-        return containerShape;
-    }
- /**
-     * PictogramElement for the deadend vertex
-     *
-     * @param context
-     * @return
-     */
-    // BREACH_OR_CLOSE
-    private PictogramElement addDeadEndVertex(final IAddContext context) {
-        Stumpfgleisknoten deadEndVertex =
-                (Stumpfgleisknoten) context.getNewObject();
-        Diagram targetDiagram = (Diagram) context.getTargetContainer();
+			// PORT
+			Port port = einbruchsknoten.getPorts().get(0);
+			final BoxRelativeAnchor boxAnchor = peCreateService
+					.createBoxRelativeAnchor(containerShape);
+			boxAnchor.setActive(true);
+			boxAnchor.setRelativeHeight(MIDDLE);
+			boxAnchor.setRelativeWidth(MIDDLE);
+			boxAnchor.setReferencedGraphicsAlgorithm(ellipse);
+			Rectangle rec = gaService.createRectangle(boxAnchor);
+			rec.setStyle(styleProvider.getStyle(StyleProvider.BREACH_PORT));
 
-        // CONTAINER SHAPE WITH ROUNDED RECTANGLE
-        IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        ContainerShape containerShape =
-                peCreateService.createContainerShape(targetDiagram, true);
-        peCreateService.createChopboxAnchor(containerShape);
+			gaService.setLocationAndSize(rec, -PORT_SIZE / 2, -PORT_SIZE / 2,
+					PORT_SIZE, PORT_SIZE);
 
-        // define a default size for the shape
-        // TODO make constants (50)
-        int width = context.getWidth() != WIDTH_DEADEND ? WIDTH_DEADEND : context.getWidth();
-        int height = context.getHeight() != WIDTH_DEADEND ? WIDTH_DEADEND : context.getHeight();
-        IGaService gaService = Graphiti.getGaService();
+			link(boxAnchor, port);
+			// PORT
 
-        Rectangle portContainer =
-                gaService.createInvisibleRectangle(containerShape);
+			// create link and wire it
+			link(textShape, einbruchsknoten);
+		}
 
-        gaService.setLocationAndSize(portContainer, context.getX(),
-                context.getY(), width, height);
-        {
+		// add a chopbox anchor to the shape
+		// peCreateService.createChopboxAnchor(containerShape);
 
-            Rectangle rectangleShape = gaService.createRectangle(portContainer);
+		// call the layout feature
+		// layoutPictogramElement(containerShape);
 
-            // if added Class has no resource we add it to the resource
-            // of the diagram
-            // in a real scenario the business model would have its own resource
-            if (deadEndVertex.eResource() == null) {
-                getDiagram().eResource().getContents().add(deadEndVertex);
-            }
-            // create link and wire it
-            link(containerShape, deadEndVertex);
-        }
+		return containerShape;
+	}
 
-        // SHAPE WITH LINE
-        {
-            // create shape for line
-            Shape shape = peCreateService.createShape(containerShape, false);
+	/**
+	 * PictogramElement for the deadend vertex
+	 * 
+	 * @param context
+	 * @return
+	 */
+	// BREACH_OR_CLOSE
+	private PictogramElement addDeadEndVertex(final IAddContext context) {
+		Stumpfgleisknoten deadEndVertex = (Stumpfgleisknoten) context
+				.getNewObject();
+		Diagram targetDiagram = (Diagram) context.getTargetContainer();
 
-            // create and set graphics algorithm
-            Polyline polyline =
-                    gaService.createPolyline(shape, new int[] {width / 2, 0,
-                            width / 2, height });
-            polyline.setStyle(styleProvider
-                    .getStyle(StyleProvider.DEFAULT_STYLE));
-            // gaService.setLocationAndSize(polyline,width/2, 0, width/2,
-            // height);
-        }
+		// CONTAINER SHAPE WITH ROUNDED RECTANGLE
+		IPeCreateService peCreateService = Graphiti.getPeCreateService();
+		ContainerShape containerShape = peCreateService.createContainerShape(
+				targetDiagram, true);
+		peCreateService.createChopboxAnchor(containerShape);
 
-        // SHAPE WITH TEXT
-        {
-            // create shape for text
-            Shape shapeLabel =
-                    peCreateService.createShape(containerShape, false);
+		// define a default size for the shape
+		// TODO make constants (50)
+		int width = context.getWidth() != WIDTH_DEADEND ? WIDTH_DEADEND
+				: context.getWidth();
+		int height = context.getHeight() != WIDTH_DEADEND ? WIDTH_DEADEND
+				: context.getHeight();
+		IGaService gaService = Graphiti.getGaService();
 
-            // create and set text graphics algorithm
-            String ans = deadEndVertex.getName();
-            if (ans == null) {
-                ans = ExampleUtil.askString("", "Enter Label", "");
-                // ans = JOptionPane.showInputDialog(null, "Enter Label");
-                deadEndVertex.setName(ans); // TODO ???
-            }
+		Rectangle portContainer = gaService
+				.createInvisibleRectangle(containerShape);
 
-            Text text =
-                    gaService.createDefaultText(shapeLabel,
-                            deadEndVertex.getName());
-            text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
-            text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.getFont().setBold(true);
-            gaService.setLocationAndSize(text, 0, 0, width, 20);
+		gaService.setLocationAndSize(portContainer, context.getX(),
+				context.getY(), width, height);
+		{
 
-            // create link and wire it
-            link(shapeLabel, deadEndVertex);
+			Rectangle rectangleShape = gaService.createRectangle(portContainer);
 
-            /*
+			// if added Class has no resource we add it to the resource
+			// of the diagram
+			// in a real scenario the business model would have its own resource
+			if (deadEndVertex.eResource() == null) {
+				getDiagram().eResource().getContents().add(deadEndVertex);
+			}
+			// create link and wire it
+			link(containerShape, deadEndVertex);
+		}
 
+		// SHAPE WITH LINE
+		{
+			// create shape for line
+			Shape shape = peCreateService.createShape(containerShape, false);
 
-            //TODO ???? don't know if this is necessary 
-            // set container shape for direct editing after object creation
-            IDirectEditingInfo directEditingInfo = getFeatureProvider().getDirectEditingInfo();
-            directEditingInfo.setMainPictogramElement(containerShape);
-            // set shape and graphics algorithm where the editor for
-            // direct editing shall be opened after object creation
-            directEditingInfo.setPictogramElement(shapeLabel);
-            directEditingInfo.setGraphicsAlgorithm(text);
-            */
+			// create and set graphics algorithm
+			Polyline polyline = gaService.createPolyline(shape, new int[] {
+					width / 2, 0, width / 2, height });
+			polyline.setStyle(styleProvider
+					.getStyle(StyleProvider.DEFAULT_STYLE));
+			// gaService.setLocationAndSize(polyline,width/2, 0, width/2,
+			// height);
+		}
 
-        }
+		// SHAPE WITH TEXT
+		{
+			// create shape for text
+			Shape shapeLabel = peCreateService.createShape(containerShape,
+					false);
 
-     // PORT
-        Port port = deadEndVertex.getPorts().get(0);
-        final BoxRelativeAnchor boxAnchor =
-                peCreateService.createBoxRelativeAnchor(containerShape);
-        boxAnchor.setActive(true);
-        boxAnchor.setRelativeHeight(0.5);
-        boxAnchor.setRelativeWidth(0.5);
-        boxAnchor.setReferencedGraphicsAlgorithm(portContainer);
-        Rectangle rec = gaService.createRectangle(boxAnchor);
-        rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
-        
-        gaService.setLocationAndSize(rec, -PORT_SIZE/2, -PORT_SIZE/2, PORT_SIZE, PORT_SIZE);
+			// create and set text graphics algorithm
+			String ans = deadEndVertex.getName();
+			if (ans == null) {
+				ans = ExampleUtil.askString("", "Enter Label", "");
+				// ans = JOptionPane.showInputDialog(null, "Enter Label");
+				deadEndVertex.setName(ans); // TODO ???
+			}
 
-        link(boxAnchor, port);
-        // PORT
-        
-        
-        // TODO maybe to delete (at the other places maybe too)
-        // add a chopbox anchor to the shape
-        //peCreateService.createChopboxAnchor(containerShape);
+			Text text = gaService.createDefaultText(shapeLabel,
+					deadEndVertex.getName());
+			text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
+			text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
+			text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
+			text.getFont().setBold(true);
+			gaService.setLocationAndSize(text, 0, 0, width, 20);
 
-        // TODO maybe kick out
-        // call the layout feature
-        layoutPictogramElement(containerShape);
+			// create link and wire it
+			link(shapeLabel, deadEndVertex);
 
-        return containerShape;
-    }
+			/*
+			 * 
+			 * 
+			 * //TODO ???? don't know if this is necessary // set container
+			 * shape for direct editing after object creation IDirectEditingInfo
+			 * directEditingInfo = getFeatureProvider().getDirectEditingInfo();
+			 * directEditingInfo.setMainPictogramElement(containerShape); // set
+			 * shape and graphics algorithm where the editor for // direct
+			 * editing shall be opened after object creation
+			 * directEditingInfo.setPictogramElement(shapeLabel);
+			 * directEditingInfo.setGraphicsAlgorithm(text);
+			 */
 
-    /**
-     * Creates the Graphic representation for a switch
-     * @param context  The context witch is use to create the pictorgram element
-     * @param orientatin left or right switch
-     * @return The pictorgram Element with the switch.
-     */
-    private PictogramElement addSwitchVertex(final IAddContext context,
-            final EOrientation orientatin) {
+		}
 
-    	int[] spitzeStammXY = { 0, 0, 0, 0 };
-        int[] mitteAbzweigXY = { 25, 25, 0, 0 };
+		// PORT
+		Port port = deadEndVertex.getPorts().get(0);
+		final BoxRelativeAnchor boxAnchor = peCreateService
+				.createBoxRelativeAnchor(containerShape);
+		boxAnchor.setActive(true);
+		boxAnchor.setRelativeHeight(0.5);
+		boxAnchor.setRelativeWidth(0.5);
+		boxAnchor.setReferencedGraphicsAlgorithm(portContainer);
+		Rectangle rec = gaService.createRectangle(boxAnchor);
+		rec.setStyle(styleProvider.getStyle(StyleProvider.PORT));
 
-        // create Switch from source
-        Weichenknoten switchVertex = (Weichenknoten) context.getNewObject();
-        switchVertex.setAbzweigendeLage(orientatin);
+		gaService.setLocationAndSize(rec, -PORT_SIZE / 2, -PORT_SIZE / 2,
+				PORT_SIZE, PORT_SIZE);
 
-        Diagram targetDiagram = (Diagram) context.getTargetContainer();
+		link(boxAnchor, port);
+		// PORT
 
-        // CONTAINER SHAPE
-        IPeCreateService peCreateService = Graphiti.getPeCreateService();
-        ContainerShape containerShape =
-                peCreateService.createContainerShape(targetDiagram, true);
+		// TODO maybe to delete (at the other places maybe too)
+		// add a chopbox anchor to the shape
+		// peCreateService.createChopboxAnchor(containerShape);
 
-        // for the Layouter
-        Property properOrientatin = MmFactory.eINSTANCE.createProperty();
-        properOrientatin.setKey(KLAY_NODETYPE_KEY);
-        switch (orientatin) {
-        case LINKS:
-            properOrientatin.setValue("SWITCH_LEFT");
-            break;
-        case RECHTS:
-            properOrientatin.setValue("SWITCH_RIGHT");
-            break;
-        }
-        containerShape.getProperties().add(properOrientatin);
+		// TODO maybe kick out
+		// call the layout feature
+		layoutPictogramElement(containerShape);
 
-        IGaService gaService = Graphiti.getGaService();
+		return containerShape;
+	}
 
-      //for the angle
+	/**
+	 * Creates the Graphic representation for a switch
+	 * 
+	 * @param context
+	 *            The context witch is use to create the pictorgram element
+	 * @param orientatin
+	 *            left or right switch
+	 * @return The pictorgram Element with the switch.
+	 */
+	private PictogramElement addSwitchVertex(final IAddContext context,
+			final EOrientation orientatin) {
+
+		int[] spitzeStammXY = { 0, 0, 0, 0 };
+		int[] mitteAbzweigXY = { 25, 25, 0, 0 };
+
+		// create Switch from source
+		Weichenknoten switchVertex = (Weichenknoten) context.getNewObject();
+		switchVertex.setAbzweigendeLage(orientatin);
+
+		Diagram targetDiagram = (Diagram) context.getTargetContainer();
+
+		// CONTAINER SHAPE
+		IPeCreateService peCreateService = Graphiti.getPeCreateService();
+		ContainerShape containerShape = peCreateService.createContainerShape(
+				targetDiagram, true);
+
+		// for the Layouter
+		Property properOrientatin = MmFactory.eINSTANCE.createProperty();
+		properOrientatin.setKey(KLAY_NODETYPE_KEY);
+		switch (orientatin) {
+		case LINKS:
+			properOrientatin.setValue("SWITCH_LEFT");
+			break;
+		case RECHTS:
+			properOrientatin.setValue("SWITCH_RIGHT");
+			break;
+		default:
+			break;
+		}
+		containerShape.getProperties().add(properOrientatin);
+
+		IGaService gaService = Graphiti.getGaService();
+
+		// for the angle
 		Property proper = MmFactory.eINSTANCE.createProperty();
 		proper.setKey(RotationSwitchHandler.MULTIPLEANGLE_KEY);
 		proper.setValue("0");
-        containerShape.getProperties().add(proper);
+		containerShape.getProperties().add(proper);
 
-        // virtual Rectangle
-        Rectangle rect = gaService.createRectangle(containerShape);
-        rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-        rect.setForeground(manageColor(255, 255, 255)); //TODO const
+		// virtual Rectangle
+		Rectangle rect = gaService.createRectangle(containerShape);
+		rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+		rect.setForeground(manageColor(255, 255, 255)); // TODO const
 
-        // PORT
-        int width= 50;// containerShape.getGraphicsAlgorithm().getWidth();
-        int height= 50;// containerShape.getGraphicsAlgorithm().getHeight();
+		// PORT
+		int width = 50;// containerShape.getGraphicsAlgorithm().getWidth();
+		int height = 50;// containerShape.getGraphicsAlgorithm().getHeight();
 
-        
-        if (switchVertex.eResource() == null) {
-            getDiagram().eResource().getContents().add(switchVertex);
-        }
-        
-        for (Port port : switchVertex.getPorts()) {
-        	if (port != null) {
-	            final BoxRelativeAnchor boxAnchor =
-	                    peCreateService.createBoxRelativeAnchor(containerShape);
-	            boxAnchor.setActive(true);
-	
-	            double portWidth = PORT_SIZE / 50;
-	
-	            //for the Layouter
-	            Property properPort = MmFactory.eINSTANCE.createProperty();
-	            properPort.setKey(KLAY_NODETYPE_KEY);
-	
-	            boxAnchor.setRelativeHeight(0.4);// (0.5-portWidth);
-	
-	
-	            int boxWidth = PORT_SIZE;
-	            int boxHeight = PORT_SIZE;
-	            
-	            switch (port.getName()) {
-	            case SPITZE:
-	                boxAnchor.setRelativeWidth(0.0);
-	                properPort.setValue("STUMP");
-	                spitzeStammXY[0] =
-	                    (int) (width * (boxAnchor.getRelativeWidth()) - boxWidth / 2);
-	                spitzeStammXY[1] =
-	                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
-	                break;
-	            case STAMM:
-	                boxAnchor.setRelativeWidth(0.85);
-	                properPort.setValue("STRAIGHT");
-	                spitzeStammXY[2] =
-	                    (int) (width * (boxAnchor.getRelativeWidth()) + boxWidth / 2);
-	                spitzeStammXY[3] =
-	                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
-	                break;
-	            case ABZWEIG:
-	                properPort.setValue("BRANCH");
-	                if (orientatin == EOrientation.LINKS) {
-	                    //boxAnchor.setRelativeWidth(0.8);
-	                    boxAnchor.setRelativeWidth(Geometry.getRelativWeight(0.5, Geometry.degreeToRad(30), 1.0));
-	                } else {
-	                    //boxAnchor.setRelativeWidth(0.2);
-	                    boxAnchor.setRelativeWidth(Geometry.getRelativWeight(0.5, Geometry.degreeToRad(90+30), 1.0));
-	                }
-	                boxAnchor.setRelativeHeight(0.0);
-	                mitteAbzweigXY[2] =
-	                    (int) (width * (boxAnchor.getRelativeWidth()) + boxWidth / 2);
-	                mitteAbzweigXY[3] =
-	                    (int) (height * (boxAnchor.getRelativeHeight()) + boxHeight / 2);
-	            }
-	            boxAnchor.getProperties().add(properPort);
-	
-	            boxAnchor.setReferencedGraphicsAlgorithm(rect);
-	
-	            createGraphicalPort(boxAnchor, port.getName());
-	
-	            link(boxAnchor, port);
-        	}
-        }
+		if (switchVertex.eResource() == null) {
+			getDiagram().eResource().getContents().add(switchVertex);
+		}
 
-        // PORT
-        
-        //LINES
-        
-        int[][] spitzeStammMitteAbzweigXY = UpdateSwitchFeature.getSpitzeStammMitteAbzweigXY(containerShape.getAnchors(), height, width, getFeatureProvider());
-        
-        // Line (straight line)
-        Shape shapep = peCreateService.createShape(containerShape, false);
-        //Polyline polyline =
-                //gaService.createPolyline(shapep, spitzeStammXY); //{ 0, 25, 25, 25 });
-        Polyline polyline =
-            gaService.createPolyline(shapep, spitzeStammMitteAbzweigXY[0]); //{ 0, 25, 25, 25 });
-        polyline.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
+		for (Port port : switchVertex.getPorts()) {
+			if (port != null) {
+				final BoxRelativeAnchor boxAnchor = peCreateService
+						.createBoxRelativeAnchor(containerShape);
+				boxAnchor.setActive(true);
 
-        // Line (30°)
-        mitteAbzweigXY[1] = getYFromArray(mitteAbzweigXY, 25);
-        Shape shapep30 = peCreateService.createShape(containerShape, false);
-        //mitteAbzweigXY
-        //Polyline polyline30 =
-                //gaService.createPolyline(shapep30,mitteAbzweigXY);//new int[] { 20, 25, 0,
-        Polyline polyline30 =
-            gaService.createPolyline(shapep30,spitzeStammMitteAbzweigXY[1]);//new int[] { 20, 25, 0,
-        polyline30.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
-                        //(int) (25 * 0.577350269) });
-        //polyline30.getPoints().get(0).setX(mitteAbzweigXY[0]);
-        
-        //triangle
-        Shape shapeptriangle = peCreateService.createShape(containerShape, false);
-        int[] polyXY = new int[]{mitteAbzweigXY[0],mitteAbzweigXY[1],0,0,0,0};
-        
-        if(orientatin == EOrientation.LINKS){
-        	polyXY[2] = 32;
-        }
-        else{
-        	polyXY[2] = 50-32;
-        }
-        polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
-    	polyXY[4] = polyXY[2];
-        polyXY[5] = 25;
+				double portWidth = PORT_SIZE / 50;
 
-        Polygon polygon=gaService.createPolygon(shapeptriangle, polyXY) ;
+				// for the Layouter
+				Property properPort = MmFactory.eINSTANCE.createProperty();
+				properPort.setKey(KLAY_NODETYPE_KEY);
 
+				boxAnchor.setRelativeHeight(0.4);// (0.5-portWidth);
 
+				int boxWidth = PORT_SIZE;
+				int boxHeight = PORT_SIZE;
 
-     // create shape for text
-        Shape shape = peCreateService.createShape(containerShape, false);
+				switch (port.getName()) {
+				case SPITZE:
+					boxAnchor.setRelativeWidth(0.0);
+					properPort.setValue("STUMP");
+					spitzeStammXY[0] = (int) (width
+							* (boxAnchor.getRelativeWidth()) - boxWidth / 2);
+					spitzeStammXY[1] = (int) (height
+							* (boxAnchor.getRelativeHeight()) + boxHeight / 2);
+					break;
+				case STAMM:
+					boxAnchor.setRelativeWidth(0.85);
+					properPort.setValue("STRAIGHT");
+					spitzeStammXY[2] = (int) (width
+							* (boxAnchor.getRelativeWidth()) + boxWidth / 2);
+					spitzeStammXY[3] = (int) (height
+							* (boxAnchor.getRelativeHeight()) + boxHeight / 2);
+					break;
+				case ABZWEIG:
+					properPort.setValue("BRANCH");
+					if (orientatin == EOrientation.LINKS) {
+						// boxAnchor.setRelativeWidth(0.8);
+						boxAnchor.setRelativeWidth(Geometry.getRelativWeight(
+								0.5, Geometry.degreeToRad(30), 1.0));
+					} else {
+						// boxAnchor.setRelativeWidth(0.2);
+						boxAnchor.setRelativeWidth(Geometry.getRelativWeight(
+								0.5, Geometry.degreeToRad(90 + 30), 1.0));
+					}
+					boxAnchor.setRelativeHeight(0.0);
+					mitteAbzweigXY[2] = (int) (width
+							* (boxAnchor.getRelativeWidth()) + boxWidth / 2);
+					mitteAbzweigXY[3] = (int) (height
+							* (boxAnchor.getRelativeHeight()) + boxHeight / 2);
+				}
+				boxAnchor.getProperties().add(properPort);
 
-        // create and set text graphics algorithm
-        // Compromise only
-        String ans = switchVertex.getName();
-        // only ask for name if none is set already
-        if (ans == null) {
-            ans = ExampleUtil.askString("", "Enter Label", "");
-            // ans = JOptionPane.showInputDialog(null, "Enter Label");
-            switchVertex.setName(ans); // TODO ???
-        }
-        Text text =
-                gaService.createDefaultText(shape,
-                        switchVertex.getName()); // addedClass.getName()
-        text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
-        text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
-        text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
-        text.getFont().setBold(true);
-        gaService.setLocationAndSize(text, 0, 30, width, 20);
-        //TEXT
+				boxAnchor.setReferencedGraphicsAlgorithm(rect);
 
-        layoutPictogramElement(containerShape);
-        
-        gaService.setLocationAndSize(containerShape.getGraphicsAlgorithm(),
-                context.getX(), context.getY(), HEIGHT_SWITCH, WIDTH_SWITCH);
-        
-        link(shape, switchVertex);
+				createGraphicalPort(boxAnchor, port.getName());
 
-        // provide information to support direct-editing directly
-        // after object creation (must be activated additionally)
-        IDirectEditingInfo directEditingInfo =
-            getFeatureProvider().getDirectEditingInfo();
-        // set container shape for direct editing after object creation
-        directEditingInfo.setMainPictogramElement(containerShape);
-        // set shape and graphics algorithm where the editor for
-        // direct editing shall be opened after object creation
-        directEditingInfo.setPictogramElement(shape);
-        directEditingInfo.setGraphicsAlgorithm(text);
-        
-        link(containerShape, switchVertex); // containerShape
-        if (switchVertex.eResource() == null) {
-            getDiagram().eResource().getContents().add(switchVertex);
-        }
-        
-        RotationSwitchHandler.setMultipleAngle(containerShape,
-        		getFeatureProvider() , 0, 0.1);
-        
-        updatePictogramElement(containerShape);
+				link(boxAnchor, port);
+			}
+		}
 
-        return containerShape;
-    }
+		// PORT
 
-    /**
-     * create the graphical port with a sideffect.
-     * @param boxAnchor The BoxRelativeAnchor witch is connected with the port.
-     * @param portType The port type is imported for the drawing (only White, line, etc.)
-     */
-    private void createGraphicalPort(final BoxRelativeAnchor boxAnchor,
-    final EPort portType) {
+		// LINES
+
+		int[][] spitzeStammMitteAbzweigXY = UpdateSwitchFeature
+				.getSpitzeStammMitteAbzweigXY(containerShape.getAnchors(),
+						height, width, getFeatureProvider());
+
+		// Line (straight line)
+		Shape shapep = peCreateService.createShape(containerShape, false);
+		// Polyline polyline =
+		// gaService.createPolyline(shapep, spitzeStammXY); //{ 0, 25, 25, 25
+		// });
+		Polyline polyline = gaService.createPolyline(shapep,
+				spitzeStammMitteAbzweigXY[0]); // { 0, 25, 25, 25 });
+		polyline.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
+
+		// Line (30°)
+		mitteAbzweigXY[1] = getYFromArray(mitteAbzweigXY, 25);
+		Shape shapep30 = peCreateService.createShape(containerShape, false);
+		// mitteAbzweigXY
+		// Polyline polyline30 =
+		// gaService.createPolyline(shapep30,mitteAbzweigXY);//new int[] { 20,
+		// 25, 0,
+		Polyline polyline30 = gaService.createPolyline(shapep30,
+				spitzeStammMitteAbzweigXY[1]);// new int[] { 20, 25, 0,
+		polyline30.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
+		// (int) (25 * 0.577350269) });
+		// polyline30.getPoints().get(0).setX(mitteAbzweigXY[0]);
+
+		// triangle
+		Shape shapeptriangle = peCreateService.createShape(containerShape,
+				false);
+		int[] polyXY = new int[] { mitteAbzweigXY[0], mitteAbzweigXY[1], 0, 0,
+				0, 0 };
+
+		if (orientatin == EOrientation.LINKS) {
+			polyXY[2] = 32;
+		} else {
+			polyXY[2] = 50 - 32;
+		}
+		polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
+		polyXY[4] = polyXY[2];
+		polyXY[5] = 25;
+
+		Polygon polygon = gaService.createPolygon(shapeptriangle, polyXY);
+
+		// create shape for text
+		Shape shape = peCreateService.createShape(containerShape, false);
+
+		// create and set text graphics algorithm
+		// Compromise only
+		String ans = switchVertex.getName();
+		// only ask for name if none is set already
+		if (ans == null) {
+			ans = ExampleUtil.askString("", "Enter Label", "");
+			// ans = JOptionPane.showInputDialog(null, "Enter Label");
+			switchVertex.setName(ans); // TODO ???
+		}
+		Text text = gaService.createDefaultText(shape, switchVertex.getName()); // addedClass.getName()
+		text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
+		text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
+		text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
+		text.getFont().setBold(true);
+		gaService.setLocationAndSize(text, 0, 30, width, 20);
+		// TEXT
+
+		layoutPictogramElement(containerShape);
+
+		gaService.setLocationAndSize(containerShape.getGraphicsAlgorithm(),
+				context.getX(), context.getY(), HEIGHT_SWITCH, WIDTH_SWITCH);
+
+		link(shape, switchVertex);
+
+		// provide information to support direct-editing directly
+		// after object creation (must be activated additionally)
+		IDirectEditingInfo directEditingInfo = getFeatureProvider()
+				.getDirectEditingInfo();
+		// set container shape for direct editing after object creation
+		directEditingInfo.setMainPictogramElement(containerShape);
+		// set shape and graphics algorithm where the editor for
+		// direct editing shall be opened after object creation
+		directEditingInfo.setPictogramElement(shape);
+		directEditingInfo.setGraphicsAlgorithm(text);
+
+		link(containerShape, switchVertex); // containerShape
+		if (switchVertex.eResource() == null) {
+			getDiagram().eResource().getContents().add(switchVertex);
+		}
+
+		RotationSwitchHandler.setMultipleAngle(containerShape,
+				getFeatureProvider(), 0, 0.1);
+
+		updatePictogramElement(containerShape);
+
+		return containerShape;
+	}
+
+	/**
+	 * create the graphical port with a sideffect.
+	 * 
+	 * @param boxAnchor
+	 *            The BoxRelativeAnchor witch is connected with the port.
+	 * @param portType
+	 *            The port type is imported for the drawing (only White, line,
+	 *            etc.)
+	 */
+	private void createGraphicalPort(final BoxRelativeAnchor boxAnchor,
+			final EPort portType) {
 
 		IGaService gaService = Graphiti.getGaService();
 		Style style = styleProvider.getStyle();
 
 		switch (portType) {
-			case ENDE:
-				style = styleProvider.
-				getStyle(StyleProvider.PORT_END);
-				break;
-			default:
-				style = styleProvider.
-				getStyle(StyleProvider.PORT);
+		case ENDE:
+			style = styleProvider.getStyle(StyleProvider.PORT_END);
+			break;
+		default:
+			style = styleProvider.getStyle(StyleProvider.PORT);
 		}
 
-    	Rectangle rec = gaService.createRectangle(boxAnchor);
-		//Polyline poly = gaService.createPolyline(boxAnchor ,new int[]{0, PORT_SIZE / 2, PORT_SIZE, PORT_SIZE / 2});
-        rec.setStyle(style);
-        //poly.setStyle(style);
-        gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
-        //gaService.setLocationAndSize(poly, 0, 0, PORT_SIZE, PORT_SIZE);
+		Rectangle rec = gaService.createRectangle(boxAnchor);
+		// Polyline poly = gaService.createPolyline(boxAnchor ,new int[]{0,
+		// PORT_SIZE / 2, PORT_SIZE, PORT_SIZE / 2});
+		rec.setStyle(style);
+		// poly.setStyle(style);
+		gaService.setLocationAndSize(rec, 0, 0, PORT_SIZE, PORT_SIZE);
+		// gaService.setLocationAndSize(poly, 0, 0, PORT_SIZE, PORT_SIZE);
 
 	}
 
-    /**
-     * Calculate the Y pos for the straight line (port Stamm to port Ende) for a
-     * x pos
-     * 
-     * @param mitteAbzweigXY The data witch is necessary for the linear function (x1,y1,x2,y2)
-     * @param x the x position for the calculated function
-     * @return f(x)
-     */
-    private int getYFromArray(final int[] mitteAbzweigXY, final int x) {
-    	double m =
-                (mitteAbzweigXY[3] - mitteAbzweigXY[1])
-                        / (mitteAbzweigXY[2] - mitteAbzweigXY[0]);
-        double b = mitteAbzweigXY[1] - m * mitteAbzweigXY[0];
-        return (int) (m * x + b);
+	/**
+	 * Calculate the Y pos for the straight line (port Stamm to port Ende) for a
+	 * x pos
+	 * 
+	 * @param mitteAbzweigXY
+	 *            The data witch is necessary for the linear function
+	 *            (x1,y1,x2,y2)
+	 * @param x
+	 *            the x position for the calculated function
+	 * @return f(x)
+	 */
+	private int getYFromArray(final int[] mitteAbzweigXY, final int x) {
+		double m = (mitteAbzweigXY[3] - mitteAbzweigXY[1])
+				/ (mitteAbzweigXY[2] - mitteAbzweigXY[0]);
+		double b = mitteAbzweigXY[1] - m * mitteAbzweigXY[0];
+		return (int) (m * x + b);
 
-    }
+	}
 }

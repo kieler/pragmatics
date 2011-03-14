@@ -243,6 +243,14 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
     	System.out.println("angle " + angle);
 
         polyXY[3] = Geometry.getYFromArray(mitteAbzweigXY, polyXY[2]);
+        
+        int[] ortoXY = Geometry.getOrthogonalityInterceptPoint(polyXY[2], polyXY[3],spitzeStammXY );
+        
+        //TODO noch nicht richtig
+        polyXY[4] = ortoXY[0];
+        polyXY[5] = ortoXY[1];
+        
+        
     	polyXY[4] = polyXY[2];
         polyXY[5] = Geometry.getYFromArray(spitzeStammXY, polyXY[2]);
 
@@ -351,4 +359,5 @@ public class UpdateSwitchFeature extends AbstractUpdateFeature {
 	}
 
 
+	
 }

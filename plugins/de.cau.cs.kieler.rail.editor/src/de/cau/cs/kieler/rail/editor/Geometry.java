@@ -55,4 +55,60 @@ public class Geometry {
         double b = xy1Xy2[Y1] - m * xy1Xy2[X1];
         return (int) (m * x + b);
     }
+    
+    /**
+     * calculate the Slope of a linear function.
+     * @param xy1Xy2 this 2 Point are needet
+     * @return the slope
+     */
+    public static double getSlopeLineaFunction(final int[] xy1Xy2) {
+    	double m =
+            (xy1Xy2[Y2] - xy1Xy2[Y1])
+                    / (xy1Xy2[X2] - xy1Xy2[X1]);
+    	return m;
+    }
+    /**
+     * Calculate the offset of a linear function
+     * @param m the slope of the function
+     * @param x the x position
+     * @param y the y position
+     * @return the offset.
+     */
+    public static double getOffsetLineaFunction(final double m, final int x, final int y) {
+    	return y - m * x;
+    }
+    
+    /**
+     * Calculate the offset of a linear function
+     * @param m the slope of the function
+     * @param x the x position
+     * @param y the y position
+     * @return the offset.
+     */
+    public static double getOffsetLineaFunction(final int[] xy, final double m) {
+    	double b = xy[Y1] - m * xy[X1];
+    	return b;
+    }
+    
+    public static int[] getInterceptPoint (final double m1, final double b1, final int[] f2xy1xy2) {
+    	double m2 = getSlopeLineaFunction(f2xy1xy2);
+    	double b2 = getOffsetLineaFunction(f2xy1xy2, m2);
+    	
+    	double x = (b2-b1) / (m1-m2);
+    	double y = m1*x + b1;
+    	return new int[] {(int) x,(int) y};
+    }
+    /**
+     * Get the orthogonality intercept point
+     * @param x 
+     * @param y
+     * @param xy1Xy2
+     * @return
+     */
+    public static int[] getOrthogonalityInterceptPoint(final int x, final int y, final int[] xy1Xy2) {
+    	// Orthogonality mathematically f_1'(x) = -1/f_2'(x)
+    	double m = -1/getSlopeLineaFunction(xy1Xy2);
+    	double b = getOffsetLineaFunction(m,x,y);
+    	return getInterceptPoint(m,b,xy1Xy2);
+    }
 }

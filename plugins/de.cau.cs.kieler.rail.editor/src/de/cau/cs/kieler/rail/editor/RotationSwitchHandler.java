@@ -240,11 +240,11 @@ public class RotationSwitchHandler {
 	 * for Left switch are only  0 2 3 5 valid
 	 * for Right switch are only 0 1 3 4 valid
 	 * @param value value witch is to check
-	 * @param abzweigendeLage
+	 * @param abzweigendeLage The oration for this switch.
 	 * @return valid and between 0-5
 	 */
 	public static int getValidMultipleAngle(final int value,
-			EOrientation abzweigendeLage) {
+			final EOrientation abzweigendeLage) {
 		if (abzweigendeLage == EOrientation.LINKS) {
 			//0 2  3  5
 			if (value == 1) {

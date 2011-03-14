@@ -20,7 +20,9 @@ public class KrailNewWizard extends GraphitiNewWizard {
 	 * Makes a new Wizard for the raileditor
 	 */
     public KrailNewWizard() {
-        super("Rail", KrailDiagramEditor.DIAGRAM_FILE_EXTENSION, KrailDiagramEditor.MODEL_FILE_EXTENSION, KrailDiagramEditor.DIAGRAM_TYPE,
+        super("Rail", KrailDiagramEditor.DIAGRAM_FILE_EXTENSION,
+        		KrailDiagramEditor.MODEL_FILE_EXTENSION,
+        		KrailDiagramEditor.DIAGRAM_TYPE,
                 KrailDiagramEditor.EDITOR_ID);
     }
 
