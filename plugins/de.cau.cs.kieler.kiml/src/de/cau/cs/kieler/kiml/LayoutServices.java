@@ -33,7 +33,8 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  * {@link createLayoutServices()}. The subclass is then responsible to add
  * appropriate data to the nested registry instance.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  * @author msp
  */
 public class LayoutServices {
@@ -237,7 +238,7 @@ public class LayoutServices {
     /**
      * Returns the layout algorithm data associated with the given identifier.
      * 
-     * @param id layout provider identifier
+     * @param id layout algorithm identifier
      * @return the corresponding layout algorithm data, or {@code null} if there
      *         is no algorithm with the given identifier
      */
@@ -278,18 +279,18 @@ public class LayoutServices {
 
     /**
      * Returns a list of layout options that are suitable for the given layout
-     * provider and layout option target. The layout provider must know the
+     * algorithm and layout option target. The layout algorithm must know the
      * layout options and at the target must be active for each option.
      * 
-     * @param providerData layout provider data
+     * @param algorithmData layout algorithm data
      * @param targetType type of layout option target
      * @return list of suitable layout options
      */
-    public final List<LayoutOptionData<?>> getOptions(final LayoutAlgorithmData providerData,
+    public final List<LayoutOptionData<?>> getOptions(final LayoutAlgorithmData algorithmData,
             final LayoutOptionData.Target targetType) {
         List<LayoutOptionData<?>> optionDataList = new LinkedList<LayoutOptionData<?>>();
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
-            if (providerData.knowsOption(optionData.getId())
+            if (algorithmData.knowsOption(optionData.getId())
                     || LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
                 if (optionData.hasTarget(targetType)) {
                     optionDataList.add(optionData);

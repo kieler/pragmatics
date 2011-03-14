@@ -26,9 +26,7 @@ public enum Shape {
     /** rectangle shape. */
     RECTANGLE,
     /** ellipse shape. */
-    ELLIPSE,
-    /** triangle shape. */
-    TRIANGLE;
+    ELLIPSE;
 
     /**
      * Returns the enumeration value related to the given ordinal.

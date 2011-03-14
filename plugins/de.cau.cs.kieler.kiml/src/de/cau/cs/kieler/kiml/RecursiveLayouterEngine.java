@@ -25,8 +25,10 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
  * root of the nodes in the graph, using size information from lower levels in
  * the levels above.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  * @author ars
+ * @author msp
  */
 public class RecursiveLayouterEngine {
 

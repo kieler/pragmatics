@@ -25,7 +25,8 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
  * extension point. The former can be accessed with static variables, while the latter
  * are accessed with methods.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  * @author msp
  */
 public final class LayoutOptions {

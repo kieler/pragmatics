@@ -110,7 +110,7 @@ public class LayoutOptionData<T> implements ILayoutData, IProperty<T>, Comparabl
 
     /** option target enumeration. */
     public enum Target {
-        /** parents target. */
+        /** parents target (hierarchical nodes). */
         PARENTS,
         /** nodes target. */
         NODES,
