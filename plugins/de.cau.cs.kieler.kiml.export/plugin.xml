@@ -39,6 +39,28 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:de.cau.cs.kieler">
+         <command
+               commandId="de.cau.cs.kieler.kiml.export.exportCommand"
+               icon="icons/exportdiagram.gif"
+               label="Export Graph"
+               mnemonic="E"
+               style="push"
+               tooltip="Export the graph to a common file format.">
+            <visibleWhen
+                  checkEnabled="false">
+              <with
+                    variable="activeEditor">
+                 <test
+                       forcePluginActivation="false"
+                       property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+                 </test>
+              </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>

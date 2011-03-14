@@ -80,7 +80,7 @@ point="org.eclipse.ui.menus">
          icon="icons/menu16/kieler-arrange.gif"
          label="%command.label.0"
          style="push"
-         tooltip="Layout the current diagram with KIELER">
+         tooltip="%command.tooltip.0">
       <visibleWhen
             checkEnabled="false">
          <with

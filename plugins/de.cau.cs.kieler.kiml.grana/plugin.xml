@@ -9,7 +9,7 @@
             categoryId="de.cau.cs.kieler"
             defaultHandler="de.cau.cs.kieler.kiml.grana.handlers.AnalysisHandler"
             id="de.cau.cs.kieler.kiml.grana.command.analyse"
-            name="Analyse">
+            name="Analyze">
       </command>
       <command
             categoryId="de.cau.cs.kieler"
@@ -32,9 +32,30 @@
                commandId="de.cau.cs.kieler.kiml.grana.command.analyse"
                icon="icons/menu16/analyzediagram.gif"
                id="de.cau.cs.kieler.kiml.grana.menu.analysis"
-               label="Analyse"
+               label="Analyze Graph"
                style="pulldown"
-               tooltip="Analyse the current diagram with KIELER">
+               tooltip="Analyze the Graph of the Current Diagram">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditor">
+                  <test
+                        forcePluginActivation="false"
+                        property="de.cau.cs.kieler.kiml.ui.activeEditorIsSupported">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:de.cau.cs.kieler">
+         <command
+               commandId="de.cau.cs.kieler.kiml.grana.command.analyse"
+               icon="icons/menu16/analyzediagram.gif"
+               id="de.cau.cs.kieler.kiml.grana.menu.analysis"
+               label="Analyze Graph"
+               style="push"
+               tooltip="Analyze the Graph of the Current Diagram">
             <visibleWhen
                   checkEnabled="false">
                <with
