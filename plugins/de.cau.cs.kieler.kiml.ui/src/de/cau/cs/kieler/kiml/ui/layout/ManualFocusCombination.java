@@ -32,12 +32,11 @@ import de.cau.cs.kieler.core.model.trigger.DiagramTrigger.DiagramState;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**
- * A Kieler Viewmanagement Combination that lets the user manually select a focus
- * in a diagram and then configures Focus&Context accordingly by collapsing and
- * expanding compartments. Elements in the focus are shown with most details and
- * elements in the context with the least details, e.g. their compartments get
- * collapsed. Zoom buttons allow to change the hierarchy level for which the
- * contents of the focus should be shown. 
+ * A Kieler Viewmanagement Combination that lets the user manually select a focus in a diagram and
+ * then configures Focus&Context accordingly by collapsing and expanding compartments. Elements in
+ * the focus are shown with most details and elements in the context with the least details, e.g.
+ * their compartments get collapsed. Zoom buttons allow to change the hierarchy level for which the
+ * contents of the focus should be shown.
  * 
  * @author haf
  * 
@@ -47,6 +46,7 @@ public class ManualFocusCombination extends AbstractCombination {
     private static final String FOCUS_BUTTON_ID = "de.cau.cs.kieler.core.kivi.selectionFocus";
     private static final String PLUS_BUTTON_ID = "de.cau.cs.kieler.core.kivi.focusPlus";
     private static final String MINUS_BUTTON_ID = "de.cau.cs.kieler.core.kivi.focusMinus";
+    private static final String ALL_BUTTON_ID = "de.cau.cs.kieler.core.kivi.focusAll";
 
     /*
      * Add editor ID here to enable this button also for other editors.
@@ -69,6 +69,8 @@ public class ManualFocusCombination extends AbstractCombination {
                 "icons/menu16/focusContext.png");
         ImageDescriptor iconPlus = KimlUiPlugin.imageDescriptorFromPlugin(KimlUiPlugin.PLUGIN_ID,
                 "icons/menu16/focusContextPlus.png");
+        ImageDescriptor iconPlusPlus = KimlUiPlugin.imageDescriptorFromPlugin(
+                KimlUiPlugin.PLUGIN_ID, "icons/menu16/focusContextPlusPlus.png");
         ImageDescriptor iconMinus = KimlUiPlugin.imageDescriptorFromPlugin(KimlUiPlugin.PLUGIN_ID,
                 "icons/menu16/focusContextMinus.png");
 
@@ -82,6 +84,10 @@ public class ManualFocusCombination extends AbstractCombination {
 
         KiviMenuContributionService.INSTANCE.addToolbarButton(this, MINUS_BUTTON_ID, "focusMinus",
                 "Decrease Focus/Context zoom level.", iconMinus, SWT.PUSH, null,
+                EDITOR_IDS.toArray(new String[2]));
+
+        KiviMenuContributionService.INSTANCE.addToolbarButton(this, ALL_BUTTON_ID, "focusPlusPlus",
+                "Show all hierarchy levels.", iconPlusPlus, SWT.PUSH, null,
                 EDITOR_IDS.toArray(new String[2]));
     }
 
@@ -98,25 +104,36 @@ public class ManualFocusCombination extends AbstractCombination {
     public void execute(final ButtonState button, final SelectionState selection,
             final DiagramState diagram) {
         // first check buttons
+        boolean showAll = false;
         if (this.getTriggerState() instanceof ButtonState) {
             if (button.getButtonId().equals(PLUS_BUTTON_ID)) {
                 zoomLevel++;
             } else if (button.getButtonId().equals(MINUS_BUTTON_ID)) {
                 zoomLevel--;
+            } else if (button.getButtonId().equals(ALL_BUTTON_ID)) {
+                showAll = true;
             }
+
         }
 
         this.enable(button.isPushedIn(FOCUS_BUTTON_ID), diagram);
 
         // if enabled, do something
         if (this.enabled) {
+            int level = zoomLevel;
             List<EObject> focus = selection.getSelectedEObjects();
-            // if nothing is selected, use the model root as the focus
-            if (focus.isEmpty()) {
+            // if we want to see everything, select root element and do a full child focus
+            if (showAll) {
                 focus.add(diagram.getSemanticModel());
+                level = Integer.MAX_VALUE;
+            } else {
+                // if nothing is selected, use the model root as the focus
+                if (focus.isEmpty()) {
+                    focus.add(diagram.getSemanticModel());
+                }
             }
             FocusContextEffect focusEffect = new FocusContextEffect(diagram.getDiagramPart());
-            focusEffect.addFocus(focus, zoomLevel);
+            focusEffect.addFocus(focus, level);
             this.schedule(focusEffect);
             this.schedule(new LayoutEffect(diagram.getDiagramPart(), null, true, false, true));
         } else {
