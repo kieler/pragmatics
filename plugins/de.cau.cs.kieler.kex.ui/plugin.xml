@@ -6,7 +6,7 @@
       <wizard
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kex.ui.wizards.exporting.ExampleExportWizard"
-            icon="icons/keksIcon.gif"
+            icon="icons/kiel_16.gif"
             id="de.cau.cs.kieler.kex.ui.exportWizard"
             name="Example">
       </wizard>
@@ -17,9 +17,9 @@
       <wizard
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard"
-            icon="icons/keksIcon.gif"
+            icon="icons/kiel_16.gif"
             id="de.cau.cs.kieler.kex.ui.importWizard"
-            name="Example">
+            name="Examples">
       </wizard>
    </extension>
     <extension point="org.eclipse.ui.newWizards">
@@ -27,7 +27,7 @@
             name="KIELER Examples"
             class="de.cau.cs.kieler.kex.ui.wizards.importing.ExampleImportWizard"
             category="de.cau.cs.kieler"
-            icon="icons/keksIcon.gif"
+            icon="icons/kiel_16.gif"
             project="true">
             <description>Add KIELER examples to your workspace.</description>
         </wizard>
