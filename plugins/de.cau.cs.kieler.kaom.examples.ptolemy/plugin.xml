@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kex">
+      <category
+            description="Ptolemy Demos imported to KAOM"
+            icon="icons/ptolemy.gif"
+            id="de.cau.cs.kieler.kaom.ptolemy"
+            parent_category="de.cau.cs.kieler.kaom"
+            title="Ptolemy">
+      </category>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.examples.ptolemy.???"
+            overview_pic="images/???.png"
+            root_directory="models/???"
+            title="???">
+         <resource
+               direct_open="false"
+               local_path="de.cau.cs.kieler.kaom.examples.ptolemy.resource1"
+               resource_type="de.cau.cs.kieler.kaom.examples.ptolemy.resource1">
+         </resource>
+      </example>
+   </extension>
+
+</plugin>

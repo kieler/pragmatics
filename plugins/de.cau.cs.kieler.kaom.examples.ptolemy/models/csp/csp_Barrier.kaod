@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:kaom="http://kieler.cs.cau.de/KAOM" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_BNUHUEAMEeCIfOdOxMaTvA" type="Kaom" measurementUnit="Pixel">
+  <children xmi:type="notation:Node" xmi:id="_BOkrkEAMEeCIfOdOxMaTvA" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_BOkrlEAMEeCIfOdOxMaTvA" type="5004">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_BOkrlUAMEeCIfOdOxMaTvA" y="5"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_BOkrlkAMEeCIfOdOxMaTvA" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_BOl5sEAMEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOl5tEAMEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOl5tUAMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_BOl5tkAMEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_BOsAUEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BOsAVEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BOsAVUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOsAUUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BOsAUkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.0/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOsAU0AMEeCIfOdOxMaTvA" x="61" y="16"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BOsAVkAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BOsAWkAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BOsAW0AMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOsAV0AMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BOsAWEAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.0/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOsAWUAMEeCIfOdOxMaTvA" x="-6" y="7"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BOsAXEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BOsAYEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BOsAYUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOsAXUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BOsAXkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.0/@childPorts.2"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOsAX0AMEeCIfOdOxMaTvA" x="-6" y="26"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOl5sUAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOl5skAMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.0"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOl5s0AMEeCIfOdOxMaTvA" x="197" y="15"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_BOl5t0AMEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOl5u0AMEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOl5vEAMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_BOl5vUAMEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_BO6CwEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BO6CxEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BO6CxUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BO6CwUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BO6CwkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.1/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BO6Cw0AMEeCIfOdOxMaTvA" x="-6" y="11"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOl5uEAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOl5uUAMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOl5ukAMEeCIfOdOxMaTvA" x="597" y="15"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_BOmgwEAMEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOmgxEAMEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOmgxUAMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_BOmgxkAMEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_BO9GEEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BO9GFEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BO9GFUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BO9GEUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BO9GEkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.2/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BO9GE0AMEeCIfOdOxMaTvA" x="-6" y="1"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BO9GFkAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BO9GGkAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BO9GG0AMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BO9GF0AMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BO9GGEAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.2/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BO9GGUAMEeCIfOdOxMaTvA" x="68" y="10"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BO9GHEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BO9GIEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BO9GIUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BO9GHUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BO9GHkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.2/@childPorts.2"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BO9GH0AMEeCIfOdOxMaTvA" x="30" y="29"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOmgwUAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOmgwkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.2"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOmgw0AMEeCIfOdOxMaTvA" x="744" y="15"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_BOmgx0AMEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOmgy0AMEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOmgzEAMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_BOmgzUAMEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_BP-ZwEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BP-ZxEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BP-ZxUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BP-ZwUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BP-ZwkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.3/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BP-Zw0AMEeCIfOdOxMaTvA" x="67" y="19"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BP-ZxkAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BP-ZykAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BP-Zy0AMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BP-Zx0AMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BP-ZyEAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.3/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BP-ZyUAMEeCIfOdOxMaTvA" x="-6" y="10"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BP-ZzEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BP_A0EAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BP_A0UAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BP-ZzUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BP-ZzkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.3/@childPorts.2"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BP-Zz0AMEeCIfOdOxMaTvA" x="-6" y="29"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BP_A0kAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BP_A1kAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BP_A10AMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BP_A00AMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BP_A1EAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.3/@childPorts.3"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BP_A1UAMEeCIfOdOxMaTvA" x="-6" y="19"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOmgyEAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOmgyUAMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.3"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOmgykAMEeCIfOdOxMaTvA" x="391" y="62"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_BOmgzkAMEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOmg0kAMEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOmg00AMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_BOmg1EAMEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_BQpvMEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BQpvNEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BQpvNUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BQpvMUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BQpvMkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.4/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BQpvM0AMEeCIfOdOxMaTvA" x="-6" y="15"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BQqWQEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BQqWREAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BQqWRUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BQqWQUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BQqWQkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.4/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BQqWQ0AMEeCIfOdOxMaTvA" x="38" y="15"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOmgz0AMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOmg0EAMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.4"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOmg0UAMEeCIfOdOxMaTvA" x="597" y="191"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_BOmg1UAMEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOmg2UAMEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOmg2kAMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_BOmg20AMEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_BR5sYEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BR5sZEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BR5sZUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BR5sYUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BR5sYkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.5/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BR5sY0AMEeCIfOdOxMaTvA" x="-6" y="29"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BR5sZkAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BR5sakAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BR5sa0AMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BR5sZ0AMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BR5saEAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.5/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BR5saUAMEeCIfOdOxMaTvA" x="36" y="29"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOmg1kAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOmg10AMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.5"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOmg2EAMEeCIfOdOxMaTvA" x="598" y="85"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_BOmg3EAMEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOmg4EAMEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOmg4UAMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_BOmg4kAMEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_BSCPQEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BSC2UEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BSC2UUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BSCPQUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BSCPQkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.6/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BSCPQ0AMEeCIfOdOxMaTvA" x="61" y="16"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BSC2UkAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BSC2VkAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BSC2V0AMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BSC2U0AMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BSC2VEAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.6/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BSC2VUAMEeCIfOdOxMaTvA" x="-6" y="7"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_BSC2WEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BSC2XEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BSC2XUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BSC2WUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BSC2WkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.6/@childPorts.2"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BSC2W0AMEeCIfOdOxMaTvA" x="-6" y="26"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOmg3UAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOmg3kAMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.6"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOmg30AMEeCIfOdOxMaTvA" x="197" y="132"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_BOmg40AMEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOnH0EAMEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOnH0UAMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_BOnH0kAMEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_BSQRsEAMEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_BSQRtEAMEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_BSQRtUAMEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_BSQRsUAMEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_BSQRskAMEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.7/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BSQRs0AMEeCIfOdOxMaTvA" x="-6" y="11"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOmg5EAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOmg5UAMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.7"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOmg5kAMEeCIfOdOxMaTvA" x="597" y="268"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_BOnH00AMEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOnH10AMEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOnH2EAMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_BOnH2UAMEeCIfOdOxMaTvA" type="7002"/>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOnH1EAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOnH1UAMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#//@childEntities.0/@childEntities.8"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOnH1kAMEeCIfOdOxMaTvA" x="843" y="97"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_BOnH2kAMEeCIfOdOxMaTvA" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOnH3kAMEeCIfOdOxMaTvA" type="5002">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOnH30AMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOnH20AMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOnH3EAMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Relation" href="csp_Barrier.kaom#//@childEntities.0/@childRelations.0"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOnH3UAMEeCIfOdOxMaTvA" x="399" y="15"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_BOnH4EAMEeCIfOdOxMaTvA" type="3003">
+        <children xmi:type="notation:DecorationNode" xmi:id="_BOnH5EAMEeCIfOdOxMaTvA" type="5002">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_BOnH5UAMEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOnH4UAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_BOnH4kAMEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Relation" href="csp_Barrier.kaom#//@childEntities.0/@childRelations.1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOnH40AMEeCIfOdOxMaTvA" x="399" y="148"/>
+      </children>
+      <children xmi:type="notation:Shape" xmi:id="_BWmmMEAMEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="This model illustrates a design pattern with CSP&#xA;called a &quot;barrier synchronization.&quot; In this example,&#xA;the two Ramps are sending increasing sequences of&#xA;integers to the Displays. However, the transfer&#xA;is constrained to occur only when the Barrier actor&#xA;reads inputs. Thus, a multi-way rendezvous between the&#xA;two Ramp actors, the two Display actors, and the Barrier&#xA;actor constrains the two transfers to the Display actors&#xA;to occur simultaneously.  The Barrier actor, after&#xA;reading inputs, will rendezvous with the Sleep actor&#xA;connected to its output.  This sleep actor will sleep&#xA;a random amount of time after reading its input, and&#xA;during that time will not accept additional inputs.&#xA;Thus, after the first two transfers to the Display&#xA;actors (why two?) the time between transfers is&#xA;controlled by the Sleep actor." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_BWnNQEAMEeCIfOdOxMaTvA" type="DiagramName">
+          <element xsi:nil="true"/>
+        </children>
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_BWnNQUAMEeCIfOdOxMaTvA" type="Description">
+          <element xsi:nil="true"/>
+        </children>
+        <styles xmi:type="notation:TextStyle" xmi:id="_BWmmMUAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:LineTypeStyle" xmi:id="_BWmmMkAMEeCIfOdOxMaTvA"/>
+        <element xsi:nil="true"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BWmmM0AMEeCIfOdOxMaTvA" x="712" y="167"/>
+      </children>
+      <children xmi:type="notation:Shape" xmi:id="_Be0HAEAMEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="Author: Edward A. Lee" fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_Be0uE0AMEeCIfOdOxMaTvA" type="DiagramName">
+          <element xsi:nil="true"/>
+        </children>
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_Be0uFEAMEeCIfOdOxMaTvA" type="Description">
+          <element xsi:nil="true"/>
+        </children>
+        <styles xmi:type="notation:TextStyle" xmi:id="_Be0uEEAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:LineTypeStyle" xmi:id="_Be0uEUAMEeCIfOdOxMaTvA"/>
+        <element xsi:nil="true"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Be0uEkAMEeCIfOdOxMaTvA" x="815" y="439"/>
+      </children>
+      <children xmi:type="notation:Shape" xmi:id="_BkROwEAMEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="Random wait time." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_BkR10EAMEeCIfOdOxMaTvA" type="DiagramName">
+          <element xsi:nil="true"/>
+        </children>
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_BkR10UAMEeCIfOdOxMaTvA" type="Description">
+          <element xsi:nil="true"/>
+        </children>
+        <styles xmi:type="notation:TextStyle" xmi:id="_BkROwUAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:LineTypeStyle" xmi:id="_BkROwkAMEeCIfOdOxMaTvA"/>
+        <element xsi:nil="true"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BkROw0AMEeCIfOdOxMaTvA" x="355" y="195"/>
+      </children>
+      <children xmi:type="notation:Shape" xmi:id="_BsYB4EAMEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="Relation results&#xA;in multi-way&#xA;rendezvous." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_BsYo8EAMEeCIfOdOxMaTvA" type="DiagramName">
+          <element xsi:nil="true"/>
+        </children>
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_BsYo8UAMEeCIfOdOxMaTvA" type="Description">
+          <element xsi:nil="true"/>
+        </children>
+        <styles xmi:type="notation:TextStyle" xmi:id="_BsYB4UAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:LineTypeStyle" xmi:id="_BsYB4kAMEeCIfOdOxMaTvA"/>
+        <element xsi:nil="true"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BsYB40AMEeCIfOdOxMaTvA" x="15" y="15"/>
+      </children>
+      <children xmi:type="notation:Shape" xmi:id="_B0KE4EAMEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="Illustration of Barrier Synchronization in CSP" fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_B0Kr8EAMEeCIfOdOxMaTvA" type="DiagramName">
+          <element xsi:nil="true"/>
+        </children>
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_B0Kr8UAMEeCIfOdOxMaTvA" type="Description">
+          <element xsi:nil="true"/>
+        </children>
+        <styles xmi:type="notation:TextStyle" xmi:id="_B0KE4UAMEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:LineTypeStyle" xmi:id="_B0KE4kAMEeCIfOdOxMaTvA"/>
+        <element xsi:nil="true"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_B0KE40AMEeCIfOdOxMaTvA" x="750" y="516"/>
+      </children>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_BOkrkUAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_BOkrkkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#//@childEntities.0"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_BOkrk0AMEeCIfOdOxMaTvA" x="15" y="15" width="1111" height="607"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_BNUHUUAMEeCIfOdOxMaTvA"/>
+  <element xmi:type="kaom:Entity" href="csp_Barrier.kaom#/"/>
+  <edges xmi:type="notation:Edge" xmi:id="_BTCU0EAMEeCIfOdOxMaTvA" type="4001" source="_BOsAUEAMEeCIfOdOxMaTvA" target="_BOnH2kAMEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_BTCU1EAMEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_BTCU1UAMEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_BTCU0UAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_BTCU0kAMEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="csp_Barrier.kaom#//@childEntities.0/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_BTCU00AMEeCIfOdOxMaTvA" points="[0, 0, -131, 16]$[37, 0, -94, 16]$[37, -16, -94, 0]$[131, -16, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvdUAMEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvdkAMEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_BTC74EAMEeCIfOdOxMaTvA" type="4001" source="_BOnH2kAMEeCIfOdOxMaTvA" target="_BO6CwEAMEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_BTDi8EAMEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_BTDi8UAMEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_BTC74UAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_BTC74kAMEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="csp_Barrier.kaom#//@childEntities.0/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_BTC740AMEeCIfOdOxMaTvA" points="[0, 0, -182, -11]$[141, 0, -41, -11]$[141, 11, -41, 0]$[182, 11, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvgUAMEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvgkAMEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_BTEKAEAMEeCIfOdOxMaTvA" type="4001" source="_BP-ZwEAMEeCIfOdOxMaTvA" target="_BQpvMEAMEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_BTEKBEAMEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_BTEKBUAMEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_BTEKAUAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_BTEKAkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="csp_Barrier.kaom#//@childEntities.0/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_BTEKA0AMEeCIfOdOxMaTvA" points="[0, 0, -123, -125]$[67, 0, -56, -125]$[67, 125, -56, 0]$[123, 125, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9Pvc0AMEeCIfOdOxMaTvA" id="(1.0,0.5000003814697266)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvdEAMEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_BTExEEAMEeCIfOdOxMaTvA" type="4001" source="_BQqWQEAMEeCIfOdOxMaTvA" target="_BO9GHEAMEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_BTExFEAMEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_BTExFUAMEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_BTExEUAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_BTExEkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="csp_Barrier.kaom#//@childEntities.0/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_BTExE0AMEeCIfOdOxMaTvA" points="[0, 0, -134, 157]$[52, 0, -82, 157]$[52, -142, -82, 15]$[134, -142, 0, 15]$[134, -157, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PveUAMEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvekAMEeCIfOdOxMaTvA" id="(0.5,1.0)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_BTFYIEAMEeCIfOdOxMaTvA" type="4001" source="_BOnH4EAMEeCIfOdOxMaTvA" target="_BR5sYEAMEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_BTFYJEAMEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_BTFYJUAMEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_BTFYIUAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_BTFYIkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="csp_Barrier.kaom#//@childEntities.0/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_BTFYI0AMEeCIfOdOxMaTvA" points="[0, 0, -183, 34]$[96, 0, -87, 34]$[96, -34, -87, 0]$[183, -34, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9Pve0AMEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvfEAMEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_BTF_MEAMEeCIfOdOxMaTvA" type="4001" source="_BOnH2kAMEeCIfOdOxMaTvA" target="_BR5sYEAMEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_BTF_NEAMEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_BTF_NUAMEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_BTF_MUAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_BTF_MkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="csp_Barrier.kaom#//@childEntities.0/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_BTF_M0AMEeCIfOdOxMaTvA" points="[0, 0, -183, -99]$[141, 0, -42, -99]$[141, 99, -42, 0]$[183, 99, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9Pvd0AMEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PveEAMEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_BTHNUEAMEeCIfOdOxMaTvA" type="4001" source="_BR5sZkAMEeCIfOdOxMaTvA" target="_BO9GEEAMEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_BTHNVEAMEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_BTHNVUAMEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_BTHNUUAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_BTHNUkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="csp_Barrier.kaom#//@childEntities.0/@childLinks.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_BTHNU0AMEeCIfOdOxMaTvA" points="[0, 0, -94, 98]$[38, 0, -56, 98]$[38, -98, -56, 0]$[94, -98, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvfUAMEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvfkAMEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_BTH0YEAMEeCIfOdOxMaTvA" type="4001" source="_BSCPQEAMEeCIfOdOxMaTvA" target="_BOnH4EAMEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_BTH0ZEAMEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_BTH0ZUAMEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_BTH0YUAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_BTH0YkAMEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="csp_Barrier.kaom#//@childEntities.0/@childLinks.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_BTH0Y0AMEeCIfOdOxMaTvA" points="[0, 0, -131, 0]$[131, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PIYEAMEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PIYUAMEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_BTIbcEAMEeCIfOdOxMaTvA" type="4001" source="_BOnH4EAMEeCIfOdOxMaTvA" target="_BSQRsEAMEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_BTIbdEAMEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_BTIbdUAMEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_BTIbcUAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_BTIbckAMEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="csp_Barrier.kaom#//@childEntities.0/@childLinks.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_BTIbc0AMEeCIfOdOxMaTvA" points="[0, 0, -182, -131]$[96, 0, -86, -131]$[96, 131, -86, 0]$[182, 131, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9Pvf0AMEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvgEAMEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_BlA1oEAMEeCIfOdOxMaTvA" type="NoteAttachment" source="_BkROwEAMEeCIfOdOxMaTvA" target="_BOmgzkAMEeCIfOdOxMaTvA" lineWidth="1">
+    <styles xmi:type="notation:ArrowStyle" xmi:id="_BlA1oUAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:LineTypeStyle" xmi:id="_BlA1okAMEeCIfOdOxMaTvA"/>
+    <element xsi:nil="true"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_BlA1o0AMEeCIfOdOxMaTvA" points="[0, 0, -107, 12]$[30, 0, -77, 12]$[30, -12, -77, 0]$[107, -12, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PIYkAMEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvcEAMEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_Bs0t0EAMEeCIfOdOxMaTvA" type="NoteAttachment" source="_BsYB4EAMEeCIfOdOxMaTvA" target="_BOl5sEAMEeCIfOdOxMaTvA" lineWidth="1">
+    <styles xmi:type="notation:ArrowStyle" xmi:id="_Bs0t0UAMEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:LineTypeStyle" xmi:id="_Bs0t0kAMEeCIfOdOxMaTvA"/>
+    <element xsi:nil="true"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Bs0t00AMEeCIfOdOxMaTvA" points="[0, 0, -70, 7]$[15, 0, -55, 7]$[15, -7, -55, 0]$[70, -7, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvcUAMEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_B9PvckAMEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+</notation:Diagram>
