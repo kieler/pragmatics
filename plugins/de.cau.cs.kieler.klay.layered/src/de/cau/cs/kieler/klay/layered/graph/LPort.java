@@ -28,11 +28,10 @@ import de.cau.cs.kieler.kiml.options.PortType;
  * edges; for input ports this list must only contain incoming edges, while
  * for output ports it must only contain outgoing edges. Usually all ports
  * are required to be either input ports or output ports.
- * <p>
- * Port must be used even if the original graph does not reveal them. In this
+ * 
+ * <p>Port must be used even if the original graph does not reveal them. In this
  * case each edge has dedicated source and target ports, which are used to
- * determine the points where the edge touches the source and target nodes.
- * </p>
+ * determine the points where the edge touches the source and target nodes.</p>
  *
  * @author msp
  */

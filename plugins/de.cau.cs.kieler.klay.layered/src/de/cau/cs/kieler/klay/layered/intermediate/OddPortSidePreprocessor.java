@@ -34,22 +34,20 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 /**
  * Inserts dummy nodes to cope with odd port sides.
  * 
- * <p>
- * The problem is with edges coming from the left of a node being connected to a
+ * <p>The problem is with edges coming from the left of a node being connected to a
  * port that's on its right side, or the other way around. Let a node of that kind
  * be in layer {@code i}. This processor now takes the offending edge and connects
  * it to a new dummy node, also in layer {@code i}. That dummy node is then connected
  * to another new dummy node, in layer {@code i + 1}. Finally, a new edge connects
- * the offending port with the dummy node in layer {@code i + 1}.
+ * the offending port with the dummy node in layer {@code i + 1}.</p>
  * 
- * <p>
- * The dummy nodes are decorated with a {@link de.cau.cs.kieler.klay.layered.Properties#NODE_TYPE}
+ * <p>The dummy nodes are decorated with a {@link de.cau.cs.kieler.klay.layered.Properties#NODE_TYPE}
  * property. For nodes in the same layer, it is set to
  * {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE}, since these
  * can simply be treated just like any other node that splits long edges. Nodes that
  * get placed in a previous or next layer have their node type property set to
  * {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#ODD_PORT_SIDE}, since
- * these require special treatment because of their ports.
+ * these require special treatment because of their ports.</p>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>

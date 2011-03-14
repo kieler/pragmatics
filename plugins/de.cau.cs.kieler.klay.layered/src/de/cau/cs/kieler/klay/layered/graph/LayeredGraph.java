@@ -28,8 +28,8 @@ import de.cau.cs.kieler.klay.layered.Properties.NodeType;
  * required to layout the graph from left to right. If another layout direction
  * is desired, it can be obtained by pre-processing and post-processing the graph.
  * 
- * <p>
- * TODO add methods to rotate / mirror the graph for alternative layout directions
+ * <p>TODO add methods to rotate / mirror the graph for alternative layout
+ * directions</p>
  *
  * @author msp
  */

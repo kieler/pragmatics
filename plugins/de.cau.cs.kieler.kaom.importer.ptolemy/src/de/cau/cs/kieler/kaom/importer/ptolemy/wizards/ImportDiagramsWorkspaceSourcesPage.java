@@ -35,10 +35,15 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
  * A wizard page to import files from the workspace.
  * 
  * @author cds
+ * @kieler.rating yellow 2010-03-14
+ *      reviewed by haf, msp, pkl
  */
 public class ImportDiagramsWorkspaceSourcesPage extends WorkspaceResourcesPage {
     
     // CONSTANTS
+    /**
+     * The wizard page name.
+     */
     private static final String PAGE_NAME = "importDiagramsWorkspaceSourcesPage"; //$NON-NLS-1$
     
     

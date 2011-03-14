@@ -27,9 +27,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * Restores the direction of reversed edges. (edges with the property
  * {@link de.cau.cs.kieler.klay.layered.Properties#REVERSED} set to {@code true})
  * 
- * <p>
- * All edges are traversed to look for reversed edges. If such edges are found,
- * they are restored, the ports they are connected to being restored as well.
+ * <p>All edges are traversed to look for reversed edges. If such edges are found,
+ * they are restored, the ports they are connected to being restored as well.</p>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph; may contain reversed edges.</dd>

@@ -32,16 +32,32 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.utils.Utils;
  * First page of the Import Diagrams Wizard.
  * 
  * @author cds
+ * @kieler.rating yellow 2010-03-14
+ *      reviewed by haf, msp, pkl
  */
 public class ImportDiagramsOptionsPage extends WizardPage {
     
     // CONSTANTS
+    /**
+     * The wizard page name.
+     */
     private static final String PAGE_NAME = "importDiagramsOptionsPage"; //$NON-NLS-1$
     
+    /**
+     * Key of the import source setting.
+     */
     private static final String SETT_SOURCE_FILESYSTEM =
         PAGE_NAME + ".source.filesystem"; //$NON-NLS-1$
+    
+    /**
+     * Key of the initialize KAOD files setting.
+     */
     private static final String SETT_OPT_INIT_KAOD =
         PAGE_NAME + ".options.initKaodFiles"; //$NON-NLS-1$
+    
+    /**
+     * Key of the overwrite setting.
+     */
     private static final String SETT_OPT_OVERWRITE =
         PAGE_NAME + ".options.overwrite"; //$NON-NLS-1$
     

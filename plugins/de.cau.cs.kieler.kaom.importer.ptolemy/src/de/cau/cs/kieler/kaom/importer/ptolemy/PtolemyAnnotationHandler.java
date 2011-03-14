@@ -48,7 +48,7 @@ import de.cau.cs.kieler.kaom.Entity;
  * likely annotating.
  * 
  * <p>In Ptolemy, certain annotations in a model are like comments in source code.
- * There are two ways how they can be represented in MOML:
+ * There are two ways how they can be represented in MOML:</p>
  * 
  * <ol>
  *   <li>Using a property of type "ptolemy.vergil.kernel.attributes.TextAttribute"
@@ -106,24 +106,24 @@ import de.cau.cs.kieler.kaom.Entity;
  * disturbs the quiet peace of the parser. (which, in turn, disturbs my quiet peace.)
  * The {@code configure} element and its children are then dropped by the parser
  * during the transformation and are added to a list of unknown features. That's
- * where this handler comes in.
+ * where this handler comes in.</p>
  * 
  * <p>The handler is hooked into the transformation workflow just before the
  * transformed model is written to a file. It takes a look at the transformed
  * model and looks for unknown elements. If it finds anything matching the second
  * comment style, it adds a {@code TypedStringAnnotation} to the transformed
  * model element that contains the annotation's text, thus preserving the comment's
- * text even in the face of severely hopeless circumstances. Hurray!
+ * text even in the face of severely hopeless circumstances. Hurray!</p>
  * 
  * <p>After that's done, it applies a heuristic to each comment annotation, trying
  * to find the entity it is probably annotating. If it finds any, the comment is
  * attached to it by means of a {@code ReferenceAnnotation} named {@code attachedTo}.
  * If we don't find one, that {@code ReferenceAnnotation} is still added to the
  * comment, but with an empty reference; thus, the presence of this annotation
- * can be used to find out if an annotation represents a comment or not.
+ * can be used to find out if an annotation represents a comment or not.</p>
  * 
  * <p>This is still kind of experimental. It does work, but the heuristic is quite
- * simpllistic and doesn't always give correct results.
+ * simpllistic and doesn't always give correct results.</p>
  * 
  * @author cds
  */
@@ -319,7 +319,7 @@ public class PtolemyAnnotationHandler extends TransformationWorkflowHook {
      * 
      * <p>This simple implementation just uses the annotation's and entity's locations
      * and computes the squared euclidian distance. More sophisticated implementations
-     * could take the annotation and entity sizes into account.
+     * could take the annotation and entity sizes into account.</p>
      * 
      * @param annotation the annotation.
      * @param annotationLocation the annotation's location.

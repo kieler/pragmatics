@@ -44,7 +44,6 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * </dl>
  * 
  * @author uru
- * 
  */
 public class SimpleSplineEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
 

@@ -51,13 +51,12 @@ import de.cau.cs.kieler.klay.layered.p5edges.SimpleSplineEdgeRouter;
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
  * 
- * <p>
- * The layered layouter works with five main phases: cycle breaking, layering, crossing
+ * <p>The layered layouter works with five main phases: cycle breaking, layering, crossing
  * minimization, node placement and edge routing. Before these phases and after the last
  * phase, so called intermediate layout processors can be inserted that do some kind of
  * pre or post processing. Implementations of the different main phases specify the
  * intermediate layout processors they require, which are automatically collected and
- * inserted between the main phases.
+ * inserted between the main phases.</p>
  * 
  * <pre>
  *           Intermediate Layout Processors

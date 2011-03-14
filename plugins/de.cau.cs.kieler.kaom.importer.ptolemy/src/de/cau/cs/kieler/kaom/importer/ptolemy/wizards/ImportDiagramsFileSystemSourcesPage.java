@@ -29,10 +29,15 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.PtolemyImporterConstants;
  * A wizard page to import files from the file system.
  * 
  * @author cds
+ * @kieler.rating yellow 2010-03-14
+ *      reviewed by haf, msp, pkl
  */
 public class ImportDiagramsFileSystemSourcesPage extends FileSystemResourcesPage {
     
     // CONSTANTS
+    /**
+     * The wizard page name.
+     */
     private static final String PAGE_NAME = "importDiagramsFileSystemSourcesPage"; //$NON-NLS-1$
     
     // VARIABLES

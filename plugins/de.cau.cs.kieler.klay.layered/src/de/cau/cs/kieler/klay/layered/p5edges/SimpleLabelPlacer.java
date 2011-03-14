@@ -29,7 +29,6 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * Places the labels in the middle between two ports.
  * 
  * @author jjc
- *
  */
 public class SimpleLabelPlacer extends AbstractAlgorithm implements ILabelPlacer {
 

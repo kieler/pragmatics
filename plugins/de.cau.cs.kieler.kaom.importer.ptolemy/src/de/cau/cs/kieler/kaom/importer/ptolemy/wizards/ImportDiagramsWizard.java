@@ -40,6 +40,8 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.Messages;
  * A wizard to import diagrams exported from Ptolemy2.
  * 
  * @author cds
+ * @kieler.rating yellow 2010-03-14
+ *      reviewed by haf, msp, pkl
  */
 public class ImportDiagramsWizard extends Wizard implements IImportWizard {
     

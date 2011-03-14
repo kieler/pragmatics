@@ -24,24 +24,21 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 /**
  * A strategy for intermediate layout processors to be used.
  * 
- * <p>
- * Layout phases use instances of this class to specify which intermediate layout
+ * <p>Layout phases use instances of this class to specify which intermediate layout
  * processors they depend on. The layout provider uses this class to keep track of
  * which intermediate layout processors must be inserted into the layout algorithm
- * workflow.
+ * workflow.</p>
  * 
- * <p>
- * To construct a processing strategy that just depends on processors in a single
- * processing slot, use code like the following:
+ * <p>To construct a processing strategy that just depends on processors in a single
+ * processing slot, use code like the following:</p>
  * <pre>
  * new IntermediateProcessingStrategy(
  *         IntermediateProcessingStrategy.BEFORE_PHASE_3,
  *         EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER));
  * </pre>
  * 
- * <p>
- * To construct a processing strategy with processors in more than one slot, you
- * can use code like the following:
+ * <p>To construct a processing strategy with processors in more than one slot, you
+ * can use code like the following:</p>
  * <pre>
  * new IntermediateProcessingStrategy(
  *         // Before Phase 1

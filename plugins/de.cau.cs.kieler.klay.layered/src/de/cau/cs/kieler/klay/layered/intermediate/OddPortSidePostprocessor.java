@@ -27,14 +27,13 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 /**
  * Removes odd port side dummy nodes.
  * 
- * <p>
- * Odd port side dummy nodes are nodes that have their
+ * <p>Odd port side dummy nodes are nodes that have their
  * {@link de.cau.cs.kieler.klay.layered.Properties#NODE_TYPE} property set to
  * {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#ODD_PORT_SIDE}. These
  * are removed, the edge connected to the original node being rerouted to the long
  * edge dummy node also inserted. (see {@link OddPortSidePreprocessor}) The result
  * is a graph that's not properly layered anymore: the long edge dummy node is connected
- * to the original node, both being in the same layer.
+ * to the original node, both being in the same layer.</p>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>

@@ -29,12 +29,11 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * Removes dummy nodes due to edge splitting. (dummy nodes that have the node
  * type {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE})
  * 
- * <p>
- * It is assumed that the edges connected to such dummy nodes were created by
+ * <p>It is assumed that the edges connected to such dummy nodes were created by
  * the {@link EdgeSplitter}, which implies that such a dummy node has exactly
  * one incoming and one outgoing edge, and that these edges were created from
  * the same source edge. It should thus make no difference which of the edges
- * is dropped.
+ * is dropped.</p>
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph; dummy nodes with the

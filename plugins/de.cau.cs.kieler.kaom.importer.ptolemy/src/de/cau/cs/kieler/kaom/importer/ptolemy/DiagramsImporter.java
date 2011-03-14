@@ -67,6 +67,8 @@ import de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard;
  * only run once and be destroyed.
  * 
  * @author cds
+ * @kieler.rating yellow 2010-03-14
+ *      reviewed by haf, msp, pkl
  */
 public class DiagramsImporter implements IRunnableWithProgress {
     
@@ -439,7 +441,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
      * 
      * <p>This is necessary because the import can only cope with moml files, not with the
      * more common xml files. To work around this, xml files are copied to the temp
-     * folder, using a file name with a moml extension.
+     * folder, using a file name with a moml extension.</p>
      *  
      * @param sourceFile the source file to possibly be copied to a temporary moml file.
      * @return moml file to be imported.

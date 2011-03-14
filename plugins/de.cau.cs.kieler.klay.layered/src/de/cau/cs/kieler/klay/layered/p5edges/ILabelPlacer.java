@@ -20,13 +20,14 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
 /**
  * Interface for label placement modules.
+ * 
  * <dl>
  *   <dt>Precondition:</dt><dd>the graph has a proper layering with
  *     assigned node and port positions</dd>
  *   <dt>Postcondition:</dt><dd>the position of every label is set</dd>
  * </dl>
+ * 
  * @author jjc
- *
  */
 public interface ILabelPlacer extends IAlgorithm {
 

@@ -293,7 +293,7 @@ public class PtolemyHelper implements IExecutionContextAware {
      * to obtain detailed information about the transformation.
      * 
      * <p>This implementation currently does nothing since the execution context is
-     * not used at the moment.
+     * not used at the moment.</p>
      * 
      * @param context the execution context.
      */
