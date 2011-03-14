@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:kaom="http://kieler.cs.cau.de/KAOM" xmlns:layoutoptions="http://kieler.cs.cau.de/LayoutOptions" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_t3KyAEALEeCIfOdOxMaTvA" type="Kaom" measurementUnit="Pixel">
+  <children xmi:type="notation:Node" xmi:id="_t30SQEALEeCIfOdOxMaTvA" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t30SREALEeCIfOdOxMaTvA" type="5004">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t30SRUALEeCIfOdOxMaTvA" y="5"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_t30SRkALEeCIfOdOxMaTvA" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_t31gYEALEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_t31gZEALEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_t31gZUALEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_t31gZkALEeCIfOdOxMaTvA" type="7002">
+          <children xmi:type="notation:Node" xmi:id="_t3_4cEALEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_t3_4dEALEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_t3_4dUALEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_t3_4dkALEeCIfOdOxMaTvA" type="7002">
+              <children xmi:type="notation:Node" xmi:id="_t4GmIEALEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_t4GmJEALEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_t4GmJUALEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_t4GmJkALEeCIfOdOxMaTvA" type="7002"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4GmIUALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_t4GmIkALEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childEntities.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4GmI0ALEeCIfOdOxMaTvA" x="267" y="88"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_t4GmJ0ALEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_t4GmK0ALEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_t4GmLEALEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_t4GmLUALEeCIfOdOxMaTvA" type="7002"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4GmKEALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_t4GmKUALEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childEntities.1"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4GmKkALEeCIfOdOxMaTvA" x="594" y="112"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_t4GmLkALEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_t4GmMkALEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_t4GmM0ALEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_t4GmNEALEeCIfOdOxMaTvA" type="7002"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4GmL0ALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_t4GmMEALEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childEntities.2"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4GmMUALEeCIfOdOxMaTvA" x="267" y="152"/>
+              </children>
+              <children xmi:type="notation:Shape" xmi:id="_uPJNIEALEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="The thermostat has two modes of operation, &quot;heating&quot; and &quot;cooling.&quot; The &quot;init&quot; state&#xA;has a transition that is used to initialize the &quot;heating&quot; model (double click on that&#xA;transition to see its actions)." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+                <children xmi:type="notation:BasicDecorationNode" xmi:id="_uPJNJEALEeCIfOdOxMaTvA" type="DiagramName">
+                  <element xsi:nil="true"/>
+                </children>
+                <children xmi:type="notation:BasicDecorationNode" xmi:id="_uPJ0MEALEeCIfOdOxMaTvA" type="Description">
+                  <element xsi:nil="true"/>
+                </children>
+                <styles xmi:type="notation:TextStyle" xmi:id="_uPJNIUALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:LineTypeStyle" xmi:id="_uPJNIkALEeCIfOdOxMaTvA"/>
+                <element xsi:nil="true"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_uPJNI0ALEeCIfOdOxMaTvA" x="15" y="14"/>
+              </children>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_t4BGkEALEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_t4BGlEALEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_t4BGlUALEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4BGkUALEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_t4BGkkALEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4BGk0ALEeCIfOdOxMaTvA" x="-9" y="141"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_t4BGlkALEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_t4BGmkALEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_t4BGm0ALEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4BGl0ALEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_t4BGmEALEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4BGmUALEeCIfOdOxMaTvA" x="-9" y="68"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_t3_4cUALEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_t3_4ckALEeCIfOdOxMaTvA" fontName="Sans"/>
+            <styles xmi:type="layoutoptions:LayoutOptionStyle" xmi:id="_vyGNoEALEeCIfOdOxMaTvA">
+              <options xmi:type="layoutoptions:KOption" xmi:id="_vyGNoUALEeCIfOdOxMaTvA" key="de.cau.cs.kieler.algorithm" value="de.cau.cs.kieler.graphviz.dot"/>
+              <options xmi:type="layoutoptions:KOption" xmi:id="_wFXH4EALEeCIfOdOxMaTvA" key="de.cau.cs.kieler.borderSpacing" value="15.0"/>
+            </styles>
+            <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t3_4c0ALEeCIfOdOxMaTvA" x="1234" y="15" width="660" height="219"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_t3_4d0ALEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_t3_4e0ALEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_t3_4fEALEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_t3_4fUALEeCIfOdOxMaTvA" type="7002">
+              <children xmi:type="notation:Node" xmi:id="_t4PwEEALEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_t4PwFEALEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_t4PwFUALEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_t4PwFkALEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_t4ZhEEALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t4ZhFEALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t4ZhFUALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4ZhEUALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t4ZhEkALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4ZhE0ALEeCIfOdOxMaTvA" x="-6" y="7"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_t4ZhFkALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t4ZhGkALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t4ZhG0ALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4ZhF0ALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t4ZhGEALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.1"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4ZhGUALEeCIfOdOxMaTvA" x="-6" y="26"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_t4aIIEALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t4aIJEALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t4aIJUALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4aIIUALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t4aIIkALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.2"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4aII0ALEeCIfOdOxMaTvA" x="41" y="16"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4PwEUALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_t4PwEkALEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4PwE0ALEeCIfOdOxMaTvA" x="199" y="80"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_t4PwF0ALEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_t4PwG0ALEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_t4PwHEALEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_t4PwHUALEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_t4x7kEALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t4yioEALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t4yioUALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4x7kUALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t4x7kkALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4x7k0ALEeCIfOdOxMaTvA" x="9" y="47"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_t4yiokALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t4yipkALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t4yip0ALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4yio0ALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t4yipEALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.1"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4yipUALEeCIfOdOxMaTvA" x="-6" y="29"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_t4yiqEALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t4yirEALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t4yirUALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4yiqUALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t4yiqkALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.2"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4yiq0ALEeCIfOdOxMaTvA" x="44" y="19"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_t4yirkALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t4yiskALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t4yis0ALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4yir0ALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t4yisEALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.3"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4yisUALEeCIfOdOxMaTvA" x="28" y="47"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4PwGEALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_t4PwGUALEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4PwGkALEeCIfOdOxMaTvA" x="360" y="60"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_t4PwHkALEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_t4PwIkALEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_t4PwI0ALEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_t4PwJEALEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_t5XxcEALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t5XxdEALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t5XxdUALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t5XxcUALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t5XxckALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.2/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t5Xxc0ALEeCIfOdOxMaTvA" x="73" y="19"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_t5XxdkALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t5XxekALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t5Xxe0ALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t5Xxd0ALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t5XxeEALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.2/@childPorts.1"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t5XxeUALEeCIfOdOxMaTvA" x="-6" y="19"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4PwH0ALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_t4PwIEALEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.2"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4PwIUALEeCIfOdOxMaTvA" x="692" y="15"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_t4PwJUALEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_t4PwKUALEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_t4PwKkALEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_t4PwK0ALEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_t5efIEALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t5efJEALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t5efJUALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t5efIUALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t5efIkALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.3/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t5efI0ALEeCIfOdOxMaTvA" x="-6" y="10"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_t5efJkALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t5efKkALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t5efK0ALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t5efJ0ALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t5efKEALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.3/@childPorts.1"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t5efKUALEeCIfOdOxMaTvA" x="68" y="10"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4PwJkALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_t4PwJ0ALEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.3"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4PwKEALEeCIfOdOxMaTvA" x="577" y="100"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_t4QXIEALEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_t4QXJEALEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_t4QXJUALEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_t4QXJkALEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_t5j-sEALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t5j-tEALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t5j-tUALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t5j-sUALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t5j-skALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.4/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t5j-s0ALEeCIfOdOxMaTvA" x="30" y="9"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_t5j-tkALEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_t5klwEALEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_t5klwUALEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_t5j-t0ALEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_t5j-uEALEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.4/@childPorts.1"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t5j-uUALEeCIfOdOxMaTvA" x="-6" y="9"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4QXIUALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_t4QXIkALEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.4"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4QXI0ALEeCIfOdOxMaTvA" x="55" y="78"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_t4QXJ0ALEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_t4QXK0ALEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_t4QXLEALEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_t4QXLUALEeCIfOdOxMaTvA" type="7002"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4QXKEALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_t4QXKUALEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.5"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4QXKkALEeCIfOdOxMaTvA" x="674" y="183"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_t4QXLkALEeCIfOdOxMaTvA" type="3003">
+                <children xmi:type="notation:DecorationNode" xmi:id="_t4QXMkALEeCIfOdOxMaTvA" type="5002">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_t4QXM0ALEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4QXL0ALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_t4QXMEALEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Relation" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childRelations.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4QXMUALEeCIfOdOxMaTvA" x="474" y="98"/>
+              </children>
+              <children xmi:type="notation:Shape" xmi:id="_uXlXcEALEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="Differential equation describing heating or cooling&#xA;operation. The LevelCrossingDetector actor produces an&#xA;event that triggers a transition out of this mode." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+                <children xmi:type="notation:BasicDecorationNode" xmi:id="_uXl-gEALEeCIfOdOxMaTvA" type="DiagramName">
+                  <element xsi:nil="true"/>
+                </children>
+                <children xmi:type="notation:BasicDecorationNode" xmi:id="_uXl-gUALEeCIfOdOxMaTvA" type="Description">
+                  <element xsi:nil="true"/>
+                </children>
+                <styles xmi:type="notation:TextStyle" xmi:id="_uXlXcUALEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:LineTypeStyle" xmi:id="_uXlXckALEeCIfOdOxMaTvA"/>
+                <element xsi:nil="true"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_uXlXc0ALEeCIfOdOxMaTvA" x="545" y="252"/>
+              </children>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_t4K3kEALEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_t4K3lEALEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_t4K3lUALEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4K3kUALEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_t4K3kkALEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4K3k0ALEeCIfOdOxMaTvA" x="979" y="335"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_t4K3lkALEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_t4LeoEALEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_t4LeoUALEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_t4K3l0ALEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_t4K3mEALEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t4K3mUALEeCIfOdOxMaTvA" x="979" y="44"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_t3_4eEALEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_t3_4eUALEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t3_4ekALEeCIfOdOxMaTvA" x="15" y="15" width="980" height="370"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_t3_4fkALEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_t3_4gkALEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_t3_4g0ALEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_t3_4f0ALEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_t3_4gEALEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childRelations.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t3_4gUALEeCIfOdOxMaTvA" x="1097" y="350"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_t3_4hEALEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_t4AfgEALEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_t4AfgUALEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_t3_4hUALEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_t3_4hkALEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childRelations.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t3_4h0ALEeCIfOdOxMaTvA" x="1097" y="59"/>
+          </children>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_t32HcEALEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_t32ugEALEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_t32ugUALEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_t32HcUALEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_t32HckALEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t32Hc0ALEeCIfOdOxMaTvA" x="1959" y="320"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_t32ugkALEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_t32uhkALEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_t32uh0ALEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_t32ug0ALEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_t32uhEALEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t32uhUALEeCIfOdOxMaTvA" x="1959" y="350"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_t31gYUALEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_t31gYkALEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t31gY0ALEeCIfOdOxMaTvA" x="15" y="15" width="1960" height="437"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_t31gZ0ALEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_t31ga0ALEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_t31gbEALEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_t31gbUALEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_t52SkEALEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_t52SlEALEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_t52SlUALEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_t52SkUALEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_t52SkkALEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.1/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t52Sk0ALEeCIfOdOxMaTvA" x="-6" y="16"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_t31gaEALEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_t31gaUALEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t31gakALEeCIfOdOxMaTvA" x="2074" y="319"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_t31gbkALEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_t31gckALEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_t31gc0ALEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_t31gdEALEeCIfOdOxMaTvA" type="7002"/>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_t31gb0ALEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_t31gcEALEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.2"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t31gcUALEeCIfOdOxMaTvA" x="2170" y="399"/>
+      </children>
+      <children xmi:type="notation:Shape" xmi:id="_t-6YwEALEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="Thermostat model showing heating a cooling cycles.&#xA;In this model, the refinements of the modes in the&#xA;state machine are the same model, and the parameters&#xA;of the model are changed when state transitions are&#xA;taken." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_t-6YxEALEeCIfOdOxMaTvA" type="DiagramName">
+          <element xsi:nil="true"/>
+        </children>
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_t-6YxUALEeCIfOdOxMaTvA" type="Description">
+          <element xsi:nil="true"/>
+        </children>
+        <styles xmi:type="notation:TextStyle" xmi:id="_t-6YwUALEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:LineTypeStyle" xmi:id="_t-6YwkALEeCIfOdOxMaTvA"/>
+        <element xsi:nil="true"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t-6Yw0ALEeCIfOdOxMaTvA" x="2042" y="469"/>
+      </children>
+      <children xmi:type="notation:Shape" xmi:id="_uHMLAEALEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="Author: Jie Liu" fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_uHMyEEALEeCIfOdOxMaTvA" type="DiagramName">
+          <element xsi:nil="true"/>
+        </children>
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_uHMyEUALEeCIfOdOxMaTvA" type="Description">
+          <element xsi:nil="true"/>
+        </children>
+        <styles xmi:type="notation:TextStyle" xmi:id="_uHMLAUALEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:LineTypeStyle" xmi:id="_uHMLAkALEeCIfOdOxMaTvA"/>
+        <element xsi:nil="true"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_uHMLA0ALEeCIfOdOxMaTvA" x="2168" y="576"/>
+      </children>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_t30SQUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t30SQkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#//@childEntities.0"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_t30SQ0ALEeCIfOdOxMaTvA" x="15" y="15" width="2436" height="667"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_t3KyAUALEeCIfOdOxMaTvA"/>
+  <element xmi:type="kaom:Entity" href="continuous_Thermostat.kaom#/"/>
+  <edges xmi:type="notation:Edge" xmi:id="_t6krUEALEeCIfOdOxMaTvA" type="4001" source="_t32HcEALEeCIfOdOxMaTvA" target="_t52SkEALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6lSYEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6lSYUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6krUUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6krUkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6krU0ALEeCIfOdOxMaTvA" points="[0, 0, -84, 0]$[84, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65qkALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65q0ALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6l5cEALEeCIfOdOxMaTvA" type="4001" source="_t3_4fkALEeCIfOdOxMaTvA" target="_t32HcEALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6l5dEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6l5dUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6l5cUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6l5ckALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6l5c0ALEeCIfOdOxMaTvA" points="[0, 0, -842, 40]$[66, 0, -776, 40]$[66, -10, -776, 30]$[793, -10, -49, 30]$[793, -40, -49, 0]$[842, -40, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65rEALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65rUALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6mggEALEeCIfOdOxMaTvA" type="4001" source="_t3_4hEALEeCIfOdOxMaTvA" target="_t32ugkALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6nHkEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6nHkUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6mggUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6mggkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6mgg0ALEeCIfOdOxMaTvA" points="[0, 0, -842, -281]$[51, 0, -791, -281]$[51, 281, -791, 0]$[842, 281, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65sEALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65sUALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6nuoEALEeCIfOdOxMaTvA" type="4001" source="_t3_4fkALEeCIfOdOxMaTvA" target="_t4BGkEALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6nupEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6nupUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6nuoUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6nuokALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6nuo0ALEeCIfOdOxMaTvA" points="[0, 0, -118, 194]$[66, 0, -52, 194]$[66, -194, -52, 0]$[118, -194, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65qEALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65qUALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6oVsEALEeCIfOdOxMaTvA" type="4001" source="_t3_4hEALEeCIfOdOxMaTvA" target="_t4BGlkALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6oVtEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6oVtUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6oVsUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6oVskALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6oVs0ALEeCIfOdOxMaTvA" points="[0, 0, -118, -24]$[51, 0, -67, -24]$[51, 24, -67, 0]$[118, 24, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug6SkkALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug6Sk0ALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6o8wEALEeCIfOdOxMaTvA" type="4001" source="_t4K3kEALEeCIfOdOxMaTvA" target="_t3_4fkALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6o8xEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6o8xUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6o8wUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6o8wkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6o8w0ALEeCIfOdOxMaTvA" points="[0, 0, -93, 0]$[93, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65tkALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65t0ALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6qK4EALEeCIfOdOxMaTvA" type="4001" source="_t4K3lkALEeCIfOdOxMaTvA" target="_t3_4hEALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6qK5EALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6qK5UALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6qK4UALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6qK4kALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6qK40ALEeCIfOdOxMaTvA" points="[0, 0, -93, 0]$[93, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65uEALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65uUALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6qx8EALEeCIfOdOxMaTvA" type="4001" source="_t4GmIEALEeCIfOdOxMaTvA" target="_t4GmJ0ALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6qx9EALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6qx9UALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6qx8UALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6qx8kALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6qx80ALEeCIfOdOxMaTvA" points="[0, 0, -297, -15]$[45, -6, -252, -21]$[178, -21, -119, -36]$[281, 8, -16, -7]$[287, 10, -10, -5]$[292, 13, -5, -2]$[297, 15, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65tEALEeCIfOdOxMaTvA" id="(1.0039998372395833,0.4373334248860677)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65tUALEeCIfOdOxMaTvA" id="(0.003999837239583333,0.1373334248860677)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6rZAEALEeCIfOdOxMaTvA" type="4001" source="_t4GmJ0ALEeCIfOdOxMaTvA" target="_t4GmIEALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6rZBEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6rZBUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6rZAUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6rZAkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6rZA0ALEeCIfOdOxMaTvA" points="[0, 0, 297, 24]$[-8, 1, 289, 25]$[-18, 1, 279, 25]$[-28, 1, 269, 25]$[-131, -4, 166, 20]$[-254, -19, 43, 5]$[-297, -24, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65pEALEeCIfOdOxMaTvA" id="(0.003999837239583333,0.570666758219401)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65pUALEeCIfOdOxMaTvA" id="(1.0039998372395833,0.570666758219401)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6sAEEALEeCIfOdOxMaTvA" type="4001" source="_t4GmLkALEeCIfOdOxMaTvA" target="_t4GmJ0ALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6sAFEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6sAFUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6sAEUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6sAEkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6sAE0ALEeCIfOdOxMaTvA" points="[0, 0, -297, 27]$[45, 7, -252, 34]$[180, 21, -117, 48]$[281, -17, -16, 10]$[287, -19, -10, 8]$[293, -23, -4, 4]$[297, -27, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65skALEeCIfOdOxMaTvA" id="(1.0039998372395833,0.57066650390625)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65s0ALEeCIfOdOxMaTvA" id="(0.003999837239583333,1.0040000915527343)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6tOMEALEeCIfOdOxMaTvA" type="4001" source="_t4QXLkALEeCIfOdOxMaTvA" target="_t4K3kEALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6tONEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6tONUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6tOMUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6tOMkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6tOM0ALEeCIfOdOxMaTvA" points="[0, 0, -485, -227]$[31, 0, -454, -227]$[31, 227, -454, 0]$[485, 227, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65vEALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65vUALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6t1QEALEeCIfOdOxMaTvA" type="4001" source="_t4aIIEALEeCIfOdOxMaTvA" target="_t4yiokALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6t1REALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6t1RUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6t1QUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6t1QkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6t1Q0ALEeCIfOdOxMaTvA" points="[0, 0, -104, 7]$[37, 0, -67, 7]$[37, -7, -67, 0]$[104, -7, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65vkALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65v0ALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6ucUEALEeCIfOdOxMaTvA" type="4001" source="_t4yiqEALEeCIfOdOxMaTvA" target="_t4QXLkALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6ucVEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6ucVUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6ucUUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6ucUkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6ucU0ALEeCIfOdOxMaTvA" points="[0, 0, -60, -19]$[29, 0, -31, -19]$[29, 19, -31, 0]$[60, 19, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65rkALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65r0ALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6vDYEALEeCIfOdOxMaTvA" type="4001" source="_t5XxcEALEeCIfOdOxMaTvA" target="_t4K3lkALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6vqcEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6vqcUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6vDYUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6vDYkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6vDY0ALEeCIfOdOxMaTvA" points="[0, 0, -194, 0]$[194, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65pkALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65p0ALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6wRgEALEeCIfOdOxMaTvA" type="4001" source="_t4QXLkALEeCIfOdOxMaTvA" target="_t5XxdkALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6wRhEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6wRhUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6wRgUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6wRgkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6wRg0ALEeCIfOdOxMaTvA" points="[0, 0, -202, 64]$[31, 0, -171, 64]$[31, -64, -171, 0]$[202, -64, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65okALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65o0ALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6w4kEALEeCIfOdOxMaTvA" type="4001" source="_t4QXLkALEeCIfOdOxMaTvA" target="_t5efIEALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6w4lEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6w4lUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6w4kUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6w4kkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6w4k0ALEeCIfOdOxMaTvA" points="[0, 0, -87, -12]$[31, 0, -56, -12]$[31, 12, -56, 0]$[87, 12, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65oEALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65oUALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6xfoEALEeCIfOdOxMaTvA" type="4001" source="_t5efJkALEeCIfOdOxMaTvA" target="_t4ZhFkALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6xfpEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6yGsEALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6xfoUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6xfokALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6xfo0ALEeCIfOdOxMaTvA" points="[0, 0, 462, 4]$[9, 0, 471, 4]$[9, 30, 471, 34]$[-368, 30, 94, 34]$[-368, 23, 94, 27]$[-477, 23, -15, 27]$[-477, -4, -15, 0]$[-462, -4, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65ukALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug65u0ALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_t6ytwEALEeCIfOdOxMaTvA" type="4001" source="_t5j-sEALEeCIfOdOxMaTvA" target="_t4ZhEEALEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_t6ytxEALEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_t6ytxUALEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_t6ytwUALEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_t6ytwkALEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_Thermostat.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_t6ytw0ALEeCIfOdOxMaTvA" points="[0, 0, -98, 0]$[98, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug6SkEALEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_ug6SkUALEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+</notation:Diagram>

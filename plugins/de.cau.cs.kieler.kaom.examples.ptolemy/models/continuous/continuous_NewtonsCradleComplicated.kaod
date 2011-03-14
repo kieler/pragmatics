@@ -1,0 +1,1681 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:kaom="http://kieler.cs.cau.de/KAOM" xmlns:layoutoptions="http://kieler.cs.cau.de/LayoutOptions" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmi:id="_h3DoYEAGEeCIfOdOxMaTvA" type="Kaom" measurementUnit="Pixel">
+  <children xmi:type="notation:Node" xmi:id="_h4eksEAGEeCIfOdOxMaTvA" type="2001">
+    <children xmi:type="notation:DecorationNode" xmi:id="_h4ektEAGEeCIfOdOxMaTvA" type="5004">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_h4ektUAGEeCIfOdOxMaTvA" y="5"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_h4fLwEAGEeCIfOdOxMaTvA" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_h4gZ4EAGEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_h4gZ5EAGEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_h4gZ5UAGEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_h4hA8EAGEeCIfOdOxMaTvA" type="7002">
+          <children xmi:type="notation:Node" xmi:id="_h42_MEAGEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h43mQEAGEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h43mQUAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_h43mQkAGEeCIfOdOxMaTvA" type="7002">
+              <children xmi:type="notation:Node" xmi:id="_h5Hd4EAGEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_h5IE8EAGEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_h5IE8UAGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_h5IE8kAGEeCIfOdOxMaTvA" type="7002"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5Hd4UAGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_h5Hd4kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childEntities.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5Hd40AGEeCIfOdOxMaTvA" x="91" y="87"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_h5IE80AGEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_h5IE90AGEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_h5IE-EAGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_h5IE-UAGEeCIfOdOxMaTvA" type="7002"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5IE9EAGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_h5IE9UAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childEntities.1"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5IE9kAGEeCIfOdOxMaTvA" x="17" y="87"/>
+              </children>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h46CgEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h46ChEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h46ChUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h46CgUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h46CgkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h46Cg0AGEeCIfOdOxMaTvA" x="-9" y="41"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h46pkEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h46plEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h46plUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h46pkUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h46pkkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h46pk0AGEeCIfOdOxMaTvA" x="-9" y="88"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h46plkAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h46pmkAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h46pm0AGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h46pl0AGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h46pmEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.2"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h46pmUAGEeCIfOdOxMaTvA" x="-9" y="26"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h46pnEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h46poEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h46poUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h46pnUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h46pnkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.3"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h46pn0AGEeCIfOdOxMaTvA" x="-9" y="73"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h46pokAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h46ppkAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h46pp0AGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h46po0AGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h46ppEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.4"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h46ppUAGEeCIfOdOxMaTvA" x="-9" y="135"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h47QoEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h47QpEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h47QpUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h47QoUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h47QokAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.5"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h47Qo0AGEeCIfOdOxMaTvA" x="-9" y="119"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h47QpkAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h47QqkAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h47Qq0AGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h47Qp0AGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h47QqEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.6"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h47QqUAGEeCIfOdOxMaTvA" x="-9" y="10"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h47QrEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h47QsEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h47QsUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h47QrUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h47QrkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.7"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h47Qr0AGEeCIfOdOxMaTvA" x="-9" y="57"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h47QskAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h47QtkAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h47Qt0AGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h47Qs0AGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h47QtEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childPorts.8"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h47QtUAGEeCIfOdOxMaTvA" x="-9" y="104"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h42_MUAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h42_MkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <styles xmi:type="layoutoptions:LayoutOptionStyle" xmi:id="_kM2bEEAGEeCIfOdOxMaTvA">
+              <options xmi:type="layoutoptions:KOption" xmi:id="_kM2bEUAGEeCIfOdOxMaTvA" key="de.cau.cs.kieler.algorithm" value="de.cau.cs.kieler.graphviz.dot"/>
+              <options xmi:type="layoutoptions:KOption" xmi:id="_komi8EAGEeCIfOdOxMaTvA" key="de.cau.cs.kieler.borderSpacing" value="18.0"/>
+            </styles>
+            <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h42_M0AGEeCIfOdOxMaTvA" x="726" y="16" width="160" height="156"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_h43mQ0AGEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h43mR0AGEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h43mSEAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_h43mSUAGEeCIfOdOxMaTvA" type="7002">
+              <children xmi:type="notation:Node" xmi:id="_h5XVgEAGEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_h5XVhEAGEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_h5XVhUAGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_h5XVhkAGEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_h7NvoEAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h7NvpEAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h7NvpUAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h7NvoUAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h7NvokAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7Nvo0AGEeCIfOdOxMaTvA" x="-2" y="10"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h7NvpkAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h7NvqkAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h7Nvq0AGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h7Nvp0AGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h7NvqEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.1"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7NvqUAGEeCIfOdOxMaTvA" x="-2" y="25"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h7NvrEAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h7OWsEAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h7OWsUAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h7NvrUAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h7NvrkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.2"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7Nvr0AGEeCIfOdOxMaTvA" x="38" y="10"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h7OWskAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h7OWtkAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h7OWt0AGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h7OWs0AGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h7OWtEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.3"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7OWtUAGEeCIfOdOxMaTvA" x="38" y="25"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h7OWuEAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h7OWvEAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h7OWvUAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h7OWuUAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h7OWukAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.0/@childPorts.4"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h7OWu0AGEeCIfOdOxMaTvA" x="38" y="17"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5XVgUAGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_h5XVgkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5XVg0AGEeCIfOdOxMaTvA" x="58" y="15"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_h5XVh0AGEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_h5XVi0AGEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_h5XVjEAGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_h5XVjUAGEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_h8xO0EAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h8x14EAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h8x14UAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h8xO0UAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h8xO0kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h8xO00AGEeCIfOdOxMaTvA" x="-2" y="10"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h8x14kAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h8x15kAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h8x150AGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h8x140AGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h8x15EAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.1"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h8x15UAGEeCIfOdOxMaTvA" x="-2" y="25"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h8x16EAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h8x17EAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h8x17UAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h8x16UAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h8x16kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.2"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h8x160AGEeCIfOdOxMaTvA" x="38" y="10"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h8x17kAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h8x18kAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h8x180AGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h8x170AGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h8x18EAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.3"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h8x18UAGEeCIfOdOxMaTvA" x="38" y="25"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h8x19EAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h8yc8EAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h8yc8UAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h8x19UAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h8x19kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1/@childPorts.4"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h8x190AGEeCIfOdOxMaTvA" x="38" y="17"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5XViEAGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_h5XViUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.1"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5XVikAGEeCIfOdOxMaTvA" x="58" y="92"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_h5X8kEAGEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_h5X8lEAGEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_h5X8lUAGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_h5X8lkAGEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_h_H_QEAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h_ImUEAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h_ImUUAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h_H_QUAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h_H_QkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.2/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h_H_Q0AGEeCIfOdOxMaTvA" x="-2" y="10"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h_ImUkAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h_ImVkAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h_ImV0AGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h_ImU0AGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h_ImVEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.2/@childPorts.1"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h_ImVUAGEeCIfOdOxMaTvA" x="-2" y="25"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h_ImWEAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h_ImXEAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h_ImXUAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h_ImWUAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h_ImWkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.2/@childPorts.2"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h_ImW0AGEeCIfOdOxMaTvA" x="38" y="10"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h_ImXkAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h_ImYkAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h_ImY0AGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h_ImX0AGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h_ImYEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.2/@childPorts.3"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h_ImYUAGEeCIfOdOxMaTvA" x="38" y="25"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_h_ImZEAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_h_ImaEAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_h_JNYEAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_h_ImZUAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_h_ImZkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.2/@childPorts.4"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h_ImZ0AGEeCIfOdOxMaTvA" x="38" y="17"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5X8kUAGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_h5X8kkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.2"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5X8k0AGEeCIfOdOxMaTvA" x="58" y="239"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_h5X8l0AGEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_h5X8m0AGEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_h5X8nEAGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_h5X8nUAGEeCIfOdOxMaTvA" type="7002"/>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5X8mEAGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_h5X8mUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childEntities.3"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5X8mkAGEeCIfOdOxMaTvA" x="30" y="170"/>
+              </children>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h5LvUEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h5LvVEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h5LvVUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5LvUUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h5LvUkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5LvU0AGEeCIfOdOxMaTvA" x="252" y="86"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h5MWYEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h5MWZEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h5MWZUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5MWYUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h5MWYkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5MWY0AGEeCIfOdOxMaTvA" x="252" y="177"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h5MWZkAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h5MWakAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h5MWa0AGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5MWZ0AGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h5MWaEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.2"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5MWaUAGEeCIfOdOxMaTvA" x="252" y="55"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h5MWbEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h5MWcEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h5MWcUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5MWbUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h5MWbkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.3"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5MWb0AGEeCIfOdOxMaTvA" x="252" y="147"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h5MWckAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h5MWdkAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h5MWd0AGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5MWc0AGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h5MWdEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.4"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5MWdUAGEeCIfOdOxMaTvA" x="252" y="269"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h5MWeEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h5MWfEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h5M9cEAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5MWeUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h5MWekAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.5"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5MWe0AGEeCIfOdOxMaTvA" x="252" y="238"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h5M9cUAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h5M9dUAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h5M9dkAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5M9ckAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h5M9c0AGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.6"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5M9dEAGEeCIfOdOxMaTvA" x="252" y="25"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h5M9d0AGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h5M9e0AGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h5M9fEAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5M9eEAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h5M9eUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.7"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5M9ekAGEeCIfOdOxMaTvA" x="252" y="116"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_h5M9fUAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_h5M9gUAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_h5M9gkAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_h5M9fkAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_h5M9f0AGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childPorts.8"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h5M9gEAGEeCIfOdOxMaTvA" x="252" y="208"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h43mREAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h43mRUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h43mRkAGEeCIfOdOxMaTvA" x="15" y="58" width="253" height="331"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_h43mSkAGEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h43mTkAGEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h43mT0AGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h43mS0AGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h43mTEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childRelations.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h43mTUAGEeCIfOdOxMaTvA" x="442" y="110"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_h43mUEAGEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h43mVEAGEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h43mVUAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h43mUUAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h43mUkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childRelations.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h43mU0AGEeCIfOdOxMaTvA" x="442" y="252"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_h43mVkAGEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h43mWkAGEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h43mW0AGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h43mV0AGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h43mWEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childRelations.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h43mWUAGEeCIfOdOxMaTvA" x="442" y="62"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_h44NUEAGEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h44NVEAGEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h44NVUAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h44NUUAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h44NUkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childRelations.3"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h44NU0AGEeCIfOdOxMaTvA" x="442" y="205"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_h44NVkAGEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h44NWkAGEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h44NW0AGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h44NV0AGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h44NWEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childRelations.4"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h44NWUAGEeCIfOdOxMaTvA" x="442" y="395"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_h44NXEAGEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h44NYEAGEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h44NYUAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h44NXUAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h44NXkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childRelations.5"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h44NX0AGEeCIfOdOxMaTvA" x="442" y="347"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_h44NYkAGEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h44NZkAGEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h44NZ0AGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h44NY0AGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h44NZEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childRelations.6"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h44NZUAGEeCIfOdOxMaTvA" x="442" y="15"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_h44NaEAGEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h440YEAGEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h440YUAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h44NaUAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h44NakAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childRelations.7"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h44Na0AGEeCIfOdOxMaTvA" x="442" y="157"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_h440YkAGEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_h440ZkAGEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_h440Z0AGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_h440Y0AGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_h440ZEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childRelations.8"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h440ZUAGEeCIfOdOxMaTvA" x="442" y="300"/>
+          </children>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_h4jdMEAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h4jdNEAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_h4jdNUAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4jdMUAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_h4jdMkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4jdM0AGEeCIfOdOxMaTvA" x="951" y="25"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_h4jdNkAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h4jdOkAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_h4jdO0AGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4jdN0AGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_h4jdOEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4jdOUAGEeCIfOdOxMaTvA" x="951" y="55"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_h4jdPEAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h4kEQ0AGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_h4kEREAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4kEQEAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_h4kEQUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childPorts.2"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4kEQkAGEeCIfOdOxMaTvA" x="951" y="86"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_h4kERUAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h4kESUAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_h4kESkAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4kERkAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_h4kER0AGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childPorts.3"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4kESEAGEeCIfOdOxMaTvA" x="951" y="116"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_h4kES0AGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h4kET0AGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_h4kEUEAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4kETEAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_h4kETUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childPorts.4"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4kETkAGEeCIfOdOxMaTvA" x="951" y="147"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_h4kEUUAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h4kEVUAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_h4kEVkAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4kEUkAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_h4kEU0AGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childPorts.5"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4kEVEAGEeCIfOdOxMaTvA" x="951" y="177"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_h4kEV0AGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h4kEW0AGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_h4kEXEAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4kEWEAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_h4kEWUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childPorts.6"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4kEWkAGEeCIfOdOxMaTvA" x="951" y="208"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_h4krUEAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h4krVEAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_h4krVUAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4krUUAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_h4krUkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childPorts.7"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4krU0AGEeCIfOdOxMaTvA" x="951" y="238"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_h4krVkAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_h4krWkAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_h4krW0AGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4krV0AGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_h4krWEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childPorts.8"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4krWUAGEeCIfOdOxMaTvA" x="951" y="269"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4gZ4UAGEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_h4gZ4kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4gZ40AGEeCIfOdOxMaTvA" x="15" y="15" width="952" height="457"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_h4hA8UAGEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_h4hA9UAGEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_h4hA9kAGEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_h4hA90AGEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_iB4_YEAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_iB4_ZEAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_iB4_ZUAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_iB4_YUAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_iB4_YkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.1/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iB4_Y0AGEeCIfOdOxMaTvA" x="-6" y="16"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4hA8kAGEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_h4hA80AGEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.1"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4hA9EAGEeCIfOdOxMaTvA" x="1124" y="15"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_h4hA-EAGEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_h4hA_EAGEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_h4hA_UAGEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_h4hA_kAGEeCIfOdOxMaTvA" type="7002"/>
+        <children xmi:type="notation:Node" xmi:id="_iB9Q0EAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_iB9Q1EAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_iB9Q1UAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_iB9Q0UAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_iB9Q0kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.2/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iB9Q00AGEeCIfOdOxMaTvA" x="41" y="16"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4hA-UAGEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_h4hA-kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.2"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4hA-0AGEeCIfOdOxMaTvA" x="1096" y="95"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_h4hA_0AGEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_h4hoAEAGEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_h4hoAUAGEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_h4hoAkAGEeCIfOdOxMaTvA" type="7002" collapsed="true">
+          <children xmi:type="notation:Node" xmi:id="_iCElkEAGEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_iCEllEAGEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_iCEllUAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_iCEllkAGEeCIfOdOxMaTvA" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_iCWSYEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iCWSZEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iCWSZUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCWSYUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iCWSYkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.0/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCWSY0AGEeCIfOdOxMaTvA" x="-2" y="17"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCElkUAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_iCElkkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCElk0AGEeCIfOdOxMaTvA" x="588" y="423"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_iCFMoEAGEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_iCFMpEAGEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_iCFMpUAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_iCFMpkAGEeCIfOdOxMaTvA" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_iCsQoEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iCs3sEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iCs3sUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCsQoUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iCsQokAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.1/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCsQo0AGEeCIfOdOxMaTvA" x="-5" y="20"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCFMoUAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_iCFMokAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.1"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCFMo0AGEeCIfOdOxMaTvA" x="469" y="15"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_iCFMp0AGEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_iCFMq0AGEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_iCFMrEAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_iCFMrUAGEeCIfOdOxMaTvA" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_iC7hMEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iC8IQEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iC8IQUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iC7hMUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iC7hMkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.2/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iC7hM0AGEeCIfOdOxMaTvA" x="-5" y="1"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_iC8IQkAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iC8IRkAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iC8IR0AGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iC8IQ0AGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iC8IREAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.2/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iC8IRUAGEeCIfOdOxMaTvA" x="38" y="17"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCFMqEAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_iCFMqUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.2"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCFMqkAGEeCIfOdOxMaTvA" x="384" y="107"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_iCFMrkAGEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_iCFMskAGEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_iCFMs0AGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_iCFMtEAGEeCIfOdOxMaTvA" type="7002">
+              <children xmi:type="notation:Node" xmi:id="_iDF5QEAGEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_iDF5REAGEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_iDF5RUAGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_iDF5RkAGEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_iDQ4YEAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_iDQ4ZEAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_iDQ4ZUAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDQ4YUAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_iDQ4YkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childEntities.0/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDQ4Y0AGEeCIfOdOxMaTvA" x="-5" y="20"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_iDQ4ZkAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_iDRfcEAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_iDRfcUAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDQ4Z0AGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_iDQ4aEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childEntities.0/@childPorts.1"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDQ4aUAGEeCIfOdOxMaTvA" x="-5" y="20"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDF5QUAGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_iDF5QkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childEntities.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDF5Q0AGEeCIfOdOxMaTvA" x="183" y="107"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_iDGgUEAGEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_iDGgVEAGEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_iDGgVUAGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_iDGgVkAGEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_iDbQcEAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_iDbQdEAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_iDbQdUAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDbQcUAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_iDbQckAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childEntities.1/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDbQc0AGEeCIfOdOxMaTvA" x="-5" y="20"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDGgUUAGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_iDGgUkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childEntities.1"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDGgU0AGEeCIfOdOxMaTvA" x="194" y="15"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_iDGgV0AGEeCIfOdOxMaTvA" type="3002">
+                <children xmi:type="notation:DecorationNode" xmi:id="_iDGgW0AGEeCIfOdOxMaTvA" type="5003">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_iDGgXEAGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <children xmi:type="notation:BasicCompartment" xmi:id="_iDGgXUAGEeCIfOdOxMaTvA" type="7002"/>
+                <children xmi:type="notation:Node" xmi:id="_iDilMEAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_iDilNEAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_iDilNUAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDilMUAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_iDilMkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childEntities.2/@childPorts.0"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDilM0AGEeCIfOdOxMaTvA" x="-5" y="1"/>
+                </children>
+                <children xmi:type="notation:Node" xmi:id="_iDjMQEAGEeCIfOdOxMaTvA" type="3001">
+                  <children xmi:type="notation:DecorationNode" xmi:id="_iDjMREAGEeCIfOdOxMaTvA" type="5001">
+                    <layoutConstraint xmi:type="notation:Location" xmi:id="_iDjMRUAGEeCIfOdOxMaTvA" y="5"/>
+                  </children>
+                  <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDjMQUAGEeCIfOdOxMaTvA"/>
+                  <styles xmi:type="notation:FontStyle" xmi:id="_iDjMQkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                  <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childEntities.2/@childPorts.1"/>
+                  <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDjMQ0AGEeCIfOdOxMaTvA" x="38" y="17"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDGgWEAGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_iDGgWUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childEntities.2"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDGgWkAGEeCIfOdOxMaTvA" x="112" y="200"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_iDGgXkAGEeCIfOdOxMaTvA" type="3003">
+                <children xmi:type="notation:DecorationNode" xmi:id="_iDGgYkAGEeCIfOdOxMaTvA" type="5002">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_iDGgY0AGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDGgX0AGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_iDGgYEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childRelations.0"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDGgYUAGEeCIfOdOxMaTvA" x="317" y="111"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_iDGgZEAGEeCIfOdOxMaTvA" type="3003">
+                <children xmi:type="notation:DecorationNode" xmi:id="_iDGgaEAGEeCIfOdOxMaTvA" type="5002">
+                  <layoutConstraint xmi:type="notation:Location" xmi:id="_iDGgaUAGEeCIfOdOxMaTvA" y="5"/>
+                </children>
+                <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDGgZUAGEeCIfOdOxMaTvA"/>
+                <styles xmi:type="notation:FontStyle" xmi:id="_iDGgZkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+                <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childRelations.1"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDGgZ0AGEeCIfOdOxMaTvA" x="311" y="172"/>
+              </children>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_iDErIEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iDErJEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iDErJUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iDErIUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iDErIkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iDErI0AGEeCIfOdOxMaTvA" x="426" y="225"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCFMr0AGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_iCFMsEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCFMsUAGEeCIfOdOxMaTvA" x="40" y="277" width="427" height="307"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_iCFMtUAGEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_iCFMuUAGEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_iCFMukAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_iCFMu0AGEeCIfOdOxMaTvA" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_iD0SAEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iD0SBEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iD0SBUAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iD0SAUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iD0SAkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.4/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iD0SA0AGEeCIfOdOxMaTvA" x="38" y="17"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_iD0SBkAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iD0SCkAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iD0SC0AGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iD0SB0AGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iD0SCEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.4/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iD0SCUAGEeCIfOdOxMaTvA" x="-2" y="17"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCFMtkAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_iCFMt0AGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.4"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCFMuEAGEeCIfOdOxMaTvA" x="254" y="622"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_iCFzsEAGEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_iCFztEAGEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_iCFztUAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_iCFztkAGEeCIfOdOxMaTvA" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_iEHM8EAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iEHM9EAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iEHM9UAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iEHM8UAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iEHM8kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.5/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iEHM80AGEeCIfOdOxMaTvA" x="38" y="17"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_iEHM9kAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iEHM-kAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iEHM-0AGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iEHM90AGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iEHM-EAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.5/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iEHM-UAGEeCIfOdOxMaTvA" x="-2" y="17"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCFzsUAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_iCFzskAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.5"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCFzs0AGEeCIfOdOxMaTvA" x="254" y="200"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_iCFzt0AGEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_iCFzu0AGEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_iCFzvEAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_iCFzvUAGEeCIfOdOxMaTvA" type="7002"/>
+            <children xmi:type="notation:Node" xmi:id="_iFa0gEAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iFa0hEAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iFbbkEAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iFa0gUAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iFa0gkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.6/@childPorts.0"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iFa0g0AGEeCIfOdOxMaTvA" x="38" y="17"/>
+            </children>
+            <children xmi:type="notation:Node" xmi:id="_iFbbkUAGEeCIfOdOxMaTvA" type="3001">
+              <children xmi:type="notation:DecorationNode" xmi:id="_iFbblUAGEeCIfOdOxMaTvA" type="5001">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iFbblkAGEeCIfOdOxMaTvA" y="5"/>
+              </children>
+              <styles xmi:type="notation:DescriptionStyle" xmi:id="_iFbbkkAGEeCIfOdOxMaTvA"/>
+              <styles xmi:type="notation:FontStyle" xmi:id="_iFbbk0AGEeCIfOdOxMaTvA" fontName="Sans"/>
+              <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.6/@childPorts.1"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iFbblEAGEeCIfOdOxMaTvA" x="-2" y="17"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCFzuEAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_iCFzuUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.6"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCFzukAGEeCIfOdOxMaTvA" x="254" y="699"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_iCFzvkAGEeCIfOdOxMaTvA" type="3002">
+            <children xmi:type="notation:DecorationNode" xmi:id="_iCFzwkAGEeCIfOdOxMaTvA" type="5003">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_iCFzw0AGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <children xmi:type="notation:BasicCompartment" xmi:id="_iCFzxEAGEeCIfOdOxMaTvA" type="7002"/>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCFzv0AGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_iCFzwEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.7"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCFzwUAGEeCIfOdOxMaTvA" x="664" y="158"/>
+          </children>
+          <children xmi:type="notation:Node" xmi:id="_iCFzxUAGEeCIfOdOxMaTvA" type="3003">
+            <children xmi:type="notation:DecorationNode" xmi:id="_iCFzyUAGEeCIfOdOxMaTvA" type="5002">
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_iCFzykAGEeCIfOdOxMaTvA" y="5"/>
+            </children>
+            <styles xmi:type="notation:DescriptionStyle" xmi:id="_iCFzxkAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:FontStyle" xmi:id="_iCFzx0AGEeCIfOdOxMaTvA" fontName="Sans"/>
+            <element xmi:type="kaom:Relation" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childRelations.0"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iCFzyEAGEeCIfOdOxMaTvA" x="568" y="111"/>
+          </children>
+          <children xmi:type="notation:Shape" xmi:id="_i1F98EAGEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="This subsystem renders three balls on strings&#xA;with the angle at which they hang given by inputs." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+            <children xmi:type="notation:BasicDecorationNode" xmi:id="_i1F99EAGEeCIfOdOxMaTvA" type="DiagramName">
+              <element xsi:nil="true"/>
+            </children>
+            <children xmi:type="notation:BasicDecorationNode" xmi:id="_i1GlAEAGEeCIfOdOxMaTvA" type="Description">
+              <element xsi:nil="true"/>
+            </children>
+            <styles xmi:type="notation:TextStyle" xmi:id="_i1F98UAGEeCIfOdOxMaTvA"/>
+            <styles xmi:type="notation:LineTypeStyle" xmi:id="_i1F98kAGEeCIfOdOxMaTvA"/>
+            <element xsi:nil="true"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_i1F980AGEeCIfOdOxMaTvA" x="549" y="228"/>
+          </children>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_iB_tEEAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_iB_tFEAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_iB_tFUAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_iB_tEUAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_iB_tEkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childPorts.0"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iB_tE0AGEeCIfOdOxMaTvA" x="-9" y="7"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_iB_tFkAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_iB_tGkAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_iB_tG0AGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_iB_tF0AGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_iB_tGEAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childPorts.1"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iB_tGUAGEeCIfOdOxMaTvA" x="-9" y="20"/>
+        </children>
+        <children xmi:type="notation:Node" xmi:id="_iB_tHEAGEeCIfOdOxMaTvA" type="3001">
+          <children xmi:type="notation:DecorationNode" xmi:id="_iB_tIEAGEeCIfOdOxMaTvA" type="5001">
+            <layoutConstraint xmi:type="notation:Location" xmi:id="_iB_tIUAGEeCIfOdOxMaTvA" y="5"/>
+          </children>
+          <styles xmi:type="notation:DescriptionStyle" xmi:id="_iB_tHUAGEeCIfOdOxMaTvA"/>
+          <styles xmi:type="notation:FontStyle" xmi:id="_iB_tHkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+          <element xmi:type="kaom:Port" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childPorts.2"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iB_tH0AGEeCIfOdOxMaTvA" x="-9" y="32"/>
+        </children>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4hBAEAGEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_h4hBAUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4hBAkAGEeCIfOdOxMaTvA" x="1143" y="191" width="63" height="50"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_h4hoA0AGEeCIfOdOxMaTvA" type="3002">
+        <children xmi:type="notation:DecorationNode" xmi:id="_h4hoB0AGEeCIfOdOxMaTvA" type="5003">
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_h4hoCEAGEeCIfOdOxMaTvA" y="5"/>
+        </children>
+        <children xmi:type="notation:BasicCompartment" xmi:id="_h4hoCUAGEeCIfOdOxMaTvA" type="7002"/>
+        <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4hoBEAGEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:FontStyle" xmi:id="_h4hoBUAGEeCIfOdOxMaTvA" fontName="Sans"/>
+        <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.4"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4hoBkAGEeCIfOdOxMaTvA" x="1241" y="278"/>
+      </children>
+      <children xmi:type="notation:Shape" xmi:id="_iRFR8EAGEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="Author: Haiyang Zheng" fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_iRFR9EAGEeCIfOdOxMaTvA" type="DiagramName">
+          <element xsi:nil="true"/>
+        </children>
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_iRF5AEAGEeCIfOdOxMaTvA" type="Description">
+          <element xsi:nil="true"/>
+        </children>
+        <styles xmi:type="notation:TextStyle" xmi:id="_iRFR8UAGEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:LineTypeStyle" xmi:id="_iRFR8kAGEeCIfOdOxMaTvA"/>
+        <element xsi:nil="true"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iRFR80AGEeCIfOdOxMaTvA" x="1211" y="348"/>
+      </children>
+      <children xmi:type="notation:Shape" xmi:id="_irmqwEAGEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="This variant starts with a more &#xA;complicated initial condition." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_irmqxEAGEeCIfOdOxMaTvA" type="DiagramName">
+          <element xsi:nil="true"/>
+        </children>
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_irnR0EAGEeCIfOdOxMaTvA" type="Description">
+          <element xsi:nil="true"/>
+        </children>
+        <styles xmi:type="notation:TextStyle" xmi:id="_irmqwUAGEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:LineTypeStyle" xmi:id="_irmqwkAGEeCIfOdOxMaTvA"/>
+        <element xsi:nil="true"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_irmqw0AGEeCIfOdOxMaTvA" x="1188" y="424"/>
+      </children>
+      <children xmi:type="notation:Shape" xmi:id="_iviIgEAGEeCIfOdOxMaTvA" type="Note" fontName="Sans" description="This is a modified version of the Newton's cradle demo that&#xA;shows a more complicated dynamic behavior. The key change &#xA;is the initial states of balls. In this demo, both ball #1 and &#xA;ball #2 are moved away from their equilibrium positions &#xA;but start at different angles of PI/8 and PI/16.&#xA;&#xA;Because the period of a pendulum depends on not only its &#xA;sizes but also the initial angle, ball #1 and #2 do not reach &#xA;their equilibrium positions at the same time. Therefore, &#xA;the collisions between ball #1 and #2 and between ball #2 &#xA;and #3 do not happen at the exactly same time. This makes &#xA;the model's dynamics complicated.&#xA;&#xA;In particular, because ball #2 has a smaller initial angle than&#xA;that of ball #1, its period is smaller. Therefore, ball #2 first &#xA;collides with ball #3, then with ball #1, and then with ball #3 &#xA;again. All these collisions happen at different times. Zoom in &#xA;the velocities plot for a better understanding of this." fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_iviIhEAGEeCIfOdOxMaTvA" type="DiagramName">
+          <element xsi:nil="true"/>
+        </children>
+        <children xmi:type="notation:BasicDecorationNode" xmi:id="_iviIhUAGEeCIfOdOxMaTvA" type="Description">
+          <element xsi:nil="true"/>
+        </children>
+        <styles xmi:type="notation:TextStyle" xmi:id="_iviIgUAGEeCIfOdOxMaTvA"/>
+        <styles xmi:type="notation:LineTypeStyle" xmi:id="_iviIgkAGEeCIfOdOxMaTvA"/>
+        <element xsi:nil="true"/>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iviIg0AGEeCIfOdOxMaTvA" x="1092" y="501"/>
+      </children>
+    </children>
+    <styles xmi:type="notation:DescriptionStyle" xmi:id="_h4eksUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_h4ekskAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_h4eks0AGEeCIfOdOxMaTvA" x="15" y="15" width="1528" height="818"/>
+  </children>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_h3DoYUAGEeCIfOdOxMaTvA"/>
+  <element xmi:type="kaom:Entity" href="continuous_NewtonsCradleComplicated.kaom#/"/>
+  <edges xmi:type="notation:Edge" xmi:id="_iM4HYEAGEeCIfOdOxMaTvA" type="4001" source="_h4jdMEAGEeCIfOdOxMaTvA" target="_iB4_YEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iM4HZEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iM4HZUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iM4HYUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iM4HYkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iM4HY0AGEeCIfOdOxMaTvA" points="[0, 0, -142, 9]$[71, 0, -71, 9]$[71, -9, -71, 0]$[142, -9, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1eEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1eUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iM5VgEAGEeCIfOdOxMaTvA" type="4001" source="_h4jdNkAGEeCIfOdOxMaTvA" target="_iB4_YEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iM5VhEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iM58kEAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iM5VgUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iM5VgkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iM5Vg0AGEeCIfOdOxMaTvA" points="[0, 0, -142, 39]$[71, 0, -71, 39]$[71, -39, -71, 0]$[142, -39, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDqUAGEeCIfOdOxMaTvA" id="(1.0,0.5000003814697266)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDqkAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iM6joEAGEeCIfOdOxMaTvA" type="4001" source="_h4jdPEAGEeCIfOdOxMaTvA" target="_iB9Q0EAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iM6jpEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iM6jpUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iM6joUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iM6jokAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iM6jo0AGEeCIfOdOxMaTvA" points="[0, 0, -171, -10]$[86, 0, -85, -10]$[86, 47, -85, 37]$[186, 47, 15, 37]$[186, 10, 15, 0]$[171, 10, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcnEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcnUAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iM7KsEAGEeCIfOdOxMaTvA" type="4001" source="_h4kERUAGEeCIfOdOxMaTvA" target="_iB9Q0EAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iM7xwEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iM7xwUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iM7KsUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iM7KskAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iM7Ks0AGEeCIfOdOxMaTvA" points="[0, 0, -171, 20]$[86, 0, -85, 20]$[86, 17, -85, 37]$[186, 17, 15, 37]$[186, -20, 15, 0]$[171, -20, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcjEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcjUAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iM8Y0EAGEeCIfOdOxMaTvA" type="4001" source="_h4kES0AGEeCIfOdOxMaTvA" target="_iB4_YEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iM8Y1EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iM8Y1UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iM8Y0UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iM8Y0kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iM8Y00AGEeCIfOdOxMaTvA" points="[0, 0, -142, 131]$[71, 0, -71, 131]$[71, -131, -71, 0]$[142, -131, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WclkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Wcl0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iM9m8EAGEeCIfOdOxMaTvA" type="4001" source="_h4kEUUAGEeCIfOdOxMaTvA" target="_iB9Q0EAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iM9m9EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iM9m9UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iM9m8UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iM9m8kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iM9m80AGEeCIfOdOxMaTvA" points="[0, 0, -171, 81]$[86, 0, -85, 81]$[86, -44, -85, 37]$[186, -44, 15, 37]$[186, -81, 15, 0]$[171, -81, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WckEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WckUAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iM-OAEAGEeCIfOdOxMaTvA" type="4001" source="_h4kEV0AGEeCIfOdOxMaTvA" target="_iB_tEEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iM-OBEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iM-OBUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iM-OAUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iM-OAkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childLinks.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iM-OA0AGEeCIfOdOxMaTvA" points="[0, 0, -158, 25]$[71, 0, -87, 25]$[71, -25, -87, 0]$[158, -25, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDmUAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDmkAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iM_cIEAGEeCIfOdOxMaTvA" type="4001" source="_h4krUEAGEeCIfOdOxMaTvA" target="_iB_tFkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iM_cJEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iM_cJUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iM_cIUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iM_cIkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childLinks.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iM_cI0AGEeCIfOdOxMaTvA" points="[0, 0, -158, 42]$[86, 0, -72, 42]$[86, -42, -72, 0]$[158, -42, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1cEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1cUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNADMEAGEeCIfOdOxMaTvA" type="4001" source="_h4krVkAGEeCIfOdOxMaTvA" target="_iB_tHEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNADNEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNADNUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNADMUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNADMkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childLinks.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNADM0AGEeCIfOdOxMaTvA" points="[0, 0, -158, 61]$[101, 0, -57, 61]$[101, -61, -57, 0]$[158, -61, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WckkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Wck0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNBRUEAGEeCIfOdOxMaTvA" type="4001" source="_h43mSkAGEeCIfOdOxMaTvA" target="_h4jdMEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNBRVEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNBRVUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNBRUUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNBRUkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNBRU0AGEeCIfOdOxMaTvA" points="[0, 0, -489, 95]$[110, 0, -379, 95]$[110, 95, -379, 190]$[440, 95, -49, 190]$[440, -95, -49, 0]$[489, -95, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDp0AGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDqEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNB4YEAGEeCIfOdOxMaTvA" type="4001" source="_h43mUEAGEeCIfOdOxMaTvA" target="_h4jdNkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNB4ZEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNB4ZUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNB4YUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNB4YkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNB4Y0AGEeCIfOdOxMaTvA" points="[0, 0, -489, 207]$[140, 0, -349, 207]$[140, -47, -349, 160]$[440, -47, -49, 160]$[440, -207, -49, 0]$[489, -207, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WclEAGEeCIfOdOxMaTvA" id="(1.0,0.49999847412109377)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WclUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNDGgEAGEeCIfOdOxMaTvA" type="4001" source="_h43mVkAGEeCIfOdOxMaTvA" target="_h4jdPEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNDGhEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNDGhUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNDGgUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNDGgkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNDGg0AGEeCIfOdOxMaTvA" points="[0, 0, -489, -14]$[95, 0, -394, -14]$[95, 143, -394, 129]$[440, 143, -49, 129]$[440, 14, -49, 0]$[489, 14, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcgkAGEeCIfOdOxMaTvA" id="(1.0,0.5000003814697266)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Wcg0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNDtkEAGEeCIfOdOxMaTvA" type="4001" source="_h44NUEAGEeCIfOdOxMaTvA" target="_h4kERUAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNDtlEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNDtlUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNDtkUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNDtkkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNDtk0AGEeCIfOdOxMaTvA" points="[0, 0, -489, 99]$[65, 0, -424, 99]$[65, 0, -424, 99]$[440, 0, -49, 99]$[440, -99, -49, 0]$[489, -99, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1fkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1f0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNE7sEAGEeCIfOdOxMaTvA" type="4001" source="_h44NVkAGEeCIfOdOxMaTvA" target="_h4kES0AGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNE7tEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNE7tUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNE7sUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNE7skAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNE7s0AGEeCIfOdOxMaTvA" points="[0, 0, -489, 258]$[185, 0, -304, 258]$[185, -190, -304, 68]$[440, -190, -49, 68]$[440, -258, -49, 0]$[489, -258, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1gkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1g0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNFiwEAGEeCIfOdOxMaTvA" type="4001" source="_h44NXEAGEeCIfOdOxMaTvA" target="_h4kEUUAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNFixEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNFixUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNFiwUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNFiwkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNFiw0AGEeCIfOdOxMaTvA" points="[0, 0, -489, 180]$[170, 0, -319, 180]$[170, -142, -319, 38]$[440, -142, -49, 38]$[440, -180, -49, 0]$[489, -180, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1ckAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1c0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNGw4EAGEeCIfOdOxMaTvA" type="4001" source="_h44NYkAGEeCIfOdOxMaTvA" target="_h4kEV0AGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNGw5EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNGw5UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNGw4UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNGw4kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNGw40AGEeCIfOdOxMaTvA" points="[0, 0, -489, -183]$[80, 0, -409, -183]$[80, 190, -409, 7]$[440, 190, -49, 7]$[440, 183, -49, 0]$[489, 183, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1hEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1hUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNHX8EAGEeCIfOdOxMaTvA" type="4001" source="_h44NaEAGEeCIfOdOxMaTvA" target="_h4krUEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNHX9EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNHX9UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNHX8UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNHX8kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNHX80AGEeCIfOdOxMaTvA" points="[0, 0, -489, -71]$[125, 0, -364, -71]$[125, 48, -364, -23]$[440, 48, -49, -23]$[440, 71, -49, 0]$[489, 71, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDsUAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDskAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNH_AEAGEeCIfOdOxMaTvA" type="4001" source="_h440YkAGEeCIfOdOxMaTvA" target="_h4krVkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNImEEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNImEUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNH_AUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNH_AkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNH_A0AGEeCIfOdOxMaTvA" points="[0, 0, -489, 41]$[155, 0, -334, 41]$[155, -95, -334, -54]$[440, -95, -49, -54]$[440, -41, -49, 0]$[489, -41, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDm0AGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDnEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNJNIEAGEeCIfOdOxMaTvA" type="4001" source="_h43mSkAGEeCIfOdOxMaTvA" target="_h46CgEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNJNJEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNJNJUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNJNIUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNJNIkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.9"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNJNI0AGEeCIfOdOxMaTvA" points="[0, 0, -265, 52]$[110, 0, -155, 52]$[110, -52, -155, 0]$[265, -52, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDs0AGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDtEAGEeCIfOdOxMaTvA" id="(0.0,0.5000001907348632)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNJ0MEAGEeCIfOdOxMaTvA" type="4001" source="_h43mUEAGEeCIfOdOxMaTvA" target="_h46pkEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNJ0NEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNJ0NUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNJ0MUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNJ0MkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.10"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNJ0M0AGEeCIfOdOxMaTvA" points="[0, 0, -265, 147]$[140, 0, -125, 147]$[140, -147, -125, 0]$[265, -147, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDoUAGEeCIfOdOxMaTvA" id="(1.0,0.49999847412109377)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDokAGEeCIfOdOxMaTvA" id="(0.0,0.5000001907348632)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNLCUEAGEeCIfOdOxMaTvA" type="4001" source="_h43mVkAGEeCIfOdOxMaTvA" target="_h46plkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNLCVEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNLCVUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNLCUUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNLCUkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.11"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNLCU0AGEeCIfOdOxMaTvA" points="[0, 0, -265, 20]$[95, 0, -170, 20]$[95, -20, -170, 0]$[265, -20, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDnUAGEeCIfOdOxMaTvA" id="(1.0,0.5000003814697266)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDnkAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNLpYEAGEeCIfOdOxMaTvA" type="4001" source="_h44NUEAGEeCIfOdOxMaTvA" target="_h46pnEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNLpZEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNLpZUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNLpYUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNLpYkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.12"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNLpY0AGEeCIfOdOxMaTvA" points="[0, 0, -265, 116]$[65, 0, -200, 116]$[65, -116, -200, 0]$[265, -116, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqrkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Xqr0AGEeCIfOdOxMaTvA" id="(0.0,0.5000001907348632)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNM3gEAGEeCIfOdOxMaTvA" type="4001" source="_h44NVkAGEeCIfOdOxMaTvA" target="_h46pokAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNM3hEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNM3hUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNM3gUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNM3gkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.13"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNM3g0AGEeCIfOdOxMaTvA" points="[0, 0, -265, 243]$[185, 0, -80, 243]$[185, -243, -80, 0]$[265, -243, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1dkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1d0AGEeCIfOdOxMaTvA" id="(0.0,0.5000001907348632)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNNekEAGEeCIfOdOxMaTvA" type="4001" source="_h44NXEAGEeCIfOdOxMaTvA" target="_h47QoEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNNelEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNNelUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNNekUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNNekkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.14"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNNek0AGEeCIfOdOxMaTvA" points="[0, 0, -265, 211]$[170, 0, -95, 211]$[170, -211, -95, 0]$[265, -211, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDr0AGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDsEAGEeCIfOdOxMaTvA" id="(0.0,0.4999994277954102)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNOssEAGEeCIfOdOxMaTvA" type="4001" source="_h44NYkAGEeCIfOdOxMaTvA" target="_h47QpkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNOstEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNOstUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNOssUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNOsskAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.15"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNOss0AGEeCIfOdOxMaTvA" points="[0, 0, -265, -12]$[80, 0, -185, -12]$[80, 12, -185, 0]$[265, 12, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqqEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqqUAGEeCIfOdOxMaTvA" id="(0.0,0.4999998092651367)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNPTwEAGEeCIfOdOxMaTvA" type="4001" source="_h44NaEAGEeCIfOdOxMaTvA" target="_h47QrEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNPTxEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNPTxUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNPTwUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNPTwkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.16"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNPTw0AGEeCIfOdOxMaTvA" points="[0, 0, -265, 83]$[125, 0, -140, 83]$[125, -83, -140, 0]$[265, -83, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcpEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcpUAGEeCIfOdOxMaTvA" id="(0.0,0.5000001907348632)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNQh4EAGEeCIfOdOxMaTvA" type="4001" source="_h440YkAGEeCIfOdOxMaTvA" target="_h47QskAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNQh5EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNQh5UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNQh4UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNQh4kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.17"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNQh40AGEeCIfOdOxMaTvA" points="[0, 0, -265, 180]$[155, 0, -110, 180]$[155, -180, -110, 0]$[265, -180, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1hkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1h0AGEeCIfOdOxMaTvA" id="(0.0,0.5000001907348632)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNRI8EAGEeCIfOdOxMaTvA" type="4001" source="_h5LvUEAGEeCIfOdOxMaTvA" target="_h43mSkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNRI9EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNRI9UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNRI8UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNRI8kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.18"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNRI80AGEeCIfOdOxMaTvA" points="[0, 0, -165, 34]$[101, 0, -64, 34]$[101, -34, -64, 0]$[165, -34, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1gEAGEeCIfOdOxMaTvA" id="(1.0,0.5000007629394532)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1gUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNSXEEAGEeCIfOdOxMaTvA" type="4001" source="_h5MWYEAGEeCIfOdOxMaTvA" target="_h43mUEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNSXFEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNSXFUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNSXEUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNSXEkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.19"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNSXE0AGEeCIfOdOxMaTvA" points="[0, 0, -165, -17]$[71, 0, -94, -17]$[71, 17, -94, 0]$[165, 17, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1jEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1jUAGEeCIfOdOxMaTvA" id="(0.0,0.49999847412109377)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNS-IEAGEeCIfOdOxMaTvA" type="4001" source="_h5MWZkAGEeCIfOdOxMaTvA" target="_h43mVkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNS-JEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNS-JUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNS-IUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNS-IkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.20"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNS-I0AGEeCIfOdOxMaTvA" points="[0, 0, -165, 51]$[86, 0, -79, 51]$[86, -51, -79, 0]$[165, -51, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDlUAGEeCIfOdOxMaTvA" id="(1.0,0.5000003814697266)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDlkAGEeCIfOdOxMaTvA" id="(0.0,0.5000003814697266)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNUMQEAGEeCIfOdOxMaTvA" type="4001" source="_h5MWbEAGEeCIfOdOxMaTvA" target="_h44NUEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNUMREAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNUMRUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNUMQUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNUMQkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.21"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNUMQ0AGEeCIfOdOxMaTvA" points="[0, 0, -165, 0]$[71, 0, -94, 0]$[71, 0, -94, 0]$[165, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1dEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1dUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNUzUEAGEeCIfOdOxMaTvA" type="4001" source="_h5MWckAGEeCIfOdOxMaTvA" target="_h44NVkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNUzVEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNUzVUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNUzUUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNUzUkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.22"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNUzU0AGEeCIfOdOxMaTvA" points="[0, 0, -165, -68]$[71, 0, -94, -68]$[71, 68, -94, 0]$[165, 68, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcmkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Wcm0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNVaYEAGEeCIfOdOxMaTvA" type="4001" source="_h5MWeEAGEeCIfOdOxMaTvA" target="_h44NXEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNWBcEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNWBcUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNVaYUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNVaYkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.23"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNVaY0AGEeCIfOdOxMaTvA" points="[0, 0, -165, -51]$[86, 0, -79, -51]$[86, 51, -79, 0]$[165, 51, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDo0AGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDpEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNWogEAGEeCIfOdOxMaTvA" type="4001" source="_h5M9cUAGEeCIfOdOxMaTvA" target="_h44NYkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNWohEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNWohUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNWogUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNWogkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.24"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNWog0AGEeCIfOdOxMaTvA" points="[0, 0, -165, 68]$[71, 0, -94, 68]$[71, -68, -94, 0]$[165, -68, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WchkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Wch0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNXPkEAGEeCIfOdOxMaTvA" type="4001" source="_h5M9d0AGEeCIfOdOxMaTvA" target="_h44NaEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNXPlEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNXPlUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNXPkUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNXPkkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.25"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNXPk0AGEeCIfOdOxMaTvA" points="[0, 0, -165, 17]$[71, 0, -94, 17]$[71, -17, -94, 0]$[165, -17, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WchEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WchUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNYdsEAGEeCIfOdOxMaTvA" type="4001" source="_h5M9fUAGEeCIfOdOxMaTvA" target="_h440YkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNYdtEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNYdtUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNYdsUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNYdskAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childLinks.26"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNYds0AGEeCIfOdOxMaTvA" points="[0, 0, -165, -34]$[101, 0, -64, -34]$[101, 34, -64, 0]$[165, 34, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcqEAGEeCIfOdOxMaTvA" id="(1.0,0.49999847412109377)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcqUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNZEwEAGEeCIfOdOxMaTvA" type="4001" source="_h5Hd4EAGEeCIfOdOxMaTvA" target="_h5Hd4EAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNZExEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNZExUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNZEwUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNZEwkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNZEw0AGEeCIfOdOxMaTvA" points="[0, 0, -6, 0]$[0, -9, -6, -9]$[0, -18, -6, -18]$[3, -18, -3, -18]$[5, -18, -1, -18]$[6, -9, 0, -9]$[6, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WciEAGEeCIfOdOxMaTvA" id="(0.40400009155273436,0.004000091552734375)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WciUAGEeCIfOdOxMaTvA" id="(0.6040000915527344,0.004000091552734375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNaS4EAGEeCIfOdOxMaTvA" type="4001" source="_h5Hd4EAGEeCIfOdOxMaTvA" target="_h5Hd4EAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNaS5EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNaS5UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNaS4UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNaS4kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNaS40AGEeCIfOdOxMaTvA" points="[0, 0, -18, 0]$[-6, -17, -24, -17]$[-3, -36, -21, -36]$[9, -36, -9, -36]$[21, -36, 3, -36]$[24, -17, 6, -17]$[18, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqqkAGEeCIfOdOxMaTvA" id="(0.20400009155273438,0.004000091552734375)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Xqq0AGEeCIfOdOxMaTvA" id="(0.8040000915527343,0.004000091552734375)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNa58EAGEeCIfOdOxMaTvA" type="4001" source="_h5IE80AGEeCIfOdOxMaTvA" target="_h5Hd4EAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNa59EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNa59UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNa58UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNa58kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.0/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNa580AGEeCIfOdOxMaTvA" points="[0, 0, -44, 0]$[13, 0, -31, 0]$[31, 0, -13, 0]$[44, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDrUAGEeCIfOdOxMaTvA" id="(1.0039999643961588,0.5040000915527344)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDrkAGEeCIfOdOxMaTvA" id="(0.004000091552734375,0.5040000915527344)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNcIEEAGEeCIfOdOxMaTvA" type="4001" source="_h7NvrEAGEeCIfOdOxMaTvA" target="_h5LvUEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNcIFEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNcIFUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNcIEUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNcIEkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNcIE0AGEeCIfOdOxMaTvA" points="[0, 0, -140, -53]$[61, 0, -79, -53]$[61, 53, -79, 0]$[140, 53, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDl0AGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDmEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNcvIEAGEeCIfOdOxMaTvA" type="4001" source="_h7OWskAGEeCIfOdOxMaTvA" target="_h5M9cUAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNcvJEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNcvJUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNcvIUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNcvIkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNcvI0AGEeCIfOdOxMaTvA" points="[0, 0, -130, 33]$[91, 0, -39, 33]$[91, -23, -39, 10]$[130, -33, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDn0AGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDoEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNdWMEAGEeCIfOdOxMaTvA" type="4001" source="_h7OWuEAGEeCIfOdOxMaTvA" target="_h5MWZkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNd9QEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNd9QUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNdWMUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNdWMkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNdWM0AGEeCIfOdOxMaTvA" points="[0, 0, -140, -15]$[76, 0, -64, -15]$[76, 15, -64, 0]$[140, 15, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1ekAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1e0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNekUEAGEeCIfOdOxMaTvA" type="4001" source="_h8x16EAGEeCIfOdOxMaTvA" target="_h5MWYEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNekVEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNekVUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNekUUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNekUkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNekU0AGEeCIfOdOxMaTvA" points="[0, 0, -140, -67]$[61, 0, -79, -67]$[61, 67, -79, 0]$[140, 67, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcokAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Wco0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNfLYEAGEeCIfOdOxMaTvA" type="4001" source="_h8x17kAGEeCIfOdOxMaTvA" target="_h5M9d0AGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNfycEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNfycUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNfLYUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNfLYkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNfLY0AGEeCIfOdOxMaTvA" points="[0, 0, -140, 9]$[91, 0, -49, 9]$[91, -9, -49, 0]$[140, -9, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcnkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Wcn0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNgZgEAGEeCIfOdOxMaTvA" type="4001" source="_h8x19EAGEeCIfOdOxMaTvA" target="_h5MWbEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNgZhEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNgZhUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNgZgUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNgZgkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNgZg0AGEeCIfOdOxMaTvA" points="[0, 0, -140, -30]$[76, 0, -64, -30]$[76, 30, -64, 0]$[140, 30, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqrEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqrUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNhAkEAGEeCIfOdOxMaTvA" type="4001" source="_h_ImWEAGEeCIfOdOxMaTvA" target="_h5MWckAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNhnoEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNhnoUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNhAkUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNhAkkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNhAk0AGEeCIfOdOxMaTvA" points="[0, 0, -140, -12]$[91, 0, -49, -12]$[91, 12, -49, 0]$[140, 12, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqpEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqpUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNiOsEAGEeCIfOdOxMaTvA" type="4001" source="_h_ImXkAGEeCIfOdOxMaTvA" target="_h5M9fUAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNiOtEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNiOtUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNiOsUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNiOskAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNiOs0AGEeCIfOdOxMaTvA" points="[0, 0, -140, 64]$[76, 0, -64, 64]$[76, -64, -64, 0]$[140, -64, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDk0AGEeCIfOdOxMaTvA" id="(1.0,0.5000025431315104)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDlEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNi1wEAGEeCIfOdOxMaTvA" type="4001" source="_h_ImZEAGEeCIfOdOxMaTvA" target="_h5MWeEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNi1xEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNjc0EAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNi1wUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNi1wkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.0/@childEntities.1/@childLinks.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNi1w0AGEeCIfOdOxMaTvA" points="[0, 0, -140, 26]$[61, 0, -79, 26]$[61, -26, -79, 0]$[140, -26, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDq0AGEeCIfOdOxMaTvA" id="(1.0,0.5000025431315104)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDrEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNkD4EAGEeCIfOdOxMaTvA" type="4001" source="_iB_tEEAGEeCIfOdOxMaTvA" target="_iEHM9kAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNkD5EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNkD5UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNkD4UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNkD4kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNkD40AGEeCIfOdOxMaTvA" points="[0, 0, -261, 0]$[261, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDpUAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDpkAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNkq8EAGEeCIfOdOxMaTvA" type="4001" source="_iB_tFkAGEeCIfOdOxMaTvA" target="_iD0SBkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNkq9EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNkq9UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNkq8UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNkq8kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNkq80AGEeCIfOdOxMaTvA" points="[0, 0, -261, 0]$[261, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcjkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Wcj0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNl5EEAGEeCIfOdOxMaTvA" type="4001" source="_iB_tHEAGEeCIfOdOxMaTvA" target="_iFbbkUAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNl5FEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNl5FUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNl5EUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNl5EkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNl5E0AGEeCIfOdOxMaTvA" points="[0, 0, -261, 0]$[261, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1jkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1j0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNmgIEAGEeCIfOdOxMaTvA" type="4001" source="_iCsQoEAGEeCIfOdOxMaTvA" target="_iCFzxUAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNmgJEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNmgJUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNmgIUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNmgIkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNmgI0AGEeCIfOdOxMaTvA" points="[0, 0, -104, -78]$[-15, 0, -119, -78]$[-15, 32, -119, -46]$[55, 32, -49, -46]$[55, 78, -49, 0]$[104, 78, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcgEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcgUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNnuQEAGEeCIfOdOxMaTvA" type="4001" source="_iC7hMEAGEeCIfOdOxMaTvA" target="_iCFzxUAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNnuREAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNnuRUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNnuQUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNnuQkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNnuQ0AGEeCIfOdOxMaTvA" points="[0, 0, -189, -5]$[-15, 0, -204, -5]$[-15, 51, -204, 46]$[140, 51, -49, 46]$[140, 5, -49, 0]$[189, 5, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDkUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDkkAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNoVUEAGEeCIfOdOxMaTvA" type="4001" source="_iC8IQkAGEeCIfOdOxMaTvA" target="_iCWSYEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNoVVEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNoVVUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNoVUUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNoVUkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childLinks.5"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNoVU0AGEeCIfOdOxMaTvA" points="[0, 0, -158, -316]$[106, 0, -52, -316]$[106, 316, -52, 0]$[158, 316, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcmEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcmUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNpjcEAGEeCIfOdOxMaTvA" type="4001" source="_iDErIEAGEeCIfOdOxMaTvA" target="_iCWSYEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNpjdEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNpjdUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNpjcUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNpjckAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childLinks.6"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNpjc0AGEeCIfOdOxMaTvA" points="[0, 0, -110, 64]$[58, 0, -52, 64]$[58, -64, -52, 0]$[110, -64, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1iEAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1iUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNqKgEAGEeCIfOdOxMaTvA" type="4001" source="_iD0SAEAGEeCIfOdOxMaTvA" target="_iCWSYEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNqKhEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNqKhUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNqKgUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNqKgkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childLinks.7"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNqKg0AGEeCIfOdOxMaTvA" points="[0, 0, -288, 199]$[236, 0, -52, 199]$[236, -199, -52, 0]$[288, -199, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcpkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Wcp0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNrYoEAGEeCIfOdOxMaTvA" type="4001" source="_iEHM8EAGEeCIfOdOxMaTvA" target="_iCWSYEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNrYpEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNrYpUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNrYoUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNrYokAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childLinks.8"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNrYo0AGEeCIfOdOxMaTvA" points="[0, 0, -288, -223]$[236, 0, -52, -223]$[236, 223, -52, 0]$[288, 223, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcqkAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XDkEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNr_sEAGEeCIfOdOxMaTvA" type="4001" source="_iFa0gEAGEeCIfOdOxMaTvA" target="_iCWSYEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNr_tEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNr_tUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNr_sUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNr_skAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childLinks.9"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNr_s0AGEeCIfOdOxMaTvA" points="[0, 0, -288, 276]$[236, 0, -52, 276]$[236, -276, -52, 0]$[288, -276, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1ikAGEeCIfOdOxMaTvA" id="(1.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1i0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNtN0EAGEeCIfOdOxMaTvA" type="4001" source="_iDQ4YEAGEeCIfOdOxMaTvA" target="_iDGgXkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNtN1EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNtN1UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNtN0UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNtN0kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childLinks.0"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNtN00AGEeCIfOdOxMaTvA" points="[0, 0, -139, 14]$[-15, 0, -154, 14]$[-15, 32, -154, 46]$[69, 32, -70, 46]$[69, -14, -70, 0]$[139, -14, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcoEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8WcoUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNt04EAGEeCIfOdOxMaTvA" type="4001" source="_iDQ4ZkAGEeCIfOdOxMaTvA" target="_iDGgZEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNt05EAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNt05UAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNt04UAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNt04kAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childLinks.1"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNt040AGEeCIfOdOxMaTvA" points="[0, 0, -133, -47]$[-15, 0, -148, -47]$[-15, 32, -148, -15]$[84, 32, -49, -15]$[84, 47, -49, 0]$[133, 47, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1fEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8V1fUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNvDAEAGEeCIfOdOxMaTvA" type="4001" source="_iDbQcEAGEeCIfOdOxMaTvA" target="_iDGgXkAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNvDBEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNvDBUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNvDAUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNvDAkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childLinks.2"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNvDA0AGEeCIfOdOxMaTvA" points="[0, 0, -128, -78]$[-15, 0, -143, -78]$[-15, 32, -143, -46]$[58, 32, -70, -46]$[58, 78, -70, 0]$[128, 78, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqpkAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Xqp0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNvqEEAGEeCIfOdOxMaTvA" type="4001" source="_iDilMEAGEeCIfOdOxMaTvA" target="_iDGgZEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNvqFEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNvqFUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNvqEUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNvqEkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childLinks.3"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNvqE0AGEeCIfOdOxMaTvA" points="[0, 0, -204, 27]$[-15, 0, -219, 27]$[-15, 51, -219, 78]$[155, 51, -49, 78]$[155, -27, -49, 0]$[204, -27, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqokAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8Xqo0AGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+  <edges xmi:type="notation:Edge" xmi:id="_iNw4MEAGEeCIfOdOxMaTvA" type="4001" source="_iDjMQEAGEeCIfOdOxMaTvA" target="_iDErIEAGEeCIfOdOxMaTvA">
+    <children xmi:type="notation:DecorationNode" xmi:id="_iNw4NEAGEeCIfOdOxMaTvA" type="6001">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_iNw4NUAGEeCIfOdOxMaTvA"/>
+    </children>
+    <styles xmi:type="notation:RoutingStyle" xmi:id="_iNw4MUAGEeCIfOdOxMaTvA"/>
+    <styles xmi:type="notation:FontStyle" xmi:id="_iNw4MkAGEeCIfOdOxMaTvA" fontName="Sans"/>
+    <element xmi:type="kaom:Link" href="continuous_NewtonsCradleComplicated.kaom#//@childEntities.0/@childEntities.3/@childEntities.3/@childLinks.4"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_iNw4M0AGEeCIfOdOxMaTvA" points="[0, 0, -266, 0]$[266, 0, 0, 0]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqoEAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_i8XqoUAGEeCIfOdOxMaTvA" id="(0.0,0.5)"/>
+  </edges>
+</notation:Diagram>
