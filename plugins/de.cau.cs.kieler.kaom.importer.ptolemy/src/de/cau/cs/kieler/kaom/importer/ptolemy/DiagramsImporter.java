@@ -297,6 +297,8 @@ public class DiagramsImporter implements IRunnableWithProgress {
         
         // Iterate through the array of source files
         for (File sourceFile : sourceFiles) {
+            monitor.subTask(sourceFile.getName());
+            
             // Check if the operation should be cancelled
             if (monitor.isCanceled()) {
                 this.wasImportCanceled = true;
@@ -318,12 +320,13 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 doImportModelFile(
                         sourceFile,
                         targetFilesBaseName + "." //$NON-NLS-1$
-                            + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION,
-                        new SubProgressMonitor(monitor, 1));
+                            + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION);
             } catch (CoreException e) {
                 StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG);
                 statuses.add(e.getStatus());
             }
+            
+            monitor.worked(1);
             
             try {
                 // Possibly initialize diagram file
@@ -333,12 +336,13 @@ public class DiagramsImporter implements IRunnableWithProgress {
                                 + PtolemyImporterConstants.TARGET_MODEL_FILE_EXTENSION,
                             targetFilesBaseName + "." //$NON-NLS-1$
                                 + PtolemyImporterConstants.TARGET_DIAGRAM_FILE_EXTENSION);
-                    monitor.worked(1);
                 }
             } catch (CoreException e) {
                 StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG);
                 statuses.add(e.getStatus());
             }
+            
+            monitor.worked(1);
         }
         
         // Import done
@@ -485,11 +489,10 @@ public class DiagramsImporter implements IRunnableWithProgress {
      * 
      * @param sourceFile the source file to import.
      * @param targetFileName the name of the target file to import to.
-     * @param monitor the progress monitor to report progress to.
      * @throws CoreException if the transformation fails.
      */
-    private void doImportModelFile(final File sourceFile, final String targetFileName,
-            final IProgressMonitor monitor) throws CoreException {
+    private void doImportModelFile(final File sourceFile, final String targetFileName)
+        throws CoreException {
         
         URI sourceFileURI, targetFileURI;
         
@@ -525,7 +528,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
         
         // Do my bidding, little ones!
         XtendStatus status = XtendTransformationUtil.model2ModelTransform(
-                new KielerProgressMonitor(monitor),
+                new KielerProgressMonitor(new NullProgressMonitor()),
                 transformation,
                 entryFunction,
                 sourceFileURI,
