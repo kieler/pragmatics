@@ -14,7 +14,7 @@
       <wizard
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.kaom.importer.ptolemy.wizards.ImportDiagramsWizard"
-            icon="icons/importdiagram.gif"
+            icon="icons/importdiagram_icon.gif"
             id="de.cau.cs.kieler.kaom.importer.ptolemy.importDiagramsWizard"
             name="%importWizard.name">
          <description>

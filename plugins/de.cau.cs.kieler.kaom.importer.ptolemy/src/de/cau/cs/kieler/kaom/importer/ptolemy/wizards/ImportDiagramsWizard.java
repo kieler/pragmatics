@@ -73,6 +73,9 @@ public class ImportDiagramsWizard extends Wizard implements IImportWizard {
         super();
         
         setWindowTitle(Messages.ImportDiagramsWizard_title);
+        setDefaultPageImageDescriptor(KaomImporterPtolemyPlugin.imageDescriptorFromPlugin(
+                KaomImporterPtolemyPlugin.PLUGIN_ID,
+                "icons/importdiagram_header.gif"));
         setDialogSettings(KaomImporterPtolemyPlugin.getDefault().getDialogSettings());
         
         // Required for the import process

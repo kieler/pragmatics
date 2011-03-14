@@ -30,7 +30,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import de.cau.cs.kieler.core.ui.util.TreeViewerCheckStateManager;
+import de.cau.cs.kieler.core.ui.util.TreeViewerCheckStateHandler;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AbstractInfoAnalysis;
 import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
@@ -73,7 +73,7 @@ public class AnalysisSelectionViewer extends Composite implements
                 .setContentProvider(new AnalysisContentProvider(theCategories));
         treeViewer.setInput(theCategories);
         
-        TreeViewerCheckStateManager checkStateManager = new TreeViewerCheckStateManager(treeViewer);
+        TreeViewerCheckStateHandler checkStateManager = new TreeViewerCheckStateHandler(treeViewer);
         checkStateManager.checkElements(selectedAnalyses);
         
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);

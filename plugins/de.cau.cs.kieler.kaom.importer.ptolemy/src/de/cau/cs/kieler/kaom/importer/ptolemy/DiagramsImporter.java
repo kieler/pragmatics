@@ -119,7 +119,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
      * List of exceptions thrown during the import process, wrapped in {@code IStatus}
      * objects.
      */
-    private List<IStatus> statusses = new ArrayList<IStatus>();
+    private List<IStatus> statuses = new ArrayList<IStatus>();
     
     
     /**
@@ -178,11 +178,11 @@ public class DiagramsImporter implements IRunnableWithProgress {
                     IStatus.CANCEL,
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
                     Messages.DiagramsImporter_status_importCanceled);
-        } else if (statusses.size() >= 1) {
+        } else if (statuses.size() >= 1) {
             return new MultiStatus(
                     KaomImporterPtolemyPlugin.PLUGIN_ID,
                     maxSeverity,
-                    statusses.toArray(new IStatus[statusses.size()]),
+                    statuses.toArray(new IStatus[statuses.size()]),
                     Messages.DiagramsImporter_status_exceptions,
                     null);
         } else {
@@ -224,7 +224,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
             targetContainer = getTargetContainer(new SubProgressMonitor(progressMonitor, 1));
         } catch (CoreException e) {
             StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG);
-            statusses.add(e.getStatus());
+            statuses.add(e.getStatus());
             progressMonitor.done();
             return;
         }
@@ -320,7 +320,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
                         new SubProgressMonitor(monitor, 1));
             } catch (CoreException e) {
                 StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG);
-                statusses.add(e.getStatus());
+                statuses.add(e.getStatus());
             }
             
             try {
@@ -335,7 +335,7 @@ public class DiagramsImporter implements IRunnableWithProgress {
                 }
             } catch (CoreException e) {
                 StatusManager.getManager().handle(e.getStatus(), StatusManager.LOG);
-                statusses.add(e.getStatus());
+                statuses.add(e.getStatus());
             }
         }
         
