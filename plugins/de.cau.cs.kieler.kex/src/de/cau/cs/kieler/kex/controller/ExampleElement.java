@@ -19,7 +19,9 @@ package de.cau.cs.kieler.kex.controller;
  * @author pkl
  */
 public enum ExampleElement {
-
-    DESCRIPTION, VERSION, DEST_LOCATION, CONTACT, SOURCETYPE, RESOURCES, CREATE_CATEGORIES, OVERVIEW_PIC, TITLE, AUTHOR, ID, CATEGORY;
+    /**
+     * Some enums for an example element.
+     */
+    DESCRIPTION, DEST_LOCATION, CONTACT, SOURCETYPE, RESOURCES, CREATE_CATEGORIES, OVERVIEW_PIC, TITLE, AUTHOR, ID, CATEGORY;
 
 }
