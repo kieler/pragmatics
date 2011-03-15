@@ -145,7 +145,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         }
         
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = parentLayout.getInsets();
         parentLayout.setWidth(totalWidth + insets.getLeft() + insets.getRight());
         parentLayout.setHeight(totalHeight + insets.getTop() + insets.getBottom());
     }

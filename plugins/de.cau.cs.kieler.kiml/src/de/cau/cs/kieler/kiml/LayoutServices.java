@@ -112,15 +112,6 @@ public class LayoutServices {
         return instance.registry;
     }
 
-    /**
-     * Returns the associated instance of the registry class.
-     * 
-     * @return the associated registry
-     */
-    protected final Registry registry() {
-        return registry;
-    }
-
     /** Class used to register the layout services. */
     public final class Registry {
 
@@ -286,7 +277,7 @@ public class LayoutServices {
      * @param targetType type of layout option target
      * @return list of suitable layout options
      */
-    public final List<LayoutOptionData<?>> getOptions(final LayoutAlgorithmData algorithmData,
+    public final List<LayoutOptionData<?>> getOptionData(final LayoutAlgorithmData algorithmData,
             final LayoutOptionData.Target targetType) {
         List<LayoutOptionData<?>> optionDataList = new LinkedList<LayoutOptionData<?>>();
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
@@ -351,17 +342,18 @@ public class LayoutServices {
      * @return the registered diagram types
      */
     public final List<Pair<String, String>> getDiagramTypes() {
-        return Pair.toList(diagramTypeMap);
+        return Pair.fromMap(diagramTypeMap);
     }
     
     /**
-     * Returns a map that contains all layout options for an object identifier.
+     * Returns a map that contains all layout option values for an object identifier.
      * 
-     * @param id an object identifier
+     * @param objectId an object identifier, such as an edit part class name, a domain model
+     *     class name, or a diagram type id
      * @return a map of layout option identifiers to their values
      */
-    public final Map<String, Object> getOptions(final String id) {
-        Map<String, Object> optionsMap = id2OptionsMap.get(id);
+    public final Map<String, Object> getOptions(final String objectId) {
+        Map<String, Object> optionsMap = id2OptionsMap.get(objectId);
         if (optionsMap != null) {
             return Collections.unmodifiableMap(optionsMap);
         }
@@ -371,7 +363,8 @@ public class LayoutServices {
     /**
      * Retrieves a layout option value for an object identifier.
      * 
-     * @param objectId an object identifier
+     * @param objectId an object identifier, such as an edit part class name, a domain model
+     *     class name, or a diagram type id
      * @param optionId a layout option identifier
      * @return the preconfigured value of the option, or {@code null} if the
      *         option is not set for the given object
@@ -385,7 +378,7 @@ public class LayoutServices {
     }
     
     /**
-     * Returns a map that contains all layout options for a domain model class. This
+     * Returns a map that contains all layout option values for a domain model class. This
      * involves options that are set for any superclass of the given one.
      * 
      * @param clazz a domain model class

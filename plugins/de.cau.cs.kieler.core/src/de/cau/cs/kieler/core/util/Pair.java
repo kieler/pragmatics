@@ -71,7 +71,7 @@ public class Pair<F, S> {
      * @param map a map
      * @return a list of map entries as pairs
      */
-    public static <G, T> List<Pair<G, T>> toList(final Map<G, T> map) {
+    public static <G, T> List<Pair<G, T>> fromMap(final Map<G, T> map) {
         List<Pair<G, T>> list = new ArrayList<Pair<G, T>>(map.size());
         for (Entry<G, T> entry : map.entrySet()) {
             list.add(new Pair<G, T>(entry));

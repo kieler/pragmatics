@@ -125,8 +125,8 @@ public final class KimlUtil {
         KLabel nodeLabel = createInitializedLabel(layoutNode);
         layoutNode.setLabel(nodeLabel);
         KShapeLayout layout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
+        layout.setInsets(KLayoutDataFactory.eINSTANCE.createKInsets());
         layoutNode.getData().add(layout);
-        layout.setProperty(LayoutOptions.INSETS, KLayoutDataFactory.eINSTANCE.createKInsets());
         return layoutNode;
     }
 
@@ -563,7 +563,7 @@ public final class KimlUtil {
         KNode node = parent;
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            KInsets insets = nodeLayout.getProperty(LayoutOptions.INSETS);
+            KInsets insets = nodeLayout.getInsets();
             point.translate(nodeLayout.getXpos() + insets.getLeft(),
                     nodeLayout.getYpos() + insets.getTop());
             node = node.getParent();
@@ -580,7 +580,7 @@ public final class KimlUtil {
         KNode node = parent;
         while (node != null) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            KInsets insets = nodeLayout.getProperty(LayoutOptions.INSETS);
+            KInsets insets = nodeLayout.getInsets();
             point.translate(-nodeLayout.getXpos() - insets.getLeft(),
                         -nodeLayout.getYpos() - insets.getTop());
             node = node.getParent();

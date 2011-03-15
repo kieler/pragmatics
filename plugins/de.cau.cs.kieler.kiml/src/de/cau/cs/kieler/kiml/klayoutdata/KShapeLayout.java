@@ -25,7 +25,9 @@ import de.cau.cs.kieler.core.kgraph.KGraphData;
  *
  * <!-- begin-model-doc -->
  * This layout data contains information for graph elements for which rectangular
- * shape is assumed for layout, such as nodes, ports, and labels.
+ * shape is assumed for layout, such as nodes, ports, and labels. Each graph element
+ * has either a shape layout or an edge layout attached. The shape layout of nodes
+ * has insets.
  * <p>
  * Layout coordinates for nodes, ports, and node labels are relative to the parent
  * node. The insets of the parent node are not included in the relative coordinates
@@ -42,12 +44,15 @@ import de.cau.cs.kieler.core.kgraph.KGraphData;
  *   <li>{@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout#getYpos <em>Ypos</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout#getWidth <em>Width</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout#getHeight <em>Height</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout#getInsets <em>Insets</em>}</li>
  * </ul>
  * </p>
  *
  * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage#getKShapeLayout()
  * @model
  * @generated
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  */
 public interface KShapeLayout extends KGraphData {
     /**
@@ -141,5 +146,31 @@ public interface KShapeLayout extends KGraphData {
      * @generated
      */
     void setHeight(float value);
+
+    /**
+     * Returns the value of the '<em><b>Insets</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Insets</em>' containment reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Insets</em>' containment reference.
+     * @see #setInsets(KInsets)
+     * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage#getKShapeLayout_Insets()
+     * @model containment="true"
+     * @generated
+     */
+    KInsets getInsets();
+
+    /**
+     * Sets the value of the '{@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout#getInsets <em>Insets</em>}' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Insets</em>' containment reference.
+     * @see #getInsets()
+     * @generated
+     */
+    void setInsets(KInsets value);
 
 } // KShapeLayout

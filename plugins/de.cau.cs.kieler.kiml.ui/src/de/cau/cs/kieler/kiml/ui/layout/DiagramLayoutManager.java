@@ -38,7 +38,6 @@ import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.RecursiveLayouterEngine;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.kiml.ui.Messages;
 import de.cau.cs.kieler.kiml.ui.triggers.LayoutGraphTrigger;
@@ -314,7 +313,7 @@ public abstract class DiagramLayoutManager {
                 layout = node.getData(KShapeLayout.class);
                 x += layout.getXpos();
                 y += layout.getYpos();
-                KInsets insets = layout.getProperty(LayoutOptions.INSETS);
+                KInsets insets = layout.getInsets();
                 x += layout.getXpos() + insets.getLeft();
                 y += layout.getYpos() + insets.getTop();
             }

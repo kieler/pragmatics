@@ -45,6 +45,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * </p>
  *
  * @generated
+ * @kieler.rating 2011-02-01 yellow
+ *     reviewed by cmot, soh
  */
 public abstract class KGraphElementImpl extends EObjectImpl implements KGraphElement {
     /**

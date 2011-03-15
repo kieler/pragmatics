@@ -16,7 +16,8 @@ package de.cau.cs.kieler.kiml.options;
 /**
  * Definition of the edge types.
  * 
- * @kieler.rating 2011-01-13 proposed yellow msp
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  * @author mri
  */
 public enum EdgeType {

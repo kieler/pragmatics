@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EList;
  *
  * <!-- begin-model-doc -->
  * This layout data contains special information for edges, such as bend points.
+ * Each graph element has either a shape layout or an edge layout attached.
  * <p>
  * All layout coordinates for edges are defined to be relative to the parent of
  * the source node, except when the target node is directly or indirectly contained
@@ -45,6 +46,8 @@ import org.eclipse.emf.common.util.EList;
  * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage#getKEdgeLayout()
  * @model
  * @generated
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  */
 public interface KEdgeLayout extends KGraphData {
     /**

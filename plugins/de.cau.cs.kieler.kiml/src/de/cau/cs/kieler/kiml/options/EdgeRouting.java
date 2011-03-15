@@ -16,7 +16,8 @@ package de.cau.cs.kieler.kiml.options;
 /**
  * Definition of edge routing styles.
  * 
- * @kieler.rating 2010-02-03 proposed yellow msp
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  * @author msp
  */
 public enum EdgeRouting {

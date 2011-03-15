@@ -371,7 +371,7 @@ public class EclipseLayoutServices extends LayoutServices {
             final String valueString) {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
-            registry().addOption(diagramType, optionData.getId(), value);
+            getRegistry().addOption(diagramType, optionData.getId(), value);
             IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
             preferenceStore.setValue(getPreferenceName(diagramType, optionData.getId()), valueString);
         }
@@ -400,7 +400,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 clazzName = relevantPart == null ? null : relevantPart.getClass().getName();
             }
             if (clazzName != null) {
-                registry().addOption(clazzName, optionData.getId(), value);
+                getRegistry().addOption(clazzName, optionData.getId(), value);
                 registeredElements.add(clazzName);
                 IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
                 preferenceStore.setValue(getPreferenceName(clazzName, optionData.getId()), valueString);
@@ -420,7 +420,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 String valueString = optionArray[2];
                 Object value = optionData.parseValue(valueString);
                 if (value != null) {
-                    registry().addOption(className, optionId, value);
+                    getRegistry().addOption(className, optionId, value);
                 }
             }
         }
@@ -489,6 +489,7 @@ public class EclipseLayoutServices extends LayoutServices {
     private void loadLayoutProviderExtensions() {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
+        Registry registry = getRegistry();
 
         for (IConfigurationElement element : extensions) {
             if (ELEMENT_LAYOUT_ALGORITHM.equals(element.getName())) {
@@ -523,7 +524,7 @@ public class EclipseLayoutServices extends LayoutServices {
                         if (typeData == null) {
                             typeData = new LayoutTypeData();
                             typeData.setId(layoutType);
-                            registry().addLayoutType(typeData);
+                            registry.addLayoutType(typeData);
                         }
                         providerData.setType(layoutType);
                         typeData.getLayouters().add(providerData);
@@ -559,7 +560,7 @@ public class EclipseLayoutServices extends LayoutServices {
                         // initialize the layout provider (which can fail)
                         try {
                             layoutProvider.initialize(element.getAttribute(ATTRIBUTE_PARAMETER));
-                            registry().addLayoutProvider(providerData);
+                            registry.addLayoutProvider(providerData);
                         } catch (Throwable exception) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, element,
                                     ATTRIBUTE_PARAMETER, exception);
@@ -580,7 +581,7 @@ public class EclipseLayoutServices extends LayoutServices {
                     typeData.setId(id);
                     typeData.setName(element.getAttribute(ATTRIBUTE_NAME));
                     typeData.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
-                    registry().addLayoutType(typeData);
+                    registry.addLayoutType(typeData);
                 }
             } else if (ELEMENT_CATEGORY.equals(element.getName())) {
                 // register a category from the extension
@@ -591,7 +592,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 } else if (name == null) {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_NAME, null);
                 } else {
-                    registry().addCategory(id, name);
+                    registry.addCategory(id, name);
                 }
             } else if (ELEMENT_LAYOUT_OPTION.equals(element.getName())) {
                 // register a layout option from the extension
@@ -632,7 +633,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 optionData.setTargets(element.getAttribute(ATTRIBUTE_APPLIESTO));
                 String advanced = element.getAttribute(ATTRIBUTE_ADVANCED);
                 optionData.setAdvanced(advanced != null && advanced.equals("true"));
-                registry().addLayoutOption(optionData);
+                registry.addLayoutOption(optionData);
             }
         }
     }
@@ -643,6 +644,7 @@ public class EclipseLayoutServices extends LayoutServices {
     private void loadLayoutInfoExtensions() {
         IConfigurationElement[] extensions = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(EXTP_ID_LAYOUT_INFO);
+        Registry registry = getRegistry();
 
         for (IConfigurationElement element : extensions) {
             if (ELEMENT_DIAGRAM_TYPE.equals(element.getName())) {
@@ -654,7 +656,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 } else if (name == null) {
                     reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_NAME, null);
                 } else {
-                    registry().addDiagramType(id, name);
+                    registry.addDiagramType(id, name);
                 }
             } else if (ELEMENT_OPTION.equals(element.getName())) {
                 // register a layout option from the extension
@@ -677,7 +679,7 @@ public class EclipseLayoutServices extends LayoutServices {
                     if (clazz == null || clazz.length() == 0) {
                         reportError(EXTP_ID_LAYOUT_INFO, element, ATTRIBUTE_CLASS, null);
                     } else {
-                        registry().addSemanticConfig(clazz, config);
+                        registry.addSemanticConfig(clazz, config);
                     }
                 } catch (CoreException exception) {
                     StatusManager.getManager().handle(exception, KimlUiPlugin.PLUGIN_ID);
@@ -741,6 +743,7 @@ public class EclipseLayoutServices extends LayoutServices {
      */
     private void loadPreferences() {
         IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+        Registry registry = getRegistry();
         
         // load default options for diagram types
         List<Pair<String, String>> diagramTypes = getDiagramTypes();
@@ -751,7 +754,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
                     if (value != null) {
-                        registry().addOption(diagramType.getFirst(), data.getId(), value);
+                        registry.addOption(diagramType.getFirst(), data.getId(), value);
                     }
                 }
             }
@@ -769,7 +772,7 @@ public class EclipseLayoutServices extends LayoutServices {
                 if (preferenceStore.contains(preference)) {
                     Object value = data.parseValue(preferenceStore.getString(preference));
                     if (value != null) {
-                        registry().addOption(elementName, data.getId(), value);
+                        registry.addOption(elementName, data.getId(), value);
                     }
                 }
             }

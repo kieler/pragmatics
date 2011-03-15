@@ -123,7 +123,7 @@ public class OrthogonalDataflowLayoutProvider extends AbstractLayoutProvider {
      */
     private void applyLayout(final List<TSMGraph> components, final KNode parentNode) {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = parentLayout.getInsets();
         float currentYpos = 0.0f, maxWidth = 0.0f;
         for (TSMGraph component : components) {
             component.applyLayout(0.0f, currentYpos);

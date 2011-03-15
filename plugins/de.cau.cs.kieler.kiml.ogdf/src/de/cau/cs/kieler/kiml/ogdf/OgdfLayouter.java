@@ -618,7 +618,7 @@ public abstract class OgdfLayouter {
             }
         }
         // get the insets
-        KInsets insets = parentNodeLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = parentNodeLayout.getInsets();
         // set the width/height of the graph
         parentNodeLayout.setWidth(boundingBoxWidth + 2 * borderSpacing + insets.getLeft()
                 + insets.getRight());

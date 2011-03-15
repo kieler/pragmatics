@@ -16,7 +16,8 @@ package de.cau.cs.kieler.kiml.options;
 /**
  * Definition of node shapes.
  * 
- * @kieler.rating 2009-12-11 proposed yellow msp
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  * @author msp
  */
 public enum Shape {

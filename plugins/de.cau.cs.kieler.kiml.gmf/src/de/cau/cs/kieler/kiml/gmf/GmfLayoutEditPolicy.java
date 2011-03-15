@@ -230,7 +230,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         
         if (KimlUtil.isDescendant(targetNode, sourceNode)) {
             // in this case the edge points are given without the source insets, so add them
-            KInsets insets = sourceLayout.getProperty(LayoutOptions.INSETS);
+            KInsets insets = sourceLayout.getInsets();
             double width = Math.max(sourceLayout.getWidth() - insets.getLeft()
                     - insets.getRight(), 1);
             double widthPercent = sourceRel.x / width;
@@ -304,7 +304,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         
         if (KimlUtil.isDescendant(sourceNode, targetNode)) {
             // in this case the edge points are given without the target insets, so add them
-            KInsets insets = targetLayout.getProperty(LayoutOptions.INSETS);
+            KInsets insets = targetLayout.getInsets();
             double width = Math.max(targetLayout.getWidth() - insets.getLeft()
                     - insets.getRight(), 1);
             double widthPercent = (targetRel.x - insets.getLeft()) / width;
@@ -470,7 +470,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     while (node.getParent() != targetNode) {
                         node = node.getParent();
                         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-                        KInsets insets = nodeLayout.getProperty(LayoutOptions.INSETS);
+                        KInsets insets = nodeLayout.getInsets();
                         referencePoint.translate(nodeLayout.getXpos() + insets.getLeft(),
                                 nodeLayout.getYpos() + insets.getTop());
                     }
@@ -496,7 +496,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     private void translatePoint(final KVector referencePoint, final KVector objectPoint,
             final KNode parentNode) {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = parentLayout.getInsets();
         double widthPercent = referencePoint.x / parentLayout.getWidth();
         double heightPercent = referencePoint.y / parentLayout.getHeight();
         if (widthPercent + heightPercent <= 1

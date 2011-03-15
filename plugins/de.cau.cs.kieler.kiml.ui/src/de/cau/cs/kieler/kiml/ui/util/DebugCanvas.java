@@ -33,7 +33,6 @@ import org.eclipse.ui.PlatformUI;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
@@ -80,7 +79,7 @@ public class DebugCanvas implements IDebugCanvas {
         KNode currentNode = parentNode;
         while (currentNode != null) {
             KShapeLayout nodeLayout = currentNode.getData(KShapeLayout.class);
-            KInsets insets = nodeLayout.getProperty(LayoutOptions.INSETS);
+            KInsets insets = nodeLayout.getInsets();
             xOffset += nodeLayout.getXpos() + insets.getLeft();
             yOffset += nodeLayout.getYpos() + insets.getTop();
             currentNode = currentNode.getParent();

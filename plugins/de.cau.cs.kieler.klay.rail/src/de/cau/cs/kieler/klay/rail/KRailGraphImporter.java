@@ -319,7 +319,7 @@ public class KRailGraphImporter implements IGraphImporter {
         }
 
         // set up the parent node
-        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = parentLayout.getInsets();
         parentLayout.setWidth((float) layeredGraph.getSize().x + 2 * borderSpacing
                 + insets.getLeft() + insets.getRight());
         parentLayout.setHeight((float) layeredGraph.getSize().y + 2 * borderSpacing

@@ -25,7 +25,6 @@ import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 
 /**
@@ -93,7 +92,7 @@ public class CoverageAnalysis implements IAnalysis {
         if (!children.isEmpty()) {
             // Compound node; get layout data and insets and compute the node's bounding box
             KShapeLayout layoutData = parentNode.getData(KShapeLayout.class);
-            KInsets insets = layoutData.getProperty(LayoutOptions.INSETS);
+            KInsets insets = layoutData.getInsets();
             Rectangle2D.Float nodeRect = NodeSizeAnalysis.computeNodeRect(
                     parentNode, true, true, true);
             

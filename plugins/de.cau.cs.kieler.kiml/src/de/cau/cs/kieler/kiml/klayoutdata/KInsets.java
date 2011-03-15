@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Insets describe the minimal amount of space that is required between the
+ * Insets specify the amount of space that is required between the
  * children of a node and the node's boundary. Usually the inset values must
  * be added to the bounding box of the contained subgraph.
  * <!-- end-model-doc -->
@@ -41,6 +41,8 @@ import org.eclipse.emf.ecore.EObject;
  * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage#getKInsets()
  * @model
  * @generated
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  */
 public interface KInsets extends EObject {
     /**

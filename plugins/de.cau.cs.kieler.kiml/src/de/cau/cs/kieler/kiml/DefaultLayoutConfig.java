@@ -69,7 +69,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
             containerLayouterData = layouterData;
         }
         if (layouterData != null) {
-            List<LayoutOptionData<?>> options = layoutServices.getOptions(
+            List<LayoutOptionData<?>> options = layoutServices.getOptionData(
                     layouterData, targetType);
             if (optionDataList == null) {
                 optionDataList = options;

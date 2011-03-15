@@ -36,6 +36,8 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * An implementation of the model <b>Package</b>.
  * <!-- end-user-doc -->
  * @generated
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  */
 public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataPackage {
     /**
@@ -180,6 +182,15 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
      * <!-- end-user-doc -->
      * @generated
      */
+    public EReference getKShapeLayout_Insets() {
+        return (EReference)kShapeLayoutEClass.getEStructuralFeatures().get(4);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getKEdgeLayout() {
         return kEdgeLayoutEClass;
     }
@@ -316,6 +327,7 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         createEAttribute(kShapeLayoutEClass, KSHAPE_LAYOUT__YPOS);
         createEAttribute(kShapeLayoutEClass, KSHAPE_LAYOUT__WIDTH);
         createEAttribute(kShapeLayoutEClass, KSHAPE_LAYOUT__HEIGHT);
+        createEReference(kShapeLayoutEClass, KSHAPE_LAYOUT__INSETS);
 
         kEdgeLayoutEClass = createEClass(KEDGE_LAYOUT);
         createEReference(kEdgeLayoutEClass, KEDGE_LAYOUT__BEND_POINTS);
@@ -373,6 +385,7 @@ public class KLayoutDataPackageImpl extends EPackageImpl implements KLayoutDataP
         initEAttribute(getKShapeLayout_Ypos(), ecorePackage.getEFloat(), "ypos", "0.0f", 0, 1, KShapeLayout.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getKShapeLayout_Width(), ecorePackage.getEFloat(), "width", "0.0f", 0, 1, KShapeLayout.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getKShapeLayout_Height(), ecorePackage.getEFloat(), "height", "0.0f", 0, 1, KShapeLayout.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getKShapeLayout_Insets(), this.getKInsets(), null, "insets", null, 0, 1, KShapeLayout.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(kEdgeLayoutEClass, KEdgeLayout.class, "KEdgeLayout", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getKEdgeLayout_BendPoints(), this.getKPoint(), null, "bendPoints", null, 0, -1, KEdgeLayout.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

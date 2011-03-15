@@ -5,7 +5,7 @@
     nsURI="http://kieler.cs.cau.de/KLayoutData" nsPrefix="klayoutdata">
   <eClassifiers xsi:type="ecore:EClass" name="KShapeLayout" eSuperTypes="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="This layout data contains information for graph elements for which rectangular&#xA;shape is assumed for layout, such as nodes, ports, and labels.&#xA;&lt;p>&#xA;Layout coordinates for nodes, ports, and node labels are relative to the parent&#xA;node. The insets of the parent node are not included in the relative coordinates&#xA;of child nodes, but they are included in the relative coordinates of ports and&#xA;node labels. For edge labels the rules defined in {@link KEdgeLayout} apply.&#xA;Port labels are relative to their ports.&#xA;&lt;/p>"/>
+      <details key="documentation" value="This layout data contains information for graph elements for which rectangular&#xA;shape is assumed for layout, such as nodes, ports, and labels. Each graph element&#xA;has either a shape layout or an edge layout attached. The shape layout of nodes&#xA;has insets.&#xA;&lt;p>&#xA;Layout coordinates for nodes, ports, and node labels are relative to the parent&#xA;node. The insets of the parent node are not included in the relative coordinates&#xA;of child nodes, but they are included in the relative coordinates of ports and&#xA;node labels. For edge labels the rules defined in {@link KEdgeLayout} apply.&#xA;Port labels are relative to their ports.&#xA;&lt;/p>"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="xpos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
         defaultValueLiteral="0.0f"/>
@@ -15,10 +15,12 @@
         defaultValueLiteral="0.0f"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
         defaultValueLiteral="0.0f"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="insets" eType="#//KInsets"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KEdgeLayout" eSuperTypes="../../de.cau.cs.kieler.core.kgraph/model/kgraph.ecore#//KGraphData">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="This layout data contains special information for edges, such as bend points.&#xA;&lt;p>&#xA;All layout coordinates for edges are defined to be relative to the parent of&#xA;the source node, except when the target node is directly or indirectly contained&#xA;in the source node, in which case all coordinates are relative to the source node&#xA;itself. The insets of the reference node are not included in relative coordinates.&#xA;&lt;/p>"/>
+      <details key="documentation" value="This layout data contains special information for edges, such as bend points.&#xA;Each graph element has either a shape layout or an edge layout attached.&#xA;&lt;p>&#xA;All layout coordinates for edges are defined to be relative to the parent of&#xA;the source node, except when the target node is directly or indirectly contained&#xA;in the source node, in which case all coordinates are relative to the source node&#xA;itself. The insets of the reference node are not included in relative coordinates.&#xA;&lt;/p>"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bendPoints" upperBound="-1"
         eType="#//KPoint" containment="true">
@@ -47,7 +49,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KInsets">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Insets describe the minimal amount of space that is required between the&#xA;children of a node and the node's boundary. Usually the inset values must&#xA;be added to the bounding box of the contained subgraph."/>
+      <details key="documentation" value="Insets specify the amount of space that is required between the&#xA;children of a node and the node's boundary. Usually the inset values must&#xA;be added to the bounding box of the contained subgraph."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="top" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

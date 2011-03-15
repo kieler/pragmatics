@@ -48,7 +48,7 @@ public class BoxPlacer extends AbstractAlgorithm {
     public void placeBoxes(final List<KNode> sortedBoxes, final KNode parentNode,
             final float objSpacing, final float borderSpacing, final boolean expandNodes) {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = parentLayout.getInsets();
         float minWidth = Math.max(parentLayout.getProperty(LayoutOptions.MIN_WIDTH)
                 - insets.getLeft() - insets.getRight(), 0);
         float minHeight = Math.max(parentLayout.getProperty(LayoutOptions.MIN_HEIGHT)

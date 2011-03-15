@@ -161,11 +161,9 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
         KShapeLayout shapeLayout = graph.getData(KShapeLayout.class);
 
         // Memorize important options.
-        // The LAYOUTER_HINT is needed to find out if the new one is compatible.
-        // The others are needed because otherwise, layout providers might
-        // crash.
+        // The ALGORITHM option is needed to find out if the new one is compatible.
         IProperty<?>[] importantOptions =
-                new IProperty<?>[] { LayoutOptions.ALGORITHM, LayoutOptions.INSETS };
+                new IProperty<?>[] { LayoutOptions.ALGORITHM };
         ILayoutConfig oldValues = new VolatileLayoutConfig();
         for (IProperty<?> property : importantOptions) {
             oldValues.setProperty(property, shapeLayout.getProperty(property));

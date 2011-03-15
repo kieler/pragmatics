@@ -455,7 +455,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
             right = containerGa.getWidth() - ga.getX() - ga.getWidth();
             bottom = containerGa.getHeight() - ga.getY() - ga.getHeight();
         }
-        KInsets insets = shapeLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = shapeLayout.getInsets();
         insets.setLeft(left);
         insets.setRight(right);
         insets.setBottom(bottom);

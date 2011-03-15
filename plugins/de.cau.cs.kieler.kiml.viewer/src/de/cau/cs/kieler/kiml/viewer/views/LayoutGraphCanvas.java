@@ -42,8 +42,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A canvas that is able to paint KIML layout graphs.
@@ -485,7 +483,7 @@ public class LayoutGraphCanvas extends Canvas implements PaintListener {
         }
 
         // add insets to offset value
-        KInsets insets = layoutNode.getData(KShapeLayout.class).getProperty(LayoutOptions.INSETS);
+        KInsets insets = layoutNode.getData(KShapeLayout.class).getInsets();
         KPoint subOffset = KLayoutDataFactory.eINSTANCE.createKPoint();
         if (insets == null) {
             subOffset.setX(offset.getX());

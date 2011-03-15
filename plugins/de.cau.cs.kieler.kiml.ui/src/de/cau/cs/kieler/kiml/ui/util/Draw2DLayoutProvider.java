@@ -212,7 +212,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         
         // apply parent node layout
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = parentLayout.getInsets();
         Dimension layoutSize = graph.getLayoutSize();
         parentLayout.setWidth(insets.getLeft() + layoutSize.width + insets.getRight());
         parentLayout.setHeight(insets.getTop() + layoutSize.height + insets.getBottom());

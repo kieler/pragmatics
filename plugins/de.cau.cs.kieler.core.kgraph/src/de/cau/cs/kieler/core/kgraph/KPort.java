@@ -39,6 +39,8 @@ import org.eclipse.emf.common.util.EList;
  * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKPort()
  * @model
  * @generated
+ * @kieler.rating 2011-02-01 yellow
+ *     reviewed by cmot, soh
  */
 public interface KPort extends KGraphElement {
     /**

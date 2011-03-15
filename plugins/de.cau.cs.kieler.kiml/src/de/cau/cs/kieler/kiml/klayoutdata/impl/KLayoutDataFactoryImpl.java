@@ -30,6 +30,8 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  * An implementation of the model <b>Factory</b>.
  * <!-- end-user-doc -->
  * @generated
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  */
 public class KLayoutDataFactoryImpl extends EFactoryImpl implements KLayoutDataFactory {
     /**

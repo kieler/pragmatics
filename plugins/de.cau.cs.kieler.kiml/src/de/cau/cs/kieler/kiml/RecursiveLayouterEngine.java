@@ -23,7 +23,9 @@ import de.cau.cs.kieler.kiml.util.IDebugCanvas;
  * Performs layout in a graph with hierarchy by executing a layout algorithm on
  * each level of the hierarchy. This is done recursively from the leafs to the
  * root of the nodes in the graph, using size information from lower levels in
- * the levels above.
+ * the levels above. If an exception occurs, {@link #getLastLayoutProvider()}
+ * can be used to get more information about the algorithm that caused the
+ * exception.
  * 
  * @kieler.rating 2011-03-14 yellow
  *     reviewed by cmot, cds

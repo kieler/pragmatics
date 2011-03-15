@@ -35,6 +35,8 @@ import org.eclipse.emf.ecore.EReference;
  * @see de.cau.cs.kieler.core.kgraph.KGraphFactory
  * @model kind="package"
  * @generated
+ * @kieler.rating 2011-02-01 yellow
+ *     reviewed by cmot, soh
  */
 public interface KGraphPackage extends EPackage {
     /**

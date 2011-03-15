@@ -507,7 +507,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
 
         // set insets if not yet defined
         if (kinsets.get() == null) {
-            KInsets ki = parentKNode.getData(KShapeLayout.class).getProperty(LayoutOptions.INSETS);
+            KInsets ki = parentKNode.getData(KShapeLayout.class).getInsets();
             Insets insets = KimlUiUtil.calcInsets(parentEditPart.getFigure(), nodeFigure);
             ki.setLeft(insets.left);
             ki.setTop(insets.top);
@@ -741,8 +741,7 @@ public class GmfDiagramLayoutManager extends DiagramLayoutManager {
             IGraphicalEditPart sourceParent = graphElem2EditPartMap.get(sourceParentNode);
             if (sourceParent != null) {
                 Rectangle sourceParentBounds = KimlUiUtil.getAbsoluteBounds(sourceParent.getFigure());
-                KInsets insets = sourceParentNode.getData(KShapeLayout.class)
-                    .getProperty(LayoutOptions.INSETS);
+                KInsets insets = sourceParentNode.getData(KShapeLayout.class).getInsets();
                 offsetx = sourceParentBounds.x + insets.getLeft();
                 offsety = sourceParentBounds.y + insets.getTop();
             }

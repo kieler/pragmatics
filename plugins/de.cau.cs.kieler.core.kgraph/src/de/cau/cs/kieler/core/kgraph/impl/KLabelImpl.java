@@ -39,6 +39,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * </p>
  *
  * @generated
+ * @kieler.rating 2011-02-01 yellow
+ *     reviewed by cmot, soh
  */
 public class KLabelImpl extends KGraphElementImpl implements KLabel {
     /**

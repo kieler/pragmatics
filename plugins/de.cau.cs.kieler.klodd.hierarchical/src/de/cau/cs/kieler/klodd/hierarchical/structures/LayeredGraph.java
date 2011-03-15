@@ -245,7 +245,7 @@ public class LayeredGraph {
      */
     public void applyLayout() {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = parentLayout.getInsets();
         // apply the new layout to the contained elements
         for (Layer layer : layers) {
             for (LayerElement element : layer.getElements()) {

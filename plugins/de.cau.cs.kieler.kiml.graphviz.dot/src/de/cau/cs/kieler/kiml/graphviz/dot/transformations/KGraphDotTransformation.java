@@ -787,7 +787,7 @@ public class KGraphDotTransformation {
         // set parent node attributes
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         if (boundingBox != null) {
-            KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+            KInsets insets = parentLayout.getInsets();
             parentLayout.setWidth((float) boundingBox.x + insets.getLeft()
                     + insets.getRight() + 2 * offset);
             parentLayout.setHeight((float) boundingBox.y + insets.getTop()

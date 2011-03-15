@@ -36,6 +36,8 @@ package de.cau.cs.kieler.core.kgraph;
  * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKLabel()
  * @model
  * @generated
+ * @kieler.rating 2011-02-01 yellow
+ *     reviewed by cmot, soh
  */
 public interface KLabel extends KGraphElement {
     /**

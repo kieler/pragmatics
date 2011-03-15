@@ -194,7 +194,7 @@ public final class KimlUiUtil {
             KShapeLayout iterLayout = iterNode.getData(KShapeLayout.class);
             xPos += iterLayout.getXpos();
             yPos += iterLayout.getYpos();
-            KInsets iterInsets = iterLayout.getProperty(LayoutOptions.INSETS);
+            KInsets iterInsets = iterLayout.getInsets();
             xPos += iterInsets.getLeft();
             yPos += iterInsets.getTop();
         }
@@ -226,7 +226,7 @@ public final class KimlUiUtil {
         List<Point> result = new LinkedList<Point>();
         KShapeLayout parentLayout = edge.getSource().getParent().getData(KShapeLayout.class);
         Point parentPosition = getAbsolutePosition(edge.getSource().getParent());
-        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = parentLayout.getInsets();
         parentPosition.translate((int) insets.getLeft(), (int) insets.getTop());
         Point pathStep = new Point(parentPosition);
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);

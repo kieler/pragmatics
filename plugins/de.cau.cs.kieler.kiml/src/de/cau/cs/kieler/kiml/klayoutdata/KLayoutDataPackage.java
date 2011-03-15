@@ -36,6 +36,8 @@ import org.eclipse.emf.ecore.EReference;
  * @see de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
  * @model kind="package"
  * @generated
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  */
 public interface KLayoutDataPackage extends EPackage {
     /**
@@ -135,13 +137,22 @@ public interface KLayoutDataPackage extends EPackage {
     int KSHAPE_LAYOUT__HEIGHT = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 3;
 
     /**
+     * The feature id for the '<em><b>Insets</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int KSHAPE_LAYOUT__INSETS = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 4;
+
+    /**
      * The number of structural features of the '<em>KShape Layout</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int KSHAPE_LAYOUT_FEATURE_COUNT = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 4;
+    int KSHAPE_LAYOUT_FEATURE_COUNT = KGraphPackage.KGRAPH_DATA_FEATURE_COUNT + 5;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl <em>KEdge Layout</em>}' class.
@@ -356,6 +367,17 @@ public interface KLayoutDataPackage extends EPackage {
     EAttribute getKShapeLayout_Height();
 
     /**
+     * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout#getInsets <em>Insets</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference '<em>Insets</em>'.
+     * @see de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout#getInsets()
+     * @see #getKShapeLayout()
+     * @generated
+     */
+    EReference getKShapeLayout_Insets();
+
+    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout <em>KEdge Layout</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -547,6 +569,14 @@ public interface KLayoutDataPackage extends EPackage {
          * @generated
          */
         EAttribute KSHAPE_LAYOUT__HEIGHT = eINSTANCE.getKShapeLayout_Height();
+
+        /**
+         * The meta object literal for the '<em><b>Insets</b></em>' containment reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference KSHAPE_LAYOUT__INSETS = eINSTANCE.getKShapeLayout_Insets();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KEdgeLayoutImpl <em>KEdge Layout</em>}' class.

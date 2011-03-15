@@ -41,6 +41,8 @@ import org.eclipse.emf.common.util.EList;
  * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getKEdge()
  * @model
  * @generated
+ * @kieler.rating 2011-02-01 yellow
+ *     reviewed by cmot, soh
  */
 public interface KEdge extends KGraphElement {
     /**

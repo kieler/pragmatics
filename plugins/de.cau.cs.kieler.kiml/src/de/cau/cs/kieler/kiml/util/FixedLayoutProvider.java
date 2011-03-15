@@ -109,7 +109,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         if (borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
         }
-        KInsets insets = parentLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = parentLayout.getInsets();
         parentLayout.setWidth(maxx + borderSpacing + insets.getLeft() + insets.getRight());
         parentLayout.setHeight(maxy + borderSpacing + insets.getTop() + insets.getBottom());
         

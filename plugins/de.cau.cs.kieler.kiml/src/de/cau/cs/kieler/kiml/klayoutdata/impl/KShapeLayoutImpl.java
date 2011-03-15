@@ -16,13 +16,16 @@
 package de.cau.cs.kieler.kiml.klayoutdata.impl;
 
 import de.cau.cs.kieler.core.kgraph.impl.KGraphDataImpl;
+import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
@@ -36,10 +39,13 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl#getYpos <em>Ypos</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl#getWidth <em>Width</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl#getHeight <em>Height</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.klayoutdata.impl.KShapeLayoutImpl#getInsets <em>Insets</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
+ * @kieler.rating 2011-03-14 yellow
+ *     reviewed by cmot, cds
  */
 public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
     /**
@@ -121,6 +127,16 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
      * @ordered
      */
     protected float height = HEIGHT_EDEFAULT;
+
+    /**
+     * The cached value of the '{@link #getInsets() <em>Insets</em>}' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getInsets()
+     * @generated
+     * @ordered
+     */
+    protected KInsets insets;
 
     /**
      * <!-- begin-user-doc -->
@@ -230,6 +246,63 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
      * <!-- end-user-doc -->
      * @generated
      */
+    public KInsets getInsets() {
+        return insets;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public NotificationChain basicSetInsets(KInsets newInsets, NotificationChain msgs) {
+        KInsets oldInsets = insets;
+        insets = newInsets;
+        if (eNotificationRequired()) {
+            ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__INSETS, oldInsets, newInsets);
+            if (msgs == null) msgs = notification; else msgs.add(notification);
+        }
+        return msgs;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setInsets(KInsets newInsets) {
+        if (newInsets != insets) {
+            NotificationChain msgs = null;
+            if (insets != null)
+                msgs = ((InternalEObject)insets).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KLayoutDataPackage.KSHAPE_LAYOUT__INSETS, null, msgs);
+            if (newInsets != null)
+                msgs = ((InternalEObject)newInsets).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KLayoutDataPackage.KSHAPE_LAYOUT__INSETS, null, msgs);
+            msgs = basicSetInsets(newInsets, msgs);
+            if (msgs != null) msgs.dispatch();
+        }
+        else if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, KLayoutDataPackage.KSHAPE_LAYOUT__INSETS, newInsets, newInsets));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case KLayoutDataPackage.KSHAPE_LAYOUT__INSETS:
+                return basicSetInsets(null, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
@@ -241,6 +314,8 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
                 return getWidth();
             case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT:
                 return getHeight();
+            case KLayoutDataPackage.KSHAPE_LAYOUT__INSETS:
+                return getInsets();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -264,6 +339,9 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
                 return;
             case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT:
                 setHeight((Float)newValue);
+                return;
+            case KLayoutDataPackage.KSHAPE_LAYOUT__INSETS:
+                setInsets((KInsets)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -289,6 +367,9 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
             case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT:
                 setHeight(HEIGHT_EDEFAULT);
                 return;
+            case KLayoutDataPackage.KSHAPE_LAYOUT__INSETS:
+                setInsets((KInsets)null);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -309,6 +390,8 @@ public class KShapeLayoutImpl extends KGraphDataImpl implements KShapeLayout {
                 return width != WIDTH_EDEFAULT;
             case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT:
                 return height != HEIGHT_EDEFAULT;
+            case KLayoutDataPackage.KSHAPE_LAYOUT__INSETS:
+                return insets != null;
         }
         return super.eIsSet(featureID);
     }

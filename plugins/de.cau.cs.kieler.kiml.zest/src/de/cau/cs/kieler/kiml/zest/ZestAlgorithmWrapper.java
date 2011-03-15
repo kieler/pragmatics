@@ -32,7 +32,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.zest.graph.AdvancedEntity;
 import de.cau.cs.kieler.kiml.zest.graph.AdvancedRelationship;
 import de.cau.cs.kieler.kiml.zest.preferences.ZestLayouterPreferencePage;
@@ -207,7 +206,7 @@ public class ZestAlgorithmWrapper {
 
         // determine size of the parent group
         KShapeLayout shapeLayout = parentNode.getData(KShapeLayout.class);
-        KInsets insets = shapeLayout.getProperty(LayoutOptions.INSETS);
+        KInsets insets = shapeLayout.getInsets();
         shapeLayout.setWidth(maxX + insets.getLeft() + insets.getRight() + SIZE_ADDITION);
         shapeLayout.setHeight(maxY + insets.getTop() + insets.getBottom() + SIZE_ADDITION);
     }

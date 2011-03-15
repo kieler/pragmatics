@@ -41,6 +41,8 @@ import org.eclipse.emf.ecore.EObject;
  * @see de.cau.cs.kieler.core.kgraph.KGraphPackage#getEMapPropertyHolder()
  * @model abstract="true" superTypes="de.cau.cs.kieler.core.kgraph.IPropertyHolder"
  * @generated
+ * @kieler.rating 2011-02-01 yellow
+ *     reviewed by cmot, soh
  */
 public interface EMapPropertyHolder extends EObject, IPropertyHolder {
     /**

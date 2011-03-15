@@ -229,7 +229,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                 KNode layoutChild = buildLayoutGraphRecursively(child, childEP, layoutConfig);
                 layoutChild.setParent(layoutNode);
                 if (kinsets == null) {
-                    kinsets = nodeLayout.getProperty(LayoutOptions.INSETS);
+                    kinsets = nodeLayout.getInsets();
                     Insets insets = KimlUiUtil.calcInsets(nodeFigure, childEP.getFigure());
                     kinsets.setLeft(insets.left);
                     kinsets.setTop(insets.top);
@@ -295,8 +295,7 @@ public class GraphsDiagramLayoutManager extends GmfDiagramLayoutManager {
                     IGraphicalEditPart sourceParentEP = getGraphElem2EditPartMap().get(sourceParent);
                     Rectangle sourceParentBounds = sourceParentEP == null ? new Rectangle()
                             : KimlUiUtil.getAbsoluteBounds(sourceParentEP.getFigure());
-                    KInsets insets = sourceParent.getData(KShapeLayout.class)
-                            .getProperty(LayoutOptions.INSETS);
+                    KInsets insets = sourceParent.getData(KShapeLayout.class).getInsets();
                     float offsetx = sourceParentBounds.x + insets.getLeft();
                     float offsety = sourceParentBounds.y + insets.getTop();
         
