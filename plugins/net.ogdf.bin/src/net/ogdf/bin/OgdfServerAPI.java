@@ -12,6 +12,7 @@
  */
 package net.ogdf.bin;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -236,6 +237,48 @@ public final class OgdfServerAPI {
     }
 
     /**
+     * A helper enumeration for identifying the operating system.
+     */
+    private enum OS {
+        LINUX32,
+        LINUX64,
+        WIN32,
+        WIN64,
+        OSX32,
+        OSX64,
+        SOLARIS,
+        UNKNOWN
+    }
+    
+    private static OS detectOS() {
+        // TODO this looks bad; is there a better way to do this?
+        String os = System.getProperty("os.name").toLowerCase();
+        String arch = System.getProperty("os.arch").toLowerCase();
+        if (os.contains("linux")) {
+            if (arch.contains("64")) {
+                return OS.LINUX64;
+            } else if (arch.contains("86")) {
+                return OS.LINUX32;
+            }
+        } else if (os.contains("win")) {
+            if (arch.contains("64")) {
+                return OS.WIN64;
+            } else if (arch.contains("86")) {
+                return OS.WIN32;
+            }
+        } else if (os.contains("mac")) {
+            if (arch.contains("64")) {
+                return OS.OSX64;
+            } else if (arch.contains("86")) {
+                return OS.OSX32;
+            }
+        } else if (os.contains("solaris")) {
+            return OS.SOLARIS;
+        }
+        return OS.UNKNOWN;
+    }
+    
+    /**
      * Finds the ogdf server executable.
      * 
      * @throws IOException
@@ -243,40 +286,40 @@ public final class OgdfServerAPI {
      */
     private static void findExecutable() throws IOException {
         Bundle bundle = OgdfPlugin.getDefault().getBundle();
-        // TODO this looks bad; is there a better way to do this?
-        String os = System.getProperty("os.name").toLowerCase();
-        String arch = System.getProperty("os.arch").toLowerCase();
         IPath path = null;
-        if (os.contains("linux")) {
-            if (arch.contains("64")) {
-                path = new Path(EXECUTABLE_PATH_LINUX64);
-            } else if (arch.contains("86")) {
-                path = new Path(EXECUTABLE_PATH_LINUX32);
-            }
-        } else if (os.contains("win")) {
-            if (arch.contains("64")) {
-                path = new Path(EXECUTABLE_PATH_WIN64);
-            } else if (arch.contains("86")) {
-                path = new Path(EXECUTABLE_PATH_WIN32);
-            }
-        } else if (os.contains("mac")) {
-            if (arch.contains("64")) {
-                path = new Path(EXECUTABLE_PATH_OSX64);
-            } else if (arch.contains("86")) {
-                path = new Path(EXECUTABLE_PATH_OSX32);
-            }
-        } else if (os.contains("solaris")) {
-            if (arch.contains("64")) {
-                // path = new Path(EXECUTABLE_PATH_SOLARIS32);
-            } else if (arch.contains("86")) {
-                // path = new Path(EXECUTABLE_PATH_SOLARIS64);
-            }
-        }
-        if (path == null) {
-            throw new IOException("Could not determine executable path.");
+        OS os = detectOS();
+        switch (os) {
+        case LINUX32:
+            path = new Path(EXECUTABLE_PATH_LINUX32);
+            break;
+        case LINUX64:
+            path = new Path(EXECUTABLE_PATH_LINUX64);
+            break;
+        case WIN32:
+            path = new Path(EXECUTABLE_PATH_WIN32);
+            break;
+        case WIN64:
+            path = new Path(EXECUTABLE_PATH_WIN64);
+            break;
+        case OSX32:
+            path = new Path(EXECUTABLE_PATH_OSX32);
+            break;
+        case OSX64:
+            path = new Path(EXECUTABLE_PATH_OSX64);
+            break;
+        default:
+            throw new RuntimeException("Unsupported operating system.");
         }
         URL url = FileLocator.find(bundle, path, null);
         executable = FileLocator.resolve(url).getFile();
+        // set the file permissions if necessary
+        switch (os) {
+        case LINUX32:
+        case LINUX64:
+            File executableFile = new File(executable);
+            executableFile.setExecutable(true);
+            break;
+        }
     }
 
     /**
@@ -323,8 +366,6 @@ public final class OgdfServerAPI {
      * @param monitor
      *            monitor to which progress is reported
      * @return returns whether input arrived
-     * @throws KielerException
-     *             if the timeout is exceeded while waiting
      */
     public static boolean waitForInput(final InputStream inputStream,
             final IKielerProgressMonitor monitor) {
