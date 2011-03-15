@@ -191,7 +191,7 @@ public class ImportExamplePage extends WizardPage {
                 updateChecks(event);
             }
 
-            private void updateChecks(CheckStateChangedEvent event) {
+            private void updateChecks(final CheckStateChangedEvent event) {
                 Object element = event.getElement();
                 ArrayList<Pair<Category, ArrayList<Object>>> input = (ArrayList<Pair<Category, ArrayList<Object>>>) treeViewer
                         .getInput();

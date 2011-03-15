@@ -46,8 +46,6 @@ import de.cau.cs.kieler.kex.model.plugin.PluginExampleCreator;
  */
 public final class ExampleManager {
 
-    // TODO exception handling in a correct way, see trac and use statushandler...
-
     private static ExampleManager instance = new ExampleManager();
 
     /**
@@ -96,7 +94,7 @@ public final class ExampleManager {
      * 
      * @param type
      *            , {@link SourceType}
-     * @param exampleTitle
+     * @param exampleId
      *            , {@link String}
      * @return {@link Example}
      * @throws RuntimeException

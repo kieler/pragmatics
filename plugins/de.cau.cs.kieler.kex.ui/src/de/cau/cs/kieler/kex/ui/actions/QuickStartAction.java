@@ -24,7 +24,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
@@ -37,10 +39,12 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IIntroAction;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.SourceType;
+import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
 
 /**
  * This class contains the contents to run a quick start example.
@@ -107,8 +111,9 @@ public class QuickStartAction implements IIntroAction {
                     false);
             postfix(directOpens);
         } catch (RuntimeException e) {
-            showError("Could not import example", e.getMessage());
-            return;
+            StatusManager.getManager().handle(
+                    new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID, "Could not import example\n"
+                            + e.getLocalizedMessage(), e), StatusManager.SHOW);
         }
     }
 
@@ -159,7 +164,9 @@ public class QuickStartAction implements IIntroAction {
                     try {
                         page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
                     } catch (PartInitException e) {
-                        showError("Opening Editor", e.getLocalizedMessage());
+                        IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
+                                "Could not open editor" + "\n" + e.getLocalizedMessage(), e);
+                        StatusManager.getManager().handle(status, StatusManager.SHOW);
                     }
                 }
             }

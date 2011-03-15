@@ -28,10 +28,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
+import de.cau.cs.kieler.kex.KEXPlugin;
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.model.ExampleResource;
@@ -60,7 +64,8 @@ public final class ExampleImport {
      *            , destination resource of type {@link IPath}.
      * @param selectedExamples
      *            , {@link List} of {@link Example}s.
-     * @param, checkDuplicate , flag for checking example duplication in project.
+     * @param checkDuplicate
+     *            , flag for checking example duplication in project.
      * @return directopens, {@link List} of {@link String}.
      */
     public static List<String> importExamples(final IPath selectedResource,
@@ -103,8 +108,8 @@ public final class ExampleImport {
     }
 
     private static void handleResources(final List<String> directOpens,
-            final List<ExampleResource> resources, String destFolder, final String nameSpaceId,
-            final int exampleBeginIndex, final boolean checkDuplicate,
+            final List<ExampleResource> resources, final String destFolder,
+            final String nameSpaceId, final int exampleBeginIndex, final boolean checkDuplicate,
             final List<String> finishedResources) throws RuntimeException {
         Bundle bundle = Platform.getBundle(nameSpaceId);
 
@@ -112,7 +117,7 @@ public final class ExampleImport {
             try {
                 String localPath = resource.getLocalPath();
                 String destPath = localPath.substring(exampleBeginIndex);
-
+                String newDestFolder = destFolder;
                 switch (resource.getResourceType()) {
                 case PROJECT:
                     checkDuplicate(destPath);
@@ -121,21 +126,21 @@ public final class ExampleImport {
                     IProject project = root.getProject(destPath);
                     project.create(progressMonitor);
                     project.open(progressMonitor);
-                    destFolder = root.getLocation().toPortableString();
+                    newDestFolder = root.getLocation().toPortableString();
                     break;
 
                 case FOLDER:
-                    File destFile = new File(destFolder + "/" + destPath);
+                    File destFile = new File(newDestFolder + "/" + destPath);
                     finishedResources.add(destFile.getPath());
                     if (checkDuplicate && destFile.exists()) {
                         throw new RuntimeException(destFile.getName());
                     }
-                    IOHandler.createFolder(destFolder + "/" + destPath);
+                    IOHandler.createFolder(newDestFolder + "/" + destPath);
                     break;
 
                 case FILE:
                     URL entry = bundle.getEntry(localPath);
-                    String dest = destFolder + "/" + destPath;
+                    String dest = newDestFolder + "/" + destPath;
                     finishedResources.add(dest);
                     IOHandler.writeFile(entry, dest, checkDuplicate);
                     if (resource.isDirectOpen()) {
@@ -171,8 +176,9 @@ public final class ExampleImport {
         try {
             return entry.openStream();
         } catch (IOException e) {
-            // FIXME think about a useful exception handling, this case should not happen at
-            // runtime
+            IStatus status = new Status(IStatus.ERROR, KEXPlugin.PLUGIN_ID,
+                    e.getLocalizedMessage(), e);
+            StatusManager.getManager().handle(status, StatusManager.SHOW);
         }
         return null;
     }
@@ -203,9 +209,6 @@ public final class ExampleImport {
                 break;
             }
         }
-        // FIXME it is possible to choose a project and additional files at
-        // export.
-        // that would cause a BANG! :-), that shouldn�t be possible
 
         // projects do not need a destinatin resource
         if (!allProjects) {

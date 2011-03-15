@@ -22,7 +22,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -36,10 +38,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
+import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
 
 /**
  * This wizard contains all elements for an kex import wizard.
@@ -80,8 +84,9 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
         try {
             ExampleManager.get().load(true);
         } catch (RuntimeException e) {
-            MessageDialog.openError(this.getShell(), "Can't initialize existing example pool.",
-                    e.getLocalizedMessage());
+            IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
+                    Messages.getString("loadError"), e);
+            StatusManager.getManager().handle(status, StatusManager.SHOW);
         }
         mainPage = new ImportExamplePage("Import Examples", selection);
         destinationPage = new ImportDestPage("Location", selection);
@@ -125,7 +130,9 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                         e.getLocalizedMessage() + " Do you want to override it?");
 
             } else {
-                MessageDialog.openError(getShell(), ERROR_TITLE, e.getLocalizedMessage());
+                IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID, ERROR_TITLE
+                        + "\n" + e.getLocalizedMessage(), e);
+                StatusManager.getManager().handle(status, StatusManager.SHOW);
             }
 
             return false;
@@ -159,8 +166,9 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                     try {
                         page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
                     } catch (PartInitException e) {
-                        MessageDialog.openError(getShell(), "Opening Editor",
-                                e.getLocalizedMessage());
+                        IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
+                                "Could not open editor" + "\n" + e.getLocalizedMessage(), e);
+                        StatusManager.getManager().handle(status, StatusManager.SHOW);
                     }
                 }
             }

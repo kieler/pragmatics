@@ -24,6 +24,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -40,8 +42,10 @@ import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kex.controller.ExportResource;
+import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
 
 /**
  * The examples resource page manages the resources for an export.
@@ -297,7 +301,9 @@ public class ExampleResourcesPage extends WizardPage {
                 }
 
             } catch (CoreException e) {
-                e.printStackTrace();
+                StatusManager.getManager()
+                        .handle(new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID, e
+                                .getLocalizedMessage(), e));
             }
         }
         for (IContainer folder : getExportedFolders()) {
@@ -364,7 +370,8 @@ public class ExampleResourcesPage extends WizardPage {
                 }
             }
         } catch (CoreException e) {
-            e.printStackTrace();
+            StatusManager.getManager().handle(
+                    new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
         }
     }
 

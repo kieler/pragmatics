@@ -16,15 +16,17 @@ package de.cau.cs.kieler.kex.ui.wizards.exporting;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kex.controller.ExampleElement;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
+import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
 
 /**
  * This is a wizard for the example export of kex. It contains of three wizardpages.
@@ -93,8 +95,9 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
             result.put(ExampleElement.RESOURCES, resourcePage.getExportedResources());
             ExampleManager.get().export(result);
         } catch (RuntimeException e) {
-            MessageDialog.open(MessageDialog.ERROR, getShell(), "Error while exporting example.",
-                    e.getMessage(), SWT.NONE);
+            IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID,
+                    "Error while exporting example." + "\n" + e.getLocalizedMessage(), e);
+            StatusManager.getManager().handle(status, StatusManager.SHOW);
             return false;
         }
         return true;
