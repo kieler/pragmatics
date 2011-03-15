@@ -82,7 +82,7 @@ public final class ExampleExport {
         validateElement(exportedResources, 1, "Exported Resources");
 
         // first example duplicate check
-        ExampleExport.checkDuplicate((String) map.get(ExampleElement.TITLE), collectors);
+        ExampleExport.checkDuplicate((String) map.get(ExampleElement.ID), collectors);
 
     }
 
