@@ -52,11 +52,9 @@ public class PluginExampleCollector extends ExampleCollector {
     /**
      * Loads examples of extenders.
      * 
-     * @throws RuntimeException
-     *             , if toExample(...) throws it.
      */
     @Override
-    public void load() throws RuntimeException {
+    public void load() {
         getCategories();
         // TODO rebuild,that first loadcategories and then loadexamples
         IConfigurationElement[] configElements = Platform.getExtensionRegistry()

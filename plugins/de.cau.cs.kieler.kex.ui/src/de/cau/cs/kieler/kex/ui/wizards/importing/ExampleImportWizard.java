@@ -130,8 +130,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                         e.getLocalizedMessage() + " Do you want to override it?");
 
             } else {
-                IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID, ERROR_TITLE
-                        + "\n" + e.getLocalizedMessage(), e);
+                IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID, ERROR_TITLE, e);
                 StatusManager.getManager().handle(status, StatusManager.SHOW);
             }
 
@@ -167,7 +166,7 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                         page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
                     } catch (PartInitException e) {
                         IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
-                                "Could not open editor" + "\n" + e.getLocalizedMessage(), e);
+                                "Could not open editor.", e);
                         StatusManager.getManager().handle(status, StatusManager.SHOW);
                     }
                 }

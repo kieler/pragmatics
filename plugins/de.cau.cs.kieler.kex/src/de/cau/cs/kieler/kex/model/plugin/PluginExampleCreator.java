@@ -95,12 +95,9 @@ public class PluginExampleCreator {
      *            , {@link List} of {@link String}s
      * @param absOverviewPic
      *            , {@link String}
-     * @throws RuntimeException
-     *             , if duplicatechecks fails or can be thrown by getPluginNode(...).
      */
     public void addExtension(final File location, final Example parseElement,
-            final List<Category> creatableCategories, final String absOverviewPic)
-            throws RuntimeException {
+            final List<Category> creatableCategories, final String absOverviewPic) {
 
         Node pluginNode = getPluginNode(location);
         Node extensionKEX = filterExtensionKEX(pluginNode);
@@ -117,7 +114,7 @@ public class PluginExampleCreator {
 
     // TODO testen...
     private void checkDuplicate(final Node extensionKEX, final String exampleId,
-            final List<Category> creatableCategories) throws RuntimeException {
+            final List<Category> creatableCategories) {
         NodeList childNodes = extensionKEX.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node item = childNodes.item(i);
@@ -149,14 +146,14 @@ public class PluginExampleCreator {
         return new Path(absOverviewPic.substring(projectPath.length())).toPortableString();
     }
 
-    private void makeRootSource(final File location, final Example example) throws RuntimeException {
+    private void makeRootSource(final File location, final Example example) {
         File project = IOHandler.searchUP(location, IOHandler.PROJECT_FILE).getParentFile();
         String relativeLocation = location.getPath().substring(project.getPath().length());
         example.setRootDir((relativeLocation.length() > 0) ? relativeLocation.substring(1)
                 : relativeLocation);
     }
 
-    private Node getPluginNode(final File locationFile) throws RuntimeException {
+    private Node getPluginNode(final File locationFile) {
 
         try {
             this.pluginXML = IOHandler.filterPluginXML(locationFile);
@@ -213,7 +210,7 @@ public class PluginExampleCreator {
         return extensionKEX;
     }
 
-    private Document createPluginDocument() throws RuntimeException {
+    private Document createPluginDocument() {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(true);
@@ -248,18 +245,16 @@ public class PluginExampleCreator {
      * 
      * @param destFile
      *            , {@link File}
-     * @throws RuntimeException
-     *             , if copyResource(...) throws it.
      */
     public void copyResources(final File destFile, final List<ExportResource> resources,
-            final List<IPath> finishedResources) throws RuntimeException {
+            final List<IPath> finishedResources) {
         for (ExportResource resource : resources) {
             copyResource(resource, destFile.getPath(), finishedResources);
         }
     }
 
     private void copyResource(final ExportResource resource, final String destPath,
-            final List<IPath> finishedResources) throws RuntimeException {
+            final List<IPath> finishedResources) {
         StringBuilder destLocation = new StringBuilder();
         try {
 
@@ -304,7 +299,7 @@ public class PluginExampleCreator {
         return true;
     }
 
-    private void writePluginXML(final String pluginPath) throws RuntimeException {
+    private void writePluginXML(final String pluginPath) {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             DOMSource source = new DOMSource(parsedXML);
@@ -328,7 +323,7 @@ public class PluginExampleCreator {
 
     }
 
-    private void throwWritePluginError(final Throwable e) throws RuntimeException {
+    private void throwWritePluginError(final Throwable e) {
         throw new RuntimeException(new StringBuffer().append(ErrorMessage.NOT_WRITE_PLUGIN)
                 .append(e.getLocalizedMessage()).toString());
     }
@@ -344,7 +339,7 @@ public class PluginExampleCreator {
         return createdElement;
     }
 
-    private Node toNode(final Example example, final File location) throws RuntimeException {
+    private Node toNode(final Example example, final File location) {
         Element createdExample = parsedXML.createElement(PluginConstants.Example.EXAMPLE);
         createdExample.setAttribute(PluginConstants.Example.ID, example.getId());
         createdExample.setAttribute(PluginConstants.Example.TITLE, example.getTitle());
@@ -403,11 +398,9 @@ public class PluginExampleCreator {
      * @param finishedResources
      *            , {@link List} of {@link IPath}
      * @return {@link String}
-     * @throws RuntimeException
-     *             , if an IOHandler.writeResource throws an exception.
      */
     public String copyOverviewPic(final String destPath, final String sourcePath,
-            final List<IPath> finishedResources) throws RuntimeException {
+            final List<IPath> finishedResources) {
         File file = new File(sourcePath);
         String destLocation = destPath + File.separatorChar + file.getName();
         IPath destination = Path.fromPortableString(destLocation.toString());

@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kex.controller;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -78,10 +77,8 @@ public final class ExampleManager {
      * 
      * @param forceLoad
      *            , set this parameter to force loading of examples
-     * @throws RuntimeException
-     *             , can be thrown by <code> load() </code>.
      */
-    public void load(final boolean forceLoad) throws RuntimeException {
+    public void load(final boolean forceLoad) {
         if (!this.isLoaded || forceLoad) {
             load();
             // after completely loaded
@@ -97,12 +94,8 @@ public final class ExampleManager {
      * @param exampleId
      *            , {@link String}
      * @return {@link Example}
-     * @throws RuntimeException
-     *             , can be thrown by <code> {@link PluginExampleCollector}.getExample(...) </code>
-     *             and if the example found example is null.
      */
-    public Example getExample(final SourceType type, final String exampleId)
-            throws RuntimeException {
+    public Example getExample(final SourceType type, final String exampleId) {
         if (type == SourceType.KIELER) {
             if (isLoaded) {
                 Map<String, Example> examplePool = extensionCollector.getExamplePool();
@@ -123,7 +116,7 @@ public final class ExampleManager {
         return null;
     }
 
-    private void load() throws RuntimeException {
+    private void load() {
         this.extensionCollector.load();
         // TODO test impl of an online interface.
         this.databaseCollector.load();
@@ -162,12 +155,9 @@ public final class ExampleManager {
      * @param checkDuplicate
      *            , boolean
      * @return {@link List} of {@link String}
-     * @throws RuntimeException
-     *             , if ExampleImport.validate(...) or ExampleImport.importExamples(...) throws it.
      */
     public List<String> importExamples(final IPath selectedResource,
-            final List<Example> selectedExamples, final boolean checkDuplicate)
-            throws RuntimeException {
+            final List<Example> selectedExamples, final boolean checkDuplicate) {
         ExampleImport.validate(selectedResource, selectedExamples, checkDuplicate);
         return ExampleImport.importExamples(selectedResource, selectedExamples, checkDuplicate);
     }
@@ -177,10 +167,8 @@ public final class ExampleManager {
      * 
      * @param properties
      *            , {@link Map} with {@link ExampleElement} as key and {@link Object} as value.
-     * @throws RuntimeException
-     *             , can be thrown at several places.
      */
-    public void export(final Map<ExampleElement, Object> properties) throws RuntimeException {
+    public void export(final Map<ExampleElement, Object> properties) {
 
         ExampleExport.validate(properties, this.extensionCollector, this.databaseCollector);
 
@@ -210,10 +198,8 @@ public final class ExampleManager {
      * @param quickStarter
      *            , {@link Example}
      * @return files which can be open directly, List<String>
-     * @throws RuntimeException
-     *             , if anything goes wrong at ExampleImport.importExamples(...).
      */
-    public List<String> quickStartImport(final Example quickStarter) throws RuntimeException {
+    public List<String> quickStartImport(final Example quickStarter) {
         List<Example> quickStarts = new ArrayList<Example>();
         quickStarts.add(quickStarter);
         return ExampleImport.importExamples(null, quickStarts, false);
@@ -226,7 +212,7 @@ public final class ExampleManager {
      * @param resourcePath
      *            , IPath of import location.
      */
-    public void generateProject(IPath resourcePath) {
+    public void generateProject(final IPath resourcePath) {
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IProject project = root.getProject(resourcePath.segment(0));
         if (!project.isAccessible()) {
@@ -240,18 +226,5 @@ public final class ExampleManager {
                 // TODO think about error handling
             }
         }
-    }
-
-    // FIXME geht so nicht mehr.
-    public Collection<? extends String> getNonEmptyCategories() {
-        List<String> result = new ArrayList<String>();
-        for (Example example : getExamples().values()) {
-            String category = example.getCategoryId();
-            if (!result.contains(category)) {
-                result.add(category);
-            }
-
-        }
-        return result;
     }
 }

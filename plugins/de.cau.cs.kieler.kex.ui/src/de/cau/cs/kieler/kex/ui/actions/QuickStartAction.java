@@ -111,9 +111,9 @@ public class QuickStartAction implements IIntroAction {
                     false);
             postfix(directOpens);
         } catch (RuntimeException e) {
-            StatusManager.getManager().handle(
-                    new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID, "Could not import example\n"
-                            + e.getLocalizedMessage(), e), StatusManager.SHOW);
+            StatusManager.getManager()
+                    .handle(new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
+                            "Could not import example", e), StatusManager.SHOW);
         }
     }
 
@@ -165,7 +165,7 @@ public class QuickStartAction implements IIntroAction {
                         page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
                     } catch (PartInitException e) {
                         IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
-                                "Could not open editor" + "\n" + e.getLocalizedMessage(), e);
+                                "Could not open editor", e);
                         StatusManager.getManager().handle(status, StatusManager.SHOW);
                     }
                 }

@@ -59,12 +59,10 @@ public final class ExampleExport {
      *            , Map of {@link ExampleElement} and an arbitrary {@link Object}.
      * @param collectors
      *            , {@link ExampleCollector}s
-     * @throws RuntimeException
-     *             , if any check fail a {@link RuntimeException} will throw.
      */
     @SuppressWarnings("unchecked")
     public static void validate(final Map<ExampleElement, Object> map,
-            final ExampleCollector... collectors) throws RuntimeException {
+            final ExampleCollector... collectors) {
         checkAttributes(map);
 
         Object sourceType = map.get(ExampleElement.SOURCETYPE);
@@ -88,8 +86,7 @@ public final class ExampleExport {
 
     }
 
-    private static void checkAttributes(final Map<ExampleElement, Object> map)
-            throws RuntimeException {
+    private static void checkAttributes(final Map<ExampleElement, Object> map) {
         String exampleTitle = (String) map.get(ExampleElement.TITLE);
         validateField(exampleTitle, EXAMPLE_TITLE_MIN, "Example Title");
 
@@ -106,7 +103,7 @@ public final class ExampleExport {
     }
 
     private static void validateElement(final List<?> list, final int minLength,
-            final String listName) throws RuntimeException {
+            final String listName) {
         if (list == null || list.size() < minLength) {
             StringBuilder errorMsg = new StringBuilder();
             errorMsg.append("No ").append(listName).append(" has been selected.\n")
@@ -116,7 +113,7 @@ public final class ExampleExport {
     }
 
     private static void validateField(final String checkable, final int minLength,
-            final String checkableName) throws RuntimeException {
+            final String checkableName) {
         if (checkable == null || checkable.length() < minLength) {
             StringBuilder errorMsg = new StringBuilder();
             errorMsg.append("The field ").append(checkableName)
@@ -134,12 +131,10 @@ public final class ExampleExport {
      *            , String
      * @param collectors
      *            , {@link ExampleCollector}...
-     * @throws RuntimeException
-     *             , throws if duplicate found.
      * 
      */
     public static void checkDuplicate(final String exampleTitle,
-            final ExampleCollector... collectors) throws RuntimeException {
+            final ExampleCollector... collectors) {
         if (exampleTitle == null) {
             throw new RuntimeException("Title of an example could not be null.");
         }
@@ -157,12 +152,10 @@ public final class ExampleExport {
      *            , {@link Map} with {@link ExampleElement} as key and an {@link Object} as value.
      * @param extensionCreator
      *            , {@link PluginExampleCreator}
-     * @throws RuntimeException
-     *             , will be caused if some errors occurs.
      */
     @SuppressWarnings("unchecked")
     public static void exportInPlugin(final Map<ExampleElement, Object> properties,
-            final PluginExampleCreator extensionCreator) throws RuntimeException {
+            final PluginExampleCreator extensionCreator) {
 
         Example mappedExample = ExampleExport.mapToExample(properties);
 
@@ -179,7 +172,7 @@ public final class ExampleExport {
             extensionCreator.copyResources(destFile, exportResources, finishedResources);
             mappedExample.addResources(ExampleExport.mapToExampleResource(exportResources));
 
-            // TODO image in den "images" ordner des jeweiligen plugins kopieren, dafür vlt.
+            // TODO image in den "images" ordner des jeweiligen plugins kopieren, dafï¿½r vlt.
             // namespace id herausfiltern.
             String absOverviewPic = copyOverviewPic(
                     (String) properties.get(ExampleElement.OVERVIEW_PIC), extensionCreator,
@@ -196,7 +189,7 @@ public final class ExampleExport {
 
     private static String copyOverviewPic(final String overviewPic,
             final PluginExampleCreator extensionCreator, final File destFile,
-            final List<IPath> finishedResources) throws RuntimeException {
+            final List<IPath> finishedResources) {
         if (overviewPic != null && overviewPic.length() > 1) {
             String absolutePath = extensionCreator.copyOverviewPic(destFile.getPath(), overviewPic,
                     finishedResources);
@@ -226,7 +219,7 @@ public final class ExampleExport {
         return result;
     }
 
-    private static String exampleIDCreator(String category, String title) {
+    private static String exampleIDCreator(final String category, final String title) {
         return category + title.trim().replace(' ', '_');
     }
 

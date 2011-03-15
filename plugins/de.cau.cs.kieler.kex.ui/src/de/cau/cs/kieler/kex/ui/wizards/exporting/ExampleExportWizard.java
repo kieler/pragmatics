@@ -96,7 +96,7 @@ public class ExampleExportWizard extends Wizard implements IExportWizard {
             ExampleManager.get().export(result);
         } catch (RuntimeException e) {
             IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID,
-                    "Error while exporting example." + "\n" + e.getLocalizedMessage(), e);
+                    "Error while exporting example.", e);
             StatusManager.getManager().handle(status, StatusManager.SHOW);
             return false;
         }

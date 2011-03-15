@@ -69,8 +69,7 @@ public final class ExampleImport {
      * @return directopens, {@link List} of {@link String}.
      */
     public static List<String> importExamples(final IPath selectedResource,
-            final List<Example> selectedExamples, final boolean checkDuplicate)
-            throws RuntimeException {
+            final List<Example> selectedExamples, final boolean checkDuplicate) {
 
         List<String> directOpens = new ArrayList<String>();
         List<String> finishedResources = new ArrayList<String>();
@@ -79,7 +78,6 @@ public final class ExampleImport {
         destFolder.append(WORKSPACE_LOCATION).append("/")
                 .append((selectedResource != null ? selectedResource.toString() : "")).append("/");
         try {
-
             for (Example example : selectedExamples) {
 
                 List<ExampleResource> resources = example.getResources();
@@ -110,7 +108,7 @@ public final class ExampleImport {
     private static void handleResources(final List<String> directOpens,
             final List<ExampleResource> resources, final String destFolder,
             final String nameSpaceId, final int exampleBeginIndex, final boolean checkDuplicate,
-            final List<String> finishedResources) throws RuntimeException {
+            final List<String> finishedResources) {
         Bundle bundle = Platform.getBundle(nameSpaceId);
 
         for (ExampleResource resource : resources) {
@@ -158,7 +156,7 @@ public final class ExampleImport {
         }
     }
 
-    private static void checkDuplicate(final String destPath) throws RuntimeException {
+    private static void checkDuplicate(final String destPath) {
         IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(destPath);
         if (project != null && project.exists()) {
             throw new RuntimeException("Duplicate Project, you maybe inserted it before.");
@@ -194,7 +192,7 @@ public final class ExampleImport {
      *            , boolean
      */
     public static void validate(final IPath selectedResource, final List<Example> selectedExamples,
-            final boolean checkDuplicate) throws RuntimeException {
+            final boolean checkDuplicate) {
         if (selectedExamples == null || selectedExamples.size() == 0) {
             throw new RuntimeException(ErrorMessage.NO_EXAMPLE_SELECTED);
         }
