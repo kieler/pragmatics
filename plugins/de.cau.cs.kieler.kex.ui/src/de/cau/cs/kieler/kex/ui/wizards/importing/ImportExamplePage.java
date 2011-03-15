@@ -297,7 +297,7 @@ public class ImportExamplePage extends WizardPage {
             categoryPairList.add(categoryPair);
         }
 
-        // structure categories
+        // structure categories and subcats
         for (Pair<Category, ArrayList<Object>> categoryPair : categoryPairList) {
             String parentId = categoryPair.getFirst().getParentId();
             if (parentId == null) {
@@ -315,8 +315,14 @@ public class ImportExamplePage extends WizardPage {
                 }
             }
         }
-        treeViewer.setInput(viewElement);
 
+        // remove empty categories
+        for (Pair<Category, ArrayList<Object>> pair : categoryPairList) {
+            if (pair.getSecond().isEmpty()) {
+                viewElement.remove(pair);
+            }
+        }
+        treeViewer.setInput(viewElement);
     }
 
     private Pair<Category, ArrayList<Object>> getParent(final String parentId,
