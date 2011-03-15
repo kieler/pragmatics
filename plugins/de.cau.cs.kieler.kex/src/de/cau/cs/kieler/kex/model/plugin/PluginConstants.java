@@ -13,6 +13,12 @@
  */
 package de.cau.cs.kieler.kex.model.plugin;
 
+/**
+ * Constants for communication with the plugin extensionpoints.
+ * 
+ * @author pkl
+ * 
+ */
 public final class PluginConstants {
 
     public static final String KEX_EXT_POINT = "de.cau.cs.kieler.kex";

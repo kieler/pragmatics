@@ -198,11 +198,8 @@ public class PluginExampleCollector extends ExampleCollector {
      * @param exampleId
      *            , {@link String}
      * @return {@link Example}
-     * @throws RuntimeException
-     *             , if a {@link InvalidRegistryObjectException} or a
-     *             {@link IllegalArgumentException} has been thrown.
      */
-    public static Example getExample(final String exampleId) throws RuntimeException {
+    public static Example getExample(final String exampleId) {
         IConfigurationElement[] configElements = Platform.getExtensionRegistry()
                 .getConfigurationElementsFor(PluginConstants.KEX_EXT_POINT);
         for (IConfigurationElement element : configElements) {

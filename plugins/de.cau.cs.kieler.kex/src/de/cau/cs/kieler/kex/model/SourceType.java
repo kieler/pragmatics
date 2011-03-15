@@ -22,7 +22,9 @@ package de.cau.cs.kieler.kex.model;
  * 
  */
 public enum SourceType {
-
+    /**
+     * examples are creatable by KIELER developer, or PUBLIC users (,but not yet).
+     */
     KIELER, PUBLIC;
 
     /**

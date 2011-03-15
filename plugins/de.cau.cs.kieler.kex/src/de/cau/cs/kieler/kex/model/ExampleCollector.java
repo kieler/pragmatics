@@ -28,10 +28,8 @@ public abstract class ExampleCollector {
     /**
      * Loads the examples.
      * 
-     * @throws RuntimeException
-     *             , should help to avoid problems.
      */
-    public abstract void load() throws RuntimeException;
+    public abstract void load();
 
     /**
      * Returns the loaded examplePool.

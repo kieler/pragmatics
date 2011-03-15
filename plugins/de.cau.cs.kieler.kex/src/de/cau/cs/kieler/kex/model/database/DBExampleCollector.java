@@ -61,10 +61,8 @@ public class DBExampleCollector extends ExampleCollector {
      * @param exampleTitle
      *            , String
      * @return {@link Example}
-     * @throws RuntimeException
-     *             , if an error occurs.
      */
-    public static Example getExample(final String exampleTitle) throws RuntimeException {
+    public static Example getExample(final String exampleTitle) {
         // to implement
         return null;
     }

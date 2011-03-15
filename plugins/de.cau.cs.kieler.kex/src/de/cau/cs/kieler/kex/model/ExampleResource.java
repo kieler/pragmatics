@@ -85,7 +85,9 @@ public class ExampleResource {
      * 
      */
     public enum Type {
-
+        /**
+         * A resource can be a file, a folder or a project.
+         */
         FILE, FOLDER, PROJECT;
 
         /**

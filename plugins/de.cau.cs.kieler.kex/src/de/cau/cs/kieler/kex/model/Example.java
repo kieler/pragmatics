@@ -61,7 +61,7 @@ public class Example {
      *            , {@link String}
      * @param title
      *            , {@link String}
-     * @param categoryParam
+     * @param categoryId
      *            , {@link Category}
      * @param sourceTypeParam
      *            , {@link SourceType}
@@ -92,12 +92,12 @@ public class Example {
     /**
      * Searches for a category.
      * 
-     * @param categoryId
+     * @param categoryIdParam
      *            , {@link String}
      * @return boolean
      */
-    public boolean contains(final String categoryId) {
-        if (getCategoryId().equals(categoryId)) {
+    public boolean contains(final String categoryIdParam) {
+        if (getCategoryId().equals(categoryIdParam)) {
             return true;
         }
         return false;

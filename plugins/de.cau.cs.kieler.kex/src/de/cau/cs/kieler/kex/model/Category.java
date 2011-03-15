@@ -132,10 +132,21 @@ public class Category {
                 .append(title).append("]").toString();
     }
 
-    public void setNamespaceId(String namespaceId) {
+    /**
+     * Setter for namespace id of an example.
+     * 
+     * @param namespaceId
+     *            , String
+     */
+    public void setNamespaceId(final String namespaceId) {
         this.namespaceId = namespaceId;
     }
 
+    /**
+     * Getter for namespaceId.
+     * 
+     * @return String
+     */
     public String getNamespaceId() {
         return namespaceId;
     }
