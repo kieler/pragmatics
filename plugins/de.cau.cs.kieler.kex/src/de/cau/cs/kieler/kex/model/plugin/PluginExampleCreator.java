@@ -99,7 +99,8 @@ public class PluginExampleCreator {
     public void addExtension(final File location, final Example parseElement,
             final List<Category> creatableCategories, final String absOverviewPic) {
 
-        Node pluginNode = getPluginNode(location);
+        this.pluginXML = IOHandler.filterPluginXML(location);
+        Node pluginNode = getPluginNode();
         Node extensionKEX = filterExtensionKEX(pluginNode);
 
         checkDuplicate(extensionKEX, parseElement.getId(), creatableCategories);
@@ -153,10 +154,9 @@ public class PluginExampleCreator {
                 : relativeLocation);
     }
 
-    private Node getPluginNode(final File locationFile) {
+    private Node getPluginNode() {
 
         try {
-            this.pluginXML = IOHandler.filterPluginXML(locationFile);
             if (IOHandler.PLUGIN_XML.equals(this.pluginXML.getName())) {
                 parsedXML = parseDocument(this.pluginXML);
             } else {
@@ -180,7 +180,7 @@ public class PluginExampleCreator {
         if (plugins.getLength() == 1) {
             return plugins.item(0);
         }
-        throw new RuntimeException("Could not filter plugin node. " + locationFile.getPath());
+        throw new RuntimeException("Could not filter plugin node. " + pluginXML.getPath());
     }
 
     private Node filterExtensionKEX(final Node pluginNode) {

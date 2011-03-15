@@ -123,7 +123,7 @@ public final class IOHandler {
      *            , folder in an plugin project.
      * @return plugin.xml if found otherwise parent java project directory
      */
-    public static File filterPluginXML(final File location) throws RuntimeException {
+    public static File filterPluginXML(final File location) {
 
         // TODO hier ansetzen project rausholen lokale rootresource filtern und
         // bei example einsetzen sowie beim plugin schreiben ber�cksichtigen,
@@ -156,8 +156,7 @@ public final class IOHandler {
      * @param fileName
      * @return true, if exactly one file is found, otherwise false
      */
-    private static File getFile(final File sourceDir, final String fileName)
-            throws RuntimeException {
+    private static File getFile(final File sourceDir, final String fileName) {
         List<File> resultList = new ArrayList<File>();
         collectFiles(sourceDir, fileName, resultList);
         return filterFoundFile(resultList, fileName, sourceDir);
@@ -172,7 +171,7 @@ public final class IOHandler {
      * @param resultList
      */
     private static void collectFiles(final File sourceDir, final String fileName,
-            final List<File> resultList) throws RuntimeException {
+            final List<File> resultList) {
         for (File file : sourceDir.listFiles()) {
             if (fileName.equals(file.getName())) {
                 resultList.add(file);
@@ -191,8 +190,7 @@ public final class IOHandler {
      *            , String
      * @return File, if exactly one file is found otherwise null;
      */
-    public static File searchUP(final File sourceDir, final String fileName)
-            throws RuntimeException {
+    public static File searchUP(final File sourceDir, final String fileName) {
         File parent = sourceDir;
         File[] foundFiles = null;
         while (parent != null && parent.exists() && parent.isDirectory()) {
@@ -212,7 +210,7 @@ public final class IOHandler {
     }
 
     private static File filterFoundFile(final List<File> foundFiles, final String searchName,
-            final File source) throws RuntimeException {
+            final File source) {
         int fileCount = foundFiles.size();
         if (fileCount == 0) {
             return null;
@@ -226,7 +224,7 @@ public final class IOHandler {
     }
 
     private static File filterFoundFile(final File[] foundFiles, final String searchName,
-            final File source) throws RuntimeException {
+            final File source) {
         int fileCount = foundFiles.length;
         if (fileCount == 0) {
             return null;
@@ -252,7 +250,7 @@ public final class IOHandler {
      *             , can occur while io writing.
      */
     public static void writeFile(final URL sourceUrl, final String destPath,
-            final boolean checkDuplicate) throws IOException, RuntimeException {
+            final boolean checkDuplicate) throws IOException {
         File target = new File(destPath);
         if (checkDuplicate && target.exists()) {
             throw new RuntimeException(target.getName());
