@@ -239,29 +239,34 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      */
     public void process(final LayeredGraph layeredGraph) {
         getMonitor().begin("Orthogonal edge routing", 1);
+        
         edgeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING);
         conflictThreshold = CONFL_THRESH_FACTOR * edgeSpacing;
+        boolean debug = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
         
         float xpos = 0.0f;
         Iterator<Layer> layerIter = layeredGraph.getLayers().iterator();
-        while (layerIter.hasNext()) {
-            Layer layer = layerIter.next();
+        Layer leftLayer = null;
+        Layer rightLayer = null;
+        
+        do {
             int slotsCount;
             
-            // Route edges of western output ports
-            slotsCount = routeEdges(layer, PortSide.WEST, xpos);
+            // Fetch the next layer, if any
+            rightLayer = layerIter.hasNext() ? layerIter.next() : null;
+            
+            // Place the left layer's nodes, if any
+            if (leftLayer != null) {
+                leftLayer.placeNodes(xpos);
+                xpos += leftLayer.getSize().x + edgeSpacing;
+            }
+            
+            // Route edges between the two layers
+            slotsCount = routeEdges(leftLayer, rightLayer, xpos, debug);
             xpos += slotsCount * edgeSpacing;
             
-            // Place the nodes
-            layer.placeNodes(xpos);
-            xpos += layer.getSize().x + edgeSpacing;
-            
-            // Route edges of eastern output ports
-            if (layerIter.hasNext()) {
-                slotsCount = routeEdges(layer, PortSide.EAST, xpos);
-                xpos += slotsCount * edgeSpacing;
-            }
-        }
+            leftLayer = rightLayer;
+        } while (leftLayer != null || rightLayer != null);
         
         layeredGraph.getSize().x = xpos;
         getMonitor().done();
@@ -271,30 +276,25 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     private static final int STRAIGHT_TOLERANCE = 256;
     
     /**
-     * Route edges originating at the given layer. The edges may go to the next layer
-     * (in case of the output ports being on the eastern side), or may stay at the same
-     * layer (in case of the output ports being on the western side).
+     * Route edges between the given layers.
      * 
-     * @param layer the source layer
-     * @param portSide side of the output ports whose edges to route. Either {@code EAST}
-     *                 or {@code WEST}.
+     * @param leftLayer the left layer. May be {@code null}.
+     * @param rightLayer the right layer. May be {@code null}.
      * @param xpos horizontal position of the first routing slot
+     * @param debug {@code true} if segment dependency graphs should be written to the
+     *              debug directory.
      * @return the number of routing slots for this layer
      */
-    private int routeEdges(final Layer layer, final PortSide portSide, final double xpos) {
-        // create hypernodes for the ports of the source layer and the target layer
+    private int routeEdges(final Layer leftLayer, final Layer rightLayer, final double xpos,
+            final boolean debug) {
+        
         Map<LPort, HyperNode> portToHyperNodeMap = new HashMap<LPort, HyperNode>();
         List<HyperNode> hyperNodes = new LinkedList<HyperNode>();
-        for (LNode node : layer.getNodes()) {
-            for (LPort port : node.getPorts(PortType.OUTPUT, portSide)) {
-                HyperNode hyperNode = portToHyperNodeMap.get(port);
-                if (hyperNode == null) {
-                    hyperNode = new HyperNode();
-                    hyperNodes.add(hyperNode);
-                    hyperNode.addPortPosis(port, portToHyperNodeMap);
-                }
-            }
-        }
+        
+        // create hypernodes for eastern output ports of the left layer and for western
+        // output ports of the right layer
+        createHyperNodes(leftLayer, PortSide.EAST, hyperNodes, portToHyperNodeMap);
+        createHyperNodes(rightLayer, PortSide.WEST, hyperNodes, portToHyperNodeMap);
         
         // create dependencies for the hypernode ordering graph
         ListIterator<HyperNode> iter1 = hyperNodes.listIterator();
@@ -308,16 +308,16 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         }
         
         // write the full dependency graph to an output file
-        if (layer.getGraph().getProperty(LayoutOptions.DEBUG_MODE)) {
-            writeDebugGraph(layer, hyperNodes, portSide, "full");
+        if (debug) {
+            writeDebugGraph(leftLayer, hyperNodes, "full");
         }
         
         // break cycles
         breakCycles(hyperNodes);
 
         // write the acyclic dependency graph to an output file
-        if (layer.getGraph().getProperty(LayoutOptions.DEBUG_MODE)) {
-            writeDebugGraph(layer, hyperNodes, portSide, "acyc");
+        if (debug) {
+            writeDebugGraph(leftLayer, hyperNodes, "acyc");
         }
         
         // assign ranks to the hypernodes
@@ -354,6 +354,32 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             }
         }
         return rankCount + 1;
+    }
+
+    /**
+     * Creates hypernodes for the given layer.
+     * 
+     * @param layer the layer. May be {@code null}, in which case nothing happens.
+     * @param portSide side of the output ports for whose outgoing edges hypernodes should
+     *                 be created.
+     * @param hyperNodes list the created hypernodes should be added to.
+     * @param portToHyperNodeMap map from ports to hypernodes that should be filled.
+     */
+    private void createHyperNodes(final Layer layer, final PortSide portSide,
+            final List<HyperNode> hyperNodes, final Map<LPort, HyperNode> portToHyperNodeMap) {
+        
+        if (layer != null) {
+            for (LNode node : layer.getNodes()) {
+                for (LPort port : node.getPorts(PortType.OUTPUT, portSide)) {
+                    HyperNode hyperNode = portToHyperNodeMap.get(port);
+                    if (hyperNode == null) {
+                        hyperNode = new HyperNode();
+                        hyperNodes.add(hyperNode);
+                        hyperNode.addPortPosis(port, portToHyperNodeMap);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -596,14 +622,25 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      * @param nodes list of hypernodes
      */
     private static void topologicalNumbering(final List<HyperNode> nodes) {
-        // determine sources and incoming count
+        // determine sources, targets, incoming count and outgoing count; targets are only
+        // added to the list if they only connect westward ports (that is, if all their
+        // horizontal segments point to the right)
         List<HyperNode> sources = new LinkedList<HyperNode>();
+        List<HyperNode> rightwardTargets = new LinkedList<HyperNode>();
         for (HyperNode node : nodes) {
             node.inweight = node.incoming.size();
+            node.outweight = node.outgoing.size();
+            
             if (node.inweight == 0) {
                 sources.add(node);
             }
+            
+            if (node.outweight == 0 && node.sourcePosis.size() == 0) {
+                rightwardTargets.add(node);
+            }
         }
+        
+        int maxRank = -1;
         
         // assign ranks using topological numbering
         while (!sources.isEmpty()) {
@@ -611,9 +648,45 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             for (Dependency dep : node.outgoing) {
                 HyperNode target = dep.target;
                 target.rank = Math.max(target.rank, node.rank + 1);
+                maxRank = Math.max(maxRank, target.rank);
+                
                 target.inweight--;
                 if (target.inweight == 0) {
-                    sources.add(dep.target);
+                    sources.add(target);
+                }
+            }
+        }
+        
+        /* If we stopped here, hyper nodes that don't have any horizontal segments pointing
+         * leftward would be ranked just like every other hyper node. This would move back
+         * edges too far away from their target node. To remedy that, we move all hyper nodes
+         * with horizontal segments only pointing rightwards as far right as possible.
+         */
+        if (maxRank > -1) {
+            // assign all target nodes with horzizontal segments pointing to the right the
+            // rightmost rank
+            for (HyperNode node : rightwardTargets) {
+                node.rank = maxRank;
+            }
+            
+            // let all other segments with horizontal segments pointing rightwards move as
+            // far right as possible
+            while (!rightwardTargets.isEmpty()) {
+                HyperNode node = rightwardTargets.remove(0);
+                
+                // The node only has connections to western ports
+                for (Dependency dep : node.incoming) {
+                    HyperNode source = dep.source;
+                    if (source.sourcePosis.size() > 0) {
+                        continue;
+                    }
+                    
+                    source.rank = Math.min(source.rank, node.rank - 1);
+                    
+                    source.outweight--;
+                    if (source.outweight == 0) {
+                        rightwardTargets.add(source);
+                    }
                 }
             }
         }
@@ -644,14 +717,13 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      * 
      * @param layer the currently processed layer
      * @param hypernodes a list of hypernodes
-     * @param portSide the side of output ports currently processed
      * @param label a label to append to the output files
      */
     private static void writeDebugGraph(final Layer layer, final List<HyperNode> hypernodes,
-            final PortSide portSide, final String label) {
+            final String label) {
         
         try {
-            Writer writer = createWriter(layer, portSide, label);
+            Writer writer = createWriter(layer, label);
             writer.write("digraph {\n");
             // write hypernode information
             for (HyperNode hypernode : hypernodes) {
@@ -676,13 +748,11 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      * Create a writer for debug output.
      * 
      * @param layer the currently processed layer
-     * @param portSide the side of output ports currently processed
      * @param label a label to append to the output files
      * @return a file writer for debug output
      * @throws IOException if creating the output file fails
      */
-    private static Writer createWriter(final Layer layer, final PortSide portSide,
-            final String label) throws IOException {
+    private static Writer createWriter(final Layer layer, final String label) throws IOException {
         
         String path = System.getProperty("user.home");
         if (path.endsWith(File.separator)) {
@@ -691,9 +761,10 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             path += File.separator + "tmp" + File.separator + "klay";
         }
         new File(path).mkdirs();
+        
+        int layerIndex = layer == null ? 0 : layer.getIndex() + 1;
         String debugFileName = Integer.toString(layer.getGraph().hashCode()
-                & ((1 << (Integer.SIZE / 2)) - 1)) + "-l" + layer.getIndex()
-                + (portSide == PortSide.EAST ? "e" : "w") + "-" + label;
+                & ((1 << (Integer.SIZE / 2)) - 1)) + "-l" + layerIndex + "-" + label;
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
