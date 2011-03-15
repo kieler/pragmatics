@@ -326,11 +326,20 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         // set bend points with appropriate coordinates
         int rankCount = -1;
         for (HyperNode node : hyperNodes) {
+            // Hypernodes that are just straight lines don't take up a slot and don't need
+            // bend points
+            if (node.start == node.end) {
+                continue;
+            }
+            
             rankCount = Math.max(rankCount, node.rank);
+            
+            // Calculate coordinates for each port's bend points
             double x = xpos + node.rank * edgeSpacing;
             for (LPort port : node.ports) {
                 if (port.getType() == PortType.OUTPUT) {
                     double sourcey = port.getNode().getPos().y + port.getPos().y;
+                    
                     for (LEdge edge : port.getEdges()) {
                         double targety = edge.getTarget().getNode().getPos().y
                                 + edge.getTarget().getPos().y;
@@ -356,6 +365,12 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      */
     private static void createDependency(final HyperNode hn1, final HyperNode hn2,
             final double minDiff) {
+        
+        // check if at least one of the two nodes is just a straight line; those don't
+        // create dependencies since they don't take up a slot
+        if (hn1.start == hn1.end || hn2.start == hn2.end) {
+            return;
+        }
         
         // compare number of conflicts for both variants
         int conflicts1 = countConflicts(hn1.targetPosis, hn2.sourcePosis, minDiff);
