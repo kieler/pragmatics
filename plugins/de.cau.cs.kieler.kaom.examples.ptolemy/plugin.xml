@@ -10,20 +10,822 @@
             parent_category="de.cau.cs.kieler.kaom"
             title="Ptolemy">
       </category>
+      <category
+            description="The component interaction (CI) domain models systems that blend data-driven and demand-driven styles of computation. As an example, the interaction between a web server and a browser is mostly demand-driven. When the user clicks on a link in the browser, it pulls the corresponding page from the web server. A stock-quote service can use a data-driven style of computation. The server generates events when stock prices change. The data drive the clients to update their displayed information. Such push/pull interaction between a data producer and consumer is common in distributed systems, and has been included in middleware services, most notably in the CORBA event service. These services motivated the design of this domain to study the interaction models in distributed systems, such as stock-quote services, traffic or weather information systems. Other applications include database systems, file systems, and the Click modular router. An actor in a CI model can be active, which means it possesses its own thread of execution. For example, an interrupt source of an embedded system can be modeled as an active source actor. Such a source generates events asynchronously with respect to the software execution on the embedded processor. CI models can be used to simulate and study how the embedded software handles the asynchronous events, such as external interrupts and asynchronous I/O."
+            id="de.cau.cs.kieler.kaom.ptolemy.ci"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Component Interaction (CI)">
+      </category>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ci"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates queue management using push and pull style communication in distributed systems. The &quot;Distributor&quot; actor will route packets to the two queues. It monitors the sizes of the queues to help it make decisions."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ci.Router"
+            overview_pic="images/ci_Router.png"
+            root_directory="models/ci"
+            title="Router">
+         <resource
+               direct_open="false"
+               local_path="models/ci/ci_Router.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ci/ci_Router.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ci/ci_Router.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <category
+            description="The domain models systems with continuous dynamics, including for example analog circuits and mechanical systems, but also cleanly supports discrete events, modal behaviors, and signals that mix continuous-time behaviors with discrete events. Models for continuous dynamics are equivalent to linear or nonlinear integral equations. A sophisticated numerical solver for these equations is integrated with the director. The clean semantics of the Continuous domain enables its integration in hierarchical heterogeneous models that use the Synchronous/Reactive (SR) and Discrete Event (DE) domains. Arbitrary hierarchical mixtures of these domains are supported, although if SR is at the top level, then the period parameter of the director must be used so that time advances."
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Continuous-time modeling">
+      </category>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This continuous-time model uses a modal model to simulate a bouncing ball and the GR domain to animate it. This is a classic example of a Zeno system, where an infinite number of bounce events occur in a finite time."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.BouncingBall"
+            overview_pic="images/continuous_BouncingBallWithoutGR.png"
+            root_directory="models/continuous"
+            title="Bouncing Ball">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_BouncingBallWithoutGR.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_BouncingBallWithoutGR.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_BouncingBallWithoutGR.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Brownian motion is the integral of white noise. This model generates approximations of two Brownian motion random processes and plots the value of one vs. the other. This creates a random walk effect. White noise is approximated as a signal where any two samples are independent and identically distributed Gaussian random variables."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Brownian"
+            overview_pic="images/continuous_Brownian.png"
+            root_directory="models/continuous"
+            title="Brownian">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Brownian.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Brownian.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Brownian.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model models a pendulum on a moving cart. The card moves in the x dimension and the pendulum moves in x-z plane, as shown in the image above. The pendulum collides with the surface of the cart and bounces back with some energy loss, specified by the lambda parameter. There is no extra force except the gravity force applied on the pendulum. In the 3D animation, the x dimension is coming out of the screen. This model is a Zeno model, where an infinite number of events occur in a finite time. The model has two modes, one for pre-Zeno and for post-Zeno dynamics. This illustrates the ability to model Zeno systems in a reasonable way."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.CartPendulum"
+            overview_pic="images/continuous_CartPendulum.png"
+            root_directory="models/continuous"
+            title="Cart Pendulum">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_CartPendulum.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_CartPendulum.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_CartPendulum.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows a simple adaptive cruise control system, illustrating model-integrated control strategies. A leading car model produces information that is observed with possible flaws by a following car. If the following car detects flaws, it uses a conservative strategy. Otherwise, it tracks the leading car closely."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.CarTracking"
+            overview_pic="images/continuous_CarTracking.png"
+            root_directory="models/continuous"
+            title="CarTracking">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_CarTracking.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_CarTracking.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_CarTracking.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This demo illustrates discrete and continuous clocks in the Continuous domain. "
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.ComparedClocks"
+            overview_pic="images/continuous_ComparedClocks.png"
+            root_directory="models/continuous"
+            title="Compared Clocks">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_ComparedClocks.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_ComparedClocks.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_ComparedClocks.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Combination of discrete-event modeling (at the top level) and continuous-time modeling (below that). This example models a job shop where job arrivals are discrete events, the processing rate is given by an exponential random variable, and the job processing is modeled in continuous time with an opaque composite actor."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.InsideDE"
+            overview_pic="images/continuous_ContinuousInsideDE.png"
+            root_directory="models/continuous"
+            title="Continuous Inside DE">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_ContinuousInsideDE.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_ContinuousInsideDE.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_ContinuousInsideDE.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model plots an approximate efficiency curve for a hypothetical internal combustion engine."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.EfficiencyCurve"
+            overview_pic="images/continuous_EfficiencyCurve.png"
+            root_directory="models/continuous"
+            title="Efficiency Curve">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_EfficiencyCurve.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_EfficiencyCurve.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_EfficiencyCurve.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="The Furuta pendulum has a motor controlling the angle of an arm, from which a free-swinging pendulum hangs. The objective is to swing the pendulum up and then balance it."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.FurutaPendulum"
+            overview_pic="images/continuous_FurutaPendulum.png"
+            root_directory="models/continuous"
+            title="Furuta Pendulum">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_FurutaPendulum.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_FurutaPendulum.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_FurutaPendulum.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows that the Continuous director gives a correct execution of a hierarchical continuous-time model. By correct execution, we mean the simulation results (signals) of the hierarchical model are the same as the results of the same model with the hierarchy removed."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.HierarchicalExecution"
+            overview_pic="images/continuous_HierarchicalExecution.png"
+            root_directory="models/continuous"
+            title="Hierarchical Execution">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_HierarchicalExecution.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_HierarchicalExecution.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_HierarchicalExecution.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Hybrid model of a plant where a continuous flow of raw material is directed into bottles as the bottles (jobs) arrive. The top level is a discrete-event model with a modal continuous-time model inside."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.HybridPlant"
+            overview_pic="images/continuous_HybridPlant.png"
+            root_directory="models/continuous"
+            title="Hybrid Plant">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_HybridPlant.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_HybridPlant.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_HybridPlant.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model demonstrates the use of a modal model to implement hysteresis."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Hysteresis"
+            overview_pic="images/continuous_Hysteresis.png"
+            root_directory="models/continuous"
+            title="Hysteresis">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Hysteresis.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Hysteresis.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Hysteresis.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model is an example of a stochastic hybrid system. It generates a Poisson process with a linearly increasing rate using the Continuous domain. The model plots the events vs. time and a histogram of the time between events. The technique here was suggested by John Lygeros."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.IncreasingRatePoisson"
+            overview_pic="images/continuous_IncreasingRatePoisson.png"
+            root_directory="models/continuous"
+            title="Increasing Rate Poisson">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_IncreasingRatePoisson.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_IncreasingRatePoisson.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_IncreasingRatePoisson.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows how level crossing detector handles the continuous signals with and w/o discontinuity. The level crossing detector has two operation modes. For continuous signals, the detector try to refine step size to find the point level crossing happens. At the time points where discontinuities happen, the detector does not try to refine step size (which is 0.0 already), but to detect the level crossing only."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.LevelCrossingDetector"
+            overview_pic="images/continuous_LevelCrossingDetector.png"
+            root_directory="models/continuous"
+            title="Level Crossing Detector">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_LevelCrossingDetector.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_LevelCrossingDetector.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_LevelCrossingDetector.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows a nonlinear feedback system that exhibits chaotic behavior. It is modeled in continuous time. The Continuous director uses a sophisticated ordinary differential equation solver to execute the model. This particular model is known as a Lorenz attractor."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Lorenz"
+            overview_pic="images/continuous_Lorenz.png"
+            root_directory="models/continuous"
+            title="Lorenz">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Lorenz.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Lorenz.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Lorenz.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model simulates Newton&apos;s cradle with three balls. Newton&apos;s cradle is a toy with steel balls hanging on strings and colliding with one another."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.NewtonsCradle"
+            overview_pic="images/continuous_NewtonsCradle.png"
+            root_directory="models/continuous"
+            title="Newtons Cradle">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_NewtonsCradle.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_NewtonsCradle.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_NewtonsCradle.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model demonstrates the use of bandlimited noise together with a modal model that implements hysteresis."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Noise"
+            overview_pic="images/continuous_Noise.png"
+            root_directory="models/continuous"
+            title="Noise">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Noise.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Noise.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Noise.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model measures the power spectrum of bandlimited noise and compares it against the theoretical value of the spectrum. Notice that the sidebands decay slightly more slowly than the theory predicts because of aliasing distortion. You can experiment with the bandwidth of the noise."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.NoiseSpectrum"
+            overview_pic="images/continuous_NoiseSpectrum.png"
+            root_directory="models/continuous"
+            title="NoiseSpectrum">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_NoiseSpectrum.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_NoiseSpectrum.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_NoiseSpectrum.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model generates a Poisson process using the Continuous domain. The time between events is an exponential random variable. The model plots the events vs. time and a histogram of the time between events, which should be exponentially distributed. The method used here would tolerate time-varying rates, although that is not shown in this example."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Poisson"
+            overview_pic="images/continuous_Poisson.png"
+            root_directory="models/continuous"
+            title="Poisson">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Poisson.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Poisson.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Poisson.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Hybrid model of a plant where a continuous flow of raw material is directed into bottles as the bottles (jobs) arrive. The top level is a discrete-event model with a modal continuous-time model inside. Model parameters are to the right. This model uses a PoissonClock to simulate the random arrival of events. Contrast this with the HybridPlant model which uses a Clock to simulate a deterministic arrival of events."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.RandomHybridPlant"
+            overview_pic="images/continuous_RandomHybridPlant.png"
+            root_directory="models/continuous"
+            title="Random Hybrid Plant">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_RandomHybridPlant.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_RandomHybridPlant.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_RandomHybridPlant.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates continuous-time signals and discrete signals. It shows that samples of a piecewise continuous signal have the value of the signal at the start of the discontinuity, as one would expect in hardware samplers that require a setup time.  In the semantics of HyVisual (and continuous-time in Ptolemy II), piecewise continuous signals have more than one value at the time of the discontinuity. Discrete signals can also be sampled, but if the discrete signal has only one value at each discrete time, then the samples will reflect exactly that value. In this example, a triggered sampler is used to sample the discrete signal, and every second discrete clock output is sampled."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.SampledClocks"
+            overview_pic="images/continuous_SampledClocks.png"
+            root_directory="models/continuous"
+            title="Sampled Clocks">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_SampledClocks.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_SampledClocks.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_SampledClocks.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows how a satellite moves around the earth and moon under the gravity. We assume that the satellite, the earth, and the moon are in the same plane. We also assume there is no friction and the earth and moon are prefectly round."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Satellite"
+            overview_pic="images/continuous_Satellite.png"
+            root_directory="models/continuous"
+            title="Satellite">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Satellite.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Satellite.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Satellite.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This is a mixed-signal model of a MEMS accelerometer using a digital feedback controller to limit the displacement of the silicon beams. The technique, which is related to Sigma-Delta A/D converters, is due to Mark Lemkin (Ph.D. thesis, 1997, UC Berkeley). The accelerometer is modeled as a second order differential system. The acceleration is sampled, filtered, and fed back to produce a countering electrostatic force."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.SigmaDelta"
+            overview_pic="images/continuous_SigmaDelta.png"
+            root_directory="models/continuous"
+            title="Sigma Delta">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_SigmaDelta.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_SigmaDelta.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_SigmaDelta.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows one way to generate a sinuoid using a marginally stable feedback system. The second integrator has a non-zero initial state, which gets things started."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Sinusoid"
+            overview_pic="images/continuous_Sinusoid.png"
+            root_directory="models/continuous"
+            title="Sinusoid">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Sinusoid.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Sinusoid.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Sinusoid.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows the square-wave response of a continuous-time transfer function.  The ContinuousTransferFunction actor constructs a composite actor to realize the specified transfer function."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.SquareWave"
+            overview_pic="images/continuous_SquareWave.png"
+            root_directory="models/continuous"
+            title="Square Wave">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_SquareWave.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_SquareWave.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_SquareWave.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model simulates the flight dynamics of the Starmac quadrotor aircraft and then uses Java3D to show the results."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Starmac"
+            overview_pic="images/continuous_Starmac.png"
+            root_directory="models/continuous"
+            title="Starmac">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Starmac.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Starmac.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Starmac.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows how to handle hybrid systems with both continuousand discrete inputs (and outputs). The DiscreteClock actor generates a sequence of discrete events which trigger the transition of the FSM inside the continuous time composite actor. The FSM routes one of the two continuous time input signals to the output."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Switch"
+            overview_pic="images/continuous_Switch.png"
+            root_directory="models/continuous"
+            title="Switch">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Switch.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Switch.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Switch.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Thermostat model showing heating a cooling cycles. In this model, the refinements of the modes in the state machine are the same model, and the parameters of the model are changed when state transitions are taken."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Thermostat"
+            overview_pic="images/continuous_Thermostat.png"
+            root_directory="models/continuous"
+            title="Thermostat">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Thermostat.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Thermostat.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Thermostat.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model represents an automobile transmission, a classic example of a hybrid system. The inputs to &quot;car model&quot; hybrid system are the current applied gear and the current throttle position.  In this model, the gear shift sequence is predetermined, and the throttle is applied constantly.  It is assumed that shifts from one gear to another occur instantaneously."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.Transmission"
+            overview_pic="images/continuous_Transmission.png"
+            root_directory="models/continuous"
+            title="Transmission">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Transmission.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_Transmission.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_Transmission.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Vehicle-to-vehicle control system, as designed by U. Penn for Mobies. The controller in FollowingPlatoon is a modal controller with the objective of following the LeadingPlatoon."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous.V2V"
+            overview_pic="images/continuous_V2V.png"
+            root_directory="models/continuous"
+            title="V2V">
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_V2V.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/continuous/continuous_V2V.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/continuous/continuous_V2V.kaod"
+               resource_type="file">
+         </resource>
+      </example>
       <example
             author="KIELER Workgroup"
             category="de.cau.cs.kieler.kaom.ptolemy"
             contact="kieler@informatik.uni-kiel.de"
             description="???"
             generation_date="Mon Mar 14 13:46 CEST 2011"
-            id="de.cau.cs.kieler.kaom.examples.ptolemy.???"
+            id="de.cau.cs.kieler.kaom.ptolemy.???"
             overview_pic="images/???.png"
             root_directory="models/???"
             title="???">
          <resource
                direct_open="false"
-               local_path="de.cau.cs.kieler.kaom.examples.ptolemy.resource1"
-               resource_type="de.cau.cs.kieler.kaom.examples.ptolemy.resource1">
+               local_path="models/???.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/???.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/???.kaod"
+               resource_type="file">
          </resource>
       </example>
    </extension>
