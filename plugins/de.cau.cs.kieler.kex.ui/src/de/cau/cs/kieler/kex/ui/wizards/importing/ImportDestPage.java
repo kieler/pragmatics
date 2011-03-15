@@ -55,12 +55,7 @@ public class ImportDestPage extends WizardResourceImportPage {
      */
     protected ImportDestPage(final String name, final IStructuredSelection selection) {
         super(name, selection);
-        super.setDescription("Set destination location for imported examples.");
-    }
-
-    @Override
-    public String getDescription() {
-        return "Set destination location for imported examples.";
+        super.setDescription(Messages.getString("importDestPageDescription"));
     }
 
     @Override
@@ -81,7 +76,7 @@ public class ImportDestPage extends WizardResourceImportPage {
     @Override
     protected void createOptionsGroupButtons(final Group optionsGroup) {
         openImports = new Button(optionsGroup, SWT.CHECK);
-        openImports.setText("Open examples after import");
+        openImports.setText(Messages.getString("optionGroupDescription"));
         openImports.setSelection(true);
     }
 
@@ -96,7 +91,7 @@ public class ImportDestPage extends WizardResourceImportPage {
         Group topGroup = new Group(parent, SWT.NONE);
         topGroup.setLayout(new GridLayout());
         topGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        topGroup.setText("Set Destination");
+        topGroup.setText(Messages.getString("topGroupDescription"));
         super.createControl(topGroup);
         if (super.getContainerFullPath() == null) {
             super.setContainerFieldValue(INIT_PROJECT);
@@ -174,6 +169,7 @@ public class ImportDestPage extends WizardResourceImportPage {
                     IMessageProvider.WARNING);
             return false;
         }
+        setMessage(Messages.getString("importDestPageDescription"));
         return true;
 
     }

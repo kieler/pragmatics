@@ -92,6 +92,8 @@ public class ImportExamplePage extends WizardPage {
     private static final int WIZARD_MIN_WIDTH = 540;
     private static final int WIZARD_MIN_HEIGHT = 720;
 
+    private static final int IMAGE_LABEL_DESC_HEIGHT = 25;
+
     private Text exampleDescField;
 
     private Label imageLabel;
@@ -248,7 +250,6 @@ public class ImportExamplePage extends WizardPage {
                 return contentProvider.applyFilter(element);
             }
         });
-
     }
 
     private Image computeImage(final String imagePath, final String nameSpaceId,
@@ -607,7 +608,12 @@ public class ImportExamplePage extends WizardPage {
     private void updateImageLabel(final Image image) {
         imageLabel.setImage(image);
         Rectangle bounds = image.getBounds();
-        imageLabel.setSize(bounds.width + IMG_PADDINGS_WIDTH, bounds.height + IMG_PADDINGS_HEIGHT);
+        int left = IMAGE_PRE_WIDTH - bounds.width;
+        int top = IMAGE_PRE_HEIGHT - bounds.height;
+        // center the image.
+        imageLabel.setBounds(left > 0 ? left / 2 : 0, IMAGE_LABEL_DESC_HEIGHT
+                + (top > 0 ? top / 2 : 0), bounds.width + IMG_PADDINGS_WIDTH, bounds.height
+                + IMG_PADDINGS_HEIGHT);
         imageLabel.pack();
     }
 
