@@ -213,6 +213,9 @@ public final class OgdfServerAPI {
     public static final String EXECUTABLE_PATH_OSX32 = EXECUTABLE_PATH_BIN + "/osx32/ogdf-server";
     /** the relative path for the osx64 executable. */
     public static final String EXECUTABLE_PATH_OSX64 = EXECUTABLE_PATH_BIN + "/osx64/ogdf-server";
+    /** the relative path for the solaris executable. */
+    public static final String EXECUTABLE_PATH_SOLARIS = EXECUTABLE_PATH_BIN
+            + "/solaris/ogdf-server";
 
     /** default timeout for waiting for the server to give some output. */
     public static final int PROCESS_DEF_TIMEOUT = 20000;
@@ -240,16 +243,9 @@ public final class OgdfServerAPI {
      * A helper enumeration for identifying the operating system.
      */
     private enum OS {
-        LINUX32,
-        LINUX64,
-        WIN32,
-        WIN64,
-        OSX32,
-        OSX64,
-        SOLARIS,
-        UNKNOWN
+        LINUX32, LINUX64, WIN32, WIN64, OSX32, OSX64, SOLARIS, UNKNOWN
     }
-    
+
     private static OS detectOS() {
         // TODO this looks bad; is there a better way to do this?
         String os = System.getProperty("os.name").toLowerCase();
@@ -277,7 +273,7 @@ public final class OgdfServerAPI {
         }
         return OS.UNKNOWN;
     }
-    
+
     /**
      * Finds the ogdf server executable.
      * 
@@ -307,6 +303,9 @@ public final class OgdfServerAPI {
         case OSX64:
             path = new Path(EXECUTABLE_PATH_OSX64);
             break;
+        case SOLARIS:
+            path = new Path(EXECUTABLE_PATH_SOLARIS);
+            break;
         default:
             throw new RuntimeException("Unsupported operating system.");
         }
@@ -316,6 +315,9 @@ public final class OgdfServerAPI {
         switch (os) {
         case LINUX32:
         case LINUX64:
+        case OSX32:
+        case OSX64:
+        case SOLARIS:
             File executableFile = new File(executable);
             executableFile.setExecutable(true);
             break;
