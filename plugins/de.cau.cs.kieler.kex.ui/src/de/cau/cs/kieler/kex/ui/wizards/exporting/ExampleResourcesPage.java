@@ -58,6 +58,9 @@ public class ExampleResourcesPage extends WizardPage {
     private static final int MIN_WIDTH = 540;
     private static final int MIN_HEIGHT = 600;
 
+    // preferred height
+    private static final int HEIGHT_HINT = 80;
+
     private Tree directOpenTree;
 
     @SuppressWarnings("restriction")
@@ -110,8 +113,12 @@ public class ExampleResourcesPage extends WizardPage {
         Label directOpenDesc = new Label(childComp, SWT.NONE);
         directOpenDesc.setText("Select files, that should "
                 + "open directly when importing that example.");
-        this.directOpenTree = new Tree(childComp, SWT.CHECK | SWT.BORDER);
-        directOpenTree.setLayoutData(new GridData(GridData.FILL_BOTH));
+        this.directOpenTree = new Tree(childComp, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL
+                | SWT.V_SCROLL);
+        GridData gridData = new GridData(GridData.FILL_BOTH);
+        gridData.heightHint = HEIGHT_HINT;
+        directOpenTree.setLayoutData(gridData);
+
         fillDirectOpenTree();
     }
 
