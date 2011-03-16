@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.List;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
@@ -21,7 +22,6 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.Properties;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
 
@@ -30,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * type {@link de.cau.cs.kieler.klay.layered.Properties.NodeType#LONG_EDGE})
  * 
  * <p>It is assumed that the edges connected to such dummy nodes were created by
- * the {@link EdgeSplitter}, which implies that such a dummy node has exactly
+ * the {@link LongEdgeSplitter}, which implies that such a dummy node has exactly
  * one incoming and one outgoing edge, and that these edges were created from
  * the same source edge. It should thus make no difference which of the edges
  * is dropped.</p>
@@ -47,7 +47,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *
  * @author cds
  */
-public class EdgeJoiner extends AbstractAlgorithm implements ILayoutProcessor {
+public class LongEdgeJoiner extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
@@ -68,20 +68,28 @@ public class EdgeJoiner extends AbstractAlgorithm implements ILayoutProcessor {
                 if (node.getProperty(Properties.NODE_TYPE).equals(Properties.NodeType.LONG_EDGE)) {
                     // Get the input and output port (of which we assume to be
                     // exactly one)
-                    LPort inputPort = node.getPorts(PortType.INPUT).iterator().next();
-                    LPort outputPort = node.getPorts(PortType.OUTPUT).iterator().next();
+                    List<LEdge> inputPortEdges =
+                        node.getPorts(PortType.INPUT).iterator().next().getEdges();
+                    List<LEdge> outputPortEdges =
+                        node.getPorts(PortType.OUTPUT).iterator().next().getEdges();
+                    int edgeCount = inputPortEdges.size();
                     
-                    // Get the two edges
-                    LEdge survivingEdge = inputPort.getEdges().get(0);
-                    LEdge droppedEdge = outputPort.getEdges().get(0);
-                    
-                    // Do some edgy stuff
-                    survivingEdge.setTarget(droppedEdge.getTarget());
-                    droppedEdge.setSource(null);
-                    droppedEdge.setTarget(null);
-                    
-                    // Join their bend points
-                    survivingEdge.getBendPoints().addAll(droppedEdge.getBendPoints());
+                    // The following code assumes that edges with the same indices in the two
+                    // lists originate from the same long edge, which is true for the current
+                    // implementation of LongEdgeSplitter and HyperedgeDummyJoiner
+                    while (edgeCount-- > 0) {
+                        // Get the two edges
+                        LEdge survivingEdge = inputPortEdges.get(0);
+                        LEdge droppedEdge = outputPortEdges.get(0);
+                        
+                        // Do some edgy stuff
+                        survivingEdge.setTarget(droppedEdge.getTarget());
+                        droppedEdge.setSource(null);
+                        droppedEdge.setTarget(null);
+                        
+                        // Join their bend points
+                        survivingEdge.getBendPoints().addAll(droppedEdge.getBendPoints());
+                    }
                     
                     // Remove the node
                     nodeIterator.remove();

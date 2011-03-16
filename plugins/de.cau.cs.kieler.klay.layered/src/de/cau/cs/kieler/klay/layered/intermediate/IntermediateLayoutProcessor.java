@@ -23,10 +23,12 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
  */
 public enum IntermediateLayoutProcessor {
     
+    /** Merges long edge dummy nodes belonging to the same hyperedge. */
+    HYPEREDGE_DUMMY_JOINER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
-    EDGE_JOINER,
+    LONG_EDGE_JOINER,
     /** Takes a layered graph and turns it into a properly layered graph. */
-    EDGE_SPLITTER,
+    LONG_EDGE_SPLITTER,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_SIDE_POSTPROCESSOR,
     /** Inserts dummy nodes to take care of northern and southern ports. */
@@ -61,11 +63,14 @@ public enum IntermediateLayoutProcessor {
      */
     public ILayoutProcessor create() {
         switch (this) {
-        case EDGE_JOINER:
-            return new EdgeJoiner();
+        case HYPEREDGE_DUMMY_JOINER:
+            return new HyperedgeDummyJoiner();
+
+        case LONG_EDGE_JOINER:
+            return new LongEdgeJoiner();
             
-        case EDGE_SPLITTER:
-            return new EdgeSplitter();
+        case LONG_EDGE_SPLITTER:
+            return new LongEdgeSplitter();
         
         case NORTH_SOUTH_SIDE_POSTPROCESSOR:
             return new NorthSouthPortPostprocessor();

@@ -65,13 +65,13 @@ public class LPSolveCrossingMinimizer extends AbstractAlgorithm implements ILayo
                 // Before Phase 2
                 null,
                 // Before Phase 3
-                EnumSet.of(IntermediateLayoutProcessor.EDGE_SPLITTER),
+                EnumSet.of(IntermediateLayoutProcessor.LONG_EDGE_SPLITTER),
                 // Before Phase 4
                 null,
                 // Before Phase 5
                 null,
                 // After Phase 5
-                EnumSet.of(IntermediateLayoutProcessor.EDGE_JOINER));
+                EnumSet.of(IntermediateLayoutProcessor.LONG_EDGE_JOINER));
     
     /** The timeout in milliseconds after which the LP solver is aborted. */
     private static final long LPSOLVE_TIMEOUT = 5000;

@@ -58,6 +58,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  * 
  * @author msp
  * @author grh
+ * @author cds
  */
 public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**

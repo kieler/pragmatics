@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
@@ -61,6 +62,10 @@ public final class Properties {
             "debugCanvas");
     /** random number generator for the algorithm. */
     public static final IProperty<Random> RANDOM = new Property<Random>("random");
+    /** the source port of a long edge before it was broken into multiple segments. */
+    public static final IProperty<LPort> LONG_EDGE_SOURCE = new Property<LPort>("longEdgeSource", null);
+    /** the target port of a long edge before it was broken into multiple segments. */
+    public static final IProperty<LPort> LONG_EDGE_TARGET = new Property<LPort>("longEdgeTarget", null);
 
     // / USER INTERFACE OPTIONS
 

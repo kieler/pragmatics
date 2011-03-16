@@ -64,6 +64,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  * </dl>
  *
  * @author msp
+ * @author cds
  */
 public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPhase {
     
@@ -77,7 +78,9 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
                 // Before Phase 3
                 EnumSet.of(IntermediateLayoutProcessor.ODD_PORT_SIDE_PREPROCESSOR),
                 // Before Phase 4
-                EnumSet.of(IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_PREPROCESSOR),
+                EnumSet.of(
+                        IntermediateLayoutProcessor.HYPEREDGE_DUMMY_JOINER,
+                        IntermediateLayoutProcessor.NORTH_SOUTH_SIDE_PREPROCESSOR),
                 // Before Phase 5
                 EnumSet.of(IntermediateLayoutProcessor.ODD_PORT_SIDE_POSTPROCESSOR),
                 // After Phase 5
@@ -262,7 +265,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
             }
             
             // Route edges between the two layers
-            slotsCount = routeEdges(leftLayer, rightLayer, xpos, debug);
+            slotsCount = routeEdges(layeredGraph, leftLayer, rightLayer, xpos, debug);
             xpos += slotsCount * edgeSpacing;
             
             leftLayer = rightLayer;
@@ -278,6 +281,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     /**
      * Route edges between the given layers.
      * 
+     * @param layeredGraph the layered graph.
      * @param leftLayer the left layer. May be {@code null}.
      * @param rightLayer the right layer. May be {@code null}.
      * @param xpos horizontal position of the first routing slot
@@ -285,8 +289,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
      *              debug directory.
      * @return the number of routing slots for this layer
      */
-    private int routeEdges(final Layer leftLayer, final Layer rightLayer, final double xpos,
-            final boolean debug) {
+    private int routeEdges(final LayeredGraph layeredGraph, final Layer leftLayer,
+            final Layer rightLayer, final double xpos, final boolean debug) {
         
         Map<LPort, HyperNode> portToHyperNodeMap = new HashMap<LPort, HyperNode>();
         List<HyperNode> hyperNodes = new LinkedList<HyperNode>();
@@ -309,7 +313,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         
         // write the full dependency graph to an output file
         if (debug) {
-            writeDebugGraph(leftLayer, hyperNodes, "full");
+            writeDebugGraph(layeredGraph, leftLayer, hyperNodes, "full");
         }
         
         // break cycles
@@ -317,7 +321,7 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
 
         // write the acyclic dependency graph to an output file
         if (debug) {
-            writeDebugGraph(leftLayer, hyperNodes, "acyc");
+            writeDebugGraph(layeredGraph, leftLayer, hyperNodes, "acyc");
         }
         
         // assign ranks to the hypernodes
@@ -715,28 +719,32 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     /**
      * Writes a debug graph for the given list of hypernodes.
      * 
+     * @param layeredGraph the layered graph
      * @param layer the currently processed layer
      * @param hypernodes a list of hypernodes
      * @param label a label to append to the output files
      */
-    private static void writeDebugGraph(final Layer layer, final List<HyperNode> hypernodes,
-            final String label) {
+    private static void writeDebugGraph(final LayeredGraph layeredGraph, final Layer layer,
+            final List<HyperNode> hypernodes, final String label) {
         
         try {
-            Writer writer = createWriter(layer, label);
+            Writer writer = createWriter(layeredGraph, layer, label);
             writer.write("digraph {\n");
-            // write hypernode information
+            
+            // Write hypernode information
             for (HyperNode hypernode : hypernodes) {
                 writer.write("  " + hypernode.hashCode() + "[label=\""
                         + hypernode.toString() + "\"]\n");
             }
-            // write dependency information
+            
+            // Write dependency information
             for (HyperNode hypernode : hypernodes) {
                 for (Dependency dependency : hypernode.outgoing) {
                     writer.write("  " + hypernode.hashCode() + "->" + dependency.target.hashCode()
                             + "[label=\"" + dependency.weight + "\"]\n");
                 }
             }
+            
             writer.write("}\n");
             writer.close();
         } catch (Exception exception) {
@@ -747,12 +755,14 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     /**
      * Create a writer for debug output.
      * 
+     * @param layeredGraph the layered graph
      * @param layer the currently processed layer
      * @param label a label to append to the output files
      * @return a file writer for debug output
      * @throws IOException if creating the output file fails
      */
-    private static Writer createWriter(final Layer layer, final String label) throws IOException {
+    private static Writer createWriter(final LayeredGraph layeredGraph, final Layer layer,
+            final String label) throws IOException {
         
         String path = System.getProperty("user.home");
         if (path.endsWith(File.separator)) {
@@ -762,8 +772,8 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
         }
         new File(path).mkdirs();
         
-        int layerIndex = layer == null ? 0 : layer.getIndex() + 1;
-        String debugFileName = Integer.toString(layer.getGraph().hashCode()
+        int layerIndex = (layer == null) ? 0 : layer.getIndex() + 1;
+        String debugFileName = Integer.toString(layeredGraph.hashCode()
                 & ((1 << (Integer.SIZE / 2)) - 1)) + "-l" + layerIndex + "-" + label;
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }

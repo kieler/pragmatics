@@ -34,6 +34,9 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  * from each other, create a dummy node to split the edge. The resulting layering
  * is <i>proper</i>, i.e. all edges connect only nodes from subsequent layers.
  * 
+ * <p>The dummy nodes retain a reference to the ports the original long edge's
+ * source and target ports.</p>
+ * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
  *   <dt>Postcondition:</dt><dd>the graph is properly layered; that is, each edge
@@ -42,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *
  * @author msp
  */
-public class EdgeSplitter extends AbstractAlgorithm implements ILayoutProcessor {
+public class LongEdgeSplitter extends AbstractAlgorithm implements ILayoutProcessor {
 
     /**
      * {@inheritDoc}
@@ -95,6 +98,8 @@ public class EdgeSplitter extends AbstractAlgorithm implements ILayoutProcessor 
                             dummyEdge.setSource(dummyOutput);
                             dummyEdge.setTarget(targetPort);
                             
+                            setDummyProperties(dummyNode, edge, dummyEdge);
+                            
                             // Reset the layer pointer
                             layerIter.previous();
                         }
@@ -104,6 +109,31 @@ public class EdgeSplitter extends AbstractAlgorithm implements ILayoutProcessor 
         }
         
         getMonitor().done();
+    }
+    
+    /**
+     * Sets the source and target properties on the given dummy node.
+     * 
+     * @param dummy the dummy node.
+     * @param inEdge the edge going into the dummy node.
+     * @param outEdge the edge going out of the dummy node.
+     */
+    private void setDummyProperties(final LNode dummy, final LEdge inEdge, final LEdge outEdge) {
+        LNode inEdgeSourceNode = inEdge.getSource().getNode();
+        
+        if (inEdgeSourceNode.getProperty(Properties.NODE_TYPE) == Properties.NodeType.LONG_EDGE) {
+            // The incoming edge originates from a long edge dummy node, so we can
+            // just copy its properties
+            dummy.setProperty(Properties.LONG_EDGE_SOURCE,
+                    inEdgeSourceNode.getProperty(Properties.LONG_EDGE_SOURCE));
+            dummy.setProperty(Properties.LONG_EDGE_TARGET,
+                    inEdgeSourceNode.getProperty(Properties.LONG_EDGE_TARGET));
+        } else {
+            // The source is the input edge's source port, the target is the output
+            // edge's target port
+            dummy.setProperty(Properties.LONG_EDGE_SOURCE, inEdge.getSource());
+            dummy.setProperty(Properties.LONG_EDGE_TARGET, outEdge.getTarget());
+        }
     }
 
 }
