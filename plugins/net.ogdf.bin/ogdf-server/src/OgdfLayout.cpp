@@ -32,10 +32,9 @@
 #include <ogdf/basic/Graph_d.h>
 #include <ogdf/basic/GraphAttributes.h>
 #include <ogdf/basic/UMLGraph.h>
-//#include <ogdf/labeling/ELabelInterface.h>
-//#include <ogdf/labeling/ELabelPosSimple.h>
 #include <ogdf/module/LayoutModule.h>
 #include <ogdf/module/UMLLayoutModule.h>
+#include <ogdf/labeling/ELabelInterface.h>
 #include <ogdf/labeling/ELabelPosSimple.h>
 #include <ogdf/layered/SugiyamaLayout.h>
 #include <ogdf/layered/FastHierarchyLayout.h>

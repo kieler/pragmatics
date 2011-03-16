@@ -236,10 +236,12 @@ void HandleRequest(chunk_istream& in, ostream& out,
 		// perform the layout
 		GraphAttributes* LGA;
 		if (LGA = ::Layout(G, CG, GA, LI, options, information)) {
+			// on success write the graph layout
 			WriteGraphLayout(out, *LGA, G, *LI);
 			SAFE_DELETE(LGA);
 			SAFE_DELETE(LI);
 		} else {
+			// on failure write the reason
 			WriteError(out, GetLastLayoutError());
 		}
 	} else {
