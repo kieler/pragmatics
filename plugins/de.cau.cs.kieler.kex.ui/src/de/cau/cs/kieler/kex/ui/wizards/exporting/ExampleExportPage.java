@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kex.ui.wizards.exporting;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -59,6 +60,12 @@ public class ExampleExportPage extends WizardResourceImportPage {
     private static final int THREE_COLUMNS = 3;
     private static final int CATEGORY_MINLENGTH = 4;
 
+    private static final int PAGE_MIN_WIDTH = 540;
+    private static final int PAGE_MIN_HEIGHT = 600;
+
+    // preferred height
+    private static final int HEIGHT_HINT = 160;
+
     private Tree categoryTree;
     private final List<String> checkedCategories;
     private final List<String> creatableCategories;
@@ -93,7 +100,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
         createTopGroup(composite);
         createMiddleGroup(composite);
         createBottomGroup(composite);
-        getShell().setMinimumSize(540, 600);
+        getShell().setMinimumSize(PAGE_MIN_WIDTH, PAGE_MIN_HEIGHT);
     }
 
     @Override
@@ -182,6 +189,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
             }
 
         });
+
+        /* mylyn bridge to generate pictures automatically */
         // final Button testButton = new Button(bottomGroup, SWT.NONE);
         // testButton.setText("mylyn adapter");
         // testButton.addSelectionListener(new SelectionAdapter() {
@@ -212,9 +221,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
         buttonCompo.setLayout(buttonCompoLayout);
         buttonCompo.setLayoutData(new GridData(GridData.FILL_BOTH));
         Button addCategory = new Button(buttonCompo, SWT.NONE);
+        addCategory.setToolTipText("Create a new Example Category");
         addCategory.setText("New...");
-        // addCategory.setToolTipText("Creates a new Category");
-        // FIXME sch�ner noch mit dem tree editing mechanismus.
         addCategory.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -229,12 +237,13 @@ public class ExampleExportPage extends WizardResourceImportPage {
                                 return "Category exists already! " + "Please enter another name.";
                             }
                         }
+
                         return null;
 
                     }
                 };
                 InputDialog dialog = new InputDialog(getShell(), "Create New Category",
-                        "Please enter a new category.", "", validator);
+                        "Please enter a new Category.", "", validator);
                 dialog.open();
                 String value = dialog.getValue();
                 if (value != null && value.length() >= CATEGORY_MINLENGTH) {
@@ -267,8 +276,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
         GridLayout middleLayout = new GridLayout();
         middleGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         middleLayout.numColumns = 1;
-        middleGroup.setText("Add Example Categories");
-        middleGroup.setToolTipText("Please select one or more cateogies.");
+        middleGroup.setText("Add a category");
+        middleGroup.setToolTipText("Please select a category.");
         middleGroup.setLayout(middleLayout);
         createCheckedTree(middleGroup);
         createButtonComposite(middleGroup);
@@ -278,6 +287,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
     private void createCheckedTree(final Composite parent) {
         this.categoryTree = new Tree(parent, SWT.CHECK | SWT.BORDER);
         GridData data = new GridData(GridData.FILL_BOTH);
+        data.heightHint = HEIGHT_HINT;
         categoryTree.setLayoutData(data);
         categoryTree.addListener(SWT.Selection, new Listener() {
             public void handleEvent(final Event event) {
@@ -302,12 +312,12 @@ public class ExampleExportPage extends WizardResourceImportPage {
         });
         categoryTree.addSelectionListener(new SelectionListener() {
 
-            public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(final SelectionEvent e) {
                 revertTree.setEnabled(checkedCategories.size() > 0
                         || creatableCategories.size() > 0);
             }
 
-            public void widgetDefaultSelected(SelectionEvent e) {
+            public void widgetDefaultSelected(final SelectionEvent e) {
                 revertTree.setEnabled(checkedCategories.size() > 0
                         || creatableCategories.size() > 0);
             }
@@ -325,13 +335,47 @@ public class ExampleExportPage extends WizardResourceImportPage {
         // disable drawing to avoid flicker
         tree.setRedraw(false);
         List<Category> categories = ExampleManager.get().getCategories();
+        List<Category> notPlacedCategories = new ArrayList<Category>(categories);
         for (Category category : categories) {
-            TreeItem item = new TreeItem(tree, SWT.NONE);
-            item.setText(category.getTitle());
-            item.setData(category);
+            if (category.getParentId() == null) {
+                TreeItem item = new TreeItem(tree, SWT.NONE);
+                item.setText(category.getTitle());
+                item.setData(category);
+                notPlacedCategories.remove(category);
+            }
         }
         // enable drawing
         tree.setRedraw(true);
+        // subcategories.
+        addCategory(Arrays.asList(tree.getItems()), tree.getItemCount(), notPlacedCategories,
+                categories);
+    }
+
+    private static void addCategory(final List<TreeItem> items, int itemCount,
+            final List<Category> placeAbleCategories, final List<Category> allCategories) {
+        // TODO not really worksome and test and tree has to be sprayed at default.
+        List<Category> removable = new ArrayList<Category>();
+        List<TreeItem> newItems = new ArrayList<TreeItem>(items);
+        for (Category placeable : placeAbleCategories) {
+
+            for (TreeItem item : items) {
+                Category cat = (Category) item.getData();
+                if (placeable.getParentId().equals(cat.getId())) {
+                    TreeItem treeItem = new TreeItem(item, SWT.NONE);
+                    treeItem.setText(placeable.getTitle());
+                    treeItem.setData(placeable);
+                    newItems.add(treeItem);
+                    itemCount++;
+                    removable.add(cat);
+                }
+
+            }
+
+        }
+        if (itemCount < allCategories.size()) {
+            placeAbleCategories.removeAll(removable);
+            addCategory(newItems, itemCount, placeAbleCategories, allCategories);
+        }
     }
 
     /**
