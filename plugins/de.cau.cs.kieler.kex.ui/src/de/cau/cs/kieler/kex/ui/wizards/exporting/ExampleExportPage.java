@@ -18,18 +18,22 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
@@ -68,7 +72,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
     private Tree categoryTree;
     private final List<String> checkedCategories;
-    private final List<String> creatableCategories;
+    private final List<Category> creatableCategories;
 
     private static final String WORKSPACE_DIR = ResourcesPlugin.getWorkspace().getRoot()
             .getLocation().toOSString();
@@ -89,7 +93,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
         setDescription("Set destination and preview picture "
                 + "for exported example and determine example categories.");
         checkedCategories = new ArrayList<String>();
-        creatableCategories = new ArrayList<String>();
+        creatableCategories = new ArrayList<Category>();
     }
 
     @Override
@@ -242,17 +246,121 @@ public class ExampleExportPage extends WizardResourceImportPage {
 
                     }
                 };
-                InputDialog dialog = new InputDialog(getShell(), "Create New Category",
-                        "Please enter a new Category.", "", validator);
-                dialog.open();
-                String value = dialog.getValue();
-                if (value != null && value.length() >= CATEGORY_MINLENGTH) {
-                    TreeItem item = new TreeItem(categoryTree, SWT.NONE);
-                    item.setText(value);
-                    creatableCategories.add(value);
-                    revertTree.setEnabled(checkedCategories.size() > 0
-                            || creatableCategories.size() > 0);
-                }
+
+                Dialog diag = new Dialog(getShell()) {
+
+                    private Text titleText;
+                    private Text idText;
+                    private Text iconPath;
+                    private Text descText;
+                    private Combo parentCatCombo;
+
+                    @Override
+                    protected Control createDialogArea(Composite parent) {
+                        // Control createDialogArea = super.createDialogArea(parent);
+                        Composite composite = new Composite(parent, SWT.BORDER);
+                        GridLayout layout = new GridLayout();
+                        layout.numColumns = 2;
+                        composite.setLayout(layout);
+                        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                        composite.setSize(PAGE_MIN_WIDTH, PAGE_MIN_HEIGHT);
+                        // TODO meaningful tips for the fields.
+                        Label idLab = new Label(composite, SWT.NONE);
+                        idLab.setText("Id: ");
+                        idLab.setToolTipText("");
+
+                        idText = new Text(composite, SWT.BORDER);
+                        idText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                        idText.addModifyListener(new ModifyListener() {
+
+                            public void modifyText(ModifyEvent e) {
+                                // TODO validate
+                                // id should be substringed with points at breaks.
+                                // all signs should be small
+                                // and min. number is 4.
+
+                            }
+                        });
+                        Label titleLab = new Label(composite, SWT.NONE);
+                        titleLab.setText("Title: ");
+                        titleLab.setToolTipText("");
+
+                        titleText = new Text(composite, SWT.BORDER);
+                        titleText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+                        // maybe listener for validation.
+
+                        // TODO browse field.
+                        Label iconLab = new Label(composite, SWT.NONE);
+                        iconLab.setText("Icon: ");
+                        iconLab.setToolTipText("");
+                        iconPath = new Text(composite, SWT.BORDER);
+                        iconPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+                        Label parentCatLab = new Label(composite, SWT.NONE);
+                        parentCatLab.setText("Parent Category: ");
+                        parentCatCombo = new Combo(composite, SWT.BORDER);
+                        parentCatCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                        parentCatCombo.add("No Parent");
+                        parentCatCombo.select(0);
+                        // FIXME save performance, if loading categories only one time.
+                        List<Category> categories = ExampleManager.get().getCategories();
+                        for (Category cat : categories) {
+                            parentCatCombo.add(cat.getId());
+                            parentCatCombo.getText();
+                        }
+
+                        // final FileDialog picDialog = new FileDialog(bottomGroup.getShell());
+                        // // ResourcesPlugin.getWorkspace().getRoot(), "Search a picture!"
+                        // picDialog.setFilterPath(WORKSPACE_DIR);
+                        // String[] extensions = { "*.png;*.jpg;*.gif" };
+                        // picDialog.setFilterExtensions(extensions);
+                        // Label label = new Label(bottomGroup, SWT.NONE);
+                        // label.setText("Set Picture:");
+                        // this.previewPic = new Text(bottomGroup, SWT.BORDER);
+                        // previewPic.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                        // Button browse = new Button(bottomGroup, SWT.NONE);
+                        // browse.setText("Browse...");
+                        // browse.addSelectionListener(new SelectionAdapter() {
+                        //
+                        // @Override
+                        // public void widgetSelected(final SelectionEvent e) {
+                        // super.widgetSelected(e);
+                        // String pic = picDialog.open();
+                        // if (pic != null) {
+                        // getPreviewPic().setText(pic);
+                        // }
+                        // }
+
+                        // });
+
+                        Label descLab = new Label(composite, SWT.NONE);
+                        descLab.setText("Description: ");
+                        descText = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
+                                | SWT.H_SCROLL);
+                        return parent;
+                    }
+
+                    @Override
+                    protected void okPressed() {
+                        addNewCategory(idText.getText(), titleText.getText(), descText.getText(),
+                                iconPath.getText(), parentCatCombo.getText());
+                        super.okPressed();
+                    }
+
+                };
+                diag.open();
+                // InputDialog dialog = new InputDialog(getShell(), "Create New Category",
+                // "Please enter a new Category.", "", validator) {
+                // };
+                // String value = dialog.getValue();
+                // if (value != null && value.length() >= CATEGORY_MINLENGTH) {
+                // TreeItem item = new TreeItem(categoryTree, SWT.NONE);
+                // item.setText(value);
+                // creatableCategories.add(value);
+                // revertTree.setEnabled(checkedCategories.size() > 0
+                // || creatableCategories.size() > 0);
+                // }
             }
         });
 
@@ -289,6 +397,8 @@ public class ExampleExportPage extends WizardResourceImportPage {
         GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = HEIGHT_HINT;
         categoryTree.setLayoutData(data);
+
+        // categoryTree.setExpanded(true);
         categoryTree.addListener(SWT.Selection, new Listener() {
             public void handleEvent(final Event event) {
                 // fill per hand checked elements list
@@ -318,8 +428,7 @@ public class ExampleExportPage extends WizardResourceImportPage {
             }
 
             public void widgetDefaultSelected(final SelectionEvent e) {
-                revertTree.setEnabled(checkedCategories.size() > 0
-                        || creatableCategories.size() > 0);
+                widgetSelected(e);
             }
         });
         fillTree(categoryTree);
@@ -331,27 +440,29 @@ public class ExampleExportPage extends WizardResourceImportPage {
      * @param tree
      *            the tree to fill
      */
-    public static void fillTree(final Tree tree) {
+    public void fillTree(final Tree tree) {
         // disable drawing to avoid flicker
         tree.setRedraw(false);
         List<Category> categories = ExampleManager.get().getCategories();
-        List<Category> notPlacedCategories = new ArrayList<Category>(categories);
+        List<Category> notPlacedCategories = new ArrayList<Category>();
         for (Category category : categories) {
             if (category.getParentId() == null) {
                 TreeItem item = new TreeItem(tree, SWT.NONE);
                 item.setText(category.getTitle());
                 item.setData(category);
-                notPlacedCategories.remove(category);
+            } else {
+                notPlacedCategories.add(category);
             }
         }
         // enable drawing
         tree.setRedraw(true);
         // subcategories.
-        addCategory(Arrays.asList(tree.getItems()), tree.getItemCount(), notPlacedCategories,
-                categories);
+        if (notPlacedCategories.size() > 0)
+            addCategory(Arrays.asList(tree.getItems()), tree.getItemCount(), notPlacedCategories,
+                    categories);
     }
 
-    private static void addCategory(final List<TreeItem> items, int itemCount,
+    private void addCategory(final List<TreeItem> items, int itemCount,
             final List<Category> placeAbleCategories, final List<Category> allCategories) {
         // TODO not really worksome and test and tree has to be sprayed at default.
         List<Category> removable = new ArrayList<Category>();
@@ -366,11 +477,10 @@ public class ExampleExportPage extends WizardResourceImportPage {
                     treeItem.setData(placeable);
                     newItems.add(treeItem);
                     itemCount++;
-                    removable.add(cat);
+                    removable.add(placeable);
+                    break;
                 }
-
             }
-
         }
         if (itemCount < allCategories.size()) {
             placeAbleCategories.removeAll(removable);
@@ -408,12 +518,17 @@ public class ExampleExportPage extends WizardResourceImportPage {
         return SourceType.KIELER;
     }
 
+    private void addNewCategory(String id, String title, String desc, String iconPath,
+            String parentId) {
+        creatableCategories.add(new Category(id, title, desc, iconPath, parentId));
+    }
+
     /**
      * Getter for categories that have to be created.
      * 
      * @return {@link List} of {@link String}s
      */
-    public List<String> getCreatableCategories() {
+    public List<Category> getCreatableCategories() {
         return creatableCategories;
     }
 
