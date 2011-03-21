@@ -29,8 +29,6 @@ public final class Messages extends NLS {
     private static final String BUNDLE_NAME =
         "de.cau.cs.kieler.kaom.importer.ptolemy.messages"; //$NON-NLS-1$
     
-    public static String DiagramsImporter_exception_diagramInitialization;
-    public static String DiagramsImporter_exception_modelFileNotFound;
     public static String DiagramsImporter_exception_possibleErrors;
     public static String DiagramsImporter_exception_projectNotExistant;
     public static String DiagramsImporter_exception_temporaryFileCreationFailed;

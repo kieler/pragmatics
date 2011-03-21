@@ -564,10 +564,9 @@ public class DiagramsImporter implements IRunnableWithProgress {
         // Get the source file
         IFile sourceFile = targetContainer.getFile(new Path(sourceFileName));
         if (!sourceFile.exists()) {
-            throw new CoreException(new Status(
-                    IStatus.ERROR,
-                    KaomImporterPtolemyPlugin.PLUGIN_ID,
-                    Messages.DiagramsImporter_exception_modelFileNotFound + sourceFileName));
+            // Don't throw an exception. This is usually caused by the model import
+            // having failed somehow, which will already have caused an exception.
+            return;
         }
         
         // Get the target file and delete it if it already exists

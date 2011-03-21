@@ -34,8 +34,6 @@ import ptolemy.kernel.util.StringAttribute;
 import ptolemy.moml.MoMLParser;
 import ptolemy.moml.filter.BackwardCompatibility;
 
-import com.microstar.xml.XmlException;
-
 import de.cau.cs.kieler.core.annotations.Annotation;
 import de.cau.cs.kieler.core.annotations.AnnotationsFactory;
 import de.cau.cs.kieler.core.annotations.TypedStringAnnotation;
@@ -62,8 +60,9 @@ public class PtolemyHelper implements IExecutionContextAware {
      * 
      * @param entities the entity or class types whose ports to return.
      * @return list of ports.
+     * @throws ClassNotFoundException if the actor could not be resolved.
      */
-    public List<Port> getPorts(final List<EObject> entities) {
+    public List<Port> getPorts(final List<EObject> entities) throws ClassNotFoundException {
         List<Port> ports = new BasicEList<Port>();
         
         for (EObject o : entities) {
@@ -73,20 +72,18 @@ public class PtolemyHelper implements IExecutionContextAware {
             if (o instanceof EntityType) {
                 try {
                     actor = instantiatePtolemyEntity((EntityType) o);
-                } catch (XmlException xe) {
-                    System.out.println(Messages.PtolemyHelper_exception_entityInstantiationFailed
-                            + xe.getMessage());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new ClassNotFoundException(
+                            "Couldn't find actor '" + ((EntityType) o).getName() + "'.",
+                            e);
                 }
             } else if (o instanceof ClassType) {
                 try {
                     actor = instantiatePtolemyEntity((ClassType) o);
-                } catch (XmlException xe) {
-                    System.out.println(Messages.PtolemyHelper_exception_entityInstantiationFailed
-                            + xe.getMessage());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new ClassNotFoundException(
+                            "Couldn't find actor '" + ((ClassType) o).getName() + "'.",
+                            e);
                 }
             }
             
@@ -106,8 +103,9 @@ public class PtolemyHelper implements IExecutionContextAware {
      * 
      * @param actor the actor whose ports to return.
      * @return list of ports.
+     * @throws ClassNotFoundException if the actor could not be resolved.
      */
-    public List<Port> getPorts(final NamedObj actor) {
+    public List<Port> getPorts(final NamedObj actor) throws ClassNotFoundException {
         List<Port> kaomPorts = new LinkedList<Port>();
         
         try {
@@ -142,7 +140,10 @@ public class PtolemyHelper implements IExecutionContextAware {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            // Throw a proper exception
+            throw new ClassNotFoundException(
+                    "Couldn't find actor '" + actor.getClassName() + "'.",
+                    e);
         }
         
         return kaomPorts;
@@ -204,7 +205,7 @@ public class PtolemyHelper implements IExecutionContextAware {
      * @throws Exception may throw different exceptions during parsing.
      */
     private NamedObj instantiatePtolemyActor(final String className, final String entityName)
-        throws Exception {
+            throws Exception {
         
         // use the Ptolemy internal Model ML (MoML) parser parsing XML and
         // creates Ptolemy models
@@ -237,7 +238,7 @@ public class PtolemyHelper implements IExecutionContextAware {
      * @throws Exception may throw different exceptions during parsing.
      */
     private NamedObj instantiatePtolemyState(final String className, final String entityName)
-    throws Exception {
+            throws Exception {
         
         // use the Ptolemy internal Model ML (MoML) parser parsing XML and
         // creates Ptolemy models
