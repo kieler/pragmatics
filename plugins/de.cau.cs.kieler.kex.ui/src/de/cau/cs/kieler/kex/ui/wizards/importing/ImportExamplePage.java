@@ -27,9 +27,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -63,6 +61,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.osgi.framework.Bundle;
 
+import de.cau.cs.kieler.core.ui.util.TreeViewerCheckStateHandler;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
@@ -157,7 +156,13 @@ public class ImportExamplePage extends WizardPage {
         final ExampleContentProvider contentProvider = new ExampleContentProvider();
         treeViewer.setContentProvider(contentProvider);
         treeViewer.setLabelProvider(new ExampleLabelProvider());
-        treeViewer.setSorter(new ViewerSorter());
+        treeViewer.setSorter(new ViewerSorter() {
+            @Override
+            public void sort(final Viewer viewer, final Object[] elements) {
+                // FIXME sort so that, the categories will be displayed at first.
+                super.sort(viewer, elements);
+            }
+        });
         treeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         fillTreeViewer();
         treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -179,53 +184,68 @@ public class ImportExamplePage extends WizardPage {
                             selectedExample.getNamespaceId(), IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
                     isPreviewAvailable = computeImage != null;
                     updateImageLabel(isPreviewAvailable ? computeImage : noPreviewPic());
-
                 }
             }
         });
-        treeViewer.addCheckStateListener(new ICheckStateListener() {
-            public void checkStateChanged(final CheckStateChangedEvent event) {
-                // TODO test if under subcategory funzt
-                boolean checked = event.getChecked();
-                treeViewer.setSubtreeChecked(event.getElement(), checked);
-                updateChecks(event);
-            }
+        // treeViewer.addCheckStateListener(new ICheckStateListener() {
+        // public void checkStateChanged(final CheckStateChangedEvent event) {
+        // boolean checked = event.getChecked();
+        // treeViewer.setSubtreeChecked(event.getElement(), checked);
+        // updateChecks(event);
+        // }
+        //
+        // private void updateChecks(final CheckStateChangedEvent event) {
+        // Object element = event.getElement();
+        // ArrayList<Pair<Category, ArrayList<Object>>> input = (ArrayList<Pair<Category,
+        // ArrayList<Object>>>) treeViewer
+        // .getInput();
+        // // TODO add functionality for subcategories.
+        // Pair<Category, ArrayList<Object>> parentCat = null;
+        // for (Pair<Category, ArrayList<Object>> cat : input) {
+        // if (cat.equals(element)) {
+        // return;
+        // }
+        // parentCat = getParent(element, cat);
+        // if (parentCat != null) {
+        // break;
+        // }
+        // }
+        // if (!event.getChecked()) {
+        // for (Object child : parentCat.getSecond()) {
+        // if (!child.equals(element) && treeViewer.getChecked(child)) {
+        // return;
+        // }
+        // }
+        // treeViewer.setChecked(parentCat, false);
+        // } else {
+        // if (!treeViewer.getChecked(parentCat)) {
+        // treeViewer.setChecked(parentCat, true);
+        // }
+        // }
+        // }
 
-            private void updateChecks(final CheckStateChangedEvent event) {
-                Object element = event.getElement();
-                ArrayList<Pair<Category, ArrayList<Object>>> input = (ArrayList<Pair<Category, ArrayList<Object>>>) treeViewer
-                        .getInput();
-                // TODO add functionality for subcategories.
-                Pair<Category, ArrayList<Object>> parentCat = null;
-                for (Pair<Category, ArrayList<Object>> cat : input) {
-                    if (cat.equals(element)) {
-                        return;
-                    }
-                    for (Object child : cat.getSecond()) {
-                        if (child.equals(element)) {
-                            parentCat = cat;
-                            break;
-                        }
-                    }
-                    if (parentCat != null) {
-                        break;
-                    }
-                }
-                if (!event.getChecked()) {
-                    for (Object child : parentCat.getSecond()) {
-                        if (!child.equals(element) && treeViewer.getChecked(child)) {
-                            return;
-                        }
-                    }
-                    treeViewer.setChecked(parentCat, false);
-                } else {
-                    if (!treeViewer.getChecked(parentCat)) {
-                        treeViewer.setChecked(parentCat, true);
-                    }
-                }
-            }
-        });
-        treeViewer.expandAll();
+        /**
+         * Searches for the direct parent of the element object.
+         * 
+         * @param element
+         *            , Object that is the search-token // * @param pair // * , Pair which could be
+         *            the result and contains the iterating list for the // * search. // * @return
+         *            Pair, if parent is found otherwise null. //
+         */
+        // @SuppressWarnings("unchecked")
+        // private Pair<Category, ArrayList<Object>> getParent(final Object element,
+        // final Pair<Category, ArrayList<Object>> pair) {
+        // for (Object child : pair.getSecond()) {
+        // if (child.equals(element)) {
+        // return pair;
+        // }
+        // if (child instanceof Pair) {
+        // return getParent(element, (Pair<Category, ArrayList<Object>>) child);
+        // }
+        // }
+        // return null;
+        // }
+        // });
         final Maybe<Boolean> filterChanged = new Maybe<Boolean>(Boolean.FALSE);
         filterText.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -283,10 +303,10 @@ public class ImportExamplePage extends WizardPage {
     }
 
     private void fillTreeViewer() {
-        ArrayList<Pair<Category, ArrayList<Object>>> viewElement = new ArrayList<Pair<Category, ArrayList<Object>>>();
         List<Category> categories = ExampleManager.get().getCategories();
         Collection<Example> values = ExampleManager.get().getExamples().values();
-        ArrayList<Pair<Category, ArrayList<Object>>> categoryPairList = new ArrayList<Pair<Category, ArrayList<Object>>>();
+        List<Pair<Category, ArrayList<Object>>> viewElement = new ArrayList<Pair<Category, ArrayList<Object>>>();
+        List<Pair<Category, ArrayList<Object>>> categoryPairList = new ArrayList<Pair<Category, ArrayList<Object>>>();
 
         // create categories
         for (Category category : categories) {
@@ -297,42 +317,52 @@ public class ImportExamplePage extends WizardPage {
             categoryPairList.add(categoryPair);
         }
 
-        // structure categories and subcats
-        for (Pair<Category, ArrayList<Object>> categoryPair : categoryPairList) {
-            String parentId = categoryPair.getFirst().getParentId();
-            if (parentId == null) {
-                viewElement.add(categoryPair);
-            } else {
-                getParent(parentId, categoryPairList).getSecond().add(categoryPair);
-            }
-        }
+        // structure subcategories
+        structCatsRec(categoryPairList);
 
         // fill with examples
         for (Pair<Category, ArrayList<Object>> categoryPair : categoryPairList) {
+            Category first = categoryPair.getFirst();
+            String catId = first.getId();
             for (Example example : values) {
-                if (example.getCategoryId().equals(categoryPair.getFirst().getId())) {
+                if (example.getCategoryId().equals(catId)) {
                     categoryPair.getSecond().add(example);
                 }
             }
-        }
-
-        // remove empty categories
-        for (Pair<Category, ArrayList<Object>> pair : categoryPairList) {
-            if (pair.getSecond().isEmpty()) {
-                viewElement.remove(pair);
+            if (first.getParentId() == null && !categoryPair.getSecond().isEmpty()) {
+                viewElement.add(categoryPair);
             }
         }
+
         treeViewer.setInput(viewElement);
+        // FIXME use the correct way.
+        TreeViewerCheckStateHandler checkStateManager = new TreeViewerCheckStateHandler(treeViewer);
+        checkStateManager.checkElements(values);
+
     }
 
-    private Pair<Category, ArrayList<Object>> getParent(final String parentId,
-            final ArrayList<Pair<Category, ArrayList<Object>>> categoryPairList) {
+    /**
+     * Builder for category-pairs, recursively.
+     */
+    private void structCatsRec(final List<Pair<Category, ArrayList<Object>>> categoryPairList) {
+        boolean changed = false;
         for (Pair<Category, ArrayList<Object>> pair : categoryPairList) {
-            if (pair.getFirst().getId().equals(parentId)) {
-                return pair;
+            String parentId = pair.getFirst().getParentId();
+            if (parentId != null) {
+                for (Pair<Category, ArrayList<Object>> pair2 : categoryPairList) {
+                    if (pair2.getFirst().getId().equals(parentId)) {
+                        if (!pair2.getSecond().contains(pair)) {
+                            pair2.getSecond().add(pair);
+                            changed = true;
+                        }
+                        break;
+                    }
+                }
             }
         }
-        return null;
+        if (changed) {
+            structCatsRec(categoryPairList);
+        }
     }
 
     /**
@@ -457,6 +487,7 @@ public class ImportExamplePage extends WizardPage {
      */
     private class ExampleLabelProvider extends LabelProvider implements ILabelProvider {
 
+        // TODO think about icon conversions
         private static final int ICON_WIDTH = 16;
         private static final int ICON_HEIGHT = 16;
 
@@ -465,7 +496,7 @@ public class ImportExamplePage extends WizardPage {
         public String getText(final Object element) {
             if (element instanceof Pair) {
                 Pair<Category, List<Object>> pair = (Pair<Category, List<Object>>) element;
-                return (pair.getFirst()).getTitle();
+                return pair.getFirst().getTitle();
             }
             if (element instanceof Example) {
                 return ((Example) element).getTitle();
@@ -473,7 +504,6 @@ public class ImportExamplePage extends WizardPage {
             return null;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public Image getImage(final Object element) {
             if (element instanceof Pair) {
@@ -482,10 +512,10 @@ public class ImportExamplePage extends WizardPage {
                 return computeImage(first.getIconPath(), first.getNamespaceId(), ICON_WIDTH,
                         ICON_HEIGHT);
             }
-            if (element instanceof Example) {
-                return computeImage(((Example) element).getOverviewPic(),
-                        ((Example) element).getNamespaceId(), ICON_WIDTH, ICON_HEIGHT);
-            }
+            // if (element instanceof Example) {
+            // return computeImage(((Example) element).getOverviewPic(),
+            // ((Example) element).getNamespaceId(), ICON_WIDTH, ICON_HEIGHT, true);
+            // }
             return null;
         }
     }
@@ -534,6 +564,8 @@ public class ImportExamplePage extends WizardPage {
 
                     private Point point;
 
+                    private Image image;
+
                     @Override
                     protected void createButtonsForButtonBar(final Composite parent) {
                         super.createButton(parent, IDialogConstants.OK_ID,
@@ -550,7 +582,7 @@ public class ImportExamplePage extends WizardPage {
                                 | SWT.H_SCROLL);
                         imgLabel.setLayoutData(new GridData(GridData.CENTER | SWT.V_SCROLL
                                 | SWT.H_SCROLL));
-                        Image image = computeImage(selectedExample.getOverviewPic(),
+                        image = computeImage(selectedExample.getOverviewPic(),
                                 selectedExample.getNamespaceId(), DIALOG_WIDTH, DIALOG_HEIGHT);
                         bounds = image.getBounds();
                         imgLabel.setImage(image);
@@ -579,6 +611,15 @@ public class ImportExamplePage extends WizardPage {
                     protected void configureShell(final Shell newShell) {
                         super.configureShell(newShell);
                         newShell.setText(Messages.getString("previewImageDialogDescription"));
+                    }
+
+                    @Override
+                    public boolean close() {
+                        if (image != null) {
+                            image.dispose();
+                        }
+                        return super.close();
+
                     }
 
                 };
@@ -612,6 +653,10 @@ public class ImportExamplePage extends WizardPage {
      *            , {@link Image}
      */
     private void updateImageLabel(final Image image) {
+        Image oldImg = imageLabel.getImage();
+        if (oldImg != null) {
+            oldImg.dispose();
+        }
         imageLabel.setImage(image);
         Rectangle bounds = image.getBounds();
         int left = IMAGE_PRE_WIDTH - bounds.width;

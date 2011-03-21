@@ -118,7 +118,6 @@ public class ExampleResourcesPage extends WizardPage {
         GridData gridData = new GridData(GridData.FILL_BOTH);
         gridData.heightHint = HEIGHT_HINT;
         directOpenTree.setLayoutData(gridData);
-
         fillDirectOpenTree();
     }
 
