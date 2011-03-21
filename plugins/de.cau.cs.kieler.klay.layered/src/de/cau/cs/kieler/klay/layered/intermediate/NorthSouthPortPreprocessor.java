@@ -69,7 +69,8 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *   <dt>Precondition:</dt><dd>a layered graph, with an established node order in each
  *     layer; port orders are fixed.</dd>
  *   <dt>Postcondition:</dt><dd>dummy nodes have been inserted for edges connected to
- *     ports on north and south sides.</dd>
+ *     ports on north and south sides; the dummy nodes form layout units with the nodes
+ *     they were created from; also, the dummy nodes have a certain order.</dd>
  * </dl>
  * 
  * @see NorthSouthPortPostprocessor
@@ -127,8 +128,19 @@ public class NorthSouthPortPreprocessor extends AbstractAlgorithm implements ILa
                 
                 dummyNodes = createDummyNodes(portList);
                 
+                LNode previousDummy = null;
                 for (LNode dummy : dummyNodes) {
                     dummy.setLayer(++pointer, layer);
+                    
+                    // The dummy nodes form a layout unit identified by the node they
+                    // were created from. In addition, the order of the dummy nodes must
+                    // be fixed.
+                    dummy.setProperty(Properties.LAYER_LAYOUT_UNIT, node);
+                    if (previousDummy != null) {
+                        previousDummy.setProperty(
+                                Properties.LAYER_NODE_SUCCESSOR_CONSTRAINT,
+                                dummy);
+                    }
                 }
             }
         }

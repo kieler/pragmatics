@@ -20,6 +20,7 @@ import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p2layers.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
@@ -66,6 +67,21 @@ public final class Properties {
     public static final IProperty<LPort> LONG_EDGE_SOURCE = new Property<LPort>("longEdgeSource", null);
     /** the target port of a long edge before it was broken into multiple segments. */
     public static final IProperty<LPort> LONG_EDGE_TARGET = new Property<LPort>("longEdgeTarget", null);
+    /**
+     * The layout unit a node belongs to. This property only makes sense for nodes. A layout unit
+     * is a set of nodes between which no nodes belonging to other layout units may be placed. Nodes
+     * not belonging to any layout unit may be placed arbitrarily between nodes of a layout unit.
+     * Layer layout units are identified through one of their nodes.
+     */
+    public static final IProperty<LNode> LAYER_LAYOUT_UNIT = new Property<LNode>(
+            "layerLayoutUnit", null);
+    /**
+     * Indicates that a node {@code y} may only appear inside a layer after the node {@code x} the
+     * property is set on. That is, having {@code y} appear before {@code x} would violate this
+     * constraint. This property only makes sense for nodes.
+     */
+    public static final IProperty<LNode> LAYER_NODE_SUCCESSOR_CONSTRAINT = new Property<LNode>(
+            "layerNodeSuccessorConstraint", null);
 
     // / USER INTERFACE OPTIONS
 
