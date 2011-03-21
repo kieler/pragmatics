@@ -978,7 +978,10 @@ Void optimizeStates(Entity entity) :
             // The entity is indeed a state, so don't link its links
             // with ports
             reportWarning("state ports=" + ports) ->
-            ports.moveLinksUp()
+            ports.moveLinksUp() ->
+            // The parent of an entity is a statemachine and get an annotation that
+            // acts as a hint which layout algorithm to use.
+            entity.eContainer.addStringAnnotation("DiagramType", "StateMachine")
         )
         else
             null ->
