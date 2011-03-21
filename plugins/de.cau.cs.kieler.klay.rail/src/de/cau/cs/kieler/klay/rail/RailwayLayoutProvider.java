@@ -35,7 +35,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
-import de.cau.cs.kieler.klay.layered.intermediate.EdgeSplitter;
+import de.cau.cs.kieler.klay.layered.intermediate.LongEdgeSplitter;
 import de.cau.cs.kieler.klay.layered.p1cycles.GreedyCycleBreaker;
 import de.cau.cs.kieler.klay.rail.impl.RailwayEdgeRouter;
 import de.cau.cs.kieler.klay.rail.impl.RailwayNetworkSimplexLayerer;
@@ -65,7 +65,7 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
      * Proper layering module. Since the phases used in this algorithm do not have any
      * dependencies, this is hardcoded into the layout provider.
      */
-    private ILayoutProcessor edgeSplitter = new EdgeSplitter();
+    private ILayoutProcessor edgeSplitter = new LongEdgeSplitter();
 
     private static final int SWITCH_PORTS = 3;
 
