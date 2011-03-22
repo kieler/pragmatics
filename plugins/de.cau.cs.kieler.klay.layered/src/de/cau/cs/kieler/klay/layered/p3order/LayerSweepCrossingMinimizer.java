@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.PortType;
@@ -59,6 +60,41 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
  * @author msp
  */
 public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements ILayoutPhase {
+    
+    /**
+     * A vertex contains one or more nodes. Vertices are used to model sets of nodes that
+     * are placed next to each other. A vertex contains methods to calculate its barycenter
+     * value, to merge with another vertex and to generally do cool stuff.
+     * 
+     * @author cds
+     */
+    private static class Vertex {
+        /**
+         * List of nodes this vertex consists of.
+         */
+        private List<LNode> nodes = new LinkedList<LNode>();
+        
+        /**
+         * A list of node barycenters and node degrees.
+         */
+        private Map<LNode, Pair<Double, Integer>> nodeInformation =
+            new HashMap<LNode, Pair<Double, Integer>>();
+        
+        /**
+         * This vertex' barycenter value.
+         */
+        private double barycenter = -1;
+        
+        
+        /**
+         * Constructs a new instance containing the given node.
+         * 
+         * @param node
+         */
+        public Vertex(final LNode node) {
+            nodes.add(node);
+        }
+    }
     
     /** intermediate processing strategy. */
     private static final IntermediateProcessingStrategy INTERMEDIATE_PROCESSING_STRATEGY =
@@ -405,24 +441,41 @@ public class LayerSweepCrossingMinimizer extends AbstractAlgorithm implements IL
         
         int totalEdges = 0;
         for (LNode node : freeLayer) {
+            // The node's barycenter will be calculated; nodes without edges connected
+            // to them will have a barycenter value of -1
             nodeBarycenter[node.id] = -1;
+            
+            // Remember the summed barycenter values of the node's ports, as well
+            // as the number of edges connected to the ports
             float nodeSum = 0;
             int edgeCount = 0;
+            
             for (LPort freePort : node.getPorts(forward ? PortType.INPUT : PortType.OUTPUT)) {
                 for (LPort fixedPort : freePort.getConnectedPorts()) {
                     nodeSum += portPos[fixedPort.id];
                 }
+                
                 edgeCount += freePort.getEdges().size();
             }
+            
+            // If any edges are connected to the node, divide the barycenter sum by
+            // the number of edges to arrive at the final value.
             if (edgeCount > 0) {
                 nodeBarycenter[node.id] = nodeSum / edgeCount;
                 totalEdges += edgeCount;
             }
         }
+        
+        // TODO: Insert constraint handling code.
+        
+        // Sort nodes by barycenter value
         sortNodes(freeLayer, preOrdered);
         assignPortPos(freeLayer);
+        
+        // Return the number of crossings
         LNode[] leftLayer = forward ? fixedLayer : freeLayer;
         LNode[] rightLayer = forward ? freeLayer : fixedLayer;
+        
         return countCrossings(leftLayer, rightLayer, totalEdges);
     }
     
