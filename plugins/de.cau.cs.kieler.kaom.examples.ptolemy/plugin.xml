@@ -16,7 +16,85 @@
             parent_category="de.cau.cs.kieler.kaom.ptolemy"
             title="Component Interaction (CI)">
       </category>
-      <example
+      <category
+            description="The domain models systems with continuous dynamics, including for example analog circuits and mechanical systems, but also cleanly supports discrete events, modal behaviors, and signals that mix continuous-time behaviors with discrete events. Models for continuous dynamics are equivalent to linear or nonlinear integral equations. A sophisticated numerical solver for these equations is integrated with the director. The clean semantics of the Continuous domain enables its integration in hierarchical heterogeneous models that use the Synchronous/Reactive (SR) and Discrete Event (DE) domains. Arbitrary hierarchical mixtures of these domains are supported, although if SR is at the top level, then the period parameter of the director must be used so that time advances."
+            id="de.cau.cs.kieler.kaom.ptolemy.continuous"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Continuous-time modeling">
+      </category>
+      <category
+            description="The Communicating Sequential Processes (CSP) domain in Ptolemy II models a system as a network of processes communicating with messages through unidirectional channels. If a process is ready to send a message, it blocks until the receiving process is ready to accept it. Similarly if a process is ready to accept a message, it blocks until the sending process is ready to send it. Thus the communication between processes is rendezvous based as both the reading and writing processes block until the other side is ready to communicate. This model of computation is non-deterministic as a process can be blocked waiting to send or receive on any number of channels. It is also highly concurrent due to the nature of the model."
+            id="de.cau.cs.kieler.kaom.ptolemy.csp"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Communicating Sequential Processes">
+      </category>
+      <category
+            description="The Distributed Discrete Event (DDE) domain incorporates a distributed notion of time into a dataflow style communication semantic. Much of the functionality of the DDE domain is consistent with the Process Networks domain. In particular, this model of computation&apos;s mechanism for dealing with blocking due to empty or full queues is functionally identical to that of the PN domain.The DDE domain&apos;s use of time serves as the point of divergence in the respective designs of DDE and PN. Time progress is communicated between actors by passing tokens that have time stamps associated with them. In a network of DDE actors each actor has a local notion of time.The DDE domain is an experimental domain, the code has not been reviewed, and the interfaces are likely to change."
+            id="de.cau.cs.kieler.kaom.ptolemy.dde"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Distributed Discrete Event">
+      </category>
+            <category
+            description="The Discrete Time (DT) domain is a timed extension of the Synchronous Dataflow (SDF) domain. Like SDF, it has static scheduling of the dataflow graph model. Likewise, DT requires that the rates on the ports of all actors be known beforehand and fixed. DT handles feedback systems in the same way that SDF does, but with additional constraints on initial tokens."
+            id="de.cau.cs.kieler.kaom.ptolemy.dt"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Discrete Time">
+      </category>
+      <category
+            description="Giotto is a domain designed by Christoph Meyer Kirsch to realize the semantics of the Giotto language, designed by Tom Henzinger, Ben Horowitz, and Christoph Meyer Kirsch. The semantics is a particular flavor of a synchronous model. Each component executes a specified number of times per iteration. The number of times it executes is called its frequency, and it defaults to one. The frequency can be specified to be something other than one by simply adding a parameter to the component named frequency, and then giving it a value different from one."
+            id="de.cau.cs.kieler.kaom.ptolemy.giotto"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Giotto">
+      </category>
+      <category
+            description="The GR domain is an experimental domain designed for three dimensional graphical animations. It is an untimed domain with particular optimizations aimed at reducing recomputations of scene graph components. A model consists of a set of three dimensional graphical elements, such as spheres, cylinders, etc., composed and transformed to form a scene graph. It is particularly interesting and useful to couple this domain with others, where the other domains provide the transformations for the graphical elements. For example, a model of a physical system might be constructed in CT and animated in GR.  Note that GR domain demos require Java3D."
+            id="de.cau.cs.kieler.kaom.ptolemy.gr"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Graphics">
+      </category>
+      <category
+            id="de.cau.cs.kieler.kaom.ptolemy.petrinet"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Petri Net">
+      </category>
+      <category
+            description="To model hardware and embedded applications, a highly concurrent model of computation is required. The PN domain in Ptolemy II presents a mechanism to model concurrency using the Kahn process networks model of computation [1]. The process networks model of computation has a dataflow flavor to it. This makes it well suited to modeling embedded dataflow applications and hardware architectures."
+            id="de.cau.cs.kieler.kaom.ptolemy.pn"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Process Networks">
+      </category>
+      <category
+            description="The Heterochronous Dataflow (HDF) domain, created by Ye Zhou, is an extension of the Synchronous Dataflow (SDF) domain. In SDF, the set of port rates (called rate signatures) of an actor are constant. In HDF, however, rate signatures are allowed to change between iterations of the HDF schedule. The change of rate signatures can be modeled by state transitions of a modal model, in which each state refinement infers a set of rate signatures. Within each state, the HDF model behaves like an SDF model."
+            id="de.cau.cs.kieler.kaom.ptolemy.hdf"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Heterochronous Dataflow Domain">
+      </category>
+      <category
+            description="The Dynamic Dataflow (DDF) domain is a superset of the Synchronous Dataflow (SDF) and Boolean dataflow (BDF) domains. In the SDF domain, an actor consumes and produces a fixed number of tokens per firing. This static information makes possible compile-time scheduling. In the DDF domain, an actor could change the production and consumption rates after each firing. The scheduler makes no attempt to construct a compile-time schedule, neither does it attempt to statically answer questions about deadlock and boundedness, which are fundamentally undecidable. Instead, each actor has a set of sequential firing rules (patterns) and can be fired if one of them is satisfied, i.e., one particular firing pattern forms a prefix of sequences of unconsumed tokens at input ports. The scheduler dynamically schedules the firing of actors according to some criteria. The canonical actors in the DDF domain include Select and Switch, which consume or produce tokens on different channels based on the token received from the control port."
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Dynamic Dataflow">
+      </category>
+      <category
+            description="The Ptolemy II Discrete Event (DE) domain provides a general environment for time-oriented simulations of systems such as queueing systems, communication networks, and hardware systems. In this domain, actors communicate by sending tokens across connections. The token sent and the time at which the action took place constitute an event in the DE domain. Upon receiving an event, the destination actor is activated and a reaction take place. The reaction may change the internal state of the actor and possibly generate new events, resulting in further reactions. A DE domain scheduler ensures that events are processed chronologically."
+            id="de.cau.cs.kieler.kaom.ptolemy.de"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title=" Discrete Event">
+      </category>
+      <category
+            description="The Parameterized Synchronous Dataflow (PSDF) domain is an extension of the Synchronous Dataflow (SDF) domain that allows for more extensive reconfiguration of models. The SDF domain uses static analysis of variable dependence to detect cases where rate parameters may change. By default, SDF disallows reconfiguration of all rate parameters. If rate parameters are allowed to change, then SDF checks that rate parameters do not change during execution of the schedule, and declares that inferred rate parameters for external ports change as often as the internal rate parameters."
+            id="de.cau.cs.kieler.kaom.ptolemy.psdf"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Parameterized Synchronous Dataflow">
+      </category>
+       <category
+            description="The Ptera (Ptolemy Event Relation Actor) domain is a discrete-event model of computation. A model in Ptera is represented with a graph of nodes and edges, where nodes represent events and directed edges between events represent scheduling relation. One or more events can be selected as initial events, which are scheduled at model time 0.0. When an event is fired, it possibly performs certain actions, and if there are outgoing edges from that event, the events at the end points of those edges are scheduled after non-negative delays. One or more events can also be selected as final events. The firing of final events causes the event queue to be emptied after their actions are performed, and therefore no more events can be processed."
+            id="de.cau.cs.kieler.kaom.ptolemy.ptera"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Ptolemy Event Relation Actor">
+      </category>
+      
+       <example
             author="KIELER Workgroup"
             category="de.cau.cs.kieler.kaom.ptolemy.ci"
             contact="kieler@informatik.uni-kiel.de"
@@ -42,12 +120,6 @@
                resource_type="file">
          </resource>
       </example>
-      <category
-            description="The domain models systems with continuous dynamics, including for example analog circuits and mechanical systems, but also cleanly supports discrete events, modal behaviors, and signals that mix continuous-time behaviors with discrete events. Models for continuous dynamics are equivalent to linear or nonlinear integral equations. A sophisticated numerical solver for these equations is integrated with the director. The clean semantics of the Continuous domain enables its integration in hierarchical heterogeneous models that use the Synchronous/Reactive (SR) and Discrete Event (DE) domains. Arbitrary hierarchical mixtures of these domains are supported, although if SR is at the top level, then the period parameter of the director must be used so that time advances."
-            id="de.cau.cs.kieler.kaom.ptolemy.continuous"
-            parent_category="de.cau.cs.kieler.kaom.ptolemy"
-            title="Continuous-time modeling">
-      </category>
       <example
             author="KIELER Workgroup"
             category="de.cau.cs.kieler.kaom.ptolemy.continuous"
@@ -803,6 +875,1366 @@
          </resource>
       </example>
       <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.csp"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates a design pattern with CSP called a &quot;barrier synchronization&quot;. In this example, the two Ramps are sending increasing sequences of integers to the Displays. However, the transfer is constrained to occur only when the Barrier actor reads inputs. Thus, a multi-way rendezvous between the two Ramp actors, the two Display actors, and the Barrier actor constrains the two transfers to the Display actors to occur simultaneously.  The Barrier actor, after reading inputs, will rendezvous with the Sleep actor connected to its output.  This sleep actor will sleep a random amount of time after reading its input, and during that time will not accept additional inputs. Thus, after the first two transfers to the Display actors (why two?) the time between transfers is controlled by the Sleep actor."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.csp.Barrier"
+            overview_pic="images/csp_Barrier.png"
+            root_directory="models/csp"
+            title="Barrier">
+         <resource
+               direct_open="false"
+               local_path="models/csp/csp_Barrier.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/csp/csp_Barrier.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/csp/csp_Barrier.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+       <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.csp"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates resource management where a pool (containing only one resource) provides that resource nondeterministically to one of two Sleep actors. The Sleep actor that gets the resource holds it for a fixed amount of time (100 and 150 ms, respectively). After this time, it releases the resource, sending it to an Expression actor, which increments the value of the resource and then returns it to the resource pool.\n\n Note that there is no assurance of fairness in this system, and in fact it is possible for only one of the two Sleep actors to get resources. How could you force this system to be more fair? "
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.csp.ResourcePool"
+            overview_pic="images/csp_ResourcePool.png"
+            root_directory="models/csp"
+            title="Resource Pool">
+         <resource
+               direct_open="false"
+               local_path="models/csp/csp_ResourcePool.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/csp/csp_ResourcePool.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/csp/csp_ResourcePool.kaod"
+               resource_type="file">
+         </resource>
+      </example> 
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.csp"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates a design pattern with CSP called a &quot;write regulator.&quot; In this example, the Ramp is sending an increasing sequence of integers to the Display. However, the transfer is constrained to occur only when the Sleep actor reads inputs, because in the CSP domain, sending data to multiple recipients via a relation is accomplished via a multi-way rendezvous. The Sleep actor reads data, then sleeps an amount of time given by its bottom input before reading the next input data token. In this case, it will wait a random amount of time between 0 and 2 seconds (0 and 2000 milliseconds) between input readings. This has the side effect of constraining the transfers from the Ramp to the Display to occur with the same random intervals."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.csp.WriteRegulator"
+            overview_pic="images/csp_WriteRegulator.png"
+            root_directory="models/csp"
+            title="Write Regulator">
+         <resource
+               direct_open="false"
+               local_path="models/csp/csp_WriteRegulator.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/csp/csp_WriteRegulator.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/csp/csp_WriteRegulator.kaod"
+               resource_type="file">
+         </resource>
+      </example> 
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.dde"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates the localization of Zeno conditions in the Distributed Discrete Event (DDE) domain. The demo consists of two topologically identical branches connected to a clock source actor. Each branch contains a feedback loop and is fed identical tokens from the clock source. As with all feedback loops in DDE (and DE) models, a positive time delay is necessary in feedback loops to prevent deadlock. If the time delay of a given loop is lower bounded by zero but can not be guaranteed to be greater than a fixed positive value, then a Zeno condition occurs in which time will cease to advance even though the actors of the feedback loop continue to execute without deadlocking."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.dde.LocalZeno"
+            overview_pic="images/dde_LocalZeno.png"
+            root_directory="models/dde"
+            title="Local Zeno">
+         <resource
+               direct_open="false"
+               local_path="models/dde/dde_LocalZeno.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/dde/dde_LocalZeno.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/dde/dde_LocalZeno.kaod"
+               resource_type="file">
+         </resource>
+      </example> 
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.dde"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model is used for testing the &quot;Local Zeno&quot;."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.dde.LocalZenoTest"
+            root_directory="models/dde"
+            title="Local Zeno Test">
+         <resource
+               direct_open="false"
+               local_path="models/dde/dde_LocalZenoTest.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/dde/dde_LocalZenoTest.kaom"
+               resource_type="file">
+         </resource>
+      </example> 
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model computes prime numbers using the sieve of Eratosthenes. It uses the ActorRecursion actor, which clones a composite actor into itself upon firing, thus dynamically expanding the topology of the model. Each iteration outputs one prime number. Change the parameter iterations in DDF Director to specify number of iterations desired."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf.Eratosthenes"
+            overview_pic="images/ddf_Eratosthenes.png"
+            root_directory="models/ddf/"
+            title="Eratosthenes">
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_Eratosthenes.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_Eratosthenes.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ddf/ddf_Eratosthenes.kaod"
+               resource_type="file">
+         </resource>
+      </example> 
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model computes factorial using a very inefficient recursive algorithm (to demonstrate the use of ActorRecursion). Each iteration outputs one number. Configure the parameter iterations in DDF Director to specify desired iteration number. Because factorial rises very fast, it is recommended to keep it small to prevent from overflowing."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf.Factorial"
+            overview_pic="images/ddf_Factorial.png"
+            root_directory="models/ddf"
+            title="Factorial">
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_Factorial.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_Factorial.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ddf/ddf_Factorial.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model solves Tower of Hanoi puzzle using the ActorRecursion actor. A tower of disks initially stacked in increasing size on the source tower shall be transferred to the destination tower, moving only at one disk at a time and never a larger one onto a smaller through the third tower. "
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf.HanoiTower"
+            overview_pic="images/ddf_HanoiTower.png"
+            root_directory="models/ddf"
+            title="Hanoi Tower">
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_HanoiTower.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_HanoiTower.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ddf/ddf_HanoiTower.kaod"
+               resource_type="file">
+         </resource>
+      </example> 
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model demos DDF domain inside SDF domain. The requiredFiringsPerIteration parameter of DDFBooleanSelect actor in DDF domain defines one iteration of +1/-1 Gain actor."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf.IfThenElse"
+            overview_pic="images/ddf_IfThenElse.png"
+            root_directory="models/ddf"
+            title="If Then Else">
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_IfThenElse.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_IfThenElse.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ddf/ddf_IfThenElse.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model demonstrates the DDF and FSM domains inside the SDF domain. "
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf.IfThenElseFSM"
+
+            root_directory="models/ddf"
+            title="If Then Else FSM">
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_IfThenElseFSM.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_IfThenElseFSM.kaom"
+               resource_type="file">
+         </resource>
+      </example> 
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Info: This model does not work."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf.IfThenElseFSMKepler"
+            root_directory="models/ddf"
+            title="If Then Else FSM Kepler">
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_IfThenElseFSMKepler.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_IfThenElseFSMKepler.kaom"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates data-dependent iteration. Input integers are repeatedly multiplied by 0.5 until the product is less than 0.5. Each iteration plots a point in outside-the-loop plotter. Configure the parameter iterations in DDF Director for desired iteration number."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf.Loop"
+            overview_pic="images/ddf_Loop.png"
+            root_directory="models/ddf"
+            title="Loop">
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_Loop.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_Loop.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ddf/ddf_Loop.kaod"
+               resource_type="file">
+         </resource>
+      </example> 
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model, whose structure is due to Kahn and MacQueen, calculates integers whose prime factors are only 2, 3, and 5, with no redundancies. It uses the DDFOrderedMerge actor, which takes two monotonically increasing input sequences and merges them into one monotonically increasing output sequence."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf.OrderedMerge"
+            overview_pic="images/ddf_OrderedMerge.png"
+            root_directory="models/ddf"
+            title="Ordered Merge">
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_OrderedMerge.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_OrderedMerge.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ddf/ddf_OrderedMerge.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model generates a random walk with evenly spaced steps. It demonstrates a three-level nesting of domains, SDF/DDF/SDF."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf.RandomWalk"
+            overview_pic="images/ddf_RandomWalk.png"
+            root_directory="models/ddf"
+            title="Random Walk">
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_RandomWalk.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_RandomWalk.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ddf/ddf_RandomWalk.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ddf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="A model of the rijndael encryption system, operating in ECB mode. This model makes heavy use of the class mechanism in Ptolemy II to describe components that are instantiated multiple times in the model."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ddf.RijndaelEncryption"
+            overview_pic="images/ddf_RijndaelEncryption.png"
+            root_directory="models/ddf"
+            title="Rijndael Encryption">
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_RijndaelEncryption.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ddf/ddf_RijndaelEncryption.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ddf/ddf_RijndaelEncryption.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.de"
+            contact="kieler@informatik.uni-kiel.de"
+            description="ThThis demo shows how to use the NonInterruptibleTimer actor and Pulse actor to model an assembly line."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.de.AssemblyLine"
+            overview_pic="images/de_AssemblyLine.png"
+            root_directory="models/de"
+            title="Assembly Line">
+         <resource
+               direct_open="false"
+               local_path="models/de/de_AssemblyLine.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/de/de_AssemblyLine.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/de/de_AssemblyLine.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.de"
+            contact="kieler@informatik.uni-kiel.de"
+            description="An Alarm Clock, useful for reminding presenters that they need to finish. This example require Java 3D."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.de.Clock"
+            overview_pic="images/de_Clock.png"
+            root_directory="models/de"
+            title="Clock">
+         <resource
+               direct_open="false"
+               local_path="models/de/de_Clock.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/de/de_Clock.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/de/de_Clock.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.de"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates a famous paradox in probability called the inspection paradox. Passengers arrive randomly at a bus stop, according to a Poisson process. Busses also arrive, and waiting time of the passengers is recorded. Two situations are compared: Busses arrive at regular intervals, and busses arrive according to a Poisson process. The expected waiting time is double for the second case as the first, even though the average arrival rate of busses is the same."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.de.Inspection"
+            overview_pic="images/de_Inspection.png"
+            root_directory="models/de"
+            title="Inspection">
+         <resource
+               direct_open="false"
+               local_path="models/de/de_Inspection.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/de/de_Inspection.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/de/de_Inspection.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.de"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates that time in Ptolemy II is unbounded. This model can be run forever, beyond the point where time can be resolved as a double relative to the time precision (1E-10). In principle, it can even be run beyond the point where the double representation of time is larger than what can be represented in a double, although it would take a truly long time to prove this. Note that the time gap that is reported remains accurate regardless of how large time gets."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.de.LongRuns"
+            overview_pic="images/de_LongRuns.png"
+            root_directory="models/de"
+            title="Long Runs">
+         <resource
+               direct_open="false"
+               local_path="models/de/de_LongRuns.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/de/de_LongRuns.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/de/de_LongRuns.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.de"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This modal model has two modes, &quot;clean&quot; and &quot;noisy&quot;. In the &quot;clean&quot; mode, it generates samples of a clean (noiseless) sinusoid at regular sample intervals. In the &quot;noisy&quot; mode, it generates a noisy sinusoid. It switches modes at random times according to a Poisson process."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.de.ModalModel"
+            overview_pic="images/de_ModalModel.png"
+            root_directory="models/de"
+            title="Modal Model">
+         <resource
+               direct_open="false"
+               local_path="models/de/de_ModalModel.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/de/de_ModalModel.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/de/de_ModalModel.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.de"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model produces a periodic rhythmic sound composed of three different sound clips."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.de.RealTimeComposite"
+            overview_pic="images/de_RealTimeComposite.png"
+            root_directory="models/de"
+            title="Realtime Composite">
+         <resource
+               direct_open="false"
+               local_path="models/de/de_RealTimeComposite.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/de/de_RealTimeComposite.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/de/de_RealTimeComposite.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.de"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model produces a rhythmic sequence of sounds from audio clips. It leverages the features of the ClipPlayer actor, which internally supports concurrent execution. Hence, there is no need for multiple threads in the DE model itself."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.de.SynchronizeToRealTime"
+            overview_pic="images/de_SynchronizeToRealTime.png"
+            root_directory="models/de"
+            title="Synchronize To Realtime">
+         <resource
+               direct_open="false"
+               local_path="models/de/de_SynchronizeToRealTime.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/de/de_SynchronizeToRealTime.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/de/de_SynchronizeToRealTime.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.de"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This example illustrates a paradox that arises when merging two event streams of the same rate with with random delay. It plots a histogram of the time between events, which illustrates that when there is a small fixed time offset between the two periodic events, then a strongly bimodal distribution results.  When a larger fixed delay is used, then the second mode is significantly reduced. Secondly this example is illustrative of the problems faced by real-time multitasking software when interacting with physical processes periodically, but with random delays."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.de.TimingParadox"
+            overview_pic="images/de_TimingParadox.png"
+            root_directory="models/de"
+            title="Timing Paradox">
+         <resource
+               direct_open="false"
+               local_path="models/de/de_TimingParadox.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/de/de_TimingParadox.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/de/de_TimingParadox.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.de"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This models shows that a VariableDelay actor adjusts the delay it delivers the inputs to outputs according the token fed in to the port parameter -- delay."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.de.VariableDelay"
+            overview_pic="images/de_VariableDelay.png"
+            root_directory="models/de"
+            title="Variable Delay">
+         <resource
+               direct_open="false"
+               local_path="models/de/de_VariableDelay.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/de/de_VariableDelay.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/de/de_VariableDelay.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.dt"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows a simple, physical-level model of a communication system. This system uses 2-level PAM (pulse amplitude modulation). It has a square-root raised cosine pulse shaper, where a top-level parameter (editable from the run control panel) specifies the excess bandwidth, which is typically between 0.0 and 1.0. The model has a matched filter. The output display is known as an &quot;eye diagram&quot;."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.dt.Eye"
+            overview_pic="images/dt_Eye.png"
+            root_directory="models/dt"
+            title="Eye">
+         <resource
+               direct_open="false"
+               local_path="models/dt/dt_Eye.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/dt/dt_Eye.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/dt/dt_Eye.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.giotto"
+            contact="kieler@informatik.uni-kiel.de"
+            description="For a Giotto model that is embedded inside another Giotto model, the period parameter of the local director is meaningless. So, during the prefire method of the local Giotto director, the period is set according the frequency of the embedded Giotto model and the period of the upper level Giotto director."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.giotto.Composite"
+            overview_pic="images/giotto_composite.png"
+            root_directory="models/giotto"
+            title="Composite">
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_composite.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_composite.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/giotto/giotto_composite.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+           <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.giotto"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model includes two submodels, each of which has its own Giotto scheduler. The lower composite and the plotter have a frequency of 4, so they run twice as often as the source and the upper composite."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.giotto.Hierarchy"
+            overview_pic="images/giotto_Hierarchy.png"
+            root_directory="models/giotto"
+            title="Hierarchy">
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_Hierarchy.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_Hierarchy.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/giotto/giotto_Hierarchy.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.giotto"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Note that this model can cause some errors."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.giotto.Lego"
+            overview_pic="images/giotto_lego.png"
+            root_directory="models/giotto"
+            title="Lego">
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_lego.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_lego.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/giotto/giotto_lego.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.giotto"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows how to combine a modal model with a giotto model to achieve mode changes."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.giotto.Multimode"
+            overview_pic="images/giotto_Multimode.png"
+            root_directory="models/giotto"
+            title="Multimode">
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_Multimode.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_Multimode.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/giotto/giotto_Multimode.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.giotto"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model starts up with two ramps and uses them to produce output."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.giotto.OneMode"
+            overview_pic="images/giotto_OneMode.png"
+            root_directory="models/giotto"
+            title="One Mode">
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_OneMode.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_OneMode.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/giotto/giotto_OneMode.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.giotto"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Giotto Code Generator Example"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.giotto.Simple"
+            overview_pic="images/giotto_Simple.png"
+            root_directory="models/giotto"
+            title="Simple">
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_Simple.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/giotto/giotto_Simple.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/giotto/giotto_Simple.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.gr"
+            contact="kieler@informatik.uni-kiel.de"
+            description="The Furuta pendulum has a motor controlling the angle of an arm, from which a free-swinging pendulum hangs. The objective is to swing the pendulum up and then balance it."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.gr.FurutaPendulum"
+            overview_pic="images/gr_FurutaPendulum.png"
+            root_directory="models/gr"
+            title="Furuta Pendulum">
+         <resource
+               direct_open="false"
+               local_path="models/gr/gr_FurutaPendulum.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/gr/gr_FurutaPendulum.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/gr/gr_FurutaPendulum.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.gr"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates mapping of a texture (from a PNG encoded photograph) onto a cube, and the tumbling of that cube using the axis rotator."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.gr.Helen"
+            overview_pic="images/gr_Helen.png"
+            root_directory="models/gr"
+            title="Helen">
+         <resource
+               direct_open="false"
+               local_path="models/gr/gr_Helen.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/gr/gr_Helen.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/gr/gr_Helen.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.gr"
+            contact="kieler@informatik.uni-kiel.de"
+            description="A simplified version of the game Pong using DE, Continuous, ModalModel and GR."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.gr.Pong"
+            overview_pic="images/gr_Pong.png"
+            root_directory="models/gr"
+            title="Pong">
+         <resource
+               direct_open="false"
+               local_path="models/gr/gr_Pong.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/gr/gr_Pong.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/gr/gr_Pong.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.gr"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows a hybrid system, which mixes continuous-time modeling with finite state machines. In this example, two point masses on springs oscillate. However, they may collide, in which case, they stick together, and oscillate together. The stickiness decays, and they eventually come apart again. This is an example of a modal model, where there are two modes, &quot;together&quot; and &quot;separate&quot;. Each mode is modeled by a state in an FSM, and each state refines to a continuous-time model of the dynamics in that mode."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.gr.StickyMasses"
+            overview_pic="images/gr_StickyMasses.png"
+            root_directory="models/gr"
+            title="Sticky Masses">
+         <resource
+               direct_open="false"
+               local_path="models/gr/gr_StickyMasses.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/gr/gr_StickyMasses.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/gr/gr_StickyMasses.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.hdf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model demonstrates that HDF allows dynamic port rate changes and correctly schedules the two modal models."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.hdf.AdaptiveCoding"
+            overview_pic="images/hdf_AdaptiveCoding.png"
+            root_directory="models/hdf"
+            title="Adaptive Coding">
+         <resource
+               direct_open="false"
+               local_path="models/hdf/hdf_AdaptiveCoding.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/hdf/hdf_AdaptiveCoding.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/hdf/hdf_AdaptiveCoding.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.hdf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model demonstrates HDF, which has static scheduling like SDF, but allows production and consumption rates to vary dynamically. In this example, the factor parameter of a DownSample actor is varied over the course of execution of the model. The HDF director calculates a new schedule each time the downsampling rate is changed. The model produces a Fibonacci sequence."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.hdf.Fibonacci"
+            overview_pic="images/hdf_Fibonacci.png"
+            root_directory="models/hdf"
+            title="Fibonacci">
+         <resource
+               direct_open="false"
+               local_path="models/hdf/hdf_Fibonacci.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/hdf/hdf_Fibonacci.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/hdf/hdf_Fibonacci.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.hdf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows the Hysteresis effect. Hysteresis is a retardation of an effect when the forces acting upon a body are changed. It is often used to describe the phenomenon in which the magnetic induction of a ferromagnetic material lags behind the changing magnetic field.\n\n In this example, the noisy sinewave is turned into a square wave. However, the polarity of the square wave does not change immediately when the sinewave changes polarity."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.hdf.Hysteresis"
+            overview_pic="images/hdf_Hysteresis.png"
+            root_directory="models/hdf"
+            title="Hysteresis">
+         <resource
+               direct_open="false"
+               local_path="models/hdf/hdf_Hysteresis.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/hdf/hdf_Hysteresis.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/hdf/hdf_Hysteresis.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.hdf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model demonstrates that HDF allows consumption and production rates to vary dynamically. The port rates of the modal model is determined by the model inside the state refinement."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.hdf.Merge"
+            overview_pic="images/hdf_Merge.png"
+            root_directory="models/hdf"
+            title="Merge">
+         <resource
+               direct_open="false"
+               local_path="models/hdf/hdf_Merge.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/hdf/hdf_Merge.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/hdf/hdf_Merge.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.petrinet"
+            contact="kieler@informatik.uni-kiel.de"
+            description="A Petri Net model of the Dining Philosophers Problem"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.petrinet.PetriNetDiningPhilosophers"
+            overview_pic="images/petrinet_PetriNetDiningPhilosophers.png"
+            root_directory="models/petrinet"
+            title="Petri Net Dining Philosophers">
+         <resource
+               direct_open="false"
+               local_path="models/petrinet/petrinet_PetriNetDiningPhilosophers.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/petrinet/petrinet_PetriNetDiningPhilosophers.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/petrinet/petrinet_PetriNetDiningPhilosophers.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.petrinet"
+            contact="kieler@informatik.uni-kiel.de"
+            description="As the model is running, the PetriNet Director sends messages to the PetriNetDisplay.\n\n The messages contain the token count for each Place at each iteration."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.petrinet.PetriNetSimple"
+            overview_pic="images/petrinet_PetriNetSimple.png"
+            root_directory="models/petrinet"
+            title="Petri Net Simple">
+         <resource
+               direct_open="false"
+               local_path="models/petrinet/petrinet_PetriNetSimple.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/petrinet/petrinet_PetriNetSimple.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/petrinet/petrinet_PetriNetSimple.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pn"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model illustrates the well-known Brock-Ackerman anomaly. The two composite actors ActorA and ActorB implement exactly the same (nondeterministic) input/output relation. That is, given any two input sequences at the two input ports, the possible output sequences from each actor are the same.  However, when wired as shown into two feedback loops, the two actors do not behave the same way.  In particular, the upper feedback loop has more possible outputs than the bottom one."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pn.BrockAckerman"
+            overview_pic="images/pn_BrockAckerman.png"
+            root_directory="models/pn"
+            title="Brock Ackerman">
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_BrockAckerman.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_BrockAckerman.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pn/pn_BrockAckerman.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pn"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows how to implement increment/decrement by 1 and test-to-zero in dataflow. Also word-level select and switch."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pn.Counter-prelim"
+            overview_pic="images/pn_Counter-prelim.png"
+            root_directory="models/pn"
+            title="Counter-prelim">
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_Counter-prelim.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_Counter-prelim.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pn/pn_Counter-prelim.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pn"
+            contact="kieler@informatik.uni-kiel.de"
+            description="The next step is how to represent the program that a counter machine runs. Here we consider a machine with a two counters, C1 and C2. A program for such a machine consists of a sequence of program locations, each with an associated command."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pn.CounterMachineHalts"
+            overview_pic="images/pn_CounterMachine-halts.png"
+            root_directory="models/pn"
+            title="Counter Machine halts">
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_CounterMachine-halts.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_CounterMachine-halts.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pn/pn_CounterMachine-halts.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pn"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Repeated runs of this model will yield the outputs in different orders because of the nondeterministic merge."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pn.MergeRamps"
+            overview_pic="images/pn_MergeRamps.png"
+            root_directory="models/pn"
+            title="Merge Ramps">
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_MergeRamps.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_MergeRamps.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pn/pn_MergeRamps.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pn"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model generates events with the time between events roughly given by the two timeStep parameters, which are in units of milliseconds. It then merges the two event sequences using a NondeterministicMerge, which is a PN-specific actor that passes data from any number of input streams to the output. Notice that this actor extends PN to support nondeterministic models. It should be used with caution."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pn.NondeterministicMerge"
+            root_directory="models/pn"
+            title="Nondeterministic Merge">
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_NondeterministicMerge.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_NondeterministicMerge.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pn/pn_NondeterministicMerge.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pn"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model, whose structure is due to Kahn and MacQueen, calculates integers whose prime factors are only 2, 3, and 5, with no redundancies. It uses the OrderedMerge actor, which takes two monotonically increasing input sequences and merges them into one monotonically increasing output sequence."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pn.OrderedMerge"
+            overview_pic="images/pn_OrderedMerge.png"
+            root_directory="models/pn"
+            title="Ordered Merge">
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_OrderedMerge.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_OrderedMerge.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pn/pn_OrderedMerge.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pn"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model shows a Process Network (PN) that executes the QR-algorithm on a continuous stream of data, coming from an array of antennas. The processes in the network execute in parallel on the new samples of data from the antennas. The update parameter indicates how many sets of samples need to be processed."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pn.QR"
+            overview_pic="images/pn_QR.png"
+            root_directory="models/pn"
+            title="QR">
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_QR.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_QR.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pn/pn_QR.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pn"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model tests handling nil tokens. The RemoveNilTokens actor removes tokens that have no value. "
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pn.RemoveNilTokens"
+            overview_pic="images/pn_RemoveNilTokens.png"
+            root_directory="models/pn"
+            title="Remove Nil Tokens">
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_RemoveNilTokens.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_RemoveNilTokens.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pn/pn_RemoveNilTokens.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pn"
+            contact="kieler@informatik.uni-kiel.de"
+            description="his model illustrates a stack, thus demonstrating that PN is Turing complete with only boolean data types, SampleDelay, LogicFunction, BooleanSwitch, and BooleanSelect."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pn.Stack"
+            overview_pic="images/pn_Stack.png"
+            root_directory="models/pn"
+            title="Stack">
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_Stack.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pn/pn_Stack.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pn/pn_Stack.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.psdf"
+            contact="kieler@informatik.uni-kiel.de"
+            description="A model of a blind communication receiver that illustrates the use of the parameterized synchronous dataflow domain."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.psdf.BlindCommunication"
+            overview_pic="images/psdf_BlindCommunication.png"
+            root_directory="models/psdf"
+            title="Blind Communication">
+         <resource
+               direct_open="false"
+               local_path="models/psdf/psdf_BlindCommunication.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/psdf/psdf_BlindCommunication.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/psdf/psdf_BlindCommunication.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptera"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This CarWash model demonstrates using Ptera (Ptolemy Event Relationship Model) and model transformation to achieve dynamic updating of the model being executed."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptera.AdaptiveCarWash"
+            overview_pic="images/ptera_AdaptiveCarWash.png"
+            root_directory="models/ptera"
+            title="Adaptive Car Wash">
+         <resource
+               direct_open="false"
+               local_path="models/ptera/ptera_AdaptiveCarWash.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptera/ptera_AdaptiveCarWash.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptera/ptera_AdaptiveCarWash.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptera"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This hierarchical model demonstrates a traffic light system with DE (Discrete Event) and Ptera (Ptolemy Event Relationship Actor). The DE model simulates an execution environment, which randomly triggers errors. The traffic light switches into error mode on receiving an error event (generated by the PoissonClock), and the yellow light flashes. After 10 units of model time, the traffic light recovers and resumes its function."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptera.TrafficLight"
+            overview_pic="images/ptera_TrafficLight.png"
+            root_directory="models/ptera"
+            title="Traffic Light">
+         <resource
+               direct_open="false"
+               local_path="models/ptera/ptera_TrafficLight.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptera/ptera_TrafficLight.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptera/ptera_TrafficLight.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+            <example
             author="KIELER Workgroup"
             category="de.cau.cs.kieler.kaom.ptolemy"
             contact="kieler@informatik.uni-kiel.de"
