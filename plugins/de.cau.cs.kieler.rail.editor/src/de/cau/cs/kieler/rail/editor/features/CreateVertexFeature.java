@@ -26,22 +26,22 @@ import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
 
 public class CreateVertexFeature extends AbstractCreateFeature  {
     private static final String TITLE = "Create class";
-    
+
     private static final String USER_QUESTION = "Enter new class name";
 
 	private TypeFeatures type;
- 
+
     public CreateVertexFeature(IFeatureProvider fp,TypeFeatures type) {
         // set name and description of the creation feature
     	super(fp, getName(type), getName(type) + " erstellen");
     	this.type = type;
     }
- 
+
     public boolean canCreate(ICreateContext context) {
         return context.getTargetContainer() instanceof Diagram;
     }
 
-    
+
     public Object[] create(ICreateContext context) {
     	Vertex vertex = getVertex();
 
@@ -53,12 +53,12 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
 
         // do the add
         vertex.getPorts().addAll(addGraphicalRepresentationForPorts(vertex));
-        
+
         PictogramElement vertexPE = addGraphicalRepresentation(context, vertex);
 
         // activate direct editing after object creation
         getFeatureProvider().getDirectEditingInfo().setActive(true);
-        
+
         // return newly created business object(s)
         return new Object[] {vertex};
     }
@@ -141,8 +141,8 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     	return ports;
     }
     /**
-     *Creates the right vertex from the SpecializedVerticesFactory 
-     *@return a right vertex in dependence form the type   
+     *Creates the right vertex from the SpecializedVerticesFactory
+     *@return a right vertex in dependence form the type
      */
     private Vertex getVertex()
     {
@@ -185,5 +185,4 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     	}
     	return "";
     }
-    
 }

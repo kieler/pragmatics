@@ -38,6 +38,9 @@ import de.cau.cs.kieler.rail.editor.StyleProvider;
 import de.menges.topologie.Topologie.Basegraph.EPort;
 import de.menges.topologie.Topologie.Basegraph.Port;
 import de.menges.topologie.Topologie.SpecializedVertices.*;
+import de.menges.topologie.ui.TopoDSL2InfrastrukturGenerator;
+
+import org.eclipse.core.resources.IResource;
 
 /**
  * @author hdw
@@ -105,11 +108,14 @@ public class AddVertexFeature extends AbstractAddFeature {
 	}
 
 	/**
-	 * Add the right vertex
-	 * 
-	 * @see org.eclipse.graphiti.func.IAdd#add(org.eclipse.graphiti.features.context.IAddContext)
-	 */
-	public PictogramElement add(final IAddContext context) {
+     * {@inheritDoc}
+     */
+	public final PictogramElement add(final IAddContext context) {
+		//TopoDSL2InfrastrukturGenerator tD= null;
+			//tD = new TopoDSL2InfrastrukturGenerator();
+		//TopoDSL2InfrastrukturGenerator.transformModel("/home/hdw/Downloads/lindaunis.topo",
+		//		"/home/hdw/Downloads/lindaunis.topo2");
+		
 		PictogramElement pe = null;
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 		switch (type) {
