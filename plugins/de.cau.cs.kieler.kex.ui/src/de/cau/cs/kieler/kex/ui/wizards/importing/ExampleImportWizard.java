@@ -44,6 +44,7 @@ import de.cau.cs.kieler.kex.controller.ErrorMessage;
 import de.cau.cs.kieler.kex.controller.ExampleManager;
 import de.cau.cs.kieler.kex.model.Example;
 import de.cau.cs.kieler.kex.ui.KEXUIPlugin;
+import de.cau.cs.kieler.kiml.ui.layout.EclipseLayoutServices;
 
 /**
  * This wizard contains all elements for an kex import wizard.
@@ -101,7 +102,6 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
 
     @Override
     public final boolean performFinish() {
-        List<String> directOpens = null;
         try {
             List<Example> checkedExamples = mainPage.getCheckedExamples();
 
@@ -122,55 +122,57 @@ public class ExampleImportWizard extends Wizard implements IImportWizard {
                 throw new RuntimeException("No import location has been set.");
             }
             ExampleManager.get().generateProject(destinationLocation);
-            directOpens = ExampleManager.get().importExamples(destinationLocation, checkedExamples,
-                    checkDuplicate);
+            final List<String> directOpens = ExampleManager.get().importExamples(
+                    destinationLocation, checkedExamples, checkDuplicate);
+
+            // refresh workspace
+            IContainer element = ResourcesPlugin.getWorkspace().getRoot();
+            try {
+                if (element != null) {
+                    element.refreshLocal(IContainer.DEPTH_INFINITE, new NullProgressMonitor());
+                }
+            } catch (CoreException e1) {
+                // do nothing
+            }
+            // open direct opens
+            if (directOpens != null && destinationPage.openImports()) {
+                IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+                IWorkbenchPage page = win.getActivePage();
+                for (String path : directOpens) {
+                    IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
+                            .findFilesForLocationURI(URIUtil.toURI(path), IResource.FILE);
+                    if (files.length == 1) {
+                        IEditorDescriptor defaultEditor = PlatformUI.getWorkbench()
+                                .getEditorRegistry().getDefaultEditor(files[0].getName());
+                        if (defaultEditor == null) {
+                            defaultEditor = PlatformUI.getWorkbench().getEditorRegistry()
+                                    .findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+                        }
+                        try {
+                            page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
+                            if (destinationPage.autoLayout()) {
+                                EclipseLayoutServices.getInstance()
+                                        .layout(PlatformUI.getWorkbench()
+                                                .getActiveWorkbenchWindow().getPartService()
+                                                .getActivePart(), null, true, true);
+                            }
+                        } catch (PartInitException e) {
+                            IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
+                                    "Could not open editor.", e);
+                            StatusManager.getManager().handle(status, StatusManager.SHOW);
+                        }
+                    }
+                }
+            }
         } catch (RuntimeException e) {
             if (e.getLocalizedMessage().equals(ErrorMessage.DUPLICATE_EXAMPLE)) {
                 checkDuplicate = !MessageDialog.openQuestion(getShell(), ERROR_TITLE,
                         e.getLocalizedMessage() + " Do you want to override it?");
-
             } else {
                 IStatus status = new Status(IStatus.WARNING, KEXUIPlugin.PLUGIN_ID, ERROR_TITLE, e);
                 StatusManager.getManager().handle(status, StatusManager.SHOW);
             }
-
             return false;
-        }
-
-        // refresh workspace
-        IContainer element = ResourcesPlugin.getWorkspace().getRoot();
-        try {
-            if (element != null) {
-                element.refreshLocal(IContainer.DEPTH_INFINITE, new NullProgressMonitor());
-            }
-        } catch (CoreException e1) {
-            // do nothing
-            return true;
-        }
-
-        // open direct opens
-        if (directOpens != null && destinationPage.openImports()) {
-            IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            IWorkbenchPage page = win.getActivePage();
-            for (String path : directOpens) {
-                IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
-                        .findFilesForLocationURI(URIUtil.toURI(path), IResource.FILE);
-                if (files.length == 1) {
-                    IEditorDescriptor defaultEditor = PlatformUI.getWorkbench().getEditorRegistry()
-                            .getDefaultEditor(files[0].getName());
-                    if (defaultEditor == null) {
-                        defaultEditor = PlatformUI.getWorkbench().getEditorRegistry()
-                                .findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-                    }
-                    try {
-                        page.openEditor(new FileEditorInput(files[0]), defaultEditor.getId());
-                    } catch (PartInitException e) {
-                        IStatus status = new Status(IStatus.ERROR, KEXUIPlugin.PLUGIN_ID,
-                                "Could not open editor.", e);
-                        StatusManager.getManager().handle(status, StatusManager.SHOW);
-                    }
-                }
-            }
         }
         return true;
     }

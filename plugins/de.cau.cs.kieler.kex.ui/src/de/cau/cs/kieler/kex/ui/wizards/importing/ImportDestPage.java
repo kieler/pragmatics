@@ -22,6 +22,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -44,6 +46,7 @@ public class ImportDestPage extends WizardResourceImportPage {
     private static final String INIT_PROJECT = "kieler_examples";
 
     private Button openImports;
+    private Button autoLayout;
 
     /**
      * Creates a new {@link ImportDestPage}, which extends the {@link WizardResourceImportPage}.
@@ -76,8 +79,22 @@ public class ImportDestPage extends WizardResourceImportPage {
     @Override
     protected void createOptionsGroupButtons(final Group optionsGroup) {
         openImports = new Button(optionsGroup, SWT.CHECK);
-        openImports.setText(Messages.getString("optionGroupDescription"));
+        openImports.setText(Messages.getString("openExamples"));
         openImports.setSelection(true);
+        openImports.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(final SelectionEvent e) {
+                autoLayout.setEnabled(openImports());
+            }
+
+            public void widgetDefaultSelected(final SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
+        autoLayout = new Button(optionsGroup, SWT.CHECK);
+        autoLayout.setText(Messages.getString("layoutExamples"));
+        autoLayout.setSelection(true);
+
     }
 
     /**
@@ -181,5 +198,14 @@ public class ImportDestPage extends WizardResourceImportPage {
      */
     public boolean openImports() {
         return openImports.getSelection();
+    }
+
+    /**
+     * Checks if the autoLayout field
+     * 
+     * @return
+     */
+    public boolean autoLayout() {
+        return openImports() && autoLayout.getSelection();
     }
 }
