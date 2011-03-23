@@ -93,7 +93,23 @@
             parent_category="de.cau.cs.kieler.kaom.ptolemy"
             title="Ptolemy Event Relation Actor">
       </category>
-      
+      <category
+            description="A brief introduction to the Pthales domain. The MoC is multidimensional dataflow: tokens are multidimensional (MD) arrays. An up-stream actor produces an MD array in multiple firings, as defined by a set of parameters, explained below. The director fires all actors conceptually in order of dependencies. Feedback loops are currently not supported, so graphs are acyclic and such an order is well-defined."
+            id="de.cau.cs.kieler.kaom.ptolemy.pthales"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Pthales">
+      </category>
+      <category
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Ptides">
+      </category>
+      <category
+            description="In the Rendezvous domain in Ptolemy II, each actor executes in its own thread of control, and communication between actors is by rendezvous. If an actor is ready to send a message, it blocks until the receiving actor is ready to receive it. Similarly if an actor is ready to receive a message, it blocks until the sending actor is ready to send it."
+            id="de.cau.cs.kieler.kaom.ptolemy.rendezvous"
+            parent_category="de.cau.cs.kieler.kaom.ptolemy"
+            title="Rendezvous">
+      </category>
        <example
             author="KIELER Workgroup"
             category="de.cau.cs.kieler.kaom.ptolemy.ci"
@@ -2234,7 +2250,137 @@
                resource_type="file">
          </resource>
       </example>
-            <example
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pthales"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pthales.Dynamic"
+            overview_pic="images/pthales_Dynamic.png"
+            root_directory="models/pthales"
+            title="Dynamic">
+         <resource
+               direct_open="false"
+               local_path="models/pthales/pthales_Dynamic.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pthales/pthales_Dynamic.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pthales/pthales_Dynamic.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pthales"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pthales.FFT"
+            overview_pic="images/pthales_FFT.png"
+            root_directory="models/pthales"
+            title="FFT">
+         <resource
+               direct_open="false"
+               local_path="models/pthales/pthales_FFT.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pthales/pthales_FFT.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pthales/pthales_FFT.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pthales"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This model is a simple Pthales model using 3-D arrays."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pthales.HelloWorld"
+            overview_pic="images/pthales_HelloWorld.png"
+            root_directory="models/pthales"
+            title="Hello World">
+         <resource
+               direct_open="false"
+               local_path="models/pthales/pthales_HelloWorld.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pthales/pthales_HelloWorld.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pthales/pthales_HelloWorld.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pthales"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Illustration for the Pthales domain."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pthales.Illustrative"
+            overview_pic="images/pthales_Illustrative.png"
+            root_directory="models/pthales"
+            title="Illustrative">
+         <resource
+               direct_open="false"
+               local_path="models/pthales/pthales_Illustrative.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pthales/pthales_Illustrative.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pthales/pthales_Illustrative.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.pthales"
+            contact="kieler@informatik.uni-kiel.de"
+            description="???"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.pthales.ImageDisplay"
+            overview_pic="images/pthales_ImageDisplay.png"
+            root_directory="models/pthales"
+            title="Image Display">
+         <resource
+               direct_open="false"
+               local_path="models/pthales/pthales_ImageDisplay.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/pthales/pthales_ImageDisplay.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/pthales/pthales_ImageDisplay.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
             author="KIELER Workgroup"
             category="de.cau.cs.kieler.kaom.ptolemy"
             contact="kieler@informatik.uni-kiel.de"
