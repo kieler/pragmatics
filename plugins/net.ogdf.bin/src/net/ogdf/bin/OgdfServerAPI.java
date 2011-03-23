@@ -20,12 +20,13 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.framework.Bundle;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 
 /**
- * A utility class to handle the communication with the ogdf server.
+ * A utility class to handle the communication with the OGDF server.
  * 
  * @author mri
  */
@@ -217,15 +218,17 @@ public final class OgdfServerAPI {
     public static final String EXECUTABLE_PATH_SOLARIS = EXECUTABLE_PATH_BIN
             + "/solaris/ogdf-server";
 
+    /** preference constant for timeout. */
+    public static final String PREF_TIMEOUT = "ogdf.timeout";
     /** default timeout for waiting for the server to give some output. */
-    public static final int PROCESS_DEF_TIMEOUT = 20000;
+    public static final int PROCESS_DEF_TIMEOUT = 5000;
     /** minimal timeout for waiting for the server to give some output. */
     public static final int PROCESS_MIN_TIMEOUT = 200;
 
     /** starting wait time for polling input from the server process. */
     private static final int MIN_INPUT_WAIT = 4;
     /** maximal wait time for polling input from the server process. */
-    private static final int MAX_INPUT_WAIT = 500;
+    private static final int MAX_INPUT_WAIT = 300;
 
     /** the ogdf server executable. */
     private static String executable = null;
@@ -247,7 +250,6 @@ public final class OgdfServerAPI {
     }
 
     private static OS detectOS() {
-        // TODO this looks bad; is there a better way to do this?
         String os = System.getProperty("os.name").toLowerCase();
         String arch = System.getProperty("os.arch").toLowerCase();
         if (os.contains("linux")) {
@@ -372,8 +374,8 @@ public final class OgdfServerAPI {
     public static boolean waitForInput(final InputStream inputStream,
             final IKielerProgressMonitor monitor) {
         monitor.begin("Wait for the ogdf server", 1);
-        // TODO read from somewhere else
-        int timeout = -1;
+        IPreferenceStore preferenceStore = OgdfPlugin.getDefault().getPreferenceStore();
+        int timeout = preferenceStore.getInt(PREF_TIMEOUT);
         if (timeout < PROCESS_MIN_TIMEOUT) {
             timeout = PROCESS_DEF_TIMEOUT;
         }
