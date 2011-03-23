@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.evol;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -366,7 +367,6 @@ public final class EvolModel {
             try {
                 sourcePopulation = EvolUtil.createPopulation(editors);
             } catch (final Exception exception) {
-                exception.printStackTrace();
                 EvolPlugin.showError("A new population could not be created.", exception);
             }
             monitor.worked(layoutOptionsWork * scale);
@@ -377,9 +377,14 @@ public final class EvolModel {
                 EvolPlugin.logStatus("Creating metric weights ...");
                 Set<String> metricIds = EvolutionServices.getInstance().getLayoutMetricsIds();
 
+                // execution speed needs special treatment
+                Set<String> metricIdsWithExecutionSpeed = new HashSet<String>(metricIds);
+                metricIdsWithExecutionSpeed.add(EvolPlugin.EXECUTION_SPEED_VALUE_ID);
+
                 Population predictors = new Population();
                 for (int i = 0; i < NUM_RATING_PREDICTORS; i++) {
-                    Genome weightGenes = GenomeFactory.createWeightGenes(metricIds);
+                    Genome weightGenes =
+                            GenomeFactory.createWeightGenes(metricIdsWithExecutionSpeed);
                     assert weightGenes != null;
                     predictors.add(weightGenes);
                 }

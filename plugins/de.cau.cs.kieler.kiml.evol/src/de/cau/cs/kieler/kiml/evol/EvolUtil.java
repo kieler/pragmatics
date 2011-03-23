@@ -45,7 +45,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.KielerException;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -168,9 +167,9 @@ public final class EvolUtil {
                     // The type in the editor is not compatible to the current
                     // population. We skip this editor.
 
-                    EvolPlugin.showError("The editor " + editor.getTitle() + " is set to "
+                    EvolPlugin.logStatus("The editor " + editor.getTitle() + " is set to "
                             + layoutTypeId + ". Expecting an editor for " + expectedLayoutTypeId
-                            + ".", null);
+                            + ".");
                     continue;
                 }
                 assert expectedLayoutTypeId.equalsIgnoreCase(layoutTypeId) || useDifferentType;
@@ -400,10 +399,9 @@ public final class EvolUtil {
 
             // Add the execution speed value.
             double time = monitor.getExecutionTime();
-
             double speed = normalizedSpeed(time);
-
             measurements.put(EvolPlugin.EXECUTION_SPEED_VALUE_ID, speed);
+            System.out.println("Result: " + EvolPlugin.EXECUTION_SPEED_VALUE_ID + ": " + speed);
 
             return measurements;
         }
@@ -783,7 +781,7 @@ public final class EvolUtil {
             return new Population();
         }
 
-        // Get the layout inspectors of the editors.
+        // Get the layout configurations of the editors.
         List<ILayoutConfig> configs = getLayoutConfigs(editors);
         if (configs.isEmpty()) {
             return new Population();
@@ -1069,7 +1067,7 @@ public final class EvolUtil {
      * are returned.
      *
      * @param configs
-     *            list of layout configurations
+     *            list of layout configurations; must not be {@code null}
      * @param id
      *            an identifier
      * @return the set of values having the specified ID
