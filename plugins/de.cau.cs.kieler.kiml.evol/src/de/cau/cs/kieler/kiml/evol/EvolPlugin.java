@@ -120,6 +120,7 @@ public class EvolPlugin extends AbstractUIPlugin {
      *            a low-level exception, or {@code null} if not applicable
      */
     public static void showError(final String message, final Throwable exception) {
+        exception.printStackTrace();
         Status myStatus =
                 new Status(IStatus.ERROR, EvolPlugin.PLUGIN_ID, message, exception);
         StatusManager.getManager().handle(myStatus, StatusManager.SHOW);

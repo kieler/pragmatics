@@ -778,7 +778,7 @@ final class GenomeFactory {
             Object value = entry.getValue();
 
             // Check the property descriptor id.
-            assert !LayoutOptions.ALGORITHM_ID.equals(id) : "There should be no layout hint in the collected options.";
+            assert !LayoutOptions.ALGORITHM_ID.equals(id) : "There should be no algorithm in the collected options.";
 
             // There should not be a gene for this option yet.
             assert result.find(id) == null : "Duplicate property: " + id;
@@ -851,10 +851,10 @@ final class GenomeFactory {
 
         return result;
     }
-    
+
     /**
      * Creates a genome of extra genes (for known options that are not present).
-     * 
+     *
      * @param knownOptionIds
      *            set of identifiers of the known options; must not be
      *            {@code null}
@@ -871,17 +871,13 @@ final class GenomeFactory {
             final IGeneFactory theGeneFactory) {
 
         if ((knownOptionIds == null) || (presentIds == null)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("'knownOptionIds' or 'presentIds' was null.");
         }
 
         Genome extraGenes = new Genome();
 
-        IGeneFactory geneFactory;
-        if (theGeneFactory == null) {
-            geneFactory = this.layoutOptionGeneFactory;
-        } else {
-            geneFactory = theGeneFactory;
-        }
+        IGeneFactory geneFactory =
+                (theGeneFactory == null) ? this.layoutOptionGeneFactory : theGeneFactory;
 
         LayoutServices layoutServices = LayoutServices.getInstance();
 

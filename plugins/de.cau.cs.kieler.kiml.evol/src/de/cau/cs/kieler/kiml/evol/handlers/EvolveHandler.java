@@ -58,7 +58,7 @@ public class EvolveHandler extends AbstractHandler {
 
         /**
          * Creates a new {@link EvolutionJobChangeAdapter} instance.
-         * 
+         *
          * @param theMonitor
          *            progress monitor
          * @param theModel
@@ -202,7 +202,6 @@ public class EvolveHandler extends AbstractHandler {
             try {
                 evolveJob.join();
             } catch (final InterruptedException exception) {
-                exception.printStackTrace();
                 EvolPlugin.showError("The evolution job was interrupted.", exception);
             }
         }

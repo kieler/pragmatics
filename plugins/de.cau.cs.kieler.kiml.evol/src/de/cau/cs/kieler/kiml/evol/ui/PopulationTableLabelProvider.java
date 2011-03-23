@@ -110,17 +110,17 @@ public class PopulationTableLabelProvider extends LabelProvider implements ITabl
 
         case 2:
             IGene<?> hintGene = individual.find(LayoutOptions.ALGORITHM_ID);
-            String providerName = null;
+            String algorithmName = null;
             if (hintGene instanceof ListItemGene) {
                 final String hintId = hintGene.toString();
 
-                final LayoutAlgorithmData provider =
+                final LayoutAlgorithmData algorithm =
                         LayoutServices.getInstance().getAlgorithmData(hintId);
-                if (provider != null) {
-                    providerName = provider.getName();
+                if (algorithm != null) {
+                    algorithmName = algorithm.getName();
                 }
             }
-            result = providerName;
+            result = algorithmName;
             break;
 
         default:

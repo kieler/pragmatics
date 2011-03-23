@@ -15,11 +15,8 @@ package de.cau.cs.kieler.kiml.evol;
 
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -228,10 +225,10 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
 
         return graph;
     }
-    
+
     /**
      * Sets the layout algorithm hint.
-     * 
+     *
      * @param gene
      *            the gene that encodes the value to set
      * @param targetGraphData
@@ -348,6 +345,7 @@ class AdoptingRecursiveLayouterEngine extends RecursiveLayouterEngine {
             }
 
         } catch (final NullPointerException e) {
+            // could not set enum property to new enum value
             EvolPlugin.showError("Enum property could not be set: " + gene.getId(), e);
             throw new AssertionError(value);
         }
