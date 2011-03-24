@@ -206,6 +206,10 @@ public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayou
         dummyEdge.setSource(eastwardPort);
         dummyEdge.setTarget(nextLayerDummyInput);
         
+        // Set LONG_EDGE_SOURCE and LONG_EDGE_TARGET properties on the LONG_EDGE dummy
+        setLongEdgeSourceAndTarget(sameLayerDummy, sameLayerDummyInput, sameLayerDummyOutput,
+                eastwardPort);
+        
         // Reconfigure the port
         eastwardPort.setType(PortType.OUTPUT);
         eastwardPort.setProperty(Properties.REVERSED, true);
@@ -266,9 +270,63 @@ public class OddPortSidePreprocessor extends AbstractAlgorithm implements ILayou
         dummyEdge.setSource(previousLayerDummyOutput);
         dummyEdge.setTarget(sameLayerDummyInput);
         
+        // Set LONG_EDGE_SOURCE and LONG_EDGE_TARGET properties on the LONG_EDGE dummy
+        setLongEdgeSourceAndTarget(sameLayerDummy, sameLayerDummyInput, sameLayerDummyOutput,
+                westwardPort);
+        
         // Reconfigure the port
         westwardPort.setType(PortType.INPUT);
         westwardPort.setProperty(Properties.REVERSED, true);
+    }
+    
+    /**
+     * Properly sets the {@link de.cau.cs.kieler.klay.layered.Properties#LONG_EDGE_SOURCE}
+     * and {@link de.cau.cs.kieler.klay.layered.Properties#LONG_EDGE_TARGET} properties for
+     * the given long edge dummy. This is required for the
+     * {@link de.cau.cs.kieler.klay.layered.intermediate.HyperedgeDummyJoiner} to work
+     * correctly.
+     * 
+     * @param longEdgeDummy the long edge dummy whose properties to set.
+     * @param dummyInputPort the dummy node's input port.
+     * @param dummyOutputPort the dummy node's output port.
+     * @param oddPort the odd port that prompted the dummy to be created.
+     */
+    private void setLongEdgeSourceAndTarget(final LNode longEdgeDummy, final LPort dummyInputPort,
+            final LPort dummyOutputPort, final LPort oddPort) {
+        
+        // There's exactly one edge connected to the input and output port
+        LPort sourcePort = dummyInputPort.getEdges().get(0).getSource();
+        LNode sourceNode = sourcePort.getNode();
+        Properties.NodeType sourceNodeType = sourceNode.getProperty(Properties.NODE_TYPE);
+        LPort targetPort = dummyOutputPort.getEdges().get(0).getTarget();
+        LNode targetNode = targetPort.getNode();
+        Properties.NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
+        
+        // Set the LONG_EDGE_SOURCE property
+        if (sourceNodeType == Properties.NodeType.LONG_EDGE) {
+            // The source is a LONG_EDGE node; use its LONG_EDGE_SOURCE
+            longEdgeDummy.setProperty(Properties.LONG_EDGE_SOURCE,
+                    sourceNode.getProperty(Properties.LONG_EDGE_SOURCE));
+        } else if (sourceNodeType == Properties.NodeType.ODD_PORT_SIDE) {
+            // The source node is an ODD_PORT_SIDE node; use our odd port as the source
+            longEdgeDummy.setProperty(Properties.LONG_EDGE_SOURCE, oddPort);
+        } else {
+            // It's nothing like that, so just use the source port
+            longEdgeDummy.setProperty(Properties.LONG_EDGE_SOURCE, sourcePort);
+        }
+
+        // Set the LONG_EDGE_TARGET property
+        if (targetNodeType == Properties.NodeType.LONG_EDGE) {
+            // The target is a LONG_EDGE node; use its LONG_EDGE_TARGET
+            longEdgeDummy.setProperty(Properties.LONG_EDGE_TARGET,
+                    targetNode.getProperty(Properties.LONG_EDGE_TARGET));
+        } else if (targetNodeType == Properties.NodeType.ODD_PORT_SIDE) {
+            // The source node is an ODD_PORT_SIDE node; use our odd port as the target
+            longEdgeDummy.setProperty(Properties.LONG_EDGE_TARGET, oddPort);
+        } else {
+            // It's nothing like that, so just use the target port
+            longEdgeDummy.setProperty(Properties.LONG_EDGE_TARGET, targetPort);
+        }
     }
 
 }
