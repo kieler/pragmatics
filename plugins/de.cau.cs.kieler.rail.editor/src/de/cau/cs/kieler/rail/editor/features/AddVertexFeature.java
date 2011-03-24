@@ -73,6 +73,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 	private static final double MIDDLE = 0.5;
 
 	public static final String KLAY_NODETYPE_KEY = "layout:de.cau.cs.kieler.klay.rail.nodeType";
+	public static final String KLAY_PORTTYPE_KEY = "layout:de.cau.cs.kieler.klay.rail.portType";
 
 	private static final int BREACH_WIDTH = 40;
 
@@ -231,10 +232,10 @@ public class AddVertexFeature extends AbstractAddFeature {
 			// direct editable
 
 			// for the Layouter
-			Property properPort = MmFactory.eINSTANCE.createProperty();
-			properPort.setKey("layout:de.cau.cs.kieler.klay.rail.portType");
-			properPort.setValue("STUMP");
-			containerShape.getProperties().add(properPort);
+			Property nodeTypeProp = MmFactory.eINSTANCE.createProperty();
+			nodeTypeProp.setKey(KLAY_NODETYPE_KEY);
+			nodeTypeProp.setValue("BREACH_OR_CLOSE");
+			containerShape.getProperties().add(nodeTypeProp);
 
 			// PORT
 			Port port = einbruchsknoten.getPorts().get(0);
@@ -302,9 +303,10 @@ public class AddVertexFeature extends AbstractAddFeature {
 		{
 			// create and set graphics algorithm
 			Polyline polyline = gaService.createPolyline(portContainer, new int[] {
-					width / 2, 0, width / 2, height });
+					width / 2 - 1, 0, width / 2 - 1, height });
 			polyline.setStyle(styleProvider
 					.getStyle(StyleProvider.DEFAULT_STYLE));
+			polyline.setLineWidth(3);
 			// gaService.setLocationAndSize(polyline,width/2, 0, width/2,
 			// height);
 		}
@@ -341,6 +343,12 @@ public class AddVertexFeature extends AbstractAddFeature {
 			 */
 
 		}
+		
+                // for the Layouter
+                Property nodeTypeProp = MmFactory.eINSTANCE.createProperty();
+                nodeTypeProp.setKey(KLAY_NODETYPE_KEY);
+                nodeTypeProp.setValue("BREACH_OR_CLOSE");
+                containerShape.getProperties().add(nodeTypeProp);
 
 		// PORT
 		Port port = deadEndVertex.getPorts().get(0);
@@ -375,19 +383,19 @@ public class AddVertexFeature extends AbstractAddFeature {
 	 * 
 	 * @param context
 	 *            The context witch is use to create the pictorgram element
-	 * @param orientatin
+	 * @param orientation
 	 *            left or right switch
 	 * @return The pictorgram Element with the switch.
 	 */
 	private PictogramElement addSwitchVertex(final IAddContext context,
-			final EOrientation orientatin) {
+			final EOrientation orientation) {
 
 		int[] spitzeStammXY = { 0, 0, 0, 0 };
 		int[] mitteAbzweigXY = { 25, 25, 0, 0 };
 
 		// create Switch from source
 		Weichenknoten switchVertex = (Weichenknoten) context.getNewObject();
-		switchVertex.setAbzweigendeLage(orientatin);
+		switchVertex.setAbzweigendeLage(orientation);
 
 
 		// CONTAINER SHAPE
@@ -396,19 +404,17 @@ public class AddVertexFeature extends AbstractAddFeature {
 		        context.getTargetContainer(), true);
 
 		// for the Layouter
-		Property properOrientatin = MmFactory.eINSTANCE.createProperty();
-		properOrientatin.setKey(KLAY_NODETYPE_KEY);
-		switch (orientatin) {
+		Property nodeTypeProp = MmFactory.eINSTANCE.createProperty();
+		nodeTypeProp.setKey(KLAY_NODETYPE_KEY);
+		switch (orientation) {
 		case LINKS:
-			properOrientatin.setValue("SWITCH_LEFT");
+			nodeTypeProp.setValue("SWITCH_LEFT");
 			break;
 		case RECHTS:
-			properOrientatin.setValue("SWITCH_RIGHT");
-			break;
-		default:
+			nodeTypeProp.setValue("SWITCH_RIGHT");
 			break;
 		}
-		containerShape.getProperties().add(properOrientatin);
+		containerShape.getProperties().add(nodeTypeProp);
 
 		IGaService gaService = Graphiti.getGaService();
 
@@ -419,9 +425,9 @@ public class AddVertexFeature extends AbstractAddFeature {
 		containerShape.getProperties().add(proper);
 
 		// virtual Rectangle
-		Rectangle rect = gaService.createRectangle(containerShape);
-		rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-		rect.setForeground(manageColor(255, 255, 255)); // TODO const
+		Rectangle portsContainer = gaService.createInvisibleRectangle(containerShape);
+                gaService.setLocationAndSize(portsContainer,
+                        context.getX(), context.getY(), WIDTH_SWITCH, HEIGHT_SWITCH);
 
 		// PORT
 		int width = 50;// containerShape.getGraphicsAlgorithm().getWidth();
@@ -440,8 +446,8 @@ public class AddVertexFeature extends AbstractAddFeature {
 				double portWidth = PORT_SIZE / 50;
 
 				// for the Layouter
-				Property properPort = MmFactory.eINSTANCE.createProperty();
-				properPort.setKey(KLAY_NODETYPE_KEY);
+				Property portTypeProp = MmFactory.eINSTANCE.createProperty();
+				portTypeProp.setKey(KLAY_PORTTYPE_KEY);
 
 				boxAnchor.setRelativeHeight(0.4);// (0.5-portWidth);
 
@@ -451,7 +457,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 				switch (port.getName()) {
 				case SPITZE:
 					boxAnchor.setRelativeWidth(0.0);
-					properPort.setValue("STUMP");
+					portTypeProp.setValue("STUMP");
 					spitzeStammXY[0] = (int) (width
 							* (boxAnchor.getRelativeWidth()) - boxWidth / 2);
 					spitzeStammXY[1] = (int) (height
@@ -459,15 +465,15 @@ public class AddVertexFeature extends AbstractAddFeature {
 					break;
 				case STAMM:
 					boxAnchor.setRelativeWidth(0.85);
-					properPort.setValue("STRAIGHT");
+					portTypeProp.setValue("STRAIGHT");
 					spitzeStammXY[2] = (int) (width
 							* (boxAnchor.getRelativeWidth()) + boxWidth / 2);
 					spitzeStammXY[3] = (int) (height
 							* (boxAnchor.getRelativeHeight()) + boxHeight / 2);
 					break;
 				case ABZWEIG:
-					properPort.setValue("BRANCH");
-					if (orientatin == EOrientation.LINKS) {
+					portTypeProp.setValue("BRANCH");
+					if (orientation == EOrientation.LINKS) {
 						// boxAnchor.setRelativeWidth(0.8);
 						boxAnchor.setRelativeWidth(Geometry.getRelativWeight(
 								0.5, Geometry.degreeToRad(30), 1.0));
@@ -482,9 +488,9 @@ public class AddVertexFeature extends AbstractAddFeature {
 					mitteAbzweigXY[3] = (int) (height
 							* (boxAnchor.getRelativeHeight()) + boxHeight / 2);
 				}
-				boxAnchor.getProperties().add(properPort);
+				boxAnchor.getProperties().add(portTypeProp);
 
-				boxAnchor.setReferencedGraphicsAlgorithm(rect);
+				boxAnchor.setReferencedGraphicsAlgorithm(portsContainer);
 
 				createGraphicalPort(boxAnchor, port.getName());
 
@@ -528,7 +534,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 		int[] polyXY = new int[] { mitteAbzweigXY[0], mitteAbzweigXY[1], 0, 0,
 				0, 0 };
 
-		if (orientatin == EOrientation.LINKS) {
+		if (orientation == EOrientation.LINKS) {
 			polyXY[2] = 32;
 		} else {
 			polyXY[2] = 50 - 32;
@@ -552,9 +558,6 @@ public class AddVertexFeature extends AbstractAddFeature {
 		// TEXT
 
 		layoutPictogramElement(containerShape);
-
-		gaService.setLocationAndSize(containerShape.getGraphicsAlgorithm(),
-				context.getX(), context.getY(), HEIGHT_SWITCH, WIDTH_SWITCH);
 
 		link(shape, switchVertex);
 

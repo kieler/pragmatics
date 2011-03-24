@@ -32,7 +32,6 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -43,7 +42,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.model.graphiti.GraphitiFrameworkBridge;
 import de.cau.cs.kieler.core.ui.IGraphicalFrameworkBridge;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.ILayoutConfig;
 import de.cau.cs.kieler.kiml.graphiti.ElementInfo.PortInfo;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -52,7 +50,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.ui.layout.DiagramLayoutManager;
 import de.cau.cs.kieler.kiml.ui.layout.ICachedLayout;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -279,24 +276,15 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
                     }
                 }
 
-                // set port constraints to fixed if there are no further
-                // children
-                if (shapeHasPorts) {
-                    shapeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS,
-                            shapeHasChildren ? PortConstraints.FREE
-                                    : PortConstraints.FIXED_POS);
-                }
-
                 // set user defined layout options
                 layoutConfig.setFocus(diagramEditor
                         .getEditPartForPictogramElement(shape));
+                layoutConfig.setPorts(shapeHasPorts);
+                layoutConfig.setChildren(shapeHasChildren);
                 shapeLayout.copyProperties(layoutConfig);
             }
         }
 
-        // set fixed size to true if there are no further children
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        parentLayout.setProperty(LayoutOptions.FIXED_SIZE, !parentHasChildren);
         return parentHasChildren;
     }
 
@@ -373,38 +361,21 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
         if (ga == null) {
             throw new ElementMissingException();
         }
-        ElementInfo.PortInfo portInfo = putPortIntoMap(bra, port);
+        putPortIntoMap(bra, port);
 
-        double xoffset = bra.getGraphicsAlgorithm().getX();
-        double yoffset = bra.getGraphicsAlgorithm().getY();
-        if (containerGa != findVisibleGa(containerGa)) {
-            xoffset += ga.getX();
-            yoffset += ga.getY();
-            portInfo.setContainerHasInvisibleParent(true);
-        }
+        // FIXME what about the "port info"?
+//        if (containerGa != findVisibleGa(containerGa)) {
+//            xoffset += ga.getX();
+//            yoffset += ga.getY();
+//            portInfo.setContainerHasInvisibleParent(true);
+//        }
         double relWidth = bra.getRelativeWidth();
         double relHeight = bra.getRelativeHeight();
 
         double parentWidth = ga.getWidth();
         double parentHeight = ga.getHeight();
-        float xPos = (float) (relWidth * parentWidth + xoffset);
-        float yPos = (float) (relHeight * parentHeight + yoffset);
-
-        Pair<Float, Float> offset = new Pair<Float, Float>(0f, 0f);
-        // place port center directly on outer bounds line
-        if (new Double(0.0).equals(relWidth)) {
-            offset.setFirst((float) bra.getGraphicsAlgorithm().getX());
-        } else if (new Double(1.0).equals(relWidth)) {
-            offset.setFirst((float) -bra.getGraphicsAlgorithm().getX());
-        }
-        if (new Double(0.0).equals(relHeight)) {
-            offset.setSecond((float) bra.getGraphicsAlgorithm().getY());
-        } else if (new Double(1.0).equals(relHeight)) {
-            offset.setSecond((float) -bra.getGraphicsAlgorithm().getY());
-        }
-        xPos += offset.getFirst();
-        yPos += offset.getSecond();
-        portInfo.setOffset(offset);
+        float xPos = (float) (relWidth * parentWidth) + bra.getGraphicsAlgorithm().getX();
+        float yPos = (float) (relHeight * parentHeight) + bra.getGraphicsAlgorithm().getY();
 
         portLayout.setXpos(xPos);
         portLayout.setYpos(yPos);
@@ -436,6 +407,7 @@ public class GraphitiDiagramLayoutManager extends DiagramLayoutManager {
 
     /**
      * Calculate insets from the invisible rectangle to the visible shape.
+     * FIXME this doesn't seem to work correctly
      * 
      * @param shapeLayout
      *            the shape layout

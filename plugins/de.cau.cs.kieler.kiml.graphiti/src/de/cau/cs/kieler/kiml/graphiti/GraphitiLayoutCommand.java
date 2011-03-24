@@ -40,7 +40,6 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.graphiti.ElementInfo.PortInfo;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
@@ -140,27 +139,41 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         if (pelem instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor anchor = (BoxRelativeAnchor) pelem;
             GraphicsAlgorithm ga = anchor.getReferencedGraphicsAlgorithm();
-            PortInfo info = (PortInfo) graphElem2ElemInfoMap.get(kport);
+            // FIXME what is this port info?
+//            PortInfo info = (PortInfo) graphElem2ElemInfoMap.get(kport);
             double parentWidth = ga.getWidth();
             double parentHeight = ga.getHeight();
             double offsetx = anchor.getGraphicsAlgorithm().getX();
             double offsety = anchor.getGraphicsAlgorithm().getY();
-            if (info.containerHasInvisibleParent()) {
-                offsetx += ga.getX();
-                offsety += ga.getY();
-            }
+//            if (info.containerHasInvisibleParent()) {
+//                offsetx += ga.getX();
+//                offsety += ga.getY();
+//            }
             double x = shapeLayout.getXpos();
             double y = shapeLayout.getYpos();
-            Pair<Float, Float> ad = info.getOffset();
-            if (ad != null) {
-                y -= ad.getSecond();
-                x -= ad.getFirst();
-            }
+//            Pair<Float, Float> ad = info.getOffset();
+//            if (ad != null) {
+//                y -= ad.getSecond();
+//                x -= ad.getFirst();
+//            }
             double relWidth = (x - offsetx) / parentWidth;
+            if (relWidth < 0) {
+                relWidth = 0;
+            }
+            if (relWidth > 1) {
+                relWidth = 1;
+            }
             double relHeight = (y - offsety) / parentHeight;
+            if (relHeight < 0) {
+                relHeight = 0;
+            }
+            if (relHeight > 1) {
+                relHeight = 1;
+            }
 
-            anchor.setRelativeWidth(relWidth);
-            anchor.setRelativeHeight(relHeight);
+            // FIXME deactivated to avoid unwanted effects (for demonstration)
+//            anchor.setRelativeWidth(relWidth);
+//            anchor.setRelativeHeight(relHeight);
 
             featureProvider.layoutIfPossible(new LayoutContext(pelem));
         }
@@ -180,8 +193,9 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
         ga.setX(Math.round(shapeLayout.getXpos()));
         ga.setY(Math.round(shapeLayout.getYpos()));
-        ga.setHeight(Math.round(shapeLayout.getHeight()));
-        ga.setWidth(Math.round(shapeLayout.getWidth()));
+        // FIXME deactivated to avoid unwanted effects (for demonstration)
+//        ga.setHeight(Math.round(shapeLayout.getHeight()));
+//        ga.setWidth(Math.round(shapeLayout.getWidth()));
         featureProvider.layoutIfPossible(new LayoutContext(pelem));
     }
 
@@ -287,11 +301,11 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     private void fixFirstBendPoint(final KVector sourcePoint,
             final BoxRelativeAnchor start) {
         // undo port center trickery
-        ElementInfo.PortInfo info =
-                (ElementInfo.PortInfo) pictElem2ElemInfoMap.get(start);
-        Pair<Float, Float> ad = info.getOffset();
-        sourcePoint.x -= ad.getFirst();
-        sourcePoint.y -= ad.getSecond();
+//        ElementInfo.PortInfo info =
+//                (ElementInfo.PortInfo) pictElem2ElemInfoMap.get(start);
+//        Pair<Float, Float> ad = info.getOffset();
+//        sourcePoint.x -= ad.getFirst();
+//        sourcePoint.y -= ad.getSecond();
         // if (start.getRelativeWidth() == 0) {
         // sourcePoint.x -= start.getGraphicsAlgorithm().getX();
         // } else if (start.getRelativeWidth() == 1) {

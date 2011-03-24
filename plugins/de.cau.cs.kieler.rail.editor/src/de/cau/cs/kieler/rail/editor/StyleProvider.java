@@ -140,7 +140,7 @@ public class StyleProvider implements IStyleProvider {
             style.setBackground(gaService.manageColor(diagram,
                     ColorConstant.LIGHT_GRAY));
             style.setFilled(false);
-            style.setTransparency(1.0);
+            style.setTransparency(0.5);
             return style;
         } else if (PORT_END.equals(id)) {
             Style style = gaService.createStyle(diagram, id);

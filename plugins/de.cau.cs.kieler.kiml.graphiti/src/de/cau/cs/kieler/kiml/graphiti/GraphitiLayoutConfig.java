@@ -20,11 +20,10 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.graphiti.mm.MmFactory;
 import org.eclipse.graphiti.mm.Property;
 import org.eclipse.graphiti.mm.pictograms.Anchor;
-import org.eclipse.graphiti.mm.pictograms.ChopboxAnchor;
+import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -368,26 +367,31 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
         setFocus(editPart);
         PictogramElement pe = editPart.getPictogramElement();
         EditPart ep = (EditPart) editPart;
+        boolean hasChildren = false, hasPorts = false;
         if (pe instanceof Diagram) {
             super.initialize(Target.PARENTS, ep, getLayoutHint(pe));
+            hasChildren = true;
         } else if (pe instanceof Shape) {
             super.initialize(Target.NODES, ep,
                     getLayoutHint(((Shape) pe).getContainer()));
-            boolean hasChildren = false;
             if (pe instanceof ContainerShape) {
-                // the same check for relevant children as in the layout manager
-                // must be made here
+                // the same check for relevant children as in the layout manager must be made here
                 for (Shape child : ((ContainerShape) pe).getChildren()) {
-                    for (Anchor anchor : child.getAnchors()) {
-                        if (anchor instanceof ChopboxAnchor) {
-                            hasChildren = true;
-                            break;
-                        }
+                    if (!child.getAnchors().isEmpty()) {
+                        hasChildren = true;
+                        break;
                     }
                 }
+                if (hasChildren) {
+                    super.initialize(Target.PARENTS, ep, getLayoutHint(pe));
+                }
             }
-            if (hasChildren) {
-                super.initialize(Target.PARENTS, ep, getLayoutHint(pe));
+            // the same check for ports as in the layout manager must be made here
+            for (Anchor anchor : ((Shape) pe).getAnchors()) {
+                if (anchor instanceof BoxRelativeAnchor) {
+                    hasPorts = true;
+                    break;
+                }
             }
         } else if (pe instanceof Connection) {
             ContainerShape parent =
@@ -399,6 +403,8 @@ public class GraphitiLayoutConfig extends EclipseLayoutConfig {
                     ((Shape) ((Anchor) pe).getParent()).getContainer();
             super.initialize(Target.PORTS, ep, getLayoutHint(parent));
         }
+        setChildren(hasChildren);
+        setPorts(hasPorts);
     }
 
     /**
