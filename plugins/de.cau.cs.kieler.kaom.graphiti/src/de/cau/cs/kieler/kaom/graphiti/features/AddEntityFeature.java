@@ -65,10 +65,9 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
      * {@inheritDoc}
      */
     public PictogramElement add(final IAddContext context) {
-        ContainerShape parentContainerShape = context.getTargetContainer();
         IPeCreateService peCreateService = Graphiti.getPeCreateService();
         ContainerShape entityShape = peCreateService.createContainerShape(
-                parentContainerShape, true);
+                context.getTargetContainer(), true);
         peCreateService.createChopboxAnchor(entityShape);
         Entity entity = (Entity) context.getNewObject();
         link(entityShape, entity);
@@ -76,8 +75,7 @@ public class AddEntityFeature extends AbstractAddShapeFeature {
         // invisible rectangle created so that ports can be placed on the
         // boundary
         IGaService gaService = Graphiti.getGaService();
-        Rectangle portContainer = gaService
-                .createInvisibleRectangle(entityShape);
+        Rectangle portContainer = gaService.createInvisibleRectangle(entityShape);
         int width = context.getWidth() <= 2 ? 2 : context.getWidth();
         int height = context.getHeight() <= 2 ? 2 : context.getHeight();
         gaService.setLocationAndSize(portContainer, context.getX()

@@ -41,7 +41,7 @@ import de.cau.cs.kieler.rail.editor.features.MovePortFeature;
 import de.cau.cs.kieler.rail.editor.features.ResizeFeature;
 import de.cau.cs.kieler.rail.editor.features.RotateSwitchFeature;
 import de.cau.cs.kieler.rail.editor.features.ToggleSwitchFeature;
-import de.cau.cs.kieler.rail.editor.features.TypeFeatures;
+import de.cau.cs.kieler.rail.editor.features.VertexType;
 import de.cau.cs.kieler.rail.editor.features.UpdateBreachFeature;
 import de.cau.cs.kieler.rail.editor.features.UpdateSwitchFeature;
 import de.menges.topologie.Topologie.Basegraph.Edge;
@@ -69,6 +69,8 @@ public class FeatureProvider extends DefaultFeatureProvider {
 	private static final int DEADENDVERTEX_WIDTH = 50;
     /** the style provider that is used by the features. */
     private IStyleProvider styleProvider;
+    /** the semantic provider that is used by create-features. */
+    private SemanticProvider semanticProvider;
 
     /**
      * Standard constructor.
@@ -77,6 +79,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
     public FeatureProvider(final IDiagramTypeProvider dtp) {
         super(dtp);
         styleProvider = new StyleProvider(dtp);
+        semanticProvider = new SemanticProvider(dtp);
     }
 
     /**
@@ -86,10 +89,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
 	public final IAddFeature getAddFeature(final IAddContext context) {
         if (context.getNewObject() instanceof Einbruchsknoten) {
             return new AddVertexFeature(this, this.styleProvider,
-                    TypeFeatures.BREANCH);
+                    VertexType.BREACH);
         } else if (context.getNewObject() instanceof Stumpfgleisknoten) {
             return new AddVertexFeature(this, this.styleProvider,
-                    TypeFeatures.DEADENDVERTEX);
+                    VertexType.DEADEND);
         } else if (context.getNewObject() instanceof Weichenknoten) {
             EOrientation orientation =
                  ((Weichenknoten) (context.getNewObject()))
@@ -97,10 +100,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
             switch (orientation) {
             case LINKS:
                 return new AddVertexFeature(this, this.styleProvider,
-                        TypeFeatures.SWITCHVERTEX_LEFT);
+                        VertexType.SWITCH_LEFT);
             case RECHTS:
                 return new AddVertexFeature(this, this.styleProvider,
-                        TypeFeatures.SWITCHVERTEX_RIGHT);
+                        VertexType.SWITCH_RIGHT);
 			default:
 				break;
             }
@@ -118,10 +121,10 @@ public class FeatureProvider extends DefaultFeatureProvider {
         // , new CreateDeadEndVertexFeature(this)
 
         return new ICreateFeature[] {
-                new CreateVertexFeature(this, TypeFeatures.BREANCH),
-                new CreateVertexFeature(this, TypeFeatures.DEADENDVERTEX),
-                new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_LEFT),
-                new CreateVertexFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT)};
+                new CreateVertexFeature(this, VertexType.BREACH, semanticProvider),
+                new CreateVertexFeature(this, VertexType.DEADEND, semanticProvider),
+                new CreateVertexFeature(this, VertexType.SWITCH_LEFT, semanticProvider),
+                new CreateVertexFeature(this, VertexType.SWITCH_RIGHT, semanticProvider)};
                 //new CreatePortFeature(this)};
     }
 
@@ -130,7 +133,7 @@ public class FeatureProvider extends DefaultFeatureProvider {
      */
     @Override
 	public final ICreateConnectionFeature[] getCreateConnectionFeatures() {
-        return new ICreateConnectionFeature[] {new CreateEdgeFeature(this)};
+        return new ICreateConnectionFeature[] {new CreateEdgeFeature(this, semanticProvider)};
     }
 
     /**
@@ -174,17 +177,17 @@ public class FeatureProvider extends DefaultFeatureProvider {
         Shape shape = context.getShape();
         Object bo = getBusinessObjectForPictogramElement(shape);
         if (bo instanceof Einbruchsknoten) {
-            return new ResizeFeature(this, TypeFeatures.BREANCH);
+            return new ResizeFeature(this, VertexType.BREACH);
         } else if (bo instanceof Stumpfgleisknoten) {
-            return new ResizeFeature(this, TypeFeatures.DEADENDVERTEX);
+            return new ResizeFeature(this, VertexType.DEADEND);
         } else if (bo instanceof Weichenknoten) {
             EOrientation orientation = ((Weichenknoten)
             		(bo)).getAbzweigendeLage();
             switch (orientation) {
             case LINKS:
-                return new ResizeFeature(this, TypeFeatures.SWITCHVERTEX_LEFT);
+                return new ResizeFeature(this, VertexType.SWITCH_LEFT);
             case RECHTS:
-                return new ResizeFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT);
+                return new ResizeFeature(this, VertexType.SWITCH_RIGHT);
 			default:
 				break;
             }
@@ -201,20 +204,20 @@ public class FeatureProvider extends DefaultFeatureProvider {
         PictogramElement pictogramElement = context.getPictogramElement();
         Object bo = getBusinessObjectForPictogramElement(pictogramElement);
         if (bo instanceof Einbruchsknoten) {
-            return new LayoutFeature(this, TypeFeatures.BREANCH,
+            return new LayoutFeature(this, VertexType.BREACH,
                     BREANCH_HEIGHT, BREANCH_WIDTH);
         } else if (bo instanceof Stumpfgleisknoten) {
-            return new LayoutFeature(this, TypeFeatures.DEADENDVERTEX,
+            return new LayoutFeature(this, VertexType.DEADEND,
             		DEADENDVERTEX_HEIGHT, DEADENDVERTEX_WIDTH);
         } else if (bo instanceof Weichenknoten) {
             EOrientation orientation =
             	((Weichenknoten) (bo)).getAbzweigendeLage();
             switch (orientation) {
             case LINKS:
-                return new LayoutFeature(this, TypeFeatures.SWITCHVERTEX_LEFT,
+                return new LayoutFeature(this, VertexType.SWITCH_LEFT,
                         SWITCH_HEIGHT, SWITCH_WIDTH);
             case RECHTS:
-                return new LayoutFeature(this, TypeFeatures.SWITCHVERTEX_RIGHT,
+                return new LayoutFeature(this, VertexType.SWITCH_RIGHT,
                 		SWITCH_HEIGHT, SWITCH_WIDTH);
 			default:
 				break;

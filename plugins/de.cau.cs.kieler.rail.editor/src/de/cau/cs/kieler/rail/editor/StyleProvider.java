@@ -100,8 +100,8 @@ public class StyleProvider implements IStyleProvider {
     /**name of a style for an polyline*/
     public static final String POLYLINE = "polyline";
     /**name of a style for an port for  a breach*/
-    public static final String BREACH_PORT = "polyline";
-	private static final Integer LINE_WIDTH = 5;
+    public static final String BREACH_PORT = "breach_port";
+	private static final Integer LINE_WIDTH = 2;
 
     /**
      * Create the style with given identifier.

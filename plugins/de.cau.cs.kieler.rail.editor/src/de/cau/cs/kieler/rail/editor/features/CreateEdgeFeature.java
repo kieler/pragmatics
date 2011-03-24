@@ -19,7 +19,7 @@ import de.menges.topologie.Topologie.Basegraph.Edge;
 import de.menges.topologie.Topologie.Basegraph.Port;
 import de.menges.topologie.Topologie.Basegraph.Vertex;
 import de.menges.topologie.Topologie.SpecializedVertices.*;
-import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
+import de.cau.cs.kieler.rail.editor.SemanticProvider;
 
 
 /**
@@ -33,10 +33,14 @@ import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
 
 public class CreateEdgeFeature extends
        AbstractCreateConnectionFeature {
+    
+    /** the semantic provider used to fetch the top-level element of the current diagram. */
+    private SemanticProvider semanticProvider;
  
-    public CreateEdgeFeature (IFeatureProvider fp) {
+    public CreateEdgeFeature (IFeatureProvider fp, final SemanticProvider sp) {
         // provide name and description for the UI, e.g. the palette
         super(fp, "Verbindung", "Verbindung erstellen");
+        this.semanticProvider = sp;
     }
  
     public boolean canCreate(ICreateConnectionContext context) {
@@ -94,20 +98,20 @@ public class CreateEdgeFeature extends
         
         
         if (source instanceof Port && target instanceof Port) {
-        	Edge link = BasegraphFactory.eINSTANCE.createEdge();
-        	link.setFrom((Port) source);
-        	link.setDestination((Port) target);
+        	Edge edge = BasegraphFactory.eINSTANCE.createEdge();
+        	edge.setFrom((Port) source);
+        	edge.setDestination((Port) target);
             
-            Model topModel = ((KrailDiagramEditor) getDiagramEditor()).fetchModel(getDiagram());
+            Model topModel = semanticProvider.fetchModel(getDiagram());
             
-            //TODO Make the link I thing it is not necessary
-            //topModel.getEdges().add(link);
-            
+            // the model has no containment reference for edges, therefore add the edge to the resource
+            // FIXME why is there no such containment?
+            topModel.eResource().getContents().add(edge);
             
             getFeatureProvider().getDirectEditingInfo().setActive(true);
             AddConnectionContext addContext = new AddConnectionContext(context.getSourceAnchor(),
                     context.getTargetAnchor());
-            addContext.setNewObject(link);
+            addContext.setNewObject(edge);
             return (Connection) getFeatureProvider().addIfPossible(addContext);
         }
         return null;

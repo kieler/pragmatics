@@ -37,7 +37,7 @@ public class LayoutFeature extends AbstractLayoutFeature {
     private int width = 50;
     
     
-    TypeFeatures type;
+    VertexType type;
     
     /**
      * 
@@ -47,7 +47,7 @@ public class LayoutFeature extends AbstractLayoutFeature {
      * @param width
      */
     public LayoutFeature(IFeatureProvider fp ,
-    final TypeFeatures type, int height, int width) {
+    final VertexType type, int height, int width) {
         super(fp);
         this.type = type;
         this.height = height;
@@ -120,12 +120,12 @@ public class LayoutFeature extends AbstractLayoutFeature {
      */
 	public final boolean isInstanceof(final Object object){
 		switch (type){
-		case BREANCH:
+		case BREACH:
 			return object instanceof Einbruchsknoten;
-		case DEADENDVERTEX:
+		case DEADEND:
 			return object instanceof Stumpfgleisknoten;
-		case SWITCHVERTEX_LEFT:
-		case SWITCHVERTEX_RIGHT:
+		case SWITCH_LEFT:
+		case SWITCH_RIGHT:
 			return object instanceof Weichenknoten;
 		default:
 			break;

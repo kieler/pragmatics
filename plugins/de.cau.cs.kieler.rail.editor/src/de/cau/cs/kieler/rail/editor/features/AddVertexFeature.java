@@ -3,7 +3,6 @@
  */
 package de.cau.cs.kieler.rail.editor.features;
 
-import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IDirectEditingInfo;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -38,7 +37,6 @@ import de.cau.cs.kieler.rail.editor.StyleProvider;
 import de.menges.topologie.Topologie.Basegraph.EPort;
 import de.menges.topologie.Topologie.Basegraph.Port;
 import de.menges.topologie.Topologie.SpecializedVertices.*;
-import de.menges.topologie.ui.TopoDSL2InfrastrukturGenerator;
 
 import org.eclipse.core.resources.IResource;
 
@@ -80,10 +78,10 @@ public class AddVertexFeature extends AbstractAddFeature {
 
 	private static final int BREACH_HEIGHT = 40;
 
-	private TypeFeatures type;
+	private VertexType type;
 
 	public AddVertexFeature(final IFeatureProvider fp,
-			final IStyleProvider thestyleProvider, final TypeFeatures type) {
+			final IStyleProvider thestyleProvider, final VertexType type) {
 		super(fp);
 		this.styleProvider = thestyleProvider;
 		this.type = type;
@@ -119,16 +117,16 @@ public class AddVertexFeature extends AbstractAddFeature {
 		PictogramElement pe = null;
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 		switch (type) {
-		case BREANCH:
+		case BREACH:
 			pe = addBreach(context);
 			break;
-		case DEADENDVERTEX:
+		case DEADEND:
 			pe = addDeadEndVertex(context);
 			break;
-		case SWITCHVERTEX_LEFT:
+		case SWITCH_LEFT:
 			pe = addSwitchVertex(context, EOrientation.LINKS);
 			break;
-		case SWITCHVERTEX_RIGHT:
+		case SWITCH_RIGHT:
 			pe = addSwitchVertex(context, EOrientation.RECHTS);
 			break;
 		default:
@@ -150,12 +148,12 @@ public class AddVertexFeature extends AbstractAddFeature {
 	 */
 	public boolean isInstanceof(final Object object) {
 		switch (type) {
-		case BREANCH:
+		case BREACH:
 			return object instanceof Einbruchsknoten;
-		case DEADENDVERTEX:
+		case DEADEND:
 			return object instanceof Stumpfgleisknoten;
-		case SWITCHVERTEX_LEFT:
-		case SWITCHVERTEX_RIGHT:
+		case SWITCH_LEFT:
+		case SWITCH_RIGHT:
 			return object instanceof Weichenknoten;
 		}
 		return false;
@@ -170,24 +168,20 @@ public class AddVertexFeature extends AbstractAddFeature {
 	private PictogramElement addBreach(final IAddContext context) {
 		Einbruchsknoten einbruchsknoten = (Einbruchsknoten) context
 				.getNewObject();
-		Diagram targetDiagram = (Diagram) context.getTargetContainer();
 
 		// CONTAINER SHAPE WITH CIRCLE
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 		ContainerShape containerShape = peCreateService.createContainerShape(
-				targetDiagram, true);
+		        context.getTargetContainer(), true);
 
 		// define a default size for the shape
 		int width = WIDTH_BREACH;
 		int height = HEIGHT_BREACH;
 		IGaService gaService = Graphiti.getGaService();
 
-		System.out.println(context.getHeight());
-		System.out.println(context.getWidth());
-
-		Rectangle rect = gaService.createRectangle(containerShape);
-		rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
-		rect.setForeground(manageColor(ColorConstant.WHITE));
+//		Rectangle rect = gaService.createRectangle(containerShape);
+//		rect.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+//		rect.setForeground(manageColor(ColorConstant.WHITE));
 		Ellipse ellipse;
 		{
 			// Create Ellipse
@@ -206,12 +200,6 @@ public class AddVertexFeature extends AbstractAddFeature {
 			gaService.setLocationAndSize(ellipse, context.getX(),
 					context.getY() + 10, width, height - 10);
 
-			// if added Class has no resource we add it to the resource
-			// of the diagram
-			// in a real scenario the business model would have its own resource
-			if (einbruchsknoten.eResource() == null) {
-				getDiagram().eResource().getContents().add(einbruchsknoten);
-			}
 			// create link and wire it
 			link(containerShape, einbruchsknoten);
 		}
@@ -223,14 +211,6 @@ public class AddVertexFeature extends AbstractAddFeature {
 					.createShape(containerShape, false);
 
 			// create and set text graphics algorithm
-			// Compromise only
-			String ans = einbruchsknoten.getName();
-			// only ask for name if none is set already
-			if (ans == null) {
-				ans = ExampleUtil.askString("", "Enter Label", "");
-				// ans = JOptionPane.showInputDialog(null, "Enter Label");
-				einbruchsknoten.setName(ans); // TODO ???
-			}
 			Text text = gaService.createDefaultText(textShape,
 					einbruchsknoten.getName()); // addedClass.getName()
 			text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
@@ -296,20 +276,17 @@ public class AddVertexFeature extends AbstractAddFeature {
 	private PictogramElement addDeadEndVertex(final IAddContext context) {
 		Stumpfgleisknoten deadEndVertex = (Stumpfgleisknoten) context
 				.getNewObject();
-		Diagram targetDiagram = (Diagram) context.getTargetContainer();
 
 		// CONTAINER SHAPE WITH ROUNDED RECTANGLE
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 		ContainerShape containerShape = peCreateService.createContainerShape(
-				targetDiagram, true);
-		peCreateService.createChopboxAnchor(containerShape);
+		        context.getTargetContainer(), true);
+//		peCreateService.createChopboxAnchor(containerShape);
 
 		// define a default size for the shape
 		// TODO make constants (50)
-		int width = context.getWidth() != WIDTH_DEADEND ? WIDTH_DEADEND
-				: context.getWidth();
-		int height = context.getHeight() != WIDTH_DEADEND ? WIDTH_DEADEND
-				: context.getHeight();
+		int width = WIDTH_DEADEND;
+		int height = HEIGHT_DEADEND;
 		IGaService gaService = Graphiti.getGaService();
 
 		Rectangle portContainer = gaService
@@ -317,27 +294,14 @@ public class AddVertexFeature extends AbstractAddFeature {
 
 		gaService.setLocationAndSize(portContainer, context.getX(),
 				context.getY(), width, height);
-		{
 
-			Rectangle rectangleShape = gaService.createRectangle(portContainer);
-
-			// if added Class has no resource we add it to the resource
-			// of the diagram
-			// in a real scenario the business model would have its own resource
-			if (deadEndVertex.eResource() == null) {
-				getDiagram().eResource().getContents().add(deadEndVertex);
-			}
-			// create link and wire it
-			link(containerShape, deadEndVertex);
-		}
+		// create link and wire it
+		link(containerShape, deadEndVertex);
 
 		// SHAPE WITH LINE
 		{
-			// create shape for line
-			Shape shape = peCreateService.createShape(containerShape, false);
-
 			// create and set graphics algorithm
-			Polyline polyline = gaService.createPolyline(shape, new int[] {
+			Polyline polyline = gaService.createPolyline(portContainer, new int[] {
 					width / 2, 0, width / 2, height });
 			polyline.setStyle(styleProvider
 					.getStyle(StyleProvider.DEFAULT_STYLE));
@@ -352,13 +316,6 @@ public class AddVertexFeature extends AbstractAddFeature {
 					false);
 
 			// create and set text graphics algorithm
-			String ans = deadEndVertex.getName();
-			if (ans == null) {
-				ans = ExampleUtil.askString("", "Enter Label", "");
-				// ans = JOptionPane.showInputDialog(null, "Enter Label");
-				deadEndVertex.setName(ans); // TODO ???
-			}
-
 			Text text = gaService.createDefaultText(shapeLabel,
 					deadEndVertex.getName());
 			text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
@@ -432,12 +389,11 @@ public class AddVertexFeature extends AbstractAddFeature {
 		Weichenknoten switchVertex = (Weichenknoten) context.getNewObject();
 		switchVertex.setAbzweigendeLage(orientatin);
 
-		Diagram targetDiagram = (Diagram) context.getTargetContainer();
 
 		// CONTAINER SHAPE
 		IPeCreateService peCreateService = Graphiti.getPeCreateService();
 		ContainerShape containerShape = peCreateService.createContainerShape(
-				targetDiagram, true);
+		        context.getTargetContainer(), true);
 
 		// for the Layouter
 		Property properOrientatin = MmFactory.eINSTANCE.createProperty();
@@ -587,14 +543,6 @@ public class AddVertexFeature extends AbstractAddFeature {
 		Shape shape = peCreateService.createShape(containerShape, false);
 
 		// create and set text graphics algorithm
-		// Compromise only
-		String ans = switchVertex.getName();
-		// only ask for name if none is set already
-		if (ans == null) {
-			ans = ExampleUtil.askString("", "Enter Label", "");
-			// ans = JOptionPane.showInputDialog(null, "Enter Label");
-			switchVertex.setName(ans); // TODO ???
-		}
 		Text text = gaService.createDefaultText(shape, switchVertex.getName()); // addedClass.getName()
 		text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
 		text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);

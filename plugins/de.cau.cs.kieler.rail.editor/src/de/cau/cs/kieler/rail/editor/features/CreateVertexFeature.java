@@ -21,20 +21,24 @@ import de.menges.topologie.Topologie.Basegraph.Port;
 import de.menges.topologie.Topologie.Basegraph.Vertex;
 import de.menges.topologie.Topologie.SpecializedVertices.*;
 
-import de.cau.cs.kieler.rail.editor.KrailDiagramEditor;
+import de.cau.cs.kieler.rail.editor.SemanticProvider;
 
 
 public class CreateVertexFeature extends AbstractCreateFeature  {
     private static final String TITLE = "Create class";
 
     private static final String USER_QUESTION = "Enter new class name";
+    
+    /** the semantic provider used to fetch the top-level element of the current diagram. */
+    private SemanticProvider semanticProvider;
 
-	private TypeFeatures type;
+	private VertexType type;
 
-    public CreateVertexFeature(IFeatureProvider fp,TypeFeatures type) {
+    public CreateVertexFeature(IFeatureProvider fp,VertexType type, final SemanticProvider sp) {
         // set name and description of the creation feature
     	super(fp, getName(type), getName(type) + " erstellen");
     	this.type = type;
+        this.semanticProvider = sp;
     }
 
     public boolean canCreate(ICreateContext context) {
@@ -45,11 +49,13 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     public Object[] create(ICreateContext context) {
     	Vertex vertex = getVertex();
 
-        KrailDiagramEditor kde = ((KrailDiagramEditor) getDiagramEditor());
         ContainerShape tc = context.getTargetContainer();
-        Model model = kde.fetchModel(tc);
+        Model model = semanticProvider.fetchModel(tc);
 
         model.getVertices().add(vertex);
+        // the 'vertices' reference is _not_ containment, therefore add the vertex to the resource
+        // FIXME why is the reference not containment?
+        model.eResource().getContents().add(vertex);
 
         // do the add
         vertex.getPorts().addAll(addGraphicalRepresentationForPorts(vertex));
@@ -74,8 +80,8 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     	EList<Port> ports = new BasicEList<Port>();
 
     	switch (type) {
-    		case SWITCHVERTEX_LEFT:
-    		case SWITCHVERTEX_RIGHT:
+    		case SWITCH_LEFT:
+    		case SWITCH_RIGHT:
     			Port abzweig = BasegraphFactory.eINSTANCE.createPort();
     	    	abzweig.setName(EPort.ABZWEIG);
     	    	Port stamm = BasegraphFactory.eINSTANCE.createPort();
@@ -86,8 +92,8 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     			ports.add(stamm);
     			ports.add(spitze);
     			break;
-    		case DEADENDVERTEX:
-    		case BREANCH:
+    		case DEADEND:
+    		case BREACH:
     			Port ende = BasegraphFactory.eINSTANCE.createPort();
     	    	ende.setName(EPort.ENDE);
     	    	ports.add(ende);
@@ -120,8 +126,8 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
         addBookContext.setTargetContainer(contShape);
 
     	switch (type) {
-    		case SWITCHVERTEX_LEFT:
-    		case SWITCHVERTEX_RIGHT:
+    		case SWITCH_LEFT:
+    		case SWITCH_RIGHT:
     			Port abzweig = BasegraphFactory.eINSTANCE.createPort();
     	    	abzweig.setName(EPort.ABZWEIG);
     	    	Port stamm = BasegraphFactory.eINSTANCE.createPort();
@@ -148,16 +154,16 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
     {
     	Vertex vertex;
 		switch(type){
-    	case BREANCH:
+    	case BREACH:
         	return SpecializedVerticesFactory.eINSTANCE.createEinbruchsknoten();
-    	case DEADENDVERTEX:
+    	case DEADEND:
     		return SpecializedVerticesFactory.eINSTANCE.createStumpfgleisknoten();
     	//TODO Make for both cases possible.
-    	case SWITCHVERTEX_LEFT:
+    	case SWITCH_LEFT:
     		vertex = SpecializedVerticesFactory.eINSTANCE.createWeichenknoten();
     		((Weichenknoten)vertex).setAbzweigendeLage(EOrientation.LINKS);
     		return vertex;
-    	case SWITCHVERTEX_RIGHT:
+    	case SWITCH_RIGHT:
     		vertex = SpecializedVerticesFactory.eINSTANCE.createWeichenknoten();
     		((Weichenknoten)vertex).setAbzweigendeLage(EOrientation.RECHTS);
     		return vertex;
@@ -170,15 +176,15 @@ public class CreateVertexFeature extends AbstractCreateFeature  {
      * @param type the type where the name comes from
      * @return a String witch insert the name of this type of vertex.
      */
-    private static String getName(TypeFeatures type){
+    private static String getName(VertexType type){
     	switch(type) {
-    	case BREANCH:
+    	case BREACH:
         	return "Einbruchstelle";
-    	case DEADENDVERTEX:
+    	case DEADEND:
     		return "Stumpfgleisknoten";
-    	case SWITCHVERTEX_LEFT:
+    	case SWITCH_LEFT:
     		return "Weiche links";
-    	case SWITCHVERTEX_RIGHT:
+    	case SWITCH_RIGHT:
     		return "Weiche rechts";
 		default:
 			break;

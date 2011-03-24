@@ -20,16 +20,16 @@ public class ResizeFeature extends DefaultResizeShapeFeature {
 
 	/**
 	 * The type of this vertex.
-	 * @see TypeFeatures
+	 * @see VertexType
 	 */
-    private TypeFeatures type;
+    private VertexType type;
 	/**
 	 * The constructor for the resize feature.
 	 * @param fp The Feature Provider.
 	 * @param type The type of the vertex.
 	 */
 	public ResizeFeature(final IFeatureProvider fp,
-			final TypeFeatures type) {
+			final VertexType type) {
         super(fp);
         this.type = type;
     }
@@ -60,12 +60,12 @@ public class ResizeFeature extends DefaultResizeShapeFeature {
      */
 	public final boolean isInstanceof(final Object object){
 		switch (type) {
-		case BREANCH:
+		case BREACH:
 			return object instanceof Einbruchsknoten;
-		case DEADENDVERTEX:
+		case DEADEND:
 			return object instanceof Stumpfgleisknoten;
-		case SWITCHVERTEX_LEFT:
-		case SWITCHVERTEX_RIGHT:
+		case SWITCH_LEFT:
+		case SWITCH_RIGHT:
 			return object instanceof Weichenknoten;
 		default:
 			break;
@@ -80,19 +80,19 @@ public class ResizeFeature extends DefaultResizeShapeFeature {
     {
     	Vertex vertex;
 		switch(type) {
-    	case BREANCH:
+    	case BREACH:
         	return SpecializedVerticesFactory.
         		eINSTANCE.createEinbruchsknoten();
-    	case DEADENDVERTEX:
+    	case DEADEND:
     		return SpecializedVerticesFactory.
     			eINSTANCE.createStumpfgleisknoten();
     	//TODO Make for both cases possible.
-    	case SWITCHVERTEX_LEFT:
+    	case SWITCH_LEFT:
     		vertex = SpecializedVerticesFactory.
     			eINSTANCE.createWeichenknoten();
     		((Weichenknoten) vertex).setAbzweigendeLage(EOrientation.LINKS);
     		return vertex;
-    	case SWITCHVERTEX_RIGHT:
+    	case SWITCH_RIGHT:
     		vertex = SpecializedVerticesFactory.
     			eINSTANCE.createWeichenknoten();
     		((Weichenknoten) vertex).setAbzweigendeLage(

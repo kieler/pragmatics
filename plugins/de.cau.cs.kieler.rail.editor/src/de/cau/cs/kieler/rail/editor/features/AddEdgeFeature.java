@@ -64,14 +64,10 @@ public class AddEdgeFeature extends AbstractAddFeature {
         IGaService gaService = Graphiti.getGaService();
 
         Polyline polyline = gaService.createPolyline(connection);
-        polyline.setStyle(styleProvider.getStyle(StyleProvider.DEFAULT_STYLE));
+        polyline.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
 
 
         // create link and write it
-        if (((EObject) context.getNewObject()).eResource() == null) {
-            getDiagram().eResource().getContents()
-                    .add((EObject) context.getNewObject());
-        }
         link(connection, context.getNewObject());
 
         // NEW
