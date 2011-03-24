@@ -241,18 +241,17 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             moveBendpointOutofNode(kedge.getSource(), allPoints.get(0), offset);
         } else if (conn.getStart() instanceof BoxRelativeAnchor
                 && !hasTailDecorator) {
-            KPoint sourcePoint = edgeLayout.getSourcePoint();
-            allPoints.add(sourcePoint.getX(), sourcePoint.getY());
-            fixFirstBendPoint(allPoints.get(0),
-                    (BoxRelativeAnchor) conn.getStart());
+//            KPoint sourcePoint = edgeLayout.getSourcePoint();
+//            allPoints.add(sourcePoint.getX(), sourcePoint.getY());
+//            fixFirstBendPoint(allPoints.get(0),
+//                    (BoxRelativeAnchor) conn.getStart());
         }
         for (KPoint bendPoint : edgeLayout.getBendPoints()) {
             Float x = bendPoint.getX();
             Float y = bendPoint.getY();
-            if (x.equals(Float.NaN) || y.equals(Float.NaN)) {
-                continue;
+            if (!Float.isNaN(x) && !Float.isNaN(y)) {
+                allPoints.add(x, y);
             }
-            allPoints.add(x, y);
         }
         if (conn.getEnd() instanceof ChopboxAnchor) {
             KPoint targetPoint = edgeLayout.getTargetPoint();
@@ -260,16 +259,16 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             moveBendpointOutofNode(kedge.getTarget(),
                     allPoints.get(allPoints.size() - 1), offset);
         } else if (conn.getEnd() instanceof BoxRelativeAnchor) {
-            if (allPoints.size() > 1) {
-                KVector last = allPoints.get(allPoints.size() - 1);
-                if (last.y == edgeLayout.getTargetPoint().getY()) {
-                    last.y--;
-                }
-            }
-            if (!hasHeadDecorator) {
-                allPoints.add(edgeLayout.getTargetPoint().getX(), edgeLayout
-                        .getTargetPoint().getY());
-            }
+//            if (allPoints.size() > 1) {
+//                KVector last = allPoints.get(allPoints.size() - 1);
+//                if (last.y == edgeLayout.getTargetPoint().getY()) {
+//                    last.y--;
+//                }
+//            }
+//            if (!hasHeadDecorator) {
+//                allPoints.add(edgeLayout.getTargetPoint().getX(), edgeLayout
+//                        .getTargetPoint().getY());
+//            }
         }
 
         // transform spline control points into approximated bend points

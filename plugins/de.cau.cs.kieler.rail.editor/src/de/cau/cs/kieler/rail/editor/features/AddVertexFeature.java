@@ -58,7 +58,7 @@ public class AddVertexFeature extends AbstractAddFeature {
 	protected static final IColorConstant CLASS_BACKGROUND = new ColorConstant(
 			255, 204, 153);
 
-	private static final int PORT_SIZE = 10;
+	private static final int PORT_SIZE = 9;
 
 	private static final int WIDTH_BREACH = 50;
 	private static final int HEIGHT_BREACH = 50;
@@ -497,8 +497,24 @@ public class AddVertexFeature extends AbstractAddFeature {
 				link(boxAnchor, port);
 			}
 		}
+		
+	        // triangle
+                mitteAbzweigXY[1] = getYFromArray(mitteAbzweigXY, 25);
+                Shape shapeptriangle = peCreateService.createShape(containerShape,
+                                false);
+                int[] polyXY = new int[] { mitteAbzweigXY[0], mitteAbzweigXY[1], 0, 0,
+                                0, 0 };
 
-		// PORT
+                if (orientation == EOrientation.LINKS) {
+                        polyXY[2] = 32;
+                } else {
+                        polyXY[2] = 50 - 32;
+                }
+                polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
+                polyXY[4] = polyXY[2];
+                polyXY[5] = 25;
+
+                gaService.createPolygon(shapeptriangle, polyXY);
 
 		// LINES
 
@@ -516,7 +532,6 @@ public class AddVertexFeature extends AbstractAddFeature {
 		polyline.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
 
 		// Line (30°)
-		mitteAbzweigXY[1] = getYFromArray(mitteAbzweigXY, 25);
 		Shape shapep30 = peCreateService.createShape(containerShape, false);
 		// mitteAbzweigXY
 		// Polyline polyline30 =
@@ -527,23 +542,6 @@ public class AddVertexFeature extends AbstractAddFeature {
 		polyline30.setStyle(styleProvider.getStyle(StyleProvider.POLYLINE));
 		// (int) (25 * 0.577350269) });
 		// polyline30.getPoints().get(0).setX(mitteAbzweigXY[0]);
-
-		// triangle
-		Shape shapeptriangle = peCreateService.createShape(containerShape,
-				false);
-		int[] polyXY = new int[] { mitteAbzweigXY[0], mitteAbzweigXY[1], 0, 0,
-				0, 0 };
-
-		if (orientation == EOrientation.LINKS) {
-			polyXY[2] = 32;
-		} else {
-			polyXY[2] = 50 - 32;
-		}
-		polyXY[3] = getYFromArray(mitteAbzweigXY, polyXY[2]);
-		polyXY[4] = polyXY[2];
-		polyXY[5] = 25;
-
-		Polygon polygon = gaService.createPolygon(shapeptriangle, polyXY);
 
 		// create shape for text
 		Shape shape = peCreateService.createShape(containerShape, false);
