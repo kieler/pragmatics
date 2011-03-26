@@ -2254,7 +2254,7 @@
             author="KIELER Workgroup"
             category="de.cau.cs.kieler.kaom.ptolemy.pthales"
             contact="kieler@informatik.uni-kiel.de"
-            description="???"
+            description="No description"
             generation_date="Mon Mar 14 13:46 CEST 2011"
             id="de.cau.cs.kieler.kaom.ptolemy.pthales.Dynamic"
             overview_pic="images/pthales_Dynamic.png"
@@ -2358,7 +2358,7 @@
             author="KIELER Workgroup"
             category="de.cau.cs.kieler.kaom.ptolemy.pthales"
             contact="kieler@informatik.uni-kiel.de"
-            description="???"
+            description="No description"
             generation_date="Mon Mar 14 13:46 CEST 2011"
             id="de.cau.cs.kieler.kaom.ptolemy.pthales.ImageDisplay"
             overview_pic="images/pthales_ImageDisplay.png"
@@ -2377,6 +2377,318 @@
          <resource
                direct_open="true"
                local_path="models/pthales/pthales_ImageDisplay.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="No description"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.2Bus"
+            overview_pic="images/ptides_2Bus.png"
+            root_directory="models/ptides"
+            title="2Bus">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_2Bus.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_2Bus.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_2Bus.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Overly simplistic tank model.\n\n This model cuts off the input flow when the tank is full and the output flow when the tank is empty."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.FuelSystem1"
+            overview_pic="images/ptides_FuelSystem_1.png"
+            root_directory="models/ptides"
+            title="FuelSystem 1">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_FuelSystem_1.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_FuelSystem_1.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_FuelSystem_1.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This Ptolemy example explores how to generate such sampling events for designs where these events are NOT produced outside of the control of the embedded microprocessor (thought to be the common case). For simplicitythis example assumes that the grid frequency is 2Hz (rather than 60) and that 5 samples per grid period (rather than 80) are required. This is done to make the plots less dense and more readable, and because the resulting sample interval is 0.1S rather than 1/(60x80) which cannot be exactly represented in binary representation with an LSB of 1ns (as in IEEE 1588). To further simplify the plots, the UTC clock actor generates a 1PPS (one pulse per second) event to model a UTC time base with an LSB of 0.01S."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.PowerManagementUnitSamplingWithCurrentLocalTime"
+            overview_pic="images/ptides_PowerManagementUnitSamplingWithCurrentLocalTime.png"
+            root_directory="models/ptides"
+            title="Power Management Unit Sampling With Current Local Time">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PowerManagementUnitSamplingWithCurrentLocalTime.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PowerManagementUnitSamplingWithCurrentLocalTime.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_PowerManagementUnitSamplingWithCurrentLocalTime.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="This is a discrete event model of an avionics fuel control system. Actors in this model are highly connected. To avoid displaying all the relations between actors, this model uses the WirelessDirector. Note that the WirelessDirector is a subclass of the DEDirector. Communication is done through special network components (Bus) which are derived from the AtomicWirelessChannel. Ports have a parameter outsideChannel which specifies the Bus they are connected to. The parameter &apos;receiver&apos; in an output port specifies the target port. "
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.PtidesAirplaneFuelControl"
+            overview_pic="images/ptides_PtidesAirplaneFuelControl.png"
+            root_directory="models/ptides"
+            title="Airplane Fuel Control">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesAirplaneFuelControl.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesAirplaneFuelControl.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_PtidesAirplaneFuelControl.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="A mixed simulator that combines PTIDES with DE and Continuous directors. The PTIDES model is a simple proportional controller, which provides output depending on the difference between the current actual input and desired input. The Continuous model implements a plant model. The DE director on the outside simulates the passage of physical time."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.PtidesBasicMixedSimulator"
+            overview_pic="images/ptides_PtidesBasicMixedSimulator.png"
+            root_directory="models/ptides"
+            title="Basic Mixed Simulator">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicMixedSimulator.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicMixedSimulator.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_PtidesBasicMixedSimulator.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Simulation of a TDMA network. There are three sources, Clock, Clock2 and Clock3. Each feeding into a Platform. The Platform is a trivial PTIDES model, which simply relays the input to its output. Since we assume a perfect world with 0 execution time, the output event of the PTIDES platform has the same timestamp as the input event. Each platform then transmits data through the network model, which models a TDMA network. The TDMA has a period of TDMAPeriod, and a transmission time of 1 is assumed for each data packet through the network."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.PtidesBasicMultiPlatformTDMA"
+            overview_pic="images/ptides_PtidesBasicMultiPlatformTDMA.png"
+            root_directory="models/ptides"
+            title="Basic Multi Platform TDMA">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicMultiPlatformTDMA.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicMultiPlatformTDMA.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_PtidesBasicMultiPlatformTDMA.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="A &quot;Hello World&quot; Ptides program. The top level of this model shows a physical environment in which two clocks provide stimulus to a compute platform, which, after some time, responds to the stimulus with output events that are plotted. At the top level of the model, &quot;time&quot; (in the DE director) represents physical time. The time-stamp of an event from the clock actors represents the physical time t which the stimulus is presented to the compute platform. The time stamp of the response event represents the physical time of the response. "
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.PtidesBasicOnePlatform"
+            overview_pic="images/ptides_PtidesBasicOnePlatform.png"
+            root_directory="models/ptides"
+            title="Basic One Platform">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicOnePlatform.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicOnePlatform.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_PtidesBasicOnePlatform.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="Top-level view of a power plant. The Supervisory Control block provides the signal to start the power plant and sets the target output levels. The Local Control block implements a simple control law to achieve the target output levels. It also detects failures to receive sensor data from the network. Upon the first such failure, it notifies the Supervisory Control block with a warning. Upon the second such failure, it locally changes the target output level to shut down the power plant, and also notifies the Supervisory Control block."
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.PtidesBasicPowerPlant"
+            overview_pic="images/ptides_PtidesBasicPowerPlant.png"
+            root_directory="models/ptides"
+            title="Basic Power Plant">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicPowerPlant.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicPowerPlant.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_PtidesBasicPowerPlant.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="No description"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.PtidesBasicTTE"
+            overview_pic="images/ptides_PtidesBasicTTE.png"
+            root_directory="models/ptides"
+            title="Basic TTE">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicTTE.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicTTE.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_PtidesBasicTTE.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="No description"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.PtidesBasicTwoPlatformsNetworkSensorEvents"
+            overview_pic="images/ptides_PtidesBasicTwoPlatformsNetworkSensorEvents.png"
+            root_directory="models/ptides"
+            title="Basic Two Platforms Network Sensor Events">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicTwoPlatformsNetworkSensorEvents.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesBasicTwoPlatformsNetworkSensorEvents.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_PtidesBasicTwoPlatformsNetworkSensorEvents.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="No description"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.PtidesNetwork"
+            overview_pic="images/ptides_PtidesNetwork.png"
+            root_directory="models/ptides"
+            title="Network">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesNetwork.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesNetwork.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_PtidesNetwork.kaod"
+               resource_type="file">
+         </resource>
+      </example>
+      <example
+            author="KIELER Workgroup"
+            category="de.cau.cs.kieler.kaom.ptolemy.ptides"
+            contact="kieler@informatik.uni-kiel.de"
+            description="No description"
+            generation_date="Mon Mar 14 13:46 CEST 2011"
+            id="de.cau.cs.kieler.kaom.ptolemy.ptides.PtidesPreemptEDFOnePlatformThreePathsRealDelay"
+            overview_pic="images/ptides_PtidesPreemptEDFOnePlatformThreePathsRealDelay.png"
+            root_directory="models/ptides"
+            title="Preempt EDF One Platform Three Paths Real Delay">
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesPreemptEDFOnePlatformThreePathsRealDelay.xml"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="false"
+               local_path="models/ptides/ptides_PtidesPreemptEDFOnePlatformThreePathsRealDelay.kaom"
+               resource_type="file">
+         </resource>
+         <resource
+               direct_open="true"
+               local_path="models/ptides/ptides_PtidesPreemptEDFOnePlatformThreePathsRealDelay.kaod"
                resource_type="file">
          </resource>
       </example>
