@@ -42,7 +42,7 @@ public class LayoutCombination extends AbstractCombination {
                     "Animates the automatic layout of a graph.", true,
                     CombinationParameter.BOOLEAN_TYPE),
             new CombinationParameter(ZOOM_TO_FIT, getPreferenceStore(), "Zoom to Fit",
-                    "Perform zoom to fit with automatic layout.", true,
+                    "Perform zoom to fit with automatic layout.", false,
                     CombinationParameter.BOOLEAN_TYPE),
             new CombinationParameter(PROGRESS_BAR, getPreferenceStore(), "Progress Bar",
                     "Display a progress bar while performing automatic layout.", false,
