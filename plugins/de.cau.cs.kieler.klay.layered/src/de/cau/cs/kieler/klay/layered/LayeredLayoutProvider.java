@@ -379,18 +379,11 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @throws IOException if anything goes wrong.
      */
     private Writer createWriter(final LayeredGraph graph, final int slotIndex) throws IOException {
-        String path = System.getProperty("user.home");
-        
-        if (path.endsWith(File.separator)) {
-            path += "tmp" + File.separator + "klay";
-        } else {
-            path += File.separator + "tmp" + File.separator + "klay";
-        }
+        String path = Util.getDebugOutputPath();
         new File(path).mkdirs();
         
-        String debugFileName = Integer.toString(graph.hashCode()
-                & ((1 << (Integer.SIZE / 2)) - 1)) + "-fulldebug-slot"
-                + String.format("%1$02d", slotIndex);
+        String debugFileName = Util.getDebugOutputFileBaseName(graph)
+                + "fulldebug-slot" + String.format("%1$02d", slotIndex);
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 

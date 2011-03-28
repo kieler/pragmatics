@@ -13,6 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -27,10 +31,12 @@ import com.google.common.collect.Iterators;
 import de.cau.cs.kieler.core.alg.AbstractAlgorithm;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.Properties.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -383,24 +389,20 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             LNode currentNode = nodeIter.next();
             LinearSegment currentSegment = null;
             
-            while (nodeIter.hasNext()) {
+            while (currentNode != null) {
                 // Get the current node's segment
-                if (currentNode.id == -1) {
-                    // Can happen for odd port side dummies
-                    currentNode = nodeIter.next();
-                    continue;
-                }
                 currentSegment = segmentList.get(currentNode.id);
                 
-                // Check if we can have a cycle. That's the case if we find a node after the
-                // current node whose segment appeared in the last layer as well, and whose
-                // index than came before node1's segment
-                Iterator<LNode> cycleNodesIter = layer.getNodes().listIterator(indexInLayer + 1);
-                LinearSegment cycleSegment = null;
-                
-                while (cycleNodesIter.hasNext()) {
-                    LNode cycleNode = cycleNodesIter.next();
-                    if (cycleNode.id != -1) {
+                /* Check if we have a cycle. That's the case if the following holds:
+                 *  - The current segment appeared in the previous layer as well.
+                 *  - In the previous layer, we find a segment after the current segment
+                 *    that appears before the current segment in the current layer.
+                 */
+                if (currentSegment.indexInLastLayer >= 0) {
+                    LinearSegment cycleSegment = null;
+                    Iterator<LNode> cycleNodesIter = layer.getNodes().listIterator(indexInLayer + 1);
+                    while (cycleNodesIter.hasNext()) {
+                        LNode cycleNode = cycleNodesIter.next();
                         cycleSegment = segmentList.get(cycleNode.id);
                         
                         if (cycleSegment.lastLayer == currentSegment.lastLayer
@@ -411,43 +413,37 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                             cycleSegment = null;
                         }
                     }
+                    
+                    // If we have found a cycle segment, we need to split the current linear segment
+                    if (cycleSegment != null) {
+                        // Update the current segment before it's split
+                        if (previousNode != null) {
+                            incomingCountList.set(currentNode.id,
+                                    incomingCountList.get(currentNode.id) - 1);
+                            outgoingList.get(previousNode.id).remove(currentSegment);
+                        }
+                        
+                        currentSegment = currentSegment.split(currentNode, nextLinearSegmentID++);
+                        segmentList.add(currentSegment);
+                        outgoingList.add(new LinkedList<LinearSegment>());
+                        
+                        if (previousNode != null) {
+                            outgoingList.get(previousNode.id).add(currentSegment);
+                            incomingCountList.add(1);
+                        } else {
+                            incomingCountList.add(0);
+                        }
+                    }
                 }
                 
-                // If we have found a cycle segment, we need to split the current linear
-                // segment
-                if (cycleSegment != null) {
-                    // Update the current segment before it's split
-                    if (previousNode != null) {
-                        incomingCountList.set(currentNode.id, incomingCountList.get(currentNode.id) - 1);
-                        outgoingList.get(previousNode.id).remove(currentSegment);
-                    }
-                    
-                    currentSegment = currentSegment.split(currentNode, nextLinearSegmentID++);
-                    segmentList.add(currentSegment);
-                    outgoingList.add(new LinkedList<LinearSegment>());
-                    
-                    if (previousNode != null) {
-                        outgoingList.get(previousNode.id).add(currentSegment);
-                        incomingCountList.add(1);
-                    } else {
-                        incomingCountList.add(0);
-                    }
-                }
-                
-                // Now add a dependency to the next node we find with id != -1
+                // Now add a dependency to the next node, if any
                 LNode nextNode = null;
-                while (nodeIter.hasNext()) {
+                if (nodeIter.hasNext()) {
                     nextNode = nodeIter.next();
-                    if (nextNode.id == -1) {
-                        nextNode = null;
-                    } else {
-                        LinearSegment nextSegment = segmentList.get(nextNode.id);
-                        
-                        outgoingList.get(currentNode.id).add(nextSegment);
-                        incomingCountList.set(nextNode.id, incomingCountList.get(nextNode.id) + 1);
-                        
-                        break;
-                    }
+                    LinearSegment nextSegment = segmentList.get(nextNode.id);
+                    
+                    outgoingList.get(currentNode.id).add(nextSegment);
+                    incomingCountList.set(nextNode.id, incomingCountList.get(nextNode.id) + 1);
                 }
                 
                 // Update segment's layer information
@@ -459,13 +455,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 currentNode = nextNode;
             }
             
-            // Assign indices to the layer's last node's segment, if any
-            if (currentSegment != null) {
-                currentSegment.lastLayer = layerIndex;
-                currentSegment.indexInLastLayer = indexInLayer;
-            }
-            
             layerIndex++;
+        }
+        
+        // Write debug output graph
+        if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
+            writeDebugGraph(layeredGraph, segmentList, outgoingList);
         }
     }
 
@@ -515,7 +510,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             
             // Fill segment
             fillSegment(nextNode, segment);
-        } else if (nodeType == NodeType.LONG_EDGE) { // || nodeType == NodeType.NORTH_SOUTH_PORT) {
+        } else if (nodeType == NodeType.LONG_EDGE || nodeType == NodeType.NORTH_SOUTH_PORT) {
             // This is a LONG_EDGE or NORTH_SOUTH_PORT dummy; check if any of its successors
             // are of one of these types too. If so, we can form a linear segment with one of
             // them (not with more than one, though)
@@ -524,8 +519,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     LNode targetNode = targetPort.getNode();
                     NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
                     
-                    if (targetNodeType == NodeType.LONG_EDGE) {
-//                            || targetNodeType == NodeType.NORTH_SOUTH_PORT) {
+                    if (targetNodeType == NodeType.LONG_EDGE
+                            || targetNodeType == NodeType.NORTH_SOUTH_PORT) {
                         
                         if (fillSegment(targetNode, segment)) {
                             // We just added another node to this node's linear segment. That's
@@ -550,14 +545,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         int[] nodeCount = new int[layeredGraph.getLayers().size()];
         boolean straightEdges = layeredGraph.getProperty(Properties.STRAIGHT_EDGES);
         for (LinearSegment segment : linearSegments) {
+            System.out.println("Segment: " + segment);
             // determine minimal offset of 'segment' as well as the height of the highest node
             float minOffset = 0;
             double maxHeight = 0.0f;
-            
-            // TODO Remove this debug statement
-            if (segment == null || segment.getNodes() == null || segment.getNodes().isEmpty()) {
-                continue;
-            }
             
             // Determine the minimum offset and maximum height of the segment's nodes
             for (LNode node : segment.getNodes()) {
@@ -595,11 +586,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 } else {
                     offset = maxHeight / 2 - node.getSize().y / 2;
                 }
-                
-                // If the node is not an odd port side dummy, adjust its layer's current size
+
+                // Set the node position. Also, if the node is not an odd port side dummy, it
+                // occupies space in the layer (thus, the layer size has to be adjusted)
+                node.getPos().y = newPos + offset;
                 if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.ODD_PORT_SIDE) {
                     Layer layer = node.getLayer();
-                    node.getPos().y = newPos + offset;
                     layer.getSize().y = newPos + offset + node.getSize().y;
                     layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
                 }
@@ -618,11 +610,6 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         for (int s = 0; s < linearSegments.length; s++) {
             LinearSegment segment = linearSegments[s];
 
-            // TODO Remove this debug statement
-            if (segment == null) {
-                continue;
-            }
-            
             Region region = new Region();
             for (LNode node : segment.getNodes()) {
                 region.nodes.add(node);
@@ -813,6 +800,56 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         }
         
         return ready;
+    }
+    
+    /**
+     * Writes a debug graph for the given linear segments and their dependencies.
+     * 
+     * @param layeredGraph the layered graph.
+     * @param segmentList the list of linear segments.
+     * @param outgoingList the list of successors for each linear segment.
+     */
+    private static void writeDebugGraph(final LayeredGraph layeredGraph,
+            final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList) {
+        
+        try {
+            Writer writer = createWriter(layeredGraph);
+            writer.write("digraph {\n");
+            
+            Iterator<LinearSegment> segmentIterator = segmentList.iterator();
+            Iterator<List<LinearSegment>> successorsIterator = outgoingList.iterator();
+            
+            while (segmentIterator.hasNext()) {
+                LinearSegment segment = segmentIterator.next();
+                List<LinearSegment> successors = successorsIterator.next();
+                
+                writer.write("  " + segment.hashCode() + "[label=\"" + segment + "\"]\n");
+                
+                for (LinearSegment successor : successors) {
+                    writer.write("  " + segment.hashCode() + "->" + successor.hashCode() + "\n");
+                }
+            }
+            
+            writer.write("}\n");
+            writer.close();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+    
+    /**
+     * Creates a writer for debug output.
+     * 
+     * @param layeredGraph the layered graph.
+     * @return a file writer for debug output.
+     * @throws IOException if creating the output file fails.
+     */
+    private static Writer createWriter(final LayeredGraph layeredGraph) throws IOException {
+        String path = Util.getDebugOutputPath();
+        new File(path).mkdirs();
+        
+        String debugFileName = Util.getDebugOutputFileBaseName(layeredGraph) + "linseg-dep";
+        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
 }

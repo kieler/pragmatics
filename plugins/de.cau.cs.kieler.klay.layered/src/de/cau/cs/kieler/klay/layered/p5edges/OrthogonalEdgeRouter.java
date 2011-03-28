@@ -35,6 +35,7 @@ import de.cau.cs.kieler.kiml.options.PortType;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingStrategy;
 import de.cau.cs.kieler.klay.layered.Properties;
+import de.cau.cs.kieler.klay.layered.Util;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -765,17 +766,12 @@ public class OrthogonalEdgeRouter extends AbstractAlgorithm implements ILayoutPh
     private static Writer createWriter(final LayeredGraph layeredGraph, final Layer layer,
             final String label) throws IOException {
         
-        String path = System.getProperty("user.home");
-        if (path.endsWith(File.separator)) {
-            path += "tmp" + File.separator + "klay";
-        } else {
-            path += File.separator + "tmp" + File.separator + "klay";
-        }
+        String path = Util.getDebugOutputPath();
         new File(path).mkdirs();
         
         int layerIndex = (layer == null) ? 0 : layer.getIndex() + 1;
-        String debugFileName = Integer.toString(layeredGraph.hashCode()
-                & ((1 << (Integer.SIZE / 2)) - 1)) + "-l" + layerIndex + "-" + label;
+        String debugFileName = Util.getDebugOutputFileBaseName(layeredGraph)
+                + "l" + layerIndex + "-" + label;
         return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
     }
 
