@@ -27,7 +27,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -106,6 +108,8 @@ public class ImportExamplePage extends WizardPage {
     private CheckboxTreeViewer treeViewer;
 
     private boolean isPreviewAvailable;
+
+    List<Pair<Category, ArrayList<Object>>> allCategoryPairs = new ArrayList<Pair<Category, ArrayList<Object>>>();
 
     /**
      * The constructor will be called with following parameters.
@@ -187,65 +191,127 @@ public class ImportExamplePage extends WizardPage {
                 }
             }
         });
-        // treeViewer.addCheckStateListener(new ICheckStateListener() {
-        // public void checkStateChanged(final CheckStateChangedEvent event) {
-        // boolean checked = event.getChecked();
-        // treeViewer.setSubtreeChecked(event.getElement(), checked);
-        // updateChecks(event);
-        // }
-        //
-        // private void updateChecks(final CheckStateChangedEvent event) {
-        // Object element = event.getElement();
-        // ArrayList<Pair<Category, ArrayList<Object>>> input = (ArrayList<Pair<Category,
-        // ArrayList<Object>>>) treeViewer
-        // .getInput();
-        // // TODO add functionality for subcategories.
-        // Pair<Category, ArrayList<Object>> parentCat = null;
-        // for (Pair<Category, ArrayList<Object>> cat : input) {
-        // if (cat.equals(element)) {
-        // return;
-        // }
-        // parentCat = getParent(element, cat);
-        // if (parentCat != null) {
-        // break;
-        // }
-        // }
-        // if (!event.getChecked()) {
-        // for (Object child : parentCat.getSecond()) {
-        // if (!child.equals(element) && treeViewer.getChecked(child)) {
-        // return;
-        // }
-        // }
-        // treeViewer.setChecked(parentCat, false);
-        // } else {
-        // if (!treeViewer.getChecked(parentCat)) {
-        // treeViewer.setChecked(parentCat, true);
-        // }
-        // }
-        // }
+        treeViewer.addCheckStateListener(new ICheckStateListener() {
+            public void checkStateChanged(final CheckStateChangedEvent event) {
+                boolean checked = event.getChecked();
+                treeViewer.setSubtreeChecked(event.getElement(), checked);
+                Object element = event.getElement();
 
-        /**
-         * Searches for the direct parent of the element object.
-         * 
-         * @param element
-         *            , Object that is the search-token // * @param pair // * , Pair which could be
-         *            the result and contains the iterating list for the // * search. // * @return
-         *            Pair, if parent is found otherwise null. //
-         */
-        // @SuppressWarnings("unchecked")
-        // private Pair<Category, ArrayList<Object>> getParent(final Object element,
-        // final Pair<Category, ArrayList<Object>> pair) {
-        // for (Object child : pair.getSecond()) {
-        // if (child.equals(element)) {
-        // return pair;
-        // }
-        // if (child instanceof Pair) {
-        // return getParent(element, (Pair<Category, ArrayList<Object>>) child);
-        // }
-        // }
-        // return null;
-        // }
-        // });
+                if (checked) {
+                    while (true) {
+                        Pair<Category, ArrayList<Object>> parent = getParent(element);
+                        if (parent == null) {
+                            break;
+                        }
+                        treeViewer.getChecked(parent);
+                        if (!treeViewer.getChecked(parent)) {
+                            treeViewer.setChecked(parent, true);
+                            if (parent.getFirst().getParentId() != null) {
+                                element = parent;
+                            } else {
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                } else {
+                    while (true) {
+                        Pair<Category, ArrayList<Object>> parent = getParent(element);
+                        if (parent == null) {
+                            break;
+                        }
+                        if (!hasCheckedElements(parent)) {
+                            treeViewer.setChecked(parent, false);
+                            if (parent.getFirst().getParentId() != null) {
+                                element = parent;
+                            } else {
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            private boolean hasCheckedElements(final Pair<Category, ArrayList<Object>> parent) {
+                for (Object element : parent.getSecond()) {
+                    if (treeViewer.getChecked(element)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @SuppressWarnings("unchecked")
+            private Pair<Category, ArrayList<Object>> getParent(final Object element) {
+                String categoryId = null;
+                if (element instanceof Example) {
+                    categoryId = ((Example) element).getCategoryId();
+                } else {
+                    categoryId = ((Pair<Category, ArrayList<Object>>) element).getFirst()
+                            .getParentId();
+                }
+                for (Pair<Category, ArrayList<Object>> cat : allCategoryPairs) {
+                    if (cat.getFirst().getId().equals(categoryId)) {
+                        return cat;
+                    }
+                }
+                return null;
+            }
+
+            private void updateChecks(final CheckStateChangedEvent event) {
+                Object element = event.getElement();
+                ArrayList<Pair<Category, ArrayList<Object>>> input = (ArrayList<Pair<Category, ArrayList<Object>>>) treeViewer
+                        .getInput();
+                // TODO add functionality for subcategories.
+                Pair<Category, ArrayList<Object>> parentCat = null;
+                for (Pair<Category, ArrayList<Object>> cat : input) {
+                    if (cat.equals(element)) {
+                        return;
+                    }
+                    parentCat = getParent(element, cat);
+                    if (parentCat != null) {
+                        break;
+                    }
+                }
+                if (!event.getChecked()) {
+                    for (Object child : parentCat.getSecond()) {
+                        if (!child.equals(element) && treeViewer.getChecked(child)) {
+                            return;
+                        }
+                    }
+                    treeViewer.setChecked(parentCat, false);
+                } else {
+                    if (!treeViewer.getChecked(parentCat)) {
+                        treeViewer.setChecked(parentCat, true);
+                    }
+                }
+            }
+
+            /**
+             * Searches for the direct parent of the element object.
+             * 
+             * @param element
+             *            , Object that is the search-token // * @param pair // * , Pair which could
+             *            be the result and contains the iterating list for the // * search. // * @return
+             *            Pair, if parent is found otherwise null. //
+             */
+            @SuppressWarnings("unchecked")
+            private Pair<Category, ArrayList<Object>> getParent(final Object element,
+                    final Pair<Category, ArrayList<Object>> pair) {
+                for (Object child : pair.getSecond()) {
+                    if (child.equals(element)) {
+                        return pair;
+                    }
+                    if (child instanceof Pair) {
+                        return getParent(element, (Pair<Category, ArrayList<Object>>) child);
+                    }
+                }
+                return null;
+            }
+        });
         final Maybe<Boolean> filterChanged = new Maybe<Boolean>(Boolean.FALSE);
         filterText.addModifyListener(new ModifyListener() {
             public void modifyText(final ModifyEvent e) {
@@ -315,6 +381,7 @@ public class ImportExamplePage extends WizardPage {
             categoryPair.setFirst(category);
             categoryPair.setSecond(categoryList);
             categoryPairList.add(categoryPair);
+            allCategoryPairs.add(categoryPair);
         }
 
         // structure subcategories
