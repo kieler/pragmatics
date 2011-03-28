@@ -266,9 +266,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         int nextLinearSegmentID = 0;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                if (node.id < 0
-                        && node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.ODD_PORT_SIDE) {
-                    
+                // Test for the node ID; calls to fillSegment(...) may have caused the node ID
+                // to be != -1.
+                if (node.id < 0) {
                     LinearSegment segment = new LinearSegment();
                     segment.id = nextLinearSegmentID++;
                     fillSegment(node, segment);
@@ -476,13 +476,18 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
      *            the node to put into the linear segment
      * @param segment
      *            a linear segment
+     * @return {@code true} if the given node was not already part of another segment and
+     *         was thus added to the given segment.
      */
-    private void fillSegment(final LNode node, final LinearSegment segment) {
+    private boolean fillSegment(final LNode node, final LinearSegment segment) {
         if (node.id >= 0) {
-            return;
+            // The node is already part of another linear segment
+            return false;
+        } else {
+            // Add the node to the given linear segment
+            node.id = segment.id;
+            segment.nodes.add(node);
         }
-        node.id = segment.id;
-        segment.nodes.add(node);
 
         // Check if outgoing edge has priority > 0
         LEdge highestPrioEdge = null;
@@ -510,21 +515,29 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             
             // Fill segment
             fillSegment(nextNode, segment);
-        } else if (nodeType == NodeType.LONG_EDGE || nodeType == NodeType.NORTH_SOUTH_PORT) {
-            // Long Edge and North South Port dummies can be part of a linear segment
+        } else if (nodeType == NodeType.LONG_EDGE) { // || nodeType == NodeType.NORTH_SOUTH_PORT) {
+            // This is a LONG_EDGE or NORTH_SOUTH_PORT dummy; check if any of its successors
+            // are of one of these types too. If so, we can form a linear segment with one of
+            // them (not with more than one, though)
             for (LPort sourcePort : node.getPorts(PortType.OUTPUT)) {
                 for (LPort targetPort : sourcePort.getConnectedPorts()) {
                     LNode targetNode = targetPort.getNode();
                     NodeType targetNodeType = targetNode.getProperty(Properties.NODE_TYPE);
                     
-                    if (targetNodeType == NodeType.LONG_EDGE
-                            || targetNodeType == NodeType.NORTH_SOUTH_PORT) {
+                    if (targetNodeType == NodeType.LONG_EDGE) {
+//                            || targetNodeType == NodeType.NORTH_SOUTH_PORT) {
                         
-                        fillSegment(targetNode, segment);
+                        if (fillSegment(targetNode, segment)) {
+                            // We just added another node to this node's linear segment. That's
+                            // quite enough
+                            return true;
+                        }
                     }
                 }
             }
         }
+        
+        return true;
     }
 
     /**
@@ -537,16 +550,24 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         int[] nodeCount = new int[layeredGraph.getLayers().size()];
         boolean straightEdges = layeredGraph.getProperty(Properties.STRAIGHT_EDGES);
         for (LinearSegment segment : linearSegments) {
-            // determine minimal offset of 'segment'
+            // determine minimal offset of 'segment' as well as the height of the highest node
             float minOffset = 0;
-            double maxSize = 0.0f;
+            double maxHeight = 0.0f;
+            
+            // TODO Remove this debug statement
+            if (segment == null || segment.getNodes() == null || segment.getNodes().isEmpty()) {
+                continue;
+            }
+            
+            // Determine the minimum offset and maximum height of the segment's nodes
             for (LNode node : segment.getNodes()) {
                 float offset = (float) node.getProperty(Properties.LINSEG_OFFSET);
                 if (offset < minOffset) {
                     minOffset = offset;
                 }
-                if (node.getSize().y > maxSize) {
-                    maxSize = node.getSize().y;
+                
+                if (node.getSize().y > maxHeight) {
+                    maxHeight = node.getSize().y;
                 }
             }
 
@@ -559,23 +580,29 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 nodeCountSum += nodeCount[layerIndex];
                 nodeCount[layerIndex]++;
             }
+            
             // apply the uppermost placement to all elements
             double newPos = uppermostPlace;
             if (nodeCountSum > 0) {
                 newPos += spacing;
             }
+            
             for (LNode node : segment.getNodes()) {
                 double offset = 0.0f;
                 if (straightEdges) {
                     // add node offset - minimal offset
                     offset = node.getProperty(Properties.LINSEG_OFFSET) - minOffset;
                 } else {
-                    offset = maxSize / 2 - node.getSize().y / 2;
+                    offset = maxHeight / 2 - node.getSize().y / 2;
                 }
-                Layer layer = node.getLayer();
-                node.getPos().y = newPos + offset;
-                layer.getSize().y = newPos + offset + node.getSize().y;
-                layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
+                
+                // If the node is not an odd port side dummy, adjust its layer's current size
+                if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.ODD_PORT_SIDE) {
+                    Layer layer = node.getLayer();
+                    node.getPos().y = newPos + offset;
+                    layer.getSize().y = newPos + offset + node.getSize().y;
+                    layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
+                }
             }
         }
     }
@@ -590,6 +617,12 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         // Initialize Regions = Linear segments
         for (int s = 0; s < linearSegments.length; s++) {
             LinearSegment segment = linearSegments[s];
+
+            // TODO Remove this debug statement
+            if (segment == null) {
+                continue;
+            }
+            
             Region region = new Region();
             for (LNode node : segment.getNodes()) {
                 region.nodes.add(node);
