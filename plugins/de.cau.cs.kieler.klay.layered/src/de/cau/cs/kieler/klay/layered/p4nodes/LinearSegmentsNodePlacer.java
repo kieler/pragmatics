@@ -590,11 +590,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 // Set the node position. Also, if the node is not an odd port side dummy, it
                 // occupies space in the layer (thus, the layer size has to be adjusted)
                 node.getPos().y = newPos + offset;
-                if (node.getProperty(Properties.NODE_TYPE) != Properties.NodeType.ODD_PORT_SIDE) {
-                    Layer layer = node.getLayer();
-                    layer.getSize().y = newPos + offset + node.getSize().y;
-                    layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
-                }
+                Layer layer = node.getLayer();
+                layer.getSize().y = newPos + offset + node.getSize().y;
+                layer.getSize().x = Math.max(layer.getSize().x, node.getSize().x);
             }
         }
     }
