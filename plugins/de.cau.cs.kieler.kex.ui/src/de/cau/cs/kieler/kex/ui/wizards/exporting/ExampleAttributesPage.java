@@ -83,29 +83,42 @@ public class ExampleAttributesPage extends WizardPage {
         layout.numColumns = 2;
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        new Label(composite, SWT.NONE).setText("Title:");
+        Label titleLab = new Label(composite, SWT.NONE);
+        titleLab.setText("Title:");
+        titleLab.setToolTipText("Think about a meaningful title of the new example.");
         exampleTitle = new Text(composite, SWT.BORDER);
         exampleTitle.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        // TODO check before example titles and set number like that.
         exampleTitle.setText("ExportedExample1");
+        exampleTitle.setToolTipText("Think about a meaningful title of the new example.");
         String user = System.getProperty("user.name");
 
-        new Label(composite, SWT.NONE).setText("Author:");
+        Label authorLab = new Label(composite, SWT.NONE);
+        authorLab.setText("Author:");
+        authorLab.setToolTipText("The person or organisation who created that example.");
         author = new Text(composite, SWT.BORDER);
         author.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         author.setText(user);
+        author.setToolTipText("The person or organisation/group who created that example.");
 
-        new Label(composite, SWT.NONE).setText("Contact:");
+        Label contactLab = new Label(composite, SWT.NONE);
+        contactLab.setText("Contact:");
+        contactLab
+                .setToolTipText("Here you usually give an emailaddress or a url of a homepage for support and additional informations.");
         contact = new Text(composite, SWT.BORDER);
         contact.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         contact.setText((user != null && user.length() > 1 ? user + "@informatik.uni-kiel.de" : ""));
-        new Label(composite, SWT.NONE).setText("Description:");
+        contact.setToolTipText("Here you usually give an emailaddress or a url of a homepage for support and additional informations.");
+        Label descLab = new Label(composite, SWT.NONE);
+        descLab.setText("Description:");
+        descLab.setToolTipText("The description gives an overview about the created example. This should help users by finding the desired example.");
         exampleDescription = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL
                 | SWT.H_SCROLL);
         GridData descData = new GridData(GridData.FILL_HORIZONTAL);
         descData.heightHint = EX_DESC_HEIGHT;
         descData.minimumHeight = EX_DESC_MINHEIGHT;
         exampleDescription.setLayoutData(descData);
+        exampleDescription
+                .setToolTipText("The description gives an overview about the created example. This should help users by finding the desired example.");
 
     }
 
