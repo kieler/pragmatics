@@ -128,7 +128,7 @@ public class Category {
 
     @Override
     public String toString() {
-        return new StringBuffer().append("Example [id= ").append(id).append(", title= ")
+        return new StringBuffer().append("Category [id= ").append(id).append(", title= ")
                 .append(title).append("]").toString();
     }
 
