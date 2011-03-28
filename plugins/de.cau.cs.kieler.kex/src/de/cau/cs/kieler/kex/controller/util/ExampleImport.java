@@ -138,6 +138,10 @@ public final class ExampleImport {
 
                 case FILE:
                     URL entry = bundle.getEntry(localPath);
+                    if (entry == null) {
+                        throw new RuntimeException(ErrorMessage.NO_Import
+                                + "Could not generate resource url from path: " + localPath);
+                    }
                     String dest = newDestFolder + "/" + destPath;
                     finishedResources.add(dest);
                     IOHandler.writeFile(entry, dest, checkDuplicate);

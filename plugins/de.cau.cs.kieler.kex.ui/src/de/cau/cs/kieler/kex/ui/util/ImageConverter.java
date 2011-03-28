@@ -1,6 +1,5 @@
 package de.cau.cs.kieler.kex.ui.util;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
@@ -126,12 +125,11 @@ public final class ImageConverter {
     }
 
     public static ImageData scaleSWTImage(final ImageData imgData, final int width,
-            final int height, final int hint) {
+            final int height, final int scaleType) {
         BufferedImage bufImg = convertToAWT(imgData);
-        Image image = bufImg.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
         BufferedImage bImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        bImage.getGraphics().drawImage(image, 0, 0, null);
-
+        bImage.getGraphics().drawImage(bufImg.getScaledInstance(width, height, scaleType), 0, 0,
+                null);
         return convertToSWT(bImage);
     }
 }

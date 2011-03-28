@@ -155,8 +155,8 @@ public class ImportExamplePage extends WizardPage {
         filterText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 
         // create tree viewer
-        treeViewer = new CheckboxTreeViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER
-                | SWT.H_SCROLL);
+        treeViewer = new CheckboxTreeViewer(composite, SWT.SINGLE | SWT.CHECK | SWT.BORDER
+                | SWT.V_SCROLL | SWT.H_SCROLL);
         final ExampleContentProvider contentProvider = new ExampleContentProvider();
         treeViewer.setContentProvider(contentProvider);
         treeViewer.setLabelProvider(new ExampleLabelProvider());
@@ -185,7 +185,8 @@ public class ImportExamplePage extends WizardPage {
                     selectedExample = (Example) firstElement;
                     updateDescriptionLabel((Example) firstElement);
                     Image computeImage = computeImage(selectedExample.getOverviewPic(),
-                            selectedExample.getNamespaceId(), IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT);
+                            selectedExample.getNamespaceId(), IMAGE_PRE_WIDTH, IMAGE_PRE_HEIGHT,
+                            java.awt.Image.SCALE_SMOOTH);
                     isPreviewAvailable = computeImage != null;
                     updateImageLabel(isPreviewAvailable ? computeImage : noPreviewPic());
                 }
@@ -195,17 +196,25 @@ public class ImportExamplePage extends WizardPage {
             public void checkStateChanged(final CheckStateChangedEvent event) {
                 boolean checked = event.getChecked();
                 treeViewer.setSubtreeChecked(event.getElement(), checked);
-                Object element = event.getElement();
+                updateTreeChecks(event, checked);
+            }
 
-                if (checked) {
-                    while (true) {
-                        Pair<Category, ArrayList<Object>> parent = getParent(element);
-                        if (parent == null) {
-                            break;
-                        }
-                        treeViewer.getChecked(parent);
-                        if (!treeViewer.getChecked(parent)) {
-                            treeViewer.setChecked(parent, true);
+            public void updateTreeChecks(final CheckStateChangedEvent event, final boolean check) {
+                Object element = event.getElement();
+                while (true) {
+                    Pair<Category, ArrayList<Object>> parent = getParent(element);
+                    if (parent == null) {
+                        break;
+                    }
+                    if (check) {
+                        if (!treeViewer.getChecked(parent) || treeViewer.getGrayed(parent)) {
+                            if (allElementsChecked(parent)) {
+                                treeViewer.setChecked(parent, true);
+                                treeViewer.setGrayed(parent, false);
+                            } else {
+                                treeViewer.setChecked(parent, true);
+                                treeViewer.setGrayed(parent, true);
+                            }
                             if (parent.getFirst().getParentId() != null) {
                                 element = parent;
                             } else {
@@ -214,25 +223,31 @@ public class ImportExamplePage extends WizardPage {
                         } else {
                             break;
                         }
-                    }
-                } else {
-                    while (true) {
-                        Pair<Category, ArrayList<Object>> parent = getParent(element);
-                        if (parent == null) {
+                    } else if (!hasCheckedElements(parent)) {
+                        treeViewer.setChecked(parent, false);
+                        if (parent.getFirst().getParentId() != null) {
+                            element = parent;
+                        } else {
                             break;
                         }
-                        if (!hasCheckedElements(parent)) {
-                            treeViewer.setChecked(parent, false);
-                            if (parent.getFirst().getParentId() != null) {
-                                element = parent;
-                            } else {
-                                break;
-                            }
+                    } else {
+                        treeViewer.setGrayed(parent, true);
+                        if (parent.getFirst().getParentId() != null) {
+                            element = parent;
                         } else {
                             break;
                         }
                     }
                 }
+            }
+
+            private boolean allElementsChecked(final Pair<Category, ArrayList<Object>> parent) {
+                for (Object ob : parent.getSecond()) {
+                    if (!treeViewer.getChecked(ob)) {
+                        return false;
+                    }
+                }
+                return true;
             }
 
             private boolean hasCheckedElements(final Pair<Category, ArrayList<Object>> parent) {
@@ -261,56 +276,6 @@ public class ImportExamplePage extends WizardPage {
                 return null;
             }
 
-            private void updateChecks(final CheckStateChangedEvent event) {
-                Object element = event.getElement();
-                ArrayList<Pair<Category, ArrayList<Object>>> input = (ArrayList<Pair<Category, ArrayList<Object>>>) treeViewer
-                        .getInput();
-                // TODO add functionality for subcategories.
-                Pair<Category, ArrayList<Object>> parentCat = null;
-                for (Pair<Category, ArrayList<Object>> cat : input) {
-                    if (cat.equals(element)) {
-                        return;
-                    }
-                    parentCat = getParent(element, cat);
-                    if (parentCat != null) {
-                        break;
-                    }
-                }
-                if (!event.getChecked()) {
-                    for (Object child : parentCat.getSecond()) {
-                        if (!child.equals(element) && treeViewer.getChecked(child)) {
-                            return;
-                        }
-                    }
-                    treeViewer.setChecked(parentCat, false);
-                } else {
-                    if (!treeViewer.getChecked(parentCat)) {
-                        treeViewer.setChecked(parentCat, true);
-                    }
-                }
-            }
-
-            /**
-             * Searches for the direct parent of the element object.
-             * 
-             * @param element
-             *            , Object that is the search-token // * @param pair // * , Pair which could
-             *            be the result and contains the iterating list for the // * search. // * @return
-             *            Pair, if parent is found otherwise null. //
-             */
-            @SuppressWarnings("unchecked")
-            private Pair<Category, ArrayList<Object>> getParent(final Object element,
-                    final Pair<Category, ArrayList<Object>> pair) {
-                for (Object child : pair.getSecond()) {
-                    if (child.equals(element)) {
-                        return pair;
-                    }
-                    if (child instanceof Pair) {
-                        return getParent(element, (Pair<Category, ArrayList<Object>>) child);
-                    }
-                }
-                return null;
-            }
         });
         final Maybe<Boolean> filterChanged = new Maybe<Boolean>(Boolean.FALSE);
         filterText.addModifyListener(new ModifyListener() {
@@ -339,7 +304,7 @@ public class ImportExamplePage extends WizardPage {
     }
 
     private Image computeImage(final String imagePath, final String nameSpaceId,
-            final int imageWidth, final int imageHeight) {
+            final int imageWidth, final int imageHeight, final int scaleType) {
         if (imagePath != null && imagePath.length() > 0) {
             Bundle bundle = Platform.getBundle(nameSpaceId);
             URL resource = bundle.getEntry(imagePath);
@@ -355,7 +320,7 @@ public class ImportExamplePage extends WizardPage {
                     }
                     imgData = ImageConverter.scaleSWTImage(imgData,
                             (int) (imgData.width / tempSize), (int) (imgData.height / tempSize),
-                            java.awt.Image.SCALE_SMOOTH);
+                            scaleType);
                     image = new Image(this.getShell().getDisplay(), imgData);
                 } else {
                     image = descriptor.createImage();
@@ -577,7 +542,7 @@ public class ImportExamplePage extends WizardPage {
                 Pair<Category, List<Object>> pair = (Pair<Category, List<Object>>) element;
                 Category first = pair.getFirst();
                 return computeImage(first.getIconPath(), first.getNamespaceId(), ICON_WIDTH,
-                        ICON_HEIGHT);
+                        ICON_HEIGHT, java.awt.Image.SCALE_SMOOTH);
             }
             // if (element instanceof Example) {
             // return computeImage(((Example) element).getOverviewPic(),
@@ -650,7 +615,8 @@ public class ImportExamplePage extends WizardPage {
                         imgLabel.setLayoutData(new GridData(GridData.CENTER | SWT.V_SCROLL
                                 | SWT.H_SCROLL));
                         image = computeImage(selectedExample.getOverviewPic(),
-                                selectedExample.getNamespaceId(), DIALOG_WIDTH, DIALOG_HEIGHT);
+                                selectedExample.getNamespaceId(), DIALOG_WIDTH, DIALOG_HEIGHT,
+                                java.awt.Image.SCALE_SMOOTH);
                         bounds = image.getBounds();
                         imgLabel.setImage(image);
                         imgLabel.pack();
