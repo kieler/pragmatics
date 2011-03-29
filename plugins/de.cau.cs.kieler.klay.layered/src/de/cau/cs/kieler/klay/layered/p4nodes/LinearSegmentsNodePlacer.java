@@ -69,11 +69,34 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateLayoutProcessor;
 public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayoutPhase {
     /**
      * A linear segment contains a single regular node or all dummy nodes of a long edge.
+     * 
+     * @author msp
+     * @author grh
+     * @author cds
      */
     public static class LinearSegment implements Comparable<LinearSegment> {
 
-        /** nodes of the linear segment. */
+        /**
+         * Nodes of the linear segment.
+         */
         private List<LNode> nodes = new LinkedList<LNode>();
+
+        /**
+         * Identifier value, may be arbitrarily used by algorithms.
+         */
+        private int id;
+        
+        /**
+         * Index in the previous layer. Used for cycle avoidance.
+         */
+        private int indexInLastLayer = -1;
+        
+        /**
+         * The last layer where a node belonging to this segment was discovered. Used for
+         * cycle avoidance.
+         */
+        private int lastLayer = -1;
+        
 
         /**
          * @return the nodes
@@ -81,24 +104,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         public List<LNode> getNodes() {
             return nodes;
         }
-
-        // CHECKSTYLEOFF VisibilityModifier
-        /**
-         * Identifier value, may be arbitrarily used by algorithms.
-         */
-        public int id;
         
-        /**
-         * Index in the previous layer. Used for cycle avoidance.
-         */
-        public int indexInLastLayer = -1;
-        
-        /**
-         * The last layer where a node belonging to this segment was discovered. Used for
-         * cycle avoidance.
-         */
-        public int lastLayer = -1;
-        // CHECKSTYLEON VisibilityModifier
         
         /**
          * Splits this linear segment before the given node. The returned segment contains
@@ -148,6 +154,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     /**
      * A Region contains Nodes or LinearSegments, that are touching and therefor need to be moved as
      * a unit.
+     * 
+     * @author msp
+     * @author grh
+     * @author cds
      */
     public class Region {
         /** The nodes that forms the region. */
@@ -365,7 +375,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
          * dependency graph. This is done by remembering the indices of each linear segment in
          * the previous layer. When we encounter a segment x, we check if there is a segment y
          * that came before x in the previous layer. (that would introduce a cycle) If that's
-         * the case, we split x at the current layer, resulting two segments, x1 and x2, x2
+         * the case, we split x at the current layer, resulting in two segments, x1 and x2, x2
          * starting at the current layer. Now, we proceed as usual, adding a dependency from x2
          * to y. But we have avoided a cycle because y does not depend on x2, but on x1.
          */
@@ -483,7 +493,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
             node.id = segment.id;
             segment.nodes.add(node);
         }
-
+        
         // Check if outgoing edge has priority > 0
         LEdge highestPrioEdge = null;
         int highestPrio = 0;
@@ -587,7 +597,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                     offset = maxHeight / 2 - node.getSize().y / 2;
                 }
 
-                // Set the node position. Also, if the node is not an odd port side dummy, it
+                // Set the node position. Also, if the segment is not invisible, its nodes
                 // occupies space in the layer (thus, the layer size has to be adjusted)
                 node.getPos().y = newPos + offset;
                 Layer layer = node.getLayer();
@@ -607,8 +617,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         // Initialize Regions = Linear segments
         for (int s = 0; s < linearSegments.length; s++) {
             LinearSegment segment = linearSegments[s];
-
             Region region = new Region();
+            
             for (LNode node : segment.getNodes()) {
                 region.nodes.add(node);
                 node.setProperty(Properties.REGION, region);
@@ -654,7 +664,8 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     }
 
     /**
-     * Calculates the force acting on the given region.
+     * Calculates the force acting on the given region. The force is saved in the region's
+     * force field. (pun not intended)
      * 
      * @param region the region whose force to be calculated
      */
@@ -695,7 +706,9 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
     }
 
     /**
-     * TODO: Document.
+     * Checks if applying the region's force to the region would result in the region
+     * overlapping with other regions. If so, its force is corrected by the amount
+     * necessary for it to not overlap with other regions.
      * 
      * @param region the region to be checked
      * @param spacing the object spacing
@@ -707,10 +720,10 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 if (node.getIndex() > 0) {
                     // Node is not topmost node
                     LNode neighbor = node.getLayer().getNodes().get(node.getIndex() - 1);
-                    if (node.getProperty(Properties.REGION) 
-                            != neighbor.getProperty(Properties.REGION)
+                    
+                    if (region != neighbor.getProperty(Properties.REGION)
                             && neighbor.getPos().y + neighbor.getSize().y + spacing 
-                            > node.getPos().y + region.force) {
+                                > node.getPos().y + region.force) {
                         
                         // Set force on region to the max possible force
                         region.force = node.getPos().y
@@ -719,15 +732,15 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 } else {
                     // Node is topmost node
                     if (node.getPos().y + region.force < 0.0f) {
-                        // Node woult like to go out of Frame
+                        // Node would like to go out of frame
                         region.force = -node.getPos().y;
                     }
                 }
             } else if (region.force > 0.0f && node.getIndex() < node.getLayer().getNodes().size() - 1) {
                 // Force is directed downward and the node is not lowermost
                 LNode neighbor = node.getLayer().getNodes().get(node.getIndex() + 1);
-                if (node.getProperty(Properties.REGION) 
-                        != neighbor.getProperty(Properties.REGION)
+                
+                if (region != neighbor.getProperty(Properties.REGION)
                         && node.getPos().y + node.getSize().y + spacing + region.force
                             > neighbor.getPos().y) {
                     
@@ -752,29 +765,30 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
         
         for (Layer layer : layeredGraph.getLayers()) {
             List<LNode> nodes = layer.getNodes();
+            if (nodes.isEmpty()) {
+                continue;
+            }
             
             // Iterator that iterates over nodes belonging to regions
+            // TODO Is this iterator really necessary?
+            //      I thought, at this point all nodes belong to regions...?
             Iterator<LNode> nodeIter = Iterators.filter(nodes.iterator(), new Predicate<LNode>() {
                 public boolean apply(final LNode node) {
                     return node.getProperty(Properties.REGION) != null;
                 }
             });
             
-            if (!nodeIter.hasNext()) {
-                // Ignore "empty" layers
-                continue;
-            }
-            
             // Get the first node
             LNode node1 = nodeIter.next();
+            Region node1Region = node1.getProperty(Properties.REGION);
             
             // While there are still nodes following the current node
             while (nodeIter.hasNext()) {
                 // Test if nodes have different regions
                 LNode node2 = nodeIter.next();
+                Region node2Region = node2.getProperty(Properties.REGION);
                 
-                if (node1.getProperty(Properties.REGION)
-                        != node2.getProperty(Properties.REGION)) {
+                if (node1Region != node2Region) {
                     
                     // Test if the nodes are touching
                     if (node1.getPos().y + node1.getSize().y + spacing > node2.getPos().y - 1.0f) {
@@ -794,6 +808,7 @@ public class LinearSegmentsNodePlacer extends AbstractAlgorithm implements ILayo
                 }
                 
                 node1 = node2;
+                node1Region = node2Region;
             }
         }
         
