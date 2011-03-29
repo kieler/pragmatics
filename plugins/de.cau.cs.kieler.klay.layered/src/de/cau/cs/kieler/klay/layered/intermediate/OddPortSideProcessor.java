@@ -51,7 +51,6 @@ import de.cau.cs.kieler.klay.layered.graph.LayeredGraph;
  *     ports on odd sides; the graph's layering may not be proper anymore.</dd>
  * </dl>
  * 
- * @see OddPortSidePostprocessor
  * @author cds
  */
 public class OddPortSideProcessor extends AbstractAlgorithm implements ILayoutProcessor {
