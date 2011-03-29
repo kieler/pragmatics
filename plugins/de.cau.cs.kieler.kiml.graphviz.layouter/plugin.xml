@@ -29,7 +29,7 @@
             description="Layered drawings of directed graphs. The algorithm aims edges in the same direction (top to bottom, or left to right) and then attempts to avoid edge crossings and reduce edge length."
             id="de.cau.cs.kieler.graphviz.dot"
             name="Dot"
-            parameter="dot"
+            parameter="DOT"
             preview="images/dot.png"
             type="de.cau.cs.kieler.type.layered">
          <supportedDiagram
@@ -77,7 +77,7 @@
             description="Spring model layouts. Neato attempts to minimize a global energy function, which is equivalent to statistical multi-dimensional scaling. The solution is achieved using stress majorization, though the older Kamada-Kawai algorithm, using steepest descent, is also available."
             id="de.cau.cs.kieler.graphviz.neato"
             name="Neato"
-            parameter="neato"
+            parameter="NEATO"
             preview="images/neato.png"
             type="de.cau.cs.kieler.type.force">
          <supportedDiagram
@@ -128,7 +128,7 @@
             description="Spring model layouts similar to those of Neato, but does this by reducing forces rather than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a multigrid solver that handles larger graphs and clustered undirected graphs."
             id="de.cau.cs.kieler.graphviz.fdp"
             name="FDP"
-            parameter="fdp"
+            parameter="FDP"
             preview="images/fdp.png"
             type="de.cau.cs.kieler.type.force">
          <supportedDiagram
@@ -179,7 +179,7 @@
             description="Radial layouts, after Wills &apos;97. The nodes are placed on concentric circles depending on their distance from a given root node.node."
             id="de.cau.cs.kieler.graphviz.twopi"
             name="Twopi"
-            parameter="twopi"
+            parameter="TWOPI"
             preview="images/twopi.png"
             type="de.cau.cs.kieler.type.tree">
          <supportedDiagram
@@ -219,7 +219,7 @@
             description="Circular layout, after Six and Tollis &apos;99, Kaufmann and Wiese &apos;02. This is suitable for certain diagrams of multiple cyclic structures such as certain telecommunications networks."
             id="de.cau.cs.kieler.graphviz.circo"
             name="Circo"
-            parameter="circo"
+            parameter="CIRCO"
             preview="images/circo.png"
             type="de.cau.cs.kieler.type.circle">
          <supportedDiagram

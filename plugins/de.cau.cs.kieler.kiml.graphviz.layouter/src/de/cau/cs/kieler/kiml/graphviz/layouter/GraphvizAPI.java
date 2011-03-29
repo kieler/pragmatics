@@ -26,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation.Command;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
 
 /**
@@ -71,8 +72,8 @@ public final class GraphvizAPI {
     }
 
     /** the process instance that is used for multiple layout runs. */
-    private static Map<String, Process> processMap =
-            new HashMap<String, Process>();
+    private static Map<Command, Process> processMap =
+            new HashMap<Command, Process>();
 
     /**
      * Starts a new Graphviz process with the given command. If a process
@@ -82,7 +83,7 @@ public final class GraphvizAPI {
      *            the graphviz command to use
      * @return an instance of the graphviz process
      */
-    public static synchronized Process startProcess(final String command) {
+    public static synchronized Process startProcess(final Command command) {
         Process graphvizProcess = processMap.get(command);
         if (graphvizProcess == null) {
             IPreferenceStore preferenceStore =

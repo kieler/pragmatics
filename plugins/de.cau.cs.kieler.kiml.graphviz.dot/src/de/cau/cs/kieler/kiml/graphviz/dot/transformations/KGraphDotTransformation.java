@@ -62,16 +62,29 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  */
 public class KGraphDotTransformation {
 
-    /** command for Dot layout. */
-    public static final String DOT_COMMAND = "dot";
-    /** command for Neato layout. */
-    public static final String NEATO_COMMAND = "neato";
-    /** command for Twopi layout. */
-    public static final String TWOPI_COMMAND = "twopi";
-    /** command for Fdp layout. */
-    public static final String FDP_COMMAND = "fdp";
-    /** command for Circo layout. */
-    public static final String CIRCO_COMMAND = "circo";
+    /** definition of Graphviz commands. */
+    public enum Command {
+        /** invalid command. */
+        INVALID,
+        /** command for Dot layout. */
+        DOT,
+        /** command for Neato layout. */
+        NEATO,
+        /** command for Twopi layout. */
+        TWOPI,
+        /** command for Fdp layout. */
+        FDP,
+        /** command for Circo layout. */
+        CIRCO;
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return super.toString().toLowerCase();
+        }
+    }
     
     /** layout option identifier for label distance. */
     public static final String LABEL_DISTANCE_ID =
@@ -218,7 +231,7 @@ public class KGraphDotTransformation {
      *            the progress monitor
      * @return the Dot instance
      */
-    public GraphvizModel transform(final String command,
+    public GraphvizModel transform(final Command command,
             final IKielerProgressMonitor monitor) {
         return createDotGraph(kgraph, command, monitor);
     }
@@ -252,7 +265,7 @@ public class KGraphDotTransformation {
      *         graph
      */
     private GraphvizModel createDotGraph(final KNode parent,
-            final String command, final IKielerProgressMonitor monitor) {
+            final Command command, final IKielerProgressMonitor monitor) {
         monitor.begin("Create Dot model", 1);
         GraphvizModel graphvizModel =
                 DotFactory.eINSTANCE.createGraphvizModel();
@@ -370,7 +383,7 @@ public class KGraphDotTransformation {
      * @param parentLayout
      *            the layout data for the parent node
      */
-    private void setGraphAttributes(final Graph graph, final String command,
+    private void setGraphAttributes(final Graph graph, final Command command,
             final KGraphData parentLayout) {
         AttributeStatement graphAttrStatement =
                 DotFactory.eINSTANCE.createAttributeStatement();
@@ -382,13 +395,13 @@ public class KGraphDotTransformation {
             minSpacing = DEF_MIN_SPACING;
         }
         String spacingVal = Float.toString(minSpacing / DPI);
-        if (command.equals(DOT_COMMAND) || command.equals(TWOPI_COMMAND)) {
+        if (command == Command.DOT || command == Command.TWOPI) {
             graphAttrs.add(createAttribute(ATTR_RANKSEP,
                     Float.toString(2 * minSpacing / DPI)));
         }
-        if (command.equals(CIRCO_COMMAND)) {
+        if (command == Command.CIRCO) {
             graphAttrs.add(createAttribute(ATTR_MINDIST, spacingVal));
-        } else if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
+        } else if (command == Command.NEATO || command == Command.FDP) {
             AttributeStatement edgeAttrStatement =
                     DotFactory.eINSTANCE.createAttributeStatement();
             edgeAttrStatement.setType(AttributeType.EDGE);
@@ -402,7 +415,7 @@ public class KGraphDotTransformation {
             offset = DEF_MIN_SPACING / 2;
         }
         // set layout direction
-        if (command.equals(DOT_COMMAND)) {
+        if (command == Command.DOT) {
             switch (parentLayout.getProperty(LayoutOptions.DIRECTION)) {
             case DOWN:
                 graphAttrs.add(createAttribute(ATTR_RANKDIR, "TB"));
@@ -419,7 +432,7 @@ public class KGraphDotTransformation {
             }
         }
         // enable node overlap avoidance
-        if (!command.equals(DOT_COMMAND)) {
+        if (command != Command.DOT) {
             graphAttrs.add(createAttribute(ATTR_OVERLAP, "false"));
         }
         // enable or disable drawing of splines
@@ -430,7 +443,7 @@ public class KGraphDotTransformation {
         graphAttrs.add(createAttribute(ATTR_SPLINES,
                 Boolean.toString(useSplines)));
         // configure initial placement of nodes
-        if (command.equals(NEATO_COMMAND) || command.equals(FDP_COMMAND)) {
+        if (command == Command.NEATO || command == Command.FDP) {
             Integer seed = parentLayout.getProperty(LayoutOptions.RANDOM_SEED);
             if (seed == null || seed < 0) {
                 seed = 1;

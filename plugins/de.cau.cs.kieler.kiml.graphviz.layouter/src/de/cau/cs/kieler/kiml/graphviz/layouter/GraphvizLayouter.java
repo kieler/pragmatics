@@ -32,6 +32,7 @@ import com.google.inject.Injector;
 import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation;
+import de.cau.cs.kieler.kiml.graphviz.dot.transformations.KGraphDotTransformation.Command;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -78,7 +79,7 @@ public class GraphvizLayouter {
      *            Graphviz command to use, determines the layout algorithm
      */
     public void layout(final KNode parentNode, final IKielerProgressMonitor progressMonitor,
-            final String command) {
+            final Command command) {
         progressMonitor.begin("Graphviz layout (" + command + ")", SMALL_TASK + LARGE_TASK + LARGE_TASK
                 + LARGE_TASK + SMALL_TASK);
         boolean debugMode = parentNode.getData(KShapeLayout.class).getProperty(LayoutOptions.DEBUG_MODE);

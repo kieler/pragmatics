@@ -80,7 +80,7 @@ public class DotExporter extends AbstractExporter {
                     new KGraphDotTransformation(graph);
             GraphvizModel dotGraph =
                     transformation.transform(
-                            KGraphDotTransformation.DOT_COMMAND,
+                            KGraphDotTransformation.Command.DOT,
                             monitor.subTask(1));
             // write to file
             Injector injector =
