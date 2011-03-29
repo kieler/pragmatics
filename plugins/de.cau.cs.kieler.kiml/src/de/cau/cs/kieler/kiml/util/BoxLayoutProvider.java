@@ -42,17 +42,6 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     private BoxSorter boxSorter = new BoxSorter();
     /** the algorithm used to place boxes. */
     private BoxPlacer boxPlacer = new BoxPlacer();
-
-    /**
-     * Initialize default options of the layout provider.
-     */
-    public BoxLayoutProvider() {
-        setProperty(LayoutOptions.SPACING, DEFAULT_SPACING);
-        setProperty(LayoutOptions.BORDER_SPACING, DEFAULT_SPACING);
-        setProperty(LayoutOptions.PRIORITY, 0);
-        setProperty(LayoutOptions.EXPAND_NODES, false);
-        setProperty(LayoutOptions.ASPECT_RATIO, BoxPlacer.DEF_ASPECT_RATIO);
-    }
     
     /**
      * {@inheritDoc}

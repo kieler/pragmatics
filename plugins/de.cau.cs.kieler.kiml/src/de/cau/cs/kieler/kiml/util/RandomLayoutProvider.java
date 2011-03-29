@@ -44,16 +44,6 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
     private static final float DEF_SPACING = 20.0f;
     
     /**
-     * Initialize default options of the layout provider.
-     */
-    public RandomLayoutProvider() {
-        setProperty(LayoutOptions.RANDOM_SEED, 0);
-        setProperty(LayoutOptions.ASPECT_RATIO, DEF_ASPECT_RATIO);
-        setProperty(LayoutOptions.SPACING, DEF_SPACING);
-        setProperty(LayoutOptions.BORDER_SPACING, DEF_SPACING);
-    }
-    
-    /**
      * {@inheritDoc}
      */
     @Override

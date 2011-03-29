@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.ogdf;
 import net.ogdf.bin.OgdfServerAPI;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -97,13 +96,5 @@ public class CircularLayouter extends OgdfLayouter {
     protected void postProcess(final KNode layoutNode) {
         loopRouter.exclude();
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void initDefaults(final IPropertyHolder defaultsHolder) {
-        super.initDefaults(defaultsHolder);
-        defaultsHolder.setProperty(LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
-    }
+    
 }

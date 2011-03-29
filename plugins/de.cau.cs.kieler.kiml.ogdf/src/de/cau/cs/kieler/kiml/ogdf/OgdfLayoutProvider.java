@@ -84,10 +84,6 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         default:
             layoutAlgorithm = null;
         }
-        // initialize default values for layout options
-        if (layoutAlgorithm != null) {
-            layoutAlgorithm.initDefaults(this);
-        }
     }
 
     /**

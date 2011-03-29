@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.ogdf;
 import net.ogdf.bin.OgdfServerAPI;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
@@ -115,16 +114,6 @@ public class TreeLayouter extends OgdfLayouter {
      */
     protected void postProcess(final KNode layoutNode) {
         loopRouter.exclude();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void initDefaults(final IPropertyHolder defaultsHolder) {
-        super.initDefaults(defaultsHolder);
-        defaultsHolder.setProperty(LayoutOptions.DIRECTION, Direction.DOWN);
-        defaultsHolder.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
     }
 
 }

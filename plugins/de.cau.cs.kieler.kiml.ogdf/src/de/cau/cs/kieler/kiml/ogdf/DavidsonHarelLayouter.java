@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.ogdf;
 import net.ogdf.bin.OgdfServerAPI;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ogdf.options.Costs;
@@ -45,9 +44,6 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
     private static final String SPEED_ID = "de.cau.cs.kieler.kiml.ogdf.option.speed";
     /** speed property. */
     private static final IProperty<Speed> SPEED = new Property<Speed>(SPEED_ID, Speed.MEDIUM);
-
-    /** default value for desired edge length. */
-    private static final float DEF_DESIRED_EDGE_LENGTH = 0.0f;
 
     /**
      * Constructs a DavidsonHarelLayouter.
@@ -96,15 +92,6 @@ public class DavidsonHarelLayouter extends OgdfLayouter {
             break;
         }
         addOption(OgdfServerAPI.OPTION_SPEED, theSpeed);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void initDefaults(final IPropertyHolder defaultsHolder) {
-        super.initDefaults(defaultsHolder);
-        defaultsHolder.setProperty(LayoutOptions.SPACING, DEF_DESIRED_EDGE_LENGTH);
     }
 
 }

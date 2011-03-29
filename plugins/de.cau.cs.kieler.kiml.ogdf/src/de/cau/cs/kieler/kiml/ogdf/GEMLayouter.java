@@ -17,7 +17,6 @@ import net.ogdf.bin.OgdfServerAPI;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ogdf.options.AttractionFormula;
@@ -168,13 +167,4 @@ public class GEMLayouter extends OgdfLayouter {
         addOption(OgdfServerAPI.OPTION_MIN_DIST_CC, minDistCC);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void initDefaults(final IPropertyHolder defaultsHolder) {
-        super.initDefaults(defaultsHolder);
-        defaultsHolder.setProperty(LayoutOptions.ASPECT_RATIO, DEF_PAGE_RATIO);
-        defaultsHolder.setProperty(LayoutOptions.SPACING, DEF_SPACING);
-    }
 }

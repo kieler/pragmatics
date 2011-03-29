@@ -920,7 +920,8 @@ final class GenomeFactory {
         for (final String id : algorithmIds) {
             LayoutAlgorithmData algorithm = layoutServices.getAlgorithmData(id);
             for (final String optionId : this.learnableOptions) {
-                if (algorithm.knowsOption(optionId)) {
+                LayoutOptionData<?> optionData = layoutServices.getOptionData(optionId);
+                if (algorithm.knowsOption(optionData)) {
                     knownOptionIds.add(optionId);
                 }
             }

@@ -19,12 +19,15 @@
                option="de.cau.cs.kieler.fixedSize">
          </knownOption>
          <knownOption
+               default="RIGHT"
                option="de.cau.cs.kieler.direction">
          </knownOption>
          <knownOption
+               default="15"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
+               default="15"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption

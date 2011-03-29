@@ -61,16 +61,6 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
     private boolean compoundMode = false;
     
     /**
-     * Initialize default options for the layout provider.
-     */
-    public Draw2DLayoutProvider() {
-        setProperty(LayoutOptions.SPACING, DEF_MIN_SPACING);
-        setProperty(LayoutOptions.BORDER_SPACING, DEF_MIN_SPACING);
-        setProperty(LayoutOptions.DIRECTION, Direction.DOWN);
-        setProperty(LayoutOptions.FIXED_SIZE, false);
-    }
-    
-    /**
      * {@inheritDoc}
      */
     @Override

@@ -42,13 +42,6 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
     private static final float DEF_BORDER_SPACING = 15.0f;
     
     /**
-     * Initialize the default values of the fixed layout provider.
-     */
-    public FixedLayoutProvider() {
-        setProperty(LayoutOptions.BORDER_SPACING, DEF_BORDER_SPACING);
-    }
-    
-    /**
      * {@inheritDoc}
      */
     @Override

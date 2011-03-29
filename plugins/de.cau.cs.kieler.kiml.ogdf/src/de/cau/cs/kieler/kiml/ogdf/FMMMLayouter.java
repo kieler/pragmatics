@@ -16,7 +16,6 @@ package de.cau.cs.kieler.kiml.ogdf;
 import net.ogdf.bin.OgdfServerAPI;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed;
@@ -48,9 +47,6 @@ public class FMMMLayouter extends OgdfLayouter {
     /** 'new initial placement' property. */
     private static final IProperty<Boolean> NEW_INITIAL_PLACEMENT = new Property<Boolean>(
             NEW_INITIAL_PLACEMENT_ID, false);
-
-    /** the default value for unit edge length. */
-    private static final float DEF_UNIT_EDGE_LENGTH = 50.0f;
 
     /** the self-loop router algorithm. */
     private SelfLoopRouter loopRouter = new SelfLoopRouter();
@@ -99,15 +95,6 @@ public class FMMMLayouter extends OgdfLayouter {
      */
     protected void postProcess(final KNode layoutNode) {
         loopRouter.exclude();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void initDefaults(final IPropertyHolder defaultsHolder) {
-        super.initDefaults(defaultsHolder);
-        defaultsHolder.setProperty(LayoutOptions.SPACING, DEF_UNIT_EDGE_LENGTH);
     }
 
 }

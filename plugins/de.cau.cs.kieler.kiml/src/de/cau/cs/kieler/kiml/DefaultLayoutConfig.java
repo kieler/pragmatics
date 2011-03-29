@@ -129,13 +129,14 @@ public class DefaultLayoutConfig implements ILayoutConfig {
      * @param property a layout option
      * @return the default value for the layout option
      */
+    @SuppressWarnings("unchecked")
     private <T> T getPropertyInternal(final LayoutOptionData<T> optionData) {
         T result = null;
         
         // check default value of the content layout provider
         if (contentLayouterData != null && optionData != null
                 && optionData.hasTarget(LayoutOptionData.Target.PARENTS)) {
-            result = contentLayouterData.getProvider().getProperty(optionData);
+            result = (T) contentLayouterData.getDefaultValue(optionData);
             if (result != null) {
                 return result;
             }
@@ -143,7 +144,7 @@ public class DefaultLayoutConfig implements ILayoutConfig {
 
         // check default value of the container layout provider
         if (containerLayouterData != null) {
-            result = containerLayouterData.getProvider().getProperty(optionData);
+            result = (T) containerLayouterData.getDefaultValue(optionData);
             if (result != null) {
                 return result;
             }

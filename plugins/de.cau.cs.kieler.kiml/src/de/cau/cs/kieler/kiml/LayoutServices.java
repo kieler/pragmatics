@@ -281,7 +281,7 @@ public class LayoutServices {
             final LayoutOptionData.Target targetType) {
         List<LayoutOptionData<?>> optionDataList = new LinkedList<LayoutOptionData<?>>();
         for (LayoutOptionData<?> optionData : layoutOptionMap.values()) {
-            if (algorithmData.knowsOption(optionData.getId())
+            if (algorithmData.knowsOption(optionData)
                     || LayoutOptions.ALGORITHM_ID.equals(optionData.getId())) {
                 if (optionData.hasTarget(targetType)) {
                     optionDataList.add(optionData);

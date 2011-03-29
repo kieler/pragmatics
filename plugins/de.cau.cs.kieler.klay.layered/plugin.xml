@@ -11,12 +11,14 @@
             preview="images/layered.png"
             type="de.cau.cs.kieler.type.layered">
          <knownOption
+               default="20"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
+               default="20"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
@@ -47,6 +49,7 @@
                option="de.cau.cs.kieler.debugMode">
          </knownOption>
          <knownOption
+               default="1"
                option="de.cau.cs.kieler.randomSeed">
          </knownOption>
          <knownOption

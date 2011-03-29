@@ -41,22 +41,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     private String command = KGraphDotTransformation.DOT_COMMAND;
 
     /**
-     * Initialize default options for the layout provider.
-     */
-    public GraphvizLayoutProvider() {
-        setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
-        setProperty(LayoutOptions.BORDER_SPACING,
-                KGraphDotTransformation.DEF_MIN_SPACING / 2);
-        setProperty(LayoutOptions.SPACING,
-                KGraphDotTransformation.DEF_MIN_SPACING);
-        setProperty(LayoutOptions.FIXED_SIZE, false);
-        setProperty(LayoutOptions.RANDOM_SEED, 1);
-        setProperty(LayoutOptions.LABEL_SPACING, 1.0f);
-        setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
-        setProperty(KGraphDotTransformation.LABEL_DISTANCE, 1.0f);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override

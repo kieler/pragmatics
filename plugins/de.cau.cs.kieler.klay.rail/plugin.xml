@@ -10,9 +10,11 @@
             name="KLay Railway"
             type="de.cau.cs.kieler.type.layered">
          <knownOption
+               default="10"
                option="de.cau.cs.kieler.borderSpacing">
          </knownOption>
          <knownOption
+               default="20"
                option="de.cau.cs.kieler.spacing">
          </knownOption>
          <knownOption

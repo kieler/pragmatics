@@ -13,13 +13,12 @@
  */
 package de.cau.cs.kieler.kiml;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  * Data type used to store information for a layout algorithm.
@@ -60,8 +59,8 @@ public class LayoutAlgorithmData implements ILayoutData {
     /** detail description. */
     private String description = "";
     
-    /** list of known layout options. */
-    private Set<String> knownOptions = new TreeSet<String>();
+    /** Map of known layout options. Keys are option data, values are the default values. */
+    private Map<LayoutOptionData<?>, Object> knownOptions = Maps.newHashMap();
     /** list of supported diagrams. */
     private List<SupportedDiagram> supportedDiagrams = new LinkedList<SupportedDiagram>();
     
@@ -102,38 +101,33 @@ public class LayoutAlgorithmData implements ILayoutData {
     /**
      * Sets the knowledge status of the given layout option.
      * 
-     * @param layoutOption identifier of layout option
-     * @param known indicates whether the layout algorithm should know
-     *     the option
+     * @param optionData layout option data
+     * @param defaultValue the default value, or {@code null} if none is specified
      */
-    public void setOption(final String layoutOption, final boolean known) {
-        if (layoutOption != null) {
-            if (known) {
-                knownOptions.add(layoutOption);
-            } else {
-                knownOptions.remove(layoutOption);
-            }
+    public void setOption(final LayoutOptionData<?> optionData, final Object defaultValue) {
+        if (optionData != null) {
+            knownOptions.put(optionData, defaultValue);
         }
-    }
-
-    /**
-     * Returns a collection of all known options of this layout algorithm.
-     * 
-     * @return the known options
-     */
-    public Collection<String> getKnownOptions() {
-        return Collections.unmodifiableCollection(knownOptions);
     }
     
     /**
-     * Determines whether the layout algorithm knows the given
-     * layout option.
+     * Determines whether the layout algorithm knows the given layout option.
      * 
-     * @param layoutOption identifier of layout option
+     * @param optionData layout option data
      * @return true if the associated layout algorithm knows the option
      */
-    public boolean knowsOption(final String layoutOption) {
-        return knownOptions.contains(layoutOption);
+    public boolean knowsOption(final LayoutOptionData<?> optionData) {
+        return knownOptions.containsKey(optionData);
+    }
+    
+    /**
+     * Returns the layout algorithm's default value for the given option.
+     * 
+     * @param optionData layout option data
+     * @return the associated default value, or {@code null} if there is none
+     */
+    public Object getDefaultValue(final LayoutOptionData<?> optionData) {
+        return knownOptions.get(optionData);
     }
     
     /**

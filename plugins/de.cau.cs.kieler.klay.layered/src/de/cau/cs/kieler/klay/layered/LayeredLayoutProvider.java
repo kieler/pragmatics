@@ -98,16 +98,6 @@ public class LayeredLayoutProvider extends AbstractLayoutProvider {
     /** list of layout processors that compose the current algorithm. */
     private List<ILayoutProcessor> algorithm = new LinkedList<ILayoutProcessor>();
     
-    
-    /**
-     * Initialize default options of the layout provider.
-     */
-    public LayeredLayoutProvider() {
-        setProperty(LayoutOptions.SPACING, Properties.DEF_SPACING);
-        setProperty(LayoutOptions.BORDER_SPACING, Properties.DEF_SPACING);
-        setProperty(LayoutOptions.RANDOM_SEED, 1);
-    }
-
     /**
      * {@inheritDoc}
      */

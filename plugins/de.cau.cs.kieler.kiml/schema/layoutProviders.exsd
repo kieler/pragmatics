@@ -292,6 +292,13 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="default" type="string">
+            <annotation>
+               <documentation>
+                  Optional default value to override the option&apos;s own default value.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

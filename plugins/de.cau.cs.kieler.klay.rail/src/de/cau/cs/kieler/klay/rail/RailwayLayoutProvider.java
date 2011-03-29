@@ -48,7 +48,6 @@ import de.cau.cs.kieler.klay.rail.options.PortType;
  * Provider class for railway layout.
  * 
  * @author jjc
- * 
  */
 public class RailwayLayoutProvider extends AbstractLayoutProvider {
 
@@ -68,14 +67,6 @@ public class RailwayLayoutProvider extends AbstractLayoutProvider {
     private ILayoutProcessor edgeSplitter = new LongEdgeSplitter();
 
     private static final int SWITCH_PORTS = 3;
-
-    /**
-     * Initialize default values for options.
-     */
-    public RailwayLayoutProvider() {
-        setProperty(LayoutOptions.BORDER_SPACING, Properties.DEF_BORDER);
-        setProperty(LayoutOptions.SPACING, Properties.DEF_SPACING);
-    }
 
     @Override
     public void doLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor) {

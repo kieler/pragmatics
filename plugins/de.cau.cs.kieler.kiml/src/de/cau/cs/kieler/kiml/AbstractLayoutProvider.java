@@ -15,24 +15,20 @@ package de.cau.cs.kieler.kiml;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.kiml.util.IDebugCanvas;
 
 /**
  * A layout provider executes a layout algorithm to layout the child elements of a node.
  * <p>When used in Eclipse, layout providers must register through the {@code layoutProviders}
  * extension point. All layout providers published to Eclipse this way are collected in the
- * {@link LayoutServices} singleton, provided the UI plugin is loaded.</p>
- * <p>Layout providers can hold properties, which represent the default layout option values
- * of the layout provider. Subclasses can register their default layout option values in
- * their constructor.</p>
+ * {@link LayoutServices} singleton, provided the UI plugin is loaded.
  * 
  * @kieler.rating 2011-01-17 proposed yellow
  *     reviewed by haf, cmot, soh
  * @author ars
  * @author msp
  */
-public abstract class AbstractLayoutProvider extends MapPropertyHolder {
+public abstract class AbstractLayoutProvider {
 
     /** the debug canvas to use. */
     private IDebugCanvas debugCanvas;

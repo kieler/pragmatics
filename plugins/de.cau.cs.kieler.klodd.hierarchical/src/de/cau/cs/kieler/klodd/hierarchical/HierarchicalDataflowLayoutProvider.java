@@ -29,7 +29,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klodd.hierarchical.impl.BalancingLayerAssigner;
 import de.cau.cs.kieler.klodd.hierarchical.impl.BalancingNodePlacer;
@@ -132,16 +131,6 @@ public class HierarchicalDataflowLayoutProvider extends AbstractLayoutProvider {
     private static final int SMALL_TASK = 5;
     /** amount of work for a large task. */
     private static final int LARGE_TASK = 15;
-
-    /**
-     * Initialize default options of the layout provider.
-     */
-    public HierarchicalDataflowLayoutProvider() {
-        setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
-        setProperty(LayoutOptions.SPACING, DEF_MIN_DIST);
-        setProperty(LayoutOptions.BORDER_SPACING, DEF_MIN_DIST);
-        setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.UNDEFINED);
-    }
     
     /**
      * {@inheritDoc}

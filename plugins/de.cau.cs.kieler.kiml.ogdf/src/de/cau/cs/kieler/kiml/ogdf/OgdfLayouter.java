@@ -60,7 +60,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.NonBlockingInputStream;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
@@ -149,18 +148,6 @@ public abstract class OgdfLayouter {
      */
     public void setDebugCanvas(final IDebugCanvas thecanvas) {
         this.debugCanvas = thecanvas;
-    }
-
-    /**
-     * Initialize the default values for the layout provider. Subclasses should extend this method
-     * with their own default values.
-     * 
-     * @param defaultsHolder
-     *            the layout options holder for default values
-     */
-    public void initDefaults(final IPropertyHolder defaultsHolder) {
-        defaultsHolder.setProperty(LayoutOptions.BORDER_SPACING, DEF_BORDER_SPACING);
-        defaultsHolder.setProperty(LayoutOptions.RANDOM_SEED, 1);
     }
 
     private static final int SMALL_TASK_WORK = 1;
